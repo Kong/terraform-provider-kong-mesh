@@ -19,7 +19,7 @@ type IndexResponse struct {
 	// Bad Request
 	BadRequestError *shared.BadRequestError
 	// Internal
-	InternalError *shared.InternalError
+	BaseError *shared.BaseError
 }
 
 func (o *IndexResponse) GetContentType() string {
@@ -57,9 +57,9 @@ func (o *IndexResponse) GetBadRequestError() *shared.BadRequestError {
 	return o.BadRequestError
 }
 
-func (o *IndexResponse) GetInternalError() *shared.InternalError {
+func (o *IndexResponse) GetBaseError() *shared.BaseError {
 	if o == nil {
 		return nil
 	}
-	return o.InternalError
+	return o.BaseError
 }

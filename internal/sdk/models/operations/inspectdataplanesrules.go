@@ -78,7 +78,7 @@ type InspectDataplanesRulesResponse struct {
 	// Bad Request
 	BadRequestError *shared.BadRequestError
 	// Internal
-	InternalError *shared.InternalError
+	BaseError *shared.BaseError
 }
 
 func (o *InspectDataplanesRulesResponse) GetContentType() string {
@@ -116,9 +116,9 @@ func (o *InspectDataplanesRulesResponse) GetBadRequestError() *shared.BadRequest
 	return o.BadRequestError
 }
 
-func (o *InspectDataplanesRulesResponse) GetInternalError() *shared.InternalError {
+func (o *InspectDataplanesRulesResponse) GetBaseError() *shared.BaseError {
 	if o == nil {
 		return nil
 	}
-	return o.InternalError
+	return o.BaseError
 }

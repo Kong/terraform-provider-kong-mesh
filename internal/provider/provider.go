@@ -40,7 +40,7 @@ func (p *KongMeshProvider) Schema(ctx context.Context, req provider.SchemaReques
 				Required:    true,
 			},
 		},
-		MarkdownDescription: `Kong Mesh API: The Kong Mesh API provides a programmatic way to interact with Kong Mesh.`,
+		MarkdownDescription: `Kong Mesh: This is a BETA Mesh specification. Endpoints in this specification may change with zero notice`,
 	}
 }
 

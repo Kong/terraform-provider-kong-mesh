@@ -14,12 +14,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	custom_boolplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/boolplanmodifier"
 	custom_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
-	custom_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
@@ -81,9 +80,9 @@ func (r *MeshLoadBalancingStrategyResource) Schema(ctx context.Context, req reso
 			"mesh": schema.StringAttribute{
 				Required: true,
 				PlanModifiers: []planmodifier.String{
-					custom_stringplanmodifier.RequiresReplaceModifier(),
+					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
-				Description: `name of the mesh`,
+				Description: `name of the mesh. Requires replacement if changed.`,
 			},
 			"modification_time": schema.StringAttribute{
 				Computed: true,
@@ -98,9 +97,9 @@ func (r *MeshLoadBalancingStrategyResource) Schema(ctx context.Context, req reso
 			"name": schema.StringAttribute{
 				Required: true,
 				PlanModifiers: []planmodifier.String{
-					custom_stringplanmodifier.RequiresReplaceModifier(),
+					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
-				Description: `name of the MeshLoadBalancingStrategy`,
+				Description: `name of the MeshLoadBalancingStrategy. Requires replacement if changed.`,
 			},
 			"spec": schema.SingleNestedAttribute{
 				Required: true,
@@ -245,10 +244,7 @@ func (r *MeshLoadBalancingStrategyResource) Schema(ctx context.Context, req reso
 																		Optional: true,
 																		Attributes: map[string]schema.Attribute{
 																			"source_ip": schema.BoolAttribute{
-																				Optional: true,
-																				PlanModifiers: []planmodifier.Bool{
-																					custom_boolplanmodifier.SupressZeroNullModifier(),
-																				},
+																				Optional:    true,
 																				Description: `Hash on source IP address.`,
 																			},
 																		},
@@ -321,9 +317,6 @@ func (r *MeshLoadBalancingStrategyResource) Schema(ctx context.Context, req reso
 																	},
 																	"terminal": schema.BoolAttribute{
 																		Optional: true,
-																		PlanModifiers: []planmodifier.Bool{
-																			custom_boolplanmodifier.SupressZeroNullModifier(),
-																		},
 																		MarkdownDescription: `Terminal is a flag that short-circuits the hash computing. This field provides` + "\n" +
 																			`a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback` + "\n" +
 																			`to rest of the policy list”, it saves time when the terminal policy works.` + "\n" +
@@ -403,10 +396,7 @@ func (r *MeshLoadBalancingStrategyResource) Schema(ctx context.Context, req reso
 																		Optional: true,
 																		Attributes: map[string]schema.Attribute{
 																			"source_ip": schema.BoolAttribute{
-																				Optional: true,
-																				PlanModifiers: []planmodifier.Bool{
-																					custom_boolplanmodifier.SupressZeroNullModifier(),
-																				},
+																				Optional:    true,
 																				Description: `Hash on source IP address.`,
 																			},
 																		},
@@ -479,9 +469,6 @@ func (r *MeshLoadBalancingStrategyResource) Schema(ctx context.Context, req reso
 																	},
 																	"terminal": schema.BoolAttribute{
 																		Optional: true,
-																		PlanModifiers: []planmodifier.Bool{
-																			custom_boolplanmodifier.SupressZeroNullModifier(),
-																		},
 																		MarkdownDescription: `Terminal is a flag that short-circuits the hash computing. This field provides` + "\n" +
 																			`a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback` + "\n" +
 																			`to rest of the policy list”, it saves time when the terminal policy works.` + "\n" +
@@ -661,9 +648,6 @@ func (r *MeshLoadBalancingStrategyResource) Schema(ctx context.Context, req reso
 												},
 												"disabled": schema.BoolAttribute{
 													Optional: true,
-													PlanModifiers: []planmodifier.Bool{
-														custom_boolplanmodifier.SupressZeroNullModifier(),
-													},
 													MarkdownDescription: `Disabled allows to disable locality-aware load balancing.` + "\n" +
 														`When disabled requests are distributed across all endpoints regardless of locality.`,
 												},

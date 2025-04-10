@@ -60,7 +60,7 @@ func (c *sdkConfiguration) GetServerDetails() (string, map[string]string) {
 	return c.ServerURL, map[string]string{}
 }
 
-// KongMesh - Kong Mesh API: The Kong Mesh API provides a programmatic way to interact with Kong Mesh.
+// KongMesh - Kong Mesh: This is a BETA Mesh specification. Endpoints in this specification may change with zero notice
 type KongMesh struct {
 	System                    *System
 	GlobalInsight             *GlobalInsight
@@ -121,10 +121,10 @@ func New(serverURL string, opts ...SDKOption) *KongMesh {
 	sdk := &KongMesh{
 		sdkConfiguration: sdkConfiguration{
 			Language:          "go",
-			OpenAPIDocVersion: "0.1.0",
+			OpenAPIDocVersion: "2.0.0",
 			SDKVersion:        "0.1.0",
 			GenVersion:        "2.546.3",
-			UserAgent:         "speakeasy-sdk/terraform 0.1.0 2.546.3 0.1.0 github.com/kong/terraform-provider-kong-mesh/internal/sdk",
+			UserAgent:         "speakeasy-sdk/terraform 0.1.0 2.546.3 2.0.0 github.com/kong/terraform-provider-kong-mesh/internal/sdk",
 			ServerURL:         serverURL,
 			Hooks:             hooks.New(),
 		},
@@ -354,12 +354,12 @@ func (s *KongMesh) GetDataplanesXdsConfig(ctx context.Context, request operation
 				return nil, err
 			}
 
-			var out shared.InternalError
+			var out shared.BaseError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.InternalError = &out
+			res.BaseError = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
