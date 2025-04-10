@@ -13565,7 +13565,7 @@ components:
       properties:
         caCert:
           properties:
-            RSAbits:
+            rsaBits:
               format: uint32
               type: integer
               x-speakeasy-param-computed: false
