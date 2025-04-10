@@ -76,7 +76,7 @@ type InspectResourcesResponse struct {
 	// Bad Request
 	BadRequestError *shared.BadRequestError
 	// Internal
-	InternalError *shared.InternalError
+	BaseError *shared.BaseError
 }
 
 func (o *InspectResourcesResponse) GetContentType() string {
@@ -114,9 +114,9 @@ func (o *InspectResourcesResponse) GetBadRequestError() *shared.BadRequestError 
 	return o.BadRequestError
 }
 
-func (o *InspectResourcesResponse) GetInternalError() *shared.InternalError {
+func (o *InspectResourcesResponse) GetBaseError() *shared.BaseError {
 	if o == nil {
 		return nil
 	}
-	return o.InternalError
+	return o.BaseError
 }

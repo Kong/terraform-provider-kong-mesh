@@ -12,13 +12,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	custom_boolplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/boolplanmodifier"
 	custom_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
 	custom_objectplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/objectplanmodifier"
-	custom_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
@@ -261,9 +260,6 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 															},
 															"enabled": schema.BoolAttribute{
 																Optional: true,
-																PlanModifiers: []planmodifier.Bool{
-																	custom_boolplanmodifier.SupressZeroNullModifier(),
-																},
 																MarkdownDescription: `If false then the application won't be scrapped. If nil, then it is treated` + "\n" +
 																	`as true and kuma-dp scrapes metrics from the service.`,
 															},
@@ -294,9 +290,6 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 														},
 														"used_only": schema.BoolAttribute{
 															Optional: true,
-															PlanModifiers: []planmodifier.Bool{
-																custom_boolplanmodifier.SupressZeroNullModifier(),
-															},
 															MarkdownDescription: `If true then return metrics that Envoy has updated (counters incremented` + "\n" +
 																`at least once, gauges changed at least once, and histograms added to at` + "\n" +
 																`least once). If nil, then it is treated as false.`,
@@ -316,9 +309,6 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 												},
 												"skip_mtls": schema.BoolAttribute{
 													Optional: true,
-													PlanModifiers: []planmodifier.Bool{
-														custom_boolplanmodifier.SupressZeroNullModifier(),
-													},
 													MarkdownDescription: `If true then endpoints for scraping metrics won't require mTLS even if mTLS` + "\n" +
 														`is enabled in Mesh. If nil, then it is treated as false.`,
 												},
@@ -703,10 +693,7 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 						Description: `Name of the enabled backend`,
 					},
 					"skip_validation": schema.BoolAttribute{
-						Optional: true,
-						PlanModifiers: []planmodifier.Bool{
-							custom_boolplanmodifier.SupressZeroNullModifier(),
-						},
+						Optional:    true,
 						Description: `If enabled, skips CA validation.`,
 					},
 				},
@@ -716,9 +703,9 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			"name": schema.StringAttribute{
 				Required: true,
 				PlanModifiers: []planmodifier.String{
-					custom_stringplanmodifier.RequiresReplaceModifier(),
+					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
-				Description: `name of the Mesh`,
+				Description: `name of the Mesh. Requires replacement if changed.`,
 			},
 			"networking": schema.SingleNestedAttribute{
 				Optional: true,
@@ -727,10 +714,7 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 						Optional: true,
 						Attributes: map[string]schema.Attribute{
 							"passthrough": schema.BoolAttribute{
-								Optional: true,
-								PlanModifiers: []planmodifier.Bool{
-									custom_boolplanmodifier.SupressZeroNullModifier(),
-								},
+								Optional:    true,
 								Description: `Control the passthrough cluster`,
 							},
 						},
@@ -744,24 +728,15 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				Attributes: map[string]schema.Attribute{
 					"default_forbid_mesh_external_service_access": schema.BoolAttribute{
 						Optional: true,
-						PlanModifiers: []planmodifier.Bool{
-							custom_boolplanmodifier.SupressZeroNullModifier(),
-						},
 						MarkdownDescription: `If true, blocks traffic to MeshExternalServices.` + "\n" +
 							`Default: false`,
 					},
 					"locality_aware_load_balancing": schema.BoolAttribute{
-						Optional: true,
-						PlanModifiers: []planmodifier.Bool{
-							custom_boolplanmodifier.SupressZeroNullModifier(),
-						},
+						Optional:    true,
 						Description: `Enable the Locality Aware Load Balancing`,
 					},
 					"zone_egress": schema.BoolAttribute{
 						Optional: true,
-						PlanModifiers: []planmodifier.Bool{
-							custom_boolplanmodifier.SupressZeroNullModifier(),
-						},
 						MarkdownDescription: `Enable routing traffic to services in other zone or external services` + "\n" +
 							`through ZoneEgress. Default: false`,
 					},
@@ -807,9 +782,6 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 												},
 												"split_service": schema.BoolAttribute{
 													Optional: true,
-													PlanModifiers: []planmodifier.Bool{
-														custom_boolplanmodifier.SupressZeroNullModifier(),
-													},
 													MarkdownDescription: `Determines if datadog service name should be split based on traffic` + "\n" +
 														`direction and destination. For example, with ` + "`" + `splitService: true` + "`" + ` and a` + "\n" +
 														`` + "`" + `backend` + "`" + ` service that communicates with a couple of databases, you would` + "\n" +
@@ -834,18 +806,12 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 												},
 												"shared_span_context": schema.BoolAttribute{
 													Optional: true,
-													PlanModifiers: []planmodifier.Bool{
-														custom_boolplanmodifier.SupressZeroNullModifier(),
-													},
 													MarkdownDescription: `Determines whether client and server spans will share the same span` + "\n" +
 														`context. Default: true.` + "\n" +
 														`https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/trace/v3/zipkin.proto#config-trace-v3-zipkinconfig`,
 												},
 												"trace_id128bit": schema.BoolAttribute{
-													Optional: true,
-													PlanModifiers: []planmodifier.Bool{
-														custom_boolplanmodifier.SupressZeroNullModifier(),
-													},
+													Optional:    true,
 													Description: `Generate 128bit traces. Default: false`,
 												},
 												"url": schema.StringAttribute{

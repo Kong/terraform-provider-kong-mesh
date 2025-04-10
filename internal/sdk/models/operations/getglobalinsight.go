@@ -19,7 +19,7 @@ type GetGlobalInsightResponse struct {
 	// Bad Request
 	BadRequestError *shared.BadRequestError
 	// Internal
-	InternalError *shared.InternalError
+	BaseError *shared.BaseError
 }
 
 func (o *GetGlobalInsightResponse) GetContentType() string {
@@ -57,9 +57,9 @@ func (o *GetGlobalInsightResponse) GetBadRequestError() *shared.BadRequestError 
 	return o.BadRequestError
 }
 
-func (o *GetGlobalInsightResponse) GetInternalError() *shared.InternalError {
+func (o *GetGlobalInsightResponse) GetBaseError() *shared.BaseError {
 	if o == nil {
 		return nil
 	}
-	return o.InternalError
+	return o.BaseError
 }

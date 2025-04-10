@@ -83,7 +83,7 @@ type InspectHostnamesResponse struct {
 	// Not Found
 	NotFoundError *shared.NotFoundError
 	// Internal
-	InternalError *shared.InternalError
+	BaseError *shared.BaseError
 }
 
 func (o *InspectHostnamesResponse) GetContentType() string {
@@ -128,9 +128,9 @@ func (o *InspectHostnamesResponse) GetNotFoundError() *shared.NotFoundError {
 	return o.NotFoundError
 }
 
-func (o *InspectHostnamesResponse) GetInternalError() *shared.InternalError {
+func (o *InspectHostnamesResponse) GetBaseError() *shared.BaseError {
 	if o == nil {
 		return nil
 	}
-	return o.InternalError
+	return o.BaseError
 }

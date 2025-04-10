@@ -14,12 +14,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int32default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	custom_boolplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/boolplanmodifier"
 	custom_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
-	custom_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
@@ -81,9 +80,9 @@ func (r *MeshMetricResource) Schema(ctx context.Context, req resource.SchemaRequ
 			"mesh": schema.StringAttribute{
 				Required: true,
 				PlanModifiers: []planmodifier.String{
-					custom_stringplanmodifier.RequiresReplaceModifier(),
+					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
-				Description: `name of the mesh`,
+				Description: `name of the mesh. Requires replacement if changed.`,
 			},
 			"modification_time": schema.StringAttribute{
 				Computed: true,
@@ -98,9 +97,9 @@ func (r *MeshMetricResource) Schema(ctx context.Context, req resource.SchemaRequ
 			"name": schema.StringAttribute{
 				Required: true,
 				PlanModifiers: []planmodifier.String{
-					custom_stringplanmodifier.RequiresReplaceModifier(),
+					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
-				Description: `name of the MeshMetric`,
+				Description: `name of the MeshMetric. Requires replacement if changed.`,
 			},
 			"spec": schema.SingleNestedAttribute{
 				Required: true,
@@ -231,9 +230,6 @@ func (r *MeshMetricResource) Schema(ctx context.Context, req resource.SchemaRequ
 								Attributes: map[string]schema.Attribute{
 									"include_unused": schema.BoolAttribute{
 										Optional: true,
-										PlanModifiers: []planmodifier.Bool{
-											custom_boolplanmodifier.SupressZeroNullModifier(),
-										},
 										MarkdownDescription: `IncludeUnused if false will scrape only metrics that has been by sidecar (counters incremented` + "\n" +
 											`at least once, gauges changed at least once, and histograms added to at` + "\n" +
 											`least once). If true will scrape all metrics (even the ones with zeros).` + "\n" +

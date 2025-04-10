@@ -13,12 +13,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	custom_boolplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/boolplanmodifier"
 	custom_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
-	custom_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
@@ -79,9 +78,9 @@ func (r *MeshCircuitBreakerResource) Schema(ctx context.Context, req resource.Sc
 			"mesh": schema.StringAttribute{
 				Required: true,
 				PlanModifiers: []planmodifier.String{
-					custom_stringplanmodifier.RequiresReplaceModifier(),
+					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
-				Description: `name of the mesh`,
+				Description: `name of the mesh. Requires replacement if changed.`,
 			},
 			"modification_time": schema.StringAttribute{
 				Computed: true,
@@ -96,9 +95,9 @@ func (r *MeshCircuitBreakerResource) Schema(ctx context.Context, req resource.Sc
 			"name": schema.StringAttribute{
 				Required: true,
 				PlanModifiers: []planmodifier.String{
-					custom_stringplanmodifier.RequiresReplaceModifier(),
+					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
-				Description: `name of the MeshCircuitBreaker`,
+				Description: `name of the MeshCircuitBreaker. Requires replacement if changed.`,
 			},
 			"spec": schema.SingleNestedAttribute{
 				Required: true,
@@ -330,10 +329,7 @@ func (r *MeshCircuitBreakerResource) Schema(ctx context.Context, req resource.Sc
 													Description: `Contains configuration for supported outlier detectors`,
 												},
 												"disabled": schema.BoolAttribute{
-													Optional: true,
-													PlanModifiers: []planmodifier.Bool{
-														custom_boolplanmodifier.SupressZeroNullModifier(),
-													},
+													Optional:    true,
 													Description: `When set to true, outlierDetection configuration won't take any effect`,
 												},
 												"healthy_panic_threshold": schema.SingleNestedAttribute{
@@ -373,9 +369,6 @@ func (r *MeshCircuitBreakerResource) Schema(ctx context.Context, req resource.Sc
 												},
 												"split_external_and_local_errors": schema.BoolAttribute{
 													Optional: true,
-													PlanModifiers: []planmodifier.Bool{
-														custom_boolplanmodifier.SupressZeroNullModifier(),
-													},
 													MarkdownDescription: `Determines whether to distinguish local origin failures from external` + "\n" +
 														`errors. If set to true the following configuration parameters are taken` + "\n" +
 														`into account: detectors.localOriginFailures.consecutive`,
@@ -692,10 +685,7 @@ func (r *MeshCircuitBreakerResource) Schema(ctx context.Context, req resource.Sc
 													Description: `Contains configuration for supported outlier detectors`,
 												},
 												"disabled": schema.BoolAttribute{
-													Optional: true,
-													PlanModifiers: []planmodifier.Bool{
-														custom_boolplanmodifier.SupressZeroNullModifier(),
-													},
+													Optional:    true,
 													Description: `When set to true, outlierDetection configuration won't take any effect`,
 												},
 												"healthy_panic_threshold": schema.SingleNestedAttribute{
@@ -735,9 +725,6 @@ func (r *MeshCircuitBreakerResource) Schema(ctx context.Context, req resource.Sc
 												},
 												"split_external_and_local_errors": schema.BoolAttribute{
 													Optional: true,
-													PlanModifiers: []planmodifier.Bool{
-														custom_boolplanmodifier.SupressZeroNullModifier(),
-													},
 													MarkdownDescription: `Determines whether to distinguish local origin failures from external` + "\n" +
 														`errors. If set to true the following configuration parameters are taken` + "\n" +
 														`into account: detectors.localOriginFailures.consecutive`,
@@ -1050,10 +1037,7 @@ func (r *MeshCircuitBreakerResource) Schema(ctx context.Context, req resource.Sc
 													Description: `Contains configuration for supported outlier detectors`,
 												},
 												"disabled": schema.BoolAttribute{
-													Optional: true,
-													PlanModifiers: []planmodifier.Bool{
-														custom_boolplanmodifier.SupressZeroNullModifier(),
-													},
+													Optional:    true,
 													Description: `When set to true, outlierDetection configuration won't take any effect`,
 												},
 												"healthy_panic_threshold": schema.SingleNestedAttribute{
@@ -1093,9 +1077,6 @@ func (r *MeshCircuitBreakerResource) Schema(ctx context.Context, req resource.Sc
 												},
 												"split_external_and_local_errors": schema.BoolAttribute{
 													Optional: true,
-													PlanModifiers: []planmodifier.Bool{
-														custom_boolplanmodifier.SupressZeroNullModifier(),
-													},
 													MarkdownDescription: `Determines whether to distinguish local origin failures from external` + "\n" +
 														`errors. If set to true the following configuration parameters are taken` + "\n" +
 														`into account: detectors.localOriginFailures.consecutive`,

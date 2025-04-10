@@ -13,12 +13,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	custom_boolplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/boolplanmodifier"
 	custom_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
-	custom_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
@@ -81,9 +80,9 @@ func (r *MeshRateLimitResource) Schema(ctx context.Context, req resource.SchemaR
 			"mesh": schema.StringAttribute{
 				Required: true,
 				PlanModifiers: []planmodifier.String{
-					custom_stringplanmodifier.RequiresReplaceModifier(),
+					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
-				Description: `name of the mesh`,
+				Description: `name of the mesh. Requires replacement if changed.`,
 			},
 			"modification_time": schema.StringAttribute{
 				Computed: true,
@@ -98,9 +97,9 @@ func (r *MeshRateLimitResource) Schema(ctx context.Context, req resource.SchemaR
 			"name": schema.StringAttribute{
 				Required: true,
 				PlanModifiers: []planmodifier.String{
-					custom_stringplanmodifier.RequiresReplaceModifier(),
+					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
-				Description: `name of the MeshRateLimit`,
+				Description: `name of the MeshRateLimit. Requires replacement if changed.`,
 			},
 			"spec": schema.SingleNestedAttribute{
 				Required: true,
@@ -125,10 +124,7 @@ func (r *MeshRateLimitResource) Schema(ctx context.Context, req resource.SchemaR
 													Optional: true,
 													Attributes: map[string]schema.Attribute{
 														"disabled": schema.BoolAttribute{
-															Optional: true,
-															PlanModifiers: []planmodifier.Bool{
-																custom_boolplanmodifier.SupressZeroNullModifier(),
-															},
+															Optional:    true,
 															Description: `Define if rate limiting should be disabled.`,
 														},
 														"on_rate_limit": schema.SingleNestedAttribute{
@@ -265,9 +261,6 @@ func (r *MeshRateLimitResource) Schema(ctx context.Context, req resource.SchemaR
 														},
 														"disabled": schema.BoolAttribute{
 															Optional: true,
-															PlanModifiers: []planmodifier.Bool{
-																custom_boolplanmodifier.SupressZeroNullModifier(),
-															},
 															MarkdownDescription: `Define if rate limiting should be disabled.` + "\n" +
 																`Default: false`,
 														},
@@ -375,10 +368,7 @@ func (r *MeshRateLimitResource) Schema(ctx context.Context, req resource.SchemaR
 													Optional: true,
 													Attributes: map[string]schema.Attribute{
 														"disabled": schema.BoolAttribute{
-															Optional: true,
-															PlanModifiers: []planmodifier.Bool{
-																custom_boolplanmodifier.SupressZeroNullModifier(),
-															},
+															Optional:    true,
 															Description: `Define if rate limiting should be disabled.`,
 														},
 														"on_rate_limit": schema.SingleNestedAttribute{
@@ -515,9 +505,6 @@ func (r *MeshRateLimitResource) Schema(ctx context.Context, req resource.SchemaR
 														},
 														"disabled": schema.BoolAttribute{
 															Optional: true,
-															PlanModifiers: []planmodifier.Bool{
-																custom_boolplanmodifier.SupressZeroNullModifier(),
-															},
 															MarkdownDescription: `Define if rate limiting should be disabled.` + "\n" +
 																`Default: false`,
 														},
@@ -621,10 +608,7 @@ func (r *MeshRateLimitResource) Schema(ctx context.Context, req resource.SchemaR
 													Optional: true,
 													Attributes: map[string]schema.Attribute{
 														"disabled": schema.BoolAttribute{
-															Optional: true,
-															PlanModifiers: []planmodifier.Bool{
-																custom_boolplanmodifier.SupressZeroNullModifier(),
-															},
+															Optional:    true,
 															Description: `Define if rate limiting should be disabled.`,
 														},
 														"on_rate_limit": schema.SingleNestedAttribute{
@@ -761,9 +745,6 @@ func (r *MeshRateLimitResource) Schema(ctx context.Context, req resource.SchemaR
 														},
 														"disabled": schema.BoolAttribute{
 															Optional: true,
-															PlanModifiers: []planmodifier.Bool{
-																custom_boolplanmodifier.SupressZeroNullModifier(),
-															},
 															MarkdownDescription: `Define if rate limiting should be disabled.` + "\n" +
 																`Default: false`,
 														},

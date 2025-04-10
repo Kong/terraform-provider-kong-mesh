@@ -14,11 +14,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int32default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	custom_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
-	custom_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
@@ -80,9 +80,9 @@ func (r *MeshRetryResource) Schema(ctx context.Context, req resource.SchemaReque
 			"mesh": schema.StringAttribute{
 				Required: true,
 				PlanModifiers: []planmodifier.String{
-					custom_stringplanmodifier.RequiresReplaceModifier(),
+					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
-				Description: `name of the mesh`,
+				Description: `name of the mesh. Requires replacement if changed.`,
 			},
 			"modification_time": schema.StringAttribute{
 				Computed: true,
@@ -97,9 +97,9 @@ func (r *MeshRetryResource) Schema(ctx context.Context, req resource.SchemaReque
 			"name": schema.StringAttribute{
 				Required: true,
 				PlanModifiers: []planmodifier.String{
-					custom_stringplanmodifier.RequiresReplaceModifier(),
+					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
-				Description: `name of the MeshRetry`,
+				Description: `name of the MeshRetry. Requires replacement if changed.`,
 			},
 			"spec": schema.SingleNestedAttribute{
 				Required: true,

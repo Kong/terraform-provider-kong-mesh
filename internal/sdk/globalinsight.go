@@ -172,12 +172,12 @@ func (s *GlobalInsight) GetGlobalInsight(ctx context.Context, opts ...operations
 				return nil, err
 			}
 
-			var out shared.InternalError
+			var out shared.BaseError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.InternalError = &out
+			res.BaseError = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {

@@ -14,12 +14,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	custom_boolplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/boolplanmodifier"
 	custom_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
-	custom_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
@@ -81,9 +80,9 @@ func (r *MeshHealthCheckResource) Schema(ctx context.Context, req resource.Schem
 			"mesh": schema.StringAttribute{
 				Required: true,
 				PlanModifiers: []planmodifier.String{
-					custom_stringplanmodifier.RequiresReplaceModifier(),
+					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
-				Description: `name of the mesh`,
+				Description: `name of the mesh. Requires replacement if changed.`,
 			},
 			"modification_time": schema.StringAttribute{
 				Computed: true,
@@ -98,9 +97,9 @@ func (r *MeshHealthCheckResource) Schema(ctx context.Context, req resource.Schem
 			"name": schema.StringAttribute{
 				Required: true,
 				PlanModifiers: []planmodifier.String{
-					custom_stringplanmodifier.RequiresReplaceModifier(),
+					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
-				Description: `name of the MeshHealthCheck`,
+				Description: `name of the MeshHealthCheck. Requires replacement if changed.`,
 			},
 			"spec": schema.SingleNestedAttribute{
 				Required: true,
@@ -185,9 +184,6 @@ func (r *MeshHealthCheckResource) Schema(ctx context.Context, req resource.Schem
 									Attributes: map[string]schema.Attribute{
 										"always_log_health_check_failures": schema.BoolAttribute{
 											Optional: true,
-											PlanModifiers: []planmodifier.Bool{
-												custom_boolplanmodifier.SupressZeroNullModifier(),
-											},
 											MarkdownDescription: `If set to true, health check failure events will always be logged. If set` + "\n" +
 												`to false, only the initial health check failure event will be logged. The` + "\n" +
 												`default value is false.`,
@@ -199,9 +195,6 @@ func (r *MeshHealthCheckResource) Schema(ctx context.Context, req resource.Schem
 										},
 										"fail_traffic_on_panic": schema.BoolAttribute{
 											Optional: true,
-											PlanModifiers: []planmodifier.Bool{
-												custom_boolplanmodifier.SupressZeroNullModifier(),
-											},
 											MarkdownDescription: `If set to true, Envoy will not consider any hosts when the cluster is in` + "\n" +
 												`'panic mode'. Instead, the cluster will fail all requests as if all hosts` + "\n" +
 												`are unhealthy. This can help avoid potentially overwhelming a failing` + "\n" +
@@ -216,10 +209,7 @@ func (r *MeshHealthCheckResource) Schema(ctx context.Context, req resource.Schem
 														`by default name of the cluster this health check is associated with`,
 												},
 												"disabled": schema.BoolAttribute{
-													Optional: true,
-													PlanModifiers: []planmodifier.Bool{
-														custom_boolplanmodifier.SupressZeroNullModifier(),
-													},
+													Optional:    true,
 													Description: `If true the GrpcHealthCheck is disabled`,
 												},
 												"service_name": schema.StringAttribute{
@@ -265,10 +255,7 @@ func (r *MeshHealthCheckResource) Schema(ctx context.Context, req resource.Schem
 											Optional: true,
 											Attributes: map[string]schema.Attribute{
 												"disabled": schema.BoolAttribute{
-													Optional: true,
-													PlanModifiers: []planmodifier.Bool{
-														custom_boolplanmodifier.SupressZeroNullModifier(),
-													},
+													Optional:    true,
 													Description: `If true the HttpHealthCheck is disabled`,
 												},
 												"expected_statuses": schema.ListAttribute{
@@ -395,20 +382,14 @@ func (r *MeshHealthCheckResource) Schema(ctx context.Context, req resource.Schem
 												`traffic interval" is 60 seconds.`,
 										},
 										"reuse_connection": schema.BoolAttribute{
-											Optional: true,
-											PlanModifiers: []planmodifier.Bool{
-												custom_boolplanmodifier.SupressZeroNullModifier(),
-											},
+											Optional:    true,
 											Description: `Reuse health check connection between health checks. Default is true.`,
 										},
 										"tcp": schema.SingleNestedAttribute{
 											Optional: true,
 											Attributes: map[string]schema.Attribute{
 												"disabled": schema.BoolAttribute{
-													Optional: true,
-													PlanModifiers: []planmodifier.Bool{
-														custom_boolplanmodifier.SupressZeroNullModifier(),
-													},
+													Optional:    true,
 													Description: `If true the TcpHealthCheck is disabled`,
 												},
 												"receive": schema.ListAttribute{

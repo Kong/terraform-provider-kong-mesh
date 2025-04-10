@@ -2,8 +2,8 @@
 
 package shared
 
-// InternalError - standard error
-type InternalError struct {
+// BaseError - standard error
+type BaseError struct {
 	// The HTTP status code of the error. Useful when passing the response
 	// body to child properties in a frontend UI. Must be returned as an integer.
 	//
@@ -28,35 +28,35 @@ type InternalError struct {
 	Detail string `json:"detail"`
 }
 
-func (o *InternalError) GetStatus() int64 {
+func (o *BaseError) GetStatus() int64 {
 	if o == nil {
 		return 0
 	}
 	return o.Status
 }
 
-func (o *InternalError) GetTitle() string {
+func (o *BaseError) GetTitle() string {
 	if o == nil {
 		return ""
 	}
 	return o.Title
 }
 
-func (o *InternalError) GetType() *string {
+func (o *BaseError) GetType() *string {
 	if o == nil {
 		return nil
 	}
 	return o.Type
 }
 
-func (o *InternalError) GetInstance() string {
+func (o *BaseError) GetInstance() string {
 	if o == nil {
 		return ""
 	}
 	return o.Instance
 }
 
-func (o *InternalError) GetDetail() string {
+func (o *BaseError) GetDetail() string {
 	if o == nil {
 		return ""
 	}

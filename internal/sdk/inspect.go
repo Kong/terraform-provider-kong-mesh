@@ -171,12 +171,12 @@ func (s *Inspect) InspectDataplanesRules(ctx context.Context, request operations
 				return nil, err
 			}
 
-			var out shared.InternalError
+			var out shared.BaseError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.InternalError = &out
+			res.BaseError = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
@@ -347,12 +347,12 @@ func (s *Inspect) InspectResources(ctx context.Context, request operations.Inspe
 				return nil, err
 			}
 
-			var out shared.InternalError
+			var out shared.BaseError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.InternalError = &out
+			res.BaseError = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
@@ -540,12 +540,12 @@ func (s *Inspect) InspectHostnames(ctx context.Context, request operations.Inspe
 				return nil, err
 			}
 
-			var out shared.InternalError
+			var out shared.BaseError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.InternalError = &out
+			res.BaseError = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {

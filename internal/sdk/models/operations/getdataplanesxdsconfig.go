@@ -98,7 +98,7 @@ type GetDataplanesXdsConfigResponse struct {
 	// Bad Request
 	BadRequestError *shared.BadRequestError
 	// Internal
-	InternalError *shared.InternalError
+	BaseError *shared.BaseError
 }
 
 func (o *GetDataplanesXdsConfigResponse) GetContentType() string {
@@ -136,9 +136,9 @@ func (o *GetDataplanesXdsConfigResponse) GetBadRequestError() *shared.BadRequest
 	return o.BadRequestError
 }
 
-func (o *GetDataplanesXdsConfigResponse) GetInternalError() *shared.InternalError {
+func (o *GetDataplanesXdsConfigResponse) GetBaseError() *shared.BaseError {
 	if o == nil {
 		return nil
 	}
-	return o.InternalError
+	return o.BaseError
 }

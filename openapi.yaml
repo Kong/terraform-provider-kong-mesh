@@ -1,8 +1,9 @@
 openapi: 3.1.0
 info:
-  title: Kong Mesh API
-  description: The Kong Mesh API provides a programmatic way to interact with Kong Mesh.
-  version: 0.1.0
+  title: Kong Mesh
+  description: |
+    This is a BETA Mesh specification. Endpoints in this specification may change with zero notice
+  version: 2.0.0
   contact:
     name: Kong
     url: https://cloud.konghq.com
@@ -4630,22 +4631,18 @@ components:
         isTargetRef:
           description: whether this policy uses targetRef matching
           type: boolean
-          x-speakeasy-plan-modifiers: SupressZeroNullModifier
           x-speakeasy-param-computed: false
         hasToTargetRef:
           description: indicates that this policy can be used as an outbound policy
           type: boolean
-          x-speakeasy-plan-modifiers: SupressZeroNullModifier
           x-speakeasy-param-computed: false
         hasFromTargetRef:
           description: indicates that this policy can be used as an inbound policy
           type: boolean
-          x-speakeasy-plan-modifiers: SupressZeroNullModifier
           x-speakeasy-param-computed: false
         isFromAsRules:
           description: If set to `true`, performs a backward compatibility conversion from the deprecated 'from' array to the new 'rules' array. This ensures older policies remain functional under the updated schema.
           type: boolean
-          x-speakeasy-plan-modifiers: SupressZeroNullModifier
           x-speakeasy-param-computed: false
     ResourceTypeDescription:
       description: Description of a resource type, this is useful for dynamically generated clients and the gui
@@ -4671,7 +4668,6 @@ components:
           x-speakeasy-param-computed: false
         readOnly:
           type: boolean
-          x-speakeasy-plan-modifiers: SupressZeroNullModifier
           x-speakeasy-param-computed: false
         path:
           description: the path to use for accessing this resource. If scope is `Global` then it will be `/<path>` otherwise it will be `/meshes/<path>`
@@ -4686,7 +4682,6 @@ components:
         includeInFederation:
           description: description resources of this type should be included in federetion-with-policies export profile (especially useful for moving from non-federated to federated or migrating to a new global).
           type: boolean
-          x-speakeasy-plan-modifiers: SupressZeroNullModifier
           x-speakeasy-param-computed: false
         policy:
           $ref: '#/components/schemas/PolicyDescription'
@@ -4765,7 +4760,6 @@ components:
         not:
           type: boolean
           description: whether we check on the absence of this key:value pair
-          x-speakeasy-plan-modifiers: SupressZeroNullModifier
           x-speakeasy-param-computed: false
     Rule:
       type: object
@@ -5004,12 +4998,12 @@ components:
           description: Mesh is the name of the Kuma mesh this resource belongs to. It may be omitted for cluster-scoped resources.
           type: string
           default: default
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         name:
           description: Name of the Kuma resource
           type: string
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         labels:
           additionalProperties:
@@ -5879,12 +5873,12 @@ components:
           description: Mesh is the name of the Kuma mesh this resource belongs to. It may be omitted for cluster-scoped resources.
           type: string
           default: default
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         name:
           description: Name of the Kuma resource
           type: string
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         labels:
           additionalProperties:
@@ -6138,7 +6132,6 @@ components:
                           disabled:
                             description: When set to true, outlierDetection configuration won't take any effect
                             type: boolean
-                            x-speakeasy-plan-modifiers: SupressZeroNullModifier
                             x-speakeasy-param-computed: false
                           healthyPanicThreshold:
                             anyOf:
@@ -6170,7 +6163,6 @@ components:
                               errors. If set to true the following configuration parameters are taken
                               into account: detectors.localOriginFailures.consecutive
                             type: boolean
-                            x-speakeasy-plan-modifiers: SupressZeroNullModifier
                             x-speakeasy-param-computed: false
                         type: object
                         x-speakeasy-param-computed: false
@@ -6498,7 +6490,6 @@ components:
                           disabled:
                             description: When set to true, outlierDetection configuration won't take any effect
                             type: boolean
-                            x-speakeasy-plan-modifiers: SupressZeroNullModifier
                             x-speakeasy-param-computed: false
                           healthyPanicThreshold:
                             anyOf:
@@ -6530,7 +6521,6 @@ components:
                               errors. If set to true the following configuration parameters are taken
                               into account: detectors.localOriginFailures.consecutive
                             type: boolean
-                            x-speakeasy-plan-modifiers: SupressZeroNullModifier
                             x-speakeasy-param-computed: false
                         type: object
                         x-speakeasy-param-computed: false
@@ -6859,7 +6849,6 @@ components:
                           disabled:
                             description: When set to true, outlierDetection configuration won't take any effect
                             type: boolean
-                            x-speakeasy-plan-modifiers: SupressZeroNullModifier
                             x-speakeasy-param-computed: false
                           healthyPanicThreshold:
                             anyOf:
@@ -6891,7 +6880,6 @@ components:
                               errors. If set to true the following configuration parameters are taken
                               into account: detectors.localOriginFailures.consecutive
                             type: boolean
-                            x-speakeasy-plan-modifiers: SupressZeroNullModifier
                             x-speakeasy-param-computed: false
                         type: object
                         x-speakeasy-param-computed: false
@@ -7026,12 +7014,12 @@ components:
           description: Mesh is the name of the Kuma mesh this resource belongs to. It may be omitted for cluster-scoped resources.
           type: string
           default: default
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         name:
           description: Name of the Kuma resource
           type: string
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         labels:
           additionalProperties:
@@ -7506,12 +7494,12 @@ components:
           description: Mesh is the name of the Kuma mesh this resource belongs to. It may be omitted for cluster-scoped resources.
           type: string
           default: default
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         name:
           description: Name of the Kuma resource
           type: string
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         labels:
           additionalProperties:
@@ -7611,7 +7599,6 @@ components:
                           to false, only the initial health check failure event will be logged. The
                           default value is false.
                         type: boolean
-                        x-speakeasy-plan-modifiers: SupressZeroNullModifier
                         x-speakeasy-param-computed: false
                       eventLogPath:
                         description: |-
@@ -7626,7 +7613,6 @@ components:
                           are unhealthy. This can help avoid potentially overwhelming a failing
                           service.
                         type: boolean
-                        x-speakeasy-plan-modifiers: SupressZeroNullModifier
                         x-speakeasy-param-computed: false
                       grpc:
                         description: |-
@@ -7642,7 +7628,6 @@ components:
                           disabled:
                             description: If true the GrpcHealthCheck is disabled
                             type: boolean
-                            x-speakeasy-plan-modifiers: SupressZeroNullModifier
                             x-speakeasy-param-computed: false
                           serviceName:
                             description: Service name parameter which will be sent to gRPC service
@@ -7677,7 +7662,6 @@ components:
                           disabled:
                             description: If true the HttpHealthCheck is disabled
                             type: boolean
-                            x-speakeasy-plan-modifiers: SupressZeroNullModifier
                             x-speakeasy-param-computed: false
                           expectedStatuses:
                             description: List of HTTP response statuses which are considered healthy
@@ -7791,7 +7775,6 @@ components:
                       reuseConnection:
                         description: Reuse health check connection between health checks. Default is true.
                         type: boolean
-                        x-speakeasy-plan-modifiers: SupressZeroNullModifier
                         x-speakeasy-param-computed: false
                       tcp:
                         description: |-
@@ -7801,7 +7784,6 @@ components:
                           disabled:
                             description: If true the TcpHealthCheck is disabled
                             type: boolean
-                            x-speakeasy-plan-modifiers: SupressZeroNullModifier
                             x-speakeasy-param-computed: false
                           receive:
                             description: |-
@@ -7965,12 +7947,12 @@ components:
           description: Mesh is the name of the Kuma mesh this resource belongs to. It may be omitted for cluster-scoped resources.
           type: string
           default: default
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         name:
           description: Name of the Kuma resource
           type: string
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         labels:
           additionalProperties:
@@ -8469,7 +8451,6 @@ components:
                                           HostToBackendHostname rewrites the hostname to the hostname of the
                                           upstream host. This option is only available when targeting MeshGateways.
                                         type: boolean
-                                        x-speakeasy-plan-modifiers: SupressZeroNullModifier
                                         x-speakeasy-param-computed: false
                                       hostname:
                                         description: Hostname is the value to be used to replace the host header value during forwarding.
@@ -8752,12 +8733,12 @@ components:
           description: Mesh is the name of the Kuma mesh this resource belongs to. It may be omitted for cluster-scoped resources.
           type: string
           default: default
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         name:
           description: Name of the Kuma resource
           type: string
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         labels:
           additionalProperties:
@@ -8901,7 +8882,6 @@ components:
                                         sourceIP:
                                           description: Hash on source IP address.
                                           type: boolean
-                                          x-speakeasy-plan-modifiers: SupressZeroNullModifier
                                           x-speakeasy-param-computed: false
                                       type: object
                                       x-speakeasy-param-computed: false
@@ -8970,7 +8950,6 @@ components:
                                         to rest of the policy list”, it saves time when the terminal policy works.
                                         If true, and there is already a hash computed, ignore rest of the list of hash polices.
                                       type: boolean
-                                      x-speakeasy-plan-modifiers: SupressZeroNullModifier
                                       x-speakeasy-param-computed: false
                                     type:
                                       enum:
@@ -9039,7 +9018,6 @@ components:
                                         sourceIP:
                                           description: Hash on source IP address.
                                           type: boolean
-                                          x-speakeasy-plan-modifiers: SupressZeroNullModifier
                                           x-speakeasy-param-computed: false
                                       type: object
                                       x-speakeasy-param-computed: false
@@ -9108,7 +9086,6 @@ components:
                                         to rest of the policy list”, it saves time when the terminal policy works.
                                         If true, and there is already a hash computed, ignore rest of the list of hash polices.
                                       type: boolean
-                                      x-speakeasy-plan-modifiers: SupressZeroNullModifier
                                       x-speakeasy-param-computed: false
                                     type:
                                       enum:
@@ -9244,7 +9221,6 @@ components:
                               Disabled allows to disable locality-aware load balancing.
                               When disabled requests are distributed across all endpoints regardless of locality.
                             type: boolean
-                            x-speakeasy-plan-modifiers: SupressZeroNullModifier
                             x-speakeasy-param-computed: false
                           localZone:
                             description: LocalZone defines locality aware load balancing priorities between dataplane proxies inside a zone
@@ -9409,12 +9385,12 @@ components:
           description: Mesh is the name of the Kuma mesh this resource belongs to. It may be omitted for cluster-scoped resources.
           type: string
           default: default
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         name:
           description: Name of the Kuma resource
           type: string
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         labels:
           additionalProperties:
@@ -9532,7 +9508,6 @@ components:
                         least once). If true will scrape all metrics (even the ones with zeros).
                         If not specified then the default value is false.
                       type: boolean
-                      x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       x-speakeasy-param-computed: false
                     profiles:
                       description: Profiles allows to customize which metrics are published.
@@ -9737,12 +9712,12 @@ components:
           description: Mesh is the name of the Kuma mesh this resource belongs to. It may be omitted for cluster-scoped resources.
           type: string
           default: default
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         name:
           description: Name of the Kuma resource
           type: string
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         labels:
           additionalProperties:
@@ -9933,12 +9908,12 @@ components:
           description: Mesh is the name of the Kuma mesh this resource belongs to. It may be omitted for cluster-scoped resources.
           type: string
           default: default
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         name:
           description: Name of the Kuma resource
           type: string
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         labels:
           additionalProperties:
@@ -10541,12 +10516,12 @@ components:
           description: Mesh is the name of the Kuma mesh this resource belongs to. It may be omitted for cluster-scoped resources.
           type: string
           default: default
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         name:
           description: Name of the Kuma resource
           type: string
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         labels:
           additionalProperties:
@@ -10577,7 +10552,6 @@ components:
                               disabled:
                                 description: Define if rate limiting should be disabled.
                                 type: boolean
-                                x-speakeasy-plan-modifiers: SupressZeroNullModifier
                                 x-speakeasy-param-computed: false
                               onRateLimit:
                                 description: Describes the actions to take on a rate limit event
@@ -10689,7 +10663,6 @@ components:
                                   Define if rate limiting should be disabled.
                                   Default: false
                                 type: boolean
-                                x-speakeasy-plan-modifiers: SupressZeroNullModifier
                                 x-speakeasy-param-computed: false
                             type: object
                             x-speakeasy-param-computed: false
@@ -10796,7 +10769,6 @@ components:
                               disabled:
                                 description: Define if rate limiting should be disabled.
                                 type: boolean
-                                x-speakeasy-plan-modifiers: SupressZeroNullModifier
                                 x-speakeasy-param-computed: false
                               onRateLimit:
                                 description: Describes the actions to take on a rate limit event
@@ -10908,7 +10880,6 @@ components:
                                   Define if rate limiting should be disabled.
                                   Default: false
                                 type: boolean
-                                x-speakeasy-plan-modifiers: SupressZeroNullModifier
                                 x-speakeasy-param-computed: false
                             type: object
                             x-speakeasy-param-computed: false
@@ -11014,7 +10985,6 @@ components:
                               disabled:
                                 description: Define if rate limiting should be disabled.
                                 type: boolean
-                                x-speakeasy-plan-modifiers: SupressZeroNullModifier
                                 x-speakeasy-param-computed: false
                               onRateLimit:
                                 description: Describes the actions to take on a rate limit event
@@ -11126,7 +11096,6 @@ components:
                                   Define if rate limiting should be disabled.
                                   Default: false
                                 type: boolean
-                                x-speakeasy-plan-modifiers: SupressZeroNullModifier
                                 x-speakeasy-param-computed: false
                             type: object
                             x-speakeasy-param-computed: false
@@ -11263,12 +11232,12 @@ components:
           description: Mesh is the name of the Kuma mesh this resource belongs to. It may be omitted for cluster-scoped resources.
           type: string
           default: default
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         name:
           description: Name of the Kuma resource
           type: string
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         labels:
           additionalProperties:
@@ -11844,12 +11813,12 @@ components:
           description: Mesh is the name of the Kuma mesh this resource belongs to. It may be omitted for cluster-scoped resources.
           type: string
           default: default
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         name:
           description: Name of the Kuma resource
           type: string
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         labels:
           additionalProperties:
@@ -12175,12 +12144,12 @@ components:
           description: Mesh is the name of the Kuma mesh this resource belongs to. It may be omitted for cluster-scoped resources.
           type: string
           default: default
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         name:
           description: Name of the Kuma resource
           type: string
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         labels:
           additionalProperties:
@@ -12669,12 +12638,12 @@ components:
           description: Mesh is the name of the Kuma mesh this resource belongs to. It may be omitted for cluster-scoped resources.
           type: string
           default: default
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         name:
           description: Name of the Kuma resource
           type: string
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         labels:
           additionalProperties:
@@ -13010,12 +12979,12 @@ components:
           description: Mesh is the name of the Kuma mesh this resource belongs to. It may be omitted for cluster-scoped resources.
           type: string
           default: default
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         name:
           description: Name of the Kuma resource
           type: string
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         labels:
           additionalProperties:
@@ -13340,12 +13309,12 @@ components:
           description: Mesh is the name of the Kuma mesh this resource belongs to. It may be omitted for cluster-scoped resources.
           type: string
           default: default
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         name:
           description: Name of the Kuma resource
           type: string
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         labels:
           additionalProperties:
@@ -13593,7 +13562,6 @@ components:
             get service names like `backend_INBOUND`, `backend_OUTBOUND_db1`, and
             `backend_OUTBOUND_db2` in Datadog. Default: false
           type: boolean
-          x-speakeasy-plan-modifiers: SupressZeroNullModifier
           x-speakeasy-param-computed: false
       type: object
     FileLoggingBackendConfig:
@@ -13842,13 +13810,12 @@ components:
             skipValidation:
               description: If enabled, skips CA validation.
               type: boolean
-              x-speakeasy-plan-modifiers: SupressZeroNullModifier
               x-speakeasy-param-computed: false
           type: object
           x-speakeasy-param-computed: false
         name:
           type: string
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         networking:
           description: Networking settings of the mesh
@@ -13859,7 +13826,6 @@ components:
                 passthrough:
                   description: Control the passthrough cluster
                   type: boolean
-                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
                   x-speakeasy-param-computed: false
               type: object
               x-speakeasy-param-computed: false
@@ -13873,19 +13839,16 @@ components:
                 If true, blocks traffic to MeshExternalServices.
                 Default: false
               type: boolean
-              x-speakeasy-plan-modifiers: SupressZeroNullModifier
               x-speakeasy-param-computed: false
             localityAwareLoadBalancing:
               description: Enable the Locality Aware Load Balancing
               type: boolean
-              x-speakeasy-plan-modifiers: SupressZeroNullModifier
               x-speakeasy-param-computed: false
             zoneEgress:
               description: |-
                 Enable routing traffic to services in other zone or external services
                 through ZoneEgress. Default: false
               type: boolean
-              x-speakeasy-plan-modifiers: SupressZeroNullModifier
               x-speakeasy-param-computed: false
           type: object
           x-speakeasy-param-computed: false
@@ -13990,7 +13953,6 @@ components:
                   If false then the application won't be scrapped. If nil, then it is treated
                   as true and kuma-dp scrapes metrics from the service.
                 type: boolean
-                x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 x-speakeasy-param-computed: false
               name:
                 description: Name which identify given configuration.
@@ -14023,7 +13985,6 @@ components:
                 at least once, gauges changed at least once, and histograms added to at
                 least once). If nil, then it is treated as false.
               type: boolean
-              x-speakeasy-plan-modifiers: SupressZeroNullModifier
               x-speakeasy-param-computed: false
           type: object
           x-speakeasy-param-computed: false
@@ -14044,7 +14005,6 @@ components:
             If true then endpoints for scraping metrics won't require mTLS even if mTLS
             is enabled in Mesh. If nil, then it is treated as false.
           type: boolean
-          x-speakeasy-plan-modifiers: SupressZeroNullModifier
           x-speakeasy-param-computed: false
         tags:
           additionalProperties:
@@ -14104,12 +14064,10 @@ components:
             context. Default: true.
             https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/trace/v3/zipkin.proto#config-trace-v3-zipkinconfig
           type: boolean
-          x-speakeasy-plan-modifiers: SupressZeroNullModifier
           x-speakeasy-param-computed: false
         traceId128bit:
           description: 'Generate 128bit traces. Default: false'
           type: boolean
-          x-speakeasy-plan-modifiers: SupressZeroNullModifier
           x-speakeasy-param-computed: false
         url:
           description: Address of Zipkin collector.
@@ -14132,7 +14090,6 @@ components:
                       CrossMesh enables traffic to flow to this listener only from other
                       meshes.
                     type: boolean
-                    x-speakeasy-plan-modifiers: SupressZeroNullModifier
                     x-speakeasy-param-computed: false
                   hostname:
                     description: |-
@@ -14237,11 +14194,11 @@ components:
           x-speakeasy-param-computed: false
         mesh:
           type: string
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         name:
           type: string
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         selectors:
           description: |-
@@ -14405,12 +14362,12 @@ components:
           description: Mesh is the name of the Kuma mesh this resource belongs to. It may be omitted for cluster-scoped resources.
           type: string
           default: default
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         name:
           description: Name of the Kuma resource
           type: string
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         labels:
           additionalProperties:
@@ -14784,12 +14741,12 @@ components:
           description: Mesh is the name of the Kuma mesh this resource belongs to. It may be omitted for cluster-scoped resources.
           type: string
           default: default
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         name:
           description: Name of the Kuma resource
           type: string
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         labels:
           additionalProperties:
@@ -15029,12 +14986,12 @@ components:
           description: Mesh is the name of the Kuma mesh this resource belongs to. It may be omitted for cluster-scoped resources.
           type: string
           default: default
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         name:
           description: Name of the Kuma resource
           type: string
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         labels:
           additionalProperties:
@@ -15453,12 +15410,12 @@ components:
           description: Mesh is the name of the Kuma mesh this resource belongs to. It may be omitted for cluster-scoped resources.
           type: string
           default: default
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         name:
           description: Name of the Kuma resource
           type: string
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         labels:
           additionalProperties:
@@ -15486,7 +15443,6 @@ components:
                               limitOnServiceFail:
                                 description: LimitOnServiceFail will pass limit requests if ratelimit service is not reachable.
                                 type: boolean
-                                x-speakeasy-plan-modifiers: SupressZeroNullModifier
                                 x-speakeasy-param-computed: false
                               timeout:
                                 description: Timeout for rate limit request made form Data Plane Proxy to rate limit service.
@@ -15507,7 +15463,6 @@ components:
                           disabled:
                             description: Define if rate limiting should be disabled.
                             type: boolean
-                            x-speakeasy-plan-modifiers: SupressZeroNullModifier
                             x-speakeasy-param-computed: false
                           onRateLimit:
                             description: Describes the actions to take on a rate limit event
@@ -15829,7 +15784,6 @@ components:
                               limitOnServiceFail:
                                 description: LimitOnServiceFail will pass limit requests if ratelimit service is not reachable.
                                 type: boolean
-                                x-speakeasy-plan-modifiers: SupressZeroNullModifier
                                 x-speakeasy-param-computed: false
                               timeout:
                                 description: Timeout for rate limit request made form Data Plane Proxy to rate limit service.
@@ -15850,7 +15804,6 @@ components:
                           disabled:
                             description: Define if rate limiting should be disabled.
                             type: boolean
-                            x-speakeasy-plan-modifiers: SupressZeroNullModifier
                             x-speakeasy-param-computed: false
                           onRateLimit:
                             description: Describes the actions to take on a rate limit event
@@ -16131,12 +16084,12 @@ components:
           description: Mesh is the name of the Kuma mesh this resource belongs to. It may be omitted for cluster-scoped resources.
           type: string
           default: default
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         name:
           description: Name of the Kuma resource
           type: string
-          x-speakeasy-plan-modifiers: RequiresReplaceModifier
+          x-speakeasy-param-force-new: true
           x-speakeasy-param-computed: false
         labels:
           additionalProperties:
@@ -16174,7 +16127,6 @@ components:
                       ignoreDecision:
                         description: If true, then policy won't be taken into account when making a decision.
                         type: boolean
-                        x-speakeasy-plan-modifiers: SupressZeroNullModifier
                         x-speakeasy-param-computed: false
                       rego:
                         description: 'OPA Policy written in Rego. Available values: secret, inline, inlineString.'
@@ -16229,7 +16181,6 @@ components:
                         sendRawBody:
                           description: SendRawBody enable sending raw body instead of the body encoded into UTF-8
                           type: boolean
-                          x-speakeasy-plan-modifiers: SupressZeroNullModifier
                           x-speakeasy-param-computed: false
                       type: object
                       x-speakeasy-param-computed: false
@@ -16355,6 +16306,48 @@ components:
     MeshOPADeleteSuccessResponse:
       type: object
       properties: {}
+    BaseError:
+      type: object
+      title: Error
+      description: standard error
+      required:
+        - status
+        - title
+        - instance
+        - detail
+      properties:
+        status:
+          type: integer
+          description: |
+            The HTTP status code of the error. Useful when passing the response
+            body to child properties in a frontend UI. Must be returned as an integer.
+          readOnly: true
+        title:
+          type: string
+          description: |
+            A short, human-readable summary of the problem. It should not
+            change between occurences of a problem, except for localization.
+            Should be provided as "Sentence case" for direct use in the UI.
+          readOnly: true
+        type:
+          type: string
+          description: The error type.
+          readOnly: true
+        instance:
+          type: string
+          description: |
+            Used to return the correlation ID back to the user, in the format
+            kong:trace:<correlation_id>. This helps us find the relevant logs
+            when a customer reports an issue.
+          readOnly: true
+        detail:
+          type: string
+          description: |
+            A human readable explanation specific to this occurence of the problem.
+            This field may contain request/entity data to help the user understand
+            what went wrong. Enclose variable values in square brackets. Should be
+            provided as "Sentence case" for direct use in the UI.
+          readOnly: true
     InvalidRules:
       description: invalid parameters rules
       type: string
@@ -16382,19 +16375,6 @@ components:
         - is_supported_network_availability_zone_list
         - is_supported_network_cidr_block
         - is_supported_provider_region
-    InvalidParameters:
-      type: array
-      nullable: false
-      uniqueItems: true
-      minItems: 1
-      description: invalid parameters
-      items:
-        oneOf:
-          - $ref: '#/components/schemas/InvalidParameterStandard'
-          - $ref: '#/components/schemas/InvalidParameterMinimumLength'
-          - $ref: '#/components/schemas/InvalidParameterMaximumLength'
-          - $ref: '#/components/schemas/InvalidParameterChoiceItem'
-          - $ref: '#/components/schemas/InvalidParameterDependentItem'
     InvalidParameterStandard:
       type: object
       additionalProperties: false
@@ -16550,48 +16530,19 @@ components:
         - rule
         - reason
         - dependents
-    BaseError:
-      type: object
-      title: Error
-      description: standard error
-      required:
-        - status
-        - title
-        - instance
-        - detail
-      properties:
-        status:
-          type: integer
-          description: |
-            The HTTP status code of the error. Useful when passing the response
-            body to child properties in a frontend UI. Must be returned as an integer.
-          readOnly: true
-        title:
-          type: string
-          description: |
-            A short, human-readable summary of the problem. It should not
-            change between occurences of a problem, except for localization.
-            Should be provided as "Sentence case" for direct use in the UI.
-          readOnly: true
-        type:
-          type: string
-          description: The error type.
-          readOnly: true
-        instance:
-          type: string
-          description: |
-            Used to return the correlation ID back to the user, in the format
-            kong:trace:<correlation_id>. This helps us find the relevant logs
-            when a customer reports an issue.
-          readOnly: true
-        detail:
-          type: string
-          description: |
-            A human readable explanation specific to this occurence of the problem.
-            This field may contain request/entity data to help the user understand
-            what went wrong. Enclose variable values in square brackets. Should be
-            provided as "Sentence case" for direct use in the UI.
-          readOnly: true
+    InvalidParameters:
+      type: array
+      nullable: false
+      uniqueItems: true
+      minItems: 1
+      description: invalid parameters
+      items:
+        oneOf:
+          - $ref: '#/components/schemas/InvalidParameterStandard'
+          - $ref: '#/components/schemas/InvalidParameterMinimumLength'
+          - $ref: '#/components/schemas/InvalidParameterMaximumLength'
+          - $ref: '#/components/schemas/InvalidParameterChoiceItem'
+          - $ref: '#/components/schemas/InvalidParameterDependentItem'
     BadRequestError:
       allOf:
         - $ref: '#/components/schemas/BaseError'
@@ -16601,36 +16552,6 @@ components:
           properties:
             invalid_parameters:
               $ref: '#/components/schemas/InvalidParameters'
-    UnauthorizedError:
-      allOf:
-        - $ref: '#/components/schemas/BaseError'
-        - type: object
-          properties:
-            status:
-              example: 401
-            title:
-              example: Unauthorized
-            type:
-              example: https://httpstatuses.com/401
-            instance:
-              example: kong:trace:1234567890
-            detail:
-              example: Invalid credentials
-    ForbiddenError:
-      allOf:
-        - $ref: '#/components/schemas/BaseError'
-        - type: object
-          properties:
-            status:
-              example: 403
-            title:
-              example: Forbidden
-            type:
-              example: https://httpstatuses.com/403
-            instance:
-              example: kong:trace:1234567890
-            detail:
-              example: Forbidden
     NotFoundError:
       allOf:
         - $ref: '#/components/schemas/BaseError'
@@ -16646,142 +16567,6 @@ components:
               example: kong:trace:1234567890
             detail:
               example: Not found
-    ConflictError:
-      allOf:
-        - $ref: '#/components/schemas/BaseError'
-        - type: object
-          properties:
-            status:
-              example: 409
-            title:
-              example: Conflict
-            type:
-              example: https://httpstatuses.com/409
-            instance:
-              example: kong:trace:1234567890
-            detail:
-              example: Conflict
-    UnsupportedMediaTypeError:
-      allOf:
-        - $ref: '#/components/schemas/BaseError'
-        - type: object
-          properties:
-            status:
-              example: 415
-            title:
-              example: UnsupportedMediaType
-            type:
-              example: https://httpstatuses.com/415
-            instance:
-              example: kong:trace:1234567890
-            detail:
-              example: UnsupportedMediaType
-    UnprocessableContentError:
-      allOf:
-        - $ref: '#/components/schemas/BaseError'
-        - type: object
-          properties:
-            status:
-              example: 422
-            title:
-              example: Unprocessable Content
-            type:
-              example: https://httpstatuses.com/422
-            instance:
-              example: kong:trace:1234567891
-            detail:
-              example: Unprocessable Content
-    TooManyRequestsError:
-      allOf:
-        - $ref: '#/components/schemas/BaseError'
-        - type: object
-          properties:
-            status:
-              example: 429
-            title:
-              example: Too Many Requests
-            type:
-              example: https://httpstatuses.com/429
-            instance:
-              example: kong:trace:1234567890
-            detail:
-              example: Too Many Requests
-    GoneError:
-      allOf:
-        - $ref: '#/components/schemas/BaseError'
-        - type: object
-          properties:
-            status:
-              example: 410
-            title:
-              example: Gone
-            type:
-              example: https://httpstatuses.com/410
-            instance:
-              example: kong:trace:1234567890
-            detail:
-              example: Gone
-    InternalError:
-      $ref: '#/components/schemas/BaseError'
-    NotAvailableError:
-      $ref: '#/components/schemas/BaseError'
-    BadRequest:
-      description: Bad Request
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/BadRequestError'
-    Unauthorized:
-      description: Unauthorized
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/UnauthorizedError'
-          examples:
-            UnauthorizedExample:
-              $ref: '#/components/examples/UnauthorizedExample'
-    Forbidden:
-      description: Forbidden
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/ForbiddenError'
-          examples:
-            UnauthorizedExample:
-              $ref: '#/components/examples/ForbiddenExample'
-    NotFound:
-      description: Not Found
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/NotFoundError'
-          examples:
-            NotFoundExample:
-              $ref: '#/components/examples/NotFoundExample'
-    Conflict:
-      description: Conflict
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/ConflictError'
-    Gone:
-      description: Gone
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/GoneError'
-    Internal:
-      description: Internal
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/InternalError'
-    NotAvailable:
-      description: Service not available
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/NotAvailableError'
   responses:
     IndexResponse:
       description: A response for the index endpoint
@@ -17388,55 +17173,18 @@ components:
               next:
                 type: string
                 description: URL to the next page
-    ErrorResponse:
-      description: api error response
-      content:
-        application/problem+json:
-          schema:
-            oneOf:
-              - $ref: '#/components/responses/BadRequest'
-              - $ref: '#/components/responses/Unauthorized'
-              - $ref: '#/components/responses/Forbidden'
-              - $ref: '#/components/responses/NotFound'
-              - $ref: '#/components/responses/Conflict'
-              - $ref: '#/components/responses/Gone'
-              - $ref: '#/components/responses/Internal'
-              - $ref: '#/components/responses/NotAvailable'
-            discriminator:
-              propertyName: status
-              mapping:
-                '400': '#/components/schemas/BadRequest'
-                '401': '#/components/schemas/Unauthorized'
-                '403': '#/components/schemas/Forbidden'
-                '404': '#/components/schemas/NotFound'
-                '409': '#/components/schemas/Conflict'
-                '410': '#/components/schemas/Gone'
-                '500': '#/components/schemas/Internal'
-                '503': '#/components/schemas/NotAvailable'
     BadRequest:
       description: Bad Request
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/BadRequestError'
-    Unauthorized:
-      description: Unauthorized
+    Internal:
+      description: Internal
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/UnauthorizedError'
-          examples:
-            UnauthorizedExample:
-              $ref: '#/components/examples/UnauthorizedExample'
-    Forbidden:
-      description: Forbidden
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/ForbiddenError'
-          examples:
-            UnauthorizedExample:
-              $ref: '#/components/examples/ForbiddenExample'
+            $ref: '#/components/schemas/BaseError'
     NotFound:
       description: Not Found
       content:
@@ -17446,54 +17194,6 @@ components:
           examples:
             NotFoundExample:
               $ref: '#/components/examples/NotFoundExample'
-    Conflict:
-      description: Conflict
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/ConflictError'
-    Gone:
-      description: Gone
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/GoneError'
-    UnsupportedMediaType:
-      description: Unsupported Media Type
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/UnsupportedMediaTypeError'
-          examples:
-            UnsupportedMediaTypeExample:
-              $ref: '#/components/examples/UnsupportedMediaTypeExample'
-    UnprocessableContent:
-      description: Unprocessable Content
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/UnprocessableContentError'
-          examples:
-            UnprocessableContentExample:
-              $ref: '#/components/examples/UnprocessableContentExample'
-    TooManyRequests:
-      description: Too Many Requests
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/TooManyRequestsError'
-    Internal:
-      description: Internal
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/InternalError'
-    NotAvailable:
-      description: Service not available
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/NotAvailableError'
   examples:
     GlobalInsightExample:
       value:
@@ -17588,33 +17288,9 @@ components:
             zones:
               - name: east
               - name: west
-    ForbiddenExample:
-      value:
-        status: 403
-        title: Forbidden
-        instance: kong:trace:2723154947768991354
-        detail: You do not have permission to perform this action
     NotFoundExample:
       value:
         status: 404
         title: Not Found
         instance: kong:trace:6816496025408232265
         detail: Not Found
-    UnsupportedMediaTypeExample:
-      value:
-        status: 415
-        title: Unsupported Media Type
-        instance: kong:trace:8347343766220159418
-        detail: 'This API only supports requests with `Content-Type: application/json`'
-    UnprocessableContentExample:
-      value:
-        status: 422
-        title: Unprocessable Content
-        instance: kong:trace:8347343766220159419
-        detail: The requested operation cannot be performed with the provided data
-    UnauthorizedExample:
-      value:
-        status: 401
-        title: Unauthorized
-        instance: kong:trace:8347343766220159418
-        detail: Unauthorized
