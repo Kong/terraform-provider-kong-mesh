@@ -12,7 +12,6 @@ require (
 	github.com/hashicorp/terraform-plugin-framework-validators v0.17.0
 	github.com/hashicorp/terraform-plugin-go v0.26.0
 	github.com/hashicorp/terraform-plugin-log v0.9.0
-	github.com/kong/terraform-provider-konnect-beta v0.1.1
 )
 
 require (
