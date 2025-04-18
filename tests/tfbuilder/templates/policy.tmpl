@@ -1,0 +1,16 @@
+resource "{{.Provider}}_{{.ResourceType}}" "{{.ResourceName}}" {
+  provider = "{{.Provider}}"
+  mesh     = {{.MeshRef}}
+  {{- if .DependsOn }}
+  depends_on = [{{range $i, $v := .DependsOn}}{{if $i}}, {{end}}{{$v}}{{end}}]
+  {{- end }}
+  labels = {
+  {{- range $k, $v := .Labels }}
+    "{{ $k }}" = {{ $v }}
+  {{- end }}
+  }
+  type = "{{.Type}}"
+  name = "{{.Name}}"
+
+  {{.Spec}}
+}
