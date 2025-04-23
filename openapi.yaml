@@ -13534,12 +13534,12 @@ components:
       properties:
         caCert:
           properties:
-            RSAbits:
-              format: uint32
-              type: integer
-              x-speakeasy-param-computed: false
             expiration:
               type: string
+              x-speakeasy-param-computed: false
+            rsaBits:
+              format: uint32
+              type: integer
               x-speakeasy-param-computed: false
           type: object
           x-speakeasy-param-computed: false
@@ -13599,8 +13599,9 @@ components:
                         type: object
                         x-speakeasy-param-computed: false
                     type: object
+                    x-speakeasy-param-computed: false
                   type: array
-                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
+                  default: []
                   x-speakeasy-param-computed: false
                 restrictions:
                   description: |-
@@ -13620,8 +13621,9 @@ components:
                         type: object
                         x-speakeasy-param-computed: false
                     type: object
+                    x-speakeasy-param-computed: false
                   type: array
-                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
+                  default: []
                   x-speakeasy-param-computed: false
               type: object
               x-speakeasy-param-computed: false
@@ -13665,8 +13667,9 @@ components:
                     type: string
                     x-speakeasy-param-computed: false
                 type: object
+                x-speakeasy-param-computed: false
               type: array
-              x-speakeasy-plan-modifiers: SupressZeroNullModifier
+              default: []
               x-speakeasy-param-computed: false
             defaultBackend:
               description: Name of the default backend
@@ -13711,8 +13714,9 @@ components:
                     type: string
                     x-speakeasy-param-computed: false
                 type: object
+                x-speakeasy-param-computed: false
               type: array
-              x-speakeasy-plan-modifiers: SupressZeroNullModifier
+              default: []
               x-speakeasy-param-computed: false
             enabledBackend:
               description: Name of the enabled backend
@@ -13800,8 +13804,9 @@ components:
                     type: string
                     x-speakeasy-param-computed: false
                 type: object
+                x-speakeasy-param-computed: false
               type: array
-              x-speakeasy-plan-modifiers: SupressZeroNullModifier
+              default: []
               x-speakeasy-param-computed: false
             enabledBackend:
               description: Name of the enabled backend
@@ -13859,8 +13864,9 @@ components:
             policies.
           items:
             type: string
+            x-speakeasy-param-computed: false
           type: array
-          x-speakeasy-plan-modifiers: SupressZeroNullModifier
+          default: []
           x-speakeasy-param-computed: false
         tracing:
           description: |-
@@ -13895,8 +13901,9 @@ components:
                     type: string
                     x-speakeasy-param-computed: false
                 type: object
+                x-speakeasy-param-computed: false
               type: array
-              x-speakeasy-plan-modifiers: SupressZeroNullModifier
+              default: []
               x-speakeasy-param-computed: false
             defaultBackend:
               description: Name of the default backend
@@ -13967,8 +13974,9 @@ components:
                 type: integer
                 x-speakeasy-param-computed: false
             type: object
+            x-speakeasy-param-computed: false
           type: array
-          x-speakeasy-plan-modifiers: SupressZeroNullModifier
+          default: []
           x-speakeasy-param-computed: false
         envoy:
           description: Configuration of Envoy's metrics.
@@ -14160,8 +14168,9 @@ components:
                           required:
                             - Type
                           type: object
+                          x-speakeasy-param-computed: false
                         type: array
-                        x-speakeasy-plan-modifiers: SupressZeroNullModifier
+                        default: []
                         x-speakeasy-param-computed: false
                       mode:
                         description: |-
@@ -14182,8 +14191,9 @@ components:
                     type: object
                     x-speakeasy-param-computed: false
                 type: object
+                x-speakeasy-param-computed: false
               type: array
-              x-speakeasy-plan-modifiers: SupressZeroNullModifier
+              default: []
               x-speakeasy-param-computed: false
           type: object
           x-speakeasy-param-computed: false
@@ -14214,8 +14224,9 @@ components:
                 type: object
                 x-speakeasy-param-computed: false
             type: object
+            x-speakeasy-param-computed: false
           type: array
-          x-speakeasy-plan-modifiers: SupressZeroNullModifier
+          default: []
           x-speakeasy-param-computed: false
         tags:
           additionalProperties:
@@ -15297,8 +15308,9 @@ components:
         dnsNames:
           items:
             type: string
+            x-speakeasy-param-computed: false
           type: array
-          x-speakeasy-plan-modifiers: SupressZeroNullModifier
+          default: []
           x-speakeasy-param-computed: false
         issuerRef:
           properties:

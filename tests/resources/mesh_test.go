@@ -35,7 +35,6 @@ func TestMesh(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("creates a mesh without skip_creating_initial_policies", func(t *testing.T) {
-		t.Skip("Skipping test until https://github.com/Kong/shared-speakeasy/pull/4")
 		builder := tfbuilder.NewBuilder(tfbuilder.KongMesh, "http", "localhost", port.Int())
 		mesh := tfbuilder.NewMeshBuilder("m1", "m1")
 		builder.AddMesh(mesh)
@@ -64,6 +63,36 @@ func TestMesh(t *testing.T) {
 		})
 	})
 
+	const AllowAllTrafficPermissionWithProxyTypesSpec = `
+  spec = {
+    from = [
+      {
+        target_ref = {
+          kind = "Mesh"
+          proxy_types = ["Sidecar"]
+        }
+        default = {
+          action = "Allow"
+        }
+      }
+    ]
+  }`
+
+	const AllowAllTrafficPermissionWithEmptyProxyTypesSpec = `
+  spec = {
+    from = [
+      {
+        target_ref = {
+          kind = "Mesh"
+          proxy_types = []
+        }
+        default = {
+          action = "Allow"
+        }
+      }
+    ]
+  }`
+
 	t.Run("creates a mesh with a policy", func(t *testing.T) {
 		builder := tfbuilder.NewBuilder(tfbuilder.KongMesh, "http", "localhost", port.Int())
 		mesh := tfbuilder.NewMeshBuilder("default", "terraform-provider-kong-mesh").
@@ -91,15 +120,7 @@ func TestMesh(t *testing.T) {
 						},
 					},
 				},
-				{
-					// Re-apply the same config and ensure no changes occur
-					Config: builder.Build(),
-					ConfigPlanChecks: resource.ConfigPlanChecks{
-						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectEmptyPlan(),
-						},
-					},
-				},
+				checkReapplyPlanEmpty(builder),
 				{
 					Config: builder.AddPolicy(mtp).Build(),
 					ConfigPlanChecks: resource.ConfigPlanChecks{
@@ -108,15 +129,25 @@ func TestMesh(t *testing.T) {
 						},
 					},
 				},
+				checkReapplyPlanEmpty(builder),
 				{
-					// Re-apply the same config and ensure no changes occur
-					Config: builder.Build(),
+					Config: builder.AddPolicy(mtp.WithSpecHCL(AllowAllTrafficPermissionWithProxyTypesSpec)).Build(),
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectEmptyPlan(),
+							plancheck.ExpectResourceAction(builder.ResourceAddress(mtp.ResourceType, mtp.ResourceName), plancheck.ResourceActionUpdate),
 						},
 					},
 				},
+				checkReapplyPlanEmpty(builder),
+				{
+					Config: builder.AddPolicy(mtp.WithSpecHCL(AllowAllTrafficPermissionWithEmptyProxyTypesSpec)).Build(),
+					ConfigPlanChecks: resource.ConfigPlanChecks{
+						PreApply: []plancheck.PlanCheck{
+							plancheck.ExpectResourceAction(builder.ResourceAddress(mtp.ResourceType, mtp.ResourceName), plancheck.ResourceActionUpdate),
+						},
+					},
+				},
+				checkReapplyPlanEmpty(builder),
 			},
 		})
 	})
@@ -128,5 +159,17 @@ func TestMesh(t *testing.T) {
 		logContent, err := io.ReadAll(logs)
 		require.NoError(t, err)
 		t.Logf("Container logs: %s", logContent)
+	}
+}
+
+func checkReapplyPlanEmpty(builder *tfbuilder.Builder) resource.TestStep {
+	return resource.TestStep{
+		// Re-apply the same config and ensure no changes occur
+		Config: builder.Build(),
+		ConfigPlanChecks: resource.ConfigPlanChecks{
+			PreApply: []plancheck.PlanCheck{
+				plancheck.ExpectEmptyPlan(),
+			},
+		},
 	}
 }

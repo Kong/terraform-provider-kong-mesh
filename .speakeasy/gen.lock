@@ -1,7 +1,7 @@
 lockVersion: 2.0.0
 id: 322c4806-8b53-493c-a05f-50d4d113c747
 management:
-  docChecksum: a8f9fc3249fdb7f54f8b90f5edc5d458
+  docChecksum: b39182d4478d4836620852cb8e19f451
   docVersion: 2.0.0
   speakeasyVersion: 1.514.1
   generationVersion: 2.546.3
@@ -1820,7 +1820,7 @@ examples:
         path:
           name: "<value>"
       requestBody:
-        application/json: {"name": "<value>", "type": "<value>"}
+        application/json: {"name": "<value>", "skipCreatingInitialPolicies": [], "type": "<value>"}
       responses:
         "200":
           application/json: {}
@@ -1863,7 +1863,7 @@ examples:
           mesh: "<value>"
           name: "<value>"
       requestBody:
-        application/json: {"mesh": "<value>", "name": "<value>", "type": "<value>"}
+        application/json: {"mesh": "<value>", "name": "<value>", "selectors": [], "type": "<value>"}
       responses:
         "201":
           application/json: {}
@@ -1874,7 +1874,7 @@ examples:
           mesh: "<value>"
           name: "<value>"
       requestBody:
-        application/json: {"mesh": "<value>", "name": "<value>", "type": "<value>"}
+        application/json: {"mesh": "<value>", "name": "<value>", "selectors": [], "type": "<value>"}
       responses:
         "200":
           application/json: {}

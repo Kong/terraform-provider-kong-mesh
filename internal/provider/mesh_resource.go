@@ -8,9 +8,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -22,8 +24,6 @@ import (
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/validators"
-	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
-	speakeasy_stringvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/stringvalidators"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -72,13 +72,7 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 						Attributes: map[string]schema.Attribute{
 							"requirements": schema.ListNestedAttribute{
 								Optional: true,
-								PlanModifiers: []planmodifier.List{
-									custom_listplanmodifier.SupressZeroNullModifier(),
-								},
 								NestedObject: schema.NestedAttributeObject{
-									Validators: []validator.Object{
-										speakeasy_objectvalidators.NotNull(),
-									},
 									Attributes: map[string]schema.Attribute{
 										"tags": schema.MapAttribute{
 											Optional:    true,
@@ -95,13 +89,7 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 							},
 							"restrictions": schema.ListNestedAttribute{
 								Optional: true,
-								PlanModifiers: []planmodifier.List{
-									custom_listplanmodifier.SupressZeroNullModifier(),
-								},
 								NestedObject: schema.NestedAttributeObject{
-									Validators: []validator.Object{
-										speakeasy_objectvalidators.NotNull(),
-									},
 									Attributes: map[string]schema.Attribute{
 										"tags": schema.MapAttribute{
 											Optional:    true,
@@ -132,13 +120,7 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				Attributes: map[string]schema.Attribute{
 					"backends": schema.ListNestedAttribute{
 						Optional: true,
-						PlanModifiers: []planmodifier.List{
-							custom_listplanmodifier.SupressZeroNullModifier(),
-						},
 						NestedObject: schema.NestedAttributeObject{
-							Validators: []validator.Object{
-								speakeasy_objectvalidators.NotNull(),
-							},
 							Attributes: map[string]schema.Attribute{
 								"conf": schema.SingleNestedAttribute{
 									Optional: true,
@@ -230,13 +212,7 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				Attributes: map[string]schema.Attribute{
 					"backends": schema.ListNestedAttribute{
 						Optional: true,
-						PlanModifiers: []planmodifier.List{
-							custom_listplanmodifier.SupressZeroNullModifier(),
-						},
 						NestedObject: schema.NestedAttributeObject{
-							Validators: []validator.Object{
-								speakeasy_objectvalidators.NotNull(),
-							},
 							Attributes: map[string]schema.Attribute{
 								"conf": schema.SingleNestedAttribute{
 									Optional: true,
@@ -246,13 +222,7 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 											Attributes: map[string]schema.Attribute{
 												"aggregate": schema.ListNestedAttribute{
 													Optional: true,
-													PlanModifiers: []planmodifier.List{
-														custom_listplanmodifier.SupressZeroNullModifier(),
-													},
 													NestedObject: schema.NestedAttributeObject{
-														Validators: []validator.Object{
-															speakeasy_objectvalidators.NotNull(),
-														},
 														Attributes: map[string]schema.Attribute{
 															"address": schema.StringAttribute{
 																Optional:    true,
@@ -385,13 +355,7 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				Attributes: map[string]schema.Attribute{
 					"backends": schema.ListNestedAttribute{
 						Optional: true,
-						PlanModifiers: []planmodifier.List{
-							custom_listplanmodifier.SupressZeroNullModifier(),
-						},
 						NestedObject: schema.NestedAttributeObject{
-							Validators: []validator.Object{
-								speakeasy_objectvalidators.NotNull(),
-							},
 							Attributes: map[string]schema.Attribute{
 								"conf": schema.SingleNestedAttribute{
 									Optional: true,
@@ -412,11 +376,9 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 																	Optional: true,
 																	Attributes: map[string]schema.Attribute{
 																		"type": schema.StringAttribute{
-																			Computed:    true,
-																			Optional:    true,
-																			Description: `Not Null; Parsed as JSON.`,
+																			Required:    true,
+																			Description: `Parsed as JSON.`,
 																			Validators: []validator.String{
-																				speakeasy_stringvalidators.NotNull(),
 																				validators.IsValidJSON(),
 																			},
 																		},
@@ -426,11 +388,9 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 																	Optional: true,
 																	Attributes: map[string]schema.Attribute{
 																		"type": schema.StringAttribute{
-																			Computed:    true,
-																			Optional:    true,
-																			Description: `Not Null; Parsed as JSON.`,
+																			Required:    true,
+																			Description: `Parsed as JSON.`,
 																			Validators: []validator.String{
-																				speakeasy_stringvalidators.NotNull(),
 																				validators.IsValidJSON(),
 																			},
 																		},
@@ -444,11 +404,9 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 													Optional: true,
 													Attributes: map[string]schema.Attribute{
 														"type": schema.StringAttribute{
-															Computed:    true,
-															Optional:    true,
-															Description: `Not Null; Parsed as JSON.`,
+															Required:    true,
+															Description: `Parsed as JSON.`,
 															Validators: []validator.String{
-																speakeasy_stringvalidators.NotNull(),
 																validators.IsValidJSON(),
 															},
 														},
@@ -476,7 +434,7 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 														"expiration": schema.StringAttribute{
 															Optional: true,
 														},
-														"rs_abits": schema.Int64Attribute{
+														"rsa_bits": schema.Int64Attribute{
 															Optional: true,
 														},
 													},
@@ -498,11 +456,9 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 													Optional: true,
 													Attributes: map[string]schema.Attribute{
 														"type": schema.StringAttribute{
-															Computed:    true,
-															Optional:    true,
-															Description: `Not Null; Parsed as JSON.`,
+															Required:    true,
+															Description: `Parsed as JSON.`,
 															Validators: []validator.String{
-																speakeasy_stringvalidators.NotNull(),
 																validators.IsValidJSON(),
 															},
 														},
@@ -512,10 +468,9 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 													Optional: true,
 												},
 												"dns_names": schema.ListAttribute{
-													Optional: true,
-													PlanModifiers: []planmodifier.List{
-														custom_listplanmodifier.SupressZeroNullModifier(),
-													},
+													Computed:    true,
+													Optional:    true,
+													Default:     listdefault.StaticValue(types.ListValueMust(types.StringType, []attr.Value{})),
 													ElementType: types.StringType,
 												},
 												"issuer_ref": schema.SingleNestedAttribute{
@@ -549,11 +504,9 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 													Optional: true,
 													Attributes: map[string]schema.Attribute{
 														"type": schema.StringAttribute{
-															Computed:    true,
-															Optional:    true,
-															Description: `Not Null; Parsed as JSON.`,
+															Required:    true,
+															Description: `Parsed as JSON.`,
 															Validators: []validator.String{
-																speakeasy_stringvalidators.NotNull(),
 																validators.IsValidJSON(),
 															},
 														},
@@ -563,11 +516,9 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 													Optional: true,
 													Attributes: map[string]schema.Attribute{
 														"type": schema.StringAttribute{
-															Computed:    true,
-															Optional:    true,
-															Description: `Not Null; Parsed as JSON.`,
+															Required:    true,
+															Description: `Parsed as JSON.`,
 															Validators: []validator.String{
-																speakeasy_stringvalidators.NotNull(),
 																validators.IsValidJSON(),
 															},
 														},
@@ -744,10 +695,9 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				Description: `Routing settings of the mesh`,
 			},
 			"skip_creating_initial_policies": schema.ListAttribute{
-				Optional: true,
-				PlanModifiers: []planmodifier.List{
-					custom_listplanmodifier.SupressZeroNullModifier(),
-				},
+				Computed:    true,
+				Optional:    true,
+				Default:     listdefault.StaticValue(types.ListValueMust(types.StringType, []attr.Value{})),
 				ElementType: types.StringType,
 				MarkdownDescription: `List of policies to skip creating by default when the mesh is created.` + "\n" +
 					`e.g. TrafficPermission, MeshRetry, etc. An '*' can be used to skip all` + "\n" +
@@ -758,13 +708,7 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				Attributes: map[string]schema.Attribute{
 					"backends": schema.ListNestedAttribute{
 						Optional: true,
-						PlanModifiers: []planmodifier.List{
-							custom_listplanmodifier.SupressZeroNullModifier(),
-						},
 						NestedObject: schema.NestedAttributeObject{
-							Validators: []validator.Object{
-								speakeasy_objectvalidators.NotNull(),
-							},
 							Attributes: map[string]schema.Attribute{
 								"conf": schema.SingleNestedAttribute{
 									Optional: true,

@@ -254,7 +254,7 @@ func (r *MeshDataSourceModel) RefreshFromSharedMeshItem(resp *shared.MeshItem) {
 						} else {
 							backends5.Conf.BuiltinCertificateAuthorityConfig.CaCert = &tfTypes.BuiltinCertificateAuthorityConfigConfCaCert{}
 							backends5.Conf.BuiltinCertificateAuthorityConfig.CaCert.Expiration = types.StringPointerValue(backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert.Expiration)
-							backends5.Conf.BuiltinCertificateAuthorityConfig.CaCert.RSAbits = types.Int64PointerValue(backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert.RSAbits)
+							backends5.Conf.BuiltinCertificateAuthorityConfig.CaCert.RsaBits = types.Int64PointerValue(backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert.RsaBits)
 						}
 					}
 					if backendsItem2.Conf.CertManagerCertificateAuthorityConfig != nil {

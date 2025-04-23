@@ -813,15 +813,8 @@ func (o *VaultCertificateAuthorityConfig) GetMode() any {
 }
 
 type BuiltinCertificateAuthorityConfigConfCaCert struct {
-	RSAbits    *int64  `json:"RSAbits,omitempty"`
 	Expiration *string `json:"expiration,omitempty"`
-}
-
-func (o *BuiltinCertificateAuthorityConfigConfCaCert) GetRSAbits() *int64 {
-	if o == nil {
-		return nil
-	}
-	return o.RSAbits
+	RsaBits    *int64  `json:"rsaBits,omitempty"`
 }
 
 func (o *BuiltinCertificateAuthorityConfigConfCaCert) GetExpiration() *string {
@@ -829,6 +822,13 @@ func (o *BuiltinCertificateAuthorityConfigConfCaCert) GetExpiration() *string {
 		return nil
 	}
 	return o.Expiration
+}
+
+func (o *BuiltinCertificateAuthorityConfigConfCaCert) GetRsaBits() *int64 {
+	if o == nil {
+		return nil
+	}
+	return o.RsaBits
 }
 
 type BuiltinCertificateAuthorityConfig struct {
