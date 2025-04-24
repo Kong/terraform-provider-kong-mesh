@@ -34,69 +34,66 @@ func TestMesh(t *testing.T) {
 	port, err := cpContainer.MappedPort(ctx, "5681/tcp")
 	require.NoError(t, err)
 
-	t.Run("creates a mesh without skip_creating_initial_policies", func(t *testing.T) {
+	t.Run("create a mesh and modify fields on it", func(t *testing.T) {
 		builder := tfbuilder.NewBuilder(tfbuilder.KongMesh, "http", "localhost", port.Int())
 		mesh := tfbuilder.NewMeshBuilder("m1", "m1")
-		builder.AddMesh(mesh)
 
-		resource.Test(t, resource.TestCase{
+		resource.ParallelTest(t, resource.TestCase{
 			ProtoV6ProviderFactories: providerFactory,
 			Steps: []resource.TestStep{
 				{
-					Config: builder.Build(),
+					Config: builder.AddMesh(mesh).Build(),
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
 							plancheck.ExpectResourceAction(builder.ResourceAddress("mesh", mesh.ResourceName), plancheck.ResourceActionCreate),
 						},
 					},
 				},
+				tfbuilder.CheckReapplyPlanEmpty(builder),
 				{
-					// Re-apply the same config and ensure no changes occur
-					Config: builder.Build(),
+					Config: builder.AddMesh(mesh.WithSpec(`skip_creating_initial_policies = [ "*" ]`)).Build(),
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectEmptyPlan(),
+							plancheck.ExpectResourceAction(builder.ResourceAddress("mesh", mesh.ResourceName), plancheck.ResourceActionUpdate),
 						},
 					},
 				},
+				tfbuilder.CheckReapplyPlanEmpty(builder),
+				{
+					Config: builder.AddMesh(mesh.UpdateSpec(`skip_creating_initial_policies = [ "*" ]`, `skip_creating_initial_policies = []`)).Build(),
+					ConfigPlanChecks: resource.ConfigPlanChecks{
+						PreApply: []plancheck.PlanCheck{
+							plancheck.ExpectResourceAction(builder.ResourceAddress("mesh", mesh.ResourceName), plancheck.ResourceActionUpdate),
+						},
+					},
+				},
+				tfbuilder.CheckReapplyPlanEmpty(builder),
+				{
+					Config: builder.AddMesh(mesh.RemoveFromSpec(`skip_creating_initial_policies = []`)).Build(),
+					ConfigPlanChecks: resource.ConfigPlanChecks{
+						PreApply: []plancheck.PlanCheck{
+							// since we use default of [] this is a noop and not an update
+							plancheck.ExpectResourceAction(builder.ResourceAddress("mesh", mesh.ResourceName), plancheck.ResourceActionNoop),
+						},
+					},
+				},
+				tfbuilder.CheckReapplyPlanEmpty(builder),
+				{
+					Config: builder.RemoveMesh(mesh.MeshName).Build(),
+					ConfigPlanChecks: resource.ConfigPlanChecks{
+						PreApply: []plancheck.PlanCheck{
+							plancheck.ExpectResourceAction(builder.ResourceAddress("mesh", mesh.ResourceName), plancheck.ResourceActionDestroy),
+						},
+					},
+				},
+				tfbuilder.CheckReapplyPlanEmpty(builder),
 			},
 		})
 	})
 
-	const AllowAllTrafficPermissionWithProxyTypesSpec = `
-  spec = {
-    from = [
-      {
-        target_ref = {
-          kind = "Mesh"
-          proxy_types = ["Sidecar"]
-        }
-        default = {
-          action = "Allow"
-        }
-      }
-    ]
-  }`
-
-	const AllowAllTrafficPermissionWithEmptyProxyTypesSpec = `
-  spec = {
-    from = [
-      {
-        target_ref = {
-          kind = "Mesh"
-          proxy_types = []
-        }
-        default = {
-          action = "Allow"
-        }
-      }
-    ]
-  }`
-
-	t.Run("creates a mesh with a policy", func(t *testing.T) {
+	t.Run("create a policy and modify fields on it", func(t *testing.T) {
 		builder := tfbuilder.NewBuilder(tfbuilder.KongMesh, "http", "localhost", port.Int())
-		mesh := tfbuilder.NewMeshBuilder("default", "terraform-provider-kong-mesh").
-			WithSpec(`skip_creating_initial_policies = [ "*" ]`)
+		mesh := tfbuilder.NewMeshBuilder("default", "terraform-provider-kong-mesh")
 		mtp := tfbuilder.NewPolicyBuilder("mesh_traffic_permission", "allow_all", "allow-all", "MeshTrafficPermission").
 			WithMeshRef(builder.ResourceAddress("mesh", mesh.ResourceName) + ".name").
 			WithDependsOn(builder.ResourceAddress("mesh", mesh.ResourceName)).
@@ -106,10 +103,10 @@ func TestMesh(t *testing.T) {
 				"kuma.io/origin": "zone",
 				"kuma.io/zone":   "default",
 			}).
-			WithSpecHCL(tfbuilder.AllowAllTrafficPermissionSpec)
+			WithSpec(tfbuilder.AllowAllTrafficPermissionSpec)
 		builder.AddMesh(mesh)
 
-		resource.Test(t, resource.TestCase{
+		resource.ParallelTest(t, resource.TestCase{
 			ProtoV6ProviderFactories: providerFactory,
 			Steps: []resource.TestStep{
 				{
@@ -120,7 +117,7 @@ func TestMesh(t *testing.T) {
 						},
 					},
 				},
-				checkReapplyPlanEmpty(builder),
+				tfbuilder.CheckReapplyPlanEmpty(builder),
 				{
 					Config: builder.AddPolicy(mtp).Build(),
 					ConfigPlanChecks: resource.ConfigPlanChecks{
@@ -129,25 +126,25 @@ func TestMesh(t *testing.T) {
 						},
 					},
 				},
-				checkReapplyPlanEmpty(builder),
+				tfbuilder.CheckReapplyPlanEmpty(builder),
 				{
-					Config: builder.AddPolicy(mtp.WithSpecHCL(AllowAllTrafficPermissionWithProxyTypesSpec)).Build(),
+					Config: builder.AddPolicy(mtp.AddToSpec(`kind = "Mesh"`, `proxy_types = ["Sidecar"]`)).Build(),
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
 							plancheck.ExpectResourceAction(builder.ResourceAddress(mtp.ResourceType, mtp.ResourceName), plancheck.ResourceActionUpdate),
 						},
 					},
 				},
-				checkReapplyPlanEmpty(builder),
+				tfbuilder.CheckReapplyPlanEmpty(builder),
 				{
-					Config: builder.AddPolicy(mtp.WithSpecHCL(AllowAllTrafficPermissionWithEmptyProxyTypesSpec)).Build(),
+					Config: builder.AddPolicy(mtp.UpdateSpec(`proxy_types = ["Sidecar"]`, `proxy_types = []`)).Build(),
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
 							plancheck.ExpectResourceAction(builder.ResourceAddress(mtp.ResourceType, mtp.ResourceName), plancheck.ResourceActionUpdate),
 						},
 					},
 				},
-				checkReapplyPlanEmpty(builder),
+				tfbuilder.CheckReapplyPlanEmpty(builder),
 			},
 		})
 	})
@@ -159,17 +156,5 @@ func TestMesh(t *testing.T) {
 		logContent, err := io.ReadAll(logs)
 		require.NoError(t, err)
 		t.Logf("Container logs: %s", logContent)
-	}
-}
-
-func checkReapplyPlanEmpty(builder *tfbuilder.Builder) resource.TestStep {
-	return resource.TestStep{
-		// Re-apply the same config and ensure no changes occur
-		Config: builder.Build(),
-		ConfigPlanChecks: resource.ConfigPlanChecks{
-			PreApply: []plancheck.PlanCheck{
-				plancheck.ExpectEmptyPlan(),
-			},
-		},
 	}
 }
