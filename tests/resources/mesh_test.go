@@ -2,7 +2,9 @@ package tests
 
 import (
 	"github.com/Kong/shared-speakeasy/tfbuilder"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
@@ -51,10 +53,24 @@ func TestMesh(t *testing.T) {
 				},
 				tfbuilder.CheckReapplyPlanEmpty(builder),
 				{
-					Config: builder.AddMesh(mesh.WithSpec(`skip_creating_initial_policies = [ "*" ]`)).Build(),
+					Config: builder.AddMesh(mesh.WithSpec(`skip_creating_initial_policies = [ "*" ]
+  routing = {
+    default_forbid_mesh_external_service_access = true
+  }
+`)).Build(),
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
 							plancheck.ExpectResourceAction(builder.ResourceAddress("mesh", mesh.ResourceName), plancheck.ResourceActionUpdate),
+							plancheck.ExpectKnownValue(builder.ResourceAddress("mesh", mesh.ResourceName), tfjsonpath.New("routing").AtMapKey("default_forbid_mesh_external_service_access"), knownvalue.Bool(true)),
+						},
+					},
+				},
+				{
+					Config: builder.AddMesh(mesh.RemoveFromSpec(`default_forbid_mesh_external_service_access = true`)).Build(),
+					ConfigPlanChecks: resource.ConfigPlanChecks{
+						PreApply: []plancheck.PlanCheck{
+							plancheck.ExpectResourceAction(builder.ResourceAddress("mesh", mesh.ResourceName), plancheck.ResourceActionUpdate),
+							plancheck.ExpectKnownValue(builder.ResourceAddress("mesh", mesh.ResourceName), tfjsonpath.New("routing").AtMapKey("default_forbid_mesh_external_service_access"), knownvalue.Null()),
 						},
 					},
 				},
