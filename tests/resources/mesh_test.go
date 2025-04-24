@@ -80,6 +80,7 @@ func TestMesh(t *testing.T) {
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
 							plancheck.ExpectResourceAction(builder.ResourceAddress("mesh", mesh.ResourceName), plancheck.ResourceActionUpdate),
+							plancheck.ExpectKnownValue(builder.ResourceAddress("mesh", mesh.ResourceName), tfjsonpath.New("skip_creating_initial_policies"), knownvalue.ListExact([]knownvalue.Check{})),
 						},
 					},
 				},
@@ -90,6 +91,7 @@ func TestMesh(t *testing.T) {
 						PreApply: []plancheck.PlanCheck{
 							// since we use default of [] this is a noop and not an update
 							plancheck.ExpectResourceAction(builder.ResourceAddress("mesh", mesh.ResourceName), plancheck.ResourceActionNoop),
+							plancheck.ExpectKnownValue(builder.ResourceAddress("mesh", mesh.ResourceName), tfjsonpath.New("skip_creating_initial_policies"), knownvalue.ListExact([]knownvalue.Check{})),
 						},
 					},
 				},
@@ -148,6 +150,7 @@ func TestMesh(t *testing.T) {
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
 							plancheck.ExpectResourceAction(builder.ResourceAddress(mtp.ResourceType, mtp.ResourceName), plancheck.ResourceActionUpdate),
+							plancheck.ExpectKnownValue(builder.ResourceAddress(mtp.ResourceType, mtp.ResourceName), tfjsonpath.New("spec").AtMapKey("from").AtSliceIndex(0).AtMapKey("target_ref").AtMapKey("proxy_types"), knownvalue.ListExact([]knownvalue.Check{knownvalue.StringExact("Sidecar")})),
 						},
 					},
 				},
@@ -157,6 +160,7 @@ func TestMesh(t *testing.T) {
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
 							plancheck.ExpectResourceAction(builder.ResourceAddress(mtp.ResourceType, mtp.ResourceName), plancheck.ResourceActionUpdate),
+							plancheck.ExpectKnownValue(builder.ResourceAddress(mtp.ResourceType, mtp.ResourceName), tfjsonpath.New("spec").AtMapKey("from").AtSliceIndex(0).AtMapKey("target_ref").AtMapKey("proxy_types"), knownvalue.ListExact([]knownvalue.Check{})),
 						},
 					},
 				},

@@ -10,14 +10,8 @@ github.com/Kong/shared-speakeasy/planmodifiers/arbitrary_json v0.0.1 h1:S3f3RAPN
 github.com/Kong/shared-speakeasy/planmodifiers/arbitrary_json v0.0.1/go.mod h1:exogJpiSOmoVk8BTkYA2wlkvqhYlOP+LJpXc4CacHuU=
 github.com/Kong/shared-speakeasy/planmodifiers/suppress_zero_null v0.0.1 h1:2PxZAhqgCU0dz+qjghtay2XkNLx2F3oEuh90U/acijc=
 github.com/Kong/shared-speakeasy/planmodifiers/suppress_zero_null v0.0.1/go.mod h1:l0nwf2fPUF7e6a+/Ui4LiuCXS6EUzcOJ7t+sW/ojvtI=
-github.com/Kong/shared-speakeasy/tfbuilder v0.0.1 h1:b/WP61Zk/MmdtjG4EHa/2mPfGDEpjZZ14Fcg4wguv+o=
-github.com/Kong/shared-speakeasy/tfbuilder v0.0.1/go.mod h1:v6oYDYrFFFeOQ0akCMj2Z6D/82hgcRualebW0dUCu8M=
-github.com/Kong/shared-speakeasy/tfbuilder v0.0.2-0.20250424075327-85d40c6fc18a h1:YvSAzeyf7rKAkHL1Hc+Iz6E6eUI38hVQwE2WVqoSnjo=
-github.com/Kong/shared-speakeasy/tfbuilder v0.0.2-0.20250424075327-85d40c6fc18a/go.mod h1:y7RVSb1teZOEJF+P7lsTv0fc3C0icoQkj07ZtVor4Lw=
-github.com/Kong/shared-speakeasy/tfbuilder v0.0.2-0.20250424083723-8e25b50f6d48 h1:BF3O2QqIb71n1p0Qu1dxsEtwW/2TvkKZIEYp6mIe6WI=
-github.com/Kong/shared-speakeasy/tfbuilder v0.0.2-0.20250424083723-8e25b50f6d48/go.mod h1:y7RVSb1teZOEJF+P7lsTv0fc3C0icoQkj07ZtVor4Lw=
-github.com/Kong/shared-speakeasy/tfbuilder v0.0.2-0.20250424092423-3904ffbaac4b h1:j6OXD1yRuddWdbmVXKoM8NSRLRIdotULosKpVFJ0bIw=
-github.com/Kong/shared-speakeasy/tfbuilder v0.0.2-0.20250424092423-3904ffbaac4b/go.mod h1:y7RVSb1teZOEJF+P7lsTv0fc3C0icoQkj07ZtVor4Lw=
+github.com/Kong/shared-speakeasy/tfbuilder v0.0.2 h1:e7H26UaSmf2Dxj4XJ5xCJmieDdRVORCv2Ky9aiVo/Z0=
+github.com/Kong/shared-speakeasy/tfbuilder v0.0.2/go.mod h1:y7RVSb1teZOEJF+P7lsTv0fc3C0icoQkj07ZtVor4Lw=
 github.com/Kunde21/markdownfmt/v3 v3.1.0 h1:KiZu9LKs+wFFBQKhrZJrFZwtLnCCWJahL+S+E/3VnM0=
 github.com/Kunde21/markdownfmt/v3 v3.1.0/go.mod h1:tPXN1RTyOzJwhfHoon9wUr4HGYmWgVxSQN6VBJDkrVc=
 github.com/Masterminds/goutils v1.1.1 h1:5nUrii3FMTL5diU80unEVvNevw1nH4+ZV4DSLVJLSYI=
