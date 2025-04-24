@@ -371,21 +371,21 @@ func (r *MeshResourceModel) ToSharedMeshItem() *shared.MeshItem {
 				if backendsItem2.Conf.BuiltinCertificateAuthorityConfig != nil {
 					var caCert *shared.BuiltinCertificateAuthorityConfigConfCaCert
 					if backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert != nil {
-						rsAbits := new(int64)
-						if !backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert.RSAbits.IsUnknown() && !backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert.RSAbits.IsNull() {
-							*rsAbits = backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert.RSAbits.ValueInt64()
-						} else {
-							rsAbits = nil
-						}
 						expiration := new(string)
 						if !backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert.Expiration.IsUnknown() && !backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert.Expiration.IsNull() {
 							*expiration = backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert.Expiration.ValueString()
 						} else {
 							expiration = nil
 						}
+						rsaBits := new(int64)
+						if !backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert.RsaBits.IsUnknown() && !backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert.RsaBits.IsNull() {
+							*rsaBits = backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert.RsaBits.ValueInt64()
+						} else {
+							rsaBits = nil
+						}
 						caCert = &shared.BuiltinCertificateAuthorityConfigConfCaCert{
-							RSAbits:    rsAbits,
 							Expiration: expiration,
+							RsaBits:    rsaBits,
 						}
 					}
 					builtinCertificateAuthorityConfig = &shared.BuiltinCertificateAuthorityConfig{
@@ -1097,7 +1097,7 @@ func (r *MeshResourceModel) RefreshFromSharedMeshItem(resp *shared.MeshItem) {
 						} else {
 							backends5.Conf.BuiltinCertificateAuthorityConfig.CaCert = &tfTypes.BuiltinCertificateAuthorityConfigConfCaCert{}
 							backends5.Conf.BuiltinCertificateAuthorityConfig.CaCert.Expiration = types.StringPointerValue(backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert.Expiration)
-							backends5.Conf.BuiltinCertificateAuthorityConfig.CaCert.RSAbits = types.Int64PointerValue(backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert.RSAbits)
+							backends5.Conf.BuiltinCertificateAuthorityConfig.CaCert.RsaBits = types.Int64PointerValue(backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert.RsaBits)
 						}
 					}
 					if backendsItem2.Conf.CertManagerCertificateAuthorityConfig != nil {

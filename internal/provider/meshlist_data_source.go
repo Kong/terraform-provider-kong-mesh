@@ -373,7 +373,7 @@ func (r *MeshListDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 																	"expiration": schema.StringAttribute{
 																		Computed: true,
 																	},
-																	"rs_abits": schema.Int64Attribute{
+																	"rsa_bits": schema.Int64Attribute{
 																		Computed: true,
 																	},
 																},
