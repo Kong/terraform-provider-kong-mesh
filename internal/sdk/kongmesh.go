@@ -122,9 +122,9 @@ func New(serverURL string, opts ...SDKOption) *KongMesh {
 		sdkConfiguration: sdkConfiguration{
 			Language:          "go",
 			OpenAPIDocVersion: "2.0.0",
-			SDKVersion:        "0.1.3",
+			SDKVersion:        "0.1.4",
 			GenVersion:        "2.546.3",
-			UserAgent:         "speakeasy-sdk/terraform 0.1.3 2.546.3 2.0.0 github.com/kong/terraform-provider-kong-mesh/internal/sdk",
+			UserAgent:         "speakeasy-sdk/terraform 0.1.4 2.546.3 2.0.0 github.com/kong/terraform-provider-kong-mesh/internal/sdk",
 			ServerURL:         serverURL,
 			Hooks:             hooks.New(),
 		},
