@@ -1,9 +1,27 @@
 # Changelog
 
+## 0.1.3
+> Released on 2025/04/29
+> 
+> - share tests between Kong Mesh and Konnect via shared-speakeasy
+
+## 0.1.2
+> Released on 2025/04/24
+>
+> - sync platform api to 1fb9aa34e8c4a2c6c62694b656289efbcd4280e7
+
+## 0.1.1
+> Released on 2025/04/17
+>
+> - sync platform api to 62c644773c491783a524113b255fcdc66a49e762
+> - remove not needed modifiers
+> - use shared-speakeasy
+
 ## 0.1.0
-> Released on 2025/??/??
+> Released on 2025/04/07
+>
+> - sync platform api to e8cbafafd7ac806c613404020d2f055fd5d69624
 
 ### Features
 
 * Initial launch
-
