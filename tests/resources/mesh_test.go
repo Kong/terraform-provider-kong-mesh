@@ -2,9 +2,6 @@ package tests
 
 import (
 	"github.com/Kong/shared-speakeasy/tfbuilder"
-	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
-	"github.com/hashicorp/terraform-plugin-testing/plancheck"
-	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
@@ -40,73 +37,7 @@ func TestMesh(t *testing.T) {
 		builder := tfbuilder.NewBuilder(tfbuilder.KongMesh, "http", "localhost", port.Int())
 		mesh := tfbuilder.NewMeshBuilder("m1", "m1")
 
-		resource.ParallelTest(t, resource.TestCase{
-			ProtoV6ProviderFactories: providerFactory,
-			Steps: []resource.TestStep{
-				{
-					Config: builder.AddMesh(mesh).Build(),
-					ConfigPlanChecks: resource.ConfigPlanChecks{
-						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction(builder.ResourceAddress("mesh", mesh.ResourceName), plancheck.ResourceActionCreate),
-						},
-					},
-				},
-				tfbuilder.CheckReapplyPlanEmpty(builder),
-				{
-					Config: builder.AddMesh(mesh.WithSpec(`skip_creating_initial_policies = [ "*" ]
-  routing = {
-    default_forbid_mesh_external_service_access = true
-  }
-`)).Build(),
-					ConfigPlanChecks: resource.ConfigPlanChecks{
-						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction(builder.ResourceAddress("mesh", mesh.ResourceName), plancheck.ResourceActionUpdate),
-							plancheck.ExpectKnownValue(builder.ResourceAddress("mesh", mesh.ResourceName), tfjsonpath.New("routing").AtMapKey("default_forbid_mesh_external_service_access"), knownvalue.Bool(true)),
-						},
-					},
-				},
-				{
-					Config: builder.AddMesh(mesh.RemoveFromSpec(`default_forbid_mesh_external_service_access = true`)).Build(),
-					ConfigPlanChecks: resource.ConfigPlanChecks{
-						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction(builder.ResourceAddress("mesh", mesh.ResourceName), plancheck.ResourceActionUpdate),
-							plancheck.ExpectKnownValue(builder.ResourceAddress("mesh", mesh.ResourceName), tfjsonpath.New("routing").AtMapKey("default_forbid_mesh_external_service_access"), knownvalue.Null()),
-						},
-					},
-				},
-				tfbuilder.CheckReapplyPlanEmpty(builder),
-				{
-					Config: builder.AddMesh(mesh.UpdateSpec(`skip_creating_initial_policies = [ "*" ]`, `skip_creating_initial_policies = []`)).Build(),
-					ConfigPlanChecks: resource.ConfigPlanChecks{
-						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction(builder.ResourceAddress("mesh", mesh.ResourceName), plancheck.ResourceActionUpdate),
-							plancheck.ExpectKnownValue(builder.ResourceAddress("mesh", mesh.ResourceName), tfjsonpath.New("skip_creating_initial_policies"), knownvalue.ListExact([]knownvalue.Check{})),
-						},
-					},
-				},
-				tfbuilder.CheckReapplyPlanEmpty(builder),
-				{
-					Config: builder.AddMesh(mesh.RemoveFromSpec(`skip_creating_initial_policies = []`)).Build(),
-					ConfigPlanChecks: resource.ConfigPlanChecks{
-						PreApply: []plancheck.PlanCheck{
-							// since we use default of [] this is a noop and not an update
-							plancheck.ExpectResourceAction(builder.ResourceAddress("mesh", mesh.ResourceName), plancheck.ResourceActionNoop),
-							plancheck.ExpectKnownValue(builder.ResourceAddress("mesh", mesh.ResourceName), tfjsonpath.New("skip_creating_initial_policies"), knownvalue.ListExact([]knownvalue.Check{})),
-						},
-					},
-				},
-				tfbuilder.CheckReapplyPlanEmpty(builder),
-				{
-					Config: builder.RemoveMesh(mesh.MeshName).Build(),
-					ConfigPlanChecks: resource.ConfigPlanChecks{
-						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction(builder.ResourceAddress("mesh", mesh.ResourceName), plancheck.ResourceActionDestroy),
-						},
-					},
-				},
-				tfbuilder.CheckReapplyPlanEmpty(builder),
-			},
-		})
+		resource.ParallelTest(t, tfbuilder.CreateMeshAndModifyFieldsOnIt(providerFactory, builder, mesh))
 	})
 
 	t.Run("create a policy and modify fields on it", func(t *testing.T) {
@@ -120,53 +51,10 @@ func TestMesh(t *testing.T) {
 				"kuma.io/env":    "universal",
 				"kuma.io/origin": "zone",
 				"kuma.io/zone":   "default",
-			}).
-			WithSpec(tfbuilder.AllowAllTrafficPermissionSpec)
+			})
 		builder.AddMesh(mesh)
 
-		resource.ParallelTest(t, resource.TestCase{
-			ProtoV6ProviderFactories: providerFactory,
-			Steps: []resource.TestStep{
-				{
-					Config: builder.Build(),
-					ConfigPlanChecks: resource.ConfigPlanChecks{
-						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction(builder.ResourceAddress("mesh", mesh.ResourceName), plancheck.ResourceActionCreate),
-						},
-					},
-				},
-				tfbuilder.CheckReapplyPlanEmpty(builder),
-				{
-					Config: builder.AddPolicy(mtp).Build(),
-					ConfigPlanChecks: resource.ConfigPlanChecks{
-						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction(builder.ResourceAddress(mtp.ResourceType, mtp.ResourceName), plancheck.ResourceActionCreate),
-						},
-					},
-				},
-				tfbuilder.CheckReapplyPlanEmpty(builder),
-				{
-					Config: builder.AddPolicy(mtp.AddToSpec(`kind = "Mesh"`, `proxy_types = ["Sidecar"]`)).Build(),
-					ConfigPlanChecks: resource.ConfigPlanChecks{
-						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction(builder.ResourceAddress(mtp.ResourceType, mtp.ResourceName), plancheck.ResourceActionUpdate),
-							plancheck.ExpectKnownValue(builder.ResourceAddress(mtp.ResourceType, mtp.ResourceName), tfjsonpath.New("spec").AtMapKey("from").AtSliceIndex(0).AtMapKey("target_ref").AtMapKey("proxy_types"), knownvalue.ListExact([]knownvalue.Check{knownvalue.StringExact("Sidecar")})),
-						},
-					},
-				},
-				tfbuilder.CheckReapplyPlanEmpty(builder),
-				{
-					Config: builder.AddPolicy(mtp.UpdateSpec(`proxy_types = ["Sidecar"]`, `proxy_types = []`)).Build(),
-					ConfigPlanChecks: resource.ConfigPlanChecks{
-						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction(builder.ResourceAddress(mtp.ResourceType, mtp.ResourceName), plancheck.ResourceActionUpdate),
-							plancheck.ExpectKnownValue(builder.ResourceAddress(mtp.ResourceType, mtp.ResourceName), tfjsonpath.New("spec").AtMapKey("from").AtSliceIndex(0).AtMapKey("target_ref").AtMapKey("proxy_types"), knownvalue.ListExact([]knownvalue.Check{})),
-						},
-					},
-				},
-				tfbuilder.CheckReapplyPlanEmpty(builder),
-			},
-		})
+		resource.ParallelTest(t, tfbuilder.CreatePolicyAndModifyFieldsOnIt(providerFactory, builder, mtp))
 	})
 
 	if t.Failed() {
