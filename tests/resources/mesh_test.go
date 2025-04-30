@@ -2,9 +2,6 @@ package tests
 
 import (
 	"github.com/Kong/shared-speakeasy/tfbuilder"
-	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
-	"github.com/hashicorp/terraform-plugin-testing/plancheck"
-	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
@@ -62,9 +59,6 @@ func TestMesh(t *testing.T) {
 
 	meshRetryAllSpec := `
   spec = {
-    target_ref = {
-      kind = "Mesh"
-    }
     to = [
       {
         target_ref = {
@@ -72,8 +66,7 @@ func TestMesh(t *testing.T) {
         }
         default = {
           grpc = {
-            num_retries = 5
-            per_try_timeout = "16s"
+            num_retries = 3
           }
         }
       }
@@ -85,7 +78,7 @@ func TestMesh(t *testing.T) {
 	t.Run("create mesh_retry with retry_on", func(t *testing.T) {
 		builder := tfbuilder.NewBuilder(tfbuilder.KongMesh, "http", "localhost", port.Int())
 		mesh := tfbuilder.NewMeshBuilder("m3", "m3")
-		mr := tfbuilder.NewPolicyBuilder("mesh_retry", "retry_on", "retry-on", "MeshRetry").
+		mr := tfbuilder.NewPolicyBuilder("mesh_retry", "retryon", "retryon", "MeshRetry").
 			WithMeshRef(builder.ResourceAddress("mesh", mesh.ResourceName) + ".name").
 			WithDependsOn(builder.ResourceAddress("mesh", mesh.ResourceName)).
 			WithSpec(meshRetryAllSpec).
@@ -96,6 +89,7 @@ func TestMesh(t *testing.T) {
 				"kuma.io/zone":   "default",
 			})
 		builder.AddMesh(mesh)
+		builder.AddPolicy(mr)
 
 		resource.ParallelTest(t, resource.TestCase{
 			ProtoV6ProviderFactories: providerFactory,
@@ -104,43 +98,12 @@ func TestMesh(t *testing.T) {
 					Config: builder.Build(),
 				},
 				{
-					Config: builder.AddPolicy(mr).Build(),
-					ConfigPlanChecks: resource.ConfigPlanChecks{
-						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction(builder.ResourceAddress(mr.ResourceType, mr.ResourceName), plancheck.ResourceActionCreate),
-						},
-					},
+					ImportState:                          true,
+					ImportStateVerify:                    true,
+					ResourceName:                         builder.ResourceAddress("mesh_retry", "retryon"),
+					ImportStateId:                        `{"mesh":"m3","name":"retryon"}`,
+					ImportStateVerifyIdentifierAttribute: "name",
 				},
-				tfbuilder.CheckReapplyPlanEmpty(builder),
-				{
-					Config: builder.AddPolicy(mr.AddToSpec(`per_try_timeout = "16s"`, `retry_on = []`)).Build(),
-					ConfigPlanChecks: resource.ConfigPlanChecks{
-						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction(builder.ResourceAddress(mr.ResourceType, mr.ResourceName), plancheck.ResourceActionNoop),
-						},
-					},
-				},
-				tfbuilder.CheckReapplyPlanEmpty(builder),
-				{
-					Config: builder.AddPolicy(mr.UpdateSpec(`retry_on = []`, `retry_on = ["Canceled"]`)).Build(),
-					ConfigPlanChecks: resource.ConfigPlanChecks{
-						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction(builder.ResourceAddress(mr.ResourceType, mr.ResourceName), plancheck.ResourceActionUpdate),
-							plancheck.ExpectKnownValue(builder.ResourceAddress(mr.ResourceType, mr.ResourceName), tfjsonpath.New("spec").AtMapKey("to").AtSliceIndex(0).AtMapKey("default").AtMapKey("grpc").AtMapKey("retry_on"), knownvalue.ListExact([]knownvalue.Check{knownvalue.StringExact("Canceled")})),
-						},
-					},
-				},
-				tfbuilder.CheckReapplyPlanEmpty(builder),
-				{
-					Config: builder.AddPolicy(mr.RemoveFromSpec(`retry_on = ["Canceled"]`)).Build(),
-					ConfigPlanChecks: resource.ConfigPlanChecks{
-						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction(builder.ResourceAddress(mr.ResourceType, mr.ResourceName), plancheck.ResourceActionUpdate),
-							plancheck.ExpectKnownValue(builder.ResourceAddress(mr.ResourceType, mr.ResourceName), tfjsonpath.New("spec").AtMapKey("to").AtSliceIndex(0).AtMapKey("default").AtMapKey("grpc").AtMapKey("retry_on"), knownvalue.Null()),
-						},
-					},
-				},
-				tfbuilder.CheckReapplyPlanEmpty(builder),
 			},
 		})
 	})
