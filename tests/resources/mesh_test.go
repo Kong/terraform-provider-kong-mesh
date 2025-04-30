@@ -116,7 +116,8 @@ func TestMesh(t *testing.T) {
 					Config: builder.AddPolicy(mr.AddToSpec(`per_try_timeout = "16s"`, `retry_on = []`)).Build(),
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction(builder.ResourceAddress(mr.ResourceType, mr.ResourceName), plancheck.ResourceActionNoop),
+							plancheck.ExpectResourceAction(builder.ResourceAddress(mr.ResourceType, mr.ResourceName), plancheck.ResourceActionUpdate),
+							plancheck.ExpectKnownValue(builder.ResourceAddress(mr.ResourceType, mr.ResourceName), tfjsonpath.New("spec").AtMapKey("to").AtSliceIndex(0).AtMapKey("default").AtMapKey("grpc").AtMapKey("retry_on"), knownvalue.ListExact([]knownvalue.Check{})),
 						},
 					},
 				},

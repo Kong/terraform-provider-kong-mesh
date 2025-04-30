@@ -100,9 +100,11 @@ func (r *MeshRetryDataSourceModel) RefreshFromSharedMeshRetryItem(resp *shared.M
 							}
 						}
 					}
-					to1.Default.Grpc.RetryOn = make([]types.String, 0, len(toItem.Default.Grpc.RetryOn))
-					for _, v := range toItem.Default.Grpc.RetryOn {
-						to1.Default.Grpc.RetryOn = append(to1.Default.Grpc.RetryOn, types.StringValue(string(v)))
+					if toItem.Default.Grpc.RetryOn != nil {
+						to1.Default.Grpc.RetryOn = make([]types.String, 0, len(toItem.Default.Grpc.RetryOn))
+						for _, v := range toItem.Default.Grpc.RetryOn {
+							to1.Default.Grpc.RetryOn = append(to1.Default.Grpc.RetryOn, types.StringValue(string(v)))
+						}
 					}
 				}
 				if toItem.Default.HTTP == nil {

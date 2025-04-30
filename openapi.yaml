@@ -11426,8 +11426,7 @@ components:
                                 - ResourceExhausted
                                 - Unavailable
                               type: string
-                            type: array
-                            x-speakeasy-plan-modifiers: SupressZeroNullModifier
+                            type: ["array", "null"]
                             x-speakeasy-param-computed: false
                         type: object
                         x-speakeasy-param-computed: false

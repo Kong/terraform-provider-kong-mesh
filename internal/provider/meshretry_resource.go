@@ -264,10 +264,7 @@ func (r *MeshRetryResource) Schema(ctx context.Context, req resource.SchemaReque
 														`the upstream returns one of the headers configured.`,
 												},
 												"retry_on": schema.ListAttribute{
-													Optional: true,
-													PlanModifiers: []planmodifier.List{
-														custom_listplanmodifier.SupressZeroNullModifier(),
-													},
+													Optional:    true,
 													ElementType: types.StringType,
 													Description: `RetryOn is a list of conditions which will cause a retry.`,
 												},
