@@ -17,6 +17,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+	"github.com/kong/terraform-provider-kong-mesh/internal/customtypes"
 	custom_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
 	custom_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
@@ -42,14 +43,14 @@ type MeshAccessLogResource struct {
 
 // MeshAccessLogResourceModel describes the resource data model.
 type MeshAccessLogResourceModel struct {
-	CreationTime     types.String            `tfsdk:"creation_time"`
-	Labels           map[string]types.String `tfsdk:"labels"`
-	Mesh             types.String            `tfsdk:"mesh"`
-	ModificationTime types.String            `tfsdk:"modification_time"`
-	Name             types.String            `tfsdk:"name"`
-	Spec             tfTypes.Spec            `tfsdk:"spec"`
-	Type             types.String            `tfsdk:"type"`
-	Warnings         []types.String          `tfsdk:"warnings"`
+	CreationTime     types.String             `tfsdk:"creation_time"`
+	Labels           customtypes.KumaLabelMap `tfsdk:"labels"`
+	Mesh             types.String             `tfsdk:"mesh"`
+	ModificationTime types.String             `tfsdk:"modification_time"`
+	Name             types.String             `tfsdk:"name"`
+	Spec             tfTypes.Spec             `tfsdk:"spec"`
+	Type             types.String             `tfsdk:"type"`
+	Warnings         []types.String           `tfsdk:"warnings"`
 }
 
 func (r *MeshAccessLogResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -71,6 +72,7 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 				},
 			},
 			"labels": schema.MapAttribute{
+				CustomType:  customtypes.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}},
 				Optional:    true,
 				ElementType: types.StringType,
 				Description: `The labels to help identity resources`,
