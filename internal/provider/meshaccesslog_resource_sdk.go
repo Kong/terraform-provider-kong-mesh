@@ -3,14 +3,19 @@
 package provider
 
 import (
+	"context"
 	"encoding/json"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
-	"time"
 )
 
-func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput() *shared.MeshAccessLogItemInput {
+func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.Context) (*shared.MeshAccessLogItemInput, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
 	typeVar := shared.Type(r.Type.ValueString())
 	mesh := new(string)
 	if !r.Mesh.IsUnknown() && !r.Mesh.IsNull() {
@@ -28,15 +33,15 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput() *shared.Me
 
 		labels[labelsKey] = labelsInst
 	}
-	var from []shared.From = []shared.From{}
+	from := make([]shared.From, 0, len(r.Spec.From))
 	for _, fromItem := range r.Spec.From {
-		var backends []shared.MeshAccessLogItemSpecFromBackends = []shared.MeshAccessLogItemSpecFromBackends{}
+		backends := make([]shared.MeshAccessLogItemSpecFromBackends, 0, len(fromItem.Default.Backends))
 		for _, backendsItem := range fromItem.Default.Backends {
 			var file *shared.File
 			if backendsItem.File != nil {
 				var format *shared.Format
 				if backendsItem.File.Format != nil {
-					var jsonVar []shared.JSON = []shared.JSON{}
+					jsonVar := make([]shared.JSON, 0, len(backendsItem.File.Format.JSON))
 					for _, jsonItem := range backendsItem.File.Format.JSON {
 						var key string
 						key = jsonItem.Key.ValueString()
@@ -79,7 +84,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput() *shared.Me
 			}
 			var openTelemetry *shared.MeshAccessLogItemSpecFromOpenTelemetry
 			if backendsItem.OpenTelemetry != nil {
-				var attributes []shared.Attributes = []shared.Attributes{}
+				attributes := make([]shared.Attributes, 0, len(backendsItem.OpenTelemetry.Attributes))
 				for _, attributesItem := range backendsItem.OpenTelemetry.Attributes {
 					var key1 string
 					key1 = attributesItem.Key.ValueString()
@@ -112,7 +117,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput() *shared.Me
 
 				var format1 *shared.MeshAccessLogItemFormat
 				if backendsItem.TCP.Format != nil {
-					var jsonVar1 []shared.MeshAccessLogItemJSON = []shared.MeshAccessLogItemJSON{}
+					jsonVar1 := make([]shared.MeshAccessLogItemJSON, 0, len(backendsItem.TCP.Format.JSON))
 					for _, jsonItem1 := range backendsItem.TCP.Format.JSON {
 						var key2 string
 						key2 = jsonItem1.Key.ValueString()
@@ -187,7 +192,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput() *shared.Me
 		} else {
 			namespace = nil
 		}
-		var proxyTypes []shared.MeshAccessLogItemProxyTypes = []shared.MeshAccessLogItemProxyTypes{}
+		proxyTypes := make([]shared.MeshAccessLogItemProxyTypes, 0, len(fromItem.TargetRef.ProxyTypes))
 		for _, proxyTypesItem := range fromItem.TargetRef.ProxyTypes {
 			proxyTypes = append(proxyTypes, shared.MeshAccessLogItemProxyTypes(proxyTypesItem.ValueString()))
 		}
@@ -219,15 +224,15 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput() *shared.Me
 			TargetRef: targetRef,
 		})
 	}
-	var rules []shared.Rules = []shared.Rules{}
+	rules := make([]shared.Rules, 0, len(r.Spec.Rules))
 	for _, rulesItem := range r.Spec.Rules {
-		var backends1 []shared.MeshAccessLogItemBackends = []shared.MeshAccessLogItemBackends{}
+		backends1 := make([]shared.MeshAccessLogItemBackends, 0, len(rulesItem.Default.Backends))
 		for _, backendsItem1 := range rulesItem.Default.Backends {
 			var file1 *shared.MeshAccessLogItemFile
 			if backendsItem1.File != nil {
 				var format2 *shared.MeshAccessLogItemSpecFormat
 				if backendsItem1.File.Format != nil {
-					var jsonVar2 []shared.MeshAccessLogItemSpecJSON = []shared.MeshAccessLogItemSpecJSON{}
+					jsonVar2 := make([]shared.MeshAccessLogItemSpecJSON, 0, len(backendsItem1.File.Format.JSON))
 					for _, jsonItem2 := range backendsItem1.File.Format.JSON {
 						var key3 string
 						key3 = jsonItem2.Key.ValueString()
@@ -270,7 +275,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput() *shared.Me
 			}
 			var openTelemetry1 *shared.MeshAccessLogItemOpenTelemetry
 			if backendsItem1.OpenTelemetry != nil {
-				var attributes1 []shared.MeshAccessLogItemAttributes = []shared.MeshAccessLogItemAttributes{}
+				attributes1 := make([]shared.MeshAccessLogItemAttributes, 0, len(backendsItem1.OpenTelemetry.Attributes))
 				for _, attributesItem1 := range backendsItem1.OpenTelemetry.Attributes {
 					var key4 string
 					key4 = attributesItem1.Key.ValueString()
@@ -303,7 +308,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput() *shared.Me
 
 				var format3 *shared.MeshAccessLogItemSpecRulesFormat
 				if backendsItem1.TCP.Format != nil {
-					var jsonVar3 []shared.MeshAccessLogItemSpecRulesJSON = []shared.MeshAccessLogItemSpecRulesJSON{}
+					jsonVar3 := make([]shared.MeshAccessLogItemSpecRulesJSON, 0, len(backendsItem1.TCP.Format.JSON))
 					for _, jsonItem3 := range backendsItem1.TCP.Format.JSON {
 						var key5 string
 						key5 = jsonItem3.Key.ValueString()
@@ -384,7 +389,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput() *shared.Me
 		} else {
 			namespace1 = nil
 		}
-		var proxyTypes1 []shared.ProxyTypes = []shared.ProxyTypes{}
+		proxyTypes1 := make([]shared.ProxyTypes, 0, len(r.Spec.TargetRef.ProxyTypes))
 		for _, proxyTypesItem1 := range r.Spec.TargetRef.ProxyTypes {
 			proxyTypes1 = append(proxyTypes1, shared.ProxyTypes(proxyTypesItem1.ValueString()))
 		}
@@ -412,15 +417,15 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput() *shared.Me
 			Tags:        tags1,
 		}
 	}
-	var to []shared.To = []shared.To{}
+	to := make([]shared.To, 0, len(r.Spec.To))
 	for _, toItem := range r.Spec.To {
-		var backends2 []shared.MeshAccessLogItemSpecBackends = []shared.MeshAccessLogItemSpecBackends{}
+		backends2 := make([]shared.MeshAccessLogItemSpecBackends, 0, len(toItem.Default.Backends))
 		for _, backendsItem2 := range toItem.Default.Backends {
 			var file2 *shared.MeshAccessLogItemSpecFile
 			if backendsItem2.File != nil {
 				var format4 *shared.MeshAccessLogItemSpecToFormat
 				if backendsItem2.File.Format != nil {
-					var jsonVar4 []shared.MeshAccessLogItemSpecToJSON = []shared.MeshAccessLogItemSpecToJSON{}
+					jsonVar4 := make([]shared.MeshAccessLogItemSpecToJSON, 0, len(backendsItem2.File.Format.JSON))
 					for _, jsonItem4 := range backendsItem2.File.Format.JSON {
 						var key6 string
 						key6 = jsonItem4.Key.ValueString()
@@ -463,7 +468,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput() *shared.Me
 			}
 			var openTelemetry2 *shared.MeshAccessLogItemSpecOpenTelemetry
 			if backendsItem2.OpenTelemetry != nil {
-				var attributes2 []shared.MeshAccessLogItemSpecAttributes = []shared.MeshAccessLogItemSpecAttributes{}
+				attributes2 := make([]shared.MeshAccessLogItemSpecAttributes, 0, len(backendsItem2.OpenTelemetry.Attributes))
 				for _, attributesItem2 := range backendsItem2.OpenTelemetry.Attributes {
 					var key7 string
 					key7 = attributesItem2.Key.ValueString()
@@ -496,7 +501,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput() *shared.Me
 
 				var format5 *shared.MeshAccessLogItemSpecToDefaultFormat
 				if backendsItem2.TCP.Format != nil {
-					var jsonVar5 []shared.MeshAccessLogItemSpecToDefaultJSON = []shared.MeshAccessLogItemSpecToDefaultJSON{}
+					jsonVar5 := make([]shared.MeshAccessLogItemSpecToDefaultJSON, 0, len(backendsItem2.TCP.Format.JSON))
 					for _, jsonItem5 := range backendsItem2.TCP.Format.JSON {
 						var key8 string
 						key8 = jsonItem5.Key.ValueString()
@@ -571,7 +576,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput() *shared.Me
 		} else {
 			namespace2 = nil
 		}
-		var proxyTypes2 []shared.MeshAccessLogItemSpecProxyTypes = []shared.MeshAccessLogItemSpecProxyTypes{}
+		proxyTypes2 := make([]shared.MeshAccessLogItemSpecProxyTypes, 0, len(toItem.TargetRef.ProxyTypes))
 		for _, proxyTypesItem2 := range toItem.TargetRef.ProxyTypes {
 			proxyTypes2 = append(proxyTypes2, shared.MeshAccessLogItemSpecProxyTypes(proxyTypesItem2.ValueString()))
 		}
@@ -616,25 +621,112 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput() *shared.Me
 		Labels: labels,
 		Spec:   spec,
 	}
-	return &out
+
+	return &out, diags
 }
 
-func (r *MeshAccessLogResourceModel) RefreshFromSharedMeshAccessLogCreateOrUpdateSuccessResponse(resp *shared.MeshAccessLogCreateOrUpdateSuccessResponse) {
+func (r *MeshAccessLogResourceModel) ToOperationsCreateMeshAccessLogRequest(ctx context.Context) (*operations.CreateMeshAccessLogRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	meshAccessLogItem, meshAccessLogItemDiags := r.ToSharedMeshAccessLogItemInput(ctx)
+	diags.Append(meshAccessLogItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.CreateMeshAccessLogRequest{
+		Mesh:              mesh,
+		Name:              name,
+		MeshAccessLogItem: *meshAccessLogItem,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshAccessLogResourceModel) ToOperationsUpdateMeshAccessLogRequest(ctx context.Context) (*operations.UpdateMeshAccessLogRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	meshAccessLogItem, meshAccessLogItemDiags := r.ToSharedMeshAccessLogItemInput(ctx)
+	diags.Append(meshAccessLogItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.UpdateMeshAccessLogRequest{
+		Mesh:              mesh,
+		Name:              name,
+		MeshAccessLogItem: *meshAccessLogItem,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshAccessLogResourceModel) ToOperationsGetMeshAccessLogRequest(ctx context.Context) (*operations.GetMeshAccessLogRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.GetMeshAccessLogRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshAccessLogResourceModel) ToOperationsDeleteMeshAccessLogRequest(ctx context.Context) (*operations.DeleteMeshAccessLogRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.DeleteMeshAccessLogRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshAccessLogResourceModel) RefreshFromSharedMeshAccessLogCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.MeshAccessLogCreateOrUpdateSuccessResponse) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
 		r.Warnings = make([]types.String, 0, len(resp.Warnings))
 		for _, v := range resp.Warnings {
 			r.Warnings = append(r.Warnings, types.StringValue(v))
 		}
 	}
+
+	return diags
 }
 
-func (r *MeshAccessLogResourceModel) RefreshFromSharedMeshAccessLogItem(resp *shared.MeshAccessLogItem) {
+func (r *MeshAccessLogResourceModel) RefreshFromSharedMeshAccessLogItem(ctx context.Context, resp *shared.MeshAccessLogItem) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
-		if resp.CreationTime != nil {
-			r.CreationTime = types.StringValue(resp.CreationTime.Format(time.RFC3339Nano))
-		} else {
-			r.CreationTime = types.StringNull()
-		}
+		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
 		if len(resp.Labels) > 0 {
 			r.Labels = make(map[string]types.String, len(resp.Labels))
 			for key, value := range resp.Labels {
@@ -642,133 +734,129 @@ func (r *MeshAccessLogResourceModel) RefreshFromSharedMeshAccessLogItem(resp *sh
 			}
 		}
 		r.Mesh = types.StringPointerValue(resp.Mesh)
-		if resp.ModificationTime != nil {
-			r.ModificationTime = types.StringValue(resp.ModificationTime.Format(time.RFC3339Nano))
-		} else {
-			r.ModificationTime = types.StringNull()
-		}
+		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
 		r.Spec.From = []tfTypes.From{}
 		if len(r.Spec.From) > len(resp.Spec.From) {
 			r.Spec.From = r.Spec.From[:len(resp.Spec.From)]
 		}
 		for fromCount, fromItem := range resp.Spec.From {
-			var from1 tfTypes.From
-			from1.Default.Backends = []tfTypes.MeshAccessLogItemSpecFromBackends{}
+			var from tfTypes.From
+			from.Default.Backends = []tfTypes.MeshAccessLogItemSpecFromBackends{}
 			for backendsCount, backendsItem := range fromItem.Default.Backends {
-				var backends1 tfTypes.MeshAccessLogItemSpecFromBackends
+				var backends tfTypes.MeshAccessLogItemSpecFromBackends
 				if backendsItem.File == nil {
-					backends1.File = nil
+					backends.File = nil
 				} else {
-					backends1.File = &tfTypes.File{}
+					backends.File = &tfTypes.File{}
 					if backendsItem.File.Format == nil {
-						backends1.File.Format = nil
+						backends.File.Format = nil
 					} else {
-						backends1.File.Format = &tfTypes.Format{}
-						backends1.File.Format.JSON = []tfTypes.JSON{}
+						backends.File.Format = &tfTypes.Format{}
+						backends.File.Format.JSON = []tfTypes.JSON{}
 						for jsonVarCount, jsonVarItem := range backendsItem.File.Format.JSON {
-							var jsonVar1 tfTypes.JSON
-							jsonVar1.Key = types.StringValue(jsonVarItem.Key)
-							jsonVar1.Value = types.StringValue(jsonVarItem.Value)
-							if jsonVarCount+1 > len(backends1.File.Format.JSON) {
-								backends1.File.Format.JSON = append(backends1.File.Format.JSON, jsonVar1)
+							var jsonVar tfTypes.JSON
+							jsonVar.Key = types.StringValue(jsonVarItem.Key)
+							jsonVar.Value = types.StringValue(jsonVarItem.Value)
+							if jsonVarCount+1 > len(backends.File.Format.JSON) {
+								backends.File.Format.JSON = append(backends.File.Format.JSON, jsonVar)
 							} else {
-								backends1.File.Format.JSON[jsonVarCount].Key = jsonVar1.Key
-								backends1.File.Format.JSON[jsonVarCount].Value = jsonVar1.Value
+								backends.File.Format.JSON[jsonVarCount].Key = jsonVar.Key
+								backends.File.Format.JSON[jsonVarCount].Value = jsonVar.Value
 							}
 						}
-						backends1.File.Format.OmitEmptyValues = types.BoolPointerValue(backendsItem.File.Format.OmitEmptyValues)
-						backends1.File.Format.Plain = types.StringPointerValue(backendsItem.File.Format.Plain)
-						backends1.File.Format.Type = types.StringValue(string(backendsItem.File.Format.Type))
+						backends.File.Format.OmitEmptyValues = types.BoolPointerValue(backendsItem.File.Format.OmitEmptyValues)
+						backends.File.Format.Plain = types.StringPointerValue(backendsItem.File.Format.Plain)
+						backends.File.Format.Type = types.StringValue(string(backendsItem.File.Format.Type))
 					}
-					backends1.File.Path = types.StringValue(backendsItem.File.Path)
+					backends.File.Path = types.StringValue(backendsItem.File.Path)
 				}
 				if backendsItem.OpenTelemetry == nil {
-					backends1.OpenTelemetry = nil
+					backends.OpenTelemetry = nil
 				} else {
-					backends1.OpenTelemetry = &tfTypes.MeshAccessLogItemSpecFromOpenTelemetry{}
-					backends1.OpenTelemetry.Attributes = []tfTypes.JSON{}
+					backends.OpenTelemetry = &tfTypes.MeshAccessLogItemSpecFromOpenTelemetry{}
+					backends.OpenTelemetry.Attributes = []tfTypes.JSON{}
 					for attributesCount, attributesItem := range backendsItem.OpenTelemetry.Attributes {
-						var attributes1 tfTypes.JSON
-						attributes1.Key = types.StringValue(attributesItem.Key)
-						attributes1.Value = types.StringValue(attributesItem.Value)
-						if attributesCount+1 > len(backends1.OpenTelemetry.Attributes) {
-							backends1.OpenTelemetry.Attributes = append(backends1.OpenTelemetry.Attributes, attributes1)
+						var attributes tfTypes.JSON
+						attributes.Key = types.StringValue(attributesItem.Key)
+						attributes.Value = types.StringValue(attributesItem.Value)
+						if attributesCount+1 > len(backends.OpenTelemetry.Attributes) {
+							backends.OpenTelemetry.Attributes = append(backends.OpenTelemetry.Attributes, attributes)
 						} else {
-							backends1.OpenTelemetry.Attributes[attributesCount].Key = attributes1.Key
-							backends1.OpenTelemetry.Attributes[attributesCount].Value = attributes1.Value
+							backends.OpenTelemetry.Attributes[attributesCount].Key = attributes.Key
+							backends.OpenTelemetry.Attributes[attributesCount].Value = attributes.Value
 						}
 					}
 					if backendsItem.OpenTelemetry.Body == nil {
-						backends1.OpenTelemetry.Body = types.StringNull()
+						backends.OpenTelemetry.Body = types.StringNull()
 					} else {
 						bodyResult, _ := json.Marshal(backendsItem.OpenTelemetry.Body)
-						backends1.OpenTelemetry.Body = types.StringValue(string(bodyResult))
+						backends.OpenTelemetry.Body = types.StringValue(string(bodyResult))
 					}
-					backends1.OpenTelemetry.Endpoint = types.StringValue(backendsItem.OpenTelemetry.Endpoint)
+					backends.OpenTelemetry.Endpoint = types.StringValue(backendsItem.OpenTelemetry.Endpoint)
 				}
 				if backendsItem.TCP == nil {
-					backends1.TCP = nil
+					backends.TCP = nil
 				} else {
-					backends1.TCP = &tfTypes.MeshAccessLogItemSpecFromTCP{}
-					backends1.TCP.Address = types.StringValue(backendsItem.TCP.Address)
+					backends.TCP = &tfTypes.MeshAccessLogItemSpecFromTCP{}
+					backends.TCP.Address = types.StringValue(backendsItem.TCP.Address)
 					if backendsItem.TCP.Format == nil {
-						backends1.TCP.Format = nil
+						backends.TCP.Format = nil
 					} else {
-						backends1.TCP.Format = &tfTypes.Format{}
-						backends1.TCP.Format.JSON = []tfTypes.JSON{}
+						backends.TCP.Format = &tfTypes.Format{}
+						backends.TCP.Format.JSON = []tfTypes.JSON{}
 						for jsonVarCount1, jsonVarItem1 := range backendsItem.TCP.Format.JSON {
-							var jsonVar2 tfTypes.JSON
-							jsonVar2.Key = types.StringValue(jsonVarItem1.Key)
-							jsonVar2.Value = types.StringValue(jsonVarItem1.Value)
-							if jsonVarCount1+1 > len(backends1.TCP.Format.JSON) {
-								backends1.TCP.Format.JSON = append(backends1.TCP.Format.JSON, jsonVar2)
+							var jsonVar1 tfTypes.JSON
+							jsonVar1.Key = types.StringValue(jsonVarItem1.Key)
+							jsonVar1.Value = types.StringValue(jsonVarItem1.Value)
+							if jsonVarCount1+1 > len(backends.TCP.Format.JSON) {
+								backends.TCP.Format.JSON = append(backends.TCP.Format.JSON, jsonVar1)
 							} else {
-								backends1.TCP.Format.JSON[jsonVarCount1].Key = jsonVar2.Key
-								backends1.TCP.Format.JSON[jsonVarCount1].Value = jsonVar2.Value
+								backends.TCP.Format.JSON[jsonVarCount1].Key = jsonVar1.Key
+								backends.TCP.Format.JSON[jsonVarCount1].Value = jsonVar1.Value
 							}
 						}
-						backends1.TCP.Format.OmitEmptyValues = types.BoolPointerValue(backendsItem.TCP.Format.OmitEmptyValues)
-						backends1.TCP.Format.Plain = types.StringPointerValue(backendsItem.TCP.Format.Plain)
-						backends1.TCP.Format.Type = types.StringValue(string(backendsItem.TCP.Format.Type))
+						backends.TCP.Format.OmitEmptyValues = types.BoolPointerValue(backendsItem.TCP.Format.OmitEmptyValues)
+						backends.TCP.Format.Plain = types.StringPointerValue(backendsItem.TCP.Format.Plain)
+						backends.TCP.Format.Type = types.StringValue(string(backendsItem.TCP.Format.Type))
 					}
 				}
-				backends1.Type = types.StringValue(string(backendsItem.Type))
-				if backendsCount+1 > len(from1.Default.Backends) {
-					from1.Default.Backends = append(from1.Default.Backends, backends1)
+				backends.Type = types.StringValue(string(backendsItem.Type))
+				if backendsCount+1 > len(from.Default.Backends) {
+					from.Default.Backends = append(from.Default.Backends, backends)
 				} else {
-					from1.Default.Backends[backendsCount].File = backends1.File
-					from1.Default.Backends[backendsCount].OpenTelemetry = backends1.OpenTelemetry
-					from1.Default.Backends[backendsCount].TCP = backends1.TCP
-					from1.Default.Backends[backendsCount].Type = backends1.Type
+					from.Default.Backends[backendsCount].File = backends.File
+					from.Default.Backends[backendsCount].OpenTelemetry = backends.OpenTelemetry
+					from.Default.Backends[backendsCount].TCP = backends.TCP
+					from.Default.Backends[backendsCount].Type = backends.Type
 				}
 			}
-			from1.TargetRef.Kind = types.StringValue(string(fromItem.TargetRef.Kind))
+			from.TargetRef.Kind = types.StringValue(string(fromItem.TargetRef.Kind))
 			if len(fromItem.TargetRef.Labels) > 0 {
-				from1.TargetRef.Labels = make(map[string]types.String, len(fromItem.TargetRef.Labels))
-				for key4, value4 := range fromItem.TargetRef.Labels {
-					from1.TargetRef.Labels[key4] = types.StringValue(value4)
+				from.TargetRef.Labels = make(map[string]types.String, len(fromItem.TargetRef.Labels))
+				for key1, value1 := range fromItem.TargetRef.Labels {
+					from.TargetRef.Labels[key1] = types.StringValue(value1)
 				}
 			}
-			from1.TargetRef.Mesh = types.StringPointerValue(fromItem.TargetRef.Mesh)
-			from1.TargetRef.Name = types.StringPointerValue(fromItem.TargetRef.Name)
-			from1.TargetRef.Namespace = types.StringPointerValue(fromItem.TargetRef.Namespace)
-			from1.TargetRef.ProxyTypes = make([]types.String, 0, len(fromItem.TargetRef.ProxyTypes))
+			from.TargetRef.Mesh = types.StringPointerValue(fromItem.TargetRef.Mesh)
+			from.TargetRef.Name = types.StringPointerValue(fromItem.TargetRef.Name)
+			from.TargetRef.Namespace = types.StringPointerValue(fromItem.TargetRef.Namespace)
+			from.TargetRef.ProxyTypes = make([]types.String, 0, len(fromItem.TargetRef.ProxyTypes))
 			for _, v := range fromItem.TargetRef.ProxyTypes {
-				from1.TargetRef.ProxyTypes = append(from1.TargetRef.ProxyTypes, types.StringValue(string(v)))
+				from.TargetRef.ProxyTypes = append(from.TargetRef.ProxyTypes, types.StringValue(string(v)))
 			}
-			from1.TargetRef.SectionName = types.StringPointerValue(fromItem.TargetRef.SectionName)
+			from.TargetRef.SectionName = types.StringPointerValue(fromItem.TargetRef.SectionName)
 			if len(fromItem.TargetRef.Tags) > 0 {
-				from1.TargetRef.Tags = make(map[string]types.String, len(fromItem.TargetRef.Tags))
-				for key5, value5 := range fromItem.TargetRef.Tags {
-					from1.TargetRef.Tags[key5] = types.StringValue(value5)
+				from.TargetRef.Tags = make(map[string]types.String, len(fromItem.TargetRef.Tags))
+				for key2, value2 := range fromItem.TargetRef.Tags {
+					from.TargetRef.Tags[key2] = types.StringValue(value2)
 				}
 			}
 			if fromCount+1 > len(r.Spec.From) {
-				r.Spec.From = append(r.Spec.From, from1)
+				r.Spec.From = append(r.Spec.From, from)
 			} else {
-				r.Spec.From[fromCount].Default = from1.Default
-				r.Spec.From[fromCount].TargetRef = from1.TargetRef
+				r.Spec.From[fromCount].Default = from.Default
+				r.Spec.From[fromCount].TargetRef = from.TargetRef
 			}
 		}
 		r.Spec.Rules = []tfTypes.Rules{}
@@ -776,100 +864,100 @@ func (r *MeshAccessLogResourceModel) RefreshFromSharedMeshAccessLogItem(resp *sh
 			r.Spec.Rules = r.Spec.Rules[:len(resp.Spec.Rules)]
 		}
 		for rulesCount, rulesItem := range resp.Spec.Rules {
-			var rules1 tfTypes.Rules
-			rules1.Default.Backends = []tfTypes.MeshAccessLogItemSpecFromBackends{}
+			var rules tfTypes.Rules
+			rules.Default.Backends = []tfTypes.MeshAccessLogItemSpecFromBackends{}
 			for backendsCount1, backendsItem1 := range rulesItem.Default.Backends {
-				var backends3 tfTypes.MeshAccessLogItemSpecFromBackends
+				var backends1 tfTypes.MeshAccessLogItemSpecFromBackends
 				if backendsItem1.File == nil {
-					backends3.File = nil
+					backends1.File = nil
 				} else {
-					backends3.File = &tfTypes.File{}
+					backends1.File = &tfTypes.File{}
 					if backendsItem1.File.Format == nil {
-						backends3.File.Format = nil
+						backends1.File.Format = nil
 					} else {
-						backends3.File.Format = &tfTypes.Format{}
-						backends3.File.Format.JSON = []tfTypes.JSON{}
+						backends1.File.Format = &tfTypes.Format{}
+						backends1.File.Format.JSON = []tfTypes.JSON{}
 						for jsonVarCount2, jsonVarItem2 := range backendsItem1.File.Format.JSON {
-							var jsonVar3 tfTypes.JSON
-							jsonVar3.Key = types.StringValue(jsonVarItem2.Key)
-							jsonVar3.Value = types.StringValue(jsonVarItem2.Value)
-							if jsonVarCount2+1 > len(backends3.File.Format.JSON) {
-								backends3.File.Format.JSON = append(backends3.File.Format.JSON, jsonVar3)
+							var jsonVar2 tfTypes.JSON
+							jsonVar2.Key = types.StringValue(jsonVarItem2.Key)
+							jsonVar2.Value = types.StringValue(jsonVarItem2.Value)
+							if jsonVarCount2+1 > len(backends1.File.Format.JSON) {
+								backends1.File.Format.JSON = append(backends1.File.Format.JSON, jsonVar2)
 							} else {
-								backends3.File.Format.JSON[jsonVarCount2].Key = jsonVar3.Key
-								backends3.File.Format.JSON[jsonVarCount2].Value = jsonVar3.Value
+								backends1.File.Format.JSON[jsonVarCount2].Key = jsonVar2.Key
+								backends1.File.Format.JSON[jsonVarCount2].Value = jsonVar2.Value
 							}
 						}
-						backends3.File.Format.OmitEmptyValues = types.BoolPointerValue(backendsItem1.File.Format.OmitEmptyValues)
-						backends3.File.Format.Plain = types.StringPointerValue(backendsItem1.File.Format.Plain)
-						backends3.File.Format.Type = types.StringValue(string(backendsItem1.File.Format.Type))
+						backends1.File.Format.OmitEmptyValues = types.BoolPointerValue(backendsItem1.File.Format.OmitEmptyValues)
+						backends1.File.Format.Plain = types.StringPointerValue(backendsItem1.File.Format.Plain)
+						backends1.File.Format.Type = types.StringValue(string(backendsItem1.File.Format.Type))
 					}
-					backends3.File.Path = types.StringValue(backendsItem1.File.Path)
+					backends1.File.Path = types.StringValue(backendsItem1.File.Path)
 				}
 				if backendsItem1.OpenTelemetry == nil {
-					backends3.OpenTelemetry = nil
+					backends1.OpenTelemetry = nil
 				} else {
-					backends3.OpenTelemetry = &tfTypes.MeshAccessLogItemSpecFromOpenTelemetry{}
-					backends3.OpenTelemetry.Attributes = []tfTypes.JSON{}
+					backends1.OpenTelemetry = &tfTypes.MeshAccessLogItemSpecFromOpenTelemetry{}
+					backends1.OpenTelemetry.Attributes = []tfTypes.JSON{}
 					for attributesCount1, attributesItem1 := range backendsItem1.OpenTelemetry.Attributes {
-						var attributes3 tfTypes.JSON
-						attributes3.Key = types.StringValue(attributesItem1.Key)
-						attributes3.Value = types.StringValue(attributesItem1.Value)
-						if attributesCount1+1 > len(backends3.OpenTelemetry.Attributes) {
-							backends3.OpenTelemetry.Attributes = append(backends3.OpenTelemetry.Attributes, attributes3)
+						var attributes1 tfTypes.JSON
+						attributes1.Key = types.StringValue(attributesItem1.Key)
+						attributes1.Value = types.StringValue(attributesItem1.Value)
+						if attributesCount1+1 > len(backends1.OpenTelemetry.Attributes) {
+							backends1.OpenTelemetry.Attributes = append(backends1.OpenTelemetry.Attributes, attributes1)
 						} else {
-							backends3.OpenTelemetry.Attributes[attributesCount1].Key = attributes3.Key
-							backends3.OpenTelemetry.Attributes[attributesCount1].Value = attributes3.Value
+							backends1.OpenTelemetry.Attributes[attributesCount1].Key = attributes1.Key
+							backends1.OpenTelemetry.Attributes[attributesCount1].Value = attributes1.Value
 						}
 					}
 					if backendsItem1.OpenTelemetry.Body == nil {
-						backends3.OpenTelemetry.Body = types.StringNull()
+						backends1.OpenTelemetry.Body = types.StringNull()
 					} else {
 						bodyResult1, _ := json.Marshal(backendsItem1.OpenTelemetry.Body)
-						backends3.OpenTelemetry.Body = types.StringValue(string(bodyResult1))
+						backends1.OpenTelemetry.Body = types.StringValue(string(bodyResult1))
 					}
-					backends3.OpenTelemetry.Endpoint = types.StringValue(backendsItem1.OpenTelemetry.Endpoint)
+					backends1.OpenTelemetry.Endpoint = types.StringValue(backendsItem1.OpenTelemetry.Endpoint)
 				}
 				if backendsItem1.TCP == nil {
-					backends3.TCP = nil
+					backends1.TCP = nil
 				} else {
-					backends3.TCP = &tfTypes.MeshAccessLogItemSpecFromTCP{}
-					backends3.TCP.Address = types.StringValue(backendsItem1.TCP.Address)
+					backends1.TCP = &tfTypes.MeshAccessLogItemSpecFromTCP{}
+					backends1.TCP.Address = types.StringValue(backendsItem1.TCP.Address)
 					if backendsItem1.TCP.Format == nil {
-						backends3.TCP.Format = nil
+						backends1.TCP.Format = nil
 					} else {
-						backends3.TCP.Format = &tfTypes.Format{}
-						backends3.TCP.Format.JSON = []tfTypes.JSON{}
+						backends1.TCP.Format = &tfTypes.Format{}
+						backends1.TCP.Format.JSON = []tfTypes.JSON{}
 						for jsonVarCount3, jsonVarItem3 := range backendsItem1.TCP.Format.JSON {
-							var jsonVar4 tfTypes.JSON
-							jsonVar4.Key = types.StringValue(jsonVarItem3.Key)
-							jsonVar4.Value = types.StringValue(jsonVarItem3.Value)
-							if jsonVarCount3+1 > len(backends3.TCP.Format.JSON) {
-								backends3.TCP.Format.JSON = append(backends3.TCP.Format.JSON, jsonVar4)
+							var jsonVar3 tfTypes.JSON
+							jsonVar3.Key = types.StringValue(jsonVarItem3.Key)
+							jsonVar3.Value = types.StringValue(jsonVarItem3.Value)
+							if jsonVarCount3+1 > len(backends1.TCP.Format.JSON) {
+								backends1.TCP.Format.JSON = append(backends1.TCP.Format.JSON, jsonVar3)
 							} else {
-								backends3.TCP.Format.JSON[jsonVarCount3].Key = jsonVar4.Key
-								backends3.TCP.Format.JSON[jsonVarCount3].Value = jsonVar4.Value
+								backends1.TCP.Format.JSON[jsonVarCount3].Key = jsonVar3.Key
+								backends1.TCP.Format.JSON[jsonVarCount3].Value = jsonVar3.Value
 							}
 						}
-						backends3.TCP.Format.OmitEmptyValues = types.BoolPointerValue(backendsItem1.TCP.Format.OmitEmptyValues)
-						backends3.TCP.Format.Plain = types.StringPointerValue(backendsItem1.TCP.Format.Plain)
-						backends3.TCP.Format.Type = types.StringValue(string(backendsItem1.TCP.Format.Type))
+						backends1.TCP.Format.OmitEmptyValues = types.BoolPointerValue(backendsItem1.TCP.Format.OmitEmptyValues)
+						backends1.TCP.Format.Plain = types.StringPointerValue(backendsItem1.TCP.Format.Plain)
+						backends1.TCP.Format.Type = types.StringValue(string(backendsItem1.TCP.Format.Type))
 					}
 				}
-				backends3.Type = types.StringValue(string(backendsItem1.Type))
-				if backendsCount1+1 > len(rules1.Default.Backends) {
-					rules1.Default.Backends = append(rules1.Default.Backends, backends3)
+				backends1.Type = types.StringValue(string(backendsItem1.Type))
+				if backendsCount1+1 > len(rules.Default.Backends) {
+					rules.Default.Backends = append(rules.Default.Backends, backends1)
 				} else {
-					rules1.Default.Backends[backendsCount1].File = backends3.File
-					rules1.Default.Backends[backendsCount1].OpenTelemetry = backends3.OpenTelemetry
-					rules1.Default.Backends[backendsCount1].TCP = backends3.TCP
-					rules1.Default.Backends[backendsCount1].Type = backends3.Type
+					rules.Default.Backends[backendsCount1].File = backends1.File
+					rules.Default.Backends[backendsCount1].OpenTelemetry = backends1.OpenTelemetry
+					rules.Default.Backends[backendsCount1].TCP = backends1.TCP
+					rules.Default.Backends[backendsCount1].Type = backends1.Type
 				}
 			}
 			if rulesCount+1 > len(r.Spec.Rules) {
-				r.Spec.Rules = append(r.Spec.Rules, rules1)
+				r.Spec.Rules = append(r.Spec.Rules, rules)
 			} else {
-				r.Spec.Rules[rulesCount].Default = rules1.Default
+				r.Spec.Rules[rulesCount].Default = rules.Default
 			}
 		}
 		if resp.Spec.TargetRef == nil {
@@ -879,8 +967,8 @@ func (r *MeshAccessLogResourceModel) RefreshFromSharedMeshAccessLogItem(resp *sh
 			r.Spec.TargetRef.Kind = types.StringValue(string(resp.Spec.TargetRef.Kind))
 			if len(resp.Spec.TargetRef.Labels) > 0 {
 				r.Spec.TargetRef.Labels = make(map[string]types.String, len(resp.Spec.TargetRef.Labels))
-				for key9, value9 := range resp.Spec.TargetRef.Labels {
-					r.Spec.TargetRef.Labels[key9] = types.StringValue(value9)
+				for key3, value3 := range resp.Spec.TargetRef.Labels {
+					r.Spec.TargetRef.Labels[key3] = types.StringValue(value3)
 				}
 			}
 			r.Spec.TargetRef.Mesh = types.StringPointerValue(resp.Spec.TargetRef.Mesh)
@@ -893,8 +981,8 @@ func (r *MeshAccessLogResourceModel) RefreshFromSharedMeshAccessLogItem(resp *sh
 			r.Spec.TargetRef.SectionName = types.StringPointerValue(resp.Spec.TargetRef.SectionName)
 			if len(resp.Spec.TargetRef.Tags) > 0 {
 				r.Spec.TargetRef.Tags = make(map[string]types.String, len(resp.Spec.TargetRef.Tags))
-				for key10, value10 := range resp.Spec.TargetRef.Tags {
-					r.Spec.TargetRef.Tags[key10] = types.StringValue(value10)
+				for key4, value4 := range resp.Spec.TargetRef.Tags {
+					r.Spec.TargetRef.Tags[key4] = types.StringValue(value4)
 				}
 			}
 		}
@@ -903,124 +991,126 @@ func (r *MeshAccessLogResourceModel) RefreshFromSharedMeshAccessLogItem(resp *sh
 			r.Spec.To = r.Spec.To[:len(resp.Spec.To)]
 		}
 		for toCount, toItem := range resp.Spec.To {
-			var to1 tfTypes.From
-			to1.Default.Backends = []tfTypes.MeshAccessLogItemSpecFromBackends{}
+			var to tfTypes.From
+			to.Default.Backends = []tfTypes.MeshAccessLogItemSpecFromBackends{}
 			for backendsCount2, backendsItem2 := range toItem.Default.Backends {
-				var backends5 tfTypes.MeshAccessLogItemSpecFromBackends
+				var backends2 tfTypes.MeshAccessLogItemSpecFromBackends
 				if backendsItem2.File == nil {
-					backends5.File = nil
+					backends2.File = nil
 				} else {
-					backends5.File = &tfTypes.File{}
+					backends2.File = &tfTypes.File{}
 					if backendsItem2.File.Format == nil {
-						backends5.File.Format = nil
+						backends2.File.Format = nil
 					} else {
-						backends5.File.Format = &tfTypes.Format{}
-						backends5.File.Format.JSON = []tfTypes.JSON{}
+						backends2.File.Format = &tfTypes.Format{}
+						backends2.File.Format.JSON = []tfTypes.JSON{}
 						for jsonVarCount4, jsonVarItem4 := range backendsItem2.File.Format.JSON {
-							var jsonVar5 tfTypes.JSON
-							jsonVar5.Key = types.StringValue(jsonVarItem4.Key)
-							jsonVar5.Value = types.StringValue(jsonVarItem4.Value)
-							if jsonVarCount4+1 > len(backends5.File.Format.JSON) {
-								backends5.File.Format.JSON = append(backends5.File.Format.JSON, jsonVar5)
+							var jsonVar4 tfTypes.JSON
+							jsonVar4.Key = types.StringValue(jsonVarItem4.Key)
+							jsonVar4.Value = types.StringValue(jsonVarItem4.Value)
+							if jsonVarCount4+1 > len(backends2.File.Format.JSON) {
+								backends2.File.Format.JSON = append(backends2.File.Format.JSON, jsonVar4)
 							} else {
-								backends5.File.Format.JSON[jsonVarCount4].Key = jsonVar5.Key
-								backends5.File.Format.JSON[jsonVarCount4].Value = jsonVar5.Value
+								backends2.File.Format.JSON[jsonVarCount4].Key = jsonVar4.Key
+								backends2.File.Format.JSON[jsonVarCount4].Value = jsonVar4.Value
 							}
 						}
-						backends5.File.Format.OmitEmptyValues = types.BoolPointerValue(backendsItem2.File.Format.OmitEmptyValues)
-						backends5.File.Format.Plain = types.StringPointerValue(backendsItem2.File.Format.Plain)
-						backends5.File.Format.Type = types.StringValue(string(backendsItem2.File.Format.Type))
+						backends2.File.Format.OmitEmptyValues = types.BoolPointerValue(backendsItem2.File.Format.OmitEmptyValues)
+						backends2.File.Format.Plain = types.StringPointerValue(backendsItem2.File.Format.Plain)
+						backends2.File.Format.Type = types.StringValue(string(backendsItem2.File.Format.Type))
 					}
-					backends5.File.Path = types.StringValue(backendsItem2.File.Path)
+					backends2.File.Path = types.StringValue(backendsItem2.File.Path)
 				}
 				if backendsItem2.OpenTelemetry == nil {
-					backends5.OpenTelemetry = nil
+					backends2.OpenTelemetry = nil
 				} else {
-					backends5.OpenTelemetry = &tfTypes.MeshAccessLogItemSpecFromOpenTelemetry{}
-					backends5.OpenTelemetry.Attributes = []tfTypes.JSON{}
+					backends2.OpenTelemetry = &tfTypes.MeshAccessLogItemSpecFromOpenTelemetry{}
+					backends2.OpenTelemetry.Attributes = []tfTypes.JSON{}
 					for attributesCount2, attributesItem2 := range backendsItem2.OpenTelemetry.Attributes {
-						var attributes5 tfTypes.JSON
-						attributes5.Key = types.StringValue(attributesItem2.Key)
-						attributes5.Value = types.StringValue(attributesItem2.Value)
-						if attributesCount2+1 > len(backends5.OpenTelemetry.Attributes) {
-							backends5.OpenTelemetry.Attributes = append(backends5.OpenTelemetry.Attributes, attributes5)
+						var attributes2 tfTypes.JSON
+						attributes2.Key = types.StringValue(attributesItem2.Key)
+						attributes2.Value = types.StringValue(attributesItem2.Value)
+						if attributesCount2+1 > len(backends2.OpenTelemetry.Attributes) {
+							backends2.OpenTelemetry.Attributes = append(backends2.OpenTelemetry.Attributes, attributes2)
 						} else {
-							backends5.OpenTelemetry.Attributes[attributesCount2].Key = attributes5.Key
-							backends5.OpenTelemetry.Attributes[attributesCount2].Value = attributes5.Value
+							backends2.OpenTelemetry.Attributes[attributesCount2].Key = attributes2.Key
+							backends2.OpenTelemetry.Attributes[attributesCount2].Value = attributes2.Value
 						}
 					}
 					if backendsItem2.OpenTelemetry.Body == nil {
-						backends5.OpenTelemetry.Body = types.StringNull()
+						backends2.OpenTelemetry.Body = types.StringNull()
 					} else {
 						bodyResult2, _ := json.Marshal(backendsItem2.OpenTelemetry.Body)
-						backends5.OpenTelemetry.Body = types.StringValue(string(bodyResult2))
+						backends2.OpenTelemetry.Body = types.StringValue(string(bodyResult2))
 					}
-					backends5.OpenTelemetry.Endpoint = types.StringValue(backendsItem2.OpenTelemetry.Endpoint)
+					backends2.OpenTelemetry.Endpoint = types.StringValue(backendsItem2.OpenTelemetry.Endpoint)
 				}
 				if backendsItem2.TCP == nil {
-					backends5.TCP = nil
+					backends2.TCP = nil
 				} else {
-					backends5.TCP = &tfTypes.MeshAccessLogItemSpecFromTCP{}
-					backends5.TCP.Address = types.StringValue(backendsItem2.TCP.Address)
+					backends2.TCP = &tfTypes.MeshAccessLogItemSpecFromTCP{}
+					backends2.TCP.Address = types.StringValue(backendsItem2.TCP.Address)
 					if backendsItem2.TCP.Format == nil {
-						backends5.TCP.Format = nil
+						backends2.TCP.Format = nil
 					} else {
-						backends5.TCP.Format = &tfTypes.Format{}
-						backends5.TCP.Format.JSON = []tfTypes.JSON{}
+						backends2.TCP.Format = &tfTypes.Format{}
+						backends2.TCP.Format.JSON = []tfTypes.JSON{}
 						for jsonVarCount5, jsonVarItem5 := range backendsItem2.TCP.Format.JSON {
-							var jsonVar6 tfTypes.JSON
-							jsonVar6.Key = types.StringValue(jsonVarItem5.Key)
-							jsonVar6.Value = types.StringValue(jsonVarItem5.Value)
-							if jsonVarCount5+1 > len(backends5.TCP.Format.JSON) {
-								backends5.TCP.Format.JSON = append(backends5.TCP.Format.JSON, jsonVar6)
+							var jsonVar5 tfTypes.JSON
+							jsonVar5.Key = types.StringValue(jsonVarItem5.Key)
+							jsonVar5.Value = types.StringValue(jsonVarItem5.Value)
+							if jsonVarCount5+1 > len(backends2.TCP.Format.JSON) {
+								backends2.TCP.Format.JSON = append(backends2.TCP.Format.JSON, jsonVar5)
 							} else {
-								backends5.TCP.Format.JSON[jsonVarCount5].Key = jsonVar6.Key
-								backends5.TCP.Format.JSON[jsonVarCount5].Value = jsonVar6.Value
+								backends2.TCP.Format.JSON[jsonVarCount5].Key = jsonVar5.Key
+								backends2.TCP.Format.JSON[jsonVarCount5].Value = jsonVar5.Value
 							}
 						}
-						backends5.TCP.Format.OmitEmptyValues = types.BoolPointerValue(backendsItem2.TCP.Format.OmitEmptyValues)
-						backends5.TCP.Format.Plain = types.StringPointerValue(backendsItem2.TCP.Format.Plain)
-						backends5.TCP.Format.Type = types.StringValue(string(backendsItem2.TCP.Format.Type))
+						backends2.TCP.Format.OmitEmptyValues = types.BoolPointerValue(backendsItem2.TCP.Format.OmitEmptyValues)
+						backends2.TCP.Format.Plain = types.StringPointerValue(backendsItem2.TCP.Format.Plain)
+						backends2.TCP.Format.Type = types.StringValue(string(backendsItem2.TCP.Format.Type))
 					}
 				}
-				backends5.Type = types.StringValue(string(backendsItem2.Type))
-				if backendsCount2+1 > len(to1.Default.Backends) {
-					to1.Default.Backends = append(to1.Default.Backends, backends5)
+				backends2.Type = types.StringValue(string(backendsItem2.Type))
+				if backendsCount2+1 > len(to.Default.Backends) {
+					to.Default.Backends = append(to.Default.Backends, backends2)
 				} else {
-					to1.Default.Backends[backendsCount2].File = backends5.File
-					to1.Default.Backends[backendsCount2].OpenTelemetry = backends5.OpenTelemetry
-					to1.Default.Backends[backendsCount2].TCP = backends5.TCP
-					to1.Default.Backends[backendsCount2].Type = backends5.Type
+					to.Default.Backends[backendsCount2].File = backends2.File
+					to.Default.Backends[backendsCount2].OpenTelemetry = backends2.OpenTelemetry
+					to.Default.Backends[backendsCount2].TCP = backends2.TCP
+					to.Default.Backends[backendsCount2].Type = backends2.Type
 				}
 			}
-			to1.TargetRef.Kind = types.StringValue(string(toItem.TargetRef.Kind))
+			to.TargetRef.Kind = types.StringValue(string(toItem.TargetRef.Kind))
 			if len(toItem.TargetRef.Labels) > 0 {
-				to1.TargetRef.Labels = make(map[string]types.String, len(toItem.TargetRef.Labels))
-				for key14, value14 := range toItem.TargetRef.Labels {
-					to1.TargetRef.Labels[key14] = types.StringValue(value14)
+				to.TargetRef.Labels = make(map[string]types.String, len(toItem.TargetRef.Labels))
+				for key5, value5 := range toItem.TargetRef.Labels {
+					to.TargetRef.Labels[key5] = types.StringValue(value5)
 				}
 			}
-			to1.TargetRef.Mesh = types.StringPointerValue(toItem.TargetRef.Mesh)
-			to1.TargetRef.Name = types.StringPointerValue(toItem.TargetRef.Name)
-			to1.TargetRef.Namespace = types.StringPointerValue(toItem.TargetRef.Namespace)
-			to1.TargetRef.ProxyTypes = make([]types.String, 0, len(toItem.TargetRef.ProxyTypes))
+			to.TargetRef.Mesh = types.StringPointerValue(toItem.TargetRef.Mesh)
+			to.TargetRef.Name = types.StringPointerValue(toItem.TargetRef.Name)
+			to.TargetRef.Namespace = types.StringPointerValue(toItem.TargetRef.Namespace)
+			to.TargetRef.ProxyTypes = make([]types.String, 0, len(toItem.TargetRef.ProxyTypes))
 			for _, v := range toItem.TargetRef.ProxyTypes {
-				to1.TargetRef.ProxyTypes = append(to1.TargetRef.ProxyTypes, types.StringValue(string(v)))
+				to.TargetRef.ProxyTypes = append(to.TargetRef.ProxyTypes, types.StringValue(string(v)))
 			}
-			to1.TargetRef.SectionName = types.StringPointerValue(toItem.TargetRef.SectionName)
+			to.TargetRef.SectionName = types.StringPointerValue(toItem.TargetRef.SectionName)
 			if len(toItem.TargetRef.Tags) > 0 {
-				to1.TargetRef.Tags = make(map[string]types.String, len(toItem.TargetRef.Tags))
-				for key15, value15 := range toItem.TargetRef.Tags {
-					to1.TargetRef.Tags[key15] = types.StringValue(value15)
+				to.TargetRef.Tags = make(map[string]types.String, len(toItem.TargetRef.Tags))
+				for key6, value6 := range toItem.TargetRef.Tags {
+					to.TargetRef.Tags[key6] = types.StringValue(value6)
 				}
 			}
 			if toCount+1 > len(r.Spec.To) {
-				r.Spec.To = append(r.Spec.To, to1)
+				r.Spec.To = append(r.Spec.To, to)
 			} else {
-				r.Spec.To[toCount].Default = to1.Default
-				r.Spec.To[toCount].TargetRef = to1.TargetRef
+				r.Spec.To[toCount].Default = to.Default
+				r.Spec.To[toCount].TargetRef = to.TargetRef
 			}
 		}
 		r.Type = types.StringValue(string(resp.Type))
 	}
+
+	return diags
 }

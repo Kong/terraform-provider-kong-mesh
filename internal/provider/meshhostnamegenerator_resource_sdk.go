@@ -3,13 +3,18 @@
 package provider
 
 import (
+	"context"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
-	"time"
 )
 
-func (r *MeshHostnameGeneratorResourceModel) ToSharedHostnameGeneratorItemInput() *shared.HostnameGeneratorItemInput {
+func (r *MeshHostnameGeneratorResourceModel) ToSharedHostnameGeneratorItemInput(ctx context.Context) (*shared.HostnameGeneratorItemInput, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
 	typeVar := shared.HostnameGeneratorItemType(r.Type.ValueString())
 	var name string
 	name = r.Name.ValueString()
@@ -84,36 +89,103 @@ func (r *MeshHostnameGeneratorResourceModel) ToSharedHostnameGeneratorItemInput(
 		Labels: labels,
 		Spec:   spec,
 	}
-	return &out
+
+	return &out, diags
 }
 
-func (r *MeshHostnameGeneratorResourceModel) RefreshFromSharedHostnameGeneratorCreateOrUpdateSuccessResponse(resp *shared.HostnameGeneratorCreateOrUpdateSuccessResponse) {
+func (r *MeshHostnameGeneratorResourceModel) ToOperationsCreateHostnameGeneratorRequest(ctx context.Context) (*operations.CreateHostnameGeneratorRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var name string
+	name = r.Name.ValueString()
+
+	hostnameGeneratorItem, hostnameGeneratorItemDiags := r.ToSharedHostnameGeneratorItemInput(ctx)
+	diags.Append(hostnameGeneratorItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.CreateHostnameGeneratorRequest{
+		Name:                  name,
+		HostnameGeneratorItem: *hostnameGeneratorItem,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshHostnameGeneratorResourceModel) ToOperationsUpdateHostnameGeneratorRequest(ctx context.Context) (*operations.UpdateHostnameGeneratorRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var name string
+	name = r.Name.ValueString()
+
+	hostnameGeneratorItem, hostnameGeneratorItemDiags := r.ToSharedHostnameGeneratorItemInput(ctx)
+	diags.Append(hostnameGeneratorItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.UpdateHostnameGeneratorRequest{
+		Name:                  name,
+		HostnameGeneratorItem: *hostnameGeneratorItem,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshHostnameGeneratorResourceModel) ToOperationsGetHostnameGeneratorRequest(ctx context.Context) (*operations.GetHostnameGeneratorRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.GetHostnameGeneratorRequest{
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshHostnameGeneratorResourceModel) ToOperationsDeleteHostnameGeneratorRequest(ctx context.Context) (*operations.DeleteHostnameGeneratorRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.DeleteHostnameGeneratorRequest{
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshHostnameGeneratorResourceModel) RefreshFromSharedHostnameGeneratorCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.HostnameGeneratorCreateOrUpdateSuccessResponse) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
 		r.Warnings = make([]types.String, 0, len(resp.Warnings))
 		for _, v := range resp.Warnings {
 			r.Warnings = append(r.Warnings, types.StringValue(v))
 		}
 	}
+
+	return diags
 }
 
-func (r *MeshHostnameGeneratorResourceModel) RefreshFromSharedHostnameGeneratorItem(resp *shared.HostnameGeneratorItem) {
+func (r *MeshHostnameGeneratorResourceModel) RefreshFromSharedHostnameGeneratorItem(ctx context.Context, resp *shared.HostnameGeneratorItem) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
-		if resp.CreationTime != nil {
-			r.CreationTime = types.StringValue(resp.CreationTime.Format(time.RFC3339Nano))
-		} else {
-			r.CreationTime = types.StringNull()
-		}
+		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
 		if len(resp.Labels) > 0 {
 			r.Labels = make(map[string]types.String, len(resp.Labels))
 			for key, value := range resp.Labels {
 				r.Labels[key] = types.StringValue(value)
 			}
 		}
-		if resp.ModificationTime != nil {
-			r.ModificationTime = types.StringValue(resp.ModificationTime.Format(time.RFC3339Nano))
-		} else {
-			r.ModificationTime = types.StringNull()
-		}
+		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
 		if resp.Spec.Selector == nil {
 			r.Spec.Selector = nil
@@ -156,4 +228,6 @@ func (r *MeshHostnameGeneratorResourceModel) RefreshFromSharedHostnameGeneratorI
 		r.Spec.Template = types.StringPointerValue(resp.Spec.Template)
 		r.Type = types.StringValue(string(resp.Type))
 	}
+
+	return diags
 }

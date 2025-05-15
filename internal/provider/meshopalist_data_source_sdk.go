@@ -3,137 +3,150 @@
 package provider
 
 import (
+	"context"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
-	"math/big"
-	"time"
 )
 
-func (r *MeshOPAListDataSourceModel) RefreshFromSharedMeshOPAList(resp *shared.MeshOPAList) {
+func (r *MeshOPAListDataSourceModel) ToOperationsGetMeshOPAListRequest(ctx context.Context) (*operations.GetMeshOPAListRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	offset := new(int64)
+	if !r.Offset.IsUnknown() && !r.Offset.IsNull() {
+		*offset = r.Offset.ValueInt64()
+	} else {
+		offset = nil
+	}
+	size := new(int64)
+	if !r.Size.IsUnknown() && !r.Size.IsNull() {
+		*size = r.Size.ValueInt64()
+	} else {
+		size = nil
+	}
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	out := operations.GetMeshOPAListRequest{
+		Offset: offset,
+		Size:   size,
+		Mesh:   mesh,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshOPAListDataSourceModel) RefreshFromSharedMeshOPAList(ctx context.Context, resp *shared.MeshOPAList) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
 		r.Items = []tfTypes.MeshOPAItem{}
 		if len(r.Items) > len(resp.Items) {
 			r.Items = r.Items[:len(resp.Items)]
 		}
 		for itemsCount, itemsItem := range resp.Items {
-			var items1 tfTypes.MeshOPAItem
-			if itemsItem.CreationTime != nil {
-				items1.CreationTime = types.StringValue(itemsItem.CreationTime.Format(time.RFC3339Nano))
-			} else {
-				items1.CreationTime = types.StringNull()
-			}
+			var items tfTypes.MeshOPAItem
+			items.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(itemsItem.CreationTime))
 			if len(itemsItem.Labels) > 0 {
-				items1.Labels = make(map[string]types.String, len(itemsItem.Labels))
+				items.Labels = make(map[string]types.String, len(itemsItem.Labels))
 				for key, value := range itemsItem.Labels {
-					items1.Labels[key] = types.StringValue(value)
+					items.Labels[key] = types.StringValue(value)
 				}
 			}
-			items1.Mesh = types.StringPointerValue(itemsItem.Mesh)
-			if itemsItem.ModificationTime != nil {
-				items1.ModificationTime = types.StringValue(itemsItem.ModificationTime.Format(time.RFC3339Nano))
-			} else {
-				items1.ModificationTime = types.StringNull()
-			}
-			items1.Name = types.StringValue(itemsItem.Name)
+			items.Mesh = types.StringPointerValue(itemsItem.Mesh)
+			items.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(itemsItem.ModificationTime))
+			items.Name = types.StringValue(itemsItem.Name)
 			if itemsItem.Spec.Default == nil {
-				items1.Spec.Default = nil
+				items.Spec.Default = nil
 			} else {
-				items1.Spec.Default = &tfTypes.MeshOPAItemDefault{}
+				items.Spec.Default = &tfTypes.MeshOPAItemDefault{}
 				if itemsItem.Spec.Default.AgentConfig == nil {
-					items1.Spec.Default.AgentConfig = nil
+					items.Spec.Default.AgentConfig = nil
 				} else {
-					items1.Spec.Default.AgentConfig = &tfTypes.CaCert{}
-					items1.Spec.Default.AgentConfig.Inline = types.StringPointerValue(itemsItem.Spec.Default.AgentConfig.Inline)
-					items1.Spec.Default.AgentConfig.InlineString = types.StringPointerValue(itemsItem.Spec.Default.AgentConfig.InlineString)
-					items1.Spec.Default.AgentConfig.Secret = types.StringPointerValue(itemsItem.Spec.Default.AgentConfig.Secret)
+					items.Spec.Default.AgentConfig = &tfTypes.CaCert{}
+					items.Spec.Default.AgentConfig.Inline = types.StringPointerValue(itemsItem.Spec.Default.AgentConfig.Inline)
+					items.Spec.Default.AgentConfig.InlineString = types.StringPointerValue(itemsItem.Spec.Default.AgentConfig.InlineString)
+					items.Spec.Default.AgentConfig.Secret = types.StringPointerValue(itemsItem.Spec.Default.AgentConfig.Secret)
 				}
-				items1.Spec.Default.AppendPolicies = []tfTypes.AppendPolicies{}
+				items.Spec.Default.AppendPolicies = []tfTypes.AppendPolicies{}
 				for appendPoliciesCount, appendPoliciesItem := range itemsItem.Spec.Default.AppendPolicies {
-					var appendPolicies1 tfTypes.AppendPolicies
-					appendPolicies1.IgnoreDecision = types.BoolPointerValue(appendPoliciesItem.IgnoreDecision)
-					appendPolicies1.Rego.Inline = types.StringPointerValue(appendPoliciesItem.Rego.Inline)
-					appendPolicies1.Rego.InlineString = types.StringPointerValue(appendPoliciesItem.Rego.InlineString)
-					appendPolicies1.Rego.Secret = types.StringPointerValue(appendPoliciesItem.Rego.Secret)
-					if appendPoliciesCount+1 > len(items1.Spec.Default.AppendPolicies) {
-						items1.Spec.Default.AppendPolicies = append(items1.Spec.Default.AppendPolicies, appendPolicies1)
+					var appendPolicies tfTypes.AppendPolicies
+					appendPolicies.IgnoreDecision = types.BoolPointerValue(appendPoliciesItem.IgnoreDecision)
+					appendPolicies.Rego.Inline = types.StringPointerValue(appendPoliciesItem.Rego.Inline)
+					appendPolicies.Rego.InlineString = types.StringPointerValue(appendPoliciesItem.Rego.InlineString)
+					appendPolicies.Rego.Secret = types.StringPointerValue(appendPoliciesItem.Rego.Secret)
+					if appendPoliciesCount+1 > len(items.Spec.Default.AppendPolicies) {
+						items.Spec.Default.AppendPolicies = append(items.Spec.Default.AppendPolicies, appendPolicies)
 					} else {
-						items1.Spec.Default.AppendPolicies[appendPoliciesCount].IgnoreDecision = appendPolicies1.IgnoreDecision
-						items1.Spec.Default.AppendPolicies[appendPoliciesCount].Rego = appendPolicies1.Rego
+						items.Spec.Default.AppendPolicies[appendPoliciesCount].IgnoreDecision = appendPolicies.IgnoreDecision
+						items.Spec.Default.AppendPolicies[appendPoliciesCount].Rego = appendPolicies.Rego
 					}
 				}
 				if itemsItem.Spec.Default.AuthConfig == nil {
-					items1.Spec.Default.AuthConfig = nil
+					items.Spec.Default.AuthConfig = nil
 				} else {
-					items1.Spec.Default.AuthConfig = &tfTypes.AuthConfig{}
+					items.Spec.Default.AuthConfig = &tfTypes.AuthConfig{}
 					if itemsItem.Spec.Default.AuthConfig.OnAgentFailure != nil {
-						items1.Spec.Default.AuthConfig.OnAgentFailure = types.StringValue(string(*itemsItem.Spec.Default.AuthConfig.OnAgentFailure))
+						items.Spec.Default.AuthConfig.OnAgentFailure = types.StringValue(string(*itemsItem.Spec.Default.AuthConfig.OnAgentFailure))
 					} else {
-						items1.Spec.Default.AuthConfig.OnAgentFailure = types.StringNull()
+						items.Spec.Default.AuthConfig.OnAgentFailure = types.StringNull()
 					}
 					if itemsItem.Spec.Default.AuthConfig.RequestBody == nil {
-						items1.Spec.Default.AuthConfig.RequestBody = nil
+						items.Spec.Default.AuthConfig.RequestBody = nil
 					} else {
-						items1.Spec.Default.AuthConfig.RequestBody = &tfTypes.RequestBody{}
-						if itemsItem.Spec.Default.AuthConfig.RequestBody.MaxSize != nil {
-							items1.Spec.Default.AuthConfig.RequestBody.MaxSize = types.Int32Value(int32(*itemsItem.Spec.Default.AuthConfig.RequestBody.MaxSize))
-						} else {
-							items1.Spec.Default.AuthConfig.RequestBody.MaxSize = types.Int32Null()
-						}
-						items1.Spec.Default.AuthConfig.RequestBody.SendRawBody = types.BoolPointerValue(itemsItem.Spec.Default.AuthConfig.RequestBody.SendRawBody)
+						items.Spec.Default.AuthConfig.RequestBody = &tfTypes.RequestBody{}
+						items.Spec.Default.AuthConfig.RequestBody.MaxSize = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(itemsItem.Spec.Default.AuthConfig.RequestBody.MaxSize))
+						items.Spec.Default.AuthConfig.RequestBody.SendRawBody = types.BoolPointerValue(itemsItem.Spec.Default.AuthConfig.RequestBody.SendRawBody)
 					}
-					if itemsItem.Spec.Default.AuthConfig.StatusOnError != nil {
-						items1.Spec.Default.AuthConfig.StatusOnError = types.Int32Value(int32(*itemsItem.Spec.Default.AuthConfig.StatusOnError))
-					} else {
-						items1.Spec.Default.AuthConfig.StatusOnError = types.Int32Null()
-					}
-					items1.Spec.Default.AuthConfig.Timeout = types.StringPointerValue(itemsItem.Spec.Default.AuthConfig.Timeout)
+					items.Spec.Default.AuthConfig.StatusOnError = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(itemsItem.Spec.Default.AuthConfig.StatusOnError))
+					items.Spec.Default.AuthConfig.Timeout = types.StringPointerValue(itemsItem.Spec.Default.AuthConfig.Timeout)
 				}
 			}
 			if itemsItem.Spec.TargetRef == nil {
-				items1.Spec.TargetRef = nil
+				items.Spec.TargetRef = nil
 			} else {
-				items1.Spec.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
-				items1.Spec.TargetRef.Kind = types.StringValue(string(itemsItem.Spec.TargetRef.Kind))
+				items.Spec.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
+				items.Spec.TargetRef.Kind = types.StringValue(string(itemsItem.Spec.TargetRef.Kind))
 				if len(itemsItem.Spec.TargetRef.Labels) > 0 {
-					items1.Spec.TargetRef.Labels = make(map[string]types.String, len(itemsItem.Spec.TargetRef.Labels))
+					items.Spec.TargetRef.Labels = make(map[string]types.String, len(itemsItem.Spec.TargetRef.Labels))
 					for key1, value1 := range itemsItem.Spec.TargetRef.Labels {
-						items1.Spec.TargetRef.Labels[key1] = types.StringValue(value1)
+						items.Spec.TargetRef.Labels[key1] = types.StringValue(value1)
 					}
 				}
-				items1.Spec.TargetRef.Mesh = types.StringPointerValue(itemsItem.Spec.TargetRef.Mesh)
-				items1.Spec.TargetRef.Name = types.StringPointerValue(itemsItem.Spec.TargetRef.Name)
-				items1.Spec.TargetRef.Namespace = types.StringPointerValue(itemsItem.Spec.TargetRef.Namespace)
-				items1.Spec.TargetRef.ProxyTypes = make([]types.String, 0, len(itemsItem.Spec.TargetRef.ProxyTypes))
+				items.Spec.TargetRef.Mesh = types.StringPointerValue(itemsItem.Spec.TargetRef.Mesh)
+				items.Spec.TargetRef.Name = types.StringPointerValue(itemsItem.Spec.TargetRef.Name)
+				items.Spec.TargetRef.Namespace = types.StringPointerValue(itemsItem.Spec.TargetRef.Namespace)
+				items.Spec.TargetRef.ProxyTypes = make([]types.String, 0, len(itemsItem.Spec.TargetRef.ProxyTypes))
 				for _, v := range itemsItem.Spec.TargetRef.ProxyTypes {
-					items1.Spec.TargetRef.ProxyTypes = append(items1.Spec.TargetRef.ProxyTypes, types.StringValue(string(v)))
+					items.Spec.TargetRef.ProxyTypes = append(items.Spec.TargetRef.ProxyTypes, types.StringValue(string(v)))
 				}
-				items1.Spec.TargetRef.SectionName = types.StringPointerValue(itemsItem.Spec.TargetRef.SectionName)
+				items.Spec.TargetRef.SectionName = types.StringPointerValue(itemsItem.Spec.TargetRef.SectionName)
 				if len(itemsItem.Spec.TargetRef.Tags) > 0 {
-					items1.Spec.TargetRef.Tags = make(map[string]types.String, len(itemsItem.Spec.TargetRef.Tags))
+					items.Spec.TargetRef.Tags = make(map[string]types.String, len(itemsItem.Spec.TargetRef.Tags))
 					for key2, value2 := range itemsItem.Spec.TargetRef.Tags {
-						items1.Spec.TargetRef.Tags[key2] = types.StringValue(value2)
+						items.Spec.TargetRef.Tags[key2] = types.StringValue(value2)
 					}
 				}
 			}
-			items1.Type = types.StringValue(string(itemsItem.Type))
+			items.Type = types.StringValue(string(itemsItem.Type))
 			if itemsCount+1 > len(r.Items) {
-				r.Items = append(r.Items, items1)
+				r.Items = append(r.Items, items)
 			} else {
-				r.Items[itemsCount].CreationTime = items1.CreationTime
-				r.Items[itemsCount].Labels = items1.Labels
-				r.Items[itemsCount].Mesh = items1.Mesh
-				r.Items[itemsCount].ModificationTime = items1.ModificationTime
-				r.Items[itemsCount].Name = items1.Name
-				r.Items[itemsCount].Spec = items1.Spec
-				r.Items[itemsCount].Type = items1.Type
+				r.Items[itemsCount].CreationTime = items.CreationTime
+				r.Items[itemsCount].Labels = items.Labels
+				r.Items[itemsCount].Mesh = items.Mesh
+				r.Items[itemsCount].ModificationTime = items.ModificationTime
+				r.Items[itemsCount].Name = items.Name
+				r.Items[itemsCount].Spec = items.Spec
+				r.Items[itemsCount].Type = items.Type
 			}
 		}
 		r.Next = types.StringPointerValue(resp.Next)
-		if resp.Total != nil {
-			r.Total = types.NumberValue(big.NewFloat(float64(*resp.Total)))
-		} else {
-			r.Total = types.NumberNull()
-		}
+		r.Total = types.Float64PointerValue(resp.Total)
 	}
+
+	return diags
 }

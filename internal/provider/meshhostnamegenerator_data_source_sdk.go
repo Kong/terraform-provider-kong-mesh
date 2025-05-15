@@ -3,30 +3,40 @@
 package provider
 
 import (
+	"context"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
-	"time"
 )
 
-func (r *MeshHostnameGeneratorDataSourceModel) RefreshFromSharedHostnameGeneratorItem(resp *shared.HostnameGeneratorItem) {
+func (r *MeshHostnameGeneratorDataSourceModel) ToOperationsGetHostnameGeneratorRequest(ctx context.Context) (*operations.GetHostnameGeneratorRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.GetHostnameGeneratorRequest{
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshHostnameGeneratorDataSourceModel) RefreshFromSharedHostnameGeneratorItem(ctx context.Context, resp *shared.HostnameGeneratorItem) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
-		if resp.CreationTime != nil {
-			r.CreationTime = types.StringValue(resp.CreationTime.Format(time.RFC3339Nano))
-		} else {
-			r.CreationTime = types.StringNull()
-		}
+		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
 		if len(resp.Labels) > 0 {
 			r.Labels = make(map[string]types.String, len(resp.Labels))
 			for key, value := range resp.Labels {
 				r.Labels[key] = types.StringValue(value)
 			}
 		}
-		if resp.ModificationTime != nil {
-			r.ModificationTime = types.StringValue(resp.ModificationTime.Format(time.RFC3339Nano))
-		} else {
-			r.ModificationTime = types.StringNull()
-		}
+		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
 		if resp.Spec.Selector == nil {
 			r.Spec.Selector = nil
@@ -69,4 +79,6 @@ func (r *MeshHostnameGeneratorDataSourceModel) RefreshFromSharedHostnameGenerato
 		r.Spec.Template = types.StringPointerValue(resp.Spec.Template)
 		r.Type = types.StringValue(string(resp.Type))
 	}
+
+	return diags
 }

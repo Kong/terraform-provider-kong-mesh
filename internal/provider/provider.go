@@ -5,6 +5,7 @@ package provider
 import (
 	"context"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/ephemeral"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -14,7 +15,8 @@ import (
 	"os"
 )
 
-var _ provider.Provider = &KongMeshProvider{}
+var _ provider.Provider = (*KongMeshProvider)(nil)
+var _ provider.ProviderWithEphemeralResources = (*KongMeshProvider)(nil)
 
 type KongMeshProvider struct {
 	// version is set to the provider version on release, "dev" when the
@@ -79,6 +81,7 @@ func (p *KongMeshProvider) Configure(ctx context.Context, req provider.Configure
 	client := sdk.New(ServerURL, opts...)
 
 	resp.DataSourceData = client
+	resp.EphemeralResourceData = client
 	resp.ResourceData = client
 }
 
@@ -162,6 +165,10 @@ func (p *KongMeshProvider) DataSources(ctx context.Context) []func() datasource.
 		NewMeshTrafficPermissionDataSource,
 		NewMeshTrafficPermissionListDataSource,
 	}
+}
+
+func (p *KongMeshProvider) EphemeralResources(ctx context.Context) []func() ephemeral.EphemeralResource {
+	return []func() ephemeral.EphemeralResource{}
 }
 
 func New(version string) func() provider.Provider {

@@ -25,7 +25,6 @@ import (
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
-	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/validators"
 	speakeasy_int64validators "github.com/kong/terraform-provider-kong-mesh/internal/validators/int64validators"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
@@ -552,19 +551,13 @@ func (r *MeshExternalServiceResource) Create(ctx context.Context, req resource.C
 		return
 	}
 
-	var mesh string
-	mesh = data.Mesh.ValueString()
+	request, requestDiags := data.ToOperationsCreateMeshExternalServiceRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	var name string
-	name = data.Name.ValueString()
-
-	meshExternalServiceItem := *data.ToSharedMeshExternalServiceItemInput()
-	request := operations.CreateMeshExternalServiceRequest{
-		Mesh:                    mesh,
-		Name:                    name,
-		MeshExternalServiceItem: meshExternalServiceItem,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.MeshExternalService.CreateMeshExternalService(ctx, request)
+	res, err := r.client.MeshExternalService.CreateMeshExternalService(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -584,19 +577,24 @@ func (r *MeshExternalServiceResource) Create(ctx context.Context, req resource.C
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshExternalServiceCreateOrUpdateSuccessResponse(res.MeshExternalServiceCreateOrUpdateSuccessResponse)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
-	var mesh1 string
-	mesh1 = data.Mesh.ValueString()
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshExternalServiceCreateOrUpdateSuccessResponse(ctx, res.MeshExternalServiceCreateOrUpdateSuccessResponse)...)
 
-	var name1 string
-	name1 = data.Name.ValueString()
-
-	request1 := operations.GetMeshExternalServiceRequest{
-		Mesh: mesh1,
-		Name: name1,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res1, err := r.client.MeshExternalService.GetMeshExternalService(ctx, request1)
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	request1, request1Diags := data.ToOperationsGetMeshExternalServiceRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.MeshExternalService.GetMeshExternalService(ctx, *request1)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res1 != nil && res1.RawResponse != nil {
@@ -616,8 +614,17 @@ func (r *MeshExternalServiceResource) Create(ctx context.Context, req resource.C
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshExternalServiceItem(res1.MeshExternalServiceItem)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshExternalServiceItem(ctx, res1.MeshExternalServiceItem)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -641,17 +648,13 @@ func (r *MeshExternalServiceResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 
-	var mesh string
-	mesh = data.Mesh.ValueString()
+	request, requestDiags := data.ToOperationsGetMeshExternalServiceRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	var name string
-	name = data.Name.ValueString()
-
-	request := operations.GetMeshExternalServiceRequest{
-		Mesh: mesh,
-		Name: name,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.MeshExternalService.GetMeshExternalService(ctx, request)
+	res, err := r.client.MeshExternalService.GetMeshExternalService(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -675,7 +678,11 @@ func (r *MeshExternalServiceResource) Read(ctx context.Context, req resource.Rea
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshExternalServiceItem(res.MeshExternalServiceItem)
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshExternalServiceItem(ctx, res.MeshExternalServiceItem)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -695,19 +702,13 @@ func (r *MeshExternalServiceResource) Update(ctx context.Context, req resource.U
 		return
 	}
 
-	var mesh string
-	mesh = data.Mesh.ValueString()
+	request, requestDiags := data.ToOperationsUpdateMeshExternalServiceRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	var name string
-	name = data.Name.ValueString()
-
-	meshExternalServiceItem := *data.ToSharedMeshExternalServiceItemInput()
-	request := operations.UpdateMeshExternalServiceRequest{
-		Mesh:                    mesh,
-		Name:                    name,
-		MeshExternalServiceItem: meshExternalServiceItem,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.MeshExternalService.UpdateMeshExternalService(ctx, request)
+	res, err := r.client.MeshExternalService.UpdateMeshExternalService(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -727,19 +728,24 @@ func (r *MeshExternalServiceResource) Update(ctx context.Context, req resource.U
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshExternalServiceCreateOrUpdateSuccessResponse(res.MeshExternalServiceCreateOrUpdateSuccessResponse)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
-	var mesh1 string
-	mesh1 = data.Mesh.ValueString()
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshExternalServiceCreateOrUpdateSuccessResponse(ctx, res.MeshExternalServiceCreateOrUpdateSuccessResponse)...)
 
-	var name1 string
-	name1 = data.Name.ValueString()
-
-	request1 := operations.GetMeshExternalServiceRequest{
-		Mesh: mesh1,
-		Name: name1,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res1, err := r.client.MeshExternalService.GetMeshExternalService(ctx, request1)
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	request1, request1Diags := data.ToOperationsGetMeshExternalServiceRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.MeshExternalService.GetMeshExternalService(ctx, *request1)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res1 != nil && res1.RawResponse != nil {
@@ -759,8 +765,17 @@ func (r *MeshExternalServiceResource) Update(ctx context.Context, req resource.U
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshExternalServiceItem(res1.MeshExternalServiceItem)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshExternalServiceItem(ctx, res1.MeshExternalServiceItem)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -784,17 +799,13 @@ func (r *MeshExternalServiceResource) Delete(ctx context.Context, req resource.D
 		return
 	}
 
-	var mesh string
-	mesh = data.Mesh.ValueString()
+	request, requestDiags := data.ToOperationsDeleteMeshExternalServiceRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	var name string
-	name = data.Name.ValueString()
-
-	request := operations.DeleteMeshExternalServiceRequest{
-		Mesh: mesh,
-		Name: name,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.MeshExternalService.DeleteMeshExternalService(ctx, request)
+	res, err := r.client.MeshExternalService.DeleteMeshExternalService(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -822,7 +833,7 @@ func (r *MeshExternalServiceResource) ImportState(ctx context.Context, req resou
 	}
 
 	if err := dec.Decode(&data); err != nil {
-		resp.Diagnostics.AddError("Invalid ID", `The ID is not valid. It's expected to be a JSON object alike '{ "mesh": "",  "name": ""}': `+err.Error())
+		resp.Diagnostics.AddError("Invalid ID", `The import ID is not valid. It is expected to be a JSON object string with the format: '{ "mesh": "",  "name": ""}': `+err.Error())
 		return
 	}
 

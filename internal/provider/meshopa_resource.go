@@ -20,7 +20,6 @@ import (
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
-	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/validators"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
 )
@@ -333,19 +332,13 @@ func (r *MeshOPAResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 
-	var mesh string
-	mesh = data.Mesh.ValueString()
+	request, requestDiags := data.ToOperationsCreateMeshOPARequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	var name string
-	name = data.Name.ValueString()
-
-	meshOPAItem := *data.ToSharedMeshOPAItemInput()
-	request := operations.CreateMeshOPARequest{
-		Mesh:        mesh,
-		Name:        name,
-		MeshOPAItem: meshOPAItem,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.MeshOPA.CreateMeshOPA(ctx, request)
+	res, err := r.client.MeshOPA.CreateMeshOPA(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -365,19 +358,24 @@ func (r *MeshOPAResource) Create(ctx context.Context, req resource.CreateRequest
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshOPACreateOrUpdateSuccessResponse(res.MeshOPACreateOrUpdateSuccessResponse)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
-	var mesh1 string
-	mesh1 = data.Mesh.ValueString()
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshOPACreateOrUpdateSuccessResponse(ctx, res.MeshOPACreateOrUpdateSuccessResponse)...)
 
-	var name1 string
-	name1 = data.Name.ValueString()
-
-	request1 := operations.GetMeshOPARequest{
-		Mesh: mesh1,
-		Name: name1,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res1, err := r.client.MeshOPA.GetMeshOPA(ctx, request1)
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	request1, request1Diags := data.ToOperationsGetMeshOPARequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.MeshOPA.GetMeshOPA(ctx, *request1)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res1 != nil && res1.RawResponse != nil {
@@ -397,8 +395,17 @@ func (r *MeshOPAResource) Create(ctx context.Context, req resource.CreateRequest
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshOPAItem(res1.MeshOPAItem)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshOPAItem(ctx, res1.MeshOPAItem)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -422,17 +429,13 @@ func (r *MeshOPAResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 
-	var mesh string
-	mesh = data.Mesh.ValueString()
+	request, requestDiags := data.ToOperationsGetMeshOPARequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	var name string
-	name = data.Name.ValueString()
-
-	request := operations.GetMeshOPARequest{
-		Mesh: mesh,
-		Name: name,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.MeshOPA.GetMeshOPA(ctx, request)
+	res, err := r.client.MeshOPA.GetMeshOPA(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -456,7 +459,11 @@ func (r *MeshOPAResource) Read(ctx context.Context, req resource.ReadRequest, re
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshOPAItem(res.MeshOPAItem)
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshOPAItem(ctx, res.MeshOPAItem)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -476,19 +483,13 @@ func (r *MeshOPAResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 
-	var mesh string
-	mesh = data.Mesh.ValueString()
+	request, requestDiags := data.ToOperationsUpdateMeshOPARequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	var name string
-	name = data.Name.ValueString()
-
-	meshOPAItem := *data.ToSharedMeshOPAItemInput()
-	request := operations.UpdateMeshOPARequest{
-		Mesh:        mesh,
-		Name:        name,
-		MeshOPAItem: meshOPAItem,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.MeshOPA.UpdateMeshOPA(ctx, request)
+	res, err := r.client.MeshOPA.UpdateMeshOPA(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -508,19 +509,24 @@ func (r *MeshOPAResource) Update(ctx context.Context, req resource.UpdateRequest
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshOPACreateOrUpdateSuccessResponse(res.MeshOPACreateOrUpdateSuccessResponse)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
-	var mesh1 string
-	mesh1 = data.Mesh.ValueString()
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshOPACreateOrUpdateSuccessResponse(ctx, res.MeshOPACreateOrUpdateSuccessResponse)...)
 
-	var name1 string
-	name1 = data.Name.ValueString()
-
-	request1 := operations.GetMeshOPARequest{
-		Mesh: mesh1,
-		Name: name1,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res1, err := r.client.MeshOPA.GetMeshOPA(ctx, request1)
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	request1, request1Diags := data.ToOperationsGetMeshOPARequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.MeshOPA.GetMeshOPA(ctx, *request1)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res1 != nil && res1.RawResponse != nil {
@@ -540,8 +546,17 @@ func (r *MeshOPAResource) Update(ctx context.Context, req resource.UpdateRequest
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshOPAItem(res1.MeshOPAItem)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshOPAItem(ctx, res1.MeshOPAItem)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -565,17 +580,13 @@ func (r *MeshOPAResource) Delete(ctx context.Context, req resource.DeleteRequest
 		return
 	}
 
-	var mesh string
-	mesh = data.Mesh.ValueString()
+	request, requestDiags := data.ToOperationsDeleteMeshOPARequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	var name string
-	name = data.Name.ValueString()
-
-	request := operations.DeleteMeshOPARequest{
-		Mesh: mesh,
-		Name: name,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.MeshOPA.DeleteMeshOPA(ctx, request)
+	res, err := r.client.MeshOPA.DeleteMeshOPA(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -603,7 +614,7 @@ func (r *MeshOPAResource) ImportState(ctx context.Context, req resource.ImportSt
 	}
 
 	if err := dec.Decode(&data); err != nil {
-		resp.Diagnostics.AddError("Invalid ID", `The ID is not valid. It's expected to be a JSON object alike '{ "mesh": "",  "name": ""}': `+err.Error())
+		resp.Diagnostics.AddError("Invalid ID", `The import ID is not valid. It is expected to be a JSON object string with the format: '{ "mesh": "",  "name": ""}': `+err.Error())
 		return
 	}
 

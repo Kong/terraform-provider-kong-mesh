@@ -3,155 +3,176 @@
 package provider
 
 import (
+	"context"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
-	"math/big"
-	"time"
 )
 
-func (r *MeshMultiZoneServiceListDataSourceModel) RefreshFromSharedMeshMultiZoneServiceList(resp *shared.MeshMultiZoneServiceList) {
+func (r *MeshMultiZoneServiceListDataSourceModel) ToOperationsGetMeshMultiZoneServiceListRequest(ctx context.Context) (*operations.GetMeshMultiZoneServiceListRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	offset := new(int64)
+	if !r.Offset.IsUnknown() && !r.Offset.IsNull() {
+		*offset = r.Offset.ValueInt64()
+	} else {
+		offset = nil
+	}
+	size := new(int64)
+	if !r.Size.IsUnknown() && !r.Size.IsNull() {
+		*size = r.Size.ValueInt64()
+	} else {
+		size = nil
+	}
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	out := operations.GetMeshMultiZoneServiceListRequest{
+		Offset: offset,
+		Size:   size,
+		Mesh:   mesh,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshMultiZoneServiceListDataSourceModel) RefreshFromSharedMeshMultiZoneServiceList(ctx context.Context, resp *shared.MeshMultiZoneServiceList) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
 		r.Items = []tfTypes.MeshMultiZoneServiceItem{}
 		if len(r.Items) > len(resp.Items) {
 			r.Items = r.Items[:len(resp.Items)]
 		}
 		for itemsCount, itemsItem := range resp.Items {
-			var items1 tfTypes.MeshMultiZoneServiceItem
-			if itemsItem.CreationTime != nil {
-				items1.CreationTime = types.StringValue(itemsItem.CreationTime.Format(time.RFC3339Nano))
-			} else {
-				items1.CreationTime = types.StringNull()
-			}
+			var items tfTypes.MeshMultiZoneServiceItem
+			items.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(itemsItem.CreationTime))
 			if len(itemsItem.Labels) > 0 {
-				items1.Labels = make(map[string]types.String, len(itemsItem.Labels))
+				items.Labels = make(map[string]types.String, len(itemsItem.Labels))
 				for key, value := range itemsItem.Labels {
-					items1.Labels[key] = types.StringValue(value)
+					items.Labels[key] = types.StringValue(value)
 				}
 			}
-			items1.Mesh = types.StringPointerValue(itemsItem.Mesh)
-			if itemsItem.ModificationTime != nil {
-				items1.ModificationTime = types.StringValue(itemsItem.ModificationTime.Format(time.RFC3339Nano))
-			} else {
-				items1.ModificationTime = types.StringNull()
-			}
-			items1.Name = types.StringValue(itemsItem.Name)
-			items1.Spec.Ports = []tfTypes.Ports{}
+			items.Mesh = types.StringPointerValue(itemsItem.Mesh)
+			items.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(itemsItem.ModificationTime))
+			items.Name = types.StringValue(itemsItem.Name)
+			items.Spec.Ports = []tfTypes.Ports{}
 			for portsCount, portsItem := range itemsItem.Spec.Ports {
-				var ports1 tfTypes.Ports
-				ports1.AppProtocol = types.StringPointerValue(portsItem.AppProtocol)
-				ports1.Name = types.StringPointerValue(portsItem.Name)
-				ports1.Port = types.Int32Value(int32(portsItem.Port))
-				if portsCount+1 > len(items1.Spec.Ports) {
-					items1.Spec.Ports = append(items1.Spec.Ports, ports1)
+				var ports tfTypes.Ports
+				ports.AppProtocol = types.StringPointerValue(portsItem.AppProtocol)
+				ports.Name = types.StringPointerValue(portsItem.Name)
+				ports.Port = types.Int32Value(int32(portsItem.Port))
+				if portsCount+1 > len(items.Spec.Ports) {
+					items.Spec.Ports = append(items.Spec.Ports, ports)
 				} else {
-					items1.Spec.Ports[portsCount].AppProtocol = ports1.AppProtocol
-					items1.Spec.Ports[portsCount].Name = ports1.Name
-					items1.Spec.Ports[portsCount].Port = ports1.Port
+					items.Spec.Ports[portsCount].AppProtocol = ports.AppProtocol
+					items.Spec.Ports[portsCount].Name = ports.Name
+					items.Spec.Ports[portsCount].Port = ports.Port
 				}
 			}
 			if len(itemsItem.Spec.Selector.MeshService.MatchLabels) > 0 {
-				items1.Spec.Selector.MeshService.MatchLabels = make(map[string]types.String, len(itemsItem.Spec.Selector.MeshService.MatchLabels))
+				items.Spec.Selector.MeshService.MatchLabels = make(map[string]types.String, len(itemsItem.Spec.Selector.MeshService.MatchLabels))
 				for key1, value1 := range itemsItem.Spec.Selector.MeshService.MatchLabels {
-					items1.Spec.Selector.MeshService.MatchLabels[key1] = types.StringValue(value1)
+					items.Spec.Selector.MeshService.MatchLabels[key1] = types.StringValue(value1)
 				}
 			}
 			if itemsItem.Status == nil {
-				items1.Status = nil
+				items.Status = nil
 			} else {
-				items1.Status = &tfTypes.MeshMultiZoneServiceItemStatus{}
-				items1.Status.Addresses = []tfTypes.Addresses{}
+				items.Status = &tfTypes.MeshMultiZoneServiceItemStatus{}
+				items.Status.Addresses = []tfTypes.Addresses{}
 				for addressesCount, addressesItem := range itemsItem.Status.Addresses {
-					var addresses1 tfTypes.Addresses
-					addresses1.Hostname = types.StringPointerValue(addressesItem.Hostname)
+					var addresses tfTypes.Addresses
+					addresses.Hostname = types.StringPointerValue(addressesItem.Hostname)
 					if addressesItem.HostnameGeneratorRef == nil {
-						addresses1.HostnameGeneratorRef = nil
+						addresses.HostnameGeneratorRef = nil
 					} else {
-						addresses1.HostnameGeneratorRef = &tfTypes.HostnameGeneratorRef{}
-						addresses1.HostnameGeneratorRef.CoreName = types.StringValue(addressesItem.HostnameGeneratorRef.CoreName)
+						addresses.HostnameGeneratorRef = &tfTypes.HostnameGeneratorRef{}
+						addresses.HostnameGeneratorRef.CoreName = types.StringValue(addressesItem.HostnameGeneratorRef.CoreName)
 					}
-					addresses1.Origin = types.StringPointerValue(addressesItem.Origin)
-					if addressesCount+1 > len(items1.Status.Addresses) {
-						items1.Status.Addresses = append(items1.Status.Addresses, addresses1)
+					addresses.Origin = types.StringPointerValue(addressesItem.Origin)
+					if addressesCount+1 > len(items.Status.Addresses) {
+						items.Status.Addresses = append(items.Status.Addresses, addresses)
 					} else {
-						items1.Status.Addresses[addressesCount].Hostname = addresses1.Hostname
-						items1.Status.Addresses[addressesCount].HostnameGeneratorRef = addresses1.HostnameGeneratorRef
-						items1.Status.Addresses[addressesCount].Origin = addresses1.Origin
+						items.Status.Addresses[addressesCount].Hostname = addresses.Hostname
+						items.Status.Addresses[addressesCount].HostnameGeneratorRef = addresses.HostnameGeneratorRef
+						items.Status.Addresses[addressesCount].Origin = addresses.Origin
 					}
 				}
-				items1.Status.HostnameGenerators = []tfTypes.HostnameGenerators{}
+				items.Status.HostnameGenerators = []tfTypes.HostnameGenerators{}
 				for hostnameGeneratorsCount, hostnameGeneratorsItem := range itemsItem.Status.HostnameGenerators {
-					var hostnameGenerators1 tfTypes.HostnameGenerators
-					hostnameGenerators1.Conditions = []tfTypes.Conditions{}
+					var hostnameGenerators tfTypes.HostnameGenerators
+					hostnameGenerators.Conditions = []tfTypes.Conditions{}
 					for conditionsCount, conditionsItem := range hostnameGeneratorsItem.Conditions {
-						var conditions1 tfTypes.Conditions
-						conditions1.Message = types.StringValue(conditionsItem.Message)
-						conditions1.Reason = types.StringValue(conditionsItem.Reason)
-						conditions1.Status = types.StringValue(string(conditionsItem.Status))
-						conditions1.Type = types.StringValue(conditionsItem.Type)
-						if conditionsCount+1 > len(hostnameGenerators1.Conditions) {
-							hostnameGenerators1.Conditions = append(hostnameGenerators1.Conditions, conditions1)
+						var conditions tfTypes.Conditions
+						conditions.Message = types.StringValue(conditionsItem.Message)
+						conditions.Reason = types.StringValue(conditionsItem.Reason)
+						conditions.Status = types.StringValue(string(conditionsItem.Status))
+						conditions.Type = types.StringValue(conditionsItem.Type)
+						if conditionsCount+1 > len(hostnameGenerators.Conditions) {
+							hostnameGenerators.Conditions = append(hostnameGenerators.Conditions, conditions)
 						} else {
-							hostnameGenerators1.Conditions[conditionsCount].Message = conditions1.Message
-							hostnameGenerators1.Conditions[conditionsCount].Reason = conditions1.Reason
-							hostnameGenerators1.Conditions[conditionsCount].Status = conditions1.Status
-							hostnameGenerators1.Conditions[conditionsCount].Type = conditions1.Type
+							hostnameGenerators.Conditions[conditionsCount].Message = conditions.Message
+							hostnameGenerators.Conditions[conditionsCount].Reason = conditions.Reason
+							hostnameGenerators.Conditions[conditionsCount].Status = conditions.Status
+							hostnameGenerators.Conditions[conditionsCount].Type = conditions.Type
 						}
 					}
-					hostnameGenerators1.HostnameGeneratorRef.CoreName = types.StringValue(hostnameGeneratorsItem.HostnameGeneratorRef.CoreName)
-					if hostnameGeneratorsCount+1 > len(items1.Status.HostnameGenerators) {
-						items1.Status.HostnameGenerators = append(items1.Status.HostnameGenerators, hostnameGenerators1)
+					hostnameGenerators.HostnameGeneratorRef.CoreName = types.StringValue(hostnameGeneratorsItem.HostnameGeneratorRef.CoreName)
+					if hostnameGeneratorsCount+1 > len(items.Status.HostnameGenerators) {
+						items.Status.HostnameGenerators = append(items.Status.HostnameGenerators, hostnameGenerators)
 					} else {
-						items1.Status.HostnameGenerators[hostnameGeneratorsCount].Conditions = hostnameGenerators1.Conditions
-						items1.Status.HostnameGenerators[hostnameGeneratorsCount].HostnameGeneratorRef = hostnameGenerators1.HostnameGeneratorRef
+						items.Status.HostnameGenerators[hostnameGeneratorsCount].Conditions = hostnameGenerators.Conditions
+						items.Status.HostnameGenerators[hostnameGeneratorsCount].HostnameGeneratorRef = hostnameGenerators.HostnameGeneratorRef
 					}
 				}
-				items1.Status.MeshServices = []tfTypes.MeshMultiZoneServiceItemMeshServices{}
+				items.Status.MeshServices = []tfTypes.MeshMultiZoneServiceItemMeshServices{}
 				for meshServicesCount, meshServicesItem := range itemsItem.Status.MeshServices {
-					var meshServices1 tfTypes.MeshMultiZoneServiceItemMeshServices
-					meshServices1.Mesh = types.StringValue(meshServicesItem.Mesh)
-					meshServices1.Name = types.StringValue(meshServicesItem.Name)
-					meshServices1.Namespace = types.StringValue(meshServicesItem.Namespace)
-					meshServices1.Zone = types.StringValue(meshServicesItem.Zone)
-					if meshServicesCount+1 > len(items1.Status.MeshServices) {
-						items1.Status.MeshServices = append(items1.Status.MeshServices, meshServices1)
+					var meshServices tfTypes.MeshMultiZoneServiceItemMeshServices
+					meshServices.Mesh = types.StringValue(meshServicesItem.Mesh)
+					meshServices.Name = types.StringValue(meshServicesItem.Name)
+					meshServices.Namespace = types.StringValue(meshServicesItem.Namespace)
+					meshServices.Zone = types.StringValue(meshServicesItem.Zone)
+					if meshServicesCount+1 > len(items.Status.MeshServices) {
+						items.Status.MeshServices = append(items.Status.MeshServices, meshServices)
 					} else {
-						items1.Status.MeshServices[meshServicesCount].Mesh = meshServices1.Mesh
-						items1.Status.MeshServices[meshServicesCount].Name = meshServices1.Name
-						items1.Status.MeshServices[meshServicesCount].Namespace = meshServices1.Namespace
-						items1.Status.MeshServices[meshServicesCount].Zone = meshServices1.Zone
+						items.Status.MeshServices[meshServicesCount].Mesh = meshServices.Mesh
+						items.Status.MeshServices[meshServicesCount].Name = meshServices.Name
+						items.Status.MeshServices[meshServicesCount].Namespace = meshServices.Namespace
+						items.Status.MeshServices[meshServicesCount].Zone = meshServices.Zone
 					}
 				}
-				items1.Status.Vips = []tfTypes.Vip{}
+				items.Status.Vips = []tfTypes.Vip{}
 				for vipsCount, vipsItem := range itemsItem.Status.Vips {
-					var vips1 tfTypes.Vip
-					vips1.IP = types.StringPointerValue(vipsItem.IP)
-					if vipsCount+1 > len(items1.Status.Vips) {
-						items1.Status.Vips = append(items1.Status.Vips, vips1)
+					var vips tfTypes.Vip
+					vips.IP = types.StringPointerValue(vipsItem.IP)
+					if vipsCount+1 > len(items.Status.Vips) {
+						items.Status.Vips = append(items.Status.Vips, vips)
 					} else {
-						items1.Status.Vips[vipsCount].IP = vips1.IP
+						items.Status.Vips[vipsCount].IP = vips.IP
 					}
 				}
 			}
-			items1.Type = types.StringValue(string(itemsItem.Type))
+			items.Type = types.StringValue(string(itemsItem.Type))
 			if itemsCount+1 > len(r.Items) {
-				r.Items = append(r.Items, items1)
+				r.Items = append(r.Items, items)
 			} else {
-				r.Items[itemsCount].CreationTime = items1.CreationTime
-				r.Items[itemsCount].Labels = items1.Labels
-				r.Items[itemsCount].Mesh = items1.Mesh
-				r.Items[itemsCount].ModificationTime = items1.ModificationTime
-				r.Items[itemsCount].Name = items1.Name
-				r.Items[itemsCount].Spec = items1.Spec
-				r.Items[itemsCount].Status = items1.Status
-				r.Items[itemsCount].Type = items1.Type
+				r.Items[itemsCount].CreationTime = items.CreationTime
+				r.Items[itemsCount].Labels = items.Labels
+				r.Items[itemsCount].Mesh = items.Mesh
+				r.Items[itemsCount].ModificationTime = items.ModificationTime
+				r.Items[itemsCount].Name = items.Name
+				r.Items[itemsCount].Spec = items.Spec
+				r.Items[itemsCount].Status = items.Status
+				r.Items[itemsCount].Type = items.Type
 			}
 		}
 		r.Next = types.StringPointerValue(resp.Next)
-		if resp.Total != nil {
-			r.Total = types.NumberValue(big.NewFloat(float64(*resp.Total)))
-		} else {
-			r.Total = types.NumberNull()
-		}
+		r.Total = types.Float64PointerValue(resp.Total)
 	}
+
+	return diags
 }

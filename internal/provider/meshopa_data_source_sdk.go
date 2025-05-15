@@ -3,19 +3,37 @@
 package provider
 
 import (
+	"context"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
-	"time"
 )
 
-func (r *MeshOPADataSourceModel) RefreshFromSharedMeshOPAItem(resp *shared.MeshOPAItem) {
+func (r *MeshOPADataSourceModel) ToOperationsGetMeshOPARequest(ctx context.Context) (*operations.GetMeshOPARequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.GetMeshOPARequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshOPADataSourceModel) RefreshFromSharedMeshOPAItem(ctx context.Context, resp *shared.MeshOPAItem) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
-		if resp.CreationTime != nil {
-			r.CreationTime = types.StringValue(resp.CreationTime.Format(time.RFC3339Nano))
-		} else {
-			r.CreationTime = types.StringNull()
-		}
+		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
 		if len(resp.Labels) > 0 {
 			r.Labels = make(map[string]types.String, len(resp.Labels))
 			for key, value := range resp.Labels {
@@ -23,11 +41,7 @@ func (r *MeshOPADataSourceModel) RefreshFromSharedMeshOPAItem(resp *shared.MeshO
 			}
 		}
 		r.Mesh = types.StringPointerValue(resp.Mesh)
-		if resp.ModificationTime != nil {
-			r.ModificationTime = types.StringValue(resp.ModificationTime.Format(time.RFC3339Nano))
-		} else {
-			r.ModificationTime = types.StringNull()
-		}
+		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
 		if resp.Spec.Default == nil {
 			r.Spec.Default = nil
@@ -46,16 +60,16 @@ func (r *MeshOPADataSourceModel) RefreshFromSharedMeshOPAItem(resp *shared.MeshO
 				r.Spec.Default.AppendPolicies = r.Spec.Default.AppendPolicies[:len(resp.Spec.Default.AppendPolicies)]
 			}
 			for appendPoliciesCount, appendPoliciesItem := range resp.Spec.Default.AppendPolicies {
-				var appendPolicies1 tfTypes.AppendPolicies
-				appendPolicies1.IgnoreDecision = types.BoolPointerValue(appendPoliciesItem.IgnoreDecision)
-				appendPolicies1.Rego.Inline = types.StringPointerValue(appendPoliciesItem.Rego.Inline)
-				appendPolicies1.Rego.InlineString = types.StringPointerValue(appendPoliciesItem.Rego.InlineString)
-				appendPolicies1.Rego.Secret = types.StringPointerValue(appendPoliciesItem.Rego.Secret)
+				var appendPolicies tfTypes.AppendPolicies
+				appendPolicies.IgnoreDecision = types.BoolPointerValue(appendPoliciesItem.IgnoreDecision)
+				appendPolicies.Rego.Inline = types.StringPointerValue(appendPoliciesItem.Rego.Inline)
+				appendPolicies.Rego.InlineString = types.StringPointerValue(appendPoliciesItem.Rego.InlineString)
+				appendPolicies.Rego.Secret = types.StringPointerValue(appendPoliciesItem.Rego.Secret)
 				if appendPoliciesCount+1 > len(r.Spec.Default.AppendPolicies) {
-					r.Spec.Default.AppendPolicies = append(r.Spec.Default.AppendPolicies, appendPolicies1)
+					r.Spec.Default.AppendPolicies = append(r.Spec.Default.AppendPolicies, appendPolicies)
 				} else {
-					r.Spec.Default.AppendPolicies[appendPoliciesCount].IgnoreDecision = appendPolicies1.IgnoreDecision
-					r.Spec.Default.AppendPolicies[appendPoliciesCount].Rego = appendPolicies1.Rego
+					r.Spec.Default.AppendPolicies[appendPoliciesCount].IgnoreDecision = appendPolicies.IgnoreDecision
+					r.Spec.Default.AppendPolicies[appendPoliciesCount].Rego = appendPolicies.Rego
 				}
 			}
 			if resp.Spec.Default.AuthConfig == nil {
@@ -71,18 +85,10 @@ func (r *MeshOPADataSourceModel) RefreshFromSharedMeshOPAItem(resp *shared.MeshO
 					r.Spec.Default.AuthConfig.RequestBody = nil
 				} else {
 					r.Spec.Default.AuthConfig.RequestBody = &tfTypes.RequestBody{}
-					if resp.Spec.Default.AuthConfig.RequestBody.MaxSize != nil {
-						r.Spec.Default.AuthConfig.RequestBody.MaxSize = types.Int32Value(int32(*resp.Spec.Default.AuthConfig.RequestBody.MaxSize))
-					} else {
-						r.Spec.Default.AuthConfig.RequestBody.MaxSize = types.Int32Null()
-					}
+					r.Spec.Default.AuthConfig.RequestBody.MaxSize = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(resp.Spec.Default.AuthConfig.RequestBody.MaxSize))
 					r.Spec.Default.AuthConfig.RequestBody.SendRawBody = types.BoolPointerValue(resp.Spec.Default.AuthConfig.RequestBody.SendRawBody)
 				}
-				if resp.Spec.Default.AuthConfig.StatusOnError != nil {
-					r.Spec.Default.AuthConfig.StatusOnError = types.Int32Value(int32(*resp.Spec.Default.AuthConfig.StatusOnError))
-				} else {
-					r.Spec.Default.AuthConfig.StatusOnError = types.Int32Null()
-				}
+				r.Spec.Default.AuthConfig.StatusOnError = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(resp.Spec.Default.AuthConfig.StatusOnError))
 				r.Spec.Default.AuthConfig.Timeout = types.StringPointerValue(resp.Spec.Default.AuthConfig.Timeout)
 			}
 		}
@@ -114,4 +120,6 @@ func (r *MeshOPADataSourceModel) RefreshFromSharedMeshOPAItem(resp *shared.MeshO
 		}
 		r.Type = types.StringValue(string(resp.Type))
 	}
+
+	return diags
 }

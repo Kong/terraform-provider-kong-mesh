@@ -3,13 +3,35 @@
 package provider
 
 import (
+	"context"
 	"encoding/json"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
 )
 
-func (r *MeshGatewayDataSourceModel) RefreshFromSharedMeshGatewayItem(resp *shared.MeshGatewayItem) {
+func (r *MeshGatewayDataSourceModel) ToOperationsGetMeshGatewayRequest(ctx context.Context) (*operations.GetMeshGatewayRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.GetMeshGatewayRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshGatewayDataSourceModel) RefreshFromSharedMeshGatewayItem(ctx context.Context, resp *shared.MeshGatewayItem) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
 		if resp.Conf == nil {
 			r.Conf = nil
@@ -20,75 +42,71 @@ func (r *MeshGatewayDataSourceModel) RefreshFromSharedMeshGatewayItem(resp *shar
 				r.Conf.Listeners = r.Conf.Listeners[:len(resp.Conf.Listeners)]
 			}
 			for listenersCount, listenersItem := range resp.Conf.Listeners {
-				var listeners1 tfTypes.Listeners
-				listeners1.CrossMesh = types.BoolPointerValue(listenersItem.CrossMesh)
-				listeners1.Hostname = types.StringPointerValue(listenersItem.Hostname)
-				listeners1.Port = types.Int64PointerValue(listenersItem.Port)
-				if listenersItem.Protocol == nil {
-					listeners1.Protocol = nil
-				} else {
-					listeners1.Protocol = &tfTypes.Mode{}
+				var listeners tfTypes.Listeners
+				listeners.CrossMesh = types.BoolPointerValue(listenersItem.CrossMesh)
+				listeners.Hostname = types.StringPointerValue(listenersItem.Hostname)
+				listeners.Port = types.Int64PointerValue(listenersItem.Port)
+				if listenersItem.Protocol != nil {
+					listeners.Protocol = &tfTypes.Mode{}
 					if listenersItem.Protocol.Str != nil {
-						listeners1.Protocol.Str = types.StringPointerValue(listenersItem.Protocol.Str)
+						listeners.Protocol.Str = types.StringPointerValue(listenersItem.Protocol.Str)
 					}
 					if listenersItem.Protocol.Integer != nil {
-						listeners1.Protocol.Integer = types.Int64PointerValue(listenersItem.Protocol.Integer)
+						listeners.Protocol.Integer = types.Int64PointerValue(listenersItem.Protocol.Integer)
 					}
 				}
 				if listenersItem.Resources == nil {
-					listeners1.Resources = nil
+					listeners.Resources = nil
 				} else {
-					listeners1.Resources = &tfTypes.Resources{}
-					listeners1.Resources.ConnectionLimit = types.Int64PointerValue(listenersItem.Resources.ConnectionLimit)
+					listeners.Resources = &tfTypes.Resources{}
+					listeners.Resources.ConnectionLimit = types.Int64PointerValue(listenersItem.Resources.ConnectionLimit)
 				}
 				if len(listenersItem.Tags) > 0 {
-					listeners1.Tags = make(map[string]types.String, len(listenersItem.Tags))
+					listeners.Tags = make(map[string]types.String, len(listenersItem.Tags))
 					for key, value := range listenersItem.Tags {
-						listeners1.Tags[key] = types.StringValue(value)
+						listeners.Tags[key] = types.StringValue(value)
 					}
 				}
 				if listenersItem.TLS == nil {
-					listeners1.TLS = nil
+					listeners.TLS = nil
 				} else {
-					listeners1.TLS = &tfTypes.MeshGatewayItemTLS{}
-					listeners1.TLS.Certificates = []tfTypes.AccessKey{}
+					listeners.TLS = &tfTypes.MeshGatewayItemTLS{}
+					listeners.TLS.Certificates = []tfTypes.AccessKey{}
 					for certificatesCount, certificatesItem := range listenersItem.TLS.Certificates {
-						var certificates1 tfTypes.AccessKey
+						var certificates tfTypes.AccessKey
 						typeVarResult, _ := json.Marshal(certificatesItem.Type)
-						certificates1.Type = types.StringValue(string(typeVarResult))
-						if certificatesCount+1 > len(listeners1.TLS.Certificates) {
-							listeners1.TLS.Certificates = append(listeners1.TLS.Certificates, certificates1)
+						certificates.Type = types.StringValue(string(typeVarResult))
+						if certificatesCount+1 > len(listeners.TLS.Certificates) {
+							listeners.TLS.Certificates = append(listeners.TLS.Certificates, certificates)
 						} else {
-							listeners1.TLS.Certificates[certificatesCount].Type = certificates1.Type
+							listeners.TLS.Certificates[certificatesCount].Type = certificates.Type
 						}
 					}
-					if listenersItem.TLS.Mode == nil {
-						listeners1.TLS.Mode = nil
-					} else {
-						listeners1.TLS.Mode = &tfTypes.Mode{}
+					if listenersItem.TLS.Mode != nil {
+						listeners.TLS.Mode = &tfTypes.Mode{}
 						if listenersItem.TLS.Mode.Str != nil {
-							listeners1.TLS.Mode.Str = types.StringPointerValue(listenersItem.TLS.Mode.Str)
+							listeners.TLS.Mode.Str = types.StringPointerValue(listenersItem.TLS.Mode.Str)
 						}
 						if listenersItem.TLS.Mode.Integer != nil {
-							listeners1.TLS.Mode.Integer = types.Int64PointerValue(listenersItem.TLS.Mode.Integer)
+							listeners.TLS.Mode.Integer = types.Int64PointerValue(listenersItem.TLS.Mode.Integer)
 						}
 					}
 					if listenersItem.TLS.Options == nil {
-						listeners1.TLS.Options = nil
+						listeners.TLS.Options = nil
 					} else {
-						listeners1.TLS.Options = &tfTypes.OptionsObj{}
+						listeners.TLS.Options = &tfTypes.OptionsObj{}
 					}
 				}
 				if listenersCount+1 > len(r.Conf.Listeners) {
-					r.Conf.Listeners = append(r.Conf.Listeners, listeners1)
+					r.Conf.Listeners = append(r.Conf.Listeners, listeners)
 				} else {
-					r.Conf.Listeners[listenersCount].CrossMesh = listeners1.CrossMesh
-					r.Conf.Listeners[listenersCount].Hostname = listeners1.Hostname
-					r.Conf.Listeners[listenersCount].Port = listeners1.Port
-					r.Conf.Listeners[listenersCount].Protocol = listeners1.Protocol
-					r.Conf.Listeners[listenersCount].Resources = listeners1.Resources
-					r.Conf.Listeners[listenersCount].Tags = listeners1.Tags
-					r.Conf.Listeners[listenersCount].TLS = listeners1.TLS
+					r.Conf.Listeners[listenersCount].CrossMesh = listeners.CrossMesh
+					r.Conf.Listeners[listenersCount].Hostname = listeners.Hostname
+					r.Conf.Listeners[listenersCount].Port = listeners.Port
+					r.Conf.Listeners[listenersCount].Protocol = listeners.Protocol
+					r.Conf.Listeners[listenersCount].Resources = listeners.Resources
+					r.Conf.Listeners[listenersCount].Tags = listeners.Tags
+					r.Conf.Listeners[listenersCount].TLS = listeners.TLS
 				}
 			}
 		}
@@ -105,17 +123,17 @@ func (r *MeshGatewayDataSourceModel) RefreshFromSharedMeshGatewayItem(resp *shar
 			r.Selectors = r.Selectors[:len(resp.Selectors)]
 		}
 		for selectorsCount, selectorsItem := range resp.Selectors {
-			var selectors1 tfTypes.Selectors
+			var selectors tfTypes.Selectors
 			if len(selectorsItem.Match) > 0 {
-				selectors1.Match = make(map[string]types.String, len(selectorsItem.Match))
+				selectors.Match = make(map[string]types.String, len(selectorsItem.Match))
 				for key2, value2 := range selectorsItem.Match {
-					selectors1.Match[key2] = types.StringValue(value2)
+					selectors.Match[key2] = types.StringValue(value2)
 				}
 			}
 			if selectorsCount+1 > len(r.Selectors) {
-				r.Selectors = append(r.Selectors, selectors1)
+				r.Selectors = append(r.Selectors, selectors)
 			} else {
-				r.Selectors[selectorsCount].Match = selectors1.Match
+				r.Selectors[selectorsCount].Match = selectors.Match
 			}
 		}
 		if len(resp.Tags) > 0 {
@@ -126,4 +144,6 @@ func (r *MeshGatewayDataSourceModel) RefreshFromSharedMeshGatewayItem(resp *shar
 		}
 		r.Type = types.StringValue(resp.Type)
 	}
+
+	return diags
 }

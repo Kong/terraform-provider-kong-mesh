@@ -25,7 +25,6 @@ import (
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
-	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/validators"
 	speakeasy_listvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/listvalidators"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
@@ -1004,19 +1003,13 @@ func (r *MeshHTTPRouteResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	var mesh string
-	mesh = data.Mesh.ValueString()
+	request, requestDiags := data.ToOperationsCreateMeshHTTPRouteRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	var name string
-	name = data.Name.ValueString()
-
-	meshHTTPRouteItem := *data.ToSharedMeshHTTPRouteItemInput()
-	request := operations.CreateMeshHTTPRouteRequest{
-		Mesh:              mesh,
-		Name:              name,
-		MeshHTTPRouteItem: meshHTTPRouteItem,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.MeshHTTPRoute.CreateMeshHTTPRoute(ctx, request)
+	res, err := r.client.MeshHTTPRoute.CreateMeshHTTPRoute(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -1036,19 +1029,24 @@ func (r *MeshHTTPRouteResource) Create(ctx context.Context, req resource.CreateR
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshHTTPRouteCreateOrUpdateSuccessResponse(res.MeshHTTPRouteCreateOrUpdateSuccessResponse)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
-	var mesh1 string
-	mesh1 = data.Mesh.ValueString()
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshHTTPRouteCreateOrUpdateSuccessResponse(ctx, res.MeshHTTPRouteCreateOrUpdateSuccessResponse)...)
 
-	var name1 string
-	name1 = data.Name.ValueString()
-
-	request1 := operations.GetMeshHTTPRouteRequest{
-		Mesh: mesh1,
-		Name: name1,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res1, err := r.client.MeshHTTPRoute.GetMeshHTTPRoute(ctx, request1)
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	request1, request1Diags := data.ToOperationsGetMeshHTTPRouteRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.MeshHTTPRoute.GetMeshHTTPRoute(ctx, *request1)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res1 != nil && res1.RawResponse != nil {
@@ -1068,8 +1066,17 @@ func (r *MeshHTTPRouteResource) Create(ctx context.Context, req resource.CreateR
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshHTTPRouteItem(res1.MeshHTTPRouteItem)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshHTTPRouteItem(ctx, res1.MeshHTTPRouteItem)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -1093,17 +1100,13 @@ func (r *MeshHTTPRouteResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 
-	var mesh string
-	mesh = data.Mesh.ValueString()
+	request, requestDiags := data.ToOperationsGetMeshHTTPRouteRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	var name string
-	name = data.Name.ValueString()
-
-	request := operations.GetMeshHTTPRouteRequest{
-		Mesh: mesh,
-		Name: name,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.MeshHTTPRoute.GetMeshHTTPRoute(ctx, request)
+	res, err := r.client.MeshHTTPRoute.GetMeshHTTPRoute(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -1127,7 +1130,11 @@ func (r *MeshHTTPRouteResource) Read(ctx context.Context, req resource.ReadReque
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshHTTPRouteItem(res.MeshHTTPRouteItem)
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshHTTPRouteItem(ctx, res.MeshHTTPRouteItem)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -1147,19 +1154,13 @@ func (r *MeshHTTPRouteResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
-	var mesh string
-	mesh = data.Mesh.ValueString()
+	request, requestDiags := data.ToOperationsUpdateMeshHTTPRouteRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	var name string
-	name = data.Name.ValueString()
-
-	meshHTTPRouteItem := *data.ToSharedMeshHTTPRouteItemInput()
-	request := operations.UpdateMeshHTTPRouteRequest{
-		Mesh:              mesh,
-		Name:              name,
-		MeshHTTPRouteItem: meshHTTPRouteItem,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.MeshHTTPRoute.UpdateMeshHTTPRoute(ctx, request)
+	res, err := r.client.MeshHTTPRoute.UpdateMeshHTTPRoute(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -1179,19 +1180,24 @@ func (r *MeshHTTPRouteResource) Update(ctx context.Context, req resource.UpdateR
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshHTTPRouteCreateOrUpdateSuccessResponse(res.MeshHTTPRouteCreateOrUpdateSuccessResponse)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
-	var mesh1 string
-	mesh1 = data.Mesh.ValueString()
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshHTTPRouteCreateOrUpdateSuccessResponse(ctx, res.MeshHTTPRouteCreateOrUpdateSuccessResponse)...)
 
-	var name1 string
-	name1 = data.Name.ValueString()
-
-	request1 := operations.GetMeshHTTPRouteRequest{
-		Mesh: mesh1,
-		Name: name1,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res1, err := r.client.MeshHTTPRoute.GetMeshHTTPRoute(ctx, request1)
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	request1, request1Diags := data.ToOperationsGetMeshHTTPRouteRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.MeshHTTPRoute.GetMeshHTTPRoute(ctx, *request1)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res1 != nil && res1.RawResponse != nil {
@@ -1211,8 +1217,17 @@ func (r *MeshHTTPRouteResource) Update(ctx context.Context, req resource.UpdateR
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshHTTPRouteItem(res1.MeshHTTPRouteItem)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshHTTPRouteItem(ctx, res1.MeshHTTPRouteItem)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -1236,17 +1251,13 @@ func (r *MeshHTTPRouteResource) Delete(ctx context.Context, req resource.DeleteR
 		return
 	}
 
-	var mesh string
-	mesh = data.Mesh.ValueString()
+	request, requestDiags := data.ToOperationsDeleteMeshHTTPRouteRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	var name string
-	name = data.Name.ValueString()
-
-	request := operations.DeleteMeshHTTPRouteRequest{
-		Mesh: mesh,
-		Name: name,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.MeshHTTPRoute.DeleteMeshHTTPRoute(ctx, request)
+	res, err := r.client.MeshHTTPRoute.DeleteMeshHTTPRoute(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -1274,7 +1285,7 @@ func (r *MeshHTTPRouteResource) ImportState(ctx context.Context, req resource.Im
 	}
 
 	if err := dec.Decode(&data); err != nil {
-		resp.Diagnostics.AddError("Invalid ID", `The ID is not valid. It's expected to be a JSON object alike '{ "mesh": "",  "name": ""}': `+err.Error())
+		resp.Diagnostics.AddError("Invalid ID", `The import ID is not valid. It is expected to be a JSON object string with the format: '{ "mesh": "",  "name": ""}': `+err.Error())
 		return
 	}
 

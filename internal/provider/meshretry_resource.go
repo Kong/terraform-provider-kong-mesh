@@ -22,7 +22,6 @@ import (
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
-	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/validators"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/stringvalidators"
@@ -662,19 +661,13 @@ func (r *MeshRetryResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
-	var mesh string
-	mesh = data.Mesh.ValueString()
+	request, requestDiags := data.ToOperationsCreateMeshRetryRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	var name string
-	name = data.Name.ValueString()
-
-	meshRetryItem := *data.ToSharedMeshRetryItemInput()
-	request := operations.CreateMeshRetryRequest{
-		Mesh:          mesh,
-		Name:          name,
-		MeshRetryItem: meshRetryItem,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.MeshRetry.CreateMeshRetry(ctx, request)
+	res, err := r.client.MeshRetry.CreateMeshRetry(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -694,19 +687,24 @@ func (r *MeshRetryResource) Create(ctx context.Context, req resource.CreateReque
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshRetryCreateOrUpdateSuccessResponse(res.MeshRetryCreateOrUpdateSuccessResponse)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
-	var mesh1 string
-	mesh1 = data.Mesh.ValueString()
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshRetryCreateOrUpdateSuccessResponse(ctx, res.MeshRetryCreateOrUpdateSuccessResponse)...)
 
-	var name1 string
-	name1 = data.Name.ValueString()
-
-	request1 := operations.GetMeshRetryRequest{
-		Mesh: mesh1,
-		Name: name1,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res1, err := r.client.MeshRetry.GetMeshRetry(ctx, request1)
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	request1, request1Diags := data.ToOperationsGetMeshRetryRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.MeshRetry.GetMeshRetry(ctx, *request1)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res1 != nil && res1.RawResponse != nil {
@@ -726,8 +724,17 @@ func (r *MeshRetryResource) Create(ctx context.Context, req resource.CreateReque
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshRetryItem(res1.MeshRetryItem)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshRetryItem(ctx, res1.MeshRetryItem)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -751,17 +758,13 @@ func (r *MeshRetryResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
-	var mesh string
-	mesh = data.Mesh.ValueString()
+	request, requestDiags := data.ToOperationsGetMeshRetryRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	var name string
-	name = data.Name.ValueString()
-
-	request := operations.GetMeshRetryRequest{
-		Mesh: mesh,
-		Name: name,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.MeshRetry.GetMeshRetry(ctx, request)
+	res, err := r.client.MeshRetry.GetMeshRetry(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -785,7 +788,11 @@ func (r *MeshRetryResource) Read(ctx context.Context, req resource.ReadRequest, 
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshRetryItem(res.MeshRetryItem)
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshRetryItem(ctx, res.MeshRetryItem)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -805,19 +812,13 @@ func (r *MeshRetryResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
-	var mesh string
-	mesh = data.Mesh.ValueString()
+	request, requestDiags := data.ToOperationsUpdateMeshRetryRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	var name string
-	name = data.Name.ValueString()
-
-	meshRetryItem := *data.ToSharedMeshRetryItemInput()
-	request := operations.UpdateMeshRetryRequest{
-		Mesh:          mesh,
-		Name:          name,
-		MeshRetryItem: meshRetryItem,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.MeshRetry.UpdateMeshRetry(ctx, request)
+	res, err := r.client.MeshRetry.UpdateMeshRetry(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -837,19 +838,24 @@ func (r *MeshRetryResource) Update(ctx context.Context, req resource.UpdateReque
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshRetryCreateOrUpdateSuccessResponse(res.MeshRetryCreateOrUpdateSuccessResponse)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
-	var mesh1 string
-	mesh1 = data.Mesh.ValueString()
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshRetryCreateOrUpdateSuccessResponse(ctx, res.MeshRetryCreateOrUpdateSuccessResponse)...)
 
-	var name1 string
-	name1 = data.Name.ValueString()
-
-	request1 := operations.GetMeshRetryRequest{
-		Mesh: mesh1,
-		Name: name1,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res1, err := r.client.MeshRetry.GetMeshRetry(ctx, request1)
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	request1, request1Diags := data.ToOperationsGetMeshRetryRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.MeshRetry.GetMeshRetry(ctx, *request1)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res1 != nil && res1.RawResponse != nil {
@@ -869,8 +875,17 @@ func (r *MeshRetryResource) Update(ctx context.Context, req resource.UpdateReque
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshRetryItem(res1.MeshRetryItem)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshRetryItem(ctx, res1.MeshRetryItem)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -894,17 +909,13 @@ func (r *MeshRetryResource) Delete(ctx context.Context, req resource.DeleteReque
 		return
 	}
 
-	var mesh string
-	mesh = data.Mesh.ValueString()
+	request, requestDiags := data.ToOperationsDeleteMeshRetryRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	var name string
-	name = data.Name.ValueString()
-
-	request := operations.DeleteMeshRetryRequest{
-		Mesh: mesh,
-		Name: name,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.MeshRetry.DeleteMeshRetry(ctx, request)
+	res, err := r.client.MeshRetry.DeleteMeshRetry(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -932,7 +943,7 @@ func (r *MeshRetryResource) ImportState(ctx context.Context, req resource.Import
 	}
 
 	if err := dec.Decode(&data); err != nil {
-		resp.Diagnostics.AddError("Invalid ID", `The ID is not valid. It's expected to be a JSON object alike '{ "mesh": "",  "name": ""}': `+err.Error())
+		resp.Diagnostics.AddError("Invalid ID", `The import ID is not valid. It is expected to be a JSON object string with the format: '{ "mesh": "",  "name": ""}': `+err.Error())
 		return
 	}
 

@@ -22,7 +22,6 @@ import (
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
-	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/validators"
 	speakeasy_int32validators "github.com/kong/terraform-provider-kong-mesh/internal/validators/int32validators"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
@@ -471,19 +470,13 @@ func (r *MeshMetricResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 
-	var mesh string
-	mesh = data.Mesh.ValueString()
+	request, requestDiags := data.ToOperationsCreateMeshMetricRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	var name string
-	name = data.Name.ValueString()
-
-	meshMetricItem := *data.ToSharedMeshMetricItemInput()
-	request := operations.CreateMeshMetricRequest{
-		Mesh:           mesh,
-		Name:           name,
-		MeshMetricItem: meshMetricItem,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.MeshMetric.CreateMeshMetric(ctx, request)
+	res, err := r.client.MeshMetric.CreateMeshMetric(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -503,19 +496,24 @@ func (r *MeshMetricResource) Create(ctx context.Context, req resource.CreateRequ
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshMetricCreateOrUpdateSuccessResponse(res.MeshMetricCreateOrUpdateSuccessResponse)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
-	var mesh1 string
-	mesh1 = data.Mesh.ValueString()
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshMetricCreateOrUpdateSuccessResponse(ctx, res.MeshMetricCreateOrUpdateSuccessResponse)...)
 
-	var name1 string
-	name1 = data.Name.ValueString()
-
-	request1 := operations.GetMeshMetricRequest{
-		Mesh: mesh1,
-		Name: name1,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res1, err := r.client.MeshMetric.GetMeshMetric(ctx, request1)
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	request1, request1Diags := data.ToOperationsGetMeshMetricRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.MeshMetric.GetMeshMetric(ctx, *request1)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res1 != nil && res1.RawResponse != nil {
@@ -535,8 +533,17 @@ func (r *MeshMetricResource) Create(ctx context.Context, req resource.CreateRequ
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshMetricItem(res1.MeshMetricItem)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshMetricItem(ctx, res1.MeshMetricItem)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -560,17 +567,13 @@ func (r *MeshMetricResource) Read(ctx context.Context, req resource.ReadRequest,
 		return
 	}
 
-	var mesh string
-	mesh = data.Mesh.ValueString()
+	request, requestDiags := data.ToOperationsGetMeshMetricRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	var name string
-	name = data.Name.ValueString()
-
-	request := operations.GetMeshMetricRequest{
-		Mesh: mesh,
-		Name: name,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.MeshMetric.GetMeshMetric(ctx, request)
+	res, err := r.client.MeshMetric.GetMeshMetric(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -594,7 +597,11 @@ func (r *MeshMetricResource) Read(ctx context.Context, req resource.ReadRequest,
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshMetricItem(res.MeshMetricItem)
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshMetricItem(ctx, res.MeshMetricItem)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -614,19 +621,13 @@ func (r *MeshMetricResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 
-	var mesh string
-	mesh = data.Mesh.ValueString()
+	request, requestDiags := data.ToOperationsUpdateMeshMetricRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	var name string
-	name = data.Name.ValueString()
-
-	meshMetricItem := *data.ToSharedMeshMetricItemInput()
-	request := operations.UpdateMeshMetricRequest{
-		Mesh:           mesh,
-		Name:           name,
-		MeshMetricItem: meshMetricItem,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.MeshMetric.UpdateMeshMetric(ctx, request)
+	res, err := r.client.MeshMetric.UpdateMeshMetric(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -646,19 +647,24 @@ func (r *MeshMetricResource) Update(ctx context.Context, req resource.UpdateRequ
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshMetricCreateOrUpdateSuccessResponse(res.MeshMetricCreateOrUpdateSuccessResponse)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
-	var mesh1 string
-	mesh1 = data.Mesh.ValueString()
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshMetricCreateOrUpdateSuccessResponse(ctx, res.MeshMetricCreateOrUpdateSuccessResponse)...)
 
-	var name1 string
-	name1 = data.Name.ValueString()
-
-	request1 := operations.GetMeshMetricRequest{
-		Mesh: mesh1,
-		Name: name1,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res1, err := r.client.MeshMetric.GetMeshMetric(ctx, request1)
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	request1, request1Diags := data.ToOperationsGetMeshMetricRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.MeshMetric.GetMeshMetric(ctx, *request1)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res1 != nil && res1.RawResponse != nil {
@@ -678,8 +684,17 @@ func (r *MeshMetricResource) Update(ctx context.Context, req resource.UpdateRequ
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshMetricItem(res1.MeshMetricItem)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshMetricItem(ctx, res1.MeshMetricItem)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -703,17 +718,13 @@ func (r *MeshMetricResource) Delete(ctx context.Context, req resource.DeleteRequ
 		return
 	}
 
-	var mesh string
-	mesh = data.Mesh.ValueString()
+	request, requestDiags := data.ToOperationsDeleteMeshMetricRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	var name string
-	name = data.Name.ValueString()
-
-	request := operations.DeleteMeshMetricRequest{
-		Mesh: mesh,
-		Name: name,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.MeshMetric.DeleteMeshMetric(ctx, request)
+	res, err := r.client.MeshMetric.DeleteMeshMetric(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -741,7 +752,7 @@ func (r *MeshMetricResource) ImportState(ctx context.Context, req resource.Impor
 	}
 
 	if err := dec.Decode(&data); err != nil {
-		resp.Diagnostics.AddError("Invalid ID", `The ID is not valid. It's expected to be a JSON object alike '{ "mesh": "",  "name": ""}': `+err.Error())
+		resp.Diagnostics.AddError("Invalid ID", `The import ID is not valid. It is expected to be a JSON object string with the format: '{ "mesh": "",  "name": ""}': `+err.Error())
 		return
 	}
 

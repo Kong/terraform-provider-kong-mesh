@@ -3,20 +3,38 @@
 package provider
 
 import (
+	"context"
 	"encoding/json"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
-	"time"
 )
 
-func (r *MeshProxyPatchDataSourceModel) RefreshFromSharedMeshProxyPatchItem(resp *shared.MeshProxyPatchItem) {
+func (r *MeshProxyPatchDataSourceModel) ToOperationsGetMeshProxyPatchRequest(ctx context.Context) (*operations.GetMeshProxyPatchRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.GetMeshProxyPatchRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshProxyPatchDataSourceModel) RefreshFromSharedMeshProxyPatchItem(ctx context.Context, resp *shared.MeshProxyPatchItem) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
-		if resp.CreationTime != nil {
-			r.CreationTime = types.StringValue(resp.CreationTime.Format(time.RFC3339Nano))
-		} else {
-			r.CreationTime = types.StringNull()
-		}
+		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
 		if len(resp.Labels) > 0 {
 			r.Labels = make(map[string]types.String, len(resp.Labels))
 			for key, value := range resp.Labels {
@@ -24,217 +42,213 @@ func (r *MeshProxyPatchDataSourceModel) RefreshFromSharedMeshProxyPatchItem(resp
 			}
 		}
 		r.Mesh = types.StringPointerValue(resp.Mesh)
-		if resp.ModificationTime != nil {
-			r.ModificationTime = types.StringValue(resp.ModificationTime.Format(time.RFC3339Nano))
-		} else {
-			r.ModificationTime = types.StringNull()
-		}
+		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
 		r.Spec.Default.AppendModifications = []tfTypes.AppendModifications{}
 		if len(r.Spec.Default.AppendModifications) > len(resp.Spec.Default.AppendModifications) {
 			r.Spec.Default.AppendModifications = r.Spec.Default.AppendModifications[:len(resp.Spec.Default.AppendModifications)]
 		}
 		for appendModificationsCount, appendModificationsItem := range resp.Spec.Default.AppendModifications {
-			var appendModifications1 tfTypes.AppendModifications
+			var appendModifications tfTypes.AppendModifications
 			if appendModificationsItem.Cluster == nil {
-				appendModifications1.Cluster = nil
+				appendModifications.Cluster = nil
 			} else {
-				appendModifications1.Cluster = &tfTypes.Cluster{}
-				appendModifications1.Cluster.JSONPatches = []tfTypes.JSONPatches{}
+				appendModifications.Cluster = &tfTypes.Cluster{}
+				appendModifications.Cluster.JSONPatches = []tfTypes.JSONPatches{}
 				for jsonPatchesCount, jsonPatchesItem := range appendModificationsItem.Cluster.JSONPatches {
-					var jsonPatches1 tfTypes.JSONPatches
-					jsonPatches1.From = types.StringPointerValue(jsonPatchesItem.From)
-					jsonPatches1.Op = types.StringValue(string(jsonPatchesItem.Op))
-					jsonPatches1.Path = types.StringValue(jsonPatchesItem.Path)
+					var jsonPatches tfTypes.JSONPatches
+					jsonPatches.From = types.StringPointerValue(jsonPatchesItem.From)
+					jsonPatches.Op = types.StringValue(string(jsonPatchesItem.Op))
+					jsonPatches.Path = types.StringValue(jsonPatchesItem.Path)
 					if jsonPatchesItem.Value == nil {
-						jsonPatches1.Value = types.StringNull()
+						jsonPatches.Value = types.StringNull()
 					} else {
 						valueResult, _ := json.Marshal(jsonPatchesItem.Value)
-						jsonPatches1.Value = types.StringValue(string(valueResult))
+						jsonPatches.Value = types.StringValue(string(valueResult))
 					}
-					if jsonPatchesCount+1 > len(appendModifications1.Cluster.JSONPatches) {
-						appendModifications1.Cluster.JSONPatches = append(appendModifications1.Cluster.JSONPatches, jsonPatches1)
+					if jsonPatchesCount+1 > len(appendModifications.Cluster.JSONPatches) {
+						appendModifications.Cluster.JSONPatches = append(appendModifications.Cluster.JSONPatches, jsonPatches)
 					} else {
-						appendModifications1.Cluster.JSONPatches[jsonPatchesCount].From = jsonPatches1.From
-						appendModifications1.Cluster.JSONPatches[jsonPatchesCount].Op = jsonPatches1.Op
-						appendModifications1.Cluster.JSONPatches[jsonPatchesCount].Path = jsonPatches1.Path
-						appendModifications1.Cluster.JSONPatches[jsonPatchesCount].Value = jsonPatches1.Value
+						appendModifications.Cluster.JSONPatches[jsonPatchesCount].From = jsonPatches.From
+						appendModifications.Cluster.JSONPatches[jsonPatchesCount].Op = jsonPatches.Op
+						appendModifications.Cluster.JSONPatches[jsonPatchesCount].Path = jsonPatches.Path
+						appendModifications.Cluster.JSONPatches[jsonPatchesCount].Value = jsonPatches.Value
 					}
 				}
 				if appendModificationsItem.Cluster.Match == nil {
-					appendModifications1.Cluster.Match = nil
+					appendModifications.Cluster.Match = nil
 				} else {
-					appendModifications1.Cluster.Match = &tfTypes.MeshProxyPatchItemMatch{}
-					appendModifications1.Cluster.Match.Name = types.StringPointerValue(appendModificationsItem.Cluster.Match.Name)
-					appendModifications1.Cluster.Match.Origin = types.StringPointerValue(appendModificationsItem.Cluster.Match.Origin)
+					appendModifications.Cluster.Match = &tfTypes.MeshProxyPatchItemMatch{}
+					appendModifications.Cluster.Match.Name = types.StringPointerValue(appendModificationsItem.Cluster.Match.Name)
+					appendModifications.Cluster.Match.Origin = types.StringPointerValue(appendModificationsItem.Cluster.Match.Origin)
 				}
-				appendModifications1.Cluster.Operation = types.StringValue(string(appendModificationsItem.Cluster.Operation))
-				appendModifications1.Cluster.Value = types.StringPointerValue(appendModificationsItem.Cluster.Value)
+				appendModifications.Cluster.Operation = types.StringValue(string(appendModificationsItem.Cluster.Operation))
+				appendModifications.Cluster.Value = types.StringPointerValue(appendModificationsItem.Cluster.Value)
 			}
 			if appendModificationsItem.HTTPFilter == nil {
-				appendModifications1.HTTPFilter = nil
+				appendModifications.HTTPFilter = nil
 			} else {
-				appendModifications1.HTTPFilter = &tfTypes.HTTPFilter{}
-				appendModifications1.HTTPFilter.JSONPatches = []tfTypes.JSONPatches{}
+				appendModifications.HTTPFilter = &tfTypes.HTTPFilter{}
+				appendModifications.HTTPFilter.JSONPatches = []tfTypes.JSONPatches{}
 				for jsonPatchesCount1, jsonPatchesItem1 := range appendModificationsItem.HTTPFilter.JSONPatches {
-					var jsonPatches3 tfTypes.JSONPatches
-					jsonPatches3.From = types.StringPointerValue(jsonPatchesItem1.From)
-					jsonPatches3.Op = types.StringValue(string(jsonPatchesItem1.Op))
-					jsonPatches3.Path = types.StringValue(jsonPatchesItem1.Path)
+					var jsonPatches1 tfTypes.JSONPatches
+					jsonPatches1.From = types.StringPointerValue(jsonPatchesItem1.From)
+					jsonPatches1.Op = types.StringValue(string(jsonPatchesItem1.Op))
+					jsonPatches1.Path = types.StringValue(jsonPatchesItem1.Path)
 					if jsonPatchesItem1.Value == nil {
-						jsonPatches3.Value = types.StringNull()
+						jsonPatches1.Value = types.StringNull()
 					} else {
 						valueResult1, _ := json.Marshal(jsonPatchesItem1.Value)
-						jsonPatches3.Value = types.StringValue(string(valueResult1))
+						jsonPatches1.Value = types.StringValue(string(valueResult1))
 					}
-					if jsonPatchesCount1+1 > len(appendModifications1.HTTPFilter.JSONPatches) {
-						appendModifications1.HTTPFilter.JSONPatches = append(appendModifications1.HTTPFilter.JSONPatches, jsonPatches3)
+					if jsonPatchesCount1+1 > len(appendModifications.HTTPFilter.JSONPatches) {
+						appendModifications.HTTPFilter.JSONPatches = append(appendModifications.HTTPFilter.JSONPatches, jsonPatches1)
 					} else {
-						appendModifications1.HTTPFilter.JSONPatches[jsonPatchesCount1].From = jsonPatches3.From
-						appendModifications1.HTTPFilter.JSONPatches[jsonPatchesCount1].Op = jsonPatches3.Op
-						appendModifications1.HTTPFilter.JSONPatches[jsonPatchesCount1].Path = jsonPatches3.Path
-						appendModifications1.HTTPFilter.JSONPatches[jsonPatchesCount1].Value = jsonPatches3.Value
+						appendModifications.HTTPFilter.JSONPatches[jsonPatchesCount1].From = jsonPatches1.From
+						appendModifications.HTTPFilter.JSONPatches[jsonPatchesCount1].Op = jsonPatches1.Op
+						appendModifications.HTTPFilter.JSONPatches[jsonPatchesCount1].Path = jsonPatches1.Path
+						appendModifications.HTTPFilter.JSONPatches[jsonPatchesCount1].Value = jsonPatches1.Value
 					}
 				}
 				if appendModificationsItem.HTTPFilter.Match == nil {
-					appendModifications1.HTTPFilter.Match = nil
+					appendModifications.HTTPFilter.Match = nil
 				} else {
-					appendModifications1.HTTPFilter.Match = &tfTypes.MeshProxyPatchItemSpecMatch{}
-					appendModifications1.HTTPFilter.Match.ListenerName = types.StringPointerValue(appendModificationsItem.HTTPFilter.Match.ListenerName)
+					appendModifications.HTTPFilter.Match = &tfTypes.MeshProxyPatchItemSpecMatch{}
+					appendModifications.HTTPFilter.Match.ListenerName = types.StringPointerValue(appendModificationsItem.HTTPFilter.Match.ListenerName)
 					if len(appendModificationsItem.HTTPFilter.Match.ListenerTags) > 0 {
-						appendModifications1.HTTPFilter.Match.ListenerTags = make(map[string]types.String, len(appendModificationsItem.HTTPFilter.Match.ListenerTags))
-						for key1, value4 := range appendModificationsItem.HTTPFilter.Match.ListenerTags {
-							appendModifications1.HTTPFilter.Match.ListenerTags[key1] = types.StringValue(value4)
+						appendModifications.HTTPFilter.Match.ListenerTags = make(map[string]types.String, len(appendModificationsItem.HTTPFilter.Match.ListenerTags))
+						for key1, value1 := range appendModificationsItem.HTTPFilter.Match.ListenerTags {
+							appendModifications.HTTPFilter.Match.ListenerTags[key1] = types.StringValue(value1)
 						}
 					}
-					appendModifications1.HTTPFilter.Match.Name = types.StringPointerValue(appendModificationsItem.HTTPFilter.Match.Name)
-					appendModifications1.HTTPFilter.Match.Origin = types.StringPointerValue(appendModificationsItem.HTTPFilter.Match.Origin)
+					appendModifications.HTTPFilter.Match.Name = types.StringPointerValue(appendModificationsItem.HTTPFilter.Match.Name)
+					appendModifications.HTTPFilter.Match.Origin = types.StringPointerValue(appendModificationsItem.HTTPFilter.Match.Origin)
 				}
-				appendModifications1.HTTPFilter.Operation = types.StringValue(string(appendModificationsItem.HTTPFilter.Operation))
-				appendModifications1.HTTPFilter.Value = types.StringPointerValue(appendModificationsItem.HTTPFilter.Value)
+				appendModifications.HTTPFilter.Operation = types.StringValue(string(appendModificationsItem.HTTPFilter.Operation))
+				appendModifications.HTTPFilter.Value = types.StringPointerValue(appendModificationsItem.HTTPFilter.Value)
 			}
 			if appendModificationsItem.Listener == nil {
-				appendModifications1.Listener = nil
+				appendModifications.Listener = nil
 			} else {
-				appendModifications1.Listener = &tfTypes.Listener{}
-				appendModifications1.Listener.JSONPatches = []tfTypes.JSONPatches{}
+				appendModifications.Listener = &tfTypes.Listener{}
+				appendModifications.Listener.JSONPatches = []tfTypes.JSONPatches{}
 				for jsonPatchesCount2, jsonPatchesItem2 := range appendModificationsItem.Listener.JSONPatches {
-					var jsonPatches5 tfTypes.JSONPatches
-					jsonPatches5.From = types.StringPointerValue(jsonPatchesItem2.From)
-					jsonPatches5.Op = types.StringValue(string(jsonPatchesItem2.Op))
-					jsonPatches5.Path = types.StringValue(jsonPatchesItem2.Path)
+					var jsonPatches2 tfTypes.JSONPatches
+					jsonPatches2.From = types.StringPointerValue(jsonPatchesItem2.From)
+					jsonPatches2.Op = types.StringValue(string(jsonPatchesItem2.Op))
+					jsonPatches2.Path = types.StringValue(jsonPatchesItem2.Path)
 					if jsonPatchesItem2.Value == nil {
-						jsonPatches5.Value = types.StringNull()
+						jsonPatches2.Value = types.StringNull()
 					} else {
 						valueResult2, _ := json.Marshal(jsonPatchesItem2.Value)
-						jsonPatches5.Value = types.StringValue(string(valueResult2))
+						jsonPatches2.Value = types.StringValue(string(valueResult2))
 					}
-					if jsonPatchesCount2+1 > len(appendModifications1.Listener.JSONPatches) {
-						appendModifications1.Listener.JSONPatches = append(appendModifications1.Listener.JSONPatches, jsonPatches5)
+					if jsonPatchesCount2+1 > len(appendModifications.Listener.JSONPatches) {
+						appendModifications.Listener.JSONPatches = append(appendModifications.Listener.JSONPatches, jsonPatches2)
 					} else {
-						appendModifications1.Listener.JSONPatches[jsonPatchesCount2].From = jsonPatches5.From
-						appendModifications1.Listener.JSONPatches[jsonPatchesCount2].Op = jsonPatches5.Op
-						appendModifications1.Listener.JSONPatches[jsonPatchesCount2].Path = jsonPatches5.Path
-						appendModifications1.Listener.JSONPatches[jsonPatchesCount2].Value = jsonPatches5.Value
+						appendModifications.Listener.JSONPatches[jsonPatchesCount2].From = jsonPatches2.From
+						appendModifications.Listener.JSONPatches[jsonPatchesCount2].Op = jsonPatches2.Op
+						appendModifications.Listener.JSONPatches[jsonPatchesCount2].Path = jsonPatches2.Path
+						appendModifications.Listener.JSONPatches[jsonPatchesCount2].Value = jsonPatches2.Value
 					}
 				}
 				if appendModificationsItem.Listener.Match == nil {
-					appendModifications1.Listener.Match = nil
+					appendModifications.Listener.Match = nil
 				} else {
-					appendModifications1.Listener.Match = &tfTypes.MeshProxyPatchItemSpecDefaultMatch{}
-					appendModifications1.Listener.Match.Name = types.StringPointerValue(appendModificationsItem.Listener.Match.Name)
-					appendModifications1.Listener.Match.Origin = types.StringPointerValue(appendModificationsItem.Listener.Match.Origin)
+					appendModifications.Listener.Match = &tfTypes.MeshProxyPatchItemSpecDefaultMatch{}
+					appendModifications.Listener.Match.Name = types.StringPointerValue(appendModificationsItem.Listener.Match.Name)
+					appendModifications.Listener.Match.Origin = types.StringPointerValue(appendModificationsItem.Listener.Match.Origin)
 					if len(appendModificationsItem.Listener.Match.Tags) > 0 {
-						appendModifications1.Listener.Match.Tags = make(map[string]types.String, len(appendModificationsItem.Listener.Match.Tags))
-						for key2, value7 := range appendModificationsItem.Listener.Match.Tags {
-							appendModifications1.Listener.Match.Tags[key2] = types.StringValue(value7)
+						appendModifications.Listener.Match.Tags = make(map[string]types.String, len(appendModificationsItem.Listener.Match.Tags))
+						for key2, value2 := range appendModificationsItem.Listener.Match.Tags {
+							appendModifications.Listener.Match.Tags[key2] = types.StringValue(value2)
 						}
 					}
 				}
-				appendModifications1.Listener.Operation = types.StringValue(string(appendModificationsItem.Listener.Operation))
-				appendModifications1.Listener.Value = types.StringPointerValue(appendModificationsItem.Listener.Value)
+				appendModifications.Listener.Operation = types.StringValue(string(appendModificationsItem.Listener.Operation))
+				appendModifications.Listener.Value = types.StringPointerValue(appendModificationsItem.Listener.Value)
 			}
 			if appendModificationsItem.NetworkFilter == nil {
-				appendModifications1.NetworkFilter = nil
+				appendModifications.NetworkFilter = nil
 			} else {
-				appendModifications1.NetworkFilter = &tfTypes.HTTPFilter{}
-				appendModifications1.NetworkFilter.JSONPatches = []tfTypes.JSONPatches{}
+				appendModifications.NetworkFilter = &tfTypes.HTTPFilter{}
+				appendModifications.NetworkFilter.JSONPatches = []tfTypes.JSONPatches{}
 				for jsonPatchesCount3, jsonPatchesItem3 := range appendModificationsItem.NetworkFilter.JSONPatches {
-					var jsonPatches7 tfTypes.JSONPatches
-					jsonPatches7.From = types.StringPointerValue(jsonPatchesItem3.From)
-					jsonPatches7.Op = types.StringValue(string(jsonPatchesItem3.Op))
-					jsonPatches7.Path = types.StringValue(jsonPatchesItem3.Path)
+					var jsonPatches3 tfTypes.JSONPatches
+					jsonPatches3.From = types.StringPointerValue(jsonPatchesItem3.From)
+					jsonPatches3.Op = types.StringValue(string(jsonPatchesItem3.Op))
+					jsonPatches3.Path = types.StringValue(jsonPatchesItem3.Path)
 					if jsonPatchesItem3.Value == nil {
-						jsonPatches7.Value = types.StringNull()
+						jsonPatches3.Value = types.StringNull()
 					} else {
 						valueResult3, _ := json.Marshal(jsonPatchesItem3.Value)
-						jsonPatches7.Value = types.StringValue(string(valueResult3))
+						jsonPatches3.Value = types.StringValue(string(valueResult3))
 					}
-					if jsonPatchesCount3+1 > len(appendModifications1.NetworkFilter.JSONPatches) {
-						appendModifications1.NetworkFilter.JSONPatches = append(appendModifications1.NetworkFilter.JSONPatches, jsonPatches7)
+					if jsonPatchesCount3+1 > len(appendModifications.NetworkFilter.JSONPatches) {
+						appendModifications.NetworkFilter.JSONPatches = append(appendModifications.NetworkFilter.JSONPatches, jsonPatches3)
 					} else {
-						appendModifications1.NetworkFilter.JSONPatches[jsonPatchesCount3].From = jsonPatches7.From
-						appendModifications1.NetworkFilter.JSONPatches[jsonPatchesCount3].Op = jsonPatches7.Op
-						appendModifications1.NetworkFilter.JSONPatches[jsonPatchesCount3].Path = jsonPatches7.Path
-						appendModifications1.NetworkFilter.JSONPatches[jsonPatchesCount3].Value = jsonPatches7.Value
+						appendModifications.NetworkFilter.JSONPatches[jsonPatchesCount3].From = jsonPatches3.From
+						appendModifications.NetworkFilter.JSONPatches[jsonPatchesCount3].Op = jsonPatches3.Op
+						appendModifications.NetworkFilter.JSONPatches[jsonPatchesCount3].Path = jsonPatches3.Path
+						appendModifications.NetworkFilter.JSONPatches[jsonPatchesCount3].Value = jsonPatches3.Value
 					}
 				}
 				if appendModificationsItem.NetworkFilter.Match == nil {
-					appendModifications1.NetworkFilter.Match = nil
+					appendModifications.NetworkFilter.Match = nil
 				} else {
-					appendModifications1.NetworkFilter.Match = &tfTypes.MeshProxyPatchItemSpecMatch{}
-					appendModifications1.NetworkFilter.Match.ListenerName = types.StringPointerValue(appendModificationsItem.NetworkFilter.Match.ListenerName)
+					appendModifications.NetworkFilter.Match = &tfTypes.MeshProxyPatchItemSpecMatch{}
+					appendModifications.NetworkFilter.Match.ListenerName = types.StringPointerValue(appendModificationsItem.NetworkFilter.Match.ListenerName)
 					if len(appendModificationsItem.NetworkFilter.Match.ListenerTags) > 0 {
-						appendModifications1.NetworkFilter.Match.ListenerTags = make(map[string]types.String, len(appendModificationsItem.NetworkFilter.Match.ListenerTags))
-						for key3, value10 := range appendModificationsItem.NetworkFilter.Match.ListenerTags {
-							appendModifications1.NetworkFilter.Match.ListenerTags[key3] = types.StringValue(value10)
+						appendModifications.NetworkFilter.Match.ListenerTags = make(map[string]types.String, len(appendModificationsItem.NetworkFilter.Match.ListenerTags))
+						for key3, value3 := range appendModificationsItem.NetworkFilter.Match.ListenerTags {
+							appendModifications.NetworkFilter.Match.ListenerTags[key3] = types.StringValue(value3)
 						}
 					}
-					appendModifications1.NetworkFilter.Match.Name = types.StringPointerValue(appendModificationsItem.NetworkFilter.Match.Name)
-					appendModifications1.NetworkFilter.Match.Origin = types.StringPointerValue(appendModificationsItem.NetworkFilter.Match.Origin)
+					appendModifications.NetworkFilter.Match.Name = types.StringPointerValue(appendModificationsItem.NetworkFilter.Match.Name)
+					appendModifications.NetworkFilter.Match.Origin = types.StringPointerValue(appendModificationsItem.NetworkFilter.Match.Origin)
 				}
-				appendModifications1.NetworkFilter.Operation = types.StringValue(string(appendModificationsItem.NetworkFilter.Operation))
-				appendModifications1.NetworkFilter.Value = types.StringPointerValue(appendModificationsItem.NetworkFilter.Value)
+				appendModifications.NetworkFilter.Operation = types.StringValue(string(appendModificationsItem.NetworkFilter.Operation))
+				appendModifications.NetworkFilter.Value = types.StringPointerValue(appendModificationsItem.NetworkFilter.Value)
 			}
 			if appendModificationsItem.VirtualHost == nil {
-				appendModifications1.VirtualHost = nil
+				appendModifications.VirtualHost = nil
 			} else {
-				appendModifications1.VirtualHost = &tfTypes.VirtualHost{}
-				appendModifications1.VirtualHost.JSONPatches = []tfTypes.JSONPatches{}
+				appendModifications.VirtualHost = &tfTypes.VirtualHost{}
+				appendModifications.VirtualHost.JSONPatches = []tfTypes.JSONPatches{}
 				for jsonPatchesCount4, jsonPatchesItem4 := range appendModificationsItem.VirtualHost.JSONPatches {
-					var jsonPatches9 tfTypes.JSONPatches
-					jsonPatches9.From = types.StringPointerValue(jsonPatchesItem4.From)
-					jsonPatches9.Op = types.StringValue(string(jsonPatchesItem4.Op))
-					jsonPatches9.Path = types.StringValue(jsonPatchesItem4.Path)
+					var jsonPatches4 tfTypes.JSONPatches
+					jsonPatches4.From = types.StringPointerValue(jsonPatchesItem4.From)
+					jsonPatches4.Op = types.StringValue(string(jsonPatchesItem4.Op))
+					jsonPatches4.Path = types.StringValue(jsonPatchesItem4.Path)
 					if jsonPatchesItem4.Value == nil {
-						jsonPatches9.Value = types.StringNull()
+						jsonPatches4.Value = types.StringNull()
 					} else {
 						valueResult4, _ := json.Marshal(jsonPatchesItem4.Value)
-						jsonPatches9.Value = types.StringValue(string(valueResult4))
+						jsonPatches4.Value = types.StringValue(string(valueResult4))
 					}
-					if jsonPatchesCount4+1 > len(appendModifications1.VirtualHost.JSONPatches) {
-						appendModifications1.VirtualHost.JSONPatches = append(appendModifications1.VirtualHost.JSONPatches, jsonPatches9)
+					if jsonPatchesCount4+1 > len(appendModifications.VirtualHost.JSONPatches) {
+						appendModifications.VirtualHost.JSONPatches = append(appendModifications.VirtualHost.JSONPatches, jsonPatches4)
 					} else {
-						appendModifications1.VirtualHost.JSONPatches[jsonPatchesCount4].From = jsonPatches9.From
-						appendModifications1.VirtualHost.JSONPatches[jsonPatchesCount4].Op = jsonPatches9.Op
-						appendModifications1.VirtualHost.JSONPatches[jsonPatchesCount4].Path = jsonPatches9.Path
-						appendModifications1.VirtualHost.JSONPatches[jsonPatchesCount4].Value = jsonPatches9.Value
+						appendModifications.VirtualHost.JSONPatches[jsonPatchesCount4].From = jsonPatches4.From
+						appendModifications.VirtualHost.JSONPatches[jsonPatchesCount4].Op = jsonPatches4.Op
+						appendModifications.VirtualHost.JSONPatches[jsonPatchesCount4].Path = jsonPatches4.Path
+						appendModifications.VirtualHost.JSONPatches[jsonPatchesCount4].Value = jsonPatches4.Value
 					}
 				}
-				appendModifications1.VirtualHost.Match.Name = types.StringPointerValue(appendModificationsItem.VirtualHost.Match.Name)
-				appendModifications1.VirtualHost.Match.Origin = types.StringPointerValue(appendModificationsItem.VirtualHost.Match.Origin)
-				appendModifications1.VirtualHost.Match.RouteConfigurationName = types.StringPointerValue(appendModificationsItem.VirtualHost.Match.RouteConfigurationName)
-				appendModifications1.VirtualHost.Operation = types.StringValue(string(appendModificationsItem.VirtualHost.Operation))
-				appendModifications1.VirtualHost.Value = types.StringPointerValue(appendModificationsItem.VirtualHost.Value)
+				appendModifications.VirtualHost.Match.Name = types.StringPointerValue(appendModificationsItem.VirtualHost.Match.Name)
+				appendModifications.VirtualHost.Match.Origin = types.StringPointerValue(appendModificationsItem.VirtualHost.Match.Origin)
+				appendModifications.VirtualHost.Match.RouteConfigurationName = types.StringPointerValue(appendModificationsItem.VirtualHost.Match.RouteConfigurationName)
+				appendModifications.VirtualHost.Operation = types.StringValue(string(appendModificationsItem.VirtualHost.Operation))
+				appendModifications.VirtualHost.Value = types.StringPointerValue(appendModificationsItem.VirtualHost.Value)
 			}
 			if appendModificationsCount+1 > len(r.Spec.Default.AppendModifications) {
-				r.Spec.Default.AppendModifications = append(r.Spec.Default.AppendModifications, appendModifications1)
+				r.Spec.Default.AppendModifications = append(r.Spec.Default.AppendModifications, appendModifications)
 			} else {
-				r.Spec.Default.AppendModifications[appendModificationsCount].Cluster = appendModifications1.Cluster
-				r.Spec.Default.AppendModifications[appendModificationsCount].HTTPFilter = appendModifications1.HTTPFilter
-				r.Spec.Default.AppendModifications[appendModificationsCount].Listener = appendModifications1.Listener
-				r.Spec.Default.AppendModifications[appendModificationsCount].NetworkFilter = appendModifications1.NetworkFilter
-				r.Spec.Default.AppendModifications[appendModificationsCount].VirtualHost = appendModifications1.VirtualHost
+				r.Spec.Default.AppendModifications[appendModificationsCount].Cluster = appendModifications.Cluster
+				r.Spec.Default.AppendModifications[appendModificationsCount].HTTPFilter = appendModifications.HTTPFilter
+				r.Spec.Default.AppendModifications[appendModificationsCount].Listener = appendModifications.Listener
+				r.Spec.Default.AppendModifications[appendModificationsCount].NetworkFilter = appendModifications.NetworkFilter
+				r.Spec.Default.AppendModifications[appendModificationsCount].VirtualHost = appendModifications.VirtualHost
 			}
 		}
 		if resp.Spec.TargetRef == nil {
@@ -244,8 +258,8 @@ func (r *MeshProxyPatchDataSourceModel) RefreshFromSharedMeshProxyPatchItem(resp
 			r.Spec.TargetRef.Kind = types.StringValue(string(resp.Spec.TargetRef.Kind))
 			if len(resp.Spec.TargetRef.Labels) > 0 {
 				r.Spec.TargetRef.Labels = make(map[string]types.String, len(resp.Spec.TargetRef.Labels))
-				for key4, value14 := range resp.Spec.TargetRef.Labels {
-					r.Spec.TargetRef.Labels[key4] = types.StringValue(value14)
+				for key4, value4 := range resp.Spec.TargetRef.Labels {
+					r.Spec.TargetRef.Labels[key4] = types.StringValue(value4)
 				}
 			}
 			r.Spec.TargetRef.Mesh = types.StringPointerValue(resp.Spec.TargetRef.Mesh)
@@ -258,11 +272,13 @@ func (r *MeshProxyPatchDataSourceModel) RefreshFromSharedMeshProxyPatchItem(resp
 			r.Spec.TargetRef.SectionName = types.StringPointerValue(resp.Spec.TargetRef.SectionName)
 			if len(resp.Spec.TargetRef.Tags) > 0 {
 				r.Spec.TargetRef.Tags = make(map[string]types.String, len(resp.Spec.TargetRef.Tags))
-				for key5, value15 := range resp.Spec.TargetRef.Tags {
-					r.Spec.TargetRef.Tags[key5] = types.StringValue(value15)
+				for key5, value5 := range resp.Spec.TargetRef.Tags {
+					r.Spec.TargetRef.Tags[key5] = types.StringValue(value5)
 				}
 			}
 		}
 		r.Type = types.StringValue(string(resp.Type))
 	}
+
+	return diags
 }

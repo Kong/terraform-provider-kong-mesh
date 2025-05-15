@@ -3,13 +3,18 @@
 package provider
 
 import (
+	"context"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
-	"time"
 )
 
-func (r *MeshMetricResourceModel) ToSharedMeshMetricItemInput() *shared.MeshMetricItemInput {
+func (r *MeshMetricResourceModel) ToSharedMeshMetricItemInput(ctx context.Context) (*shared.MeshMetricItemInput, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
 	typeVar := shared.MeshMetricItemType(r.Type.ValueString())
 	mesh := new(string)
 	if !r.Mesh.IsUnknown() && !r.Mesh.IsNull() {
@@ -29,7 +34,7 @@ func (r *MeshMetricResourceModel) ToSharedMeshMetricItemInput() *shared.MeshMetr
 	}
 	var defaultVar *shared.Default
 	if r.Spec.Default != nil {
-		var applications []shared.Applications = []shared.Applications{}
+		applications := make([]shared.Applications, 0, len(r.Spec.Default.Applications))
 		for _, applicationsItem := range r.Spec.Default.Applications {
 			address := new(string)
 			if !applicationsItem.Address.IsUnknown() && !applicationsItem.Address.IsNull() {
@@ -59,7 +64,7 @@ func (r *MeshMetricResourceModel) ToSharedMeshMetricItemInput() *shared.MeshMetr
 				Port:    port,
 			})
 		}
-		var backends []shared.MeshMetricItemBackends = []shared.MeshMetricItemBackends{}
+		backends := make([]shared.MeshMetricItemBackends, 0, len(r.Spec.Default.Backends))
 		for _, backendsItem := range r.Spec.Default.Backends {
 			var openTelemetry *shared.OpenTelemetry
 			if backendsItem.OpenTelemetry != nil {
@@ -133,14 +138,14 @@ func (r *MeshMetricResourceModel) ToSharedMeshMetricItemInput() *shared.MeshMetr
 			}
 			var profiles *shared.Profiles
 			if r.Spec.Default.Sidecar.Profiles != nil {
-				var appendProfiles []shared.AppendProfiles = []shared.AppendProfiles{}
+				appendProfiles := make([]shared.AppendProfiles, 0, len(r.Spec.Default.Sidecar.Profiles.AppendProfiles))
 				for _, appendProfilesItem := range r.Spec.Default.Sidecar.Profiles.AppendProfiles {
 					name2 := shared.Name(appendProfilesItem.Name.ValueString())
 					appendProfiles = append(appendProfiles, shared.AppendProfiles{
 						Name: name2,
 					})
 				}
-				var exclude []shared.Exclude = []shared.Exclude{}
+				exclude := make([]shared.Exclude, 0, len(r.Spec.Default.Sidecar.Profiles.Exclude))
 				for _, excludeItem := range r.Spec.Default.Sidecar.Profiles.Exclude {
 					var match string
 					match = excludeItem.Match.ValueString()
@@ -151,7 +156,7 @@ func (r *MeshMetricResourceModel) ToSharedMeshMetricItemInput() *shared.MeshMetr
 						Type:  type2,
 					})
 				}
-				var include []shared.Include = []shared.Include{}
+				include := make([]shared.Include, 0, len(r.Spec.Default.Sidecar.Profiles.Include))
 				for _, includeItem := range r.Spec.Default.Sidecar.Profiles.Include {
 					var match1 string
 					match1 = includeItem.Match.ValueString()
@@ -207,7 +212,7 @@ func (r *MeshMetricResourceModel) ToSharedMeshMetricItemInput() *shared.MeshMetr
 		} else {
 			namespace = nil
 		}
-		var proxyTypes []shared.MeshMetricItemProxyTypes = []shared.MeshMetricItemProxyTypes{}
+		proxyTypes := make([]shared.MeshMetricItemProxyTypes, 0, len(r.Spec.TargetRef.ProxyTypes))
 		for _, proxyTypesItem := range r.Spec.TargetRef.ProxyTypes {
 			proxyTypes = append(proxyTypes, shared.MeshMetricItemProxyTypes(proxyTypesItem.ValueString()))
 		}
@@ -246,25 +251,112 @@ func (r *MeshMetricResourceModel) ToSharedMeshMetricItemInput() *shared.MeshMetr
 		Labels: labels,
 		Spec:   spec,
 	}
-	return &out
+
+	return &out, diags
 }
 
-func (r *MeshMetricResourceModel) RefreshFromSharedMeshMetricCreateOrUpdateSuccessResponse(resp *shared.MeshMetricCreateOrUpdateSuccessResponse) {
+func (r *MeshMetricResourceModel) ToOperationsCreateMeshMetricRequest(ctx context.Context) (*operations.CreateMeshMetricRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	meshMetricItem, meshMetricItemDiags := r.ToSharedMeshMetricItemInput(ctx)
+	diags.Append(meshMetricItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.CreateMeshMetricRequest{
+		Mesh:           mesh,
+		Name:           name,
+		MeshMetricItem: *meshMetricItem,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshMetricResourceModel) ToOperationsUpdateMeshMetricRequest(ctx context.Context) (*operations.UpdateMeshMetricRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	meshMetricItem, meshMetricItemDiags := r.ToSharedMeshMetricItemInput(ctx)
+	diags.Append(meshMetricItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.UpdateMeshMetricRequest{
+		Mesh:           mesh,
+		Name:           name,
+		MeshMetricItem: *meshMetricItem,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshMetricResourceModel) ToOperationsGetMeshMetricRequest(ctx context.Context) (*operations.GetMeshMetricRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.GetMeshMetricRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshMetricResourceModel) ToOperationsDeleteMeshMetricRequest(ctx context.Context) (*operations.DeleteMeshMetricRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.DeleteMeshMetricRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshMetricResourceModel) RefreshFromSharedMeshMetricCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.MeshMetricCreateOrUpdateSuccessResponse) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
 		r.Warnings = make([]types.String, 0, len(resp.Warnings))
 		for _, v := range resp.Warnings {
 			r.Warnings = append(r.Warnings, types.StringValue(v))
 		}
 	}
+
+	return diags
 }
 
-func (r *MeshMetricResourceModel) RefreshFromSharedMeshMetricItem(resp *shared.MeshMetricItem) {
+func (r *MeshMetricResourceModel) RefreshFromSharedMeshMetricItem(ctx context.Context, resp *shared.MeshMetricItem) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
-		if resp.CreationTime != nil {
-			r.CreationTime = types.StringValue(resp.CreationTime.Format(time.RFC3339Nano))
-		} else {
-			r.CreationTime = types.StringNull()
-		}
+		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
 		if len(resp.Labels) > 0 {
 			r.Labels = make(map[string]types.String, len(resp.Labels))
 			for key, value := range resp.Labels {
@@ -272,11 +364,7 @@ func (r *MeshMetricResourceModel) RefreshFromSharedMeshMetricItem(resp *shared.M
 			}
 		}
 		r.Mesh = types.StringPointerValue(resp.Mesh)
-		if resp.ModificationTime != nil {
-			r.ModificationTime = types.StringValue(resp.ModificationTime.Format(time.RFC3339Nano))
-		} else {
-			r.ModificationTime = types.StringNull()
-		}
+		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
 		if resp.Spec.Default == nil {
 			r.Spec.Default = nil
@@ -287,18 +375,18 @@ func (r *MeshMetricResourceModel) RefreshFromSharedMeshMetricItem(resp *shared.M
 				r.Spec.Default.Applications = r.Spec.Default.Applications[:len(resp.Spec.Default.Applications)]
 			}
 			for applicationsCount, applicationsItem := range resp.Spec.Default.Applications {
-				var applications1 tfTypes.Applications
-				applications1.Address = types.StringPointerValue(applicationsItem.Address)
-				applications1.Name = types.StringPointerValue(applicationsItem.Name)
-				applications1.Path = types.StringPointerValue(applicationsItem.Path)
-				applications1.Port = types.Int32Value(int32(applicationsItem.Port))
+				var applications tfTypes.Applications
+				applications.Address = types.StringPointerValue(applicationsItem.Address)
+				applications.Name = types.StringPointerValue(applicationsItem.Name)
+				applications.Path = types.StringPointerValue(applicationsItem.Path)
+				applications.Port = types.Int32Value(int32(applicationsItem.Port))
 				if applicationsCount+1 > len(r.Spec.Default.Applications) {
-					r.Spec.Default.Applications = append(r.Spec.Default.Applications, applications1)
+					r.Spec.Default.Applications = append(r.Spec.Default.Applications, applications)
 				} else {
-					r.Spec.Default.Applications[applicationsCount].Address = applications1.Address
-					r.Spec.Default.Applications[applicationsCount].Name = applications1.Name
-					r.Spec.Default.Applications[applicationsCount].Path = applications1.Path
-					r.Spec.Default.Applications[applicationsCount].Port = applications1.Port
+					r.Spec.Default.Applications[applicationsCount].Address = applications.Address
+					r.Spec.Default.Applications[applicationsCount].Name = applications.Name
+					r.Spec.Default.Applications[applicationsCount].Path = applications.Path
+					r.Spec.Default.Applications[applicationsCount].Port = applications.Port
 				}
 			}
 			r.Spec.Default.Backends = []tfTypes.MeshMetricItemBackends{}
@@ -306,43 +394,39 @@ func (r *MeshMetricResourceModel) RefreshFromSharedMeshMetricItem(resp *shared.M
 				r.Spec.Default.Backends = r.Spec.Default.Backends[:len(resp.Spec.Default.Backends)]
 			}
 			for backendsCount, backendsItem := range resp.Spec.Default.Backends {
-				var backends1 tfTypes.MeshMetricItemBackends
+				var backends tfTypes.MeshMetricItemBackends
 				if backendsItem.OpenTelemetry == nil {
-					backends1.OpenTelemetry = nil
+					backends.OpenTelemetry = nil
 				} else {
-					backends1.OpenTelemetry = &tfTypes.OpenTelemetry{}
-					backends1.OpenTelemetry.Endpoint = types.StringValue(backendsItem.OpenTelemetry.Endpoint)
-					backends1.OpenTelemetry.RefreshInterval = types.StringPointerValue(backendsItem.OpenTelemetry.RefreshInterval)
+					backends.OpenTelemetry = &tfTypes.OpenTelemetry{}
+					backends.OpenTelemetry.Endpoint = types.StringValue(backendsItem.OpenTelemetry.Endpoint)
+					backends.OpenTelemetry.RefreshInterval = types.StringPointerValue(backendsItem.OpenTelemetry.RefreshInterval)
 				}
 				if backendsItem.Prometheus == nil {
-					backends1.Prometheus = nil
+					backends.Prometheus = nil
 				} else {
-					backends1.Prometheus = &tfTypes.Prometheus{}
-					backends1.Prometheus.ClientID = types.StringPointerValue(backendsItem.Prometheus.ClientID)
-					backends1.Prometheus.Path = types.StringPointerValue(backendsItem.Prometheus.Path)
-					if backendsItem.Prometheus.Port != nil {
-						backends1.Prometheus.Port = types.Int32Value(int32(*backendsItem.Prometheus.Port))
-					} else {
-						backends1.Prometheus.Port = types.Int32Null()
-					}
+					backends.Prometheus = &tfTypes.Prometheus{}
+					backends.Prometheus.ClientID = types.StringPointerValue(backendsItem.Prometheus.ClientID)
+					backends.Prometheus.Path = types.StringPointerValue(backendsItem.Prometheus.Path)
+					backends.Prometheus.Port = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(backendsItem.Prometheus.Port))
 					if backendsItem.Prometheus.TLS == nil {
-						backends1.Prometheus.TLS = nil
+						backends.Prometheus.TLS = nil
 					} else {
-						backends1.Prometheus.TLS = &tfTypes.MeshMetricItemTLS{}
+						backends.Prometheus.TLS = &tfTypes.MeshMetricItemTLS{}
 						if backendsItem.Prometheus.TLS.Mode != nil {
-							backends1.Prometheus.TLS.Mode = types.StringValue(string(*backendsItem.Prometheus.TLS.Mode))
+							backends.Prometheus.TLS.Mode = types.StringValue(string(*backendsItem.Prometheus.TLS.Mode))
 						} else {
-							backends1.Prometheus.TLS.Mode = types.StringNull()
+							backends.Prometheus.TLS.Mode = types.StringNull()
 						}
 					}
 				}
-				backends1.Type = types.StringValue(string(backendsItem.Type))
+				backends.Type = types.StringValue(string(backendsItem.Type))
 				if backendsCount+1 > len(r.Spec.Default.Backends) {
-					r.Spec.Default.Backends = append(r.Spec.Default.Backends, backends1)
+					r.Spec.Default.Backends = append(r.Spec.Default.Backends, backends)
 				} else {
-					r.Spec.Default.Backends[backendsCount].OpenTelemetry = backends1.OpenTelemetry
-					r.Spec.Default.Backends[backendsCount].Prometheus = backends1.Prometheus
-					r.Spec.Default.Backends[backendsCount].Type = backends1.Type
+					r.Spec.Default.Backends[backendsCount].OpenTelemetry = backends.OpenTelemetry
+					r.Spec.Default.Backends[backendsCount].Prometheus = backends.Prometheus
+					r.Spec.Default.Backends[backendsCount].Type = backends.Type
 				}
 			}
 			if resp.Spec.Default.Sidecar == nil {
@@ -359,12 +443,12 @@ func (r *MeshMetricResourceModel) RefreshFromSharedMeshMetricItem(resp *shared.M
 						r.Spec.Default.Sidecar.Profiles.AppendProfiles = r.Spec.Default.Sidecar.Profiles.AppendProfiles[:len(resp.Spec.Default.Sidecar.Profiles.AppendProfiles)]
 					}
 					for appendProfilesCount, appendProfilesItem := range resp.Spec.Default.Sidecar.Profiles.AppendProfiles {
-						var appendProfiles1 tfTypes.MeshLoadBalancingStrategyItemSpecHeader
-						appendProfiles1.Name = types.StringValue(string(appendProfilesItem.Name))
+						var appendProfiles tfTypes.MeshLoadBalancingStrategyItemSpecHeader
+						appendProfiles.Name = types.StringValue(string(appendProfilesItem.Name))
 						if appendProfilesCount+1 > len(r.Spec.Default.Sidecar.Profiles.AppendProfiles) {
-							r.Spec.Default.Sidecar.Profiles.AppendProfiles = append(r.Spec.Default.Sidecar.Profiles.AppendProfiles, appendProfiles1)
+							r.Spec.Default.Sidecar.Profiles.AppendProfiles = append(r.Spec.Default.Sidecar.Profiles.AppendProfiles, appendProfiles)
 						} else {
-							r.Spec.Default.Sidecar.Profiles.AppendProfiles[appendProfilesCount].Name = appendProfiles1.Name
+							r.Spec.Default.Sidecar.Profiles.AppendProfiles[appendProfilesCount].Name = appendProfiles.Name
 						}
 					}
 					r.Spec.Default.Sidecar.Profiles.Exclude = []tfTypes.Exclude{}
@@ -372,14 +456,14 @@ func (r *MeshMetricResourceModel) RefreshFromSharedMeshMetricItem(resp *shared.M
 						r.Spec.Default.Sidecar.Profiles.Exclude = r.Spec.Default.Sidecar.Profiles.Exclude[:len(resp.Spec.Default.Sidecar.Profiles.Exclude)]
 					}
 					for excludeCount, excludeItem := range resp.Spec.Default.Sidecar.Profiles.Exclude {
-						var exclude1 tfTypes.Exclude
-						exclude1.Match = types.StringValue(excludeItem.Match)
-						exclude1.Type = types.StringValue(string(excludeItem.Type))
+						var exclude tfTypes.Exclude
+						exclude.Match = types.StringValue(excludeItem.Match)
+						exclude.Type = types.StringValue(string(excludeItem.Type))
 						if excludeCount+1 > len(r.Spec.Default.Sidecar.Profiles.Exclude) {
-							r.Spec.Default.Sidecar.Profiles.Exclude = append(r.Spec.Default.Sidecar.Profiles.Exclude, exclude1)
+							r.Spec.Default.Sidecar.Profiles.Exclude = append(r.Spec.Default.Sidecar.Profiles.Exclude, exclude)
 						} else {
-							r.Spec.Default.Sidecar.Profiles.Exclude[excludeCount].Match = exclude1.Match
-							r.Spec.Default.Sidecar.Profiles.Exclude[excludeCount].Type = exclude1.Type
+							r.Spec.Default.Sidecar.Profiles.Exclude[excludeCount].Match = exclude.Match
+							r.Spec.Default.Sidecar.Profiles.Exclude[excludeCount].Type = exclude.Type
 						}
 					}
 					r.Spec.Default.Sidecar.Profiles.Include = []tfTypes.Exclude{}
@@ -387,14 +471,14 @@ func (r *MeshMetricResourceModel) RefreshFromSharedMeshMetricItem(resp *shared.M
 						r.Spec.Default.Sidecar.Profiles.Include = r.Spec.Default.Sidecar.Profiles.Include[:len(resp.Spec.Default.Sidecar.Profiles.Include)]
 					}
 					for includeCount, includeItem := range resp.Spec.Default.Sidecar.Profiles.Include {
-						var include1 tfTypes.Exclude
-						include1.Match = types.StringValue(includeItem.Match)
-						include1.Type = types.StringValue(string(includeItem.Type))
+						var include tfTypes.Exclude
+						include.Match = types.StringValue(includeItem.Match)
+						include.Type = types.StringValue(string(includeItem.Type))
 						if includeCount+1 > len(r.Spec.Default.Sidecar.Profiles.Include) {
-							r.Spec.Default.Sidecar.Profiles.Include = append(r.Spec.Default.Sidecar.Profiles.Include, include1)
+							r.Spec.Default.Sidecar.Profiles.Include = append(r.Spec.Default.Sidecar.Profiles.Include, include)
 						} else {
-							r.Spec.Default.Sidecar.Profiles.Include[includeCount].Match = include1.Match
-							r.Spec.Default.Sidecar.Profiles.Include[includeCount].Type = include1.Type
+							r.Spec.Default.Sidecar.Profiles.Include[includeCount].Match = include.Match
+							r.Spec.Default.Sidecar.Profiles.Include[includeCount].Type = include.Type
 						}
 					}
 				}
@@ -428,4 +512,6 @@ func (r *MeshMetricResourceModel) RefreshFromSharedMeshMetricItem(resp *shared.M
 		}
 		r.Type = types.StringValue(string(resp.Type))
 	}
+
+	return diags
 }

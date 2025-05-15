@@ -3,13 +3,18 @@
 package provider
 
 import (
+	"context"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
-	"time"
 )
 
-func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrategyItemInput() *shared.MeshLoadBalancingStrategyItemInput {
+func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrategyItemInput(ctx context.Context) (*shared.MeshLoadBalancingStrategyItemInput, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
 	typeVar := shared.MeshLoadBalancingStrategyItemType(r.Type.ValueString())
 	mesh := new(string)
 	if !r.Mesh.IsUnknown() && !r.Mesh.IsNull() {
@@ -55,7 +60,7 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 		} else {
 			namespace = nil
 		}
-		var proxyTypes []shared.MeshLoadBalancingStrategyItemProxyTypes = []shared.MeshLoadBalancingStrategyItemProxyTypes{}
+		proxyTypes := make([]shared.MeshLoadBalancingStrategyItemProxyTypes, 0, len(r.Spec.TargetRef.ProxyTypes))
 		for _, proxyTypesItem := range r.Spec.TargetRef.ProxyTypes {
 			proxyTypes = append(proxyTypes, shared.MeshLoadBalancingStrategyItemProxyTypes(proxyTypesItem.ValueString()))
 		}
@@ -83,7 +88,7 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 			Tags:        tags,
 		}
 	}
-	var to []shared.MeshLoadBalancingStrategyItemTo = []shared.MeshLoadBalancingStrategyItemTo{}
+	to := make([]shared.MeshLoadBalancingStrategyItemTo, 0, len(r.Spec.To))
 	for _, toItem := range r.Spec.To {
 		var defaultVar *shared.MeshLoadBalancingStrategyItemDefault
 		if toItem.Default != nil {
@@ -129,7 +134,7 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 				}
 				var maglev *shared.Maglev
 				if toItem.Default.LoadBalancer.Maglev != nil {
-					var hashPolicies []shared.HashPolicies = []shared.HashPolicies{}
+					hashPolicies := make([]shared.HashPolicies, 0, len(toItem.Default.LoadBalancer.Maglev.HashPolicies))
 					for _, hashPoliciesItem := range toItem.Default.LoadBalancer.Maglev.HashPolicies {
 						var connection *shared.Connection
 						if hashPoliciesItem.Connection != nil {
@@ -233,7 +238,7 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 					} else {
 						hashFunction = nil
 					}
-					var hashPolicies1 []shared.MeshLoadBalancingStrategyItemHashPolicies = []shared.MeshLoadBalancingStrategyItemHashPolicies{}
+					hashPolicies1 := make([]shared.MeshLoadBalancingStrategyItemHashPolicies, 0, len(toItem.Default.LoadBalancer.RingHash.HashPolicies))
 					for _, hashPoliciesItem1 := range toItem.Default.LoadBalancer.RingHash.HashPolicies {
 						var connection1 *shared.MeshLoadBalancingStrategyItemConnection
 						if hashPoliciesItem1.Connection != nil {
@@ -351,11 +356,11 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 			if toItem.Default.LocalityAwareness != nil {
 				var crossZone *shared.CrossZone
 				if toItem.Default.LocalityAwareness.CrossZone != nil {
-					var failover []shared.Failover = []shared.Failover{}
+					failover := make([]shared.Failover, 0, len(toItem.Default.LocalityAwareness.CrossZone.Failover))
 					for _, failoverItem := range toItem.Default.LocalityAwareness.CrossZone.Failover {
 						var from *shared.MeshLoadBalancingStrategyItemFrom
 						if failoverItem.From != nil {
-							var zones []string = []string{}
+							zones := make([]string, 0, len(failoverItem.From.Zones))
 							for _, zonesItem := range failoverItem.From.Zones {
 								zones = append(zones, zonesItem.ValueString())
 							}
@@ -364,7 +369,7 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 							}
 						}
 						typeVar2 := shared.MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessType(failoverItem.To.Type.ValueString())
-						var zones1 []string = []string{}
+						zones1 := make([]string, 0, len(failoverItem.To.Zones))
 						for _, zonesItem1 := range failoverItem.To.Zones {
 							zones1 = append(zones1, zonesItem1.ValueString())
 						}
@@ -419,7 +424,7 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 				}
 				var localZone *shared.LocalZone
 				if toItem.Default.LocalityAwareness.LocalZone != nil {
-					var affinityTags []shared.AffinityTags = []shared.AffinityTags{}
+					affinityTags := make([]shared.AffinityTags, 0, len(toItem.Default.LocalityAwareness.LocalZone.AffinityTags))
 					for _, affinityTagsItem := range toItem.Default.LocalityAwareness.LocalZone.AffinityTags {
 						var key2 string
 						key2 = affinityTagsItem.Key.ValueString()
@@ -476,7 +481,7 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 		} else {
 			namespace1 = nil
 		}
-		var proxyTypes1 []shared.MeshLoadBalancingStrategyItemSpecProxyTypes = []shared.MeshLoadBalancingStrategyItemSpecProxyTypes{}
+		proxyTypes1 := make([]shared.MeshLoadBalancingStrategyItemSpecProxyTypes, 0, len(toItem.TargetRef.ProxyTypes))
 		for _, proxyTypesItem1 := range toItem.TargetRef.ProxyTypes {
 			proxyTypes1 = append(proxyTypes1, shared.MeshLoadBalancingStrategyItemSpecProxyTypes(proxyTypesItem1.ValueString()))
 		}
@@ -519,25 +524,112 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 		Labels: labels,
 		Spec:   spec,
 	}
-	return &out
+
+	return &out, diags
 }
 
-func (r *MeshLoadBalancingStrategyResourceModel) RefreshFromSharedMeshLoadBalancingStrategyCreateOrUpdateSuccessResponse(resp *shared.MeshLoadBalancingStrategyCreateOrUpdateSuccessResponse) {
+func (r *MeshLoadBalancingStrategyResourceModel) ToOperationsCreateMeshLoadBalancingStrategyRequest(ctx context.Context) (*operations.CreateMeshLoadBalancingStrategyRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	meshLoadBalancingStrategyItem, meshLoadBalancingStrategyItemDiags := r.ToSharedMeshLoadBalancingStrategyItemInput(ctx)
+	diags.Append(meshLoadBalancingStrategyItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.CreateMeshLoadBalancingStrategyRequest{
+		Mesh:                          mesh,
+		Name:                          name,
+		MeshLoadBalancingStrategyItem: *meshLoadBalancingStrategyItem,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshLoadBalancingStrategyResourceModel) ToOperationsUpdateMeshLoadBalancingStrategyRequest(ctx context.Context) (*operations.UpdateMeshLoadBalancingStrategyRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	meshLoadBalancingStrategyItem, meshLoadBalancingStrategyItemDiags := r.ToSharedMeshLoadBalancingStrategyItemInput(ctx)
+	diags.Append(meshLoadBalancingStrategyItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.UpdateMeshLoadBalancingStrategyRequest{
+		Mesh:                          mesh,
+		Name:                          name,
+		MeshLoadBalancingStrategyItem: *meshLoadBalancingStrategyItem,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshLoadBalancingStrategyResourceModel) ToOperationsGetMeshLoadBalancingStrategyRequest(ctx context.Context) (*operations.GetMeshLoadBalancingStrategyRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.GetMeshLoadBalancingStrategyRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshLoadBalancingStrategyResourceModel) ToOperationsDeleteMeshLoadBalancingStrategyRequest(ctx context.Context) (*operations.DeleteMeshLoadBalancingStrategyRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.DeleteMeshLoadBalancingStrategyRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshLoadBalancingStrategyResourceModel) RefreshFromSharedMeshLoadBalancingStrategyCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.MeshLoadBalancingStrategyCreateOrUpdateSuccessResponse) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
 		r.Warnings = make([]types.String, 0, len(resp.Warnings))
 		for _, v := range resp.Warnings {
 			r.Warnings = append(r.Warnings, types.StringValue(v))
 		}
 	}
+
+	return diags
 }
 
-func (r *MeshLoadBalancingStrategyResourceModel) RefreshFromSharedMeshLoadBalancingStrategyItem(resp *shared.MeshLoadBalancingStrategyItem) {
+func (r *MeshLoadBalancingStrategyResourceModel) RefreshFromSharedMeshLoadBalancingStrategyItem(ctx context.Context, resp *shared.MeshLoadBalancingStrategyItem) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
-		if resp.CreationTime != nil {
-			r.CreationTime = types.StringValue(resp.CreationTime.Format(time.RFC3339Nano))
-		} else {
-			r.CreationTime = types.StringNull()
-		}
+		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
 		if len(resp.Labels) > 0 {
 			r.Labels = make(map[string]types.String, len(resp.Labels))
 			for key, value := range resp.Labels {
@@ -545,11 +637,7 @@ func (r *MeshLoadBalancingStrategyResourceModel) RefreshFromSharedMeshLoadBalanc
 			}
 		}
 		r.Mesh = types.StringPointerValue(resp.Mesh)
-		if resp.ModificationTime != nil {
-			r.ModificationTime = types.StringValue(resp.ModificationTime.Format(time.RFC3339Nano))
-		} else {
-			r.ModificationTime = types.StringNull()
-		}
+		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
 		if resp.Spec.TargetRef == nil {
 			r.Spec.TargetRef = nil
@@ -582,272 +670,252 @@ func (r *MeshLoadBalancingStrategyResourceModel) RefreshFromSharedMeshLoadBalanc
 			r.Spec.To = r.Spec.To[:len(resp.Spec.To)]
 		}
 		for toCount, toItem := range resp.Spec.To {
-			var to1 tfTypes.MeshLoadBalancingStrategyItemTo
+			var to tfTypes.MeshLoadBalancingStrategyItemTo
 			if toItem.Default == nil {
-				to1.Default = nil
+				to.Default = nil
 			} else {
-				to1.Default = &tfTypes.MeshLoadBalancingStrategyItemDefault{}
+				to.Default = &tfTypes.MeshLoadBalancingStrategyItemDefault{}
 				if toItem.Default.LoadBalancer == nil {
-					to1.Default.LoadBalancer = nil
+					to.Default.LoadBalancer = nil
 				} else {
-					to1.Default.LoadBalancer = &tfTypes.LoadBalancer{}
+					to.Default.LoadBalancer = &tfTypes.LoadBalancer{}
 					if toItem.Default.LoadBalancer.LeastRequest == nil {
-						to1.Default.LoadBalancer.LeastRequest = nil
+						to.Default.LoadBalancer.LeastRequest = nil
 					} else {
-						to1.Default.LoadBalancer.LeastRequest = &tfTypes.LeastRequest{}
-						if toItem.Default.LoadBalancer.LeastRequest.ActiveRequestBias == nil {
-							to1.Default.LoadBalancer.LeastRequest.ActiveRequestBias = nil
-						} else {
-							to1.Default.LoadBalancer.LeastRequest.ActiveRequestBias = &tfTypes.Mode{}
+						to.Default.LoadBalancer.LeastRequest = &tfTypes.LeastRequest{}
+						if toItem.Default.LoadBalancer.LeastRequest.ActiveRequestBias != nil {
+							to.Default.LoadBalancer.LeastRequest.ActiveRequestBias = &tfTypes.Mode{}
 							if toItem.Default.LoadBalancer.LeastRequest.ActiveRequestBias.Integer != nil {
-								to1.Default.LoadBalancer.LeastRequest.ActiveRequestBias.Integer = types.Int64PointerValue(toItem.Default.LoadBalancer.LeastRequest.ActiveRequestBias.Integer)
+								to.Default.LoadBalancer.LeastRequest.ActiveRequestBias.Integer = types.Int64PointerValue(toItem.Default.LoadBalancer.LeastRequest.ActiveRequestBias.Integer)
 							}
 							if toItem.Default.LoadBalancer.LeastRequest.ActiveRequestBias.Str != nil {
-								to1.Default.LoadBalancer.LeastRequest.ActiveRequestBias.Str = types.StringPointerValue(toItem.Default.LoadBalancer.LeastRequest.ActiveRequestBias.Str)
+								to.Default.LoadBalancer.LeastRequest.ActiveRequestBias.Str = types.StringPointerValue(toItem.Default.LoadBalancer.LeastRequest.ActiveRequestBias.Str)
 							}
 						}
-						if toItem.Default.LoadBalancer.LeastRequest.ChoiceCount != nil {
-							to1.Default.LoadBalancer.LeastRequest.ChoiceCount = types.Int32Value(int32(*toItem.Default.LoadBalancer.LeastRequest.ChoiceCount))
-						} else {
-							to1.Default.LoadBalancer.LeastRequest.ChoiceCount = types.Int32Null()
-						}
+						to.Default.LoadBalancer.LeastRequest.ChoiceCount = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(toItem.Default.LoadBalancer.LeastRequest.ChoiceCount))
 					}
 					if toItem.Default.LoadBalancer.Maglev == nil {
-						to1.Default.LoadBalancer.Maglev = nil
+						to.Default.LoadBalancer.Maglev = nil
 					} else {
-						to1.Default.LoadBalancer.Maglev = &tfTypes.Maglev{}
-						to1.Default.LoadBalancer.Maglev.HashPolicies = []tfTypes.HashPolicies{}
+						to.Default.LoadBalancer.Maglev = &tfTypes.Maglev{}
+						to.Default.LoadBalancer.Maglev.HashPolicies = []tfTypes.HashPolicies{}
 						for hashPoliciesCount, hashPoliciesItem := range toItem.Default.LoadBalancer.Maglev.HashPolicies {
-							var hashPolicies1 tfTypes.HashPolicies
+							var hashPolicies tfTypes.HashPolicies
 							if hashPoliciesItem.Connection == nil {
+								hashPolicies.Connection = nil
+							} else {
+								hashPolicies.Connection = &tfTypes.Connection{}
+								hashPolicies.Connection.SourceIP = types.BoolPointerValue(hashPoliciesItem.Connection.SourceIP)
+							}
+							if hashPoliciesItem.Cookie == nil {
+								hashPolicies.Cookie = nil
+							} else {
+								hashPolicies.Cookie = &tfTypes.Cookie{}
+								hashPolicies.Cookie.Name = types.StringValue(hashPoliciesItem.Cookie.Name)
+								hashPolicies.Cookie.Path = types.StringPointerValue(hashPoliciesItem.Cookie.Path)
+								hashPolicies.Cookie.TTL = types.StringPointerValue(hashPoliciesItem.Cookie.TTL)
+							}
+							if hashPoliciesItem.FilterState == nil {
+								hashPolicies.FilterState = nil
+							} else {
+								hashPolicies.FilterState = &tfTypes.FilterState{}
+								hashPolicies.FilterState.Key = types.StringValue(hashPoliciesItem.FilterState.Key)
+							}
+							if hashPoliciesItem.Header == nil {
+								hashPolicies.Header = nil
+							} else {
+								hashPolicies.Header = &tfTypes.MeshLoadBalancingStrategyItemSpecHeader{}
+								hashPolicies.Header.Name = types.StringValue(hashPoliciesItem.Header.Name)
+							}
+							if hashPoliciesItem.QueryParameter == nil {
+								hashPolicies.QueryParameter = nil
+							} else {
+								hashPolicies.QueryParameter = &tfTypes.MeshLoadBalancingStrategyItemSpecHeader{}
+								hashPolicies.QueryParameter.Name = types.StringValue(hashPoliciesItem.QueryParameter.Name)
+							}
+							hashPolicies.Terminal = types.BoolPointerValue(hashPoliciesItem.Terminal)
+							hashPolicies.Type = types.StringValue(string(hashPoliciesItem.Type))
+							if hashPoliciesCount+1 > len(to.Default.LoadBalancer.Maglev.HashPolicies) {
+								to.Default.LoadBalancer.Maglev.HashPolicies = append(to.Default.LoadBalancer.Maglev.HashPolicies, hashPolicies)
+							} else {
+								to.Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesCount].Connection = hashPolicies.Connection
+								to.Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesCount].Cookie = hashPolicies.Cookie
+								to.Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesCount].FilterState = hashPolicies.FilterState
+								to.Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesCount].Header = hashPolicies.Header
+								to.Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesCount].QueryParameter = hashPolicies.QueryParameter
+								to.Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesCount].Terminal = hashPolicies.Terminal
+								to.Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesCount].Type = hashPolicies.Type
+							}
+						}
+						to.Default.LoadBalancer.Maglev.TableSize = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(toItem.Default.LoadBalancer.Maglev.TableSize))
+					}
+					if toItem.Default.LoadBalancer.Random == nil {
+						to.Default.LoadBalancer.Random = nil
+					} else {
+						to.Default.LoadBalancer.Random = &tfTypes.OptionsObj{}
+					}
+					if toItem.Default.LoadBalancer.RingHash == nil {
+						to.Default.LoadBalancer.RingHash = nil
+					} else {
+						to.Default.LoadBalancer.RingHash = &tfTypes.RingHash{}
+						if toItem.Default.LoadBalancer.RingHash.HashFunction != nil {
+							to.Default.LoadBalancer.RingHash.HashFunction = types.StringValue(string(*toItem.Default.LoadBalancer.RingHash.HashFunction))
+						} else {
+							to.Default.LoadBalancer.RingHash.HashFunction = types.StringNull()
+						}
+						to.Default.LoadBalancer.RingHash.HashPolicies = []tfTypes.HashPolicies{}
+						for hashPoliciesCount1, hashPoliciesItem1 := range toItem.Default.LoadBalancer.RingHash.HashPolicies {
+							var hashPolicies1 tfTypes.HashPolicies
+							if hashPoliciesItem1.Connection == nil {
 								hashPolicies1.Connection = nil
 							} else {
 								hashPolicies1.Connection = &tfTypes.Connection{}
-								hashPolicies1.Connection.SourceIP = types.BoolPointerValue(hashPoliciesItem.Connection.SourceIP)
+								hashPolicies1.Connection.SourceIP = types.BoolPointerValue(hashPoliciesItem1.Connection.SourceIP)
 							}
-							if hashPoliciesItem.Cookie == nil {
+							if hashPoliciesItem1.Cookie == nil {
 								hashPolicies1.Cookie = nil
 							} else {
 								hashPolicies1.Cookie = &tfTypes.Cookie{}
-								hashPolicies1.Cookie.Name = types.StringValue(hashPoliciesItem.Cookie.Name)
-								hashPolicies1.Cookie.Path = types.StringPointerValue(hashPoliciesItem.Cookie.Path)
-								hashPolicies1.Cookie.TTL = types.StringPointerValue(hashPoliciesItem.Cookie.TTL)
+								hashPolicies1.Cookie.Name = types.StringValue(hashPoliciesItem1.Cookie.Name)
+								hashPolicies1.Cookie.Path = types.StringPointerValue(hashPoliciesItem1.Cookie.Path)
+								hashPolicies1.Cookie.TTL = types.StringPointerValue(hashPoliciesItem1.Cookie.TTL)
 							}
-							if hashPoliciesItem.FilterState == nil {
+							if hashPoliciesItem1.FilterState == nil {
 								hashPolicies1.FilterState = nil
 							} else {
 								hashPolicies1.FilterState = &tfTypes.FilterState{}
-								hashPolicies1.FilterState.Key = types.StringValue(hashPoliciesItem.FilterState.Key)
+								hashPolicies1.FilterState.Key = types.StringValue(hashPoliciesItem1.FilterState.Key)
 							}
-							if hashPoliciesItem.Header == nil {
+							if hashPoliciesItem1.Header == nil {
 								hashPolicies1.Header = nil
 							} else {
 								hashPolicies1.Header = &tfTypes.MeshLoadBalancingStrategyItemSpecHeader{}
-								hashPolicies1.Header.Name = types.StringValue(hashPoliciesItem.Header.Name)
+								hashPolicies1.Header.Name = types.StringValue(hashPoliciesItem1.Header.Name)
 							}
-							if hashPoliciesItem.QueryParameter == nil {
+							if hashPoliciesItem1.QueryParameter == nil {
 								hashPolicies1.QueryParameter = nil
 							} else {
 								hashPolicies1.QueryParameter = &tfTypes.MeshLoadBalancingStrategyItemSpecHeader{}
-								hashPolicies1.QueryParameter.Name = types.StringValue(hashPoliciesItem.QueryParameter.Name)
+								hashPolicies1.QueryParameter.Name = types.StringValue(hashPoliciesItem1.QueryParameter.Name)
 							}
-							hashPolicies1.Terminal = types.BoolPointerValue(hashPoliciesItem.Terminal)
-							hashPolicies1.Type = types.StringValue(string(hashPoliciesItem.Type))
-							if hashPoliciesCount+1 > len(to1.Default.LoadBalancer.Maglev.HashPolicies) {
-								to1.Default.LoadBalancer.Maglev.HashPolicies = append(to1.Default.LoadBalancer.Maglev.HashPolicies, hashPolicies1)
+							hashPolicies1.Terminal = types.BoolPointerValue(hashPoliciesItem1.Terminal)
+							hashPolicies1.Type = types.StringValue(string(hashPoliciesItem1.Type))
+							if hashPoliciesCount1+1 > len(to.Default.LoadBalancer.RingHash.HashPolicies) {
+								to.Default.LoadBalancer.RingHash.HashPolicies = append(to.Default.LoadBalancer.RingHash.HashPolicies, hashPolicies1)
 							} else {
-								to1.Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesCount].Connection = hashPolicies1.Connection
-								to1.Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesCount].Cookie = hashPolicies1.Cookie
-								to1.Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesCount].FilterState = hashPolicies1.FilterState
-								to1.Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesCount].Header = hashPolicies1.Header
-								to1.Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesCount].QueryParameter = hashPolicies1.QueryParameter
-								to1.Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesCount].Terminal = hashPolicies1.Terminal
-								to1.Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesCount].Type = hashPolicies1.Type
+								to.Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesCount1].Connection = hashPolicies1.Connection
+								to.Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesCount1].Cookie = hashPolicies1.Cookie
+								to.Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesCount1].FilterState = hashPolicies1.FilterState
+								to.Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesCount1].Header = hashPolicies1.Header
+								to.Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesCount1].QueryParameter = hashPolicies1.QueryParameter
+								to.Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesCount1].Terminal = hashPolicies1.Terminal
+								to.Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesCount1].Type = hashPolicies1.Type
 							}
 						}
-						if toItem.Default.LoadBalancer.Maglev.TableSize != nil {
-							to1.Default.LoadBalancer.Maglev.TableSize = types.Int32Value(int32(*toItem.Default.LoadBalancer.Maglev.TableSize))
-						} else {
-							to1.Default.LoadBalancer.Maglev.TableSize = types.Int32Null()
-						}
-					}
-					if toItem.Default.LoadBalancer.Random == nil {
-						to1.Default.LoadBalancer.Random = nil
-					} else {
-						to1.Default.LoadBalancer.Random = &tfTypes.OptionsObj{}
-					}
-					if toItem.Default.LoadBalancer.RingHash == nil {
-						to1.Default.LoadBalancer.RingHash = nil
-					} else {
-						to1.Default.LoadBalancer.RingHash = &tfTypes.RingHash{}
-						if toItem.Default.LoadBalancer.RingHash.HashFunction != nil {
-							to1.Default.LoadBalancer.RingHash.HashFunction = types.StringValue(string(*toItem.Default.LoadBalancer.RingHash.HashFunction))
-						} else {
-							to1.Default.LoadBalancer.RingHash.HashFunction = types.StringNull()
-						}
-						to1.Default.LoadBalancer.RingHash.HashPolicies = []tfTypes.HashPolicies{}
-						for hashPoliciesCount1, hashPoliciesItem1 := range toItem.Default.LoadBalancer.RingHash.HashPolicies {
-							var hashPolicies3 tfTypes.HashPolicies
-							if hashPoliciesItem1.Connection == nil {
-								hashPolicies3.Connection = nil
-							} else {
-								hashPolicies3.Connection = &tfTypes.Connection{}
-								hashPolicies3.Connection.SourceIP = types.BoolPointerValue(hashPoliciesItem1.Connection.SourceIP)
-							}
-							if hashPoliciesItem1.Cookie == nil {
-								hashPolicies3.Cookie = nil
-							} else {
-								hashPolicies3.Cookie = &tfTypes.Cookie{}
-								hashPolicies3.Cookie.Name = types.StringValue(hashPoliciesItem1.Cookie.Name)
-								hashPolicies3.Cookie.Path = types.StringPointerValue(hashPoliciesItem1.Cookie.Path)
-								hashPolicies3.Cookie.TTL = types.StringPointerValue(hashPoliciesItem1.Cookie.TTL)
-							}
-							if hashPoliciesItem1.FilterState == nil {
-								hashPolicies3.FilterState = nil
-							} else {
-								hashPolicies3.FilterState = &tfTypes.FilterState{}
-								hashPolicies3.FilterState.Key = types.StringValue(hashPoliciesItem1.FilterState.Key)
-							}
-							if hashPoliciesItem1.Header == nil {
-								hashPolicies3.Header = nil
-							} else {
-								hashPolicies3.Header = &tfTypes.MeshLoadBalancingStrategyItemSpecHeader{}
-								hashPolicies3.Header.Name = types.StringValue(hashPoliciesItem1.Header.Name)
-							}
-							if hashPoliciesItem1.QueryParameter == nil {
-								hashPolicies3.QueryParameter = nil
-							} else {
-								hashPolicies3.QueryParameter = &tfTypes.MeshLoadBalancingStrategyItemSpecHeader{}
-								hashPolicies3.QueryParameter.Name = types.StringValue(hashPoliciesItem1.QueryParameter.Name)
-							}
-							hashPolicies3.Terminal = types.BoolPointerValue(hashPoliciesItem1.Terminal)
-							hashPolicies3.Type = types.StringValue(string(hashPoliciesItem1.Type))
-							if hashPoliciesCount1+1 > len(to1.Default.LoadBalancer.RingHash.HashPolicies) {
-								to1.Default.LoadBalancer.RingHash.HashPolicies = append(to1.Default.LoadBalancer.RingHash.HashPolicies, hashPolicies3)
-							} else {
-								to1.Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesCount1].Connection = hashPolicies3.Connection
-								to1.Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesCount1].Cookie = hashPolicies3.Cookie
-								to1.Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesCount1].FilterState = hashPolicies3.FilterState
-								to1.Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesCount1].Header = hashPolicies3.Header
-								to1.Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesCount1].QueryParameter = hashPolicies3.QueryParameter
-								to1.Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesCount1].Terminal = hashPolicies3.Terminal
-								to1.Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesCount1].Type = hashPolicies3.Type
-							}
-						}
-						if toItem.Default.LoadBalancer.RingHash.MaxRingSize != nil {
-							to1.Default.LoadBalancer.RingHash.MaxRingSize = types.Int32Value(int32(*toItem.Default.LoadBalancer.RingHash.MaxRingSize))
-						} else {
-							to1.Default.LoadBalancer.RingHash.MaxRingSize = types.Int32Null()
-						}
-						if toItem.Default.LoadBalancer.RingHash.MinRingSize != nil {
-							to1.Default.LoadBalancer.RingHash.MinRingSize = types.Int32Value(int32(*toItem.Default.LoadBalancer.RingHash.MinRingSize))
-						} else {
-							to1.Default.LoadBalancer.RingHash.MinRingSize = types.Int32Null()
-						}
+						to.Default.LoadBalancer.RingHash.MaxRingSize = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(toItem.Default.LoadBalancer.RingHash.MaxRingSize))
+						to.Default.LoadBalancer.RingHash.MinRingSize = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(toItem.Default.LoadBalancer.RingHash.MinRingSize))
 					}
 					if toItem.Default.LoadBalancer.RoundRobin == nil {
-						to1.Default.LoadBalancer.RoundRobin = nil
+						to.Default.LoadBalancer.RoundRobin = nil
 					} else {
-						to1.Default.LoadBalancer.RoundRobin = &tfTypes.OptionsObj{}
+						to.Default.LoadBalancer.RoundRobin = &tfTypes.OptionsObj{}
 					}
-					to1.Default.LoadBalancer.Type = types.StringValue(string(toItem.Default.LoadBalancer.Type))
+					to.Default.LoadBalancer.Type = types.StringValue(string(toItem.Default.LoadBalancer.Type))
 				}
 				if toItem.Default.LocalityAwareness == nil {
-					to1.Default.LocalityAwareness = nil
+					to.Default.LocalityAwareness = nil
 				} else {
-					to1.Default.LocalityAwareness = &tfTypes.LocalityAwareness{}
+					to.Default.LocalityAwareness = &tfTypes.LocalityAwareness{}
 					if toItem.Default.LocalityAwareness.CrossZone == nil {
-						to1.Default.LocalityAwareness.CrossZone = nil
+						to.Default.LocalityAwareness.CrossZone = nil
 					} else {
-						to1.Default.LocalityAwareness.CrossZone = &tfTypes.CrossZone{}
-						to1.Default.LocalityAwareness.CrossZone.Failover = []tfTypes.Failover{}
+						to.Default.LocalityAwareness.CrossZone = &tfTypes.CrossZone{}
+						to.Default.LocalityAwareness.CrossZone.Failover = []tfTypes.Failover{}
 						for failoverCount, failoverItem := range toItem.Default.LocalityAwareness.CrossZone.Failover {
-							var failover1 tfTypes.Failover
+							var failover tfTypes.Failover
 							if failoverItem.From == nil {
-								failover1.From = nil
+								failover.From = nil
 							} else {
-								failover1.From = &tfTypes.MeshLoadBalancingStrategyItemFrom{}
-								failover1.From.Zones = make([]types.String, 0, len(failoverItem.From.Zones))
+								failover.From = &tfTypes.MeshLoadBalancingStrategyItemFrom{}
+								failover.From.Zones = make([]types.String, 0, len(failoverItem.From.Zones))
 								for _, v := range failoverItem.From.Zones {
-									failover1.From.Zones = append(failover1.From.Zones, types.StringValue(v))
+									failover.From.Zones = append(failover.From.Zones, types.StringValue(v))
 								}
 							}
-							failover1.To.Type = types.StringValue(string(failoverItem.To.Type))
-							failover1.To.Zones = make([]types.String, 0, len(failoverItem.To.Zones))
+							failover.To.Type = types.StringValue(string(failoverItem.To.Type))
+							failover.To.Zones = make([]types.String, 0, len(failoverItem.To.Zones))
 							for _, v := range failoverItem.To.Zones {
-								failover1.To.Zones = append(failover1.To.Zones, types.StringValue(v))
+								failover.To.Zones = append(failover.To.Zones, types.StringValue(v))
 							}
-							if failoverCount+1 > len(to1.Default.LocalityAwareness.CrossZone.Failover) {
-								to1.Default.LocalityAwareness.CrossZone.Failover = append(to1.Default.LocalityAwareness.CrossZone.Failover, failover1)
+							if failoverCount+1 > len(to.Default.LocalityAwareness.CrossZone.Failover) {
+								to.Default.LocalityAwareness.CrossZone.Failover = append(to.Default.LocalityAwareness.CrossZone.Failover, failover)
 							} else {
-								to1.Default.LocalityAwareness.CrossZone.Failover[failoverCount].From = failover1.From
-								to1.Default.LocalityAwareness.CrossZone.Failover[failoverCount].To = failover1.To
+								to.Default.LocalityAwareness.CrossZone.Failover[failoverCount].From = failover.From
+								to.Default.LocalityAwareness.CrossZone.Failover[failoverCount].To = failover.To
 							}
 						}
 						if toItem.Default.LocalityAwareness.CrossZone.FailoverThreshold == nil {
-							to1.Default.LocalityAwareness.CrossZone.FailoverThreshold = nil
+							to.Default.LocalityAwareness.CrossZone.FailoverThreshold = nil
 						} else {
-							to1.Default.LocalityAwareness.CrossZone.FailoverThreshold = &tfTypes.FailoverThreshold{}
+							to.Default.LocalityAwareness.CrossZone.FailoverThreshold = &tfTypes.FailoverThreshold{}
 							if toItem.Default.LocalityAwareness.CrossZone.FailoverThreshold.Percentage.Integer != nil {
-								to1.Default.LocalityAwareness.CrossZone.FailoverThreshold.Percentage.Integer = types.Int64PointerValue(toItem.Default.LocalityAwareness.CrossZone.FailoverThreshold.Percentage.Integer)
+								to.Default.LocalityAwareness.CrossZone.FailoverThreshold.Percentage.Integer = types.Int64PointerValue(toItem.Default.LocalityAwareness.CrossZone.FailoverThreshold.Percentage.Integer)
 							}
 							if toItem.Default.LocalityAwareness.CrossZone.FailoverThreshold.Percentage.Str != nil {
-								to1.Default.LocalityAwareness.CrossZone.FailoverThreshold.Percentage.Str = types.StringPointerValue(toItem.Default.LocalityAwareness.CrossZone.FailoverThreshold.Percentage.Str)
+								to.Default.LocalityAwareness.CrossZone.FailoverThreshold.Percentage.Str = types.StringPointerValue(toItem.Default.LocalityAwareness.CrossZone.FailoverThreshold.Percentage.Str)
 							}
 						}
 					}
-					to1.Default.LocalityAwareness.Disabled = types.BoolPointerValue(toItem.Default.LocalityAwareness.Disabled)
+					to.Default.LocalityAwareness.Disabled = types.BoolPointerValue(toItem.Default.LocalityAwareness.Disabled)
 					if toItem.Default.LocalityAwareness.LocalZone == nil {
-						to1.Default.LocalityAwareness.LocalZone = nil
+						to.Default.LocalityAwareness.LocalZone = nil
 					} else {
-						to1.Default.LocalityAwareness.LocalZone = &tfTypes.LocalZone{}
-						to1.Default.LocalityAwareness.LocalZone.AffinityTags = []tfTypes.AffinityTags{}
+						to.Default.LocalityAwareness.LocalZone = &tfTypes.LocalZone{}
+						to.Default.LocalityAwareness.LocalZone.AffinityTags = []tfTypes.AffinityTags{}
 						for affinityTagsCount, affinityTagsItem := range toItem.Default.LocalityAwareness.LocalZone.AffinityTags {
-							var affinityTags1 tfTypes.AffinityTags
-							affinityTags1.Key = types.StringValue(affinityTagsItem.Key)
-							if affinityTagsItem.Weight != nil {
-								affinityTags1.Weight = types.Int32Value(int32(*affinityTagsItem.Weight))
+							var affinityTags tfTypes.AffinityTags
+							affinityTags.Key = types.StringValue(affinityTagsItem.Key)
+							affinityTags.Weight = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(affinityTagsItem.Weight))
+							if affinityTagsCount+1 > len(to.Default.LocalityAwareness.LocalZone.AffinityTags) {
+								to.Default.LocalityAwareness.LocalZone.AffinityTags = append(to.Default.LocalityAwareness.LocalZone.AffinityTags, affinityTags)
 							} else {
-								affinityTags1.Weight = types.Int32Null()
-							}
-							if affinityTagsCount+1 > len(to1.Default.LocalityAwareness.LocalZone.AffinityTags) {
-								to1.Default.LocalityAwareness.LocalZone.AffinityTags = append(to1.Default.LocalityAwareness.LocalZone.AffinityTags, affinityTags1)
-							} else {
-								to1.Default.LocalityAwareness.LocalZone.AffinityTags[affinityTagsCount].Key = affinityTags1.Key
-								to1.Default.LocalityAwareness.LocalZone.AffinityTags[affinityTagsCount].Weight = affinityTags1.Weight
+								to.Default.LocalityAwareness.LocalZone.AffinityTags[affinityTagsCount].Key = affinityTags.Key
+								to.Default.LocalityAwareness.LocalZone.AffinityTags[affinityTagsCount].Weight = affinityTags.Weight
 							}
 						}
 					}
 				}
 			}
-			to1.TargetRef.Kind = types.StringValue(string(toItem.TargetRef.Kind))
+			to.TargetRef.Kind = types.StringValue(string(toItem.TargetRef.Kind))
 			if len(toItem.TargetRef.Labels) > 0 {
-				to1.TargetRef.Labels = make(map[string]types.String, len(toItem.TargetRef.Labels))
-				for key6, value3 := range toItem.TargetRef.Labels {
-					to1.TargetRef.Labels[key6] = types.StringValue(value3)
+				to.TargetRef.Labels = make(map[string]types.String, len(toItem.TargetRef.Labels))
+				for key3, value3 := range toItem.TargetRef.Labels {
+					to.TargetRef.Labels[key3] = types.StringValue(value3)
 				}
 			}
-			to1.TargetRef.Mesh = types.StringPointerValue(toItem.TargetRef.Mesh)
-			to1.TargetRef.Name = types.StringPointerValue(toItem.TargetRef.Name)
-			to1.TargetRef.Namespace = types.StringPointerValue(toItem.TargetRef.Namespace)
-			to1.TargetRef.ProxyTypes = make([]types.String, 0, len(toItem.TargetRef.ProxyTypes))
+			to.TargetRef.Mesh = types.StringPointerValue(toItem.TargetRef.Mesh)
+			to.TargetRef.Name = types.StringPointerValue(toItem.TargetRef.Name)
+			to.TargetRef.Namespace = types.StringPointerValue(toItem.TargetRef.Namespace)
+			to.TargetRef.ProxyTypes = make([]types.String, 0, len(toItem.TargetRef.ProxyTypes))
 			for _, v := range toItem.TargetRef.ProxyTypes {
-				to1.TargetRef.ProxyTypes = append(to1.TargetRef.ProxyTypes, types.StringValue(string(v)))
+				to.TargetRef.ProxyTypes = append(to.TargetRef.ProxyTypes, types.StringValue(string(v)))
 			}
-			to1.TargetRef.SectionName = types.StringPointerValue(toItem.TargetRef.SectionName)
+			to.TargetRef.SectionName = types.StringPointerValue(toItem.TargetRef.SectionName)
 			if len(toItem.TargetRef.Tags) > 0 {
-				to1.TargetRef.Tags = make(map[string]types.String, len(toItem.TargetRef.Tags))
-				for key7, value4 := range toItem.TargetRef.Tags {
-					to1.TargetRef.Tags[key7] = types.StringValue(value4)
+				to.TargetRef.Tags = make(map[string]types.String, len(toItem.TargetRef.Tags))
+				for key4, value4 := range toItem.TargetRef.Tags {
+					to.TargetRef.Tags[key4] = types.StringValue(value4)
 				}
 			}
 			if toCount+1 > len(r.Spec.To) {
-				r.Spec.To = append(r.Spec.To, to1)
+				r.Spec.To = append(r.Spec.To, to)
 			} else {
-				r.Spec.To[toCount].Default = to1.Default
-				r.Spec.To[toCount].TargetRef = to1.TargetRef
+				r.Spec.To[toCount].Default = to.Default
+				r.Spec.To[toCount].TargetRef = to.TargetRef
 			}
 		}
 		r.Type = types.StringValue(string(resp.Type))
 	}
+
+	return diags
 }

@@ -17,7 +17,6 @@ import (
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
-	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/validators"
 )
 
@@ -183,15 +182,13 @@ func (r *MeshHostnameGeneratorResource) Create(ctx context.Context, req resource
 		return
 	}
 
-	var name string
-	name = data.Name.ValueString()
+	request, requestDiags := data.ToOperationsCreateHostnameGeneratorRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	hostnameGeneratorItem := *data.ToSharedHostnameGeneratorItemInput()
-	request := operations.CreateHostnameGeneratorRequest{
-		Name:                  name,
-		HostnameGeneratorItem: hostnameGeneratorItem,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.HostnameGenerator.CreateHostnameGenerator(ctx, request)
+	res, err := r.client.HostnameGenerator.CreateHostnameGenerator(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -211,15 +208,24 @@ func (r *MeshHostnameGeneratorResource) Create(ctx context.Context, req resource
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedHostnameGeneratorCreateOrUpdateSuccessResponse(res.HostnameGeneratorCreateOrUpdateSuccessResponse)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
-	var name1 string
-	name1 = data.Name.ValueString()
+	resp.Diagnostics.Append(data.RefreshFromSharedHostnameGeneratorCreateOrUpdateSuccessResponse(ctx, res.HostnameGeneratorCreateOrUpdateSuccessResponse)...)
 
-	request1 := operations.GetHostnameGeneratorRequest{
-		Name: name1,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res1, err := r.client.HostnameGenerator.GetHostnameGenerator(ctx, request1)
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	request1, request1Diags := data.ToOperationsGetHostnameGeneratorRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.HostnameGenerator.GetHostnameGenerator(ctx, *request1)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res1 != nil && res1.RawResponse != nil {
@@ -239,8 +245,17 @@ func (r *MeshHostnameGeneratorResource) Create(ctx context.Context, req resource
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
 		return
 	}
-	data.RefreshFromSharedHostnameGeneratorItem(res1.HostnameGeneratorItem)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
+	resp.Diagnostics.Append(data.RefreshFromSharedHostnameGeneratorItem(ctx, res1.HostnameGeneratorItem)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -264,13 +279,13 @@ func (r *MeshHostnameGeneratorResource) Read(ctx context.Context, req resource.R
 		return
 	}
 
-	var name string
-	name = data.Name.ValueString()
+	request, requestDiags := data.ToOperationsGetHostnameGeneratorRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	request := operations.GetHostnameGeneratorRequest{
-		Name: name,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.HostnameGenerator.GetHostnameGenerator(ctx, request)
+	res, err := r.client.HostnameGenerator.GetHostnameGenerator(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -294,7 +309,11 @@ func (r *MeshHostnameGeneratorResource) Read(ctx context.Context, req resource.R
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedHostnameGeneratorItem(res.HostnameGeneratorItem)
+	resp.Diagnostics.Append(data.RefreshFromSharedHostnameGeneratorItem(ctx, res.HostnameGeneratorItem)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -314,15 +333,13 @@ func (r *MeshHostnameGeneratorResource) Update(ctx context.Context, req resource
 		return
 	}
 
-	var name string
-	name = data.Name.ValueString()
+	request, requestDiags := data.ToOperationsUpdateHostnameGeneratorRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	hostnameGeneratorItem := *data.ToSharedHostnameGeneratorItemInput()
-	request := operations.UpdateHostnameGeneratorRequest{
-		Name:                  name,
-		HostnameGeneratorItem: hostnameGeneratorItem,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.HostnameGenerator.UpdateHostnameGenerator(ctx, request)
+	res, err := r.client.HostnameGenerator.UpdateHostnameGenerator(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -342,15 +359,24 @@ func (r *MeshHostnameGeneratorResource) Update(ctx context.Context, req resource
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedHostnameGeneratorCreateOrUpdateSuccessResponse(res.HostnameGeneratorCreateOrUpdateSuccessResponse)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
-	var name1 string
-	name1 = data.Name.ValueString()
+	resp.Diagnostics.Append(data.RefreshFromSharedHostnameGeneratorCreateOrUpdateSuccessResponse(ctx, res.HostnameGeneratorCreateOrUpdateSuccessResponse)...)
 
-	request1 := operations.GetHostnameGeneratorRequest{
-		Name: name1,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res1, err := r.client.HostnameGenerator.GetHostnameGenerator(ctx, request1)
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	request1, request1Diags := data.ToOperationsGetHostnameGeneratorRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.HostnameGenerator.GetHostnameGenerator(ctx, *request1)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res1 != nil && res1.RawResponse != nil {
@@ -370,8 +396,17 @@ func (r *MeshHostnameGeneratorResource) Update(ctx context.Context, req resource
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
 		return
 	}
-	data.RefreshFromSharedHostnameGeneratorItem(res1.HostnameGeneratorItem)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
+	resp.Diagnostics.Append(data.RefreshFromSharedHostnameGeneratorItem(ctx, res1.HostnameGeneratorItem)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -395,13 +430,13 @@ func (r *MeshHostnameGeneratorResource) Delete(ctx context.Context, req resource
 		return
 	}
 
-	var name string
-	name = data.Name.ValueString()
+	request, requestDiags := data.ToOperationsDeleteHostnameGeneratorRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	request := operations.DeleteHostnameGeneratorRequest{
-		Name: name,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.HostnameGenerator.DeleteHostnameGenerator(ctx, request)
+	res, err := r.client.HostnameGenerator.DeleteHostnameGenerator(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {

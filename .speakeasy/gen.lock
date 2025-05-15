@@ -3,17 +3,16 @@ id: 322c4806-8b53-493c-a05f-50d4d113c747
 management:
   docChecksum: b39182d4478d4836620852cb8e19f451
   docVersion: 2.0.0
-  speakeasyVersion: 1.514.1
-  generationVersion: 2.546.3
+  speakeasyVersion: 1.545.0
+  generationVersion: 2.599.0
   releaseVersion: 0.1.4
-  configChecksum: 8fe7cde4f5bc57f8693549aa898f8b17
+  configChecksum: 6f23ab2a5b9bce2ef7af81ee88e87aec
 features:
   terraform:
     additionalDependencies: 0.1.0
     constsAndDefaults: 0.2.1
-    core: 3.36.1
-    envVarSecurityUsage: 0.1.0
-    globalServerURLs: 2.82.1
+    core: 3.41.6
+    globalServerURLs: 2.82.2
     inputOutputModels: 2.83.0
     nullables: 0.0.0
     unions: 2.81.17
@@ -291,6 +290,9 @@ generatedFiles:
   - internal/provider/reflect/primitive.go
   - internal/provider/reflect/slice.go
   - internal/provider/reflect/struct.go
+  - internal/provider/typeconvert/date.go
+  - internal/provider/typeconvert/datetime.go
+  - internal/provider/typeconvert/int32.go
   - internal/provider/types/abort.go
   - internal/provider/types/access_key.go
   - internal/provider/types/acm_certificate_authority_config.go
@@ -2195,5 +2197,5 @@ examples:
       responses:
         "200":
           application/json: {"items": [{"type": "MeshOPA", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}, {"type": "MeshOPA", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}, {"type": "MeshOPA", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
-examplesVersion: 1.0.0
+examplesVersion: 1.0.1
 generatedTests: {}

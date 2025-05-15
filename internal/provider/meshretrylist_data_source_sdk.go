@@ -3,269 +3,274 @@
 package provider
 
 import (
+	"context"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
-	"math/big"
-	"time"
 )
 
-func (r *MeshRetryListDataSourceModel) RefreshFromSharedMeshRetryList(resp *shared.MeshRetryList) {
+func (r *MeshRetryListDataSourceModel) ToOperationsGetMeshRetryListRequest(ctx context.Context) (*operations.GetMeshRetryListRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	offset := new(int64)
+	if !r.Offset.IsUnknown() && !r.Offset.IsNull() {
+		*offset = r.Offset.ValueInt64()
+	} else {
+		offset = nil
+	}
+	size := new(int64)
+	if !r.Size.IsUnknown() && !r.Size.IsNull() {
+		*size = r.Size.ValueInt64()
+	} else {
+		size = nil
+	}
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	out := operations.GetMeshRetryListRequest{
+		Offset: offset,
+		Size:   size,
+		Mesh:   mesh,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshRetryListDataSourceModel) RefreshFromSharedMeshRetryList(ctx context.Context, resp *shared.MeshRetryList) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
 		r.Items = []tfTypes.MeshRetryItem{}
 		if len(r.Items) > len(resp.Items) {
 			r.Items = r.Items[:len(resp.Items)]
 		}
 		for itemsCount, itemsItem := range resp.Items {
-			var items1 tfTypes.MeshRetryItem
-			if itemsItem.CreationTime != nil {
-				items1.CreationTime = types.StringValue(itemsItem.CreationTime.Format(time.RFC3339Nano))
-			} else {
-				items1.CreationTime = types.StringNull()
-			}
+			var items tfTypes.MeshRetryItem
+			items.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(itemsItem.CreationTime))
 			if len(itemsItem.Labels) > 0 {
-				items1.Labels = make(map[string]types.String, len(itemsItem.Labels))
+				items.Labels = make(map[string]types.String, len(itemsItem.Labels))
 				for key, value := range itemsItem.Labels {
-					items1.Labels[key] = types.StringValue(value)
+					items.Labels[key] = types.StringValue(value)
 				}
 			}
-			items1.Mesh = types.StringPointerValue(itemsItem.Mesh)
-			if itemsItem.ModificationTime != nil {
-				items1.ModificationTime = types.StringValue(itemsItem.ModificationTime.Format(time.RFC3339Nano))
-			} else {
-				items1.ModificationTime = types.StringNull()
-			}
-			items1.Name = types.StringValue(itemsItem.Name)
+			items.Mesh = types.StringPointerValue(itemsItem.Mesh)
+			items.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(itemsItem.ModificationTime))
+			items.Name = types.StringValue(itemsItem.Name)
 			if itemsItem.Spec.TargetRef == nil {
-				items1.Spec.TargetRef = nil
+				items.Spec.TargetRef = nil
 			} else {
-				items1.Spec.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
-				items1.Spec.TargetRef.Kind = types.StringValue(string(itemsItem.Spec.TargetRef.Kind))
+				items.Spec.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
+				items.Spec.TargetRef.Kind = types.StringValue(string(itemsItem.Spec.TargetRef.Kind))
 				if len(itemsItem.Spec.TargetRef.Labels) > 0 {
-					items1.Spec.TargetRef.Labels = make(map[string]types.String, len(itemsItem.Spec.TargetRef.Labels))
+					items.Spec.TargetRef.Labels = make(map[string]types.String, len(itemsItem.Spec.TargetRef.Labels))
 					for key1, value1 := range itemsItem.Spec.TargetRef.Labels {
-						items1.Spec.TargetRef.Labels[key1] = types.StringValue(value1)
+						items.Spec.TargetRef.Labels[key1] = types.StringValue(value1)
 					}
 				}
-				items1.Spec.TargetRef.Mesh = types.StringPointerValue(itemsItem.Spec.TargetRef.Mesh)
-				items1.Spec.TargetRef.Name = types.StringPointerValue(itemsItem.Spec.TargetRef.Name)
-				items1.Spec.TargetRef.Namespace = types.StringPointerValue(itemsItem.Spec.TargetRef.Namespace)
-				items1.Spec.TargetRef.ProxyTypes = make([]types.String, 0, len(itemsItem.Spec.TargetRef.ProxyTypes))
+				items.Spec.TargetRef.Mesh = types.StringPointerValue(itemsItem.Spec.TargetRef.Mesh)
+				items.Spec.TargetRef.Name = types.StringPointerValue(itemsItem.Spec.TargetRef.Name)
+				items.Spec.TargetRef.Namespace = types.StringPointerValue(itemsItem.Spec.TargetRef.Namespace)
+				items.Spec.TargetRef.ProxyTypes = make([]types.String, 0, len(itemsItem.Spec.TargetRef.ProxyTypes))
 				for _, v := range itemsItem.Spec.TargetRef.ProxyTypes {
-					items1.Spec.TargetRef.ProxyTypes = append(items1.Spec.TargetRef.ProxyTypes, types.StringValue(string(v)))
+					items.Spec.TargetRef.ProxyTypes = append(items.Spec.TargetRef.ProxyTypes, types.StringValue(string(v)))
 				}
-				items1.Spec.TargetRef.SectionName = types.StringPointerValue(itemsItem.Spec.TargetRef.SectionName)
+				items.Spec.TargetRef.SectionName = types.StringPointerValue(itemsItem.Spec.TargetRef.SectionName)
 				if len(itemsItem.Spec.TargetRef.Tags) > 0 {
-					items1.Spec.TargetRef.Tags = make(map[string]types.String, len(itemsItem.Spec.TargetRef.Tags))
+					items.Spec.TargetRef.Tags = make(map[string]types.String, len(itemsItem.Spec.TargetRef.Tags))
 					for key2, value2 := range itemsItem.Spec.TargetRef.Tags {
-						items1.Spec.TargetRef.Tags[key2] = types.StringValue(value2)
+						items.Spec.TargetRef.Tags[key2] = types.StringValue(value2)
 					}
 				}
 			}
-			items1.Spec.To = []tfTypes.MeshRetryItemTo{}
+			items.Spec.To = []tfTypes.MeshRetryItemTo{}
 			for toCount, toItem := range itemsItem.Spec.To {
-				var to1 tfTypes.MeshRetryItemTo
+				var to tfTypes.MeshRetryItemTo
 				if toItem.Default == nil {
-					to1.Default = nil
+					to.Default = nil
 				} else {
-					to1.Default = &tfTypes.MeshRetryItemDefault{}
+					to.Default = &tfTypes.MeshRetryItemDefault{}
 					if toItem.Default.Grpc == nil {
-						to1.Default.Grpc = nil
+						to.Default.Grpc = nil
 					} else {
-						to1.Default.Grpc = &tfTypes.MeshRetryItemGrpc{}
+						to.Default.Grpc = &tfTypes.MeshRetryItemGrpc{}
 						if toItem.Default.Grpc.BackOff == nil {
-							to1.Default.Grpc.BackOff = nil
+							to.Default.Grpc.BackOff = nil
 						} else {
-							to1.Default.Grpc.BackOff = &tfTypes.BackOff{}
-							to1.Default.Grpc.BackOff.BaseInterval = types.StringPointerValue(toItem.Default.Grpc.BackOff.BaseInterval)
-							to1.Default.Grpc.BackOff.MaxInterval = types.StringPointerValue(toItem.Default.Grpc.BackOff.MaxInterval)
+							to.Default.Grpc.BackOff = &tfTypes.BackOff{}
+							to.Default.Grpc.BackOff.BaseInterval = types.StringPointerValue(toItem.Default.Grpc.BackOff.BaseInterval)
+							to.Default.Grpc.BackOff.MaxInterval = types.StringPointerValue(toItem.Default.Grpc.BackOff.MaxInterval)
 						}
-						if toItem.Default.Grpc.NumRetries != nil {
-							to1.Default.Grpc.NumRetries = types.Int32Value(int32(*toItem.Default.Grpc.NumRetries))
-						} else {
-							to1.Default.Grpc.NumRetries = types.Int32Null()
-						}
-						to1.Default.Grpc.PerTryTimeout = types.StringPointerValue(toItem.Default.Grpc.PerTryTimeout)
+						to.Default.Grpc.NumRetries = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(toItem.Default.Grpc.NumRetries))
+						to.Default.Grpc.PerTryTimeout = types.StringPointerValue(toItem.Default.Grpc.PerTryTimeout)
 						if toItem.Default.Grpc.RateLimitedBackOff == nil {
-							to1.Default.Grpc.RateLimitedBackOff = nil
+							to.Default.Grpc.RateLimitedBackOff = nil
 						} else {
-							to1.Default.Grpc.RateLimitedBackOff = &tfTypes.RateLimitedBackOff{}
-							to1.Default.Grpc.RateLimitedBackOff.MaxInterval = types.StringPointerValue(toItem.Default.Grpc.RateLimitedBackOff.MaxInterval)
-							to1.Default.Grpc.RateLimitedBackOff.ResetHeaders = []tfTypes.ResetHeaders{}
+							to.Default.Grpc.RateLimitedBackOff = &tfTypes.RateLimitedBackOff{}
+							to.Default.Grpc.RateLimitedBackOff.MaxInterval = types.StringPointerValue(toItem.Default.Grpc.RateLimitedBackOff.MaxInterval)
+							to.Default.Grpc.RateLimitedBackOff.ResetHeaders = []tfTypes.ResetHeaders{}
 							for resetHeadersCount, resetHeadersItem := range toItem.Default.Grpc.RateLimitedBackOff.ResetHeaders {
-								var resetHeaders1 tfTypes.ResetHeaders
-								resetHeaders1.Format = types.StringValue(string(resetHeadersItem.Format))
-								resetHeaders1.Name = types.StringValue(resetHeadersItem.Name)
-								if resetHeadersCount+1 > len(to1.Default.Grpc.RateLimitedBackOff.ResetHeaders) {
-									to1.Default.Grpc.RateLimitedBackOff.ResetHeaders = append(to1.Default.Grpc.RateLimitedBackOff.ResetHeaders, resetHeaders1)
+								var resetHeaders tfTypes.ResetHeaders
+								resetHeaders.Format = types.StringValue(string(resetHeadersItem.Format))
+								resetHeaders.Name = types.StringValue(resetHeadersItem.Name)
+								if resetHeadersCount+1 > len(to.Default.Grpc.RateLimitedBackOff.ResetHeaders) {
+									to.Default.Grpc.RateLimitedBackOff.ResetHeaders = append(to.Default.Grpc.RateLimitedBackOff.ResetHeaders, resetHeaders)
 								} else {
-									to1.Default.Grpc.RateLimitedBackOff.ResetHeaders[resetHeadersCount].Format = resetHeaders1.Format
-									to1.Default.Grpc.RateLimitedBackOff.ResetHeaders[resetHeadersCount].Name = resetHeaders1.Name
+									to.Default.Grpc.RateLimitedBackOff.ResetHeaders[resetHeadersCount].Format = resetHeaders.Format
+									to.Default.Grpc.RateLimitedBackOff.ResetHeaders[resetHeadersCount].Name = resetHeaders.Name
 								}
 							}
 						}
-						to1.Default.Grpc.RetryOn = make([]types.String, 0, len(toItem.Default.Grpc.RetryOn))
+						to.Default.Grpc.RetryOn = make([]types.String, 0, len(toItem.Default.Grpc.RetryOn))
 						for _, v := range toItem.Default.Grpc.RetryOn {
-							to1.Default.Grpc.RetryOn = append(to1.Default.Grpc.RetryOn, types.StringValue(string(v)))
+							to.Default.Grpc.RetryOn = append(to.Default.Grpc.RetryOn, types.StringValue(string(v)))
 						}
 					}
 					if toItem.Default.HTTP == nil {
-						to1.Default.HTTP = nil
+						to.Default.HTTP = nil
 					} else {
-						to1.Default.HTTP = &tfTypes.MeshRetryItemHTTP{}
+						to.Default.HTTP = &tfTypes.MeshRetryItemHTTP{}
 						if toItem.Default.HTTP.BackOff == nil {
-							to1.Default.HTTP.BackOff = nil
+							to.Default.HTTP.BackOff = nil
 						} else {
-							to1.Default.HTTP.BackOff = &tfTypes.BackOff{}
-							to1.Default.HTTP.BackOff.BaseInterval = types.StringPointerValue(toItem.Default.HTTP.BackOff.BaseInterval)
-							to1.Default.HTTP.BackOff.MaxInterval = types.StringPointerValue(toItem.Default.HTTP.BackOff.MaxInterval)
+							to.Default.HTTP.BackOff = &tfTypes.BackOff{}
+							to.Default.HTTP.BackOff.BaseInterval = types.StringPointerValue(toItem.Default.HTTP.BackOff.BaseInterval)
+							to.Default.HTTP.BackOff.MaxInterval = types.StringPointerValue(toItem.Default.HTTP.BackOff.MaxInterval)
 						}
-						to1.Default.HTTP.HostSelection = []tfTypes.HostSelection{}
+						to.Default.HTTP.HostSelection = []tfTypes.HostSelection{}
 						for hostSelectionCount, hostSelectionItem := range toItem.Default.HTTP.HostSelection {
-							var hostSelection1 tfTypes.HostSelection
-							hostSelection1.Predicate = types.StringValue(string(hostSelectionItem.Predicate))
+							var hostSelection tfTypes.HostSelection
+							hostSelection.Predicate = types.StringValue(string(hostSelectionItem.Predicate))
 							if len(hostSelectionItem.Tags) > 0 {
-								hostSelection1.Tags = make(map[string]types.String, len(hostSelectionItem.Tags))
+								hostSelection.Tags = make(map[string]types.String, len(hostSelectionItem.Tags))
 								for key3, value3 := range hostSelectionItem.Tags {
-									hostSelection1.Tags[key3] = types.StringValue(value3)
+									hostSelection.Tags[key3] = types.StringValue(value3)
 								}
 							}
-							if hostSelectionItem.UpdateFrequency != nil {
-								hostSelection1.UpdateFrequency = types.Int32Value(int32(*hostSelectionItem.UpdateFrequency))
+							hostSelection.UpdateFrequency = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(hostSelectionItem.UpdateFrequency))
+							if hostSelectionCount+1 > len(to.Default.HTTP.HostSelection) {
+								to.Default.HTTP.HostSelection = append(to.Default.HTTP.HostSelection, hostSelection)
 							} else {
-								hostSelection1.UpdateFrequency = types.Int32Null()
-							}
-							if hostSelectionCount+1 > len(to1.Default.HTTP.HostSelection) {
-								to1.Default.HTTP.HostSelection = append(to1.Default.HTTP.HostSelection, hostSelection1)
-							} else {
-								to1.Default.HTTP.HostSelection[hostSelectionCount].Predicate = hostSelection1.Predicate
-								to1.Default.HTTP.HostSelection[hostSelectionCount].Tags = hostSelection1.Tags
-								to1.Default.HTTP.HostSelection[hostSelectionCount].UpdateFrequency = hostSelection1.UpdateFrequency
+								to.Default.HTTP.HostSelection[hostSelectionCount].Predicate = hostSelection.Predicate
+								to.Default.HTTP.HostSelection[hostSelectionCount].Tags = hostSelection.Tags
+								to.Default.HTTP.HostSelection[hostSelectionCount].UpdateFrequency = hostSelection.UpdateFrequency
 							}
 						}
-						to1.Default.HTTP.HostSelectionMaxAttempts = types.Int64PointerValue(toItem.Default.HTTP.HostSelectionMaxAttempts)
-						if toItem.Default.HTTP.NumRetries != nil {
-							to1.Default.HTTP.NumRetries = types.Int32Value(int32(*toItem.Default.HTTP.NumRetries))
-						} else {
-							to1.Default.HTTP.NumRetries = types.Int32Null()
-						}
-						to1.Default.HTTP.PerTryTimeout = types.StringPointerValue(toItem.Default.HTTP.PerTryTimeout)
+						to.Default.HTTP.HostSelectionMaxAttempts = types.Int64PointerValue(toItem.Default.HTTP.HostSelectionMaxAttempts)
+						to.Default.HTTP.NumRetries = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(toItem.Default.HTTP.NumRetries))
+						to.Default.HTTP.PerTryTimeout = types.StringPointerValue(toItem.Default.HTTP.PerTryTimeout)
 						if toItem.Default.HTTP.RateLimitedBackOff == nil {
-							to1.Default.HTTP.RateLimitedBackOff = nil
+							to.Default.HTTP.RateLimitedBackOff = nil
 						} else {
-							to1.Default.HTTP.RateLimitedBackOff = &tfTypes.RateLimitedBackOff{}
-							to1.Default.HTTP.RateLimitedBackOff.MaxInterval = types.StringPointerValue(toItem.Default.HTTP.RateLimitedBackOff.MaxInterval)
-							to1.Default.HTTP.RateLimitedBackOff.ResetHeaders = []tfTypes.ResetHeaders{}
+							to.Default.HTTP.RateLimitedBackOff = &tfTypes.RateLimitedBackOff{}
+							to.Default.HTTP.RateLimitedBackOff.MaxInterval = types.StringPointerValue(toItem.Default.HTTP.RateLimitedBackOff.MaxInterval)
+							to.Default.HTTP.RateLimitedBackOff.ResetHeaders = []tfTypes.ResetHeaders{}
 							for resetHeadersCount1, resetHeadersItem1 := range toItem.Default.HTTP.RateLimitedBackOff.ResetHeaders {
-								var resetHeaders3 tfTypes.ResetHeaders
-								resetHeaders3.Format = types.StringValue(string(resetHeadersItem1.Format))
-								resetHeaders3.Name = types.StringValue(resetHeadersItem1.Name)
-								if resetHeadersCount1+1 > len(to1.Default.HTTP.RateLimitedBackOff.ResetHeaders) {
-									to1.Default.HTTP.RateLimitedBackOff.ResetHeaders = append(to1.Default.HTTP.RateLimitedBackOff.ResetHeaders, resetHeaders3)
+								var resetHeaders1 tfTypes.ResetHeaders
+								resetHeaders1.Format = types.StringValue(string(resetHeadersItem1.Format))
+								resetHeaders1.Name = types.StringValue(resetHeadersItem1.Name)
+								if resetHeadersCount1+1 > len(to.Default.HTTP.RateLimitedBackOff.ResetHeaders) {
+									to.Default.HTTP.RateLimitedBackOff.ResetHeaders = append(to.Default.HTTP.RateLimitedBackOff.ResetHeaders, resetHeaders1)
 								} else {
-									to1.Default.HTTP.RateLimitedBackOff.ResetHeaders[resetHeadersCount1].Format = resetHeaders3.Format
-									to1.Default.HTTP.RateLimitedBackOff.ResetHeaders[resetHeadersCount1].Name = resetHeaders3.Name
+									to.Default.HTTP.RateLimitedBackOff.ResetHeaders[resetHeadersCount1].Format = resetHeaders1.Format
+									to.Default.HTTP.RateLimitedBackOff.ResetHeaders[resetHeadersCount1].Name = resetHeaders1.Name
 								}
 							}
 						}
-						to1.Default.HTTP.RetriableRequestHeaders = []tfTypes.Headers{}
+						to.Default.HTTP.RetriableRequestHeaders = []tfTypes.Headers{}
 						for retriableRequestHeadersCount, retriableRequestHeadersItem := range toItem.Default.HTTP.RetriableRequestHeaders {
-							var retriableRequestHeaders1 tfTypes.Headers
-							retriableRequestHeaders1.Name = types.StringValue(retriableRequestHeadersItem.Name)
+							var retriableRequestHeaders tfTypes.Headers
+							retriableRequestHeaders.Name = types.StringValue(retriableRequestHeadersItem.Name)
 							if retriableRequestHeadersItem.Type != nil {
-								retriableRequestHeaders1.Type = types.StringValue(string(*retriableRequestHeadersItem.Type))
+								retriableRequestHeaders.Type = types.StringValue(string(*retriableRequestHeadersItem.Type))
 							} else {
-								retriableRequestHeaders1.Type = types.StringNull()
+								retriableRequestHeaders.Type = types.StringNull()
 							}
-							retriableRequestHeaders1.Value = types.StringPointerValue(retriableRequestHeadersItem.Value)
-							if retriableRequestHeadersCount+1 > len(to1.Default.HTTP.RetriableRequestHeaders) {
-								to1.Default.HTTP.RetriableRequestHeaders = append(to1.Default.HTTP.RetriableRequestHeaders, retriableRequestHeaders1)
+							retriableRequestHeaders.Value = types.StringPointerValue(retriableRequestHeadersItem.Value)
+							if retriableRequestHeadersCount+1 > len(to.Default.HTTP.RetriableRequestHeaders) {
+								to.Default.HTTP.RetriableRequestHeaders = append(to.Default.HTTP.RetriableRequestHeaders, retriableRequestHeaders)
 							} else {
-								to1.Default.HTTP.RetriableRequestHeaders[retriableRequestHeadersCount].Name = retriableRequestHeaders1.Name
-								to1.Default.HTTP.RetriableRequestHeaders[retriableRequestHeadersCount].Type = retriableRequestHeaders1.Type
-								to1.Default.HTTP.RetriableRequestHeaders[retriableRequestHeadersCount].Value = retriableRequestHeaders1.Value
+								to.Default.HTTP.RetriableRequestHeaders[retriableRequestHeadersCount].Name = retriableRequestHeaders.Name
+								to.Default.HTTP.RetriableRequestHeaders[retriableRequestHeadersCount].Type = retriableRequestHeaders.Type
+								to.Default.HTTP.RetriableRequestHeaders[retriableRequestHeadersCount].Value = retriableRequestHeaders.Value
 							}
 						}
-						to1.Default.HTTP.RetriableResponseHeaders = []tfTypes.Headers{}
+						to.Default.HTTP.RetriableResponseHeaders = []tfTypes.Headers{}
 						for retriableResponseHeadersCount, retriableResponseHeadersItem := range toItem.Default.HTTP.RetriableResponseHeaders {
-							var retriableResponseHeaders1 tfTypes.Headers
-							retriableResponseHeaders1.Name = types.StringValue(retriableResponseHeadersItem.Name)
+							var retriableResponseHeaders tfTypes.Headers
+							retriableResponseHeaders.Name = types.StringValue(retriableResponseHeadersItem.Name)
 							if retriableResponseHeadersItem.Type != nil {
-								retriableResponseHeaders1.Type = types.StringValue(string(*retriableResponseHeadersItem.Type))
+								retriableResponseHeaders.Type = types.StringValue(string(*retriableResponseHeadersItem.Type))
 							} else {
-								retriableResponseHeaders1.Type = types.StringNull()
+								retriableResponseHeaders.Type = types.StringNull()
 							}
-							retriableResponseHeaders1.Value = types.StringPointerValue(retriableResponseHeadersItem.Value)
-							if retriableResponseHeadersCount+1 > len(to1.Default.HTTP.RetriableResponseHeaders) {
-								to1.Default.HTTP.RetriableResponseHeaders = append(to1.Default.HTTP.RetriableResponseHeaders, retriableResponseHeaders1)
+							retriableResponseHeaders.Value = types.StringPointerValue(retriableResponseHeadersItem.Value)
+							if retriableResponseHeadersCount+1 > len(to.Default.HTTP.RetriableResponseHeaders) {
+								to.Default.HTTP.RetriableResponseHeaders = append(to.Default.HTTP.RetriableResponseHeaders, retriableResponseHeaders)
 							} else {
-								to1.Default.HTTP.RetriableResponseHeaders[retriableResponseHeadersCount].Name = retriableResponseHeaders1.Name
-								to1.Default.HTTP.RetriableResponseHeaders[retriableResponseHeadersCount].Type = retriableResponseHeaders1.Type
-								to1.Default.HTTP.RetriableResponseHeaders[retriableResponseHeadersCount].Value = retriableResponseHeaders1.Value
+								to.Default.HTTP.RetriableResponseHeaders[retriableResponseHeadersCount].Name = retriableResponseHeaders.Name
+								to.Default.HTTP.RetriableResponseHeaders[retriableResponseHeadersCount].Type = retriableResponseHeaders.Type
+								to.Default.HTTP.RetriableResponseHeaders[retriableResponseHeadersCount].Value = retriableResponseHeaders.Value
 							}
 						}
-						to1.Default.HTTP.RetryOn = make([]types.String, 0, len(toItem.Default.HTTP.RetryOn))
+						to.Default.HTTP.RetryOn = make([]types.String, 0, len(toItem.Default.HTTP.RetryOn))
 						for _, v := range toItem.Default.HTTP.RetryOn {
-							to1.Default.HTTP.RetryOn = append(to1.Default.HTTP.RetryOn, types.StringValue(v))
+							to.Default.HTTP.RetryOn = append(to.Default.HTTP.RetryOn, types.StringValue(v))
 						}
 					}
 					if toItem.Default.TCP == nil {
-						to1.Default.TCP = nil
+						to.Default.TCP = nil
 					} else {
-						to1.Default.TCP = &tfTypes.MeshRetryItemTCP{}
-						if toItem.Default.TCP.MaxConnectAttempt != nil {
-							to1.Default.TCP.MaxConnectAttempt = types.Int32Value(int32(*toItem.Default.TCP.MaxConnectAttempt))
-						} else {
-							to1.Default.TCP.MaxConnectAttempt = types.Int32Null()
-						}
+						to.Default.TCP = &tfTypes.MeshRetryItemTCP{}
+						to.Default.TCP.MaxConnectAttempt = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(toItem.Default.TCP.MaxConnectAttempt))
 					}
 				}
-				to1.TargetRef.Kind = types.StringValue(string(toItem.TargetRef.Kind))
+				to.TargetRef.Kind = types.StringValue(string(toItem.TargetRef.Kind))
 				if len(toItem.TargetRef.Labels) > 0 {
-					to1.TargetRef.Labels = make(map[string]types.String, len(toItem.TargetRef.Labels))
-					for key4, value6 := range toItem.TargetRef.Labels {
-						to1.TargetRef.Labels[key4] = types.StringValue(value6)
+					to.TargetRef.Labels = make(map[string]types.String, len(toItem.TargetRef.Labels))
+					for key4, value4 := range toItem.TargetRef.Labels {
+						to.TargetRef.Labels[key4] = types.StringValue(value4)
 					}
 				}
-				to1.TargetRef.Mesh = types.StringPointerValue(toItem.TargetRef.Mesh)
-				to1.TargetRef.Name = types.StringPointerValue(toItem.TargetRef.Name)
-				to1.TargetRef.Namespace = types.StringPointerValue(toItem.TargetRef.Namespace)
-				to1.TargetRef.ProxyTypes = make([]types.String, 0, len(toItem.TargetRef.ProxyTypes))
+				to.TargetRef.Mesh = types.StringPointerValue(toItem.TargetRef.Mesh)
+				to.TargetRef.Name = types.StringPointerValue(toItem.TargetRef.Name)
+				to.TargetRef.Namespace = types.StringPointerValue(toItem.TargetRef.Namespace)
+				to.TargetRef.ProxyTypes = make([]types.String, 0, len(toItem.TargetRef.ProxyTypes))
 				for _, v := range toItem.TargetRef.ProxyTypes {
-					to1.TargetRef.ProxyTypes = append(to1.TargetRef.ProxyTypes, types.StringValue(string(v)))
+					to.TargetRef.ProxyTypes = append(to.TargetRef.ProxyTypes, types.StringValue(string(v)))
 				}
-				to1.TargetRef.SectionName = types.StringPointerValue(toItem.TargetRef.SectionName)
+				to.TargetRef.SectionName = types.StringPointerValue(toItem.TargetRef.SectionName)
 				if len(toItem.TargetRef.Tags) > 0 {
-					to1.TargetRef.Tags = make(map[string]types.String, len(toItem.TargetRef.Tags))
-					for key5, value7 := range toItem.TargetRef.Tags {
-						to1.TargetRef.Tags[key5] = types.StringValue(value7)
+					to.TargetRef.Tags = make(map[string]types.String, len(toItem.TargetRef.Tags))
+					for key5, value5 := range toItem.TargetRef.Tags {
+						to.TargetRef.Tags[key5] = types.StringValue(value5)
 					}
 				}
-				if toCount+1 > len(items1.Spec.To) {
-					items1.Spec.To = append(items1.Spec.To, to1)
+				if toCount+1 > len(items.Spec.To) {
+					items.Spec.To = append(items.Spec.To, to)
 				} else {
-					items1.Spec.To[toCount].Default = to1.Default
-					items1.Spec.To[toCount].TargetRef = to1.TargetRef
+					items.Spec.To[toCount].Default = to.Default
+					items.Spec.To[toCount].TargetRef = to.TargetRef
 				}
 			}
-			items1.Type = types.StringValue(string(itemsItem.Type))
+			items.Type = types.StringValue(string(itemsItem.Type))
 			if itemsCount+1 > len(r.Items) {
-				r.Items = append(r.Items, items1)
+				r.Items = append(r.Items, items)
 			} else {
-				r.Items[itemsCount].CreationTime = items1.CreationTime
-				r.Items[itemsCount].Labels = items1.Labels
-				r.Items[itemsCount].Mesh = items1.Mesh
-				r.Items[itemsCount].ModificationTime = items1.ModificationTime
-				r.Items[itemsCount].Name = items1.Name
-				r.Items[itemsCount].Spec = items1.Spec
-				r.Items[itemsCount].Type = items1.Type
+				r.Items[itemsCount].CreationTime = items.CreationTime
+				r.Items[itemsCount].Labels = items.Labels
+				r.Items[itemsCount].Mesh = items.Mesh
+				r.Items[itemsCount].ModificationTime = items.ModificationTime
+				r.Items[itemsCount].Name = items.Name
+				r.Items[itemsCount].Spec = items.Spec
+				r.Items[itemsCount].Type = items.Type
 			}
 		}
 		r.Next = types.StringPointerValue(resp.Next)
-		if resp.Total != nil {
-			r.Total = types.NumberValue(big.NewFloat(float64(*resp.Total)))
-		} else {
-			r.Total = types.NumberNull()
-		}
+		r.Total = types.Float64PointerValue(resp.Total)
 	}
+
+	return diags
 }

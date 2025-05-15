@@ -3,13 +3,18 @@
 package provider
 
 import (
+	"context"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
-	"time"
 )
 
-func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput() *shared.MeshHTTPRouteItemInput {
+func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.Context) (*shared.MeshHTTPRouteItemInput, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
 	typeVar := shared.MeshHTTPRouteItemType(r.Type.ValueString())
 	mesh := new(string)
 	if !r.Mesh.IsUnknown() && !r.Mesh.IsNull() {
@@ -55,7 +60,7 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput() *shared.Me
 		} else {
 			namespace = nil
 		}
-		var proxyTypes []shared.MeshHTTPRouteItemProxyTypes = []shared.MeshHTTPRouteItemProxyTypes{}
+		proxyTypes := make([]shared.MeshHTTPRouteItemProxyTypes, 0, len(r.Spec.TargetRef.ProxyTypes))
 		for _, proxyTypesItem := range r.Spec.TargetRef.ProxyTypes {
 			proxyTypes = append(proxyTypes, shared.MeshHTTPRouteItemProxyTypes(proxyTypesItem.ValueString()))
 		}
@@ -83,15 +88,15 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput() *shared.Me
 			Tags:        tags,
 		}
 	}
-	var to []shared.MeshHTTPRouteItemTo = []shared.MeshHTTPRouteItemTo{}
+	to := make([]shared.MeshHTTPRouteItemTo, 0, len(r.Spec.To))
 	for _, toItem := range r.Spec.To {
-		var hostnames []string = []string{}
+		hostnames := make([]string, 0, len(toItem.Hostnames))
 		for _, hostnamesItem := range toItem.Hostnames {
 			hostnames = append(hostnames, hostnamesItem.ValueString())
 		}
-		var rules []shared.MeshHTTPRouteItemRules = []shared.MeshHTTPRouteItemRules{}
+		rules := make([]shared.MeshHTTPRouteItemRules, 0, len(toItem.Rules))
 		for _, rulesItem := range toItem.Rules {
-			var backendRefs []shared.BackendRefs = []shared.BackendRefs{}
+			backendRefs := make([]shared.BackendRefs, 0, len(rulesItem.Default.BackendRefs))
 			for _, backendRefsItem := range rulesItem.Default.BackendRefs {
 				kind1 := shared.MeshHTTPRouteItemSpecToKind(backendRefsItem.Kind.ValueString())
 				labels2 := make(map[string]string)
@@ -125,7 +130,7 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput() *shared.Me
 				} else {
 					port = nil
 				}
-				var proxyTypes1 []shared.MeshHTTPRouteItemSpecToProxyTypes = []shared.MeshHTTPRouteItemSpecToProxyTypes{}
+				proxyTypes1 := make([]shared.MeshHTTPRouteItemSpecToProxyTypes, 0, len(backendRefsItem.ProxyTypes))
 				for _, proxyTypesItem1 := range backendRefsItem.ProxyTypes {
 					proxyTypes1 = append(proxyTypes1, shared.MeshHTTPRouteItemSpecToProxyTypes(proxyTypesItem1.ValueString()))
 				}
@@ -161,11 +166,11 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput() *shared.Me
 					Weight:      weight,
 				})
 			}
-			var filters []shared.Filters = []shared.Filters{}
+			filters := make([]shared.Filters, 0, len(rulesItem.Default.Filters))
 			for _, filtersItem := range rulesItem.Default.Filters {
 				var requestHeaderModifier *shared.RequestHeaderModifier
 				if filtersItem.RequestHeaderModifier != nil {
-					var add []shared.MeshHTTPRouteItemAdd = []shared.MeshHTTPRouteItemAdd{}
+					add := make([]shared.MeshHTTPRouteItemAdd, 0, len(filtersItem.RequestHeaderModifier.Add))
 					for _, addItem := range filtersItem.RequestHeaderModifier.Add {
 						var name3 string
 						name3 = addItem.Name.ValueString()
@@ -178,11 +183,11 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput() *shared.Me
 							Value: value,
 						})
 					}
-					var remove []string = []string{}
+					remove := make([]string, 0, len(filtersItem.RequestHeaderModifier.Remove))
 					for _, removeItem := range filtersItem.RequestHeaderModifier.Remove {
 						remove = append(remove, removeItem.ValueString())
 					}
-					var set []shared.MeshHTTPRouteItemSet = []shared.MeshHTTPRouteItemSet{}
+					set := make([]shared.MeshHTTPRouteItemSet, 0, len(filtersItem.RequestHeaderModifier.Set))
 					for _, setItem := range filtersItem.RequestHeaderModifier.Set {
 						var name4 string
 						name4 = setItem.Name.ValueString()
@@ -235,7 +240,7 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput() *shared.Me
 					} else {
 						port1 = nil
 					}
-					var proxyTypes2 []shared.MeshHTTPRouteItemSpecToRulesProxyTypes = []shared.MeshHTTPRouteItemSpecToRulesProxyTypes{}
+					proxyTypes2 := make([]shared.MeshHTTPRouteItemSpecToRulesProxyTypes, 0, len(filtersItem.RequestMirror.BackendRef.ProxyTypes))
 					for _, proxyTypesItem2 := range filtersItem.RequestMirror.BackendRef.ProxyTypes {
 						proxyTypes2 = append(proxyTypes2, shared.MeshHTTPRouteItemSpecToRulesProxyTypes(proxyTypesItem2.ValueString()))
 					}
@@ -357,7 +362,7 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput() *shared.Me
 				}
 				var responseHeaderModifier *shared.ResponseHeaderModifier
 				if filtersItem.ResponseHeaderModifier != nil {
-					var add1 []shared.MeshHTTPRouteItemSpecAdd = []shared.MeshHTTPRouteItemSpecAdd{}
+					add1 := make([]shared.MeshHTTPRouteItemSpecAdd, 0, len(filtersItem.ResponseHeaderModifier.Add))
 					for _, addItem1 := range filtersItem.ResponseHeaderModifier.Add {
 						var name6 string
 						name6 = addItem1.Name.ValueString()
@@ -370,11 +375,11 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput() *shared.Me
 							Value: value2,
 						})
 					}
-					var remove1 []string = []string{}
+					remove1 := make([]string, 0, len(filtersItem.ResponseHeaderModifier.Remove))
 					for _, removeItem1 := range filtersItem.ResponseHeaderModifier.Remove {
 						remove1 = append(remove1, removeItem1.ValueString())
 					}
-					var set1 []shared.MeshHTTPRouteItemSpecSet = []shared.MeshHTTPRouteItemSpecSet{}
+					set1 := make([]shared.MeshHTTPRouteItemSpecSet, 0, len(filtersItem.ResponseHeaderModifier.Set))
 					for _, setItem1 := range filtersItem.ResponseHeaderModifier.Set {
 						var name7 string
 						name7 = setItem1.Name.ValueString()
@@ -448,9 +453,9 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput() *shared.Me
 				BackendRefs: backendRefs,
 				Filters:     filters,
 			}
-			var matches []shared.Matches = []shared.Matches{}
+			matches := make([]shared.Matches, 0, len(rulesItem.Matches))
 			for _, matchesItem := range rulesItem.Matches {
-				var headers []shared.Headers = []shared.Headers{}
+				headers := make([]shared.Headers, 0, len(matchesItem.Headers))
 				for _, headersItem := range matchesItem.Headers {
 					var name8 string
 					name8 = headersItem.Name.ValueString()
@@ -490,7 +495,7 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput() *shared.Me
 						Value: value5,
 					}
 				}
-				var queryParams []shared.QueryParams = []shared.QueryParams{}
+				queryParams := make([]shared.QueryParams, 0, len(matchesItem.QueryParams))
 				for _, queryParamsItem := range matchesItem.QueryParams {
 					var name9 string
 					name9 = queryParamsItem.Name.ValueString()
@@ -543,7 +548,7 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput() *shared.Me
 		} else {
 			namespace3 = nil
 		}
-		var proxyTypes3 []shared.MeshHTTPRouteItemSpecProxyTypes = []shared.MeshHTTPRouteItemSpecProxyTypes{}
+		proxyTypes3 := make([]shared.MeshHTTPRouteItemSpecProxyTypes, 0, len(toItem.TargetRef.ProxyTypes))
 		for _, proxyTypesItem3 := range toItem.TargetRef.ProxyTypes {
 			proxyTypes3 = append(proxyTypes3, shared.MeshHTTPRouteItemSpecProxyTypes(proxyTypesItem3.ValueString()))
 		}
@@ -587,25 +592,112 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput() *shared.Me
 		Labels: labels,
 		Spec:   spec,
 	}
-	return &out
+
+	return &out, diags
 }
 
-func (r *MeshHTTPRouteResourceModel) RefreshFromSharedMeshHTTPRouteCreateOrUpdateSuccessResponse(resp *shared.MeshHTTPRouteCreateOrUpdateSuccessResponse) {
+func (r *MeshHTTPRouteResourceModel) ToOperationsCreateMeshHTTPRouteRequest(ctx context.Context) (*operations.CreateMeshHTTPRouteRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	meshHTTPRouteItem, meshHTTPRouteItemDiags := r.ToSharedMeshHTTPRouteItemInput(ctx)
+	diags.Append(meshHTTPRouteItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.CreateMeshHTTPRouteRequest{
+		Mesh:              mesh,
+		Name:              name,
+		MeshHTTPRouteItem: *meshHTTPRouteItem,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshHTTPRouteResourceModel) ToOperationsUpdateMeshHTTPRouteRequest(ctx context.Context) (*operations.UpdateMeshHTTPRouteRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	meshHTTPRouteItem, meshHTTPRouteItemDiags := r.ToSharedMeshHTTPRouteItemInput(ctx)
+	diags.Append(meshHTTPRouteItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.UpdateMeshHTTPRouteRequest{
+		Mesh:              mesh,
+		Name:              name,
+		MeshHTTPRouteItem: *meshHTTPRouteItem,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshHTTPRouteResourceModel) ToOperationsGetMeshHTTPRouteRequest(ctx context.Context) (*operations.GetMeshHTTPRouteRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.GetMeshHTTPRouteRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshHTTPRouteResourceModel) ToOperationsDeleteMeshHTTPRouteRequest(ctx context.Context) (*operations.DeleteMeshHTTPRouteRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.DeleteMeshHTTPRouteRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshHTTPRouteResourceModel) RefreshFromSharedMeshHTTPRouteCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.MeshHTTPRouteCreateOrUpdateSuccessResponse) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
 		r.Warnings = make([]types.String, 0, len(resp.Warnings))
 		for _, v := range resp.Warnings {
 			r.Warnings = append(r.Warnings, types.StringValue(v))
 		}
 	}
+
+	return diags
 }
 
-func (r *MeshHTTPRouteResourceModel) RefreshFromSharedMeshHTTPRouteItem(resp *shared.MeshHTTPRouteItem) {
+func (r *MeshHTTPRouteResourceModel) RefreshFromSharedMeshHTTPRouteItem(ctx context.Context, resp *shared.MeshHTTPRouteItem) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
-		if resp.CreationTime != nil {
-			r.CreationTime = types.StringValue(resp.CreationTime.Format(time.RFC3339Nano))
-		} else {
-			r.CreationTime = types.StringNull()
-		}
+		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
 		if len(resp.Labels) > 0 {
 			r.Labels = make(map[string]types.String, len(resp.Labels))
 			for key, value := range resp.Labels {
@@ -613,11 +705,7 @@ func (r *MeshHTTPRouteResourceModel) RefreshFromSharedMeshHTTPRouteItem(resp *sh
 			}
 		}
 		r.Mesh = types.StringPointerValue(resp.Mesh)
-		if resp.ModificationTime != nil {
-			r.ModificationTime = types.StringValue(resp.ModificationTime.Format(time.RFC3339Nano))
-		} else {
-			r.ModificationTime = types.StringNull()
-		}
+		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
 		if resp.Spec.TargetRef == nil {
 			r.Spec.TargetRef = nil
@@ -650,319 +738,307 @@ func (r *MeshHTTPRouteResourceModel) RefreshFromSharedMeshHTTPRouteItem(resp *sh
 			r.Spec.To = r.Spec.To[:len(resp.Spec.To)]
 		}
 		for toCount, toItem := range resp.Spec.To {
-			var to1 tfTypes.MeshHTTPRouteItemTo
-			to1.Hostnames = make([]types.String, 0, len(toItem.Hostnames))
+			var to tfTypes.MeshHTTPRouteItemTo
+			to.Hostnames = make([]types.String, 0, len(toItem.Hostnames))
 			for _, v := range toItem.Hostnames {
-				to1.Hostnames = append(to1.Hostnames, types.StringValue(v))
+				to.Hostnames = append(to.Hostnames, types.StringValue(v))
 			}
-			to1.Rules = []tfTypes.MeshHTTPRouteItemRules{}
+			to.Rules = []tfTypes.MeshHTTPRouteItemRules{}
 			for rulesCount, rulesItem := range toItem.Rules {
-				var rules1 tfTypes.MeshHTTPRouteItemRules
-				rules1.Default.BackendRefs = []tfTypes.BackendRefs{}
+				var rules tfTypes.MeshHTTPRouteItemRules
+				rules.Default.BackendRefs = []tfTypes.BackendRefs{}
 				for backendRefsCount, backendRefsItem := range rulesItem.Default.BackendRefs {
-					var backendRefs1 tfTypes.BackendRefs
-					backendRefs1.Kind = types.StringValue(string(backendRefsItem.Kind))
+					var backendRefs tfTypes.BackendRefs
+					backendRefs.Kind = types.StringValue(string(backendRefsItem.Kind))
 					if len(backendRefsItem.Labels) > 0 {
-						backendRefs1.Labels = make(map[string]types.String, len(backendRefsItem.Labels))
+						backendRefs.Labels = make(map[string]types.String, len(backendRefsItem.Labels))
 						for key3, value3 := range backendRefsItem.Labels {
-							backendRefs1.Labels[key3] = types.StringValue(value3)
+							backendRefs.Labels[key3] = types.StringValue(value3)
 						}
 					}
-					backendRefs1.Mesh = types.StringPointerValue(backendRefsItem.Mesh)
-					backendRefs1.Name = types.StringPointerValue(backendRefsItem.Name)
-					backendRefs1.Namespace = types.StringPointerValue(backendRefsItem.Namespace)
-					if backendRefsItem.Port != nil {
-						backendRefs1.Port = types.Int32Value(int32(*backendRefsItem.Port))
-					} else {
-						backendRefs1.Port = types.Int32Null()
-					}
-					backendRefs1.ProxyTypes = make([]types.String, 0, len(backendRefsItem.ProxyTypes))
+					backendRefs.Mesh = types.StringPointerValue(backendRefsItem.Mesh)
+					backendRefs.Name = types.StringPointerValue(backendRefsItem.Name)
+					backendRefs.Namespace = types.StringPointerValue(backendRefsItem.Namespace)
+					backendRefs.Port = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(backendRefsItem.Port))
+					backendRefs.ProxyTypes = make([]types.String, 0, len(backendRefsItem.ProxyTypes))
 					for _, v := range backendRefsItem.ProxyTypes {
-						backendRefs1.ProxyTypes = append(backendRefs1.ProxyTypes, types.StringValue(string(v)))
+						backendRefs.ProxyTypes = append(backendRefs.ProxyTypes, types.StringValue(string(v)))
 					}
-					backendRefs1.SectionName = types.StringPointerValue(backendRefsItem.SectionName)
+					backendRefs.SectionName = types.StringPointerValue(backendRefsItem.SectionName)
 					if len(backendRefsItem.Tags) > 0 {
-						backendRefs1.Tags = make(map[string]types.String, len(backendRefsItem.Tags))
+						backendRefs.Tags = make(map[string]types.String, len(backendRefsItem.Tags))
 						for key4, value4 := range backendRefsItem.Tags {
-							backendRefs1.Tags[key4] = types.StringValue(value4)
+							backendRefs.Tags[key4] = types.StringValue(value4)
 						}
 					}
-					backendRefs1.Weight = types.Int64PointerValue(backendRefsItem.Weight)
-					if backendRefsCount+1 > len(rules1.Default.BackendRefs) {
-						rules1.Default.BackendRefs = append(rules1.Default.BackendRefs, backendRefs1)
+					backendRefs.Weight = types.Int64PointerValue(backendRefsItem.Weight)
+					if backendRefsCount+1 > len(rules.Default.BackendRefs) {
+						rules.Default.BackendRefs = append(rules.Default.BackendRefs, backendRefs)
 					} else {
-						rules1.Default.BackendRefs[backendRefsCount].Kind = backendRefs1.Kind
-						rules1.Default.BackendRefs[backendRefsCount].Labels = backendRefs1.Labels
-						rules1.Default.BackendRefs[backendRefsCount].Mesh = backendRefs1.Mesh
-						rules1.Default.BackendRefs[backendRefsCount].Name = backendRefs1.Name
-						rules1.Default.BackendRefs[backendRefsCount].Namespace = backendRefs1.Namespace
-						rules1.Default.BackendRefs[backendRefsCount].Port = backendRefs1.Port
-						rules1.Default.BackendRefs[backendRefsCount].ProxyTypes = backendRefs1.ProxyTypes
-						rules1.Default.BackendRefs[backendRefsCount].SectionName = backendRefs1.SectionName
-						rules1.Default.BackendRefs[backendRefsCount].Tags = backendRefs1.Tags
-						rules1.Default.BackendRefs[backendRefsCount].Weight = backendRefs1.Weight
+						rules.Default.BackendRefs[backendRefsCount].Kind = backendRefs.Kind
+						rules.Default.BackendRefs[backendRefsCount].Labels = backendRefs.Labels
+						rules.Default.BackendRefs[backendRefsCount].Mesh = backendRefs.Mesh
+						rules.Default.BackendRefs[backendRefsCount].Name = backendRefs.Name
+						rules.Default.BackendRefs[backendRefsCount].Namespace = backendRefs.Namespace
+						rules.Default.BackendRefs[backendRefsCount].Port = backendRefs.Port
+						rules.Default.BackendRefs[backendRefsCount].ProxyTypes = backendRefs.ProxyTypes
+						rules.Default.BackendRefs[backendRefsCount].SectionName = backendRefs.SectionName
+						rules.Default.BackendRefs[backendRefsCount].Tags = backendRefs.Tags
+						rules.Default.BackendRefs[backendRefsCount].Weight = backendRefs.Weight
 					}
 				}
-				rules1.Default.Filters = []tfTypes.Filters{}
+				rules.Default.Filters = []tfTypes.Filters{}
 				for filtersCount, filtersItem := range rulesItem.Default.Filters {
-					var filters1 tfTypes.Filters
+					var filters tfTypes.Filters
 					if filtersItem.RequestHeaderModifier == nil {
-						filters1.RequestHeaderModifier = nil
+						filters.RequestHeaderModifier = nil
 					} else {
-						filters1.RequestHeaderModifier = &tfTypes.RequestHeaderModifier{}
-						filters1.RequestHeaderModifier.Add = []tfTypes.MeshGlobalRateLimitItemAdd{}
+						filters.RequestHeaderModifier = &tfTypes.RequestHeaderModifier{}
+						filters.RequestHeaderModifier.Add = []tfTypes.MeshGlobalRateLimitItemAdd{}
 						for addCount, addItem := range filtersItem.RequestHeaderModifier.Add {
-							var add1 tfTypes.MeshGlobalRateLimitItemAdd
-							add1.Name = types.StringValue(addItem.Name)
-							add1.Value = types.StringValue(addItem.Value)
-							if addCount+1 > len(filters1.RequestHeaderModifier.Add) {
-								filters1.RequestHeaderModifier.Add = append(filters1.RequestHeaderModifier.Add, add1)
+							var add tfTypes.MeshGlobalRateLimitItemAdd
+							add.Name = types.StringValue(addItem.Name)
+							add.Value = types.StringValue(addItem.Value)
+							if addCount+1 > len(filters.RequestHeaderModifier.Add) {
+								filters.RequestHeaderModifier.Add = append(filters.RequestHeaderModifier.Add, add)
 							} else {
-								filters1.RequestHeaderModifier.Add[addCount].Name = add1.Name
-								filters1.RequestHeaderModifier.Add[addCount].Value = add1.Value
+								filters.RequestHeaderModifier.Add[addCount].Name = add.Name
+								filters.RequestHeaderModifier.Add[addCount].Value = add.Value
 							}
 						}
-						filters1.RequestHeaderModifier.Remove = make([]types.String, 0, len(filtersItem.RequestHeaderModifier.Remove))
+						filters.RequestHeaderModifier.Remove = make([]types.String, 0, len(filtersItem.RequestHeaderModifier.Remove))
 						for _, v := range filtersItem.RequestHeaderModifier.Remove {
-							filters1.RequestHeaderModifier.Remove = append(filters1.RequestHeaderModifier.Remove, types.StringValue(v))
+							filters.RequestHeaderModifier.Remove = append(filters.RequestHeaderModifier.Remove, types.StringValue(v))
 						}
-						filters1.RequestHeaderModifier.Set = []tfTypes.MeshGlobalRateLimitItemAdd{}
+						filters.RequestHeaderModifier.Set = []tfTypes.MeshGlobalRateLimitItemAdd{}
 						for setCount, setItem := range filtersItem.RequestHeaderModifier.Set {
-							var set1 tfTypes.MeshGlobalRateLimitItemAdd
-							set1.Name = types.StringValue(setItem.Name)
-							set1.Value = types.StringValue(setItem.Value)
-							if setCount+1 > len(filters1.RequestHeaderModifier.Set) {
-								filters1.RequestHeaderModifier.Set = append(filters1.RequestHeaderModifier.Set, set1)
+							var set tfTypes.MeshGlobalRateLimitItemAdd
+							set.Name = types.StringValue(setItem.Name)
+							set.Value = types.StringValue(setItem.Value)
+							if setCount+1 > len(filters.RequestHeaderModifier.Set) {
+								filters.RequestHeaderModifier.Set = append(filters.RequestHeaderModifier.Set, set)
 							} else {
-								filters1.RequestHeaderModifier.Set[setCount].Name = set1.Name
-								filters1.RequestHeaderModifier.Set[setCount].Value = set1.Value
+								filters.RequestHeaderModifier.Set[setCount].Name = set.Name
+								filters.RequestHeaderModifier.Set[setCount].Value = set.Value
 							}
 						}
 					}
 					if filtersItem.RequestMirror == nil {
-						filters1.RequestMirror = nil
+						filters.RequestMirror = nil
 					} else {
-						filters1.RequestMirror = &tfTypes.RequestMirror{}
-						filters1.RequestMirror.BackendRef.Kind = types.StringValue(string(filtersItem.RequestMirror.BackendRef.Kind))
+						filters.RequestMirror = &tfTypes.RequestMirror{}
+						filters.RequestMirror.BackendRef.Kind = types.StringValue(string(filtersItem.RequestMirror.BackendRef.Kind))
 						if len(filtersItem.RequestMirror.BackendRef.Labels) > 0 {
-							filters1.RequestMirror.BackendRef.Labels = make(map[string]types.String, len(filtersItem.RequestMirror.BackendRef.Labels))
-							for key5, value7 := range filtersItem.RequestMirror.BackendRef.Labels {
-								filters1.RequestMirror.BackendRef.Labels[key5] = types.StringValue(value7)
+							filters.RequestMirror.BackendRef.Labels = make(map[string]types.String, len(filtersItem.RequestMirror.BackendRef.Labels))
+							for key5, value5 := range filtersItem.RequestMirror.BackendRef.Labels {
+								filters.RequestMirror.BackendRef.Labels[key5] = types.StringValue(value5)
 							}
 						}
-						filters1.RequestMirror.BackendRef.Mesh = types.StringPointerValue(filtersItem.RequestMirror.BackendRef.Mesh)
-						filters1.RequestMirror.BackendRef.Name = types.StringPointerValue(filtersItem.RequestMirror.BackendRef.Name)
-						filters1.RequestMirror.BackendRef.Namespace = types.StringPointerValue(filtersItem.RequestMirror.BackendRef.Namespace)
-						if filtersItem.RequestMirror.BackendRef.Port != nil {
-							filters1.RequestMirror.BackendRef.Port = types.Int32Value(int32(*filtersItem.RequestMirror.BackendRef.Port))
-						} else {
-							filters1.RequestMirror.BackendRef.Port = types.Int32Null()
-						}
-						filters1.RequestMirror.BackendRef.ProxyTypes = make([]types.String, 0, len(filtersItem.RequestMirror.BackendRef.ProxyTypes))
+						filters.RequestMirror.BackendRef.Mesh = types.StringPointerValue(filtersItem.RequestMirror.BackendRef.Mesh)
+						filters.RequestMirror.BackendRef.Name = types.StringPointerValue(filtersItem.RequestMirror.BackendRef.Name)
+						filters.RequestMirror.BackendRef.Namespace = types.StringPointerValue(filtersItem.RequestMirror.BackendRef.Namespace)
+						filters.RequestMirror.BackendRef.Port = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(filtersItem.RequestMirror.BackendRef.Port))
+						filters.RequestMirror.BackendRef.ProxyTypes = make([]types.String, 0, len(filtersItem.RequestMirror.BackendRef.ProxyTypes))
 						for _, v := range filtersItem.RequestMirror.BackendRef.ProxyTypes {
-							filters1.RequestMirror.BackendRef.ProxyTypes = append(filters1.RequestMirror.BackendRef.ProxyTypes, types.StringValue(string(v)))
+							filters.RequestMirror.BackendRef.ProxyTypes = append(filters.RequestMirror.BackendRef.ProxyTypes, types.StringValue(string(v)))
 						}
-						filters1.RequestMirror.BackendRef.SectionName = types.StringPointerValue(filtersItem.RequestMirror.BackendRef.SectionName)
+						filters.RequestMirror.BackendRef.SectionName = types.StringPointerValue(filtersItem.RequestMirror.BackendRef.SectionName)
 						if len(filtersItem.RequestMirror.BackendRef.Tags) > 0 {
-							filters1.RequestMirror.BackendRef.Tags = make(map[string]types.String, len(filtersItem.RequestMirror.BackendRef.Tags))
-							for key6, value8 := range filtersItem.RequestMirror.BackendRef.Tags {
-								filters1.RequestMirror.BackendRef.Tags[key6] = types.StringValue(value8)
+							filters.RequestMirror.BackendRef.Tags = make(map[string]types.String, len(filtersItem.RequestMirror.BackendRef.Tags))
+							for key6, value6 := range filtersItem.RequestMirror.BackendRef.Tags {
+								filters.RequestMirror.BackendRef.Tags[key6] = types.StringValue(value6)
 							}
 						}
-						filters1.RequestMirror.BackendRef.Weight = types.Int64PointerValue(filtersItem.RequestMirror.BackendRef.Weight)
-						if filtersItem.RequestMirror.Percentage == nil {
-							filters1.RequestMirror.Percentage = nil
-						} else {
-							filters1.RequestMirror.Percentage = &tfTypes.Mode{}
+						filters.RequestMirror.BackendRef.Weight = types.Int64PointerValue(filtersItem.RequestMirror.BackendRef.Weight)
+						if filtersItem.RequestMirror.Percentage != nil {
+							filters.RequestMirror.Percentage = &tfTypes.Mode{}
 							if filtersItem.RequestMirror.Percentage.Integer != nil {
-								filters1.RequestMirror.Percentage.Integer = types.Int64PointerValue(filtersItem.RequestMirror.Percentage.Integer)
+								filters.RequestMirror.Percentage.Integer = types.Int64PointerValue(filtersItem.RequestMirror.Percentage.Integer)
 							}
 							if filtersItem.RequestMirror.Percentage.Str != nil {
-								filters1.RequestMirror.Percentage.Str = types.StringPointerValue(filtersItem.RequestMirror.Percentage.Str)
+								filters.RequestMirror.Percentage.Str = types.StringPointerValue(filtersItem.RequestMirror.Percentage.Str)
 							}
 						}
 					}
 					if filtersItem.RequestRedirect == nil {
-						filters1.RequestRedirect = nil
+						filters.RequestRedirect = nil
 					} else {
-						filters1.RequestRedirect = &tfTypes.RequestRedirect{}
-						filters1.RequestRedirect.Hostname = types.StringPointerValue(filtersItem.RequestRedirect.Hostname)
+						filters.RequestRedirect = &tfTypes.RequestRedirect{}
+						filters.RequestRedirect.Hostname = types.StringPointerValue(filtersItem.RequestRedirect.Hostname)
 						if filtersItem.RequestRedirect.Path == nil {
-							filters1.RequestRedirect.Path = nil
+							filters.RequestRedirect.Path = nil
 						} else {
-							filters1.RequestRedirect.Path = &tfTypes.MeshHTTPRouteItemSpecPath{}
-							filters1.RequestRedirect.Path.ReplaceFullPath = types.StringPointerValue(filtersItem.RequestRedirect.Path.ReplaceFullPath)
-							filters1.RequestRedirect.Path.ReplacePrefixMatch = types.StringPointerValue(filtersItem.RequestRedirect.Path.ReplacePrefixMatch)
-							filters1.RequestRedirect.Path.Type = types.StringValue(string(filtersItem.RequestRedirect.Path.Type))
+							filters.RequestRedirect.Path = &tfTypes.MeshHTTPRouteItemSpecPath{}
+							filters.RequestRedirect.Path.ReplaceFullPath = types.StringPointerValue(filtersItem.RequestRedirect.Path.ReplaceFullPath)
+							filters.RequestRedirect.Path.ReplacePrefixMatch = types.StringPointerValue(filtersItem.RequestRedirect.Path.ReplacePrefixMatch)
+							filters.RequestRedirect.Path.Type = types.StringValue(string(filtersItem.RequestRedirect.Path.Type))
 						}
-						if filtersItem.RequestRedirect.Port != nil {
-							filters1.RequestRedirect.Port = types.Int32Value(int32(*filtersItem.RequestRedirect.Port))
-						} else {
-							filters1.RequestRedirect.Port = types.Int32Null()
-						}
+						filters.RequestRedirect.Port = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(filtersItem.RequestRedirect.Port))
 						if filtersItem.RequestRedirect.Scheme != nil {
-							filters1.RequestRedirect.Scheme = types.StringValue(string(*filtersItem.RequestRedirect.Scheme))
+							filters.RequestRedirect.Scheme = types.StringValue(string(*filtersItem.RequestRedirect.Scheme))
 						} else {
-							filters1.RequestRedirect.Scheme = types.StringNull()
+							filters.RequestRedirect.Scheme = types.StringNull()
 						}
 						if filtersItem.RequestRedirect.StatusCode != nil {
-							filters1.RequestRedirect.StatusCode = types.Int64Value(int64(*filtersItem.RequestRedirect.StatusCode))
+							filters.RequestRedirect.StatusCode = types.Int64Value(int64(*filtersItem.RequestRedirect.StatusCode))
 						} else {
-							filters1.RequestRedirect.StatusCode = types.Int64Null()
+							filters.RequestRedirect.StatusCode = types.Int64Null()
 						}
 					}
 					if filtersItem.ResponseHeaderModifier == nil {
-						filters1.ResponseHeaderModifier = nil
+						filters.ResponseHeaderModifier = nil
 					} else {
-						filters1.ResponseHeaderModifier = &tfTypes.RequestHeaderModifier{}
-						filters1.ResponseHeaderModifier.Add = []tfTypes.MeshGlobalRateLimitItemAdd{}
+						filters.ResponseHeaderModifier = &tfTypes.RequestHeaderModifier{}
+						filters.ResponseHeaderModifier.Add = []tfTypes.MeshGlobalRateLimitItemAdd{}
 						for addCount1, addItem1 := range filtersItem.ResponseHeaderModifier.Add {
-							var add3 tfTypes.MeshGlobalRateLimitItemAdd
-							add3.Name = types.StringValue(addItem1.Name)
-							add3.Value = types.StringValue(addItem1.Value)
-							if addCount1+1 > len(filters1.ResponseHeaderModifier.Add) {
-								filters1.ResponseHeaderModifier.Add = append(filters1.ResponseHeaderModifier.Add, add3)
+							var add1 tfTypes.MeshGlobalRateLimitItemAdd
+							add1.Name = types.StringValue(addItem1.Name)
+							add1.Value = types.StringValue(addItem1.Value)
+							if addCount1+1 > len(filters.ResponseHeaderModifier.Add) {
+								filters.ResponseHeaderModifier.Add = append(filters.ResponseHeaderModifier.Add, add1)
 							} else {
-								filters1.ResponseHeaderModifier.Add[addCount1].Name = add3.Name
-								filters1.ResponseHeaderModifier.Add[addCount1].Value = add3.Value
+								filters.ResponseHeaderModifier.Add[addCount1].Name = add1.Name
+								filters.ResponseHeaderModifier.Add[addCount1].Value = add1.Value
 							}
 						}
-						filters1.ResponseHeaderModifier.Remove = make([]types.String, 0, len(filtersItem.ResponseHeaderModifier.Remove))
+						filters.ResponseHeaderModifier.Remove = make([]types.String, 0, len(filtersItem.ResponseHeaderModifier.Remove))
 						for _, v := range filtersItem.ResponseHeaderModifier.Remove {
-							filters1.ResponseHeaderModifier.Remove = append(filters1.ResponseHeaderModifier.Remove, types.StringValue(v))
+							filters.ResponseHeaderModifier.Remove = append(filters.ResponseHeaderModifier.Remove, types.StringValue(v))
 						}
-						filters1.ResponseHeaderModifier.Set = []tfTypes.MeshGlobalRateLimitItemAdd{}
+						filters.ResponseHeaderModifier.Set = []tfTypes.MeshGlobalRateLimitItemAdd{}
 						for setCount1, setItem1 := range filtersItem.ResponseHeaderModifier.Set {
-							var set3 tfTypes.MeshGlobalRateLimitItemAdd
-							set3.Name = types.StringValue(setItem1.Name)
-							set3.Value = types.StringValue(setItem1.Value)
-							if setCount1+1 > len(filters1.ResponseHeaderModifier.Set) {
-								filters1.ResponseHeaderModifier.Set = append(filters1.ResponseHeaderModifier.Set, set3)
+							var set1 tfTypes.MeshGlobalRateLimitItemAdd
+							set1.Name = types.StringValue(setItem1.Name)
+							set1.Value = types.StringValue(setItem1.Value)
+							if setCount1+1 > len(filters.ResponseHeaderModifier.Set) {
+								filters.ResponseHeaderModifier.Set = append(filters.ResponseHeaderModifier.Set, set1)
 							} else {
-								filters1.ResponseHeaderModifier.Set[setCount1].Name = set3.Name
-								filters1.ResponseHeaderModifier.Set[setCount1].Value = set3.Value
+								filters.ResponseHeaderModifier.Set[setCount1].Name = set1.Name
+								filters.ResponseHeaderModifier.Set[setCount1].Value = set1.Value
 							}
 						}
 					}
-					filters1.Type = types.StringValue(string(filtersItem.Type))
+					filters.Type = types.StringValue(string(filtersItem.Type))
 					if filtersItem.URLRewrite == nil {
-						filters1.URLRewrite = nil
+						filters.URLRewrite = nil
 					} else {
-						filters1.URLRewrite = &tfTypes.URLRewrite{}
-						filters1.URLRewrite.Hostname = types.StringPointerValue(filtersItem.URLRewrite.Hostname)
-						filters1.URLRewrite.HostToBackendHostname = types.BoolPointerValue(filtersItem.URLRewrite.HostToBackendHostname)
+						filters.URLRewrite = &tfTypes.URLRewrite{}
+						filters.URLRewrite.Hostname = types.StringPointerValue(filtersItem.URLRewrite.Hostname)
+						filters.URLRewrite.HostToBackendHostname = types.BoolPointerValue(filtersItem.URLRewrite.HostToBackendHostname)
 						if filtersItem.URLRewrite.Path == nil {
-							filters1.URLRewrite.Path = nil
+							filters.URLRewrite.Path = nil
 						} else {
-							filters1.URLRewrite.Path = &tfTypes.MeshHTTPRouteItemSpecPath{}
-							filters1.URLRewrite.Path.ReplaceFullPath = types.StringPointerValue(filtersItem.URLRewrite.Path.ReplaceFullPath)
-							filters1.URLRewrite.Path.ReplacePrefixMatch = types.StringPointerValue(filtersItem.URLRewrite.Path.ReplacePrefixMatch)
-							filters1.URLRewrite.Path.Type = types.StringValue(string(filtersItem.URLRewrite.Path.Type))
+							filters.URLRewrite.Path = &tfTypes.MeshHTTPRouteItemSpecPath{}
+							filters.URLRewrite.Path.ReplaceFullPath = types.StringPointerValue(filtersItem.URLRewrite.Path.ReplaceFullPath)
+							filters.URLRewrite.Path.ReplacePrefixMatch = types.StringPointerValue(filtersItem.URLRewrite.Path.ReplacePrefixMatch)
+							filters.URLRewrite.Path.Type = types.StringValue(string(filtersItem.URLRewrite.Path.Type))
 						}
 					}
-					if filtersCount+1 > len(rules1.Default.Filters) {
-						rules1.Default.Filters = append(rules1.Default.Filters, filters1)
+					if filtersCount+1 > len(rules.Default.Filters) {
+						rules.Default.Filters = append(rules.Default.Filters, filters)
 					} else {
-						rules1.Default.Filters[filtersCount].RequestHeaderModifier = filters1.RequestHeaderModifier
-						rules1.Default.Filters[filtersCount].RequestMirror = filters1.RequestMirror
-						rules1.Default.Filters[filtersCount].RequestRedirect = filters1.RequestRedirect
-						rules1.Default.Filters[filtersCount].ResponseHeaderModifier = filters1.ResponseHeaderModifier
-						rules1.Default.Filters[filtersCount].Type = filters1.Type
-						rules1.Default.Filters[filtersCount].URLRewrite = filters1.URLRewrite
+						rules.Default.Filters[filtersCount].RequestHeaderModifier = filters.RequestHeaderModifier
+						rules.Default.Filters[filtersCount].RequestMirror = filters.RequestMirror
+						rules.Default.Filters[filtersCount].RequestRedirect = filters.RequestRedirect
+						rules.Default.Filters[filtersCount].ResponseHeaderModifier = filters.ResponseHeaderModifier
+						rules.Default.Filters[filtersCount].Type = filters.Type
+						rules.Default.Filters[filtersCount].URLRewrite = filters.URLRewrite
 					}
 				}
-				rules1.Matches = []tfTypes.Matches{}
+				rules.Matches = []tfTypes.Matches{}
 				for matchesCount, matchesItem := range rulesItem.Matches {
-					var matches1 tfTypes.Matches
-					matches1.Headers = []tfTypes.Headers{}
+					var matches tfTypes.Matches
+					matches.Headers = []tfTypes.Headers{}
 					for headersCount, headersItem := range matchesItem.Headers {
-						var headers1 tfTypes.Headers
-						headers1.Name = types.StringValue(headersItem.Name)
+						var headers tfTypes.Headers
+						headers.Name = types.StringValue(headersItem.Name)
 						if headersItem.Type != nil {
-							headers1.Type = types.StringValue(string(*headersItem.Type))
+							headers.Type = types.StringValue(string(*headersItem.Type))
 						} else {
-							headers1.Type = types.StringNull()
+							headers.Type = types.StringNull()
 						}
-						headers1.Value = types.StringPointerValue(headersItem.Value)
-						if headersCount+1 > len(matches1.Headers) {
-							matches1.Headers = append(matches1.Headers, headers1)
+						headers.Value = types.StringPointerValue(headersItem.Value)
+						if headersCount+1 > len(matches.Headers) {
+							matches.Headers = append(matches.Headers, headers)
 						} else {
-							matches1.Headers[headersCount].Name = headers1.Name
-							matches1.Headers[headersCount].Type = headers1.Type
-							matches1.Headers[headersCount].Value = headers1.Value
+							matches.Headers[headersCount].Name = headers.Name
+							matches.Headers[headersCount].Type = headers.Type
+							matches.Headers[headersCount].Value = headers.Value
 						}
 					}
 					if matchesItem.Method != nil {
-						matches1.Method = types.StringValue(string(*matchesItem.Method))
+						matches.Method = types.StringValue(string(*matchesItem.Method))
 					} else {
-						matches1.Method = types.StringNull()
+						matches.Method = types.StringNull()
 					}
 					if matchesItem.Path == nil {
-						matches1.Path = nil
+						matches.Path = nil
 					} else {
-						matches1.Path = &tfTypes.Path{}
-						matches1.Path.Type = types.StringValue(string(matchesItem.Path.Type))
-						matches1.Path.Value = types.StringValue(matchesItem.Path.Value)
+						matches.Path = &tfTypes.Path{}
+						matches.Path.Type = types.StringValue(string(matchesItem.Path.Type))
+						matches.Path.Value = types.StringValue(matchesItem.Path.Value)
 					}
-					matches1.QueryParams = []tfTypes.QueryParams{}
+					matches.QueryParams = []tfTypes.QueryParams{}
 					for queryParamsCount, queryParamsItem := range matchesItem.QueryParams {
-						var queryParams1 tfTypes.QueryParams
-						queryParams1.Name = types.StringValue(queryParamsItem.Name)
-						queryParams1.Type = types.StringValue(string(queryParamsItem.Type))
-						queryParams1.Value = types.StringValue(queryParamsItem.Value)
-						if queryParamsCount+1 > len(matches1.QueryParams) {
-							matches1.QueryParams = append(matches1.QueryParams, queryParams1)
+						var queryParams tfTypes.QueryParams
+						queryParams.Name = types.StringValue(queryParamsItem.Name)
+						queryParams.Type = types.StringValue(string(queryParamsItem.Type))
+						queryParams.Value = types.StringValue(queryParamsItem.Value)
+						if queryParamsCount+1 > len(matches.QueryParams) {
+							matches.QueryParams = append(matches.QueryParams, queryParams)
 						} else {
-							matches1.QueryParams[queryParamsCount].Name = queryParams1.Name
-							matches1.QueryParams[queryParamsCount].Type = queryParams1.Type
-							matches1.QueryParams[queryParamsCount].Value = queryParams1.Value
+							matches.QueryParams[queryParamsCount].Name = queryParams.Name
+							matches.QueryParams[queryParamsCount].Type = queryParams.Type
+							matches.QueryParams[queryParamsCount].Value = queryParams.Value
 						}
 					}
-					if matchesCount+1 > len(rules1.Matches) {
-						rules1.Matches = append(rules1.Matches, matches1)
+					if matchesCount+1 > len(rules.Matches) {
+						rules.Matches = append(rules.Matches, matches)
 					} else {
-						rules1.Matches[matchesCount].Headers = matches1.Headers
-						rules1.Matches[matchesCount].Method = matches1.Method
-						rules1.Matches[matchesCount].Path = matches1.Path
-						rules1.Matches[matchesCount].QueryParams = matches1.QueryParams
+						rules.Matches[matchesCount].Headers = matches.Headers
+						rules.Matches[matchesCount].Method = matches.Method
+						rules.Matches[matchesCount].Path = matches.Path
+						rules.Matches[matchesCount].QueryParams = matches.QueryParams
 					}
 				}
-				if rulesCount+1 > len(to1.Rules) {
-					to1.Rules = append(to1.Rules, rules1)
+				if rulesCount+1 > len(to.Rules) {
+					to.Rules = append(to.Rules, rules)
 				} else {
-					to1.Rules[rulesCount].Default = rules1.Default
-					to1.Rules[rulesCount].Matches = rules1.Matches
+					to.Rules[rulesCount].Default = rules.Default
+					to.Rules[rulesCount].Matches = rules.Matches
 				}
 			}
-			to1.TargetRef.Kind = types.StringValue(string(toItem.TargetRef.Kind))
+			to.TargetRef.Kind = types.StringValue(string(toItem.TargetRef.Kind))
 			if len(toItem.TargetRef.Labels) > 0 {
-				to1.TargetRef.Labels = make(map[string]types.String, len(toItem.TargetRef.Labels))
-				for key7, value14 := range toItem.TargetRef.Labels {
-					to1.TargetRef.Labels[key7] = types.StringValue(value14)
+				to.TargetRef.Labels = make(map[string]types.String, len(toItem.TargetRef.Labels))
+				for key7, value7 := range toItem.TargetRef.Labels {
+					to.TargetRef.Labels[key7] = types.StringValue(value7)
 				}
 			}
-			to1.TargetRef.Mesh = types.StringPointerValue(toItem.TargetRef.Mesh)
-			to1.TargetRef.Name = types.StringPointerValue(toItem.TargetRef.Name)
-			to1.TargetRef.Namespace = types.StringPointerValue(toItem.TargetRef.Namespace)
-			to1.TargetRef.ProxyTypes = make([]types.String, 0, len(toItem.TargetRef.ProxyTypes))
+			to.TargetRef.Mesh = types.StringPointerValue(toItem.TargetRef.Mesh)
+			to.TargetRef.Name = types.StringPointerValue(toItem.TargetRef.Name)
+			to.TargetRef.Namespace = types.StringPointerValue(toItem.TargetRef.Namespace)
+			to.TargetRef.ProxyTypes = make([]types.String, 0, len(toItem.TargetRef.ProxyTypes))
 			for _, v := range toItem.TargetRef.ProxyTypes {
-				to1.TargetRef.ProxyTypes = append(to1.TargetRef.ProxyTypes, types.StringValue(string(v)))
+				to.TargetRef.ProxyTypes = append(to.TargetRef.ProxyTypes, types.StringValue(string(v)))
 			}
-			to1.TargetRef.SectionName = types.StringPointerValue(toItem.TargetRef.SectionName)
+			to.TargetRef.SectionName = types.StringPointerValue(toItem.TargetRef.SectionName)
 			if len(toItem.TargetRef.Tags) > 0 {
-				to1.TargetRef.Tags = make(map[string]types.String, len(toItem.TargetRef.Tags))
-				for key8, value15 := range toItem.TargetRef.Tags {
-					to1.TargetRef.Tags[key8] = types.StringValue(value15)
+				to.TargetRef.Tags = make(map[string]types.String, len(toItem.TargetRef.Tags))
+				for key8, value8 := range toItem.TargetRef.Tags {
+					to.TargetRef.Tags[key8] = types.StringValue(value8)
 				}
 			}
 			if toCount+1 > len(r.Spec.To) {
-				r.Spec.To = append(r.Spec.To, to1)
+				r.Spec.To = append(r.Spec.To, to)
 			} else {
-				r.Spec.To[toCount].Hostnames = to1.Hostnames
-				r.Spec.To[toCount].Rules = to1.Rules
-				r.Spec.To[toCount].TargetRef = to1.TargetRef
+				r.Spec.To[toCount].Hostnames = to.Hostnames
+				r.Spec.To[toCount].Rules = to.Rules
+				r.Spec.To[toCount].TargetRef = to.TargetRef
 			}
 		}
 		r.Type = types.StringValue(string(resp.Type))
 	}
+
+	return diags
 }

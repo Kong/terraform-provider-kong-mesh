@@ -3,13 +3,18 @@
 package provider
 
 import (
+	"context"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
-	"time"
 )
 
-func (r *MeshTimeoutResourceModel) ToSharedMeshTimeoutItemInput() *shared.MeshTimeoutItemInput {
+func (r *MeshTimeoutResourceModel) ToSharedMeshTimeoutItemInput(ctx context.Context) (*shared.MeshTimeoutItemInput, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
 	typeVar := shared.MeshTimeoutItemType(r.Type.ValueString())
 	mesh := new(string)
 	if !r.Mesh.IsUnknown() && !r.Mesh.IsNull() {
@@ -27,7 +32,7 @@ func (r *MeshTimeoutResourceModel) ToSharedMeshTimeoutItemInput() *shared.MeshTi
 
 		labels[labelsKey] = labelsInst
 	}
-	var from []shared.MeshTimeoutItemFrom = []shared.MeshTimeoutItemFrom{}
+	from := make([]shared.MeshTimeoutItemFrom, 0, len(r.Spec.From))
 	for _, fromItem := range r.Spec.From {
 		var defaultVar *shared.MeshTimeoutItemDefault
 		if fromItem.Default != nil {
@@ -115,7 +120,7 @@ func (r *MeshTimeoutResourceModel) ToSharedMeshTimeoutItemInput() *shared.MeshTi
 		} else {
 			namespace = nil
 		}
-		var proxyTypes []shared.MeshTimeoutItemSpecProxyTypes = []shared.MeshTimeoutItemSpecProxyTypes{}
+		proxyTypes := make([]shared.MeshTimeoutItemSpecProxyTypes, 0, len(fromItem.TargetRef.ProxyTypes))
 		for _, proxyTypesItem := range fromItem.TargetRef.ProxyTypes {
 			proxyTypes = append(proxyTypes, shared.MeshTimeoutItemSpecProxyTypes(proxyTypesItem.ValueString()))
 		}
@@ -147,7 +152,7 @@ func (r *MeshTimeoutResourceModel) ToSharedMeshTimeoutItemInput() *shared.MeshTi
 			TargetRef: targetRef,
 		})
 	}
-	var rules []shared.MeshTimeoutItemRules = []shared.MeshTimeoutItemRules{}
+	rules := make([]shared.MeshTimeoutItemRules, 0, len(r.Spec.Rules))
 	for _, rulesItem := range r.Spec.Rules {
 		var default1 *shared.MeshTimeoutItemSpecDefault
 		if rulesItem.Default != nil {
@@ -241,7 +246,7 @@ func (r *MeshTimeoutResourceModel) ToSharedMeshTimeoutItemInput() *shared.MeshTi
 		} else {
 			namespace1 = nil
 		}
-		var proxyTypes1 []shared.MeshTimeoutItemProxyTypes = []shared.MeshTimeoutItemProxyTypes{}
+		proxyTypes1 := make([]shared.MeshTimeoutItemProxyTypes, 0, len(r.Spec.TargetRef.ProxyTypes))
 		for _, proxyTypesItem1 := range r.Spec.TargetRef.ProxyTypes {
 			proxyTypes1 = append(proxyTypes1, shared.MeshTimeoutItemProxyTypes(proxyTypesItem1.ValueString()))
 		}
@@ -269,7 +274,7 @@ func (r *MeshTimeoutResourceModel) ToSharedMeshTimeoutItemInput() *shared.MeshTi
 			Tags:        tags1,
 		}
 	}
-	var to []shared.MeshTimeoutItemTo = []shared.MeshTimeoutItemTo{}
+	to := make([]shared.MeshTimeoutItemTo, 0, len(r.Spec.To))
 	for _, toItem := range r.Spec.To {
 		var default2 *shared.MeshTimeoutItemSpecToDefault
 		if toItem.Default != nil {
@@ -357,7 +362,7 @@ func (r *MeshTimeoutResourceModel) ToSharedMeshTimeoutItemInput() *shared.MeshTi
 		} else {
 			namespace2 = nil
 		}
-		var proxyTypes2 []shared.MeshTimeoutItemSpecToProxyTypes = []shared.MeshTimeoutItemSpecToProxyTypes{}
+		proxyTypes2 := make([]shared.MeshTimeoutItemSpecToProxyTypes, 0, len(toItem.TargetRef.ProxyTypes))
 		for _, proxyTypesItem2 := range toItem.TargetRef.ProxyTypes {
 			proxyTypes2 = append(proxyTypes2, shared.MeshTimeoutItemSpecToProxyTypes(proxyTypesItem2.ValueString()))
 		}
@@ -402,25 +407,112 @@ func (r *MeshTimeoutResourceModel) ToSharedMeshTimeoutItemInput() *shared.MeshTi
 		Labels: labels,
 		Spec:   spec,
 	}
-	return &out
+
+	return &out, diags
 }
 
-func (r *MeshTimeoutResourceModel) RefreshFromSharedMeshTimeoutCreateOrUpdateSuccessResponse(resp *shared.MeshTimeoutCreateOrUpdateSuccessResponse) {
+func (r *MeshTimeoutResourceModel) ToOperationsCreateMeshTimeoutRequest(ctx context.Context) (*operations.CreateMeshTimeoutRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	meshTimeoutItem, meshTimeoutItemDiags := r.ToSharedMeshTimeoutItemInput(ctx)
+	diags.Append(meshTimeoutItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.CreateMeshTimeoutRequest{
+		Mesh:            mesh,
+		Name:            name,
+		MeshTimeoutItem: *meshTimeoutItem,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshTimeoutResourceModel) ToOperationsUpdateMeshTimeoutRequest(ctx context.Context) (*operations.UpdateMeshTimeoutRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	meshTimeoutItem, meshTimeoutItemDiags := r.ToSharedMeshTimeoutItemInput(ctx)
+	diags.Append(meshTimeoutItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.UpdateMeshTimeoutRequest{
+		Mesh:            mesh,
+		Name:            name,
+		MeshTimeoutItem: *meshTimeoutItem,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshTimeoutResourceModel) ToOperationsGetMeshTimeoutRequest(ctx context.Context) (*operations.GetMeshTimeoutRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.GetMeshTimeoutRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshTimeoutResourceModel) ToOperationsDeleteMeshTimeoutRequest(ctx context.Context) (*operations.DeleteMeshTimeoutRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.DeleteMeshTimeoutRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshTimeoutResourceModel) RefreshFromSharedMeshTimeoutCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.MeshTimeoutCreateOrUpdateSuccessResponse) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
 		r.Warnings = make([]types.String, 0, len(resp.Warnings))
 		for _, v := range resp.Warnings {
 			r.Warnings = append(r.Warnings, types.StringValue(v))
 		}
 	}
+
+	return diags
 }
 
-func (r *MeshTimeoutResourceModel) RefreshFromSharedMeshTimeoutItem(resp *shared.MeshTimeoutItem) {
+func (r *MeshTimeoutResourceModel) RefreshFromSharedMeshTimeoutItem(ctx context.Context, resp *shared.MeshTimeoutItem) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
-		if resp.CreationTime != nil {
-			r.CreationTime = types.StringValue(resp.CreationTime.Format(time.RFC3339Nano))
-		} else {
-			r.CreationTime = types.StringNull()
-		}
+		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
 		if len(resp.Labels) > 0 {
 			r.Labels = make(map[string]types.String, len(resp.Labels))
 			for key, value := range resp.Labels {
@@ -428,61 +520,57 @@ func (r *MeshTimeoutResourceModel) RefreshFromSharedMeshTimeoutItem(resp *shared
 			}
 		}
 		r.Mesh = types.StringPointerValue(resp.Mesh)
-		if resp.ModificationTime != nil {
-			r.ModificationTime = types.StringValue(resp.ModificationTime.Format(time.RFC3339Nano))
-		} else {
-			r.ModificationTime = types.StringNull()
-		}
+		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
 		r.Spec.From = []tfTypes.MeshTimeoutItemFrom{}
 		if len(r.Spec.From) > len(resp.Spec.From) {
 			r.Spec.From = r.Spec.From[:len(resp.Spec.From)]
 		}
 		for fromCount, fromItem := range resp.Spec.From {
-			var from1 tfTypes.MeshTimeoutItemFrom
+			var from tfTypes.MeshTimeoutItemFrom
 			if fromItem.Default == nil {
-				from1.Default = nil
+				from.Default = nil
 			} else {
-				from1.Default = &tfTypes.MeshTimeoutItemDefault{}
-				from1.Default.ConnectionTimeout = types.StringPointerValue(fromItem.Default.ConnectionTimeout)
+				from.Default = &tfTypes.MeshTimeoutItemDefault{}
+				from.Default.ConnectionTimeout = types.StringPointerValue(fromItem.Default.ConnectionTimeout)
 				if fromItem.Default.HTTP == nil {
-					from1.Default.HTTP = nil
+					from.Default.HTTP = nil
 				} else {
-					from1.Default.HTTP = &tfTypes.MeshTimeoutItemHTTP{}
-					from1.Default.HTTP.MaxConnectionDuration = types.StringPointerValue(fromItem.Default.HTTP.MaxConnectionDuration)
-					from1.Default.HTTP.MaxStreamDuration = types.StringPointerValue(fromItem.Default.HTTP.MaxStreamDuration)
-					from1.Default.HTTP.RequestHeadersTimeout = types.StringPointerValue(fromItem.Default.HTTP.RequestHeadersTimeout)
-					from1.Default.HTTP.RequestTimeout = types.StringPointerValue(fromItem.Default.HTTP.RequestTimeout)
-					from1.Default.HTTP.StreamIdleTimeout = types.StringPointerValue(fromItem.Default.HTTP.StreamIdleTimeout)
+					from.Default.HTTP = &tfTypes.MeshTimeoutItemHTTP{}
+					from.Default.HTTP.MaxConnectionDuration = types.StringPointerValue(fromItem.Default.HTTP.MaxConnectionDuration)
+					from.Default.HTTP.MaxStreamDuration = types.StringPointerValue(fromItem.Default.HTTP.MaxStreamDuration)
+					from.Default.HTTP.RequestHeadersTimeout = types.StringPointerValue(fromItem.Default.HTTP.RequestHeadersTimeout)
+					from.Default.HTTP.RequestTimeout = types.StringPointerValue(fromItem.Default.HTTP.RequestTimeout)
+					from.Default.HTTP.StreamIdleTimeout = types.StringPointerValue(fromItem.Default.HTTP.StreamIdleTimeout)
 				}
-				from1.Default.IdleTimeout = types.StringPointerValue(fromItem.Default.IdleTimeout)
+				from.Default.IdleTimeout = types.StringPointerValue(fromItem.Default.IdleTimeout)
 			}
-			from1.TargetRef.Kind = types.StringValue(string(fromItem.TargetRef.Kind))
+			from.TargetRef.Kind = types.StringValue(string(fromItem.TargetRef.Kind))
 			if len(fromItem.TargetRef.Labels) > 0 {
-				from1.TargetRef.Labels = make(map[string]types.String, len(fromItem.TargetRef.Labels))
+				from.TargetRef.Labels = make(map[string]types.String, len(fromItem.TargetRef.Labels))
 				for key1, value1 := range fromItem.TargetRef.Labels {
-					from1.TargetRef.Labels[key1] = types.StringValue(value1)
+					from.TargetRef.Labels[key1] = types.StringValue(value1)
 				}
 			}
-			from1.TargetRef.Mesh = types.StringPointerValue(fromItem.TargetRef.Mesh)
-			from1.TargetRef.Name = types.StringPointerValue(fromItem.TargetRef.Name)
-			from1.TargetRef.Namespace = types.StringPointerValue(fromItem.TargetRef.Namespace)
-			from1.TargetRef.ProxyTypes = make([]types.String, 0, len(fromItem.TargetRef.ProxyTypes))
+			from.TargetRef.Mesh = types.StringPointerValue(fromItem.TargetRef.Mesh)
+			from.TargetRef.Name = types.StringPointerValue(fromItem.TargetRef.Name)
+			from.TargetRef.Namespace = types.StringPointerValue(fromItem.TargetRef.Namespace)
+			from.TargetRef.ProxyTypes = make([]types.String, 0, len(fromItem.TargetRef.ProxyTypes))
 			for _, v := range fromItem.TargetRef.ProxyTypes {
-				from1.TargetRef.ProxyTypes = append(from1.TargetRef.ProxyTypes, types.StringValue(string(v)))
+				from.TargetRef.ProxyTypes = append(from.TargetRef.ProxyTypes, types.StringValue(string(v)))
 			}
-			from1.TargetRef.SectionName = types.StringPointerValue(fromItem.TargetRef.SectionName)
+			from.TargetRef.SectionName = types.StringPointerValue(fromItem.TargetRef.SectionName)
 			if len(fromItem.TargetRef.Tags) > 0 {
-				from1.TargetRef.Tags = make(map[string]types.String, len(fromItem.TargetRef.Tags))
+				from.TargetRef.Tags = make(map[string]types.String, len(fromItem.TargetRef.Tags))
 				for key2, value2 := range fromItem.TargetRef.Tags {
-					from1.TargetRef.Tags[key2] = types.StringValue(value2)
+					from.TargetRef.Tags[key2] = types.StringValue(value2)
 				}
 			}
 			if fromCount+1 > len(r.Spec.From) {
-				r.Spec.From = append(r.Spec.From, from1)
+				r.Spec.From = append(r.Spec.From, from)
 			} else {
-				r.Spec.From[fromCount].Default = from1.Default
-				r.Spec.From[fromCount].TargetRef = from1.TargetRef
+				r.Spec.From[fromCount].Default = from.Default
+				r.Spec.From[fromCount].TargetRef = from.TargetRef
 			}
 		}
 		r.Spec.Rules = []tfTypes.MeshTimeoutItemRules{}
@@ -490,28 +578,28 @@ func (r *MeshTimeoutResourceModel) RefreshFromSharedMeshTimeoutItem(resp *shared
 			r.Spec.Rules = r.Spec.Rules[:len(resp.Spec.Rules)]
 		}
 		for rulesCount, rulesItem := range resp.Spec.Rules {
-			var rules1 tfTypes.MeshTimeoutItemRules
+			var rules tfTypes.MeshTimeoutItemRules
 			if rulesItem.Default == nil {
-				rules1.Default = nil
+				rules.Default = nil
 			} else {
-				rules1.Default = &tfTypes.MeshTimeoutItemDefault{}
-				rules1.Default.ConnectionTimeout = types.StringPointerValue(rulesItem.Default.ConnectionTimeout)
+				rules.Default = &tfTypes.MeshTimeoutItemDefault{}
+				rules.Default.ConnectionTimeout = types.StringPointerValue(rulesItem.Default.ConnectionTimeout)
 				if rulesItem.Default.HTTP == nil {
-					rules1.Default.HTTP = nil
+					rules.Default.HTTP = nil
 				} else {
-					rules1.Default.HTTP = &tfTypes.MeshTimeoutItemHTTP{}
-					rules1.Default.HTTP.MaxConnectionDuration = types.StringPointerValue(rulesItem.Default.HTTP.MaxConnectionDuration)
-					rules1.Default.HTTP.MaxStreamDuration = types.StringPointerValue(rulesItem.Default.HTTP.MaxStreamDuration)
-					rules1.Default.HTTP.RequestHeadersTimeout = types.StringPointerValue(rulesItem.Default.HTTP.RequestHeadersTimeout)
-					rules1.Default.HTTP.RequestTimeout = types.StringPointerValue(rulesItem.Default.HTTP.RequestTimeout)
-					rules1.Default.HTTP.StreamIdleTimeout = types.StringPointerValue(rulesItem.Default.HTTP.StreamIdleTimeout)
+					rules.Default.HTTP = &tfTypes.MeshTimeoutItemHTTP{}
+					rules.Default.HTTP.MaxConnectionDuration = types.StringPointerValue(rulesItem.Default.HTTP.MaxConnectionDuration)
+					rules.Default.HTTP.MaxStreamDuration = types.StringPointerValue(rulesItem.Default.HTTP.MaxStreamDuration)
+					rules.Default.HTTP.RequestHeadersTimeout = types.StringPointerValue(rulesItem.Default.HTTP.RequestHeadersTimeout)
+					rules.Default.HTTP.RequestTimeout = types.StringPointerValue(rulesItem.Default.HTTP.RequestTimeout)
+					rules.Default.HTTP.StreamIdleTimeout = types.StringPointerValue(rulesItem.Default.HTTP.StreamIdleTimeout)
 				}
-				rules1.Default.IdleTimeout = types.StringPointerValue(rulesItem.Default.IdleTimeout)
+				rules.Default.IdleTimeout = types.StringPointerValue(rulesItem.Default.IdleTimeout)
 			}
 			if rulesCount+1 > len(r.Spec.Rules) {
-				r.Spec.Rules = append(r.Spec.Rules, rules1)
+				r.Spec.Rules = append(r.Spec.Rules, rules)
 			} else {
-				r.Spec.Rules[rulesCount].Default = rules1.Default
+				r.Spec.Rules[rulesCount].Default = rules.Default
 			}
 		}
 		if resp.Spec.TargetRef == nil {
@@ -545,52 +633,54 @@ func (r *MeshTimeoutResourceModel) RefreshFromSharedMeshTimeoutItem(resp *shared
 			r.Spec.To = r.Spec.To[:len(resp.Spec.To)]
 		}
 		for toCount, toItem := range resp.Spec.To {
-			var to1 tfTypes.MeshTimeoutItemFrom
+			var to tfTypes.MeshTimeoutItemFrom
 			if toItem.Default == nil {
-				to1.Default = nil
+				to.Default = nil
 			} else {
-				to1.Default = &tfTypes.MeshTimeoutItemDefault{}
-				to1.Default.ConnectionTimeout = types.StringPointerValue(toItem.Default.ConnectionTimeout)
+				to.Default = &tfTypes.MeshTimeoutItemDefault{}
+				to.Default.ConnectionTimeout = types.StringPointerValue(toItem.Default.ConnectionTimeout)
 				if toItem.Default.HTTP == nil {
-					to1.Default.HTTP = nil
+					to.Default.HTTP = nil
 				} else {
-					to1.Default.HTTP = &tfTypes.MeshTimeoutItemHTTP{}
-					to1.Default.HTTP.MaxConnectionDuration = types.StringPointerValue(toItem.Default.HTTP.MaxConnectionDuration)
-					to1.Default.HTTP.MaxStreamDuration = types.StringPointerValue(toItem.Default.HTTP.MaxStreamDuration)
-					to1.Default.HTTP.RequestHeadersTimeout = types.StringPointerValue(toItem.Default.HTTP.RequestHeadersTimeout)
-					to1.Default.HTTP.RequestTimeout = types.StringPointerValue(toItem.Default.HTTP.RequestTimeout)
-					to1.Default.HTTP.StreamIdleTimeout = types.StringPointerValue(toItem.Default.HTTP.StreamIdleTimeout)
+					to.Default.HTTP = &tfTypes.MeshTimeoutItemHTTP{}
+					to.Default.HTTP.MaxConnectionDuration = types.StringPointerValue(toItem.Default.HTTP.MaxConnectionDuration)
+					to.Default.HTTP.MaxStreamDuration = types.StringPointerValue(toItem.Default.HTTP.MaxStreamDuration)
+					to.Default.HTTP.RequestHeadersTimeout = types.StringPointerValue(toItem.Default.HTTP.RequestHeadersTimeout)
+					to.Default.HTTP.RequestTimeout = types.StringPointerValue(toItem.Default.HTTP.RequestTimeout)
+					to.Default.HTTP.StreamIdleTimeout = types.StringPointerValue(toItem.Default.HTTP.StreamIdleTimeout)
 				}
-				to1.Default.IdleTimeout = types.StringPointerValue(toItem.Default.IdleTimeout)
+				to.Default.IdleTimeout = types.StringPointerValue(toItem.Default.IdleTimeout)
 			}
-			to1.TargetRef.Kind = types.StringValue(string(toItem.TargetRef.Kind))
+			to.TargetRef.Kind = types.StringValue(string(toItem.TargetRef.Kind))
 			if len(toItem.TargetRef.Labels) > 0 {
-				to1.TargetRef.Labels = make(map[string]types.String, len(toItem.TargetRef.Labels))
+				to.TargetRef.Labels = make(map[string]types.String, len(toItem.TargetRef.Labels))
 				for key5, value5 := range toItem.TargetRef.Labels {
-					to1.TargetRef.Labels[key5] = types.StringValue(value5)
+					to.TargetRef.Labels[key5] = types.StringValue(value5)
 				}
 			}
-			to1.TargetRef.Mesh = types.StringPointerValue(toItem.TargetRef.Mesh)
-			to1.TargetRef.Name = types.StringPointerValue(toItem.TargetRef.Name)
-			to1.TargetRef.Namespace = types.StringPointerValue(toItem.TargetRef.Namespace)
-			to1.TargetRef.ProxyTypes = make([]types.String, 0, len(toItem.TargetRef.ProxyTypes))
+			to.TargetRef.Mesh = types.StringPointerValue(toItem.TargetRef.Mesh)
+			to.TargetRef.Name = types.StringPointerValue(toItem.TargetRef.Name)
+			to.TargetRef.Namespace = types.StringPointerValue(toItem.TargetRef.Namespace)
+			to.TargetRef.ProxyTypes = make([]types.String, 0, len(toItem.TargetRef.ProxyTypes))
 			for _, v := range toItem.TargetRef.ProxyTypes {
-				to1.TargetRef.ProxyTypes = append(to1.TargetRef.ProxyTypes, types.StringValue(string(v)))
+				to.TargetRef.ProxyTypes = append(to.TargetRef.ProxyTypes, types.StringValue(string(v)))
 			}
-			to1.TargetRef.SectionName = types.StringPointerValue(toItem.TargetRef.SectionName)
+			to.TargetRef.SectionName = types.StringPointerValue(toItem.TargetRef.SectionName)
 			if len(toItem.TargetRef.Tags) > 0 {
-				to1.TargetRef.Tags = make(map[string]types.String, len(toItem.TargetRef.Tags))
+				to.TargetRef.Tags = make(map[string]types.String, len(toItem.TargetRef.Tags))
 				for key6, value6 := range toItem.TargetRef.Tags {
-					to1.TargetRef.Tags[key6] = types.StringValue(value6)
+					to.TargetRef.Tags[key6] = types.StringValue(value6)
 				}
 			}
 			if toCount+1 > len(r.Spec.To) {
-				r.Spec.To = append(r.Spec.To, to1)
+				r.Spec.To = append(r.Spec.To, to)
 			} else {
-				r.Spec.To[toCount].Default = to1.Default
-				r.Spec.To[toCount].TargetRef = to1.TargetRef
+				r.Spec.To[toCount].Default = to.Default
+				r.Spec.To[toCount].TargetRef = to.TargetRef
 			}
 		}
 		r.Type = types.StringValue(string(resp.Type))
 	}
+
+	return diags
 }

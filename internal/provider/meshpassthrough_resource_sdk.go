@@ -3,13 +3,18 @@
 package provider
 
 import (
+	"context"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
-	"time"
 )
 
-func (r *MeshPassthroughResourceModel) ToSharedMeshPassthroughItemInput() *shared.MeshPassthroughItemInput {
+func (r *MeshPassthroughResourceModel) ToSharedMeshPassthroughItemInput(ctx context.Context) (*shared.MeshPassthroughItemInput, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
 	typeVar := shared.MeshPassthroughItemType(r.Type.ValueString())
 	mesh := new(string)
 	if !r.Mesh.IsUnknown() && !r.Mesh.IsNull() {
@@ -29,7 +34,7 @@ func (r *MeshPassthroughResourceModel) ToSharedMeshPassthroughItemInput() *share
 	}
 	var defaultVar *shared.MeshPassthroughItemDefault
 	if r.Spec.Default != nil {
-		var appendMatch []shared.AppendMatch = []shared.AppendMatch{}
+		appendMatch := make([]shared.AppendMatch, 0, len(r.Spec.Default.AppendMatch))
 		for _, appendMatchItem := range r.Spec.Default.AppendMatch {
 			port := new(int)
 			if !appendMatchItem.Port.IsUnknown() && !appendMatchItem.Port.IsNull() {
@@ -93,7 +98,7 @@ func (r *MeshPassthroughResourceModel) ToSharedMeshPassthroughItemInput() *share
 		} else {
 			namespace = nil
 		}
-		var proxyTypes []shared.MeshPassthroughItemProxyTypes = []shared.MeshPassthroughItemProxyTypes{}
+		proxyTypes := make([]shared.MeshPassthroughItemProxyTypes, 0, len(r.Spec.TargetRef.ProxyTypes))
 		for _, proxyTypesItem := range r.Spec.TargetRef.ProxyTypes {
 			proxyTypes = append(proxyTypes, shared.MeshPassthroughItemProxyTypes(proxyTypesItem.ValueString()))
 		}
@@ -132,25 +137,112 @@ func (r *MeshPassthroughResourceModel) ToSharedMeshPassthroughItemInput() *share
 		Labels: labels,
 		Spec:   spec,
 	}
-	return &out
+
+	return &out, diags
 }
 
-func (r *MeshPassthroughResourceModel) RefreshFromSharedMeshPassthroughCreateOrUpdateSuccessResponse(resp *shared.MeshPassthroughCreateOrUpdateSuccessResponse) {
+func (r *MeshPassthroughResourceModel) ToOperationsCreateMeshPassthroughRequest(ctx context.Context) (*operations.CreateMeshPassthroughRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	meshPassthroughItem, meshPassthroughItemDiags := r.ToSharedMeshPassthroughItemInput(ctx)
+	diags.Append(meshPassthroughItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.CreateMeshPassthroughRequest{
+		Mesh:                mesh,
+		Name:                name,
+		MeshPassthroughItem: *meshPassthroughItem,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshPassthroughResourceModel) ToOperationsUpdateMeshPassthroughRequest(ctx context.Context) (*operations.UpdateMeshPassthroughRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	meshPassthroughItem, meshPassthroughItemDiags := r.ToSharedMeshPassthroughItemInput(ctx)
+	diags.Append(meshPassthroughItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.UpdateMeshPassthroughRequest{
+		Mesh:                mesh,
+		Name:                name,
+		MeshPassthroughItem: *meshPassthroughItem,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshPassthroughResourceModel) ToOperationsGetMeshPassthroughRequest(ctx context.Context) (*operations.GetMeshPassthroughRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.GetMeshPassthroughRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshPassthroughResourceModel) ToOperationsDeleteMeshPassthroughRequest(ctx context.Context) (*operations.DeleteMeshPassthroughRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.DeleteMeshPassthroughRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshPassthroughResourceModel) RefreshFromSharedMeshPassthroughCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.MeshPassthroughCreateOrUpdateSuccessResponse) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
 		r.Warnings = make([]types.String, 0, len(resp.Warnings))
 		for _, v := range resp.Warnings {
 			r.Warnings = append(r.Warnings, types.StringValue(v))
 		}
 	}
+
+	return diags
 }
 
-func (r *MeshPassthroughResourceModel) RefreshFromSharedMeshPassthroughItem(resp *shared.MeshPassthroughItem) {
+func (r *MeshPassthroughResourceModel) RefreshFromSharedMeshPassthroughItem(ctx context.Context, resp *shared.MeshPassthroughItem) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
-		if resp.CreationTime != nil {
-			r.CreationTime = types.StringValue(resp.CreationTime.Format(time.RFC3339Nano))
-		} else {
-			r.CreationTime = types.StringNull()
-		}
+		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
 		if len(resp.Labels) > 0 {
 			r.Labels = make(map[string]types.String, len(resp.Labels))
 			for key, value := range resp.Labels {
@@ -158,11 +250,7 @@ func (r *MeshPassthroughResourceModel) RefreshFromSharedMeshPassthroughItem(resp
 			}
 		}
 		r.Mesh = types.StringPointerValue(resp.Mesh)
-		if resp.ModificationTime != nil {
-			r.ModificationTime = types.StringValue(resp.ModificationTime.Format(time.RFC3339Nano))
-		} else {
-			r.ModificationTime = types.StringNull()
-		}
+		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
 		if resp.Spec.Default == nil {
 			r.Spec.Default = nil
@@ -173,26 +261,22 @@ func (r *MeshPassthroughResourceModel) RefreshFromSharedMeshPassthroughItem(resp
 				r.Spec.Default.AppendMatch = r.Spec.Default.AppendMatch[:len(resp.Spec.Default.AppendMatch)]
 			}
 			for appendMatchCount, appendMatchItem := range resp.Spec.Default.AppendMatch {
-				var appendMatch1 tfTypes.AppendMatch
-				if appendMatchItem.Port != nil {
-					appendMatch1.Port = types.Int32Value(int32(*appendMatchItem.Port))
-				} else {
-					appendMatch1.Port = types.Int32Null()
-				}
+				var appendMatch tfTypes.AppendMatch
+				appendMatch.Port = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(appendMatchItem.Port))
 				if appendMatchItem.Protocol != nil {
-					appendMatch1.Protocol = types.StringValue(string(*appendMatchItem.Protocol))
+					appendMatch.Protocol = types.StringValue(string(*appendMatchItem.Protocol))
 				} else {
-					appendMatch1.Protocol = types.StringNull()
+					appendMatch.Protocol = types.StringNull()
 				}
-				appendMatch1.Type = types.StringValue(string(appendMatchItem.Type))
-				appendMatch1.Value = types.StringValue(appendMatchItem.Value)
+				appendMatch.Type = types.StringValue(string(appendMatchItem.Type))
+				appendMatch.Value = types.StringValue(appendMatchItem.Value)
 				if appendMatchCount+1 > len(r.Spec.Default.AppendMatch) {
-					r.Spec.Default.AppendMatch = append(r.Spec.Default.AppendMatch, appendMatch1)
+					r.Spec.Default.AppendMatch = append(r.Spec.Default.AppendMatch, appendMatch)
 				} else {
-					r.Spec.Default.AppendMatch[appendMatchCount].Port = appendMatch1.Port
-					r.Spec.Default.AppendMatch[appendMatchCount].Protocol = appendMatch1.Protocol
-					r.Spec.Default.AppendMatch[appendMatchCount].Type = appendMatch1.Type
-					r.Spec.Default.AppendMatch[appendMatchCount].Value = appendMatch1.Value
+					r.Spec.Default.AppendMatch[appendMatchCount].Port = appendMatch.Port
+					r.Spec.Default.AppendMatch[appendMatchCount].Protocol = appendMatch.Protocol
+					r.Spec.Default.AppendMatch[appendMatchCount].Type = appendMatch.Type
+					r.Spec.Default.AppendMatch[appendMatchCount].Value = appendMatch.Value
 				}
 			}
 			if resp.Spec.Default.PassthroughMode != nil {
@@ -208,8 +292,8 @@ func (r *MeshPassthroughResourceModel) RefreshFromSharedMeshPassthroughItem(resp
 			r.Spec.TargetRef.Kind = types.StringValue(string(resp.Spec.TargetRef.Kind))
 			if len(resp.Spec.TargetRef.Labels) > 0 {
 				r.Spec.TargetRef.Labels = make(map[string]types.String, len(resp.Spec.TargetRef.Labels))
-				for key1, value2 := range resp.Spec.TargetRef.Labels {
-					r.Spec.TargetRef.Labels[key1] = types.StringValue(value2)
+				for key1, value1 := range resp.Spec.TargetRef.Labels {
+					r.Spec.TargetRef.Labels[key1] = types.StringValue(value1)
 				}
 			}
 			r.Spec.TargetRef.Mesh = types.StringPointerValue(resp.Spec.TargetRef.Mesh)
@@ -222,11 +306,13 @@ func (r *MeshPassthroughResourceModel) RefreshFromSharedMeshPassthroughItem(resp
 			r.Spec.TargetRef.SectionName = types.StringPointerValue(resp.Spec.TargetRef.SectionName)
 			if len(resp.Spec.TargetRef.Tags) > 0 {
 				r.Spec.TargetRef.Tags = make(map[string]types.String, len(resp.Spec.TargetRef.Tags))
-				for key2, value3 := range resp.Spec.TargetRef.Tags {
-					r.Spec.TargetRef.Tags[key2] = types.StringValue(value3)
+				for key2, value2 := range resp.Spec.TargetRef.Tags {
+					r.Spec.TargetRef.Tags[key2] = types.StringValue(value2)
 				}
 			}
 		}
 		r.Type = types.StringValue(string(resp.Type))
 	}
+
+	return diags
 }

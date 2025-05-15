@@ -21,7 +21,6 @@ import (
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
-	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/validators"
 	speakeasy_int32validators "github.com/kong/terraform-provider-kong-mesh/internal/validators/int32validators"
 	speakeasy_listvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/listvalidators"
@@ -879,19 +878,13 @@ func (r *MeshGlobalRateLimitResource) Create(ctx context.Context, req resource.C
 		return
 	}
 
-	var mesh string
-	mesh = data.Mesh.ValueString()
+	request, requestDiags := data.ToOperationsCreateMeshGlobalRateLimitRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	var name string
-	name = data.Name.ValueString()
-
-	meshGlobalRateLimitItem := *data.ToSharedMeshGlobalRateLimitItemInput()
-	request := operations.CreateMeshGlobalRateLimitRequest{
-		Mesh:                    mesh,
-		Name:                    name,
-		MeshGlobalRateLimitItem: meshGlobalRateLimitItem,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.MeshGlobalRateLimit.CreateMeshGlobalRateLimit(ctx, request)
+	res, err := r.client.MeshGlobalRateLimit.CreateMeshGlobalRateLimit(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -911,19 +904,24 @@ func (r *MeshGlobalRateLimitResource) Create(ctx context.Context, req resource.C
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshGlobalRateLimitCreateOrUpdateSuccessResponse(res.MeshGlobalRateLimitCreateOrUpdateSuccessResponse)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
-	var mesh1 string
-	mesh1 = data.Mesh.ValueString()
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshGlobalRateLimitCreateOrUpdateSuccessResponse(ctx, res.MeshGlobalRateLimitCreateOrUpdateSuccessResponse)...)
 
-	var name1 string
-	name1 = data.Name.ValueString()
-
-	request1 := operations.GetMeshGlobalRateLimitRequest{
-		Mesh: mesh1,
-		Name: name1,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res1, err := r.client.MeshGlobalRateLimit.GetMeshGlobalRateLimit(ctx, request1)
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	request1, request1Diags := data.ToOperationsGetMeshGlobalRateLimitRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.MeshGlobalRateLimit.GetMeshGlobalRateLimit(ctx, *request1)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res1 != nil && res1.RawResponse != nil {
@@ -943,8 +941,17 @@ func (r *MeshGlobalRateLimitResource) Create(ctx context.Context, req resource.C
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshGlobalRateLimitItem(res1.MeshGlobalRateLimitItem)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshGlobalRateLimitItem(ctx, res1.MeshGlobalRateLimitItem)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -968,17 +975,13 @@ func (r *MeshGlobalRateLimitResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 
-	var mesh string
-	mesh = data.Mesh.ValueString()
+	request, requestDiags := data.ToOperationsGetMeshGlobalRateLimitRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	var name string
-	name = data.Name.ValueString()
-
-	request := operations.GetMeshGlobalRateLimitRequest{
-		Mesh: mesh,
-		Name: name,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.MeshGlobalRateLimit.GetMeshGlobalRateLimit(ctx, request)
+	res, err := r.client.MeshGlobalRateLimit.GetMeshGlobalRateLimit(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -1002,7 +1005,11 @@ func (r *MeshGlobalRateLimitResource) Read(ctx context.Context, req resource.Rea
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshGlobalRateLimitItem(res.MeshGlobalRateLimitItem)
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshGlobalRateLimitItem(ctx, res.MeshGlobalRateLimitItem)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -1022,19 +1029,13 @@ func (r *MeshGlobalRateLimitResource) Update(ctx context.Context, req resource.U
 		return
 	}
 
-	var mesh string
-	mesh = data.Mesh.ValueString()
+	request, requestDiags := data.ToOperationsUpdateMeshGlobalRateLimitRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	var name string
-	name = data.Name.ValueString()
-
-	meshGlobalRateLimitItem := *data.ToSharedMeshGlobalRateLimitItemInput()
-	request := operations.UpdateMeshGlobalRateLimitRequest{
-		Mesh:                    mesh,
-		Name:                    name,
-		MeshGlobalRateLimitItem: meshGlobalRateLimitItem,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.MeshGlobalRateLimit.UpdateMeshGlobalRateLimit(ctx, request)
+	res, err := r.client.MeshGlobalRateLimit.UpdateMeshGlobalRateLimit(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -1054,19 +1055,24 @@ func (r *MeshGlobalRateLimitResource) Update(ctx context.Context, req resource.U
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshGlobalRateLimitCreateOrUpdateSuccessResponse(res.MeshGlobalRateLimitCreateOrUpdateSuccessResponse)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
-	var mesh1 string
-	mesh1 = data.Mesh.ValueString()
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshGlobalRateLimitCreateOrUpdateSuccessResponse(ctx, res.MeshGlobalRateLimitCreateOrUpdateSuccessResponse)...)
 
-	var name1 string
-	name1 = data.Name.ValueString()
-
-	request1 := operations.GetMeshGlobalRateLimitRequest{
-		Mesh: mesh1,
-		Name: name1,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res1, err := r.client.MeshGlobalRateLimit.GetMeshGlobalRateLimit(ctx, request1)
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	request1, request1Diags := data.ToOperationsGetMeshGlobalRateLimitRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.MeshGlobalRateLimit.GetMeshGlobalRateLimit(ctx, *request1)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res1 != nil && res1.RawResponse != nil {
@@ -1086,8 +1092,17 @@ func (r *MeshGlobalRateLimitResource) Update(ctx context.Context, req resource.U
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshGlobalRateLimitItem(res1.MeshGlobalRateLimitItem)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshGlobalRateLimitItem(ctx, res1.MeshGlobalRateLimitItem)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -1111,17 +1126,13 @@ func (r *MeshGlobalRateLimitResource) Delete(ctx context.Context, req resource.D
 		return
 	}
 
-	var mesh string
-	mesh = data.Mesh.ValueString()
+	request, requestDiags := data.ToOperationsDeleteMeshGlobalRateLimitRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	var name string
-	name = data.Name.ValueString()
-
-	request := operations.DeleteMeshGlobalRateLimitRequest{
-		Mesh: mesh,
-		Name: name,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.MeshGlobalRateLimit.DeleteMeshGlobalRateLimit(ctx, request)
+	res, err := r.client.MeshGlobalRateLimit.DeleteMeshGlobalRateLimit(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -1149,7 +1160,7 @@ func (r *MeshGlobalRateLimitResource) ImportState(ctx context.Context, req resou
 	}
 
 	if err := dec.Decode(&data); err != nil {
-		resp.Diagnostics.AddError("Invalid ID", `The ID is not valid. It's expected to be a JSON object alike '{ "mesh": "",  "name": ""}': `+err.Error())
+		resp.Diagnostics.AddError("Invalid ID", `The import ID is not valid. It is expected to be a JSON object string with the format: '{ "mesh": "",  "name": ""}': `+err.Error())
 		return
 	}
 

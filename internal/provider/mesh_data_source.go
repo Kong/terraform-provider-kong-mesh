@@ -11,7 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
-	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -644,7 +643,7 @@ func (r *MeshDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 									MarkdownDescription: `Name of the backend, can be then used in Mesh.tracing.defaultBackend or in` + "\n" +
 										`TrafficTrace`,
 								},
-								"sampling": schema.NumberAttribute{
+								"sampling": schema.Float64Attribute{
 									Computed: true,
 									MarkdownDescription: `Percentage of traces that will be sent to the backend (range 0.0 - 100.0).` + "\n" +
 										`Empty value defaults to 100.0%`,
@@ -710,13 +709,13 @@ func (r *MeshDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		return
 	}
 
-	var name string
-	name = data.Name.ValueString()
+	request, requestDiags := data.ToOperationsGetMeshRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	request := operations.GetMeshRequest{
-		Name: name,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.Mesh.GetMesh(ctx, request)
+	res, err := r.client.Mesh.GetMesh(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -728,10 +727,6 @@ func (r *MeshDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode == 404 {
-		resp.State.RemoveResource(ctx)
-		return
-	}
 	if res.StatusCode != 200 {
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
@@ -740,7 +735,11 @@ func (r *MeshDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedMeshItem(res.MeshItem)
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshItem(ctx, res.MeshItem)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

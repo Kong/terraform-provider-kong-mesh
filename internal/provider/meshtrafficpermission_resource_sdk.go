@@ -3,13 +3,18 @@
 package provider
 
 import (
+	"context"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
-	"time"
 )
 
-func (r *MeshTrafficPermissionResourceModel) ToSharedMeshTrafficPermissionItemInput() *shared.MeshTrafficPermissionItemInput {
+func (r *MeshTrafficPermissionResourceModel) ToSharedMeshTrafficPermissionItemInput(ctx context.Context) (*shared.MeshTrafficPermissionItemInput, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
 	typeVar := shared.MeshTrafficPermissionItemType(r.Type.ValueString())
 	mesh := new(string)
 	if !r.Mesh.IsUnknown() && !r.Mesh.IsNull() {
@@ -27,7 +32,7 @@ func (r *MeshTrafficPermissionResourceModel) ToSharedMeshTrafficPermissionItemIn
 
 		labels[labelsKey] = labelsInst
 	}
-	var from []shared.MeshTrafficPermissionItemFrom = []shared.MeshTrafficPermissionItemFrom{}
+	from := make([]shared.MeshTrafficPermissionItemFrom, 0, len(r.Spec.From))
 	for _, fromItem := range r.Spec.From {
 		var defaultVar *shared.MeshTrafficPermissionItemDefault
 		if fromItem.Default != nil {
@@ -67,7 +72,7 @@ func (r *MeshTrafficPermissionResourceModel) ToSharedMeshTrafficPermissionItemIn
 		} else {
 			namespace = nil
 		}
-		var proxyTypes []shared.MeshTrafficPermissionItemSpecProxyTypes = []shared.MeshTrafficPermissionItemSpecProxyTypes{}
+		proxyTypes := make([]shared.MeshTrafficPermissionItemSpecProxyTypes, 0, len(fromItem.TargetRef.ProxyTypes))
 		for _, proxyTypesItem := range fromItem.TargetRef.ProxyTypes {
 			proxyTypes = append(proxyTypes, shared.MeshTrafficPermissionItemSpecProxyTypes(proxyTypesItem.ValueString()))
 		}
@@ -127,7 +132,7 @@ func (r *MeshTrafficPermissionResourceModel) ToSharedMeshTrafficPermissionItemIn
 		} else {
 			namespace1 = nil
 		}
-		var proxyTypes1 []shared.MeshTrafficPermissionItemProxyTypes = []shared.MeshTrafficPermissionItemProxyTypes{}
+		proxyTypes1 := make([]shared.MeshTrafficPermissionItemProxyTypes, 0, len(r.Spec.TargetRef.ProxyTypes))
 		for _, proxyTypesItem1 := range r.Spec.TargetRef.ProxyTypes {
 			proxyTypes1 = append(proxyTypes1, shared.MeshTrafficPermissionItemProxyTypes(proxyTypesItem1.ValueString()))
 		}
@@ -166,25 +171,112 @@ func (r *MeshTrafficPermissionResourceModel) ToSharedMeshTrafficPermissionItemIn
 		Labels: labels,
 		Spec:   spec,
 	}
-	return &out
+
+	return &out, diags
 }
 
-func (r *MeshTrafficPermissionResourceModel) RefreshFromSharedMeshTrafficPermissionCreateOrUpdateSuccessResponse(resp *shared.MeshTrafficPermissionCreateOrUpdateSuccessResponse) {
+func (r *MeshTrafficPermissionResourceModel) ToOperationsCreateMeshTrafficPermissionRequest(ctx context.Context) (*operations.CreateMeshTrafficPermissionRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	meshTrafficPermissionItem, meshTrafficPermissionItemDiags := r.ToSharedMeshTrafficPermissionItemInput(ctx)
+	diags.Append(meshTrafficPermissionItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.CreateMeshTrafficPermissionRequest{
+		Mesh:                      mesh,
+		Name:                      name,
+		MeshTrafficPermissionItem: *meshTrafficPermissionItem,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshTrafficPermissionResourceModel) ToOperationsUpdateMeshTrafficPermissionRequest(ctx context.Context) (*operations.UpdateMeshTrafficPermissionRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	meshTrafficPermissionItem, meshTrafficPermissionItemDiags := r.ToSharedMeshTrafficPermissionItemInput(ctx)
+	diags.Append(meshTrafficPermissionItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.UpdateMeshTrafficPermissionRequest{
+		Mesh:                      mesh,
+		Name:                      name,
+		MeshTrafficPermissionItem: *meshTrafficPermissionItem,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshTrafficPermissionResourceModel) ToOperationsGetMeshTrafficPermissionRequest(ctx context.Context) (*operations.GetMeshTrafficPermissionRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.GetMeshTrafficPermissionRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshTrafficPermissionResourceModel) ToOperationsDeleteMeshTrafficPermissionRequest(ctx context.Context) (*operations.DeleteMeshTrafficPermissionRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.DeleteMeshTrafficPermissionRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshTrafficPermissionResourceModel) RefreshFromSharedMeshTrafficPermissionCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.MeshTrafficPermissionCreateOrUpdateSuccessResponse) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
 		r.Warnings = make([]types.String, 0, len(resp.Warnings))
 		for _, v := range resp.Warnings {
 			r.Warnings = append(r.Warnings, types.StringValue(v))
 		}
 	}
+
+	return diags
 }
 
-func (r *MeshTrafficPermissionResourceModel) RefreshFromSharedMeshTrafficPermissionItem(resp *shared.MeshTrafficPermissionItem) {
+func (r *MeshTrafficPermissionResourceModel) RefreshFromSharedMeshTrafficPermissionItem(ctx context.Context, resp *shared.MeshTrafficPermissionItem) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
-		if resp.CreationTime != nil {
-			r.CreationTime = types.StringValue(resp.CreationTime.Format(time.RFC3339Nano))
-		} else {
-			r.CreationTime = types.StringNull()
-		}
+		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
 		if len(resp.Labels) > 0 {
 			r.Labels = make(map[string]types.String, len(resp.Labels))
 			for key, value := range resp.Labels {
@@ -192,54 +284,50 @@ func (r *MeshTrafficPermissionResourceModel) RefreshFromSharedMeshTrafficPermiss
 			}
 		}
 		r.Mesh = types.StringPointerValue(resp.Mesh)
-		if resp.ModificationTime != nil {
-			r.ModificationTime = types.StringValue(resp.ModificationTime.Format(time.RFC3339Nano))
-		} else {
-			r.ModificationTime = types.StringNull()
-		}
+		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
 		r.Spec.From = []tfTypes.MeshTrafficPermissionItemFrom{}
 		if len(r.Spec.From) > len(resp.Spec.From) {
 			r.Spec.From = r.Spec.From[:len(resp.Spec.From)]
 		}
 		for fromCount, fromItem := range resp.Spec.From {
-			var from1 tfTypes.MeshTrafficPermissionItemFrom
+			var from tfTypes.MeshTrafficPermissionItemFrom
 			if fromItem.Default == nil {
-				from1.Default = nil
+				from.Default = nil
 			} else {
-				from1.Default = &tfTypes.MeshTrafficPermissionItemDefault{}
+				from.Default = &tfTypes.MeshTrafficPermissionItemDefault{}
 				if fromItem.Default.Action != nil {
-					from1.Default.Action = types.StringValue(string(*fromItem.Default.Action))
+					from.Default.Action = types.StringValue(string(*fromItem.Default.Action))
 				} else {
-					from1.Default.Action = types.StringNull()
+					from.Default.Action = types.StringNull()
 				}
 			}
-			from1.TargetRef.Kind = types.StringValue(string(fromItem.TargetRef.Kind))
+			from.TargetRef.Kind = types.StringValue(string(fromItem.TargetRef.Kind))
 			if len(fromItem.TargetRef.Labels) > 0 {
-				from1.TargetRef.Labels = make(map[string]types.String, len(fromItem.TargetRef.Labels))
+				from.TargetRef.Labels = make(map[string]types.String, len(fromItem.TargetRef.Labels))
 				for key1, value1 := range fromItem.TargetRef.Labels {
-					from1.TargetRef.Labels[key1] = types.StringValue(value1)
+					from.TargetRef.Labels[key1] = types.StringValue(value1)
 				}
 			}
-			from1.TargetRef.Mesh = types.StringPointerValue(fromItem.TargetRef.Mesh)
-			from1.TargetRef.Name = types.StringPointerValue(fromItem.TargetRef.Name)
-			from1.TargetRef.Namespace = types.StringPointerValue(fromItem.TargetRef.Namespace)
-			from1.TargetRef.ProxyTypes = make([]types.String, 0, len(fromItem.TargetRef.ProxyTypes))
+			from.TargetRef.Mesh = types.StringPointerValue(fromItem.TargetRef.Mesh)
+			from.TargetRef.Name = types.StringPointerValue(fromItem.TargetRef.Name)
+			from.TargetRef.Namespace = types.StringPointerValue(fromItem.TargetRef.Namespace)
+			from.TargetRef.ProxyTypes = make([]types.String, 0, len(fromItem.TargetRef.ProxyTypes))
 			for _, v := range fromItem.TargetRef.ProxyTypes {
-				from1.TargetRef.ProxyTypes = append(from1.TargetRef.ProxyTypes, types.StringValue(string(v)))
+				from.TargetRef.ProxyTypes = append(from.TargetRef.ProxyTypes, types.StringValue(string(v)))
 			}
-			from1.TargetRef.SectionName = types.StringPointerValue(fromItem.TargetRef.SectionName)
+			from.TargetRef.SectionName = types.StringPointerValue(fromItem.TargetRef.SectionName)
 			if len(fromItem.TargetRef.Tags) > 0 {
-				from1.TargetRef.Tags = make(map[string]types.String, len(fromItem.TargetRef.Tags))
+				from.TargetRef.Tags = make(map[string]types.String, len(fromItem.TargetRef.Tags))
 				for key2, value2 := range fromItem.TargetRef.Tags {
-					from1.TargetRef.Tags[key2] = types.StringValue(value2)
+					from.TargetRef.Tags[key2] = types.StringValue(value2)
 				}
 			}
 			if fromCount+1 > len(r.Spec.From) {
-				r.Spec.From = append(r.Spec.From, from1)
+				r.Spec.From = append(r.Spec.From, from)
 			} else {
-				r.Spec.From[fromCount].Default = from1.Default
-				r.Spec.From[fromCount].TargetRef = from1.TargetRef
+				r.Spec.From[fromCount].Default = from.Default
+				r.Spec.From[fromCount].TargetRef = from.TargetRef
 			}
 		}
 		if resp.Spec.TargetRef == nil {
@@ -270,4 +358,6 @@ func (r *MeshTrafficPermissionResourceModel) RefreshFromSharedMeshTrafficPermiss
 		}
 		r.Type = types.StringValue(string(resp.Type))
 	}
+
+	return diags
 }

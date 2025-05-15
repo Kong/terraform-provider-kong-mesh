@@ -3,19 +3,37 @@
 package provider
 
 import (
+	"context"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
-	"time"
 )
 
-func (r *MeshTraceDataSourceModel) RefreshFromSharedMeshTraceItem(resp *shared.MeshTraceItem) {
+func (r *MeshTraceDataSourceModel) ToOperationsGetMeshTraceRequest(ctx context.Context) (*operations.GetMeshTraceRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.GetMeshTraceRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshTraceDataSourceModel) RefreshFromSharedMeshTraceItem(ctx context.Context, resp *shared.MeshTraceItem) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
-		if resp.CreationTime != nil {
-			r.CreationTime = types.StringValue(resp.CreationTime.Format(time.RFC3339Nano))
-		} else {
-			r.CreationTime = types.StringNull()
-		}
+		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
 		if len(resp.Labels) > 0 {
 			r.Labels = make(map[string]types.String, len(resp.Labels))
 			for key, value := range resp.Labels {
@@ -23,11 +41,7 @@ func (r *MeshTraceDataSourceModel) RefreshFromSharedMeshTraceItem(resp *shared.M
 			}
 		}
 		r.Mesh = types.StringPointerValue(resp.Mesh)
-		if resp.ModificationTime != nil {
-			r.ModificationTime = types.StringValue(resp.ModificationTime.Format(time.RFC3339Nano))
-		} else {
-			r.ModificationTime = types.StringNull()
-		}
+		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
 		if resp.Spec.Default == nil {
 			r.Spec.Default = nil
@@ -38,50 +52,48 @@ func (r *MeshTraceDataSourceModel) RefreshFromSharedMeshTraceItem(resp *shared.M
 				r.Spec.Default.Backends = r.Spec.Default.Backends[:len(resp.Spec.Default.Backends)]
 			}
 			for backendsCount, backendsItem := range resp.Spec.Default.Backends {
-				var backends1 tfTypes.MeshTraceItemBackends
+				var backends tfTypes.MeshTraceItemBackends
 				if backendsItem.Datadog == nil {
-					backends1.Datadog = nil
+					backends.Datadog = nil
 				} else {
-					backends1.Datadog = &tfTypes.Datadog{}
-					backends1.Datadog.SplitService = types.BoolPointerValue(backendsItem.Datadog.SplitService)
-					backends1.Datadog.URL = types.StringValue(backendsItem.Datadog.URL)
+					backends.Datadog = &tfTypes.Datadog{}
+					backends.Datadog.SplitService = types.BoolPointerValue(backendsItem.Datadog.SplitService)
+					backends.Datadog.URL = types.StringValue(backendsItem.Datadog.URL)
 				}
 				if backendsItem.OpenTelemetry == nil {
-					backends1.OpenTelemetry = nil
+					backends.OpenTelemetry = nil
 				} else {
-					backends1.OpenTelemetry = &tfTypes.MeshTraceItemOpenTelemetry{}
-					backends1.OpenTelemetry.Endpoint = types.StringValue(backendsItem.OpenTelemetry.Endpoint)
+					backends.OpenTelemetry = &tfTypes.MeshTraceItemOpenTelemetry{}
+					backends.OpenTelemetry.Endpoint = types.StringValue(backendsItem.OpenTelemetry.Endpoint)
 				}
-				backends1.Type = types.StringValue(string(backendsItem.Type))
+				backends.Type = types.StringValue(string(backendsItem.Type))
 				if backendsItem.Zipkin == nil {
-					backends1.Zipkin = nil
+					backends.Zipkin = nil
 				} else {
-					backends1.Zipkin = &tfTypes.Zipkin{}
+					backends.Zipkin = &tfTypes.Zipkin{}
 					if backendsItem.Zipkin.APIVersion != nil {
-						backends1.Zipkin.APIVersion = types.StringValue(string(*backendsItem.Zipkin.APIVersion))
+						backends.Zipkin.APIVersion = types.StringValue(string(*backendsItem.Zipkin.APIVersion))
 					} else {
-						backends1.Zipkin.APIVersion = types.StringNull()
+						backends.Zipkin.APIVersion = types.StringNull()
 					}
-					backends1.Zipkin.SharedSpanContext = types.BoolPointerValue(backendsItem.Zipkin.SharedSpanContext)
-					backends1.Zipkin.TraceId128bit = types.BoolPointerValue(backendsItem.Zipkin.TraceId128bit)
-					backends1.Zipkin.URL = types.StringValue(backendsItem.Zipkin.URL)
+					backends.Zipkin.SharedSpanContext = types.BoolPointerValue(backendsItem.Zipkin.SharedSpanContext)
+					backends.Zipkin.TraceId128bit = types.BoolPointerValue(backendsItem.Zipkin.TraceId128bit)
+					backends.Zipkin.URL = types.StringValue(backendsItem.Zipkin.URL)
 				}
 				if backendsCount+1 > len(r.Spec.Default.Backends) {
-					r.Spec.Default.Backends = append(r.Spec.Default.Backends, backends1)
+					r.Spec.Default.Backends = append(r.Spec.Default.Backends, backends)
 				} else {
-					r.Spec.Default.Backends[backendsCount].Datadog = backends1.Datadog
-					r.Spec.Default.Backends[backendsCount].OpenTelemetry = backends1.OpenTelemetry
-					r.Spec.Default.Backends[backendsCount].Type = backends1.Type
-					r.Spec.Default.Backends[backendsCount].Zipkin = backends1.Zipkin
+					r.Spec.Default.Backends[backendsCount].Datadog = backends.Datadog
+					r.Spec.Default.Backends[backendsCount].OpenTelemetry = backends.OpenTelemetry
+					r.Spec.Default.Backends[backendsCount].Type = backends.Type
+					r.Spec.Default.Backends[backendsCount].Zipkin = backends.Zipkin
 				}
 			}
 			if resp.Spec.Default.Sampling == nil {
 				r.Spec.Default.Sampling = nil
 			} else {
 				r.Spec.Default.Sampling = &tfTypes.Sampling{}
-				if resp.Spec.Default.Sampling.Client == nil {
-					r.Spec.Default.Sampling.Client = nil
-				} else {
+				if resp.Spec.Default.Sampling.Client != nil {
 					r.Spec.Default.Sampling.Client = &tfTypes.Mode{}
 					if resp.Spec.Default.Sampling.Client.Integer != nil {
 						r.Spec.Default.Sampling.Client.Integer = types.Int64PointerValue(resp.Spec.Default.Sampling.Client.Integer)
@@ -90,9 +102,7 @@ func (r *MeshTraceDataSourceModel) RefreshFromSharedMeshTraceItem(resp *shared.M
 						r.Spec.Default.Sampling.Client.Str = types.StringPointerValue(resp.Spec.Default.Sampling.Client.Str)
 					}
 				}
-				if resp.Spec.Default.Sampling.Overall == nil {
-					r.Spec.Default.Sampling.Overall = nil
-				} else {
+				if resp.Spec.Default.Sampling.Overall != nil {
 					r.Spec.Default.Sampling.Overall = &tfTypes.Mode{}
 					if resp.Spec.Default.Sampling.Overall.Integer != nil {
 						r.Spec.Default.Sampling.Overall.Integer = types.Int64PointerValue(resp.Spec.Default.Sampling.Overall.Integer)
@@ -101,9 +111,7 @@ func (r *MeshTraceDataSourceModel) RefreshFromSharedMeshTraceItem(resp *shared.M
 						r.Spec.Default.Sampling.Overall.Str = types.StringPointerValue(resp.Spec.Default.Sampling.Overall.Str)
 					}
 				}
-				if resp.Spec.Default.Sampling.Random == nil {
-					r.Spec.Default.Sampling.Random = nil
-				} else {
+				if resp.Spec.Default.Sampling.Random != nil {
 					r.Spec.Default.Sampling.Random = &tfTypes.Mode{}
 					if resp.Spec.Default.Sampling.Random.Integer != nil {
 						r.Spec.Default.Sampling.Random.Integer = types.Int64PointerValue(resp.Spec.Default.Sampling.Random.Integer)
@@ -118,22 +126,22 @@ func (r *MeshTraceDataSourceModel) RefreshFromSharedMeshTraceItem(resp *shared.M
 				r.Spec.Default.Tags = r.Spec.Default.Tags[:len(resp.Spec.Default.Tags)]
 			}
 			for tagsCount, tagsItem := range resp.Spec.Default.Tags {
-				var tags1 tfTypes.Tags
+				var tags tfTypes.Tags
 				if tagsItem.Header == nil {
-					tags1.Header = nil
+					tags.Header = nil
 				} else {
-					tags1.Header = &tfTypes.Header{}
-					tags1.Header.Default = types.StringPointerValue(tagsItem.Header.Default)
-					tags1.Header.Name = types.StringValue(tagsItem.Header.Name)
+					tags.Header = &tfTypes.Header{}
+					tags.Header.Default = types.StringPointerValue(tagsItem.Header.Default)
+					tags.Header.Name = types.StringValue(tagsItem.Header.Name)
 				}
-				tags1.Literal = types.StringPointerValue(tagsItem.Literal)
-				tags1.Name = types.StringValue(tagsItem.Name)
+				tags.Literal = types.StringPointerValue(tagsItem.Literal)
+				tags.Name = types.StringValue(tagsItem.Name)
 				if tagsCount+1 > len(r.Spec.Default.Tags) {
-					r.Spec.Default.Tags = append(r.Spec.Default.Tags, tags1)
+					r.Spec.Default.Tags = append(r.Spec.Default.Tags, tags)
 				} else {
-					r.Spec.Default.Tags[tagsCount].Header = tags1.Header
-					r.Spec.Default.Tags[tagsCount].Literal = tags1.Literal
-					r.Spec.Default.Tags[tagsCount].Name = tags1.Name
+					r.Spec.Default.Tags[tagsCount].Header = tags.Header
+					r.Spec.Default.Tags[tagsCount].Literal = tags.Literal
+					r.Spec.Default.Tags[tagsCount].Name = tags.Name
 				}
 			}
 		}
@@ -165,4 +173,6 @@ func (r *MeshTraceDataSourceModel) RefreshFromSharedMeshTraceItem(resp *shared.M
 		}
 		r.Type = types.StringValue(string(resp.Type))
 	}
+
+	return diags
 }
