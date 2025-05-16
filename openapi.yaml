@@ -13328,6 +13328,12 @@ components:
           description: The labels to help identity resources
           type: object
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/kong/terraform-provider-kong-mesh/internal/customtypes
+            schemaType: |-
+              customtypes.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}
+            valueType: customtypes.KumaLabelsMapValue
         spec:
           description: Spec is the specification of the Kuma MeshTrafficPermission resource.
           properties:
