@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+	"github.com/kong/terraform-provider-kong-mesh/internal/customtypes"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
 )
@@ -58,6 +59,7 @@ func (r *MeshTrafficPermissionListDataSource) Schema(ctx context.Context, req da
 							Description: `Time at which the resource was created`,
 						},
 						"labels": schema.MapAttribute{
+							CustomType:  customtypes.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}},
 							Computed:    true,
 							ElementType: types.StringType,
 							Description: `The labels to help identity resources`,
