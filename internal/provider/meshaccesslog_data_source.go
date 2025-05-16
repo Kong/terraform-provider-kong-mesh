@@ -29,13 +29,13 @@ type MeshAccessLogDataSource struct {
 
 // MeshAccessLogDataSourceModel describes the data model.
 type MeshAccessLogDataSourceModel struct {
-	CreationTime     types.String             `tfsdk:"creation_time"`
-	Labels           customtypes.KumaLabelMap `tfsdk:"labels"`
-	Mesh             types.String             `tfsdk:"mesh"`
-	ModificationTime types.String             `tfsdk:"modification_time"`
-	Name             types.String             `tfsdk:"name"`
-	Spec             tfTypes.Spec             `tfsdk:"spec"`
-	Type             types.String             `tfsdk:"type"`
+	CreationTime     types.String                   `tfsdk:"creation_time"`
+	Labels           customtypes.KumaLabelsMapValue `tfsdk:"labels"`
+	Mesh             types.String                   `tfsdk:"mesh"`
+	ModificationTime types.String                   `tfsdk:"modification_time"`
+	Name             types.String                   `tfsdk:"name"`
+	Spec             tfTypes.Spec                   `tfsdk:"spec"`
+	Type             types.String                   `tfsdk:"type"`
 }
 
 // Metadata returns the data source type name.

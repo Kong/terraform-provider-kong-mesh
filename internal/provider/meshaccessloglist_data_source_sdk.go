@@ -56,7 +56,7 @@ func (r *MeshAccessLogListDataSourceModel) RefreshFromSharedMeshAccessLogList(ct
 			diags.Append(labelsDiags...)
 			labelsValuable, labelsDiags := customtypes.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
 			diags.Append(labelsDiags...)
-			items.Labels, _ = labelsValuable.(customtypes.KumaLabelMap)
+			items.Labels, _ = labelsValuable.(customtypes.KumaLabelsMapValue)
 			items.Mesh = types.StringPointerValue(itemsItem.Mesh)
 			items.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(itemsItem.ModificationTime))
 			items.Name = types.StringValue(itemsItem.Name)

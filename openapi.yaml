@@ -5016,7 +5016,7 @@ components:
               - github.com/kong/terraform-provider-kong-mesh/internal/customtypes
             schemaType: |-
               customtypes.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}
-            valueType: customtypes.KumaLabelMap
+            valueType: customtypes.KumaLabelsMapValue
         spec:
           description: Spec is the specification of the Kuma MeshAccessLog resource.
           properties:
