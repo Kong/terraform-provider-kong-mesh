@@ -3,13 +3,12 @@ package customtypes
 import (
 	"context"
 	"fmt"
-	"strings"
-
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
+	"github.com/kumahq/kuma/pkg/core/resources/model/labels"
 )
 
 var _ basetypes.MapTypable = KumaLabelsMapType{}
@@ -32,9 +31,8 @@ func (t KumaLabelsMapType) Equal(o attr.Type) bool {
 
 func (t KumaLabelsMapType) ValueFromMap(ctx context.Context, in basetypes.MapValue) (basetypes.MapValuable, diag.Diagnostics) {
 	filteredElements := make(map[string]attr.Value)
-
 	for key, val := range in.Elements() {
-		if !strings.HasPrefix(key, "kuma.io/") {
+		if _, ok := labels.AllComputedLabels[key]; !ok {
 			filteredElements[key] = val
 		}
 	}
