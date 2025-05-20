@@ -10,9 +10,9 @@ import (
 	"strconv"
 )
 
-var _ resource.ResourceWithModifyPlan = &MeshTrafficPermissionResource{}
+var _ resource.ResourceWithModifyPlan = &MeshHostnameGeneratorResource{}
 
-func (r *MeshTrafficPermissionResource) ModifyPlan(
+func (r *MeshHostnameGeneratorResource) ModifyPlan(
 	ctx context.Context,
 	req resource.ModifyPlanRequest,
 	resp *resource.ModifyPlanResponse,
@@ -21,18 +21,17 @@ func (r *MeshTrafficPermissionResource) ModifyPlan(
 		return
 	}
 
-	var plannedResource MeshTrafficPermissionResourceModel
+	var plannedResource MeshHostnameGeneratorResourceModel
 	diags := req.Plan.Get(ctx, &plannedResource)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if plannedResource.Name.IsUnknown() || plannedResource.Mesh.IsUnknown() {
+	if plannedResource.Name.IsUnknown() {
 		return
 	}
-	res, err := r.client.MeshTrafficPermission.GetMeshTrafficPermission(ctx, operations.GetMeshTrafficPermissionRequest{
+	res, err := r.client.Mesh.GetMesh(ctx, operations.GetMeshRequest{
 		Name: plannedResource.Name.ValueString(),
-		Mesh: plannedResource.Mesh.ValueString(),
 	})
 
 	if err != nil {
@@ -58,8 +57,8 @@ func (r *MeshTrafficPermissionResource) ModifyPlan(
 
 	if res.StatusCode != http.StatusNotFound {
 		resp.Diagnostics.AddError(
-			"MeshTrafficPermission already exists",
-			"A resource with the name "+plannedResource.Name.String()+" already exists in the mesh "+plannedResource.Mesh.String()+" - to be managed via Terraform it needs to be imported first",
+			"MeshHostnameGenerator already exists",
+			"A resource with the name "+plannedResource.Name.String()+" already exists - to be managed via Terraform it needs to be imported first",
 		)
 	}
 }

@@ -10,9 +10,9 @@ import (
 	"strconv"
 )
 
-var _ resource.ResourceWithModifyPlan = &MeshTrafficPermissionResource{}
+var _ resource.ResourceWithModifyPlan = &MeshHealthCheckResource{}
 
-func (r *MeshTrafficPermissionResource) ModifyPlan(
+func (r *MeshHealthCheckResource) ModifyPlan(
 	ctx context.Context,
 	req resource.ModifyPlanRequest,
 	resp *resource.ModifyPlanResponse,
@@ -21,7 +21,7 @@ func (r *MeshTrafficPermissionResource) ModifyPlan(
 		return
 	}
 
-	var plannedResource MeshTrafficPermissionResourceModel
+	var plannedResource MeshHealthCheckResourceModel
 	diags := req.Plan.Get(ctx, &plannedResource)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -30,7 +30,7 @@ func (r *MeshTrafficPermissionResource) ModifyPlan(
 	if plannedResource.Name.IsUnknown() || plannedResource.Mesh.IsUnknown() {
 		return
 	}
-	res, err := r.client.MeshTrafficPermission.GetMeshTrafficPermission(ctx, operations.GetMeshTrafficPermissionRequest{
+	res, err := r.client.MeshHealthCheck.GetMeshHealthCheck(ctx, operations.GetMeshHealthCheckRequest{
 		Name: plannedResource.Name.ValueString(),
 		Mesh: plannedResource.Mesh.ValueString(),
 	})
@@ -58,7 +58,7 @@ func (r *MeshTrafficPermissionResource) ModifyPlan(
 
 	if res.StatusCode != http.StatusNotFound {
 		resp.Diagnostics.AddError(
-			"MeshTrafficPermission already exists",
+			"MeshHealthCheck already exists",
 			"A resource with the name "+plannedResource.Name.String()+" already exists in the mesh "+plannedResource.Mesh.String()+" - to be managed via Terraform it needs to be imported first",
 		)
 	}

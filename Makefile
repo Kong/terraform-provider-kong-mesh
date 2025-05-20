@@ -47,5 +47,5 @@ generate-plan-modifiers:
 	| cut -d ' ' -f 2 \
 	| sed 's/Resource$$//' \
 	| xargs -n1 -I{} sh -c '\
-		go run github.com/Kong/shared-speakeasy/generators/resource_plan_modifier@v0.0.2 \
-		internal/provider/$$(echo {} | tr A-Z a-z)resource_plan_modify.go {} terraform-provider-kong-mesh'
+		go run github.com/Kong/shared-speakeasy/generators/resource_plan_modifier@v0.0.4 \
+		internal/provider/$$(echo {} | tr A-Z a-z)_resource_plan_modify.go {} terraform-provider-kong-mesh'
