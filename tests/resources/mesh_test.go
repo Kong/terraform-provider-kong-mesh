@@ -83,7 +83,7 @@ func TestMesh(t *testing.T) {
 			})
 		builder.AddMesh(mesh)
 
-		expectedErr, err := regexp.Compile(`unknown status code returned: Status 200`)
+		expectedErr, err := regexp.Compile(`MeshTrafficPermission already exists`)
 		require.NoError(t, err)
 		resource.ParallelTest(t, resource.TestCase{
 			ProtoV6ProviderFactories: providerFactory,
