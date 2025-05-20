@@ -41,7 +41,6 @@ func TestMesh(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("create a mesh and modify fields on it", func(t *testing.T) {
-		t.Skip()
 		builder := tfbuilder.NewBuilder(tfbuilder.KongMesh, "http", "localhost", port.Int())
 		mesh := tfbuilder.NewMeshBuilder("m1", "m1")
 
@@ -49,7 +48,6 @@ func TestMesh(t *testing.T) {
 	})
 
 	t.Run("create a policy and modify fields on it", func(t *testing.T) {
-		t.Skip()
 		builder := tfbuilder.NewBuilder(tfbuilder.KongMesh, "http", "localhost", port.Int())
 		mesh := tfbuilder.NewMeshBuilder("default", "terraform-provider-kong-mesh")
 		mtp := tfbuilder.NewPolicyBuilder("mesh_traffic_permission", "allow_all", "allow-all", "MeshTrafficPermission").
@@ -83,7 +81,7 @@ func TestMesh(t *testing.T) {
 			})
 		builder.AddMesh(mesh)
 
-		expectedErr, err := regexp.Compile(`unknown status code returned: Status 200`)
+		expectedErr, err := regexp.Compile(`resource already exists, use terraform import to import it to the state`)
 		require.NoError(t, err)
 		resource.ParallelTest(t, resource.TestCase{
 			ProtoV6ProviderFactories: providerFactory,

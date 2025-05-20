@@ -9,10 +9,11 @@ package hooks
  */
 
 func initHooks(h *Hooks) {
-	// exampleHook := &ExampleHook{}
-
+	h.registerBeforeRequestHook(&OverrideProtectionHook{
+		// Enabled: os.Getenv("KONG_MESH_SDK_OVERRIDE_PROTECTION") == "true",
+		Enabled: true,
+	})
 	// h.registerSDKInitHook(exampleHook)
-	// h.registerBeforeRequestHook(exampleHook)
 	// h.registerAfterErrorHook(exampleHook)
 	// h.registerAfterSuccessHook(exampleHook)
 }
