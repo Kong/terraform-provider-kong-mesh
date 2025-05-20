@@ -2,7 +2,6 @@ package tests
 
 import (
 	"github.com/Kong/shared-speakeasy/tfbuilder"
-	"github.com/docker/go-connections/nat"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
@@ -91,7 +90,7 @@ func TestMesh(t *testing.T) {
 				},
 				{
 					PreConfig: func() {
-						createAnMTP(t, port, meshName, mtpName)
+						createAnMTP(t, "http://"+net.JoinHostPort("localhost", port.Port()), meshName, mtpName)
 					},
 					Config:      builder.AddPolicy(mtp.WithSpec(tfbuilder.AllowAllTrafficPermissionSpec)).Build(),
 					ExpectError: expectedErr,
@@ -115,9 +114,9 @@ func TestMesh(t *testing.T) {
 	}
 }
 
-func createAnMTP(t *testing.T, port nat.Port, meshName string, mtpName string) {
+func createAnMTP(t *testing.T, url string, meshName string, mtpName string) {
 	ctx := t.Context()
-	client := sdk.New("http://" + net.JoinHostPort("localhost", port.Port()))
+	client := sdk.New(url)
 	action := shared.ActionAllow
 	resp, err := client.MeshTrafficPermission.CreateMeshTrafficPermission(ctx, operations.CreateMeshTrafficPermissionRequest{
 		Mesh: meshName,
