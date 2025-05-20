@@ -6,6 +6,8 @@ github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 h1:UQHMgLO+TxOEl
 github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1/go.mod h1:xomTg63KZ2rFqZQzSB4Vz2SUXa1BpHTVz9L5PTmPC4E=
 github.com/BurntSushi/toml v1.2.1 h1:9F2/+DoOYIOksmaJFPw1tGFy1eDnIJXg+UHjuD8lTak=
 github.com/BurntSushi/toml v1.2.1/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=
+github.com/Kong/shared-speakeasy/generators/resource_plan_modifier v0.0.1 h1:i9SRAJZhILb9tjIckExrCSlPdADo4Hxk0puPAYQZqyc=
+github.com/Kong/shared-speakeasy/generators/resource_plan_modifier v0.0.1/go.mod h1:ZGmHiUaBZr6QRF+IZK4eeR2niSb/DQN9VmszR09YXYE=
 github.com/Kong/shared-speakeasy/planmodifiers/arbitrary_json v0.0.1 h1:S3f3RAPNv274Yd8ShkGjSTXLWS55AY1SHNKfcX8sQjU=
 github.com/Kong/shared-speakeasy/planmodifiers/arbitrary_json v0.0.1/go.mod h1:exogJpiSOmoVk8BTkYA2wlkvqhYlOP+LJpXc4CacHuU=
 github.com/Kong/shared-speakeasy/planmodifiers/suppress_zero_null v0.0.1 h1:2PxZAhqgCU0dz+qjghtay2XkNLx2F3oEuh90U/acijc=

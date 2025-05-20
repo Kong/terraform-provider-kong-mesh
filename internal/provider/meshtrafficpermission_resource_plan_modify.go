@@ -8,11 +8,8 @@ import (
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"net/http"
 	"strconv"
-
-	// ... other relevant imports ...
 )
 
-// Ensure the resource implements the ModifyPlan interface.
 var _ resource.ResourceWithModifyPlan = &MeshTrafficPermissionResource{}
 
 func (r *MeshTrafficPermissionResource) ModifyPlan(
@@ -20,7 +17,6 @@ func (r *MeshTrafficPermissionResource) ModifyPlan(
 	req resource.ModifyPlanRequest,
 	resp *resource.ModifyPlanResponse,
 ) {
-	// Skip if resource already exists in state
 	if !req.State.Raw.IsNull() {
 		return
 	}
@@ -32,12 +28,11 @@ func (r *MeshTrafficPermissionResource) ModifyPlan(
 		return
 	}
 
-	// Skip if required fields for reading the resource are not yet known
 	if plannedResource.Name.IsUnknown() || plannedResource.Mesh.IsUnknown() {
 		return
 	}
 
-	mtp, err := r.client.MeshTrafficPermission.GetMeshTrafficPermission(ctx, operations.GetMeshTrafficPermissionRequest{
+	res, err := r.client.MeshTrafficPermission.GetMeshTrafficPermission(ctx, operations.GetMeshTrafficPermissionRequest{
 		Name: plannedResource.Name.ValueString(),
 		Mesh: plannedResource.Mesh.ValueString(),
 	})
@@ -63,7 +58,7 @@ func (r *MeshTrafficPermissionResource) ModifyPlan(
 		}
 	}
 
-	if mtp.StatusCode != http.StatusNotFound {
+	if res.StatusCode != http.StatusNotFound {
 		showAlreadyExistsError(resp, plannedResource)
 	}
 }
