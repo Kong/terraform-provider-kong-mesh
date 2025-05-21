@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.0
+> Released on 2025/05/21
+>
+> - Add a meaningful message when a user forgets to import a resource
+
 ## 0.1.4
 > Released on 2025/05/15
 > 

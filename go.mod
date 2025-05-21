@@ -5,7 +5,7 @@ go 1.24.1
 require (
 	github.com/Kong/shared-speakeasy/planmodifiers/arbitrary_json v0.0.1
 	github.com/Kong/shared-speakeasy/planmodifiers/suppress_zero_null v0.0.1
-	github.com/Kong/shared-speakeasy/tfbuilder v0.0.4-0.20250520152215-1bc75f335593
+	github.com/Kong/shared-speakeasy/tfbuilder v0.0.4-0.20250521101712-2cc5d9cdf1a6
 	github.com/ericlagergren/decimal v0.0.0-20221120152707-495c53812d05
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/hashicorp/terraform-plugin-docs v0.20.1
@@ -115,11 +115,11 @@ require (
 	go.abhg.dev/goldmark/frontmatter v0.2.0 // indirect
 	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.49.0 // indirect
-	go.opentelemetry.io/otel v1.35.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.35.0 // indirect
-	go.opentelemetry.io/otel/metric v1.35.0 // indirect
-	go.opentelemetry.io/otel/sdk v1.35.0 // indirect
-	go.opentelemetry.io/otel/trace v1.35.0 // indirect
+	go.opentelemetry.io/otel v1.36.0 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.36.0 // indirect
+	go.opentelemetry.io/otel/metric v1.36.0 // indirect
+	go.opentelemetry.io/otel/sdk v1.36.0 // indirect
+	go.opentelemetry.io/otel/trace v1.36.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.6.0 // indirect
 	golang.org/x/crypto v0.38.0 // indirect
 	golang.org/x/exp v0.0.0-20230626212559-97b1e661b5df // indirect
