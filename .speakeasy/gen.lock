@@ -6,7 +6,7 @@ management:
   speakeasyVersion: 1.545.0
   generationVersion: 2.599.0
   releaseVersion: 0.2.0
-  configChecksum: c66dfb6f9fd1428e9aded2665713394b
+  configChecksum: 373f01e77cfd82fcbc1823c878bb4f1d
 features:
   terraform:
     additionalDependencies: 0.1.0
