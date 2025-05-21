@@ -27,12 +27,14 @@ func (r *MeshResource) ModifyPlan(
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
 	if plannedResource.Name.IsUnknown() {
 		return
 	}
-	res, err := r.client.Mesh.GetMesh(ctx, operations.GetMeshRequest{
+	request := operations.GetMeshRequest{
 		Name: plannedResource.Name.ValueString(),
-	})
+	}
+	res, err := r.client.Mesh.GetMesh(ctx, request)
 
 	if err != nil {
 		var sdkError *sdkerrors.SDKError

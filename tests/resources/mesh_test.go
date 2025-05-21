@@ -2,7 +2,6 @@ package tests
 
 import (
 	"github.com/Kong/shared-speakeasy/tfbuilder"
-	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
@@ -11,7 +10,6 @@ import (
 	"github.com/testcontainers/testcontainers-go/wait"
 	"io"
 	"net"
-	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -80,28 +78,7 @@ func TestMesh(t *testing.T) {
 			})
 		builder.AddMesh(mesh)
 
-		expectedErr, err := regexp.Compile(`MeshTrafficPermission already exists`)
-		require.NoError(t, err)
-		resource.ParallelTest(t, resource.TestCase{
-			ProtoV6ProviderFactories: providerFactory,
-			Steps: []resource.TestStep{
-				{
-					Config: builder.Build(),
-				},
-				{
-					PreConfig: func() {
-						createAnMTP(t, "http://"+net.JoinHostPort("localhost", port.Port()), meshName, mtpName)
-					},
-					Config:      builder.AddPolicy(mtp.WithSpec(tfbuilder.AllowAllTrafficPermissionSpec)).Build(),
-					ExpectError: expectedErr,
-					ConfigPlanChecks: resource.ConfigPlanChecks{
-						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction(builder.ResourceAddress(mtp.ResourceType, mtp.ResourceName), plancheck.ResourceActionCreate),
-						},
-					},
-				},
-			},
-		})
+		resource.ParallelTest(t, tfbuilder.NotImportedResourceShouldErrorOutWithMeaningfulMessage(providerFactory, builder, mtp, func() { createAnMTP(t, "http://"+net.JoinHostPort("localhost", port.Port()), meshName, mtpName) }))
 	})
 
 	if t.Failed() {

@@ -27,12 +27,14 @@ func (r *MeshHostnameGeneratorResource) ModifyPlan(
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
 	if plannedResource.Name.IsUnknown() {
 		return
 	}
-	res, err := r.client.Mesh.GetMesh(ctx, operations.GetMeshRequest{
+	request := operations.GetHostnameGeneratorRequest{
 		Name: plannedResource.Name.ValueString(),
-	})
+	}
+	res, err := r.client.HostnameGenerator.GetHostnameGenerator(ctx, request)
 
 	if err != nil {
 		var sdkError *sdkerrors.SDKError

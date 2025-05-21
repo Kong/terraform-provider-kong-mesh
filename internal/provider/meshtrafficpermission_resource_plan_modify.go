@@ -27,13 +27,18 @@ func (r *MeshTrafficPermissionResource) ModifyPlan(
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if plannedResource.Name.IsUnknown() || plannedResource.Mesh.IsUnknown() {
+
+	if plannedResource.Name.IsUnknown() {
 		return
 	}
-	res, err := r.client.MeshTrafficPermission.GetMeshTrafficPermission(ctx, operations.GetMeshTrafficPermissionRequest{
+	if plannedResource.Mesh.IsUnknown() {
+		return
+	}
+	request := operations.GetMeshTrafficPermissionRequest{
 		Name: plannedResource.Name.ValueString(),
-		Mesh: plannedResource.Mesh.ValueString(),
-	})
+	}
+	request.Mesh = plannedResource.Mesh.ValueString()
+	res, err := r.client.MeshTrafficPermission.GetMeshTrafficPermission(ctx, request)
 
 	if err != nil {
 		var sdkError *sdkerrors.SDKError
