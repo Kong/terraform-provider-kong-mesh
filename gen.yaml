@@ -24,6 +24,7 @@ go:
       github.com/Kong/shared-speakeasy/planmodifiers/arbitrary_json: v0.0.1
       github.com/Kong/shared-speakeasy/planmodifiers/suppress_zero_null: v0.0.1
       github.com/Kong/shared-speakeasy/tfbuilder: v0.0.3
+      github.com/kumahq/kuma: v0.0.0-20250513063437-b6384fd3f977
 terraform:
   version: 0.1.5
   additionalDataSources: []

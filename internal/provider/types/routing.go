@@ -2,7 +2,9 @@
 
 package types
 
-import "github.com/hashicorp/terraform-plugin-framework/types"
+import (
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
 
 type Routing struct {
 	DefaultForbidMeshExternalServiceAccess types.Bool `tfsdk:"default_forbid_mesh_external_service_access"`

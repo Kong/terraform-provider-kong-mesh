@@ -2,7 +2,9 @@
 
 package types
 
-import "github.com/hashicorp/terraform-plugin-framework/types"
+import (
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
 
 type AuthConfig struct {
 	OnAgentFailure types.String `tfsdk:"on_agent_failure"`

@@ -2,7 +2,9 @@
 
 package types
 
-import "github.com/hashicorp/terraform-plugin-framework/types"
+import (
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
 
 type ConnectionLimits struct {
 	MaxConnectionPools types.Int32 `tfsdk:"max_connection_pools"`

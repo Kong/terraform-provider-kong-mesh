@@ -2,7 +2,9 @@
 
 package types
 
-import "github.com/hashicorp/terraform-plugin-framework/types"
+import (
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
 
 type RateLimitService struct {
 	LimitOnServiceFail types.Bool   `tfsdk:"limit_on_service_fail"`

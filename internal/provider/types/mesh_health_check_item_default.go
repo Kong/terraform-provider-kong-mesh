@@ -2,7 +2,9 @@
 
 package types
 
-import "github.com/hashicorp/terraform-plugin-framework/types"
+import (
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
 
 type MeshHealthCheckItemDefault struct {
 	AlwaysLogHealthCheckFailures types.Bool               `tfsdk:"always_log_health_check_failures"`
