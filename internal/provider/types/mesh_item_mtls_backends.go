@@ -2,7 +2,9 @@
 
 package types
 
-import "github.com/hashicorp/terraform-plugin-framework/types"
+import (
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
 
 type MeshItemMtlsBackends struct {
 	Conf      *MeshItemMtlsConf `tfsdk:"conf"`

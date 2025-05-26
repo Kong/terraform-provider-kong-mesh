@@ -2,7 +2,9 @@
 
 package types
 
-import "github.com/hashicorp/terraform-plugin-framework/types"
+import (
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
 
 type MeshMultiZoneServiceItemMeshService struct {
 	MatchLabels map[string]types.String `tfsdk:"match_labels"`

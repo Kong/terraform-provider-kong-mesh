@@ -2,7 +2,9 @@
 
 package types
 
-import "github.com/hashicorp/terraform-plugin-framework/types"
+import (
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
 
 type ACMCertificateAuthorityConfig struct {
 	Arn        types.String `tfsdk:"arn"`

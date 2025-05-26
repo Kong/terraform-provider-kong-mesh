@@ -2,7 +2,9 @@
 
 package types
 
-import "github.com/hashicorp/terraform-plugin-framework/types"
+import (
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
 
 type MeshTimeoutItemDefault struct {
 	ConnectionTimeout types.String         `tfsdk:"connection_timeout"`

@@ -2,7 +2,9 @@
 
 package types
 
-import "github.com/hashicorp/terraform-plugin-framework/types"
+import (
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
 
 type MeshHTTPRouteItemSpecPath struct {
 	ReplaceFullPath    types.String `tfsdk:"replace_full_path"`
