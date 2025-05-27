@@ -5013,10 +5013,10 @@ components:
           x-speakeasy-param-computed: false
           x-speakeasy-terraform-custom-type:
             imports:
-              - github.com/kong/terraform-provider-kong-mesh/internal/customtypes
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
             schemaType: |-
-              customtypes.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}
-            valueType: customtypes.KumaLabelsMapValue
+              kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}
+            valueType: kumalabels.KumaLabelsMapValue
         spec:
           description: Spec is the specification of the Kuma MeshAccessLog resource.
           properties:
@@ -13330,10 +13330,10 @@ components:
           x-speakeasy-param-computed: false
           x-speakeasy-terraform-custom-type:
             imports:
-              - github.com/kong/terraform-provider-kong-mesh/internal/customtypes
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
             schemaType: |-
-              customtypes.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}
-            valueType: customtypes.KumaLabelsMapValue
+              kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}
+            valueType: kumalabels.KumaLabelsMapValue
         spec:
           description: Spec is the specification of the Kuma MeshTrafficPermission resource.
           properties:

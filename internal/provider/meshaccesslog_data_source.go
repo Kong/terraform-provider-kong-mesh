@@ -5,11 +5,11 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"github.com/kong/terraform-provider-kong-mesh/internal/customtypes"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
 )
@@ -29,13 +29,13 @@ type MeshAccessLogDataSource struct {
 
 // MeshAccessLogDataSourceModel describes the data model.
 type MeshAccessLogDataSourceModel struct {
-	CreationTime     types.String                   `tfsdk:"creation_time"`
-	Labels           customtypes.KumaLabelsMapValue `tfsdk:"labels"`
-	Mesh             types.String                   `tfsdk:"mesh"`
-	ModificationTime types.String                   `tfsdk:"modification_time"`
-	Name             types.String                   `tfsdk:"name"`
-	Spec             tfTypes.Spec                   `tfsdk:"spec"`
-	Type             types.String                   `tfsdk:"type"`
+	CreationTime     types.String                  `tfsdk:"creation_time"`
+	Labels           kumalabels.KumaLabelsMapValue `tfsdk:"labels"`
+	Mesh             types.String                  `tfsdk:"mesh"`
+	ModificationTime types.String                  `tfsdk:"modification_time"`
+	Name             types.String                  `tfsdk:"name"`
+	Spec             tfTypes.Spec                  `tfsdk:"spec"`
+	Type             types.String                  `tfsdk:"type"`
 }
 
 // Metadata returns the data source type name.
@@ -54,7 +54,7 @@ func (r *MeshAccessLogDataSource) Schema(ctx context.Context, req datasource.Sch
 				Description: `Time at which the resource was created`,
 			},
 			"labels": schema.MapAttribute{
-				CustomType:  customtypes.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}},
+				CustomType:  kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}},
 				Computed:    true,
 				ElementType: types.StringType,
 				Description: `The labels to help identity resources`,
