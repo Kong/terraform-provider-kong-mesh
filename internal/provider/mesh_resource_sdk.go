@@ -5,7 +5,6 @@ package provider
 import (
 	"context"
 	"encoding/json"
-	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
@@ -55,9 +54,12 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 			DataplaneProxy: dataplaneProxy,
 		}
 	}
-	var labels map[string]string
-	if !r.Labels.IsUnknown() && !r.Labels.IsNull() {
-		diags.Append(r.Labels.ElementsAs(ctx, &labels, true)...)
+	labels := make(map[string]string)
+	for labelsKey, labelsValue := range r.Labels {
+		var labelsInst string
+		labelsInst = labelsValue.ValueString()
+
+		labels[labelsKey] = labelsInst
 	}
 	var logging *shared.Logging
 	if r.Logging != nil {
@@ -957,11 +959,12 @@ func (r *MeshResourceModel) RefreshFromSharedMeshItem(ctx context.Context, resp 
 				}
 			}
 		}
-		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
-		diags.Append(labelsDiags...)
-		labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
-		diags.Append(labelsDiags...)
-		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
+		if len(resp.Labels) > 0 {
+			r.Labels = make(map[string]types.String, len(resp.Labels))
+			for key2, value2 := range resp.Labels {
+				r.Labels[key2] = types.StringValue(value2)
+			}
+		}
 		if resp.Logging == nil {
 			r.Logging = nil
 		} else {
@@ -1055,8 +1058,8 @@ func (r *MeshResourceModel) RefreshFromSharedMeshItem(ctx context.Context, resp 
 						backends1.Conf.PrometheusMetricsBackendConfig.SkipMTLS = types.BoolPointerValue(backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.SkipMTLS)
 						if len(backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.Tags) > 0 {
 							backends1.Conf.PrometheusMetricsBackendConfig.Tags = make(map[string]types.String, len(backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.Tags))
-							for key2, value2 := range backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.Tags {
-								backends1.Conf.PrometheusMetricsBackendConfig.Tags[key2] = types.StringValue(value2)
+							for key3, value3 := range backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.Tags {
+								backends1.Conf.PrometheusMetricsBackendConfig.Tags[key3] = types.StringValue(value3)
 							}
 						}
 						if backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.TLS == nil {

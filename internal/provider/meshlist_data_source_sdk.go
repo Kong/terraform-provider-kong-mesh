@@ -5,7 +5,6 @@ package provider
 import (
 	"context"
 	"encoding/json"
-	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
@@ -86,11 +85,12 @@ func (r *MeshListDataSourceModel) RefreshFromSharedMeshList(ctx context.Context,
 					}
 				}
 			}
-			labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, itemsItem.Labels)
-			diags.Append(labelsDiags...)
-			labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
-			diags.Append(labelsDiags...)
-			items.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
+			if len(itemsItem.Labels) > 0 {
+				items.Labels = make(map[string]types.String, len(itemsItem.Labels))
+				for key2, value2 := range itemsItem.Labels {
+					items.Labels[key2] = types.StringValue(value2)
+				}
+			}
 			if itemsItem.Logging == nil {
 				items.Logging = nil
 			} else {
@@ -178,8 +178,8 @@ func (r *MeshListDataSourceModel) RefreshFromSharedMeshList(ctx context.Context,
 							backends1.Conf.PrometheusMetricsBackendConfig.SkipMTLS = types.BoolPointerValue(backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.SkipMTLS)
 							if len(backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.Tags) > 0 {
 								backends1.Conf.PrometheusMetricsBackendConfig.Tags = make(map[string]types.String, len(backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.Tags))
-								for key2, value2 := range backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.Tags {
-									backends1.Conf.PrometheusMetricsBackendConfig.Tags[key2] = types.StringValue(value2)
+								for key3, value3 := range backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.Tags {
+									backends1.Conf.PrometheusMetricsBackendConfig.Tags[key3] = types.StringValue(value3)
 								}
 							}
 							if backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.TLS == nil {

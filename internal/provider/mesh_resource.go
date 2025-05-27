@@ -5,7 +5,6 @@ package provider
 import (
 	"context"
 	"fmt"
-	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -41,19 +40,19 @@ type MeshResource struct {
 
 // MeshResourceModel describes the resource data model.
 type MeshResourceModel struct {
-	Constraints                 *tfTypes.Constraints          `tfsdk:"constraints"`
-	Labels                      kumalabels.KumaLabelsMapValue `tfsdk:"labels"`
-	Logging                     *tfTypes.Logging              `tfsdk:"logging"`
-	MeshServices                *tfTypes.ConfTLS              `tfsdk:"mesh_services"`
-	Metrics                     *tfTypes.MeshItemMetrics      `tfsdk:"metrics"`
-	Mtls                        *tfTypes.Mtls                 `tfsdk:"mtls"`
-	Name                        types.String                  `tfsdk:"name"`
-	Networking                  *tfTypes.MeshItemNetworking   `tfsdk:"networking"`
-	Routing                     *tfTypes.Routing              `tfsdk:"routing"`
-	SkipCreatingInitialPolicies []types.String                `tfsdk:"skip_creating_initial_policies"`
-	Tracing                     *tfTypes.Tracing              `tfsdk:"tracing"`
-	Type                        types.String                  `tfsdk:"type"`
-	Warnings                    []types.String                `tfsdk:"warnings"`
+	Constraints                 *tfTypes.Constraints        `tfsdk:"constraints"`
+	Labels                      map[string]types.String     `tfsdk:"labels"`
+	Logging                     *tfTypes.Logging            `tfsdk:"logging"`
+	MeshServices                *tfTypes.ConfTLS            `tfsdk:"mesh_services"`
+	Metrics                     *tfTypes.MeshItemMetrics    `tfsdk:"metrics"`
+	Mtls                        *tfTypes.Mtls               `tfsdk:"mtls"`
+	Name                        types.String                `tfsdk:"name"`
+	Networking                  *tfTypes.MeshItemNetworking `tfsdk:"networking"`
+	Routing                     *tfTypes.Routing            `tfsdk:"routing"`
+	SkipCreatingInitialPolicies []types.String              `tfsdk:"skip_creating_initial_policies"`
+	Tracing                     *tfTypes.Tracing            `tfsdk:"tracing"`
+	Type                        types.String                `tfsdk:"type"`
+	Warnings                    []types.String              `tfsdk:"warnings"`
 }
 
 func (r *MeshResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -112,7 +111,6 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				Description: `Constraints that applies to the mesh and its entities`,
 			},
 			"labels": schema.MapAttribute{
-				CustomType:  kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}},
 				Optional:    true,
 				ElementType: types.StringType,
 			},

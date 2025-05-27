@@ -3,21 +3,20 @@
 package types
 
 import (
-	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type MeshItem struct {
-	Constraints                 *Constraints                  `tfsdk:"constraints"`
-	Labels                      kumalabels.KumaLabelsMapValue `tfsdk:"labels"`
-	Logging                     *Logging                      `tfsdk:"logging"`
-	MeshServices                *ConfTLS                      `tfsdk:"mesh_services"`
-	Metrics                     *MeshItemMetrics              `tfsdk:"metrics"`
-	Mtls                        *Mtls                         `tfsdk:"mtls"`
-	Name                        types.String                  `tfsdk:"name"`
-	Networking                  *MeshItemNetworking           `tfsdk:"networking"`
-	Routing                     *Routing                      `tfsdk:"routing"`
-	SkipCreatingInitialPolicies []types.String                `tfsdk:"skip_creating_initial_policies"`
-	Tracing                     *Tracing                      `tfsdk:"tracing"`
-	Type                        types.String                  `tfsdk:"type"`
+	Constraints                 *Constraints            `tfsdk:"constraints"`
+	Labels                      map[string]types.String `tfsdk:"labels"`
+	Logging                     *Logging                `tfsdk:"logging"`
+	MeshServices                *ConfTLS                `tfsdk:"mesh_services"`
+	Metrics                     *MeshItemMetrics        `tfsdk:"metrics"`
+	Mtls                        *Mtls                   `tfsdk:"mtls"`
+	Name                        types.String            `tfsdk:"name"`
+	Networking                  *MeshItemNetworking     `tfsdk:"networking"`
+	Routing                     *Routing                `tfsdk:"routing"`
+	SkipCreatingInitialPolicies []types.String          `tfsdk:"skip_creating_initial_policies"`
+	Tracing                     *Tracing                `tfsdk:"tracing"`
+	Type                        types.String            `tfsdk:"type"`
 }
