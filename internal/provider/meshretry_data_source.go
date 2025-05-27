@@ -5,6 +5,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -28,13 +29,13 @@ type MeshRetryDataSource struct {
 
 // MeshRetryDataSourceModel describes the data model.
 type MeshRetryDataSourceModel struct {
-	CreationTime     types.String              `tfsdk:"creation_time"`
-	Labels           map[string]types.String   `tfsdk:"labels"`
-	Mesh             types.String              `tfsdk:"mesh"`
-	ModificationTime types.String              `tfsdk:"modification_time"`
-	Name             types.String              `tfsdk:"name"`
-	Spec             tfTypes.MeshRetryItemSpec `tfsdk:"spec"`
-	Type             types.String              `tfsdk:"type"`
+	CreationTime     types.String                  `tfsdk:"creation_time"`
+	Labels           kumalabels.KumaLabelsMapValue `tfsdk:"labels"`
+	Mesh             types.String                  `tfsdk:"mesh"`
+	ModificationTime types.String                  `tfsdk:"modification_time"`
+	Name             types.String                  `tfsdk:"name"`
+	Spec             tfTypes.MeshRetryItemSpec     `tfsdk:"spec"`
+	Type             types.String                  `tfsdk:"type"`
 }
 
 // Metadata returns the data source type name.
@@ -53,6 +54,7 @@ func (r *MeshRetryDataSource) Schema(ctx context.Context, req datasource.SchemaR
 				Description: `Time at which the resource was created`,
 			},
 			"labels": schema.MapAttribute{
+				CustomType:  kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}},
 				Computed:    true,
 				ElementType: types.StringType,
 				Description: `The labels to help identity resources`,

@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -44,14 +45,14 @@ type MeshTraceResource struct {
 
 // MeshTraceResourceModel describes the resource data model.
 type MeshTraceResourceModel struct {
-	CreationTime     types.String              `tfsdk:"creation_time"`
-	Labels           map[string]types.String   `tfsdk:"labels"`
-	Mesh             types.String              `tfsdk:"mesh"`
-	ModificationTime types.String              `tfsdk:"modification_time"`
-	Name             types.String              `tfsdk:"name"`
-	Spec             tfTypes.MeshTraceItemSpec `tfsdk:"spec"`
-	Type             types.String              `tfsdk:"type"`
-	Warnings         []types.String            `tfsdk:"warnings"`
+	CreationTime     types.String                  `tfsdk:"creation_time"`
+	Labels           kumalabels.KumaLabelsMapValue `tfsdk:"labels"`
+	Mesh             types.String                  `tfsdk:"mesh"`
+	ModificationTime types.String                  `tfsdk:"modification_time"`
+	Name             types.String                  `tfsdk:"name"`
+	Spec             tfTypes.MeshTraceItemSpec     `tfsdk:"spec"`
+	Type             types.String                  `tfsdk:"type"`
+	Warnings         []types.String                `tfsdk:"warnings"`
 }
 
 func (r *MeshTraceResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -73,6 +74,7 @@ func (r *MeshTraceResource) Schema(ctx context.Context, req resource.SchemaReque
 				},
 			},
 			"labels": schema.MapAttribute{
+				CustomType:  kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}},
 				Optional:    true,
 				ElementType: types.StringType,
 				Description: `The labels to help identity resources`,

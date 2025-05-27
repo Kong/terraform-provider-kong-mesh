@@ -4,6 +4,7 @@ package provider
 
 import (
 	"context"
+	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
@@ -50,12 +51,11 @@ func (r *MeshOPAListDataSourceModel) RefreshFromSharedMeshOPAList(ctx context.Co
 		for itemsCount, itemsItem := range resp.Items {
 			var items tfTypes.MeshOPAItem
 			items.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(itemsItem.CreationTime))
-			if len(itemsItem.Labels) > 0 {
-				items.Labels = make(map[string]types.String, len(itemsItem.Labels))
-				for key, value := range itemsItem.Labels {
-					items.Labels[key] = types.StringValue(value)
-				}
-			}
+			labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, itemsItem.Labels)
+			diags.Append(labelsDiags...)
+			labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
+			diags.Append(labelsDiags...)
+			items.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
 			items.Mesh = types.StringPointerValue(itemsItem.Mesh)
 			items.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(itemsItem.ModificationTime))
 			items.Name = types.StringValue(itemsItem.Name)
@@ -112,8 +112,8 @@ func (r *MeshOPAListDataSourceModel) RefreshFromSharedMeshOPAList(ctx context.Co
 				items.Spec.TargetRef.Kind = types.StringValue(string(itemsItem.Spec.TargetRef.Kind))
 				if len(itemsItem.Spec.TargetRef.Labels) > 0 {
 					items.Spec.TargetRef.Labels = make(map[string]types.String, len(itemsItem.Spec.TargetRef.Labels))
-					for key1, value1 := range itemsItem.Spec.TargetRef.Labels {
-						items.Spec.TargetRef.Labels[key1] = types.StringValue(value1)
+					for key, value := range itemsItem.Spec.TargetRef.Labels {
+						items.Spec.TargetRef.Labels[key] = types.StringValue(value)
 					}
 				}
 				items.Spec.TargetRef.Mesh = types.StringPointerValue(itemsItem.Spec.TargetRef.Mesh)
@@ -126,8 +126,8 @@ func (r *MeshOPAListDataSourceModel) RefreshFromSharedMeshOPAList(ctx context.Co
 				items.Spec.TargetRef.SectionName = types.StringPointerValue(itemsItem.Spec.TargetRef.SectionName)
 				if len(itemsItem.Spec.TargetRef.Tags) > 0 {
 					items.Spec.TargetRef.Tags = make(map[string]types.String, len(itemsItem.Spec.TargetRef.Tags))
-					for key2, value2 := range itemsItem.Spec.TargetRef.Tags {
-						items.Spec.TargetRef.Tags[key2] = types.StringValue(value2)
+					for key1, value1 := range itemsItem.Spec.TargetRef.Tags {
+						items.Spec.TargetRef.Tags[key1] = types.StringValue(value1)
 					}
 				}
 			}

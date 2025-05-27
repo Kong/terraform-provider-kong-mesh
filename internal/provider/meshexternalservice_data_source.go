@@ -5,6 +5,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -29,7 +30,7 @@ type MeshExternalServiceDataSource struct {
 // MeshExternalServiceDataSourceModel describes the data model.
 type MeshExternalServiceDataSourceModel struct {
 	CreationTime     types.String                        `tfsdk:"creation_time"`
-	Labels           map[string]types.String             `tfsdk:"labels"`
+	Labels           kumalabels.KumaLabelsMapValue       `tfsdk:"labels"`
 	Mesh             types.String                        `tfsdk:"mesh"`
 	ModificationTime types.String                        `tfsdk:"modification_time"`
 	Name             types.String                        `tfsdk:"name"`
@@ -54,6 +55,7 @@ func (r *MeshExternalServiceDataSource) Schema(ctx context.Context, req datasour
 				Description: `Time at which the resource was created`,
 			},
 			"labels": schema.MapAttribute{
+				CustomType:  kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}},
 				Computed:    true,
 				ElementType: types.StringType,
 				Description: `The labels to help identity resources`,

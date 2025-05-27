@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -43,14 +44,14 @@ type MeshTCPRouteResource struct {
 
 // MeshTCPRouteResourceModel describes the resource data model.
 type MeshTCPRouteResourceModel struct {
-	CreationTime     types.String                 `tfsdk:"creation_time"`
-	Labels           map[string]types.String      `tfsdk:"labels"`
-	Mesh             types.String                 `tfsdk:"mesh"`
-	ModificationTime types.String                 `tfsdk:"modification_time"`
-	Name             types.String                 `tfsdk:"name"`
-	Spec             tfTypes.MeshTCPRouteItemSpec `tfsdk:"spec"`
-	Type             types.String                 `tfsdk:"type"`
-	Warnings         []types.String               `tfsdk:"warnings"`
+	CreationTime     types.String                  `tfsdk:"creation_time"`
+	Labels           kumalabels.KumaLabelsMapValue `tfsdk:"labels"`
+	Mesh             types.String                  `tfsdk:"mesh"`
+	ModificationTime types.String                  `tfsdk:"modification_time"`
+	Name             types.String                  `tfsdk:"name"`
+	Spec             tfTypes.MeshTCPRouteItemSpec  `tfsdk:"spec"`
+	Type             types.String                  `tfsdk:"type"`
+	Warnings         []types.String                `tfsdk:"warnings"`
 }
 
 func (r *MeshTCPRouteResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -72,6 +73,7 @@ func (r *MeshTCPRouteResource) Schema(ctx context.Context, req resource.SchemaRe
 				},
 			},
 			"labels": schema.MapAttribute{
+				CustomType:  kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}},
 				Optional:    true,
 				ElementType: types.StringType,
 				Description: `The labels to help identity resources`,

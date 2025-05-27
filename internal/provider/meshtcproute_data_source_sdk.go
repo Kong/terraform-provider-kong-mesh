@@ -4,6 +4,7 @@ package provider
 
 import (
 	"context"
+	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
@@ -34,12 +35,11 @@ func (r *MeshTCPRouteDataSourceModel) RefreshFromSharedMeshTCPRouteItem(ctx cont
 
 	if resp != nil {
 		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
-		if len(resp.Labels) > 0 {
-			r.Labels = make(map[string]types.String, len(resp.Labels))
-			for key, value := range resp.Labels {
-				r.Labels[key] = types.StringValue(value)
-			}
-		}
+		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
+		diags.Append(labelsDiags...)
+		labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
+		diags.Append(labelsDiags...)
+		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
 		r.Mesh = types.StringPointerValue(resp.Mesh)
 		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
@@ -50,8 +50,8 @@ func (r *MeshTCPRouteDataSourceModel) RefreshFromSharedMeshTCPRouteItem(ctx cont
 			r.Spec.TargetRef.Kind = types.StringValue(string(resp.Spec.TargetRef.Kind))
 			if len(resp.Spec.TargetRef.Labels) > 0 {
 				r.Spec.TargetRef.Labels = make(map[string]types.String, len(resp.Spec.TargetRef.Labels))
-				for key1, value1 := range resp.Spec.TargetRef.Labels {
-					r.Spec.TargetRef.Labels[key1] = types.StringValue(value1)
+				for key, value := range resp.Spec.TargetRef.Labels {
+					r.Spec.TargetRef.Labels[key] = types.StringValue(value)
 				}
 			}
 			r.Spec.TargetRef.Mesh = types.StringPointerValue(resp.Spec.TargetRef.Mesh)
@@ -64,8 +64,8 @@ func (r *MeshTCPRouteDataSourceModel) RefreshFromSharedMeshTCPRouteItem(ctx cont
 			r.Spec.TargetRef.SectionName = types.StringPointerValue(resp.Spec.TargetRef.SectionName)
 			if len(resp.Spec.TargetRef.Tags) > 0 {
 				r.Spec.TargetRef.Tags = make(map[string]types.String, len(resp.Spec.TargetRef.Tags))
-				for key2, value2 := range resp.Spec.TargetRef.Tags {
-					r.Spec.TargetRef.Tags[key2] = types.StringValue(value2)
+				for key1, value1 := range resp.Spec.TargetRef.Tags {
+					r.Spec.TargetRef.Tags[key1] = types.StringValue(value1)
 				}
 			}
 		}
@@ -84,8 +84,8 @@ func (r *MeshTCPRouteDataSourceModel) RefreshFromSharedMeshTCPRouteItem(ctx cont
 					backendRefs.Kind = types.StringValue(string(backendRefsItem.Kind))
 					if len(backendRefsItem.Labels) > 0 {
 						backendRefs.Labels = make(map[string]types.String, len(backendRefsItem.Labels))
-						for key3, value3 := range backendRefsItem.Labels {
-							backendRefs.Labels[key3] = types.StringValue(value3)
+						for key2, value2 := range backendRefsItem.Labels {
+							backendRefs.Labels[key2] = types.StringValue(value2)
 						}
 					}
 					backendRefs.Mesh = types.StringPointerValue(backendRefsItem.Mesh)
@@ -99,8 +99,8 @@ func (r *MeshTCPRouteDataSourceModel) RefreshFromSharedMeshTCPRouteItem(ctx cont
 					backendRefs.SectionName = types.StringPointerValue(backendRefsItem.SectionName)
 					if len(backendRefsItem.Tags) > 0 {
 						backendRefs.Tags = make(map[string]types.String, len(backendRefsItem.Tags))
-						for key4, value4 := range backendRefsItem.Tags {
-							backendRefs.Tags[key4] = types.StringValue(value4)
+						for key3, value3 := range backendRefsItem.Tags {
+							backendRefs.Tags[key3] = types.StringValue(value3)
 						}
 					}
 					backendRefs.Weight = types.Int64PointerValue(backendRefsItem.Weight)
@@ -128,8 +128,8 @@ func (r *MeshTCPRouteDataSourceModel) RefreshFromSharedMeshTCPRouteItem(ctx cont
 			to.TargetRef.Kind = types.StringValue(string(toItem.TargetRef.Kind))
 			if len(toItem.TargetRef.Labels) > 0 {
 				to.TargetRef.Labels = make(map[string]types.String, len(toItem.TargetRef.Labels))
-				for key5, value5 := range toItem.TargetRef.Labels {
-					to.TargetRef.Labels[key5] = types.StringValue(value5)
+				for key4, value4 := range toItem.TargetRef.Labels {
+					to.TargetRef.Labels[key4] = types.StringValue(value4)
 				}
 			}
 			to.TargetRef.Mesh = types.StringPointerValue(toItem.TargetRef.Mesh)
@@ -142,8 +142,8 @@ func (r *MeshTCPRouteDataSourceModel) RefreshFromSharedMeshTCPRouteItem(ctx cont
 			to.TargetRef.SectionName = types.StringPointerValue(toItem.TargetRef.SectionName)
 			if len(toItem.TargetRef.Tags) > 0 {
 				to.TargetRef.Tags = make(map[string]types.String, len(toItem.TargetRef.Tags))
-				for key6, value6 := range toItem.TargetRef.Tags {
-					to.TargetRef.Tags[key6] = types.StringValue(value6)
+				for key5, value5 := range toItem.TargetRef.Tags {
+					to.TargetRef.Tags[key5] = types.StringValue(value5)
 				}
 			}
 			if toCount+1 > len(r.Spec.To) {

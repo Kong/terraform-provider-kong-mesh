@@ -7,6 +7,6 @@ import (
 )
 
 type Delay struct {
-	Percentage Mode         `tfsdk:"percentage"`
+	Percentage ConfMode     `tfsdk:"percentage"`
 	Value      types.String `tfsdk:"value"`
 }

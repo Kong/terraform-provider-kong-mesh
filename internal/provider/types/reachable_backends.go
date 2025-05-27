@@ -2,6 +2,6 @@
 
 package types
 
-type MeshServices struct {
-	Mode *Mode `tfsdk:"mode"`
+type ReachableBackends struct {
+	Refs []Refs `tfsdk:"refs"`
 }

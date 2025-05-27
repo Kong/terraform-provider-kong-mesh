@@ -4,6 +4,7 @@ package provider
 
 import (
 	"context"
+	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
@@ -34,12 +35,11 @@ func (r *MeshCircuitBreakerDataSourceModel) RefreshFromSharedMeshCircuitBreakerI
 
 	if resp != nil {
 		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
-		if len(resp.Labels) > 0 {
-			r.Labels = make(map[string]types.String, len(resp.Labels))
-			for key, value := range resp.Labels {
-				r.Labels[key] = types.StringValue(value)
-			}
-		}
+		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
+		diags.Append(labelsDiags...)
+		labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
+		diags.Append(labelsDiags...)
+		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
 		r.Mesh = types.StringPointerValue(resp.Mesh)
 		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
@@ -99,7 +99,7 @@ func (r *MeshCircuitBreakerDataSourceModel) RefreshFromSharedMeshCircuitBreakerI
 							from.Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(fromItem.Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts))
 							from.Default.OutlierDetection.Detectors.SuccessRate.RequestVolume = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(fromItem.Default.OutlierDetection.Detectors.SuccessRate.RequestVolume))
 							if fromItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor != nil {
-								from.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor = &tfTypes.Mode{}
+								from.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor = &tfTypes.ConfMode{}
 								if fromItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer != nil {
 									from.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer = types.Int64PointerValue(fromItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer)
 								}
@@ -117,7 +117,7 @@ func (r *MeshCircuitBreakerDataSourceModel) RefreshFromSharedMeshCircuitBreakerI
 					}
 					from.Default.OutlierDetection.Disabled = types.BoolPointerValue(fromItem.Default.OutlierDetection.Disabled)
 					if fromItem.Default.OutlierDetection.HealthyPanicThreshold != nil {
-						from.Default.OutlierDetection.HealthyPanicThreshold = &tfTypes.Mode{}
+						from.Default.OutlierDetection.HealthyPanicThreshold = &tfTypes.ConfMode{}
 						if fromItem.Default.OutlierDetection.HealthyPanicThreshold.Integer != nil {
 							from.Default.OutlierDetection.HealthyPanicThreshold.Integer = types.Int64PointerValue(fromItem.Default.OutlierDetection.HealthyPanicThreshold.Integer)
 						}
@@ -133,8 +133,8 @@ func (r *MeshCircuitBreakerDataSourceModel) RefreshFromSharedMeshCircuitBreakerI
 			from.TargetRef.Kind = types.StringValue(string(fromItem.TargetRef.Kind))
 			if len(fromItem.TargetRef.Labels) > 0 {
 				from.TargetRef.Labels = make(map[string]types.String, len(fromItem.TargetRef.Labels))
-				for key1, value1 := range fromItem.TargetRef.Labels {
-					from.TargetRef.Labels[key1] = types.StringValue(value1)
+				for key, value := range fromItem.TargetRef.Labels {
+					from.TargetRef.Labels[key] = types.StringValue(value)
 				}
 			}
 			from.TargetRef.Mesh = types.StringPointerValue(fromItem.TargetRef.Mesh)
@@ -147,8 +147,8 @@ func (r *MeshCircuitBreakerDataSourceModel) RefreshFromSharedMeshCircuitBreakerI
 			from.TargetRef.SectionName = types.StringPointerValue(fromItem.TargetRef.SectionName)
 			if len(fromItem.TargetRef.Tags) > 0 {
 				from.TargetRef.Tags = make(map[string]types.String, len(fromItem.TargetRef.Tags))
-				for key2, value2 := range fromItem.TargetRef.Tags {
-					from.TargetRef.Tags[key2] = types.StringValue(value2)
+				for key1, value1 := range fromItem.TargetRef.Tags {
+					from.TargetRef.Tags[key1] = types.StringValue(value1)
 				}
 			}
 			if fromCount+1 > len(r.Spec.From) {
@@ -214,7 +214,7 @@ func (r *MeshCircuitBreakerDataSourceModel) RefreshFromSharedMeshCircuitBreakerI
 							rules.Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(rulesItem.Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts))
 							rules.Default.OutlierDetection.Detectors.SuccessRate.RequestVolume = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(rulesItem.Default.OutlierDetection.Detectors.SuccessRate.RequestVolume))
 							if rulesItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor != nil {
-								rules.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor = &tfTypes.Mode{}
+								rules.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor = &tfTypes.ConfMode{}
 								if rulesItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer != nil {
 									rules.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer = types.Int64PointerValue(rulesItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer)
 								}
@@ -232,7 +232,7 @@ func (r *MeshCircuitBreakerDataSourceModel) RefreshFromSharedMeshCircuitBreakerI
 					}
 					rules.Default.OutlierDetection.Disabled = types.BoolPointerValue(rulesItem.Default.OutlierDetection.Disabled)
 					if rulesItem.Default.OutlierDetection.HealthyPanicThreshold != nil {
-						rules.Default.OutlierDetection.HealthyPanicThreshold = &tfTypes.Mode{}
+						rules.Default.OutlierDetection.HealthyPanicThreshold = &tfTypes.ConfMode{}
 						if rulesItem.Default.OutlierDetection.HealthyPanicThreshold.Integer != nil {
 							rules.Default.OutlierDetection.HealthyPanicThreshold.Integer = types.Int64PointerValue(rulesItem.Default.OutlierDetection.HealthyPanicThreshold.Integer)
 						}
@@ -258,8 +258,8 @@ func (r *MeshCircuitBreakerDataSourceModel) RefreshFromSharedMeshCircuitBreakerI
 			r.Spec.TargetRef.Kind = types.StringValue(string(resp.Spec.TargetRef.Kind))
 			if len(resp.Spec.TargetRef.Labels) > 0 {
 				r.Spec.TargetRef.Labels = make(map[string]types.String, len(resp.Spec.TargetRef.Labels))
-				for key3, value3 := range resp.Spec.TargetRef.Labels {
-					r.Spec.TargetRef.Labels[key3] = types.StringValue(value3)
+				for key2, value2 := range resp.Spec.TargetRef.Labels {
+					r.Spec.TargetRef.Labels[key2] = types.StringValue(value2)
 				}
 			}
 			r.Spec.TargetRef.Mesh = types.StringPointerValue(resp.Spec.TargetRef.Mesh)
@@ -272,8 +272,8 @@ func (r *MeshCircuitBreakerDataSourceModel) RefreshFromSharedMeshCircuitBreakerI
 			r.Spec.TargetRef.SectionName = types.StringPointerValue(resp.Spec.TargetRef.SectionName)
 			if len(resp.Spec.TargetRef.Tags) > 0 {
 				r.Spec.TargetRef.Tags = make(map[string]types.String, len(resp.Spec.TargetRef.Tags))
-				for key4, value4 := range resp.Spec.TargetRef.Tags {
-					r.Spec.TargetRef.Tags[key4] = types.StringValue(value4)
+				for key3, value3 := range resp.Spec.TargetRef.Tags {
+					r.Spec.TargetRef.Tags[key3] = types.StringValue(value3)
 				}
 			}
 		}
@@ -333,7 +333,7 @@ func (r *MeshCircuitBreakerDataSourceModel) RefreshFromSharedMeshCircuitBreakerI
 							to.Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(toItem.Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts))
 							to.Default.OutlierDetection.Detectors.SuccessRate.RequestVolume = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(toItem.Default.OutlierDetection.Detectors.SuccessRate.RequestVolume))
 							if toItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor != nil {
-								to.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor = &tfTypes.Mode{}
+								to.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor = &tfTypes.ConfMode{}
 								if toItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer != nil {
 									to.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer = types.Int64PointerValue(toItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer)
 								}
@@ -351,7 +351,7 @@ func (r *MeshCircuitBreakerDataSourceModel) RefreshFromSharedMeshCircuitBreakerI
 					}
 					to.Default.OutlierDetection.Disabled = types.BoolPointerValue(toItem.Default.OutlierDetection.Disabled)
 					if toItem.Default.OutlierDetection.HealthyPanicThreshold != nil {
-						to.Default.OutlierDetection.HealthyPanicThreshold = &tfTypes.Mode{}
+						to.Default.OutlierDetection.HealthyPanicThreshold = &tfTypes.ConfMode{}
 						if toItem.Default.OutlierDetection.HealthyPanicThreshold.Integer != nil {
 							to.Default.OutlierDetection.HealthyPanicThreshold.Integer = types.Int64PointerValue(toItem.Default.OutlierDetection.HealthyPanicThreshold.Integer)
 						}
@@ -367,8 +367,8 @@ func (r *MeshCircuitBreakerDataSourceModel) RefreshFromSharedMeshCircuitBreakerI
 			to.TargetRef.Kind = types.StringValue(string(toItem.TargetRef.Kind))
 			if len(toItem.TargetRef.Labels) > 0 {
 				to.TargetRef.Labels = make(map[string]types.String, len(toItem.TargetRef.Labels))
-				for key5, value5 := range toItem.TargetRef.Labels {
-					to.TargetRef.Labels[key5] = types.StringValue(value5)
+				for key4, value4 := range toItem.TargetRef.Labels {
+					to.TargetRef.Labels[key4] = types.StringValue(value4)
 				}
 			}
 			to.TargetRef.Mesh = types.StringPointerValue(toItem.TargetRef.Mesh)
@@ -381,8 +381,8 @@ func (r *MeshCircuitBreakerDataSourceModel) RefreshFromSharedMeshCircuitBreakerI
 			to.TargetRef.SectionName = types.StringPointerValue(toItem.TargetRef.SectionName)
 			if len(toItem.TargetRef.Tags) > 0 {
 				to.TargetRef.Tags = make(map[string]types.String, len(toItem.TargetRef.Tags))
-				for key6, value6 := range toItem.TargetRef.Tags {
-					to.TargetRef.Tags[key6] = types.StringValue(value6)
+				for key5, value5 := range toItem.TargetRef.Tags {
+					to.TargetRef.Tags[key5] = types.StringValue(value5)
 				}
 			}
 			if toCount+1 > len(r.Spec.To) {

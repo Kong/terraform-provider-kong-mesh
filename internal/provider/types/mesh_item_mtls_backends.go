@@ -9,7 +9,7 @@ import (
 type MeshItemMtlsBackends struct {
 	Conf      *MeshItemMtlsConf `tfsdk:"conf"`
 	DpCert    *DpCert           `tfsdk:"dp_cert"`
-	Mode      *Mode             `tfsdk:"mode"`
+	Mode      *ConfMode         `tfsdk:"mode"`
 	Name      types.String      `tfsdk:"name"`
 	RootChain *RootChain        `tfsdk:"root_chain"`
 	Type      types.String      `tfsdk:"type"`

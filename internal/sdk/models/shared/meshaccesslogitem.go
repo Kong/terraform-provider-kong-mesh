@@ -296,8 +296,8 @@ func (o *MeshAccessLogItemFormat) GetType() MeshAccessLogItemSpecFromDefaultType
 	return o.Type
 }
 
-// MeshAccessLogItemSpecFromTCP - TCPBackend defines a TCP logging backend.
-type MeshAccessLogItemSpecFromTCP struct {
+// MeshAccessLogItemTCP - TCPBackend defines a TCP logging backend.
+type MeshAccessLogItemTCP struct {
 	// Address of the TCP logging backend
 	Address string `json:"address"`
 	// Format of access logs. Placeholders available on
@@ -305,14 +305,14 @@ type MeshAccessLogItemSpecFromTCP struct {
 	Format *MeshAccessLogItemFormat `json:"format,omitempty"`
 }
 
-func (o *MeshAccessLogItemSpecFromTCP) GetAddress() string {
+func (o *MeshAccessLogItemTCP) GetAddress() string {
 	if o == nil {
 		return ""
 	}
 	return o.Address
 }
 
-func (o *MeshAccessLogItemSpecFromTCP) GetFormat() *MeshAccessLogItemFormat {
+func (o *MeshAccessLogItemTCP) GetFormat() *MeshAccessLogItemFormat {
 	if o == nil {
 		return nil
 	}
@@ -354,8 +354,8 @@ type MeshAccessLogItemSpecFromBackends struct {
 	// Defines an OpenTelemetry logging backend.
 	OpenTelemetry *MeshAccessLogItemSpecFromOpenTelemetry `json:"openTelemetry,omitempty"`
 	// TCPBackend defines a TCP logging backend.
-	TCP  *MeshAccessLogItemSpecFromTCP `json:"tcp,omitempty"`
-	Type MeshAccessLogItemType         `json:"type"`
+	TCP  *MeshAccessLogItemTCP `json:"tcp,omitempty"`
+	Type MeshAccessLogItemType `json:"type"`
 }
 
 func (o *MeshAccessLogItemSpecFromBackends) GetFile() *File {
@@ -372,7 +372,7 @@ func (o *MeshAccessLogItemSpecFromBackends) GetOpenTelemetry() *MeshAccessLogIte
 	return o.OpenTelemetry
 }
 
-func (o *MeshAccessLogItemSpecFromBackends) GetTCP() *MeshAccessLogItemSpecFromTCP {
+func (o *MeshAccessLogItemSpecFromBackends) GetTCP() *MeshAccessLogItemTCP {
 	if o == nil {
 		return nil
 	}
@@ -842,8 +842,8 @@ func (o *MeshAccessLogItemSpecRulesFormat) GetType() MeshAccessLogItemSpecRulesD
 	return o.Type
 }
 
-// MeshAccessLogItemTCP - TCPBackend defines a TCP logging backend.
-type MeshAccessLogItemTCP struct {
+// MeshAccessLogItemSpecTCP - TCPBackend defines a TCP logging backend.
+type MeshAccessLogItemSpecTCP struct {
 	// Address of the TCP logging backend
 	Address string `json:"address"`
 	// Format of access logs. Placeholders available on
@@ -851,14 +851,14 @@ type MeshAccessLogItemTCP struct {
 	Format *MeshAccessLogItemSpecRulesFormat `json:"format,omitempty"`
 }
 
-func (o *MeshAccessLogItemTCP) GetAddress() string {
+func (o *MeshAccessLogItemSpecTCP) GetAddress() string {
 	if o == nil {
 		return ""
 	}
 	return o.Address
 }
 
-func (o *MeshAccessLogItemTCP) GetFormat() *MeshAccessLogItemSpecRulesFormat {
+func (o *MeshAccessLogItemSpecTCP) GetFormat() *MeshAccessLogItemSpecRulesFormat {
 	if o == nil {
 		return nil
 	}
@@ -900,7 +900,7 @@ type MeshAccessLogItemBackends struct {
 	// Defines an OpenTelemetry logging backend.
 	OpenTelemetry *MeshAccessLogItemOpenTelemetry `json:"openTelemetry,omitempty"`
 	// TCPBackend defines a TCP logging backend.
-	TCP  *MeshAccessLogItemTCP     `json:"tcp,omitempty"`
+	TCP  *MeshAccessLogItemSpecTCP `json:"tcp,omitempty"`
 	Type MeshAccessLogItemSpecType `json:"type"`
 }
 
@@ -918,7 +918,7 @@ func (o *MeshAccessLogItemBackends) GetOpenTelemetry() *MeshAccessLogItemOpenTel
 	return o.OpenTelemetry
 }
 
-func (o *MeshAccessLogItemBackends) GetTCP() *MeshAccessLogItemTCP {
+func (o *MeshAccessLogItemBackends) GetTCP() *MeshAccessLogItemSpecTCP {
 	if o == nil {
 		return nil
 	}
@@ -1377,8 +1377,8 @@ func (o *MeshAccessLogItemSpecToDefaultFormat) GetType() MeshAccessLogItemSpecTo
 	return o.Type
 }
 
-// MeshAccessLogItemSpecTCP - TCPBackend defines a TCP logging backend.
-type MeshAccessLogItemSpecTCP struct {
+// MeshAccessLogItemSpecToTCP - TCPBackend defines a TCP logging backend.
+type MeshAccessLogItemSpecToTCP struct {
 	// Address of the TCP logging backend
 	Address string `json:"address"`
 	// Format of access logs. Placeholders available on
@@ -1386,14 +1386,14 @@ type MeshAccessLogItemSpecTCP struct {
 	Format *MeshAccessLogItemSpecToDefaultFormat `json:"format,omitempty"`
 }
 
-func (o *MeshAccessLogItemSpecTCP) GetAddress() string {
+func (o *MeshAccessLogItemSpecToTCP) GetAddress() string {
 	if o == nil {
 		return ""
 	}
 	return o.Address
 }
 
-func (o *MeshAccessLogItemSpecTCP) GetFormat() *MeshAccessLogItemSpecToDefaultFormat {
+func (o *MeshAccessLogItemSpecToTCP) GetFormat() *MeshAccessLogItemSpecToDefaultFormat {
 	if o == nil {
 		return nil
 	}
@@ -1435,7 +1435,7 @@ type MeshAccessLogItemSpecBackends struct {
 	// Defines an OpenTelemetry logging backend.
 	OpenTelemetry *MeshAccessLogItemSpecOpenTelemetry `json:"openTelemetry,omitempty"`
 	// TCPBackend defines a TCP logging backend.
-	TCP  *MeshAccessLogItemSpecTCP   `json:"tcp,omitempty"`
+	TCP  *MeshAccessLogItemSpecToTCP `json:"tcp,omitempty"`
 	Type MeshAccessLogItemSpecToType `json:"type"`
 }
 
@@ -1453,7 +1453,7 @@ func (o *MeshAccessLogItemSpecBackends) GetOpenTelemetry() *MeshAccessLogItemSpe
 	return o.OpenTelemetry
 }
 
-func (o *MeshAccessLogItemSpecBackends) GetTCP() *MeshAccessLogItemSpecTCP {
+func (o *MeshAccessLogItemSpecBackends) GetTCP() *MeshAccessLogItemSpecToTCP {
 	if o == nil {
 		return nil
 	}

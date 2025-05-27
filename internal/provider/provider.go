@@ -87,6 +87,7 @@ func (p *KongMeshProvider) Configure(ctx context.Context, req provider.Configure
 
 func (p *KongMeshProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
+		NewDataplaneResource,
 		NewMeshResource,
 		NewMeshAccessLogResource,
 		NewMeshCircuitBreakerResource,
@@ -116,6 +117,10 @@ func (p *KongMeshProvider) Resources(ctx context.Context) []func() resource.Reso
 
 func (p *KongMeshProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
+		NewDataplaneDataSource,
+		NewDataplaneListDataSource,
+		NewDataplaneOverviewDataSource,
+		NewDataplaneOverviewListDataSource,
 		NewHostnameGeneratorListDataSource,
 		NewMeshDataSource,
 		NewMeshAccessLogDataSource,

@@ -5,6 +5,7 @@ package provider
 import (
 	"context"
 	"encoding/json"
+	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
@@ -47,7 +48,7 @@ func (r *MeshGatewayDataSourceModel) RefreshFromSharedMeshGatewayItem(ctx contex
 				listeners.Hostname = types.StringPointerValue(listenersItem.Hostname)
 				listeners.Port = types.Int64PointerValue(listenersItem.Port)
 				if listenersItem.Protocol != nil {
-					listeners.Protocol = &tfTypes.Mode{}
+					listeners.Protocol = &tfTypes.ConfMode{}
 					if listenersItem.Protocol.Str != nil {
 						listeners.Protocol.Str = types.StringPointerValue(listenersItem.Protocol.Str)
 					}
@@ -83,7 +84,7 @@ func (r *MeshGatewayDataSourceModel) RefreshFromSharedMeshGatewayItem(ctx contex
 						}
 					}
 					if listenersItem.TLS.Mode != nil {
-						listeners.TLS.Mode = &tfTypes.Mode{}
+						listeners.TLS.Mode = &tfTypes.ConfMode{}
 						if listenersItem.TLS.Mode.Str != nil {
 							listeners.TLS.Mode.Str = types.StringPointerValue(listenersItem.TLS.Mode.Str)
 						}
@@ -94,7 +95,7 @@ func (r *MeshGatewayDataSourceModel) RefreshFromSharedMeshGatewayItem(ctx contex
 					if listenersItem.TLS.Options == nil {
 						listeners.TLS.Options = nil
 					} else {
-						listeners.TLS.Options = &tfTypes.OptionsObj{}
+						listeners.TLS.Options = &tfTypes.DataplaneItemTCP{}
 					}
 				}
 				if listenersCount+1 > len(r.Conf.Listeners) {
@@ -110,12 +111,11 @@ func (r *MeshGatewayDataSourceModel) RefreshFromSharedMeshGatewayItem(ctx contex
 				}
 			}
 		}
-		if len(resp.Labels) > 0 {
-			r.Labels = make(map[string]types.String, len(resp.Labels))
-			for key1, value1 := range resp.Labels {
-				r.Labels[key1] = types.StringValue(value1)
-			}
-		}
+		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
+		diags.Append(labelsDiags...)
+		labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
+		diags.Append(labelsDiags...)
+		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
 		r.Mesh = types.StringValue(resp.Mesh)
 		r.Name = types.StringValue(resp.Name)
 		r.Selectors = []tfTypes.Selectors{}
@@ -126,8 +126,8 @@ func (r *MeshGatewayDataSourceModel) RefreshFromSharedMeshGatewayItem(ctx contex
 			var selectors tfTypes.Selectors
 			if len(selectorsItem.Match) > 0 {
 				selectors.Match = make(map[string]types.String, len(selectorsItem.Match))
-				for key2, value2 := range selectorsItem.Match {
-					selectors.Match[key2] = types.StringValue(value2)
+				for key1, value1 := range selectorsItem.Match {
+					selectors.Match[key1] = types.StringValue(value1)
 				}
 			}
 			if selectorsCount+1 > len(r.Selectors) {
@@ -138,8 +138,8 @@ func (r *MeshGatewayDataSourceModel) RefreshFromSharedMeshGatewayItem(ctx contex
 		}
 		if len(resp.Tags) > 0 {
 			r.Tags = make(map[string]types.String, len(resp.Tags))
-			for key3, value3 := range resp.Tags {
-				r.Tags[key3] = types.StringValue(value3)
+			for key2, value2 := range resp.Tags {
+				r.Tags[key2] = types.StringValue(value2)
 			}
 		}
 		r.Type = types.StringValue(resp.Type)

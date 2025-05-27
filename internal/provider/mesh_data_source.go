@@ -5,6 +5,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -28,18 +29,18 @@ type MeshDataSource struct {
 
 // MeshDataSourceModel describes the data model.
 type MeshDataSourceModel struct {
-	Constraints                 *tfTypes.Constraints    `tfsdk:"constraints"`
-	Labels                      map[string]types.String `tfsdk:"labels"`
-	Logging                     *tfTypes.Logging        `tfsdk:"logging"`
-	MeshServices                *tfTypes.MeshServices   `tfsdk:"mesh_services"`
-	Metrics                     *tfTypes.Metrics        `tfsdk:"metrics"`
-	Mtls                        *tfTypes.Mtls           `tfsdk:"mtls"`
-	Name                        types.String            `tfsdk:"name"`
-	Networking                  *tfTypes.Networking     `tfsdk:"networking"`
-	Routing                     *tfTypes.Routing        `tfsdk:"routing"`
-	SkipCreatingInitialPolicies []types.String          `tfsdk:"skip_creating_initial_policies"`
-	Tracing                     *tfTypes.Tracing        `tfsdk:"tracing"`
-	Type                        types.String            `tfsdk:"type"`
+	Constraints                 *tfTypes.Constraints          `tfsdk:"constraints"`
+	Labels                      kumalabels.KumaLabelsMapValue `tfsdk:"labels"`
+	Logging                     *tfTypes.Logging              `tfsdk:"logging"`
+	MeshServices                *tfTypes.ConfTLS              `tfsdk:"mesh_services"`
+	Metrics                     *tfTypes.MeshItemMetrics      `tfsdk:"metrics"`
+	Mtls                        *tfTypes.Mtls                 `tfsdk:"mtls"`
+	Name                        types.String                  `tfsdk:"name"`
+	Networking                  *tfTypes.MeshItemNetworking   `tfsdk:"networking"`
+	Routing                     *tfTypes.Routing              `tfsdk:"routing"`
+	SkipCreatingInitialPolicies []types.String                `tfsdk:"skip_creating_initial_policies"`
+	Tracing                     *tfTypes.Tracing              `tfsdk:"tracing"`
+	Type                        types.String                  `tfsdk:"type"`
 }
 
 // Metadata returns the data source type name.
@@ -101,6 +102,7 @@ func (r *MeshDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 				Description: `Constraints that applies to the mesh and its entities`,
 			},
 			"labels": schema.MapAttribute{
+				CustomType:  kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}},
 				Computed:    true,
 				ElementType: types.StringType,
 			},

@@ -4,6 +4,7 @@ package provider
 
 import (
 	"context"
+	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
@@ -25,12 +26,9 @@ func (r *MeshTLSResourceModel) ToSharedMeshTLSItemInput(ctx context.Context) (*s
 	var name string
 	name = r.Name.ValueString()
 
-	labels := make(map[string]string)
-	for labelsKey, labelsValue := range r.Labels {
-		var labelsInst string
-		labelsInst = labelsValue.ValueString()
-
-		labels[labelsKey] = labelsInst
+	var labels map[string]string
+	if !r.Labels.IsUnknown() && !r.Labels.IsNull() {
+		diags.Append(r.Labels.ElementsAs(ctx, &labels, true)...)
 	}
 	from := make([]shared.MeshTLSItemFrom, 0, len(r.Spec.From))
 	for _, fromItem := range r.Spec.From {
@@ -73,11 +71,11 @@ func (r *MeshTLSResourceModel) ToSharedMeshTLSItemInput(ctx context.Context) (*s
 		}
 		kind := shared.MeshTLSItemSpecKind(fromItem.TargetRef.Kind.ValueString())
 		labels1 := make(map[string]string)
-		for labelsKey1, labelsValue1 := range fromItem.TargetRef.Labels {
-			var labelsInst1 string
-			labelsInst1 = labelsValue1.ValueString()
+		for labelsKey, labelsValue := range fromItem.TargetRef.Labels {
+			var labelsInst string
+			labelsInst = labelsValue.ValueString()
 
-			labels1[labelsKey1] = labelsInst1
+			labels1[labelsKey] = labelsInst
 		}
 		mesh1 := new(string)
 		if !fromItem.TargetRef.Mesh.IsUnknown() && !fromItem.TargetRef.Mesh.IsNull() {
@@ -176,11 +174,11 @@ func (r *MeshTLSResourceModel) ToSharedMeshTLSItemInput(ctx context.Context) (*s
 	if r.Spec.TargetRef != nil {
 		kind1 := shared.MeshTLSItemKind(r.Spec.TargetRef.Kind.ValueString())
 		labels2 := make(map[string]string)
-		for labelsKey2, labelsValue2 := range r.Spec.TargetRef.Labels {
-			var labelsInst2 string
-			labelsInst2 = labelsValue2.ValueString()
+		for labelsKey1, labelsValue1 := range r.Spec.TargetRef.Labels {
+			var labelsInst1 string
+			labelsInst1 = labelsValue1.ValueString()
 
-			labels2[labelsKey2] = labelsInst2
+			labels2[labelsKey1] = labelsInst1
 		}
 		mesh2 := new(string)
 		if !r.Spec.TargetRef.Mesh.IsUnknown() && !r.Spec.TargetRef.Mesh.IsNull() {
@@ -346,12 +344,11 @@ func (r *MeshTLSResourceModel) RefreshFromSharedMeshTLSItem(ctx context.Context,
 
 	if resp != nil {
 		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
-		if len(resp.Labels) > 0 {
-			r.Labels = make(map[string]types.String, len(resp.Labels))
-			for key, value := range resp.Labels {
-				r.Labels[key] = types.StringValue(value)
-			}
-		}
+		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
+		diags.Append(labelsDiags...)
+		labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
+		diags.Append(labelsDiags...)
+		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
 		r.Mesh = types.StringPointerValue(resp.Mesh)
 		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
@@ -377,7 +374,7 @@ func (r *MeshTLSResourceModel) RefreshFromSharedMeshTLSItem(ctx context.Context,
 				if fromItem.Default.TLSVersion == nil {
 					from.Default.TLSVersion = nil
 				} else {
-					from.Default.TLSVersion = &tfTypes.Version{}
+					from.Default.TLSVersion = &tfTypes.MeshExternalServiceItemVersion{}
 					if fromItem.Default.TLSVersion.Max != nil {
 						from.Default.TLSVersion.Max = types.StringValue(string(*fromItem.Default.TLSVersion.Max))
 					} else {
@@ -393,8 +390,8 @@ func (r *MeshTLSResourceModel) RefreshFromSharedMeshTLSItem(ctx context.Context,
 			from.TargetRef.Kind = types.StringValue(string(fromItem.TargetRef.Kind))
 			if len(fromItem.TargetRef.Labels) > 0 {
 				from.TargetRef.Labels = make(map[string]types.String, len(fromItem.TargetRef.Labels))
-				for key1, value1 := range fromItem.TargetRef.Labels {
-					from.TargetRef.Labels[key1] = types.StringValue(value1)
+				for key, value := range fromItem.TargetRef.Labels {
+					from.TargetRef.Labels[key] = types.StringValue(value)
 				}
 			}
 			from.TargetRef.Mesh = types.StringPointerValue(fromItem.TargetRef.Mesh)
@@ -407,8 +404,8 @@ func (r *MeshTLSResourceModel) RefreshFromSharedMeshTLSItem(ctx context.Context,
 			from.TargetRef.SectionName = types.StringPointerValue(fromItem.TargetRef.SectionName)
 			if len(fromItem.TargetRef.Tags) > 0 {
 				from.TargetRef.Tags = make(map[string]types.String, len(fromItem.TargetRef.Tags))
-				for key2, value2 := range fromItem.TargetRef.Tags {
-					from.TargetRef.Tags[key2] = types.StringValue(value2)
+				for key1, value1 := range fromItem.TargetRef.Tags {
+					from.TargetRef.Tags[key1] = types.StringValue(value1)
 				}
 			}
 			if fromCount+1 > len(r.Spec.From) {
@@ -440,7 +437,7 @@ func (r *MeshTLSResourceModel) RefreshFromSharedMeshTLSItem(ctx context.Context,
 				if rulesItem.Default.TLSVersion == nil {
 					rules.Default.TLSVersion = nil
 				} else {
-					rules.Default.TLSVersion = &tfTypes.Version{}
+					rules.Default.TLSVersion = &tfTypes.MeshExternalServiceItemVersion{}
 					if rulesItem.Default.TLSVersion.Max != nil {
 						rules.Default.TLSVersion.Max = types.StringValue(string(*rulesItem.Default.TLSVersion.Max))
 					} else {
@@ -466,8 +463,8 @@ func (r *MeshTLSResourceModel) RefreshFromSharedMeshTLSItem(ctx context.Context,
 			r.Spec.TargetRef.Kind = types.StringValue(string(resp.Spec.TargetRef.Kind))
 			if len(resp.Spec.TargetRef.Labels) > 0 {
 				r.Spec.TargetRef.Labels = make(map[string]types.String, len(resp.Spec.TargetRef.Labels))
-				for key3, value3 := range resp.Spec.TargetRef.Labels {
-					r.Spec.TargetRef.Labels[key3] = types.StringValue(value3)
+				for key2, value2 := range resp.Spec.TargetRef.Labels {
+					r.Spec.TargetRef.Labels[key2] = types.StringValue(value2)
 				}
 			}
 			r.Spec.TargetRef.Mesh = types.StringPointerValue(resp.Spec.TargetRef.Mesh)
@@ -480,8 +477,8 @@ func (r *MeshTLSResourceModel) RefreshFromSharedMeshTLSItem(ctx context.Context,
 			r.Spec.TargetRef.SectionName = types.StringPointerValue(resp.Spec.TargetRef.SectionName)
 			if len(resp.Spec.TargetRef.Tags) > 0 {
 				r.Spec.TargetRef.Tags = make(map[string]types.String, len(resp.Spec.TargetRef.Tags))
-				for key4, value4 := range resp.Spec.TargetRef.Tags {
-					r.Spec.TargetRef.Tags[key4] = types.StringValue(value4)
+				for key3, value3 := range resp.Spec.TargetRef.Tags {
+					r.Spec.TargetRef.Tags[key3] = types.StringValue(value3)
 				}
 			}
 		}

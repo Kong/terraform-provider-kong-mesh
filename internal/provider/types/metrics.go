@@ -7,6 +7,7 @@ import (
 )
 
 type Metrics struct {
-	Backends       []MeshItemBackends `tfsdk:"backends"`
-	EnabledBackend types.String       `tfsdk:"enabled_backend"`
+	Conf *DataplaneItemConf `tfsdk:"conf"`
+	Name types.String       `tfsdk:"name"`
+	Type types.String       `tfsdk:"type"`
 }

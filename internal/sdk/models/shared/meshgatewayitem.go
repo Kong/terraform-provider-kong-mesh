@@ -74,7 +74,7 @@ func (u Protocol) MarshalJSON() ([]byte, error) {
 
 // Resources is used to specify listener-specific resource settings.
 type Resources struct {
-	ConnectionLimit *int64 `json:"connection_limit,omitempty"`
+	ConnectionLimit *int64 `json:"connectionLimit,omitempty"`
 }
 
 func (o *Resources) GetConnectionLimit() *int64 {

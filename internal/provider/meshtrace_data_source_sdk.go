@@ -4,6 +4,7 @@ package provider
 
 import (
 	"context"
+	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
@@ -34,12 +35,11 @@ func (r *MeshTraceDataSourceModel) RefreshFromSharedMeshTraceItem(ctx context.Co
 
 	if resp != nil {
 		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
-		if len(resp.Labels) > 0 {
-			r.Labels = make(map[string]types.String, len(resp.Labels))
-			for key, value := range resp.Labels {
-				r.Labels[key] = types.StringValue(value)
-			}
-		}
+		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
+		diags.Append(labelsDiags...)
+		labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
+		diags.Append(labelsDiags...)
+		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
 		r.Mesh = types.StringPointerValue(resp.Mesh)
 		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
@@ -94,7 +94,7 @@ func (r *MeshTraceDataSourceModel) RefreshFromSharedMeshTraceItem(ctx context.Co
 			} else {
 				r.Spec.Default.Sampling = &tfTypes.Sampling{}
 				if resp.Spec.Default.Sampling.Client != nil {
-					r.Spec.Default.Sampling.Client = &tfTypes.Mode{}
+					r.Spec.Default.Sampling.Client = &tfTypes.ConfMode{}
 					if resp.Spec.Default.Sampling.Client.Integer != nil {
 						r.Spec.Default.Sampling.Client.Integer = types.Int64PointerValue(resp.Spec.Default.Sampling.Client.Integer)
 					}
@@ -103,7 +103,7 @@ func (r *MeshTraceDataSourceModel) RefreshFromSharedMeshTraceItem(ctx context.Co
 					}
 				}
 				if resp.Spec.Default.Sampling.Overall != nil {
-					r.Spec.Default.Sampling.Overall = &tfTypes.Mode{}
+					r.Spec.Default.Sampling.Overall = &tfTypes.ConfMode{}
 					if resp.Spec.Default.Sampling.Overall.Integer != nil {
 						r.Spec.Default.Sampling.Overall.Integer = types.Int64PointerValue(resp.Spec.Default.Sampling.Overall.Integer)
 					}
@@ -112,7 +112,7 @@ func (r *MeshTraceDataSourceModel) RefreshFromSharedMeshTraceItem(ctx context.Co
 					}
 				}
 				if resp.Spec.Default.Sampling.Random != nil {
-					r.Spec.Default.Sampling.Random = &tfTypes.Mode{}
+					r.Spec.Default.Sampling.Random = &tfTypes.ConfMode{}
 					if resp.Spec.Default.Sampling.Random.Integer != nil {
 						r.Spec.Default.Sampling.Random.Integer = types.Int64PointerValue(resp.Spec.Default.Sampling.Random.Integer)
 					}
@@ -152,8 +152,8 @@ func (r *MeshTraceDataSourceModel) RefreshFromSharedMeshTraceItem(ctx context.Co
 			r.Spec.TargetRef.Kind = types.StringValue(string(resp.Spec.TargetRef.Kind))
 			if len(resp.Spec.TargetRef.Labels) > 0 {
 				r.Spec.TargetRef.Labels = make(map[string]types.String, len(resp.Spec.TargetRef.Labels))
-				for key1, value1 := range resp.Spec.TargetRef.Labels {
-					r.Spec.TargetRef.Labels[key1] = types.StringValue(value1)
+				for key, value := range resp.Spec.TargetRef.Labels {
+					r.Spec.TargetRef.Labels[key] = types.StringValue(value)
 				}
 			}
 			r.Spec.TargetRef.Mesh = types.StringPointerValue(resp.Spec.TargetRef.Mesh)
@@ -166,8 +166,8 @@ func (r *MeshTraceDataSourceModel) RefreshFromSharedMeshTraceItem(ctx context.Co
 			r.Spec.TargetRef.SectionName = types.StringPointerValue(resp.Spec.TargetRef.SectionName)
 			if len(resp.Spec.TargetRef.Tags) > 0 {
 				r.Spec.TargetRef.Tags = make(map[string]types.String, len(resp.Spec.TargetRef.Tags))
-				for key2, value2 := range resp.Spec.TargetRef.Tags {
-					r.Spec.TargetRef.Tags[key2] = types.StringValue(value2)
+				for key1, value1 := range resp.Spec.TargetRef.Tags {
+					r.Spec.TargetRef.Tags[key1] = types.StringValue(value1)
 				}
 			}
 		}

@@ -2,5 +2,6 @@
 
 package types
 
-type OptionsObj struct {
+type MeshItemNetworking struct {
+	Outbound *MeshItemOutbound `tfsdk:"outbound"`
 }

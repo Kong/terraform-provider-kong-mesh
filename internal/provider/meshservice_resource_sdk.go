@@ -4,6 +4,7 @@ package provider
 
 import (
 	"context"
+	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
@@ -25,12 +26,9 @@ func (r *MeshServiceResourceModel) ToSharedMeshServiceItemInput(ctx context.Cont
 	var name string
 	name = r.Name.ValueString()
 
-	labels := make(map[string]string)
-	for labelsKey, labelsValue := range r.Labels {
-		var labelsInst string
-		labelsInst = labelsValue.ValueString()
-
-		labels[labelsKey] = labelsInst
+	var labels map[string]string
+	if !r.Labels.IsUnknown() && !r.Labels.IsNull() {
+		diags.Append(r.Labels.ElementsAs(ctx, &labels, true)...)
 	}
 	identities := make([]shared.Identities, 0, len(r.Spec.Identities))
 	for _, identitiesItem := range r.Spec.Identities {
@@ -243,12 +241,11 @@ func (r *MeshServiceResourceModel) RefreshFromSharedMeshServiceItem(ctx context.
 
 	if resp != nil {
 		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
-		if len(resp.Labels) > 0 {
-			r.Labels = make(map[string]types.String, len(resp.Labels))
-			for key, value := range resp.Labels {
-				r.Labels[key] = types.StringValue(value)
-			}
-		}
+		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
+		diags.Append(labelsDiags...)
+		labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
+		diags.Append(labelsDiags...)
+		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
 		r.Mesh = types.StringPointerValue(resp.Mesh)
 		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
@@ -277,7 +274,7 @@ func (r *MeshServiceResourceModel) RefreshFromSharedMeshServiceItem(ctx context.
 			ports.Name = types.StringPointerValue(portsItem.Name)
 			ports.Port = types.Int32Value(int32(portsItem.Port))
 			if portsItem.TargetPort != nil {
-				ports.TargetPort = &tfTypes.Mode{}
+				ports.TargetPort = &tfTypes.ConfMode{}
 				if portsItem.TargetPort.Integer != nil {
 					ports.TargetPort.Integer = types.Int64PointerValue(portsItem.TargetPort.Integer)
 				}
@@ -306,8 +303,8 @@ func (r *MeshServiceResourceModel) RefreshFromSharedMeshServiceItem(ctx context.
 			}
 			if len(resp.Spec.Selector.DataplaneTags) > 0 {
 				r.Spec.Selector.DataplaneTags = make(map[string]types.String, len(resp.Spec.Selector.DataplaneTags))
-				for key1, value1 := range resp.Spec.Selector.DataplaneTags {
-					r.Spec.Selector.DataplaneTags[key1] = types.StringValue(value1)
+				for key, value := range resp.Spec.Selector.DataplaneTags {
+					r.Spec.Selector.DataplaneTags[key] = types.StringValue(value)
 				}
 			}
 		}

@@ -3,12 +3,13 @@
 package types
 
 import (
+	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type MeshTrafficPermissionItem struct {
 	CreationTime     types.String                  `tfsdk:"creation_time"`
-	Labels           map[string]types.String       `tfsdk:"labels"`
+	Labels           kumalabels.KumaLabelsMapValue `tfsdk:"labels"`
 	Mesh             types.String                  `tfsdk:"mesh"`
 	ModificationTime types.String                  `tfsdk:"modification_time"`
 	Name             types.String                  `tfsdk:"name"`

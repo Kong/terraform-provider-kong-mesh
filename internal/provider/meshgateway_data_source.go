@@ -5,6 +5,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -28,13 +29,13 @@ type MeshGatewayDataSource struct {
 
 // MeshGatewayDataSourceModel describes the data model.
 type MeshGatewayDataSourceModel struct {
-	Conf      *tfTypes.Conf           `tfsdk:"conf"`
-	Labels    map[string]types.String `tfsdk:"labels"`
-	Mesh      types.String            `tfsdk:"mesh"`
-	Name      types.String            `tfsdk:"name"`
-	Selectors []tfTypes.Selectors     `tfsdk:"selectors"`
-	Tags      map[string]types.String `tfsdk:"tags"`
-	Type      types.String            `tfsdk:"type"`
+	Conf      *tfTypes.Conf                 `tfsdk:"conf"`
+	Labels    kumalabels.KumaLabelsMapValue `tfsdk:"labels"`
+	Mesh      types.String                  `tfsdk:"mesh"`
+	Name      types.String                  `tfsdk:"name"`
+	Selectors []tfTypes.Selectors           `tfsdk:"selectors"`
+	Tags      map[string]types.String       `tfsdk:"tags"`
+	Type      types.String                  `tfsdk:"type"`
 }
 
 // Metadata returns the data source type name.
@@ -168,6 +169,7 @@ func (r *MeshGatewayDataSource) Schema(ctx context.Context, req datasource.Schem
 				Description: `The desired configuration of the MeshGateway.`,
 			},
 			"labels": schema.MapAttribute{
+				CustomType:  kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}},
 				Computed:    true,
 				ElementType: types.StringType,
 			},

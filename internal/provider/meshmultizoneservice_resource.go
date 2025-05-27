@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -45,7 +46,7 @@ type MeshMultiZoneServiceResource struct {
 // MeshMultiZoneServiceResourceModel describes the resource data model.
 type MeshMultiZoneServiceResourceModel struct {
 	CreationTime     types.String                            `tfsdk:"creation_time"`
-	Labels           map[string]types.String                 `tfsdk:"labels"`
+	Labels           kumalabels.KumaLabelsMapValue           `tfsdk:"labels"`
 	Mesh             types.String                            `tfsdk:"mesh"`
 	ModificationTime types.String                            `tfsdk:"modification_time"`
 	Name             types.String                            `tfsdk:"name"`
@@ -74,6 +75,7 @@ func (r *MeshMultiZoneServiceResource) Schema(ctx context.Context, req resource.
 				},
 			},
 			"labels": schema.MapAttribute{
+				CustomType:  kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}},
 				Optional:    true,
 				ElementType: types.StringType,
 				Description: `The labels to help identity resources`,

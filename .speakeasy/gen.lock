@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: 322c4806-8b53-493c-a05f-50d4d113c747
 management:
-  docChecksum: b39182d4478d4836620852cb8e19f451
+  docChecksum: d276da09f92aed7b54c9d307754df985
   docVersion: 2.0.0
   speakeasyVersion: 1.551.0
   generationVersion: 2.610.0
   releaseVersion: 0.3.0
-  configChecksum: 419b0c05f0854c70acf1be8244ea6175
+  configChecksum: 7d1de1478aec91650e1f75c8433c38d6
 features:
   terraform:
     additionalDependencies: 0.1.0
@@ -20,6 +20,10 @@ generatedFiles:
   - .gitattributes
   - USAGE.md
   - examples/README.md
+  - examples/data-sources/kong-mesh_dataplane/data-source.tf
+  - examples/data-sources/kong-mesh_dataplane_list/data-source.tf
+  - examples/data-sources/kong-mesh_dataplane_overview/data-source.tf
+  - examples/data-sources/kong-mesh_dataplane_overview_list/data-source.tf
   - examples/data-sources/kong-mesh_hostname_generator_list/data-source.tf
   - examples/data-sources/kong-mesh_mesh/data-source.tf
   - examples/data-sources/kong-mesh_mesh_access_log/data-source.tf
@@ -69,6 +73,8 @@ generatedFiles:
   - examples/data-sources/kong-mesh_mesh_traffic_permission/data-source.tf
   - examples/data-sources/kong-mesh_mesh_traffic_permission_list/data-source.tf
   - examples/provider/provider.tf
+  - examples/resources/kong-mesh_dataplane/import.sh
+  - examples/resources/kong-mesh_dataplane/resource.tf
   - examples/resources/kong-mesh_mesh/import.sh
   - examples/resources/kong-mesh_mesh/resource.tf
   - examples/resources/kong-mesh_mesh_access_log/import.sh
@@ -131,6 +137,16 @@ generatedFiles:
   - internal/planmodifiers/setplanmodifier/suppress_diff.go
   - internal/planmodifiers/stringplanmodifier/suppress_diff.go
   - internal/planmodifiers/utils/state_check.go
+  - internal/provider/dataplane_data_source.go
+  - internal/provider/dataplane_data_source_sdk.go
+  - internal/provider/dataplane_resource.go
+  - internal/provider/dataplane_resource_sdk.go
+  - internal/provider/dataplanelist_data_source.go
+  - internal/provider/dataplanelist_data_source_sdk.go
+  - internal/provider/dataplaneoverview_data_source.go
+  - internal/provider/dataplaneoverview_data_source_sdk.go
+  - internal/provider/dataplaneoverviewlist_data_source.go
+  - internal/provider/dataplaneoverviewlist_data_source_sdk.go
   - internal/provider/hostnamegeneratorlist_data_source.go
   - internal/provider/hostnamegeneratorlist_data_source_sdk.go
   - internal/provider/mesh_data_source.go
@@ -297,6 +313,7 @@ generatedFiles:
   - internal/provider/types/access_key.go
   - internal/provider/types/acm_certificate_authority_config.go
   - internal/provider/types/addresses.go
+  - internal/provider/types/admin.go
   - internal/provider/types/affinity_tags.go
   - internal/provider/types/aggregate.go
   - internal/provider/types/append_match.go
@@ -308,15 +325,20 @@ generatedFiles:
   - internal/provider/types/aws_credentials.go
   - internal/provider/types/back_off.go
   - internal/provider/types/backend.go
+  - internal/provider/types/backend_ref.go
   - internal/provider/types/backend_refs.go
   - internal/provider/types/backends.go
   - internal/provider/types/builtin_certificate_authority_config.go
   - internal/provider/types/builtin_certificate_authority_config_conf_ca_cert.go
   - internal/provider/types/ca_cert.go
+  - internal/provider/types/cds.go
   - internal/provider/types/cert_manager_certificate_authority_config.go
   - internal/provider/types/cluster.go
   - internal/provider/types/conditions.go
   - internal/provider/types/conf.go
+  - internal/provider/types/conf_envoy.go
+  - internal/provider/types/conf_mode.go
+  - internal/provider/types/conf_tls.go
   - internal/provider/types/connection.go
   - internal/provider/types/connection_limits.go
   - internal/provider/types/constraints.go
@@ -324,6 +346,15 @@ generatedFiles:
   - internal/provider/types/cross_zone.go
   - internal/provider/types/datadog.go
   - internal/provider/types/datadog_tracing_backend_config.go
+  - internal/provider/types/dataplane.go
+  - internal/provider/types/dataplane_insight.go
+  - internal/provider/types/dataplane_item.go
+  - internal/provider/types/dataplane_item_conf.go
+  - internal/provider/types/dataplane_item_inbound.go
+  - internal/provider/types/dataplane_item_tcp.go
+  - internal/provider/types/dataplane_overview_with_meta.go
+  - internal/provider/types/dataplane_overview_with_meta_mtls.go
+  - internal/provider/types/dataplane_overview_with_meta_status.go
   - internal/provider/types/dataplane_proxies.go
   - internal/provider/types/dataplane_proxy.go
   - internal/provider/types/dataplane_ref.go
@@ -344,11 +375,13 @@ generatedFiles:
   - internal/provider/types/filters.go
   - internal/provider/types/format.go
   - internal/provider/types/from.go
+  - internal/provider/types/gateway.go
   - internal/provider/types/gateway_failures.go
   - internal/provider/types/grpc.go
   - internal/provider/types/hash_policies.go
   - internal/provider/types/header.go
   - internal/provider/types/headers.go
+  - internal/provider/types/health.go
   - internal/provider/types/host_selection.go
   - internal/provider/types/hostname_generator_item.go
   - internal/provider/types/hostname_generator_item_spec.go
@@ -356,9 +389,11 @@ generatedFiles:
   - internal/provider/types/hostname_generators.go
   - internal/provider/types/http.go
   - internal/provider/types/http_filter.go
+  - internal/provider/types/interval.go
   - internal/provider/types/issuer_ref.go
   - internal/provider/types/json.go
   - internal/provider/types/json_patches.go
+  - internal/provider/types/kuma_dp.go
   - internal/provider/types/least_request.go
   - internal/provider/types/listener.go
   - internal/provider/types/listeners.go
@@ -373,8 +408,8 @@ generatedFiles:
   - internal/provider/types/mesh_access_log_item_spec_from_backends.go
   - internal/provider/types/mesh_access_log_item_spec_from_default.go
   - internal/provider/types/mesh_access_log_item_spec_from_open_telemetry.go
-  - internal/provider/types/mesh_access_log_item_spec_from_tcp.go
   - internal/provider/types/mesh_access_log_item_target_ref.go
+  - internal/provider/types/mesh_access_log_item_tcp.go
   - internal/provider/types/mesh_circuit_breaker_item.go
   - internal/provider/types/mesh_circuit_breaker_item_default.go
   - internal/provider/types/mesh_circuit_breaker_item_from.go
@@ -382,8 +417,10 @@ generatedFiles:
   - internal/provider/types/mesh_circuit_breaker_item_spec.go
   - internal/provider/types/mesh_external_service.go
   - internal/provider/types/mesh_external_service_item.go
+  - internal/provider/types/mesh_external_service_item_endpoints.go
   - internal/provider/types/mesh_external_service_item_match.go
   - internal/provider/types/mesh_external_service_item_spec.go
+  - internal/provider/types/mesh_external_service_item_version.go
   - internal/provider/types/mesh_fault_injection_item.go
   - internal/provider/types/mesh_fault_injection_item_default.go
   - internal/provider/types/mesh_fault_injection_item_from.go
@@ -411,11 +448,12 @@ generatedFiles:
   - internal/provider/types/mesh_http_route_item_spec_path.go
   - internal/provider/types/mesh_http_route_item_to.go
   - internal/provider/types/mesh_item.go
-  - internal/provider/types/mesh_item_backends.go
   - internal/provider/types/mesh_item_conf.go
-  - internal/provider/types/mesh_item_logging_conf.go
+  - internal/provider/types/mesh_item_metrics.go
   - internal/provider/types/mesh_item_mtls_backends.go
   - internal/provider/types/mesh_item_mtls_conf.go
+  - internal/provider/types/mesh_item_networking.go
+  - internal/provider/types/mesh_item_outbound.go
   - internal/provider/types/mesh_item_tracing_backends.go
   - internal/provider/types/mesh_item_tracing_conf.go
   - internal/provider/types/mesh_load_balancing_strategy_item.go
@@ -468,7 +506,6 @@ generatedFiles:
   - internal/provider/types/mesh_service_item_spec.go
   - internal/provider/types/mesh_service_item_status.go
   - internal/provider/types/mesh_service_item_tls.go
-  - internal/provider/types/mesh_services.go
   - internal/provider/types/mesh_tcp_route_item.go
   - internal/provider/types/mesh_tcp_route_item_default.go
   - internal/provider/types/mesh_tcp_route_item_rules.go
@@ -495,16 +532,15 @@ generatedFiles:
   - internal/provider/types/mesh_traffic_permission_item_from.go
   - internal/provider/types/mesh_traffic_permission_item_spec.go
   - internal/provider/types/metrics.go
-  - internal/provider/types/mode.go
   - internal/provider/types/mtls.go
   - internal/provider/types/networking.go
   - internal/provider/types/on_rate_limit.go
   - internal/provider/types/open_telemetry.go
-  - internal/provider/types/options_obj.go
   - internal/provider/types/outbound.go
   - internal/provider/types/outlier_detection.go
   - internal/provider/types/path.go
   - internal/provider/types/ports.go
+  - internal/provider/types/probes.go
   - internal/provider/types/profiles.go
   - internal/provider/types/prometheus.go
   - internal/provider/types/prometheus_metrics_backend_config.go
@@ -513,11 +549,12 @@ generatedFiles:
   - internal/provider/types/rate_limit_service.go
   - internal/provider/types/rate_limited_back_off.go
   - internal/provider/types/ratelimit_on_request.go
+  - internal/provider/types/reachable_backends.go
+  - internal/provider/types/refs.go
   - internal/provider/types/request_body.go
   - internal/provider/types/request_header_modifier.go
   - internal/provider/types/request_mirror.go
   - internal/provider/types/request_redirect.go
-  - internal/provider/types/request_timeout.go
   - internal/provider/types/requirements.go
   - internal/provider/types/reset_headers.go
   - internal/provider/types/resources.go
@@ -530,16 +567,19 @@ generatedFiles:
   - internal/provider/types/sampling.go
   - internal/provider/types/selector.go
   - internal/provider/types/selectors.go
+  - internal/provider/types/service_probe.go
   - internal/provider/types/sidecar.go
   - internal/provider/types/spec.go
   - internal/provider/types/status.go
   - internal/provider/types/subject_alt_names.go
+  - internal/provider/types/subscriptions.go
   - internal/provider/types/success_rate.go
   - internal/provider/types/tags.go
   - internal/provider/types/tcp.go
   - internal/provider/types/tcp_logging_backend_config.go
   - internal/provider/types/tls.go
   - internal/provider/types/tracing.go
+  - internal/provider/types/transparent_proxying.go
   - internal/provider/types/url_rewrite.go
   - internal/provider/types/vault_certificate_authority_config.go
   - internal/provider/types/verification.go
@@ -550,6 +590,7 @@ generatedFiles:
   - internal/provider/types/zipkin_tracing_backend_config.go
   - internal/provider/utils.go
   - internal/sdk/.gitattributes
+  - internal/sdk/dataplane.go
   - internal/sdk/globalinsight.go
   - internal/sdk/hostnamegenerator.go
   - internal/sdk/inspect.go
@@ -590,6 +631,7 @@ generatedFiles:
   - internal/sdk/meshtrace.go
   - internal/sdk/meshtrafficpermission.go
   - internal/sdk/models/errors/sdkerror.go
+  - internal/sdk/models/operations/createdataplane.go
   - internal/sdk/models/operations/createhostnamegenerator.go
   - internal/sdk/models/operations/createmeshaccesslog.go
   - internal/sdk/models/operations/createmeshcircuitbreaker.go
@@ -614,6 +656,7 @@ generatedFiles:
   - internal/sdk/models/operations/createmeshtrace.go
   - internal/sdk/models/operations/createmeshtrafficpermission.go
   - internal/sdk/models/operations/createtenant.go
+  - internal/sdk/models/operations/deletedataplane.go
   - internal/sdk/models/operations/deletehostnamegenerator.go
   - internal/sdk/models/operations/deletemesh.go
   - internal/sdk/models/operations/deletemeshaccesslog.go
@@ -638,6 +681,10 @@ generatedFiles:
   - internal/sdk/models/operations/deletemeshtls.go
   - internal/sdk/models/operations/deletemeshtrace.go
   - internal/sdk/models/operations/deletemeshtrafficpermission.go
+  - internal/sdk/models/operations/getdataplane.go
+  - internal/sdk/models/operations/getdataplanelist.go
+  - internal/sdk/models/operations/getdataplaneoverview.go
+  - internal/sdk/models/operations/getdataplaneoverviewlist.go
   - internal/sdk/models/operations/getdataplanesxdsconfig.go
   - internal/sdk/models/operations/getglobalinsight.go
   - internal/sdk/models/operations/gethostnamegenerator.go
@@ -695,6 +742,7 @@ generatedFiles:
   - internal/sdk/models/operations/inspectresources.go
   - internal/sdk/models/operations/options.go
   - internal/sdk/models/operations/putmesh.go
+  - internal/sdk/models/operations/updatedataplane.go
   - internal/sdk/models/operations/updatehostnamegenerator.go
   - internal/sdk/models/operations/updatemeshaccesslog.go
   - internal/sdk/models/operations/updatemeshcircuitbreaker.go
@@ -720,8 +768,14 @@ generatedFiles:
   - internal/sdk/models/operations/updatemeshtrafficpermission.go
   - internal/sdk/models/shared/badrequesterror.go
   - internal/sdk/models/shared/baseerror.go
+  - internal/sdk/models/shared/dataplanecreateorupdatesuccessresponse.go
+  - internal/sdk/models/shared/dataplanedeletesuccessresponse.go
+  - internal/sdk/models/shared/dataplaneitem.go
+  - internal/sdk/models/shared/dataplanelist.go
+  - internal/sdk/models/shared/dataplaneoverviewwithmeta.go
   - internal/sdk/models/shared/dataplanexdsconfig.go
   - internal/sdk/models/shared/fromrule.go
+  - internal/sdk/models/shared/getdataplaneoverviewlistresponse.go
   - internal/sdk/models/shared/globalinsight.go
   - internal/sdk/models/shared/hostnamegeneratorcreateorupdatesuccessresponse.go
   - internal/sdk/models/shared/hostnamegeneratordeletesuccessresponse.go
@@ -2225,5 +2279,82 @@ examples:
       responses:
         "200":
           application/json: {"items": [{"type": "MeshOPA", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}, {"type": "MeshOPA", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}, {"type": "MeshOPA", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
+  getDataplaneOverview:
+    speakeasy-default-get-dataplane-overview:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"type": "Dataplane", "mesh": "default", "name": "my-resource", "labels": {"k8s.kuma.io/namespace": "kuma-system", "kuma.io/display-name": "mtp", "kuma.io/mesh": "default", "kuma.io/origin": "zone"}}
+        "400":
+          application/problem+json: {"status": 389461, "title": "<value>", "instance": "<value>", "detail": "<value>", "invalid_parameters": [{"field": "name", "source": "body", "reason": "is a required field"}]}
+        "500":
+          application/problem+json: {"status": 804001, "title": "<value>", "instance": "<value>", "detail": "<value>"}
+  getDataplaneOverviewList:
+    speakeasy-default-get-dataplane-overview-list:
+      parameters:
+        path:
+          mesh: "<value>"
+      responses:
+        "200":
+          application/json: {"total": 200, "items": [{"type": "Dataplane", "mesh": "default", "name": "my-resource", "labels": {"k8s.kuma.io/namespace": "kuma-system", "kuma.io/display-name": "mtp", "kuma.io/mesh": "default", "kuma.io/origin": "zone"}}, {"type": "Dataplane", "mesh": "default", "name": "my-resource", "labels": {"k8s.kuma.io/namespace": "kuma-system", "kuma.io/display-name": "mtp", "kuma.io/mesh": "default", "kuma.io/origin": "zone"}}]}
+        "400":
+          application/problem+json: {"status": 483130, "title": "<value>", "instance": "<value>", "detail": "<value>", "invalid_parameters": []}
+        "500":
+          application/problem+json: {"status": 346828, "title": "<value>", "instance": "<value>", "detail": "<value>"}
+  getDataplane:
+    NotFoundExample:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+  deleteDataplane:
+    NotFoundExample:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+  createDataplane:
+    speakeasy-default-create-dataplane:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      requestBody:
+        application/json: {"mesh": "<value>", "name": "<value>", "type": "<value>"}
+      responses:
+        "201":
+          application/json: {}
+  updateDataplane:
+    speakeasy-default-update-dataplane:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      requestBody:
+        application/json: {"mesh": "<value>", "name": "<value>", "type": "<value>"}
+      responses:
+        "200":
+          application/json: {}
+  getDataplaneList:
+    "":
+      parameters:
+        path:
+          mesh: "<value>"
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {}
 examplesVersion: 1.0.2
 generatedTests: {}

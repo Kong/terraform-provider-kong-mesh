@@ -8,10 +8,10 @@ import (
 
 type PrometheusMetricsBackendConfig struct {
 	Aggregate []Aggregate             `tfsdk:"aggregate"`
-	Envoy     *Envoy                  `tfsdk:"envoy"`
+	Envoy     *ConfEnvoy              `tfsdk:"envoy"`
 	Path      types.String            `tfsdk:"path"`
 	Port      types.Int64             `tfsdk:"port"`
 	SkipMTLS  types.Bool              `tfsdk:"skip_mtls"`
 	Tags      map[string]types.String `tfsdk:"tags"`
-	TLS       *MeshServices           `tfsdk:"tls"`
+	TLS       *ConfTLS                `tfsdk:"tls"`
 }

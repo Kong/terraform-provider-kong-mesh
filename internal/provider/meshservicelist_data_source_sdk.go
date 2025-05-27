@@ -4,6 +4,7 @@ package provider
 
 import (
 	"context"
+	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
@@ -50,12 +51,11 @@ func (r *MeshServiceListDataSourceModel) RefreshFromSharedMeshServiceList(ctx co
 		for itemsCount, itemsItem := range resp.Items {
 			var items tfTypes.MeshServiceItem
 			items.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(itemsItem.CreationTime))
-			if len(itemsItem.Labels) > 0 {
-				items.Labels = make(map[string]types.String, len(itemsItem.Labels))
-				for key, value := range itemsItem.Labels {
-					items.Labels[key] = types.StringValue(value)
-				}
-			}
+			labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, itemsItem.Labels)
+			diags.Append(labelsDiags...)
+			labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
+			diags.Append(labelsDiags...)
+			items.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
 			items.Mesh = types.StringPointerValue(itemsItem.Mesh)
 			items.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(itemsItem.ModificationTime))
 			items.Name = types.StringValue(itemsItem.Name)
@@ -78,7 +78,7 @@ func (r *MeshServiceListDataSourceModel) RefreshFromSharedMeshServiceList(ctx co
 				ports.Name = types.StringPointerValue(portsItem.Name)
 				ports.Port = types.Int32Value(int32(portsItem.Port))
 				if portsItem.TargetPort != nil {
-					ports.TargetPort = &tfTypes.Mode{}
+					ports.TargetPort = &tfTypes.ConfMode{}
 					if portsItem.TargetPort.Integer != nil {
 						ports.TargetPort.Integer = types.Int64PointerValue(portsItem.TargetPort.Integer)
 					}
@@ -107,8 +107,8 @@ func (r *MeshServiceListDataSourceModel) RefreshFromSharedMeshServiceList(ctx co
 				}
 				if len(itemsItem.Spec.Selector.DataplaneTags) > 0 {
 					items.Spec.Selector.DataplaneTags = make(map[string]types.String, len(itemsItem.Spec.Selector.DataplaneTags))
-					for key1, value1 := range itemsItem.Spec.Selector.DataplaneTags {
-						items.Spec.Selector.DataplaneTags[key1] = types.StringValue(value1)
+					for key, value := range itemsItem.Spec.Selector.DataplaneTags {
+						items.Spec.Selector.DataplaneTags[key] = types.StringValue(value)
 					}
 				}
 			}

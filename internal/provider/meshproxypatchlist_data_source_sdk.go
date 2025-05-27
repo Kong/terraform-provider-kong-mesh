@@ -5,6 +5,7 @@ package provider
 import (
 	"context"
 	"encoding/json"
+	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
@@ -51,12 +52,11 @@ func (r *MeshProxyPatchListDataSourceModel) RefreshFromSharedMeshProxyPatchList(
 		for itemsCount, itemsItem := range resp.Items {
 			var items tfTypes.MeshProxyPatchItem
 			items.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(itemsItem.CreationTime))
-			if len(itemsItem.Labels) > 0 {
-				items.Labels = make(map[string]types.String, len(itemsItem.Labels))
-				for key, value := range itemsItem.Labels {
-					items.Labels[key] = types.StringValue(value)
-				}
-			}
+			labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, itemsItem.Labels)
+			diags.Append(labelsDiags...)
+			labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
+			diags.Append(labelsDiags...)
+			items.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
 			items.Mesh = types.StringPointerValue(itemsItem.Mesh)
 			items.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(itemsItem.ModificationTime))
 			items.Name = types.StringValue(itemsItem.Name)
@@ -130,8 +130,8 @@ func (r *MeshProxyPatchListDataSourceModel) RefreshFromSharedMeshProxyPatchList(
 						appendModifications.HTTPFilter.Match.ListenerName = types.StringPointerValue(appendModificationsItem.HTTPFilter.Match.ListenerName)
 						if len(appendModificationsItem.HTTPFilter.Match.ListenerTags) > 0 {
 							appendModifications.HTTPFilter.Match.ListenerTags = make(map[string]types.String, len(appendModificationsItem.HTTPFilter.Match.ListenerTags))
-							for key1, value1 := range appendModificationsItem.HTTPFilter.Match.ListenerTags {
-								appendModifications.HTTPFilter.Match.ListenerTags[key1] = types.StringValue(value1)
+							for key, value := range appendModificationsItem.HTTPFilter.Match.ListenerTags {
+								appendModifications.HTTPFilter.Match.ListenerTags[key] = types.StringValue(value)
 							}
 						}
 						appendModifications.HTTPFilter.Match.Name = types.StringPointerValue(appendModificationsItem.HTTPFilter.Match.Name)
@@ -173,8 +173,8 @@ func (r *MeshProxyPatchListDataSourceModel) RefreshFromSharedMeshProxyPatchList(
 						appendModifications.Listener.Match.Origin = types.StringPointerValue(appendModificationsItem.Listener.Match.Origin)
 						if len(appendModificationsItem.Listener.Match.Tags) > 0 {
 							appendModifications.Listener.Match.Tags = make(map[string]types.String, len(appendModificationsItem.Listener.Match.Tags))
-							for key2, value2 := range appendModificationsItem.Listener.Match.Tags {
-								appendModifications.Listener.Match.Tags[key2] = types.StringValue(value2)
+							for key1, value1 := range appendModificationsItem.Listener.Match.Tags {
+								appendModifications.Listener.Match.Tags[key1] = types.StringValue(value1)
 							}
 						}
 					}
@@ -213,8 +213,8 @@ func (r *MeshProxyPatchListDataSourceModel) RefreshFromSharedMeshProxyPatchList(
 						appendModifications.NetworkFilter.Match.ListenerName = types.StringPointerValue(appendModificationsItem.NetworkFilter.Match.ListenerName)
 						if len(appendModificationsItem.NetworkFilter.Match.ListenerTags) > 0 {
 							appendModifications.NetworkFilter.Match.ListenerTags = make(map[string]types.String, len(appendModificationsItem.NetworkFilter.Match.ListenerTags))
-							for key3, value3 := range appendModificationsItem.NetworkFilter.Match.ListenerTags {
-								appendModifications.NetworkFilter.Match.ListenerTags[key3] = types.StringValue(value3)
+							for key2, value2 := range appendModificationsItem.NetworkFilter.Match.ListenerTags {
+								appendModifications.NetworkFilter.Match.ListenerTags[key2] = types.StringValue(value2)
 							}
 						}
 						appendModifications.NetworkFilter.Match.Name = types.StringPointerValue(appendModificationsItem.NetworkFilter.Match.Name)
@@ -271,8 +271,8 @@ func (r *MeshProxyPatchListDataSourceModel) RefreshFromSharedMeshProxyPatchList(
 				items.Spec.TargetRef.Kind = types.StringValue(string(itemsItem.Spec.TargetRef.Kind))
 				if len(itemsItem.Spec.TargetRef.Labels) > 0 {
 					items.Spec.TargetRef.Labels = make(map[string]types.String, len(itemsItem.Spec.TargetRef.Labels))
-					for key4, value4 := range itemsItem.Spec.TargetRef.Labels {
-						items.Spec.TargetRef.Labels[key4] = types.StringValue(value4)
+					for key3, value3 := range itemsItem.Spec.TargetRef.Labels {
+						items.Spec.TargetRef.Labels[key3] = types.StringValue(value3)
 					}
 				}
 				items.Spec.TargetRef.Mesh = types.StringPointerValue(itemsItem.Spec.TargetRef.Mesh)
@@ -285,8 +285,8 @@ func (r *MeshProxyPatchListDataSourceModel) RefreshFromSharedMeshProxyPatchList(
 				items.Spec.TargetRef.SectionName = types.StringPointerValue(itemsItem.Spec.TargetRef.SectionName)
 				if len(itemsItem.Spec.TargetRef.Tags) > 0 {
 					items.Spec.TargetRef.Tags = make(map[string]types.String, len(itemsItem.Spec.TargetRef.Tags))
-					for key5, value5 := range itemsItem.Spec.TargetRef.Tags {
-						items.Spec.TargetRef.Tags[key5] = types.StringValue(value5)
+					for key4, value4 := range itemsItem.Spec.TargetRef.Tags {
+						items.Spec.TargetRef.Tags[key4] = types.StringValue(value4)
 					}
 				}
 			}

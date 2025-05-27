@@ -6,7 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type RequestTimeout struct {
-	Nanos   types.Int64 `tfsdk:"nanos"`
-	Seconds types.Int64 `tfsdk:"seconds"`
+type MeshExternalServiceItemVersion struct {
+	Max types.String `tfsdk:"max"`
+	Min types.String `tfsdk:"min"`
 }

@@ -5,6 +5,7 @@ package provider
 import (
 	"context"
 	"encoding/json"
+	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
@@ -26,12 +27,9 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 	var name string
 	name = r.Name.ValueString()
 
-	labels := make(map[string]string)
-	for labelsKey, labelsValue := range r.Labels {
-		var labelsInst string
-		labelsInst = labelsValue.ValueString()
-
-		labels[labelsKey] = labelsInst
+	var labels map[string]string
+	if !r.Labels.IsUnknown() && !r.Labels.IsNull() {
+		diags.Append(r.Labels.ElementsAs(ctx, &labels, true)...)
 	}
 	from := make([]shared.From, 0, len(r.Spec.From))
 	for _, fromItem := range r.Spec.From {
@@ -110,7 +108,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 					Endpoint:   endpoint,
 				}
 			}
-			var tcp *shared.MeshAccessLogItemSpecFromTCP
+			var tcp *shared.MeshAccessLogItemTCP
 			if backendsItem.TCP != nil {
 				var address string
 				address = backendsItem.TCP.Address.ValueString()
@@ -150,7 +148,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 						Type:            typeVar2,
 					}
 				}
-				tcp = &shared.MeshAccessLogItemSpecFromTCP{
+				tcp = &shared.MeshAccessLogItemTCP{
 					Address: address,
 					Format:  format1,
 				}
@@ -168,11 +166,11 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 		}
 		kind := shared.MeshAccessLogItemKind(fromItem.TargetRef.Kind.ValueString())
 		labels1 := make(map[string]string)
-		for labelsKey1, labelsValue1 := range fromItem.TargetRef.Labels {
-			var labelsInst1 string
-			labelsInst1 = labelsValue1.ValueString()
+		for labelsKey, labelsValue := range fromItem.TargetRef.Labels {
+			var labelsInst string
+			labelsInst = labelsValue.ValueString()
 
-			labels1[labelsKey1] = labelsInst1
+			labels1[labelsKey] = labelsInst
 		}
 		mesh1 := new(string)
 		if !fromItem.TargetRef.Mesh.IsUnknown() && !fromItem.TargetRef.Mesh.IsNull() {
@@ -301,7 +299,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 					Endpoint:   endpoint1,
 				}
 			}
-			var tcp1 *shared.MeshAccessLogItemTCP
+			var tcp1 *shared.MeshAccessLogItemSpecTCP
 			if backendsItem1.TCP != nil {
 				var address1 string
 				address1 = backendsItem1.TCP.Address.ValueString()
@@ -341,7 +339,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 						Type:            typeVar4,
 					}
 				}
-				tcp1 = &shared.MeshAccessLogItemTCP{
+				tcp1 = &shared.MeshAccessLogItemSpecTCP{
 					Address: address1,
 					Format:  format3,
 				}
@@ -365,11 +363,11 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 	if r.Spec.TargetRef != nil {
 		kind1 := shared.Kind(r.Spec.TargetRef.Kind.ValueString())
 		labels2 := make(map[string]string)
-		for labelsKey2, labelsValue2 := range r.Spec.TargetRef.Labels {
-			var labelsInst2 string
-			labelsInst2 = labelsValue2.ValueString()
+		for labelsKey1, labelsValue1 := range r.Spec.TargetRef.Labels {
+			var labelsInst1 string
+			labelsInst1 = labelsValue1.ValueString()
 
-			labels2[labelsKey2] = labelsInst2
+			labels2[labelsKey1] = labelsInst1
 		}
 		mesh2 := new(string)
 		if !r.Spec.TargetRef.Mesh.IsUnknown() && !r.Spec.TargetRef.Mesh.IsNull() {
@@ -494,7 +492,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 					Endpoint:   endpoint2,
 				}
 			}
-			var tcp2 *shared.MeshAccessLogItemSpecTCP
+			var tcp2 *shared.MeshAccessLogItemSpecToTCP
 			if backendsItem2.TCP != nil {
 				var address2 string
 				address2 = backendsItem2.TCP.Address.ValueString()
@@ -534,7 +532,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 						Type:            typeVar6,
 					}
 				}
-				tcp2 = &shared.MeshAccessLogItemSpecTCP{
+				tcp2 = &shared.MeshAccessLogItemSpecToTCP{
 					Address: address2,
 					Format:  format5,
 				}
@@ -552,11 +550,11 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 		}
 		kind2 := shared.MeshAccessLogItemSpecKind(toItem.TargetRef.Kind.ValueString())
 		labels3 := make(map[string]string)
-		for labelsKey3, labelsValue3 := range toItem.TargetRef.Labels {
-			var labelsInst3 string
-			labelsInst3 = labelsValue3.ValueString()
+		for labelsKey2, labelsValue2 := range toItem.TargetRef.Labels {
+			var labelsInst2 string
+			labelsInst2 = labelsValue2.ValueString()
 
-			labels3[labelsKey3] = labelsInst3
+			labels3[labelsKey2] = labelsInst2
 		}
 		mesh3 := new(string)
 		if !toItem.TargetRef.Mesh.IsUnknown() && !toItem.TargetRef.Mesh.IsNull() {
@@ -727,12 +725,11 @@ func (r *MeshAccessLogResourceModel) RefreshFromSharedMeshAccessLogItem(ctx cont
 
 	if resp != nil {
 		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
-		if len(resp.Labels) > 0 {
-			r.Labels = make(map[string]types.String, len(resp.Labels))
-			for key, value := range resp.Labels {
-				r.Labels[key] = types.StringValue(value)
-			}
-		}
+		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
+		diags.Append(labelsDiags...)
+		labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
+		diags.Append(labelsDiags...)
+		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
 		r.Mesh = types.StringPointerValue(resp.Mesh)
 		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
@@ -798,7 +795,7 @@ func (r *MeshAccessLogResourceModel) RefreshFromSharedMeshAccessLogItem(ctx cont
 				if backendsItem.TCP == nil {
 					backends.TCP = nil
 				} else {
-					backends.TCP = &tfTypes.MeshAccessLogItemSpecFromTCP{}
+					backends.TCP = &tfTypes.MeshAccessLogItemTCP{}
 					backends.TCP.Address = types.StringValue(backendsItem.TCP.Address)
 					if backendsItem.TCP.Format == nil {
 						backends.TCP.Format = nil
@@ -834,8 +831,8 @@ func (r *MeshAccessLogResourceModel) RefreshFromSharedMeshAccessLogItem(ctx cont
 			from.TargetRef.Kind = types.StringValue(string(fromItem.TargetRef.Kind))
 			if len(fromItem.TargetRef.Labels) > 0 {
 				from.TargetRef.Labels = make(map[string]types.String, len(fromItem.TargetRef.Labels))
-				for key1, value1 := range fromItem.TargetRef.Labels {
-					from.TargetRef.Labels[key1] = types.StringValue(value1)
+				for key, value := range fromItem.TargetRef.Labels {
+					from.TargetRef.Labels[key] = types.StringValue(value)
 				}
 			}
 			from.TargetRef.Mesh = types.StringPointerValue(fromItem.TargetRef.Mesh)
@@ -848,8 +845,8 @@ func (r *MeshAccessLogResourceModel) RefreshFromSharedMeshAccessLogItem(ctx cont
 			from.TargetRef.SectionName = types.StringPointerValue(fromItem.TargetRef.SectionName)
 			if len(fromItem.TargetRef.Tags) > 0 {
 				from.TargetRef.Tags = make(map[string]types.String, len(fromItem.TargetRef.Tags))
-				for key2, value2 := range fromItem.TargetRef.Tags {
-					from.TargetRef.Tags[key2] = types.StringValue(value2)
+				for key1, value1 := range fromItem.TargetRef.Tags {
+					from.TargetRef.Tags[key1] = types.StringValue(value1)
 				}
 			}
 			if fromCount+1 > len(r.Spec.From) {
@@ -921,7 +918,7 @@ func (r *MeshAccessLogResourceModel) RefreshFromSharedMeshAccessLogItem(ctx cont
 				if backendsItem1.TCP == nil {
 					backends1.TCP = nil
 				} else {
-					backends1.TCP = &tfTypes.MeshAccessLogItemSpecFromTCP{}
+					backends1.TCP = &tfTypes.MeshAccessLogItemTCP{}
 					backends1.TCP.Address = types.StringValue(backendsItem1.TCP.Address)
 					if backendsItem1.TCP.Format == nil {
 						backends1.TCP.Format = nil
@@ -967,8 +964,8 @@ func (r *MeshAccessLogResourceModel) RefreshFromSharedMeshAccessLogItem(ctx cont
 			r.Spec.TargetRef.Kind = types.StringValue(string(resp.Spec.TargetRef.Kind))
 			if len(resp.Spec.TargetRef.Labels) > 0 {
 				r.Spec.TargetRef.Labels = make(map[string]types.String, len(resp.Spec.TargetRef.Labels))
-				for key3, value3 := range resp.Spec.TargetRef.Labels {
-					r.Spec.TargetRef.Labels[key3] = types.StringValue(value3)
+				for key2, value2 := range resp.Spec.TargetRef.Labels {
+					r.Spec.TargetRef.Labels[key2] = types.StringValue(value2)
 				}
 			}
 			r.Spec.TargetRef.Mesh = types.StringPointerValue(resp.Spec.TargetRef.Mesh)
@@ -981,8 +978,8 @@ func (r *MeshAccessLogResourceModel) RefreshFromSharedMeshAccessLogItem(ctx cont
 			r.Spec.TargetRef.SectionName = types.StringPointerValue(resp.Spec.TargetRef.SectionName)
 			if len(resp.Spec.TargetRef.Tags) > 0 {
 				r.Spec.TargetRef.Tags = make(map[string]types.String, len(resp.Spec.TargetRef.Tags))
-				for key4, value4 := range resp.Spec.TargetRef.Tags {
-					r.Spec.TargetRef.Tags[key4] = types.StringValue(value4)
+				for key3, value3 := range resp.Spec.TargetRef.Tags {
+					r.Spec.TargetRef.Tags[key3] = types.StringValue(value3)
 				}
 			}
 		}
@@ -1048,7 +1045,7 @@ func (r *MeshAccessLogResourceModel) RefreshFromSharedMeshAccessLogItem(ctx cont
 				if backendsItem2.TCP == nil {
 					backends2.TCP = nil
 				} else {
-					backends2.TCP = &tfTypes.MeshAccessLogItemSpecFromTCP{}
+					backends2.TCP = &tfTypes.MeshAccessLogItemTCP{}
 					backends2.TCP.Address = types.StringValue(backendsItem2.TCP.Address)
 					if backendsItem2.TCP.Format == nil {
 						backends2.TCP.Format = nil
@@ -1084,8 +1081,8 @@ func (r *MeshAccessLogResourceModel) RefreshFromSharedMeshAccessLogItem(ctx cont
 			to.TargetRef.Kind = types.StringValue(string(toItem.TargetRef.Kind))
 			if len(toItem.TargetRef.Labels) > 0 {
 				to.TargetRef.Labels = make(map[string]types.String, len(toItem.TargetRef.Labels))
-				for key5, value5 := range toItem.TargetRef.Labels {
-					to.TargetRef.Labels[key5] = types.StringValue(value5)
+				for key4, value4 := range toItem.TargetRef.Labels {
+					to.TargetRef.Labels[key4] = types.StringValue(value4)
 				}
 			}
 			to.TargetRef.Mesh = types.StringPointerValue(toItem.TargetRef.Mesh)
@@ -1098,8 +1095,8 @@ func (r *MeshAccessLogResourceModel) RefreshFromSharedMeshAccessLogItem(ctx cont
 			to.TargetRef.SectionName = types.StringPointerValue(toItem.TargetRef.SectionName)
 			if len(toItem.TargetRef.Tags) > 0 {
 				to.TargetRef.Tags = make(map[string]types.String, len(toItem.TargetRef.Tags))
-				for key6, value6 := range toItem.TargetRef.Tags {
-					to.TargetRef.Tags[key6] = types.StringValue(value6)
+				for key5, value5 := range toItem.TargetRef.Tags {
+					to.TargetRef.Tags[key5] = types.StringValue(value5)
 				}
 			}
 			if toCount+1 > len(r.Spec.To) {

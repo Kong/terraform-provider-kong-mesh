@@ -5,6 +5,7 @@ package provider
 import (
 	"context"
 	"encoding/json"
+	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
@@ -51,18 +52,17 @@ func (r *MeshExternalServiceListDataSourceModel) RefreshFromSharedMeshExternalSe
 		for itemsCount, itemsItem := range resp.Items {
 			var items tfTypes.MeshExternalServiceItem
 			items.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(itemsItem.CreationTime))
-			if len(itemsItem.Labels) > 0 {
-				items.Labels = make(map[string]types.String, len(itemsItem.Labels))
-				for key, value := range itemsItem.Labels {
-					items.Labels[key] = types.StringValue(value)
-				}
-			}
+			labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, itemsItem.Labels)
+			diags.Append(labelsDiags...)
+			labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
+			diags.Append(labelsDiags...)
+			items.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
 			items.Mesh = types.StringPointerValue(itemsItem.Mesh)
 			items.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(itemsItem.ModificationTime))
 			items.Name = types.StringValue(itemsItem.Name)
-			items.Spec.Endpoints = []tfTypes.Endpoints{}
+			items.Spec.Endpoints = []tfTypes.MeshExternalServiceItemEndpoints{}
 			for endpointsCount, endpointsItem := range itemsItem.Spec.Endpoints {
-				var endpoints tfTypes.Endpoints
+				var endpoints tfTypes.MeshExternalServiceItemEndpoints
 				endpoints.Address = types.StringValue(endpointsItem.Address)
 				endpoints.Port = types.Int64Value(endpointsItem.Port)
 				if endpointsCount+1 > len(items.Spec.Endpoints) {
@@ -155,7 +155,7 @@ func (r *MeshExternalServiceListDataSourceModel) RefreshFromSharedMeshExternalSe
 				if itemsItem.Spec.TLS.Version == nil {
 					items.Spec.TLS.Version = nil
 				} else {
-					items.Spec.TLS.Version = &tfTypes.Version{}
+					items.Spec.TLS.Version = &tfTypes.MeshExternalServiceItemVersion{}
 					if itemsItem.Spec.TLS.Version.Max != nil {
 						items.Spec.TLS.Version.Max = types.StringValue(string(*itemsItem.Spec.TLS.Version.Max))
 					} else {

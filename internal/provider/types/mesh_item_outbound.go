@@ -6,7 +6,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type MeshAccessLogItemSpecFromTCP struct {
-	Address types.String `tfsdk:"address"`
-	Format  *Format      `tfsdk:"format"`
+type MeshItemOutbound struct {
+	Passthrough types.Bool `tfsdk:"passthrough"`
 }

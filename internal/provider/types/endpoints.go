@@ -7,6 +7,7 @@ import (
 )
 
 type Endpoints struct {
-	Address types.String `tfsdk:"address"`
-	Port    types.Int64  `tfsdk:"port"`
+	InboundPath types.String `tfsdk:"inbound_path"`
+	InboundPort types.Int64  `tfsdk:"inbound_port"`
+	Path        types.String `tfsdk:"path"`
 }

@@ -89,6 +89,48 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '500':
           $ref: '#/components/responses/Internal'
+  /meshes/{mesh}/dataplanes/{name}/_overview:
+    get:
+      operationId: getDataplaneOverview
+      parameters:
+        - in: path
+          name: mesh
+          required: true
+          description: The mesh of the DPP to get the diff for.
+          schema:
+            type: string
+        - in: path
+          name: name
+          required: true
+          description: The name of the DPP within the mesh to get the diff for.
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/GetDataplaneOverviewResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/Internal'
+      x-speakeasy-entity-operation: DataplaneOverview#get
+  /meshes/{mesh}/dataplanes/_overview:
+    get:
+      operationId: getDataplaneOverviewList
+      parameters:
+        - in: path
+          name: mesh
+          required: true
+          description: The mesh of the DPP to get the diff for.
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/GetDataplaneOverviewListResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/Internal'
+      x-speakeasy-entity-operation: DataplaneOverviewList#get
   /meshes/{mesh}/dataplanes/{name}/_config:
     get:
       operationId: get-dataplanes-xds-config
@@ -2916,6 +2958,174 @@ paths:
         '200':
           $ref: '#/components/responses/MeshTrafficPermissionList'
       x-speakeasy-entity-operation: MeshTrafficPermissionList#get
+  /meshes/{mesh}/dataplanes/{name}#create:
+    get:
+      operationId: getDataplane
+      summary: Returns Dataplane entity
+      tags:
+        - Dataplane
+      parameters:
+        - in: path
+          name: mesh
+          schema:
+            type: string
+          required: true
+          description: name of the mesh
+        - in: path
+          name: name
+          schema:
+            type: string
+          required: true
+          description: name of the Dataplane
+      responses:
+        '200':
+          $ref: '#/components/responses/DataplaneItem'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      x-speakeasy-entity-operation: Dataplane#get
+    delete:
+      operationId: deleteDataplane
+      summary: Deletes Dataplane entity
+      tags:
+        - Dataplane
+      parameters:
+        - in: path
+          name: mesh
+          schema:
+            type: string
+          required: true
+          description: name of the mesh
+        - in: path
+          name: name
+          schema:
+            type: string
+          required: true
+          description: name of the Dataplane
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataplaneDeleteSuccessResponse'
+          description: Successful response
+        '404':
+          $ref: '#/components/responses/NotFound'
+      x-speakeasy-entity-operation: Dataplane#delete
+    put:
+      operationId: createDataplane
+      summary: Creates or Updates Dataplane entity
+      tags:
+        - Dataplane
+      parameters:
+        - in: path
+          name: mesh
+          schema:
+            type: string
+          required: true
+          description: name of the mesh
+        - in: path
+          name: name
+          schema:
+            type: string
+          required: true
+          description: name of the Dataplane
+      requestBody:
+        description: Put request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataplaneItem'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataplaneCreateOrUpdateSuccessResponse'
+      x-speakeasy-entity-operation: Dataplane#create
+    parameters: []
+  /meshes/{mesh}/dataplanes/{name}#update:
+    put:
+      operationId: updateDataplane
+      summary: Creates or Updates Dataplane entity
+      tags:
+        - Dataplane
+      parameters:
+        - in: path
+          name: mesh
+          schema:
+            type: string
+          required: true
+          description: name of the mesh
+        - in: path
+          name: name
+          schema:
+            type: string
+          required: true
+          description: name of the Dataplane
+      requestBody:
+        description: Put request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataplaneItem'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataplaneCreateOrUpdateSuccessResponse'
+      x-speakeasy-entity-operation: Dataplane#update
+    parameters: []
+  /meshes/{mesh}/dataplanes:
+    get:
+      operationId: getDataplaneList
+      summary: Returns a list of Dataplane in the mesh.
+      tags:
+        - Dataplane
+      parameters:
+        - in: query
+          name: offset
+          description: offset in the list of entities
+          required: false
+          schema:
+            type: integer
+          example: 0
+        - in: query
+          name: size
+          description: the number of items per page
+          required: false
+          schema:
+            type: integer
+            default: 100
+            maximum: 1000
+            minimum: 1
+        - in: query
+          name: filter
+          description: filter by labels when multiple filters are present, they are ANDed
+          required: false
+          schema:
+            type: object
+            properties:
+              key:
+                type: string
+              value:
+                type: string
+          example:
+            label.k8s.kuma.io/namespace: my-ns
+        - in: path
+          name: mesh
+          schema:
+            type: string
+          required: true
+          description: name of the mesh
+      responses:
+        '200':
+          $ref: '#/components/responses/DataplaneList'
+      x-speakeasy-entity-operation: DataplaneList#get
   /meshes/{name}:
     get:
       operationId: getMesh
@@ -4271,6 +4481,10 @@ components:
             $ref: '#/components/schemas/Meta'
           x-speakeasy-plan-modifiers: SupressZeroNullModifier
           x-speakeasy-param-computed: false
+    DataplaneOverviewWithMeta:
+      allOf:
+        - $ref: '#/components/schemas/Meta'
+        - $ref: '#/components/schemas/DataplaneOverview'
     DataplaneXDSConfig:
       type: object
       title: DataplaneXDSConfig
@@ -4959,6 +5173,789 @@ components:
           type: object
           x-go-type: interface{}
           x-speakeasy-param-computed: false
+    PrometheusMetricsBackendConfig:
+      properties:
+        aggregate:
+          description: |-
+            Map with the configuration of applications which metrics are going to be
+            scrapped by kuma-dp.
+          items:
+            description: PrometheusAggregateMetricsConfig defines endpoints that should be scrapped by kuma-dp for prometheus metrics.
+            properties:
+              address:
+                description: Address on which a service expose HTTP endpoint with Prometheus metrics.
+                type: string
+                x-speakeasy-param-computed: false
+              enabled:
+                description: |-
+                  If false then the application won't be scrapped. If nil, then it is treated
+                  as true and kuma-dp scrapes metrics from the service.
+                type: boolean
+                x-speakeasy-param-computed: false
+              name:
+                description: Name which identify given configuration.
+                type: string
+                x-speakeasy-param-computed: false
+              path:
+                description: Path on which a service expose HTTP endpoint with Prometheus metrics.
+                type: string
+                x-speakeasy-param-computed: false
+              port:
+                description: Port on which a service expose HTTP endpoint with Prometheus metrics.
+                type: integer
+                x-speakeasy-param-computed: false
+            type: object
+            x-speakeasy-param-computed: false
+          type: array
+          default: []
+          x-speakeasy-param-computed: false
+        envoy:
+          description: Configuration of Envoy's metrics.
+          properties:
+            filterRegex:
+              description: |-
+                FilterRegex value that is going to be passed to Envoy for filtering
+                Envoy metrics.
+              type: string
+              x-speakeasy-param-computed: false
+            usedOnly:
+              description: |-
+                If true then return metrics that Envoy has updated (counters incremented
+                at least once, gauges changed at least once, and histograms added to at
+                least once). If nil, then it is treated as false.
+              type: boolean
+              x-speakeasy-param-computed: false
+          type: object
+          x-speakeasy-param-computed: false
+        path:
+          description: |-
+            Path on which a dataplane should expose HTTP endpoint with Prometheus
+            metrics.
+          type: string
+          x-speakeasy-param-computed: false
+        port:
+          description: |-
+            Port on which a dataplane should expose HTTP endpoint with Prometheus
+            metrics.
+          type: integer
+          x-speakeasy-param-computed: false
+        skipMTLS:
+          description: |-
+            If true then endpoints for scraping metrics won't require mTLS even if mTLS
+            is enabled in Mesh. If nil, then it is treated as false.
+          type: boolean
+          x-speakeasy-param-computed: false
+        tags:
+          additionalProperties:
+            type: string
+          description: |-
+            Tags associated with an application this dataplane is deployed next to,
+            e.g. service=web, version=1.0.
+            `service` tag is mandatory.
+          type: object
+          x-speakeasy-param-computed: false
+        tls:
+          description: Configuration of TLS for prometheus listener.
+          properties:
+            mode:
+              description: |-
+                mode defines how configured is the TLS for Prometheus.
+                Supported values, delegated, disabled, activeMTLSBackend. Default to
+                `activeMTLSBackend`.
+              oneOf:
+                - type: string
+                - type: integer
+              x-speakeasy-param-computed: false
+          type: object
+          x-speakeasy-plan-modifiers: SupressZeroNullModifier
+          x-speakeasy-param-computed: false
+          default: {}
+      type: object
+    DataplaneOverview:
+      properties:
+        dataplane:
+          properties:
+            metrics:
+              description: |-
+                Configuration for metrics that should be collected and exposed by the
+                data plane proxy.
+
+                Settings defined here will override their respective defaults
+                defined at a Mesh level.
+              properties:
+                conf:
+                  oneOf:
+                    - $ref: '#/components/schemas/PrometheusMetricsBackendConfig'
+                  type: object
+                  x-speakeasy-param-computed: false
+                name:
+                  description: Name of the backend, can be then used in Mesh.metrics.enabledBackend
+                  type: string
+                  x-speakeasy-param-computed: false
+                type:
+                  description: Type of the backend (Kuma ships with 'prometheus')
+                  type: string
+                  x-speakeasy-param-computed: false
+              type: object
+              x-speakeasy-param-computed: false
+            networking:
+              description: |-
+                Networking describes inbound and outbound interfaces of the data plane
+                proxy.
+              properties:
+                address:
+                  description: |-
+                    IP on which the data plane proxy is accessible to the control plane and
+                    other data plane proxies in the same network. This can also be a
+                    hostname, in which case the control plane will periodically resolve it.
+                  type: string
+                  x-speakeasy-param-computed: false
+                admin:
+                  description: |-
+                    Admin describes configuration related to Envoy Admin API.
+                    Due to security, all the Envoy Admin endpoints are exposed only on
+                    localhost. Additionally, Envoy will expose `/ready` endpoint on
+                    `networking.address` for health checking systems to be able to check the
+                    state of Envoy. The rest of the endpoints exposed on `networking.address`
+                    are always protected by mTLS and only meant to be consumed internally by
+                    the control plane.
+                  properties:
+                    port:
+                      description: Port on which Envoy Admin API server will be listening
+                      type: integer
+                      x-speakeasy-param-computed: false
+                  type: object
+                  x-speakeasy-param-computed: false
+                advertisedAddress:
+                  description: |-
+                    In some situations, a data plane proxy resides in a private network (e.g.
+                    Docker) and is not reachable via `address` to other data plane proxies.
+                    `advertisedAddress` is configured with a routable address for such data
+                    plane proxy so that other proxies in the mesh can connect to it over
+                    `advertisedAddress` and not via address.
+
+                    Envoy still binds to the `address`, not `advertisedAddress`.
+                  type: string
+                  x-speakeasy-param-computed: false
+                gateway:
+                  description: Gateway describes a configuration of the gateway of the data plane proxy.
+                  properties:
+                    tags:
+                      additionalProperties:
+                        type: string
+                      description: |-
+                        Tags associated with a gateway of this data plane to, e.g.
+                        `kuma.io/service=gateway`, `env=prod`. `kuma.io/service` tag is
+                        mandatory.
+                      type: object
+                      x-speakeasy-param-computed: false
+                    type:
+                      description: |-
+                        Type of gateway this data plane proxy manages.
+                        There are two types: `DELEGATED` and `BUILTIN`. Defaults to
+                        `DELEGATED`.
+
+                        A `DELEGATED` gateway is an independently deployed proxy (e.g., Kong,
+                        Contour, etc) that receives inbound traffic that is not proxied by
+                        Kuma, and it sends outbound traffic into the data plane proxy.
+
+                        The `BUILTIN` gateway type causes the data plane proxy itself to be
+                        configured as a gateway.
+
+                        See https://kuma.io/docs/latest/explore/gateway/ for more information.
+                      oneOf:
+                        - type: string
+                        - type: integer
+                      x-speakeasy-param-computed: false
+                  type: object
+                  x-speakeasy-param-computed: false
+                inbound:
+                  description: |-
+                    Inbound describes a list of inbound interfaces of the data plane proxy.
+
+                    Inbound describes a service implemented by the data plane proxy.
+                    All incoming traffic to a data plane proxy is going through inbound
+                    listeners. For every defined Inbound there is a corresponding Envoy
+                    Listener.
+                  items:
+                    description: Inbound describes a service implemented by the data plane proxy.
+                    properties:
+                      address:
+                        description: |-
+                          Address on which inbound listener will be exposed.
+                          Defaults to `networking.address`.
+                        type: string
+                        x-speakeasy-param-computed: false
+                      health:
+                        description: |-
+                          Health describes the status of an inbound.
+                          If 'health' is nil we consider data plane proxy as healthy.
+                          Unhealthy data plane proxies are excluded from Endpoints Discovery
+                          Service (EDS). On Kubernetes, it is filled automatically by the control
+                          plane if Pod has readiness probe configured. On Universal, it can be
+                          set by the external health checking system, but the most common way is
+                          to use service probes.
+
+                          See https://kuma.io/docs/latest/documentation/health for more
+                          information.
+                        properties:
+                          ready:
+                            description: |-
+                              Ready indicates if the data plane proxy is ready to serve the
+                              traffic.
+                            type: boolean
+                            x-speakeasy-param-computed: false
+                        type: object
+                        x-speakeasy-param-computed: false
+                      name:
+                        description: Name adds another way of referencing this port, usable with MeshService
+                        type: string
+                        x-speakeasy-param-computed: false
+                      port:
+                        description: |-
+                          Port of the inbound interface that will forward requests to the
+                          service.
+
+                          When transparent proxying is used, it is a port on which the service is
+                          listening to. When transparent proxying is not used, Envoy will bind to
+                          this port.
+                        type: integer
+                        x-speakeasy-param-computed: false
+                      serviceAddress:
+                        description: |-
+                          Address of the service that requests will be forwarded to.
+                          Defaults to 'inbound.address', since Kuma DP should be deployed next
+                          to the service.
+                        type: string
+                        x-speakeasy-param-computed: false
+                      servicePort:
+                        description: |-
+                          Port of the service that requests will be forwarded to.
+                          Defaults to the same value as `port`.
+                        type: integer
+                        x-speakeasy-param-computed: false
+                      serviceProbe:
+                        description: |-
+                          ServiceProbe defines parameters for probing the service next to
+                          sidecar. When service probe is defined, Envoy will periodically health
+                          check the application next to it and report the status to the control
+                          plane. On Kubernetes, Kuma deployments rely on Kubernetes probes so
+                          this is not used.
+
+                          See https://kuma.io/docs/latest/documentation/health for more
+                          information.
+                        properties:
+                          healthyThreshold:
+                            description: |-
+                              Number of consecutive healthy checks before considering a host
+                              healthy.
+                            format: uint32
+                            type: integer
+                            x-speakeasy-param-computed: false
+                          interval:
+                            description: Interval between consecutive health checks.
+                            properties:
+                              nanos:
+                                type: integer
+                                x-speakeasy-param-computed: false
+                              seconds:
+                                type: integer
+                                x-speakeasy-param-computed: false
+                            type: object
+                            x-speakeasy-param-computed: false
+                          tcp:
+                            description: Tcp checker tries to establish tcp connection with destination
+                            properties: {}
+                            type: object
+                            x-speakeasy-param-computed: false
+                          timeout:
+                            description: Maximum time to wait for a health check response.
+                            properties:
+                              nanos:
+                                type: integer
+                                x-speakeasy-param-computed: false
+                              seconds:
+                                type: integer
+                                x-speakeasy-param-computed: false
+                            type: object
+                            x-speakeasy-param-computed: false
+                          unhealthyThreshold:
+                            description: |-
+                              Number of consecutive unhealthy checks before considering a host
+                              unhealthy.
+                            format: uint32
+                            type: integer
+                            x-speakeasy-param-computed: false
+                        type: object
+                        x-speakeasy-param-computed: false
+                      state:
+                        description: State describes the current state of the listener.
+                        oneOf:
+                          - type: string
+                          - type: integer
+                        x-speakeasy-param-computed: false
+                      tags:
+                        additionalProperties:
+                          type: string
+                        description: |-
+                          Tags associated with an application this data plane proxy is deployed
+                          next to, e.g. `kuma.io/service=web`, `version=1.0`. You can then
+                          reference these tags in policies like MeshTrafficPermission.
+                          `kuma.io/service` tag is mandatory.
+                        type: object
+                        x-speakeasy-param-computed: false
+                    type: object
+                  type: array
+                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
+                  x-speakeasy-param-computed: false
+                outbound:
+                  description: |-
+                    Outbound describes a list of services consumed by the data plane proxy.
+                    For every defined Outbound, there is a corresponding Envoy Listener.
+                  items:
+                    description: Outbound describes a service consumed by the data plane proxy.
+                    properties:
+                      address:
+                        description: |-
+                          IP on which the consumed service will be available to this data plane
+                          proxy. On Kubernetes, it's usually ClusterIP of a Service or PodIP of a
+                          Headless Service. Defaults to 127.0.0.1
+                        type: string
+                        x-speakeasy-param-computed: false
+                      backendRef:
+                        description: |-
+                          BackendRef is a way to target MeshService.
+                          Experimental. Do not use on production yet.
+                        properties:
+                          kind:
+                            description: 'Kind is a type of the object to target. Allowed: MeshService'
+                            type: string
+                            x-speakeasy-param-computed: false
+                          labels:
+                            additionalProperties:
+                              type: string
+                            description: |-
+                              Labels to select a single object.
+                              If no object is selected then outbound is not created.
+                              If multiple objects are selected then the oldest one is used.
+                            type: object
+                            x-speakeasy-param-computed: false
+                          name:
+                            description: Name of the targeted object
+                            type: string
+                            x-speakeasy-param-computed: false
+                          port:
+                            description: Port of the targeted object. Required when kind is MeshService.
+                            type: integer
+                            x-speakeasy-param-computed: false
+                        type: object
+                        x-speakeasy-param-computed: false
+                      port:
+                        description: |-
+                          Port on which the consumed service will be available to this data plane
+                          proxy. When transparent proxying is not used, Envoy will bind to this
+                          port.
+                        type: integer
+                        x-speakeasy-param-computed: false
+                      tags:
+                        additionalProperties:
+                          type: string
+                        description: |-
+                          Tags of consumed data plane proxies.
+                          `kuma.io/service` tag is required.
+                          These tags can then be referenced in `destinations` section of policies
+                          like TrafficRoute or in `to` section in policies like MeshAccessLog. It
+                          is recommended to only use `kuma.io/service`. If you need to consume
+                          specific data plane proxy of a service (for example: `version=v2`) the
+                          better practice is to use TrafficRoute.
+                        type: object
+                        x-speakeasy-param-computed: false
+                    type: object
+                  type: array
+                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
+                  x-speakeasy-param-computed: false
+                transparentProxying:
+                  description: |-
+                    TransparentProxying describes the configuration for transparent proxying.
+                    It is used by default on Kubernetes.
+                  properties:
+                    directAccessServices:
+                      description: |-
+                        List of services that will be accessed directly via IP:PORT
+                        Use `*` to indicate direct access to every service in the Mesh.
+                        Using `*` to directly access every service is a resource-intensive
+                        operation, use it only if needed.
+                      items:
+                        type: string
+                      type: array
+                      x-speakeasy-plan-modifiers: SupressZeroNullModifier
+                      x-speakeasy-param-computed: false
+                    ipFamilyMode:
+                      description: The IP family mode to enable for. Can be "IPv4" or "DualStack".
+                      oneOf:
+                        - type: string
+                        - type: integer
+                      x-speakeasy-param-computed: false
+                    reachableBackends:
+                      description: |-
+                        Reachable backend via transparent proxy when running with
+                        MeshExternalService, MeshService and MeshMultiZoneService. Setting an
+                        explicit list of refs can dramatically improve the performance of the
+                        mesh. If not specified, all services in the mesh are reachable.
+                      properties:
+                        refs:
+                          items:
+                            properties:
+                              kind:
+                                description: "Type of the backend: MeshService or MeshExternalService\n\n\t+required"
+                                type: string
+                                x-speakeasy-param-computed: false
+                              labels:
+                                additionalProperties:
+                                  type: string
+                                description: "Labels used to select backends\n\n\t+optional"
+                                type: object
+                                x-speakeasy-param-computed: false
+                              name:
+                                description: "Name of the backend.\n\n\t+optional"
+                                type: string
+                                x-speakeasy-param-computed: false
+                              namespace:
+                                description: "Namespace of the backend. Might be empty\n\n\t+optional"
+                                type: string
+                                x-speakeasy-param-computed: false
+                              port:
+                                description: "Port of the backend.\n\n\t+optional"
+                                format: uint32
+                                type: integer
+                                x-speakeasy-param-computed: false
+                            type: object
+                          type: array
+                          x-speakeasy-plan-modifiers: SupressZeroNullModifier
+                          x-speakeasy-param-computed: false
+                      type: object
+                      x-speakeasy-param-computed: false
+                    reachableServices:
+                      description: |-
+                        List of reachable services (represented by the value of
+                        `kuma.io/service`) via transparent proxying. Setting an explicit list
+                        can dramatically improve the performance of the mesh. If not specified,
+                        all services in the mesh are reachable.
+                      items:
+                        type: string
+                      type: array
+                      x-speakeasy-plan-modifiers: SupressZeroNullModifier
+                      x-speakeasy-param-computed: false
+                    redirectPortInbound:
+                      description: Port on which all inbound traffic is being transparently redirected.
+                      type: integer
+                      x-speakeasy-param-computed: false
+                    redirectPortOutbound:
+                      description: Port on which all outbound traffic is being transparently redirected.
+                      type: integer
+                      x-speakeasy-param-computed: false
+                  type: object
+                  x-speakeasy-param-computed: false
+              type: object
+              x-speakeasy-param-computed: false
+            probes:
+              description: |-
+                Probes describe a list of endpoints that will be exposed without mTLS.
+                This is useful to expose the health endpoints of the application so the
+                orchestration system (e.g. Kubernetes) can still health check the
+                application.
+
+                See
+                https://kuma.io/docs/latest/policies/service-health-probes/#virtual-probes
+                for more information.
+                Deprecated: this feature will be removed for Universal; on Kubernetes, it's
+                not needed anymore.
+              properties:
+                endpoints:
+                  description: List of endpoints to expose without mTLS.
+                  items:
+                    properties:
+                      inboundPath:
+                        description: |-
+                          Inbound path is a path of the application from which we expose the
+                          endpoint. It is recommended to be as specific as possible.
+                        type: string
+                        x-speakeasy-param-computed: false
+                      inboundPort:
+                        description: |-
+                          Inbound port is a port of the application from which we expose the
+                          endpoint.
+                        type: integer
+                        x-speakeasy-param-computed: false
+                      path:
+                        description: Path is a path on which we expose inbound path on the probes port.
+                        type: string
+                        x-speakeasy-param-computed: false
+                    type: object
+                  type: array
+                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
+                  x-speakeasy-param-computed: false
+                port:
+                  description: |-
+                    Port on which the probe endpoints will be exposed. This cannot overlap
+                    with any other ports.
+                  type: integer
+                  x-speakeasy-param-computed: false
+              type: object
+              x-speakeasy-param-computed: false
+          type: object
+          x-speakeasy-param-computed: false
+        dataplaneInsight:
+          properties:
+            mTLS:
+              description: Insights about mTLS for Dataplane.
+              properties:
+                certificateExpirationTime:
+                  description: |-
+                    Expiration time of the last certificate that was generated for a
+                    Dataplane.
+                  properties:
+                    nanos:
+                      type: integer
+                      x-speakeasy-param-computed: false
+                    seconds:
+                      type: integer
+                      x-speakeasy-param-computed: false
+                  type: object
+                  x-speakeasy-param-computed: false
+                certificateRegenerations:
+                  description: Number of certificate regenerations for a Dataplane.
+                  type: integer
+                  x-speakeasy-param-computed: false
+                issuedBackend:
+                  description: Backend that was used to generate current certificate
+                  type: string
+                  x-speakeasy-param-computed: false
+                lastCertificateRegeneration:
+                  description: Time on which the last certificate was generated.
+                  properties:
+                    nanos:
+                      type: integer
+                      x-speakeasy-param-computed: false
+                    seconds:
+                      type: integer
+                      x-speakeasy-param-computed: false
+                  type: object
+                  x-speakeasy-param-computed: false
+                supportedBackends:
+                  description: Supported backends (CA).
+                  items:
+                    type: string
+                  type: array
+                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
+                  x-speakeasy-param-computed: false
+              type: object
+              x-speakeasy-param-computed: false
+            metadata:
+              properties: {}
+              type: object
+              x-speakeasy-param-computed: false
+            subscriptions:
+              description: List of ADS subscriptions created by a given Dataplane.
+              items:
+                description: DiscoverySubscription describes a single ADS subscription created by a Dataplane to the Control Plane.
+                properties:
+                  connectTime:
+                    description: Time when a given Dataplane connected to the Control Plane.
+                    properties:
+                      nanos:
+                        type: integer
+                        x-speakeasy-param-computed: false
+                      seconds:
+                        type: integer
+                        x-speakeasy-param-computed: false
+                    type: object
+                    x-speakeasy-param-computed: false
+                  controlPlaneInstanceId:
+                    description: Control Plane instance that handled given subscription.
+                    type: string
+                    x-speakeasy-param-computed: false
+                  disconnectTime:
+                    description: Time when a given Dataplane disconnected from the Control Plane.
+                    properties:
+                      nanos:
+                        type: integer
+                        x-speakeasy-param-computed: false
+                      seconds:
+                        type: integer
+                        x-speakeasy-param-computed: false
+                    type: object
+                    x-speakeasy-param-computed: false
+                  generation:
+                    description: |-
+                      Generation is an integer number which is periodically increased by the
+                      status sink
+                    type: integer
+                    x-speakeasy-param-computed: false
+                  id:
+                    description: Unique id per ADS subscription.
+                    type: string
+                    x-speakeasy-param-computed: false
+                  status:
+                    description: Status of the ADS subscription.
+                    properties:
+                      cds:
+                        description: CDS defines all CDS stats.
+                        properties:
+                          responsesAcknowledged:
+                            description: Number of xDS responses ACKed by the Dataplane.
+                            type: integer
+                            x-speakeasy-param-computed: false
+                          responsesRejected:
+                            description: Number of xDS responses NACKed by the Dataplane.
+                            type: integer
+                            x-speakeasy-param-computed: false
+                          responsesSent:
+                            description: Number of xDS responses sent to the Dataplane.
+                            type: integer
+                            x-speakeasy-param-computed: false
+                        type: object
+                        x-speakeasy-param-computed: false
+                      eds:
+                        description: EDS defines all EDS stats.
+                        properties:
+                          responsesAcknowledged:
+                            description: Number of xDS responses ACKed by the Dataplane.
+                            type: integer
+                            x-speakeasy-param-computed: false
+                          responsesRejected:
+                            description: Number of xDS responses NACKed by the Dataplane.
+                            type: integer
+                            x-speakeasy-param-computed: false
+                          responsesSent:
+                            description: Number of xDS responses sent to the Dataplane.
+                            type: integer
+                            x-speakeasy-param-computed: false
+                        type: object
+                        x-speakeasy-param-computed: false
+                      lastUpdateTime:
+                        description: Time when status of a given ADS subscription was most recently updated.
+                        properties:
+                          nanos:
+                            type: integer
+                            x-speakeasy-param-computed: false
+                          seconds:
+                            type: integer
+                            x-speakeasy-param-computed: false
+                        type: object
+                        x-speakeasy-param-computed: false
+                      lds:
+                        description: LDS defines all LDS stats.
+                        properties:
+                          responsesAcknowledged:
+                            description: Number of xDS responses ACKed by the Dataplane.
+                            type: integer
+                            x-speakeasy-param-computed: false
+                          responsesRejected:
+                            description: Number of xDS responses NACKed by the Dataplane.
+                            type: integer
+                            x-speakeasy-param-computed: false
+                          responsesSent:
+                            description: Number of xDS responses sent to the Dataplane.
+                            type: integer
+                            x-speakeasy-param-computed: false
+                        type: object
+                        x-speakeasy-param-computed: false
+                      rds:
+                        description: RDS defines all RDS stats.
+                        properties:
+                          responsesAcknowledged:
+                            description: Number of xDS responses ACKed by the Dataplane.
+                            type: integer
+                            x-speakeasy-param-computed: false
+                          responsesRejected:
+                            description: Number of xDS responses NACKed by the Dataplane.
+                            type: integer
+                            x-speakeasy-param-computed: false
+                          responsesSent:
+                            description: Number of xDS responses sent to the Dataplane.
+                            type: integer
+                            x-speakeasy-param-computed: false
+                        type: object
+                        x-speakeasy-param-computed: false
+                      total:
+                        description: Total defines an aggregate over individual xDS stats.
+                        properties:
+                          responsesAcknowledged:
+                            description: Number of xDS responses ACKed by the Dataplane.
+                            type: integer
+                            x-speakeasy-param-computed: false
+                          responsesRejected:
+                            description: Number of xDS responses NACKed by the Dataplane.
+                            type: integer
+                            x-speakeasy-param-computed: false
+                          responsesSent:
+                            description: Number of xDS responses sent to the Dataplane.
+                            type: integer
+                            x-speakeasy-param-computed: false
+                        type: object
+                        x-speakeasy-param-computed: false
+                    type: object
+                  version:
+                    description: Version of Envoy and Kuma dataplane
+                    properties:
+                      dependencies:
+                        additionalProperties:
+                          type: string
+                        description: Versions of other dependencies, i.e. CoreDNS
+                        type: object
+                        x-speakeasy-param-computed: false
+                      envoy:
+                        description: Version of Envoy
+                        properties:
+                          build:
+                            description: Full build tag of Envoy version
+                            type: string
+                            x-speakeasy-param-computed: false
+                          kumaDpCompatible:
+                            description: True iff Envoy version is compatible with Kuma DP version
+                            type: boolean
+                            x-speakeasy-param-computed: false
+                          version:
+                            description: Version number of Envoy
+                            type: string
+                            x-speakeasy-param-computed: false
+                        type: object
+                        x-speakeasy-param-computed: false
+                      kumaDp:
+                        description: Version of Kuma Dataplane
+                        properties:
+                          buildDate:
+                            description: Build date of Kuma Dataplane version
+                            type: string
+                            x-speakeasy-param-computed: false
+                          gitCommit:
+                            description: Git commit of Kuma Dataplane version
+                            type: string
+                            x-speakeasy-param-computed: false
+                          gitTag:
+                            description: Git tag of Kuma Dataplane version
+                            type: string
+                            x-speakeasy-param-computed: false
+                          kumaCpCompatible:
+                            description: True iff Kuma DP version is compatible with Kuma CP version
+                            type: boolean
+                            x-speakeasy-param-computed: false
+                          version:
+                            description: Version number of Kuma Dataplane
+                            type: string
+                            x-speakeasy-param-computed: false
+                        type: object
+                        x-speakeasy-param-computed: false
+                    type: object
+                    x-speakeasy-param-computed: false
+                type: object
+              type: array
+              x-speakeasy-plan-modifiers: SupressZeroNullModifier
+              x-speakeasy-param-computed: false
+          type: object
+          x-speakeasy-param-computed: false
+      type: object
     JsonPatchItem:
       type: object
       required:
@@ -5011,6 +6008,11 @@ components:
           description: The labels to help identity resources
           type: object
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
+            valueType: kumalabels.KumaLabelsMapValue
         spec:
           description: Spec is the specification of the Kuma MeshAccessLog resource.
           properties:
@@ -5886,6 +6888,11 @@ components:
           description: The labels to help identity resources
           type: object
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
+            valueType: kumalabels.KumaLabelsMapValue
         spec:
           description: Spec is the specification of the Kuma MeshCircuitBreaker resource.
           properties:
@@ -7027,6 +8034,11 @@ components:
           description: The labels to help identity resources
           type: object
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
+            valueType: kumalabels.KumaLabelsMapValue
         spec:
           description: Spec is the specification of the Kuma MeshFaultInjection resource.
           properties:
@@ -7507,6 +8519,11 @@ components:
           description: The labels to help identity resources
           type: object
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
+            valueType: kumalabels.KumaLabelsMapValue
         spec:
           description: Spec is the specification of the Kuma MeshHealthCheck resource.
           properties:
@@ -7960,6 +8977,11 @@ components:
           description: The labels to help identity resources
           type: object
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
+            valueType: kumalabels.KumaLabelsMapValue
         spec:
           description: Spec is the specification of the Kuma MeshHTTPRoute resource.
           properties:
@@ -8746,6 +9768,11 @@ components:
           description: The labels to help identity resources
           type: object
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
+            valueType: kumalabels.KumaLabelsMapValue
         spec:
           description: Spec is the specification of the Kuma MeshLoadBalancingStrategy resource.
           properties:
@@ -9398,6 +10425,11 @@ components:
           description: The labels to help identity resources
           type: object
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
+            valueType: kumalabels.KumaLabelsMapValue
         spec:
           description: Spec is the specification of the Kuma MeshMetric resource.
           properties:
@@ -9725,6 +10757,11 @@ components:
           description: The labels to help identity resources
           type: object
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
+            valueType: kumalabels.KumaLabelsMapValue
         spec:
           description: Spec is the specification of the Kuma MeshPassthrough resource.
           properties:
@@ -9921,6 +10958,11 @@ components:
           description: The labels to help identity resources
           type: object
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
+            valueType: kumalabels.KumaLabelsMapValue
         spec:
           description: Spec is the specification of the Kuma MeshProxyPatch resource.
           properties:
@@ -10529,6 +11571,11 @@ components:
           description: The labels to help identity resources
           type: object
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
+            valueType: kumalabels.KumaLabelsMapValue
         spec:
           description: Spec is the specification of the Kuma MeshRateLimit resource.
           properties:
@@ -11245,6 +12292,11 @@ components:
           description: The labels to help identity resources
           type: object
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
+            valueType: kumalabels.KumaLabelsMapValue
         spec:
           description: Spec is the specification of the Kuma MeshRetry resource.
           properties:
@@ -11826,6 +12878,11 @@ components:
           description: The labels to help identity resources
           type: object
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
+            valueType: kumalabels.KumaLabelsMapValue
         spec:
           description: Spec is the specification of the Kuma MeshTCPRoute resource.
           properties:
@@ -12157,6 +13214,11 @@ components:
           description: The labels to help identity resources
           type: object
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
+            valueType: kumalabels.KumaLabelsMapValue
         spec:
           description: Spec is the specification of the Kuma MeshTimeout resource.
           properties:
@@ -12651,6 +13713,11 @@ components:
           description: The labels to help identity resources
           type: object
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
+            valueType: kumalabels.KumaLabelsMapValue
         spec:
           description: Spec is the specification of the Kuma MeshTLS resource.
           properties:
@@ -12992,6 +14059,11 @@ components:
           description: The labels to help identity resources
           type: object
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
+            valueType: kumalabels.KumaLabelsMapValue
         spec:
           description: Spec is the specification of the Kuma MeshTrace resource.
           properties:
@@ -13322,6 +14394,11 @@ components:
           description: The labels to help identity resources
           type: object
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
+            valueType: kumalabels.KumaLabelsMapValue
         spec:
           description: Spec is the specification of the Kuma MeshTrafficPermission resource.
           properties:
@@ -13564,6 +14641,472 @@ components:
           type: boolean
           x-speakeasy-param-computed: false
       type: object
+    DataplaneItem:
+      properties:
+        labels:
+          additionalProperties:
+            type: string
+          type: object
+          x-speakeasy-param-computed: false
+        mesh:
+          type: string
+          x-speakeasy-param-computed: false
+        metrics:
+          description: |-
+            Configuration for metrics that should be collected and exposed by the
+            data plane proxy.
+
+            Settings defined here will override their respective defaults
+            defined at a Mesh level.
+          properties:
+            conf:
+              oneOf:
+                - $ref: '#/components/schemas/PrometheusMetricsBackendConfig'
+              type: object
+              x-speakeasy-param-computed: false
+            name:
+              description: Name of the backend, can be then used in Mesh.metrics.enabledBackend
+              type: string
+              x-speakeasy-param-computed: false
+            type:
+              description: Type of the backend (Kuma ships with 'prometheus')
+              type: string
+              x-speakeasy-param-computed: false
+          type: object
+          x-speakeasy-param-computed: false
+        name:
+          type: string
+          x-speakeasy-param-computed: false
+        networking:
+          description: |-
+            Networking describes inbound and outbound interfaces of the data plane
+            proxy.
+          properties:
+            address:
+              description: |-
+                IP on which the data plane proxy is accessible to the control plane and
+                other data plane proxies in the same network. This can also be a
+                hostname, in which case the control plane will periodically resolve it.
+              type: string
+              x-speakeasy-param-computed: false
+            admin:
+              description: |-
+                Admin describes configuration related to Envoy Admin API.
+                Due to security, all the Envoy Admin endpoints are exposed only on
+                localhost. Additionally, Envoy will expose `/ready` endpoint on
+                `networking.address` for health checking systems to be able to check the
+                state of Envoy. The rest of the endpoints exposed on `networking.address`
+                are always protected by mTLS and only meant to be consumed internally by
+                the control plane.
+              properties:
+                port:
+                  description: Port on which Envoy Admin API server will be listening
+                  type: integer
+                  x-speakeasy-param-computed: false
+              type: object
+              x-speakeasy-param-computed: false
+            advertisedAddress:
+              description: |-
+                In some situations, a data plane proxy resides in a private network (e.g.
+                Docker) and is not reachable via `address` to other data plane proxies.
+                `advertisedAddress` is configured with a routable address for such data
+                plane proxy so that other proxies in the mesh can connect to it over
+                `advertisedAddress` and not via address.
+
+                Envoy still binds to the `address`, not `advertisedAddress`.
+              type: string
+              x-speakeasy-param-computed: false
+            gateway:
+              description: Gateway describes a configuration of the gateway of the data plane proxy.
+              properties:
+                tags:
+                  additionalProperties:
+                    type: string
+                  description: |-
+                    Tags associated with a gateway of this data plane to, e.g.
+                    `kuma.io/service=gateway`, `env=prod`. `kuma.io/service` tag is
+                    mandatory.
+                  type: object
+                  x-speakeasy-param-computed: false
+                type:
+                  description: |-
+                    Type of gateway this data plane proxy manages.
+                    There are two types: `DELEGATED` and `BUILTIN`. Defaults to
+                    `DELEGATED`.
+
+                    A `DELEGATED` gateway is an independently deployed proxy (e.g., Kong,
+                    Contour, etc) that receives inbound traffic that is not proxied by
+                    Kuma, and it sends outbound traffic into the data plane proxy.
+
+                    The `BUILTIN` gateway type causes the data plane proxy itself to be
+                    configured as a gateway.
+
+                    See https://kuma.io/docs/latest/explore/gateway/ for more information.
+                  oneOf:
+                    - type: string
+                    - type: integer
+                  x-speakeasy-param-computed: false
+              type: object
+              x-speakeasy-param-computed: false
+            inbound:
+              description: |-
+                Inbound describes a list of inbound interfaces of the data plane proxy.
+
+                Inbound describes a service implemented by the data plane proxy.
+                All incoming traffic to a data plane proxy is going through inbound
+                listeners. For every defined Inbound there is a corresponding Envoy
+                Listener.
+              items:
+                description: Inbound describes a service implemented by the data plane proxy.
+                properties:
+                  address:
+                    description: |-
+                      Address on which inbound listener will be exposed.
+                      Defaults to `networking.address`.
+                    type: string
+                    x-speakeasy-param-computed: false
+                  health:
+                    description: |-
+                      Health describes the status of an inbound.
+                      If 'health' is nil we consider data plane proxy as healthy.
+                      Unhealthy data plane proxies are excluded from Endpoints Discovery
+                      Service (EDS). On Kubernetes, it is filled automatically by the control
+                      plane if Pod has readiness probe configured. On Universal, it can be
+                      set by the external health checking system, but the most common way is
+                      to use service probes.
+
+                      See https://kuma.io/docs/latest/documentation/health for more
+                      information.
+                    properties:
+                      ready:
+                        description: |-
+                          Ready indicates if the data plane proxy is ready to serve the
+                          traffic.
+                        type: boolean
+                        x-speakeasy-param-computed: false
+                    type: object
+                    x-speakeasy-param-computed: false
+                  name:
+                    description: Name adds another way of referencing this port, usable with MeshService
+                    type: string
+                    x-speakeasy-param-computed: false
+                  port:
+                    description: |-
+                      Port of the inbound interface that will forward requests to the
+                      service.
+
+                      When transparent proxying is used, it is a port on which the service is
+                      listening to. When transparent proxying is not used, Envoy will bind to
+                      this port.
+                    type: integer
+                    x-speakeasy-param-computed: false
+                  serviceAddress:
+                    description: |-
+                      Address of the service that requests will be forwarded to.
+                      Defaults to 'inbound.address', since Kuma DP should be deployed next
+                      to the service.
+                    type: string
+                    x-speakeasy-param-computed: false
+                  servicePort:
+                    description: |-
+                      Port of the service that requests will be forwarded to.
+                      Defaults to the same value as `port`.
+                    type: integer
+                    x-speakeasy-param-computed: false
+                  serviceProbe:
+                    description: |-
+                      ServiceProbe defines parameters for probing the service next to
+                      sidecar. When service probe is defined, Envoy will periodically health
+                      check the application next to it and report the status to the control
+                      plane. On Kubernetes, Kuma deployments rely on Kubernetes probes so
+                      this is not used.
+
+                      See https://kuma.io/docs/latest/documentation/health for more
+                      information.
+                    properties:
+                      healthyThreshold:
+                        description: |-
+                          Number of consecutive healthy checks before considering a host
+                          healthy.
+                        format: uint32
+                        type: integer
+                        x-speakeasy-param-computed: false
+                      interval:
+                        description: Interval between consecutive health checks.
+                        properties:
+                          nanos:
+                            type: integer
+                            x-speakeasy-param-computed: false
+                          seconds:
+                            type: integer
+                            x-speakeasy-param-computed: false
+                        type: object
+                        x-speakeasy-param-computed: false
+                      tcp:
+                        description: Tcp checker tries to establish tcp connection with destination
+                        properties: {}
+                        type: object
+                        x-speakeasy-param-computed: false
+                      timeout:
+                        description: Maximum time to wait for a health check response.
+                        properties:
+                          nanos:
+                            type: integer
+                            x-speakeasy-param-computed: false
+                          seconds:
+                            type: integer
+                            x-speakeasy-param-computed: false
+                        type: object
+                        x-speakeasy-param-computed: false
+                      unhealthyThreshold:
+                        description: |-
+                          Number of consecutive unhealthy checks before considering a host
+                          unhealthy.
+                        format: uint32
+                        type: integer
+                        x-speakeasy-param-computed: false
+                    type: object
+                    x-speakeasy-param-computed: false
+                  state:
+                    description: State describes the current state of the listener.
+                    oneOf:
+                      - type: string
+                      - type: integer
+                    x-speakeasy-param-computed: false
+                  tags:
+                    additionalProperties:
+                      type: string
+                    description: |-
+                      Tags associated with an application this data plane proxy is deployed
+                      next to, e.g. `kuma.io/service=web`, `version=1.0`. You can then
+                      reference these tags in policies like MeshTrafficPermission.
+                      `kuma.io/service` tag is mandatory.
+                    type: object
+                    x-speakeasy-param-computed: false
+                type: object
+              type: array
+              x-speakeasy-plan-modifiers: SupressZeroNullModifier
+              x-speakeasy-param-computed: false
+            outbound:
+              description: |-
+                Outbound describes a list of services consumed by the data plane proxy.
+                For every defined Outbound, there is a corresponding Envoy Listener.
+              items:
+                description: Outbound describes a service consumed by the data plane proxy.
+                properties:
+                  address:
+                    description: |-
+                      IP on which the consumed service will be available to this data plane
+                      proxy. On Kubernetes, it's usually ClusterIP of a Service or PodIP of a
+                      Headless Service. Defaults to 127.0.0.1
+                    type: string
+                    x-speakeasy-param-computed: false
+                  backendRef:
+                    description: |-
+                      BackendRef is a way to target MeshService.
+                      Experimental. Do not use on production yet.
+                    properties:
+                      kind:
+                        description: 'Kind is a type of the object to target. Allowed: MeshService'
+                        type: string
+                        x-speakeasy-param-computed: false
+                      labels:
+                        additionalProperties:
+                          type: string
+                        description: |-
+                          Labels to select a single object.
+                          If no object is selected then outbound is not created.
+                          If multiple objects are selected then the oldest one is used.
+                        type: object
+                        x-speakeasy-param-computed: false
+                      name:
+                        description: Name of the targeted object
+                        type: string
+                        x-speakeasy-param-computed: false
+                      port:
+                        description: Port of the targeted object. Required when kind is MeshService.
+                        type: integer
+                        x-speakeasy-param-computed: false
+                    type: object
+                    x-speakeasy-param-computed: false
+                  port:
+                    description: |-
+                      Port on which the consumed service will be available to this data plane
+                      proxy. When transparent proxying is not used, Envoy will bind to this
+                      port.
+                    type: integer
+                    x-speakeasy-param-computed: false
+                  tags:
+                    additionalProperties:
+                      type: string
+                    description: |-
+                      Tags of consumed data plane proxies.
+                      `kuma.io/service` tag is required.
+                      These tags can then be referenced in `destinations` section of policies
+                      like TrafficRoute or in `to` section in policies like MeshAccessLog. It
+                      is recommended to only use `kuma.io/service`. If you need to consume
+                      specific data plane proxy of a service (for example: `version=v2`) the
+                      better practice is to use TrafficRoute.
+                    type: object
+                    x-speakeasy-param-computed: false
+                type: object
+              type: array
+              x-speakeasy-plan-modifiers: SupressZeroNullModifier
+              x-speakeasy-param-computed: false
+            transparentProxying:
+              description: |-
+                TransparentProxying describes the configuration for transparent proxying.
+                It is used by default on Kubernetes.
+              properties:
+                directAccessServices:
+                  description: |-
+                    List of services that will be accessed directly via IP:PORT
+                    Use `*` to indicate direct access to every service in the Mesh.
+                    Using `*` to directly access every service is a resource-intensive
+                    operation, use it only if needed.
+                  items:
+                    type: string
+                  type: array
+                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
+                  x-speakeasy-param-computed: false
+                ipFamilyMode:
+                  description: The IP family mode to enable for. Can be "IPv4" or "DualStack".
+                  oneOf:
+                    - type: string
+                    - type: integer
+                  x-speakeasy-param-computed: false
+                reachableBackends:
+                  description: |-
+                    Reachable backend via transparent proxy when running with
+                    MeshExternalService, MeshService and MeshMultiZoneService. Setting an
+                    explicit list of refs can dramatically improve the performance of the
+                    mesh. If not specified, all services in the mesh are reachable.
+                  properties:
+                    refs:
+                      items:
+                        properties:
+                          kind:
+                            description: "Type of the backend: MeshService or MeshExternalService\n\n\t+required"
+                            type: string
+                            x-speakeasy-param-computed: false
+                          labels:
+                            additionalProperties:
+                              type: string
+                            description: "Labels used to select backends\n\n\t+optional"
+                            type: object
+                            x-speakeasy-param-computed: false
+                          name:
+                            description: "Name of the backend.\n\n\t+optional"
+                            type: string
+                            x-speakeasy-param-computed: false
+                          namespace:
+                            description: "Namespace of the backend. Might be empty\n\n\t+optional"
+                            type: string
+                            x-speakeasy-param-computed: false
+                          port:
+                            description: "Port of the backend.\n\n\t+optional"
+                            format: uint32
+                            type: integer
+                            x-speakeasy-param-computed: false
+                        type: object
+                      type: array
+                      x-speakeasy-plan-modifiers: SupressZeroNullModifier
+                      x-speakeasy-param-computed: false
+                  type: object
+                  x-speakeasy-param-computed: false
+                reachableServices:
+                  description: |-
+                    List of reachable services (represented by the value of
+                    `kuma.io/service`) via transparent proxying. Setting an explicit list
+                    can dramatically improve the performance of the mesh. If not specified,
+                    all services in the mesh are reachable.
+                  items:
+                    type: string
+                  type: array
+                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
+                  x-speakeasy-param-computed: false
+                redirectPortInbound:
+                  description: Port on which all inbound traffic is being transparently redirected.
+                  type: integer
+                  x-speakeasy-param-computed: false
+                redirectPortOutbound:
+                  description: Port on which all outbound traffic is being transparently redirected.
+                  type: integer
+                  x-speakeasy-param-computed: false
+              type: object
+              x-speakeasy-param-computed: false
+          type: object
+          x-speakeasy-param-computed: false
+        probes:
+          description: |-
+            Probes describe a list of endpoints that will be exposed without mTLS.
+            This is useful to expose the health endpoints of the application so the
+            orchestration system (e.g. Kubernetes) can still health check the
+            application.
+
+            See
+            https://kuma.io/docs/latest/policies/service-health-probes/#virtual-probes
+            for more information.
+            Deprecated: this feature will be removed for Universal; on Kubernetes, it's
+            not needed anymore.
+          properties:
+            endpoints:
+              description: List of endpoints to expose without mTLS.
+              items:
+                properties:
+                  inboundPath:
+                    description: |-
+                      Inbound path is a path of the application from which we expose the
+                      endpoint. It is recommended to be as specific as possible.
+                    type: string
+                    x-speakeasy-param-computed: false
+                  inboundPort:
+                    description: |-
+                      Inbound port is a port of the application from which we expose the
+                      endpoint.
+                    type: integer
+                    x-speakeasy-param-computed: false
+                  path:
+                    description: Path is a path on which we expose inbound path on the probes port.
+                    type: string
+                    x-speakeasy-param-computed: false
+                type: object
+              type: array
+              x-speakeasy-plan-modifiers: SupressZeroNullModifier
+              x-speakeasy-param-computed: false
+            port:
+              description: |-
+                Port on which the probe endpoints will be exposed. This cannot overlap
+                with any other ports.
+              type: integer
+              x-speakeasy-param-computed: false
+          type: object
+          x-speakeasy-param-computed: false
+        type:
+          type: string
+          x-speakeasy-param-computed: false
+      required:
+        - type
+        - name
+        - mesh
+      type: object
+    DataplaneCreateOrUpdateSuccessResponse:
+      type: object
+      properties:
+        warnings:
+          type: array
+          readOnly: true
+          description: |
+            warnings is a list of warning messages to return to the requesting Kuma API clients.
+            Warning messages describe a problem the client making the API request should correct or be aware of.
+          items:
+            type: string
+          x-speakeasy-plan-modifiers: SupressZeroNullModifier
+          x-speakeasy-param-computed: false
+          x-speakeasy-param-suppress-computed-diff: true
+    DataplaneDeleteSuccessResponse:
+      type: object
+      properties: {}
     FileLoggingBackendConfig:
       properties:
         path:
@@ -13634,6 +15177,11 @@ components:
             type: string
           type: object
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
+            valueType: kumalabels.KumaLabelsMapValue
         logging:
           description: |-
             Logging settings.
@@ -13942,104 +15490,6 @@ components:
           type: string
           x-speakeasy-param-computed: false
       type: object
-    PrometheusMetricsBackendConfig:
-      properties:
-        aggregate:
-          description: |-
-            Map with the configuration of applications which metrics are going to be
-            scrapped by kuma-dp.
-          items:
-            description: PrometheusAggregateMetricsConfig defines endpoints that should be scrapped by kuma-dp for prometheus metrics.
-            properties:
-              address:
-                description: Address on which a service expose HTTP endpoint with Prometheus metrics.
-                type: string
-                x-speakeasy-param-computed: false
-              enabled:
-                description: |-
-                  If false then the application won't be scrapped. If nil, then it is treated
-                  as true and kuma-dp scrapes metrics from the service.
-                type: boolean
-                x-speakeasy-param-computed: false
-              name:
-                description: Name which identify given configuration.
-                type: string
-                x-speakeasy-param-computed: false
-              path:
-                description: Path on which a service expose HTTP endpoint with Prometheus metrics.
-                type: string
-                x-speakeasy-param-computed: false
-              port:
-                description: Port on which a service expose HTTP endpoint with Prometheus metrics.
-                type: integer
-                x-speakeasy-param-computed: false
-            type: object
-            x-speakeasy-param-computed: false
-          type: array
-          default: []
-          x-speakeasy-param-computed: false
-        envoy:
-          description: Configuration of Envoy's metrics.
-          properties:
-            filterRegex:
-              description: |-
-                FilterRegex value that is going to be passed to Envoy for filtering
-                Envoy metrics.
-              type: string
-              x-speakeasy-param-computed: false
-            usedOnly:
-              description: |-
-                If true then return metrics that Envoy has updated (counters incremented
-                at least once, gauges changed at least once, and histograms added to at
-                least once). If nil, then it is treated as false.
-              type: boolean
-              x-speakeasy-param-computed: false
-          type: object
-          x-speakeasy-param-computed: false
-        path:
-          description: |-
-            Path on which a dataplane should expose HTTP endpoint with Prometheus
-            metrics.
-          type: string
-          x-speakeasy-param-computed: false
-        port:
-          description: |-
-            Port on which a dataplane should expose HTTP endpoint with Prometheus
-            metrics.
-          type: integer
-          x-speakeasy-param-computed: false
-        skipMTLS:
-          description: |-
-            If true then endpoints for scraping metrics won't require mTLS even if mTLS
-            is enabled in Mesh. If nil, then it is treated as false.
-          type: boolean
-          x-speakeasy-param-computed: false
-        tags:
-          additionalProperties:
-            type: string
-          description: |-
-            Tags associated with an application this dataplane is deployed next to,
-            e.g. service=web, version=1.0.
-            `service` tag is mandatory.
-          type: object
-          x-speakeasy-param-computed: false
-        tls:
-          description: Configuration of TLS for prometheus listener.
-          properties:
-            mode:
-              description: |-
-                mode defines how configured is the TLS for Prometheus.
-                Supported values, delegated, disabled, activeMTLSBackend. Default to
-                `activeMTLSBackend`.
-              oneOf:
-                - type: string
-                - type: integer
-              x-speakeasy-param-computed: false
-          type: object
-          x-speakeasy-plan-modifiers: SupressZeroNullModifier
-          x-speakeasy-param-computed: false
-          default: {}
-      type: object
     ProvidedCertificateAuthorityConfig:
       properties:
         cert:
@@ -14122,7 +15572,7 @@ components:
                   resources:
                     description: Resources is used to specify listener-specific resource settings.
                     properties:
-                      connection_limit:
+                      connectionLimit:
                         type: integer
                         x-speakeasy-param-computed: false
                     type: object
@@ -14202,6 +15652,11 @@ components:
             type: string
           type: object
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
+            valueType: kumalabels.KumaLabelsMapValue
         mesh:
           type: string
           x-speakeasy-param-force-new: true
@@ -14386,6 +15841,11 @@ components:
           description: The labels to help identity resources
           type: object
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
+            valueType: kumalabels.KumaLabelsMapValue
         spec:
           description: Spec is the specification of the Kuma MeshExternalService resource.
           properties:
@@ -14765,6 +16225,11 @@ components:
           description: The labels to help identity resources
           type: object
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
+            valueType: kumalabels.KumaLabelsMapValue
         spec:
           description: Spec is the specification of the Kuma MeshMultiZoneService resource.
           properties:
@@ -15010,6 +16475,11 @@ components:
           description: The labels to help identity resources
           type: object
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
+            valueType: kumalabels.KumaLabelsMapValue
         spec:
           description: Spec is the specification of the Kuma MeshService resource.
           properties:
@@ -15435,6 +16905,11 @@ components:
           description: The labels to help identity resources
           type: object
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
+            valueType: kumalabels.KumaLabelsMapValue
         spec:
           description: Spec is the specification of the Kuma MeshGlobalRateLimit resource.
           properties:
@@ -16109,6 +17584,11 @@ components:
           description: The labels to help identity resources
           type: object
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
+            valueType: kumalabels.KumaLabelsMapValue
         spec:
           description: Spec is the specification of the Kuma MeshOPA resource.
           properties:
@@ -16616,6 +18096,28 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/DataplaneXDSConfig'
+    GetDataplaneOverviewResponse:
+      description: A response containing the overview of a dataplane.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DataplaneOverviewWithMeta'
+    GetDataplaneOverviewListResponse:
+      description: A response containing the overview of a dataplane.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              total:
+                type: integer
+                example: 200
+              next:
+                type: string
+              items:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DataplaneOverviewWithMeta'
     InspectRulesResponse:
       description: A response containing policies that match a resource
       content:
@@ -16993,6 +18495,29 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/MeshTrafficPermissionItem'
+              total:
+                type: number
+                description: The total number of entities
+              next:
+                type: string
+                description: URL to the next page
+    DataplaneItem:
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DataplaneItem'
+    DataplaneList:
+      description: List
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DataplaneItem'
               total:
                 type: number
                 description: The total number of entities

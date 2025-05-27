@@ -2,6 +2,16 @@
 
 package types
 
+import (
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
+
 type Networking struct {
-	Outbound *Outbound `tfsdk:"outbound"`
+	Address             types.String           `tfsdk:"address"`
+	Admin               *Admin                 `tfsdk:"admin"`
+	AdvertisedAddress   types.String           `tfsdk:"advertised_address"`
+	Gateway             *Gateway               `tfsdk:"gateway"`
+	Inbound             []DataplaneItemInbound `tfsdk:"inbound"`
+	Outbound            []Outbound             `tfsdk:"outbound"`
+	TransparentProxying *TransparentProxying   `tfsdk:"transparent_proxying"`
 }

@@ -4,6 +4,7 @@ package provider
 
 import (
 	"context"
+	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
@@ -34,12 +35,11 @@ func (r *MeshMultiZoneServiceDataSourceModel) RefreshFromSharedMeshMultiZoneServ
 
 	if resp != nil {
 		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
-		if len(resp.Labels) > 0 {
-			r.Labels = make(map[string]types.String, len(resp.Labels))
-			for key, value := range resp.Labels {
-				r.Labels[key] = types.StringValue(value)
-			}
-		}
+		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
+		diags.Append(labelsDiags...)
+		labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
+		diags.Append(labelsDiags...)
+		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
 		r.Mesh = types.StringPointerValue(resp.Mesh)
 		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
@@ -62,8 +62,8 @@ func (r *MeshMultiZoneServiceDataSourceModel) RefreshFromSharedMeshMultiZoneServ
 		}
 		if len(resp.Spec.Selector.MeshService.MatchLabels) > 0 {
 			r.Spec.Selector.MeshService.MatchLabels = make(map[string]types.String, len(resp.Spec.Selector.MeshService.MatchLabels))
-			for key1, value1 := range resp.Spec.Selector.MeshService.MatchLabels {
-				r.Spec.Selector.MeshService.MatchLabels[key1] = types.StringValue(value1)
+			for key, value := range resp.Spec.Selector.MeshService.MatchLabels {
+				r.Spec.Selector.MeshService.MatchLabels[key] = types.StringValue(value)
 			}
 		}
 		if resp.Status == nil {

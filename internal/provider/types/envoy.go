@@ -7,6 +7,7 @@ import (
 )
 
 type Envoy struct {
-	FilterRegex types.String `tfsdk:"filter_regex"`
-	UsedOnly    types.Bool   `tfsdk:"used_only"`
+	Build            types.String `tfsdk:"build"`
+	KumaDpCompatible types.Bool   `tfsdk:"kuma_dp_compatible"`
+	Version          types.String `tfsdk:"version"`
 }

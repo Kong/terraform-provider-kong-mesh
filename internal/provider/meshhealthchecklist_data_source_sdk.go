@@ -4,6 +4,7 @@ package provider
 
 import (
 	"context"
+	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
@@ -50,12 +51,11 @@ func (r *MeshHealthCheckListDataSourceModel) RefreshFromSharedMeshHealthCheckLis
 		for itemsCount, itemsItem := range resp.Items {
 			var items tfTypes.MeshHealthCheckItem
 			items.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(itemsItem.CreationTime))
-			if len(itemsItem.Labels) > 0 {
-				items.Labels = make(map[string]types.String, len(itemsItem.Labels))
-				for key, value := range itemsItem.Labels {
-					items.Labels[key] = types.StringValue(value)
-				}
-			}
+			labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, itemsItem.Labels)
+			diags.Append(labelsDiags...)
+			labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
+			diags.Append(labelsDiags...)
+			items.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
 			items.Mesh = types.StringPointerValue(itemsItem.Mesh)
 			items.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(itemsItem.ModificationTime))
 			items.Name = types.StringValue(itemsItem.Name)
@@ -66,8 +66,8 @@ func (r *MeshHealthCheckListDataSourceModel) RefreshFromSharedMeshHealthCheckLis
 				items.Spec.TargetRef.Kind = types.StringValue(string(itemsItem.Spec.TargetRef.Kind))
 				if len(itemsItem.Spec.TargetRef.Labels) > 0 {
 					items.Spec.TargetRef.Labels = make(map[string]types.String, len(itemsItem.Spec.TargetRef.Labels))
-					for key1, value1 := range itemsItem.Spec.TargetRef.Labels {
-						items.Spec.TargetRef.Labels[key1] = types.StringValue(value1)
+					for key, value := range itemsItem.Spec.TargetRef.Labels {
+						items.Spec.TargetRef.Labels[key] = types.StringValue(value)
 					}
 				}
 				items.Spec.TargetRef.Mesh = types.StringPointerValue(itemsItem.Spec.TargetRef.Mesh)
@@ -80,8 +80,8 @@ func (r *MeshHealthCheckListDataSourceModel) RefreshFromSharedMeshHealthCheckLis
 				items.Spec.TargetRef.SectionName = types.StringPointerValue(itemsItem.Spec.TargetRef.SectionName)
 				if len(itemsItem.Spec.TargetRef.Tags) > 0 {
 					items.Spec.TargetRef.Tags = make(map[string]types.String, len(itemsItem.Spec.TargetRef.Tags))
-					for key2, value2 := range itemsItem.Spec.TargetRef.Tags {
-						items.Spec.TargetRef.Tags[key2] = types.StringValue(value2)
+					for key1, value1 := range itemsItem.Spec.TargetRef.Tags {
+						items.Spec.TargetRef.Tags[key1] = types.StringValue(value1)
 					}
 				}
 			}
@@ -104,7 +104,7 @@ func (r *MeshHealthCheckListDataSourceModel) RefreshFromSharedMeshHealthCheckLis
 						to.Default.Grpc.ServiceName = types.StringPointerValue(toItem.Default.Grpc.ServiceName)
 					}
 					if toItem.Default.HealthyPanicThreshold != nil {
-						to.Default.HealthyPanicThreshold = &tfTypes.Mode{}
+						to.Default.HealthyPanicThreshold = &tfTypes.ConfMode{}
 						if toItem.Default.HealthyPanicThreshold.Integer != nil {
 							to.Default.HealthyPanicThreshold.Integer = types.Int64PointerValue(toItem.Default.HealthyPanicThreshold.Integer)
 						}
@@ -176,8 +176,8 @@ func (r *MeshHealthCheckListDataSourceModel) RefreshFromSharedMeshHealthCheckLis
 				to.TargetRef.Kind = types.StringValue(string(toItem.TargetRef.Kind))
 				if len(toItem.TargetRef.Labels) > 0 {
 					to.TargetRef.Labels = make(map[string]types.String, len(toItem.TargetRef.Labels))
-					for key3, value3 := range toItem.TargetRef.Labels {
-						to.TargetRef.Labels[key3] = types.StringValue(value3)
+					for key2, value2 := range toItem.TargetRef.Labels {
+						to.TargetRef.Labels[key2] = types.StringValue(value2)
 					}
 				}
 				to.TargetRef.Mesh = types.StringPointerValue(toItem.TargetRef.Mesh)
@@ -190,8 +190,8 @@ func (r *MeshHealthCheckListDataSourceModel) RefreshFromSharedMeshHealthCheckLis
 				to.TargetRef.SectionName = types.StringPointerValue(toItem.TargetRef.SectionName)
 				if len(toItem.TargetRef.Tags) > 0 {
 					to.TargetRef.Tags = make(map[string]types.String, len(toItem.TargetRef.Tags))
-					for key4, value4 := range toItem.TargetRef.Tags {
-						to.TargetRef.Tags[key4] = types.StringValue(value4)
+					for key3, value3 := range toItem.TargetRef.Tags {
+						to.TargetRef.Tags[key3] = types.StringValue(value3)
 					}
 				}
 				if toCount+1 > len(items.Spec.To) {
