@@ -39,14 +39,16 @@ func TestMesh(t *testing.T) {
 
 	t.Run("create a mesh and modify fields on it", func(t *testing.T) {
 		builder := tfbuilder.NewBuilder(tfbuilder.KongMesh, "http", "localhost", port.Int())
-		mesh := tfbuilder.NewMeshBuilder("m1", "m1")
+		mesh := tfbuilder.NewMeshBuilder("m1", "m1").
+			WithSpec(`skip_creating_initial_policies = [ "*" ]`)
 
 		resource.ParallelTest(t, tfbuilder.CreateMeshAndModifyFieldsOnIt(providerFactory, builder, mesh))
 	})
 
 	t.Run("create a policy and modify fields on it", func(t *testing.T) {
 		builder := tfbuilder.NewBuilder(tfbuilder.KongMesh, "http", "localhost", port.Int())
-		mesh := tfbuilder.NewMeshBuilder("default", "terraform-provider-kong-mesh")
+		mesh := tfbuilder.NewMeshBuilder("default", "terraform-provider-kong-mesh").
+			WithSpec(`skip_creating_initial_policies = [ "*" ]`)
 		mtp := tfbuilder.NewPolicyBuilder("mesh_traffic_permission", "allow_all", "allow-all", "MeshTrafficPermission").
 			WithMeshRef(builder.ResourceAddress("mesh", mesh.ResourceName) + ".name").
 			WithDependsOn(builder.ResourceAddress("mesh", mesh.ResourceName))
@@ -60,7 +62,8 @@ func TestMesh(t *testing.T) {
 		mtpName := "allow-all"
 
 		builder := tfbuilder.NewBuilder(tfbuilder.KongMesh, "http", "localhost", port.Int())
-		mesh := tfbuilder.NewMeshBuilder("default", meshName)
+		mesh := tfbuilder.NewMeshBuilder("default", meshName).
+			WithSpec(`skip_creating_initial_policies = [ "*" ]`)
 		mtp := tfbuilder.NewPolicyBuilder("mesh_traffic_permission", "allow_all", mtpName, "MeshTrafficPermission").
 			WithMeshRef(builder.ResourceAddress("mesh", mesh.ResourceName) + ".name").
 			WithDependsOn(builder.ResourceAddress("mesh", mesh.ResourceName))

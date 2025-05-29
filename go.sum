@@ -8,6 +8,8 @@ github.com/BurntSushi/toml v1.2.1 h1:9F2/+DoOYIOksmaJFPw1tGFy1eDnIJXg+UHjuD8lTak
 github.com/BurntSushi/toml v1.2.1/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=
 github.com/Kong/shared-speakeasy/customtypes v0.2.2 h1:GwDbzXaH1RVs2L/62EwC11EgWYzba54ZO7J6vrkoatI=
 github.com/Kong/shared-speakeasy/customtypes v0.2.2/go.mod h1:fLy23iYs9rUWZqFGbu7yQYrWL8rbCOJrLISBzqpxVhk=
+github.com/Kong/shared-speakeasy/hooks/mesh_defaults v0.0.3 h1:+wYc79YT0VlV/7BbW9tcZSIfCBGj+4twtm2bPzVj+vo=
+github.com/Kong/shared-speakeasy/hooks/mesh_defaults v0.0.3/go.mod h1:Tu9kdp+k8JF7ES5gcXBi6jHyLEOr1EAAWq8ROOipWqg=
 github.com/Kong/shared-speakeasy/planmodifiers/arbitrary_json v0.0.1 h1:S3f3RAPNv274Yd8ShkGjSTXLWS55AY1SHNKfcX8sQjU=
 github.com/Kong/shared-speakeasy/planmodifiers/arbitrary_json v0.0.1/go.mod h1:exogJpiSOmoVk8BTkYA2wlkvqhYlOP+LJpXc4CacHuU=
 github.com/Kong/shared-speakeasy/planmodifiers/suppress_zero_null v0.0.1 h1:2PxZAhqgCU0dz+qjghtay2XkNLx2F3oEuh90U/acijc=

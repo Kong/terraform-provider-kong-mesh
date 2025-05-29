@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.0
+> Released on 2025/05/29
+>
+> - Add hook that defaults `skip_creating_initial_policies`
+
 ## 0.3.0
 > Released on 2025/05/27
 >
