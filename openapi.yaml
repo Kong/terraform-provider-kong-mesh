@@ -18815,3 +18815,13 @@ components:
         title: Not Found
         instance: kong:trace:6816496025408232265
         detail: Not Found
+x-speakeasy-retries:
+  strategy: backoff
+  backoff:
+    initialInterval: 1000 # 1s
+    maxInterval: 5000 # 5s
+    maxElapsedTime: 10000 # 10s - replication shouldn't take that long
+    exponent: 1.5
+  statusCodes:
+    - 404
+  retryConnectionErrors: true
