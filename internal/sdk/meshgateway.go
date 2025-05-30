@@ -11,6 +11,7 @@ import (
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/errors"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
+	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/retry"
 	"net/http"
 )
 
@@ -28,6 +29,7 @@ func newMeshGateway(sdkConfig sdkConfiguration) *MeshGateway {
 func (s *MeshGateway) GetMeshGateway(ctx context.Context, request operations.GetMeshGatewayRequest, opts ...operations.Option) (*operations.GetMeshGatewayResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
+		operations.SupportedOptionRetries,
 		operations.SupportedOptionTimeout,
 		operations.SupportedOptionAcceptHeaderOverride,
 	}
@@ -88,32 +90,98 @@ func (s *MeshGateway) GetMeshGateway(ctx context.Context, request operations.Get
 		req.Header.Set(k, v)
 	}
 
-	req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
-	if err != nil {
-		return nil, err
+	globalRetryConfig := s.sdkConfiguration.RetryConfig
+	retryConfig := o.Retries
+	if retryConfig == nil {
+		if globalRetryConfig != nil {
+			retryConfig = globalRetryConfig
+		} else {
+			retryConfig = &retry.Config{
+				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
+					InitialInterval: 1000,
+					MaxInterval:     5000,
+					Exponent:        1.5,
+					MaxElapsedTime:  10000,
+				},
+				RetryConnectionErrors: true,
+			}
+		}
 	}
 
-	httpRes, err := s.sdkConfiguration.Client.Do(req)
-	if err != nil || httpRes == nil {
-		if err != nil {
-			err = fmt.Errorf("error sending request: %w", err)
-		} else {
-			err = fmt.Errorf("error sending request: no response")
-		}
+	var httpRes *http.Response
+	if retryConfig != nil {
+		httpRes, err = utils.Retry(ctx, utils.Retries{
+			Config: retryConfig,
+			StatusCodes: []string{
+				"404",
+			},
+		}, func() (*http.Response, error) {
+			if req.Body != nil {
+				copyBody, err := req.GetBody()
+				if err != nil {
+					return nil, err
+				}
+				req.Body = copyBody
+			}
 
-		_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
-		return nil, err
-	} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
-		_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
+			req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+			if err != nil {
+				if retry.IsPermanentError(err) || retry.IsTemporaryError(err) {
+					return nil, err
+				}
+
+				return nil, retry.Permanent(err)
+			}
+
+			httpRes, err := s.sdkConfiguration.Client.Do(req)
+			if err != nil || httpRes == nil {
+				if err != nil {
+					err = fmt.Errorf("error sending request: %w", err)
+				} else {
+					err = fmt.Errorf("error sending request: no response")
+				}
+
+				_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			}
+			return httpRes, err
+		})
+
 		if err != nil {
 			return nil, err
-		} else if _httpRes != nil {
-			httpRes = _httpRes
+		} else {
+			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
 		}
 	} else {
-		httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+		req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
 		if err != nil {
 			return nil, err
+		}
+
+		httpRes, err = s.sdkConfiguration.Client.Do(req)
+		if err != nil || httpRes == nil {
+			if err != nil {
+				err = fmt.Errorf("error sending request: %w", err)
+			} else {
+				err = fmt.Errorf("error sending request: no response")
+			}
+
+			_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			return nil, err
+		} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
+			_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
+			if err != nil {
+				return nil, err
+			} else if _httpRes != nil {
+				httpRes = _httpRes
+			}
+		} else {
+			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
@@ -182,6 +250,7 @@ func (s *MeshGateway) GetMeshGateway(ctx context.Context, request operations.Get
 func (s *MeshGateway) DeleteMeshGateway(ctx context.Context, request operations.DeleteMeshGatewayRequest, opts ...operations.Option) (*operations.DeleteMeshGatewayResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
+		operations.SupportedOptionRetries,
 		operations.SupportedOptionTimeout,
 		operations.SupportedOptionAcceptHeaderOverride,
 	}
@@ -242,32 +311,98 @@ func (s *MeshGateway) DeleteMeshGateway(ctx context.Context, request operations.
 		req.Header.Set(k, v)
 	}
 
-	req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
-	if err != nil {
-		return nil, err
+	globalRetryConfig := s.sdkConfiguration.RetryConfig
+	retryConfig := o.Retries
+	if retryConfig == nil {
+		if globalRetryConfig != nil {
+			retryConfig = globalRetryConfig
+		} else {
+			retryConfig = &retry.Config{
+				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
+					InitialInterval: 1000,
+					MaxInterval:     5000,
+					Exponent:        1.5,
+					MaxElapsedTime:  10000,
+				},
+				RetryConnectionErrors: true,
+			}
+		}
 	}
 
-	httpRes, err := s.sdkConfiguration.Client.Do(req)
-	if err != nil || httpRes == nil {
-		if err != nil {
-			err = fmt.Errorf("error sending request: %w", err)
-		} else {
-			err = fmt.Errorf("error sending request: no response")
-		}
+	var httpRes *http.Response
+	if retryConfig != nil {
+		httpRes, err = utils.Retry(ctx, utils.Retries{
+			Config: retryConfig,
+			StatusCodes: []string{
+				"404",
+			},
+		}, func() (*http.Response, error) {
+			if req.Body != nil {
+				copyBody, err := req.GetBody()
+				if err != nil {
+					return nil, err
+				}
+				req.Body = copyBody
+			}
 
-		_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
-		return nil, err
-	} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
-		_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
+			req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+			if err != nil {
+				if retry.IsPermanentError(err) || retry.IsTemporaryError(err) {
+					return nil, err
+				}
+
+				return nil, retry.Permanent(err)
+			}
+
+			httpRes, err := s.sdkConfiguration.Client.Do(req)
+			if err != nil || httpRes == nil {
+				if err != nil {
+					err = fmt.Errorf("error sending request: %w", err)
+				} else {
+					err = fmt.Errorf("error sending request: no response")
+				}
+
+				_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			}
+			return httpRes, err
+		})
+
 		if err != nil {
 			return nil, err
-		} else if _httpRes != nil {
-			httpRes = _httpRes
+		} else {
+			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
 		}
 	} else {
-		httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+		req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
 		if err != nil {
 			return nil, err
+		}
+
+		httpRes, err = s.sdkConfiguration.Client.Do(req)
+		if err != nil || httpRes == nil {
+			if err != nil {
+				err = fmt.Errorf("error sending request: %w", err)
+			} else {
+				err = fmt.Errorf("error sending request: no response")
+			}
+
+			_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			return nil, err
+		} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
+			_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
+			if err != nil {
+				return nil, err
+			} else if _httpRes != nil {
+				httpRes = _httpRes
+			}
+		} else {
+			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
@@ -336,6 +471,7 @@ func (s *MeshGateway) DeleteMeshGateway(ctx context.Context, request operations.
 func (s *MeshGateway) CreateMeshGateway(ctx context.Context, request operations.CreateMeshGatewayRequest, opts ...operations.Option) (*operations.CreateMeshGatewayResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
+		operations.SupportedOptionRetries,
 		operations.SupportedOptionTimeout,
 	}
 
@@ -397,32 +533,98 @@ func (s *MeshGateway) CreateMeshGateway(ctx context.Context, request operations.
 		req.Header.Set(k, v)
 	}
 
-	req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
-	if err != nil {
-		return nil, err
+	globalRetryConfig := s.sdkConfiguration.RetryConfig
+	retryConfig := o.Retries
+	if retryConfig == nil {
+		if globalRetryConfig != nil {
+			retryConfig = globalRetryConfig
+		} else {
+			retryConfig = &retry.Config{
+				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
+					InitialInterval: 1000,
+					MaxInterval:     5000,
+					Exponent:        1.5,
+					MaxElapsedTime:  10000,
+				},
+				RetryConnectionErrors: true,
+			}
+		}
 	}
 
-	httpRes, err := s.sdkConfiguration.Client.Do(req)
-	if err != nil || httpRes == nil {
-		if err != nil {
-			err = fmt.Errorf("error sending request: %w", err)
-		} else {
-			err = fmt.Errorf("error sending request: no response")
-		}
+	var httpRes *http.Response
+	if retryConfig != nil {
+		httpRes, err = utils.Retry(ctx, utils.Retries{
+			Config: retryConfig,
+			StatusCodes: []string{
+				"404",
+			},
+		}, func() (*http.Response, error) {
+			if req.Body != nil {
+				copyBody, err := req.GetBody()
+				if err != nil {
+					return nil, err
+				}
+				req.Body = copyBody
+			}
 
-		_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
-		return nil, err
-	} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
-		_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
+			req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+			if err != nil {
+				if retry.IsPermanentError(err) || retry.IsTemporaryError(err) {
+					return nil, err
+				}
+
+				return nil, retry.Permanent(err)
+			}
+
+			httpRes, err := s.sdkConfiguration.Client.Do(req)
+			if err != nil || httpRes == nil {
+				if err != nil {
+					err = fmt.Errorf("error sending request: %w", err)
+				} else {
+					err = fmt.Errorf("error sending request: no response")
+				}
+
+				_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			}
+			return httpRes, err
+		})
+
 		if err != nil {
 			return nil, err
-		} else if _httpRes != nil {
-			httpRes = _httpRes
+		} else {
+			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
 		}
 	} else {
-		httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+		req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
 		if err != nil {
 			return nil, err
+		}
+
+		httpRes, err = s.sdkConfiguration.Client.Do(req)
+		if err != nil || httpRes == nil {
+			if err != nil {
+				err = fmt.Errorf("error sending request: %w", err)
+			} else {
+				err = fmt.Errorf("error sending request: no response")
+			}
+
+			_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			return nil, err
+		} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
+			_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
+			if err != nil {
+				return nil, err
+			} else if _httpRes != nil {
+				httpRes = _httpRes
+			}
+		} else {
+			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
@@ -470,6 +672,7 @@ func (s *MeshGateway) CreateMeshGateway(ctx context.Context, request operations.
 func (s *MeshGateway) UpdateMeshGateway(ctx context.Context, request operations.UpdateMeshGatewayRequest, opts ...operations.Option) (*operations.UpdateMeshGatewayResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
+		operations.SupportedOptionRetries,
 		operations.SupportedOptionTimeout,
 	}
 
@@ -531,32 +734,98 @@ func (s *MeshGateway) UpdateMeshGateway(ctx context.Context, request operations.
 		req.Header.Set(k, v)
 	}
 
-	req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
-	if err != nil {
-		return nil, err
+	globalRetryConfig := s.sdkConfiguration.RetryConfig
+	retryConfig := o.Retries
+	if retryConfig == nil {
+		if globalRetryConfig != nil {
+			retryConfig = globalRetryConfig
+		} else {
+			retryConfig = &retry.Config{
+				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
+					InitialInterval: 1000,
+					MaxInterval:     5000,
+					Exponent:        1.5,
+					MaxElapsedTime:  10000,
+				},
+				RetryConnectionErrors: true,
+			}
+		}
 	}
 
-	httpRes, err := s.sdkConfiguration.Client.Do(req)
-	if err != nil || httpRes == nil {
-		if err != nil {
-			err = fmt.Errorf("error sending request: %w", err)
-		} else {
-			err = fmt.Errorf("error sending request: no response")
-		}
+	var httpRes *http.Response
+	if retryConfig != nil {
+		httpRes, err = utils.Retry(ctx, utils.Retries{
+			Config: retryConfig,
+			StatusCodes: []string{
+				"404",
+			},
+		}, func() (*http.Response, error) {
+			if req.Body != nil {
+				copyBody, err := req.GetBody()
+				if err != nil {
+					return nil, err
+				}
+				req.Body = copyBody
+			}
 
-		_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
-		return nil, err
-	} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
-		_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
+			req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+			if err != nil {
+				if retry.IsPermanentError(err) || retry.IsTemporaryError(err) {
+					return nil, err
+				}
+
+				return nil, retry.Permanent(err)
+			}
+
+			httpRes, err := s.sdkConfiguration.Client.Do(req)
+			if err != nil || httpRes == nil {
+				if err != nil {
+					err = fmt.Errorf("error sending request: %w", err)
+				} else {
+					err = fmt.Errorf("error sending request: no response")
+				}
+
+				_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			}
+			return httpRes, err
+		})
+
 		if err != nil {
 			return nil, err
-		} else if _httpRes != nil {
-			httpRes = _httpRes
+		} else {
+			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
 		}
 	} else {
-		httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+		req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
 		if err != nil {
 			return nil, err
+		}
+
+		httpRes, err = s.sdkConfiguration.Client.Do(req)
+		if err != nil || httpRes == nil {
+			if err != nil {
+				err = fmt.Errorf("error sending request: %w", err)
+			} else {
+				err = fmt.Errorf("error sending request: no response")
+			}
+
+			_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			return nil, err
+		} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
+			_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
+			if err != nil {
+				return nil, err
+			} else if _httpRes != nil {
+				httpRes = _httpRes
+			}
+		} else {
+			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
@@ -604,6 +873,7 @@ func (s *MeshGateway) UpdateMeshGateway(ctx context.Context, request operations.
 func (s *MeshGateway) GetMeshGatewayList(ctx context.Context, request operations.GetMeshGatewayListRequest, opts ...operations.Option) (*operations.GetMeshGatewayListResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
+		operations.SupportedOptionRetries,
 		operations.SupportedOptionTimeout,
 	}
 
@@ -662,32 +932,98 @@ func (s *MeshGateway) GetMeshGatewayList(ctx context.Context, request operations
 		req.Header.Set(k, v)
 	}
 
-	req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
-	if err != nil {
-		return nil, err
+	globalRetryConfig := s.sdkConfiguration.RetryConfig
+	retryConfig := o.Retries
+	if retryConfig == nil {
+		if globalRetryConfig != nil {
+			retryConfig = globalRetryConfig
+		} else {
+			retryConfig = &retry.Config{
+				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
+					InitialInterval: 1000,
+					MaxInterval:     5000,
+					Exponent:        1.5,
+					MaxElapsedTime:  10000,
+				},
+				RetryConnectionErrors: true,
+			}
+		}
 	}
 
-	httpRes, err := s.sdkConfiguration.Client.Do(req)
-	if err != nil || httpRes == nil {
-		if err != nil {
-			err = fmt.Errorf("error sending request: %w", err)
-		} else {
-			err = fmt.Errorf("error sending request: no response")
-		}
+	var httpRes *http.Response
+	if retryConfig != nil {
+		httpRes, err = utils.Retry(ctx, utils.Retries{
+			Config: retryConfig,
+			StatusCodes: []string{
+				"404",
+			},
+		}, func() (*http.Response, error) {
+			if req.Body != nil {
+				copyBody, err := req.GetBody()
+				if err != nil {
+					return nil, err
+				}
+				req.Body = copyBody
+			}
 
-		_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
-		return nil, err
-	} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
-		_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
+			req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+			if err != nil {
+				if retry.IsPermanentError(err) || retry.IsTemporaryError(err) {
+					return nil, err
+				}
+
+				return nil, retry.Permanent(err)
+			}
+
+			httpRes, err := s.sdkConfiguration.Client.Do(req)
+			if err != nil || httpRes == nil {
+				if err != nil {
+					err = fmt.Errorf("error sending request: %w", err)
+				} else {
+					err = fmt.Errorf("error sending request: no response")
+				}
+
+				_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			}
+			return httpRes, err
+		})
+
 		if err != nil {
 			return nil, err
-		} else if _httpRes != nil {
-			httpRes = _httpRes
+		} else {
+			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
 		}
 	} else {
-		httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+		req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
 		if err != nil {
 			return nil, err
+		}
+
+		httpRes, err = s.sdkConfiguration.Client.Do(req)
+		if err != nil || httpRes == nil {
+			if err != nil {
+				err = fmt.Errorf("error sending request: %w", err)
+			} else {
+				err = fmt.Errorf("error sending request: no response")
+			}
+
+			_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			return nil, err
+		} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
+			_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
+			if err != nil {
+				return nil, err
+			} else if _httpRes != nil {
+				httpRes = _httpRes
+			}
+		} else {
+			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 

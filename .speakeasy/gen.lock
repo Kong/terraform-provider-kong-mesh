@@ -1,7 +1,7 @@
 lockVersion: 2.0.0
 id: 322c4806-8b53-493c-a05f-50d4d113c747
 management:
-  docChecksum: 2aed52df07887506e7dbabcf82555cf3
+  docChecksum: 4358d9234d568a40cb460a620ef72a46
   docVersion: 2.0.0
   speakeasyVersion: 1.551.0
   generationVersion: 2.610.0
@@ -16,6 +16,7 @@ features:
     globalServerURLs: 2.82.2
     inputOutputModels: 2.83.0
     nullables: 0.0.0
+    retries: 2.81.2
     unions: 2.81.17
 generatedFiles:
   - .gitattributes
@@ -552,6 +553,7 @@ generatedFiles:
   - internal/provider/utils.go
   - internal/sdk/.gitattributes
   - internal/sdk/dataplane.go
+  - internal/sdk/docs/models/operations/option.md
   - internal/sdk/globalinsight.go
   - internal/sdk/hostnamegenerator.go
   - internal/sdk/inspect.go
