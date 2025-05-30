@@ -84,6 +84,24 @@ func (r *MeshHostnameGeneratorResource) Schema(ctx context.Context, req resource
 			"spec": schema.SingleNestedAttribute{
 				Required: true,
 				Attributes: map[string]schema.Attribute{
+					"extension": schema.SingleNestedAttribute{
+						Optional: true,
+						Attributes: map[string]schema.Attribute{
+							"config": schema.StringAttribute{
+								Computed:    true,
+								Optional:    true,
+								Description: `Config freeform configuration for the extension. Parsed as JSON.`,
+								Validators: []validator.String{
+									validators.IsValidJSON(),
+								},
+							},
+							"type": schema.StringAttribute{
+								Required:    true,
+								Description: `Type of the extension.`,
+							},
+						},
+						Description: `Extension struct for a plugin configuration`,
+					},
 					"selector": schema.SingleNestedAttribute{
 						Optional: true,
 						Attributes: map[string]schema.Attribute{

@@ -54,7 +54,7 @@ func (s *MeshProxyPatch) GetMeshProxyPatch(ctx context.Context, request operatio
 		Context:        ctx,
 		OperationID:    "getMeshProxyPatch",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -79,6 +79,10 @@ func (s *MeshProxyPatch) GetMeshProxyPatch(ctx context.Context, request operatio
 	}
 
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
 
 	for k, v := range o.SetHeaders {
 		req.Header.Set(k, v)
@@ -204,7 +208,7 @@ func (s *MeshProxyPatch) DeleteMeshProxyPatch(ctx context.Context, request opera
 		Context:        ctx,
 		OperationID:    "deleteMeshProxyPatch",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -229,6 +233,10 @@ func (s *MeshProxyPatch) DeleteMeshProxyPatch(ctx context.Context, request opera
 	}
 
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
 
 	for k, v := range o.SetHeaders {
 		req.Header.Set(k, v)
@@ -353,7 +361,7 @@ func (s *MeshProxyPatch) CreateMeshProxyPatch(ctx context.Context, request opera
 		Context:        ctx,
 		OperationID:    "createMeshProxyPatch",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "MeshProxyPatchItem", "json", `request:"mediaType=application/json"`)
 	if err != nil {
@@ -379,6 +387,10 @@ func (s *MeshProxyPatch) CreateMeshProxyPatch(ctx context.Context, request opera
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 	if reqContentType != "" {
 		req.Header.Set("Content-Type", reqContentType)
+	}
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
 	}
 
 	for k, v := range o.SetHeaders {
@@ -483,7 +495,7 @@ func (s *MeshProxyPatch) UpdateMeshProxyPatch(ctx context.Context, request opera
 		Context:        ctx,
 		OperationID:    "updateMeshProxyPatch",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "MeshProxyPatchItem", "json", `request:"mediaType=application/json"`)
 	if err != nil {
@@ -509,6 +521,10 @@ func (s *MeshProxyPatch) UpdateMeshProxyPatch(ctx context.Context, request opera
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 	if reqContentType != "" {
 		req.Header.Set("Content-Type", reqContentType)
+	}
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
 	}
 
 	for k, v := range o.SetHeaders {
@@ -613,7 +629,7 @@ func (s *MeshProxyPatch) GetMeshProxyPatchList(ctx context.Context, request oper
 		Context:        ctx,
 		OperationID:    "getMeshProxyPatchList",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -636,6 +652,10 @@ func (s *MeshProxyPatch) GetMeshProxyPatchList(ctx context.Context, request oper
 
 	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
 		return nil, fmt.Errorf("error populating query params: %w", err)
+	}
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
 	}
 
 	for k, v := range o.SetHeaders {

@@ -3,6 +3,6 @@
 package types
 
 type DpCert struct {
-	RequestTimeout *Interval `tfsdk:"request_timeout"`
-	Rotation       *Rotation `tfsdk:"rotation"`
+	RequestTimeout *RequestTimeout `tfsdk:"request_timeout"`
+	Rotation       *Rotation       `tfsdk:"rotation"`
 }

@@ -55,7 +55,7 @@ func (s *Mesh) GetMesh(ctx context.Context, request operations.GetMeshRequest, o
 		Context:        ctx,
 		OperationID:    "getMesh",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -80,6 +80,10 @@ func (s *Mesh) GetMesh(ctx context.Context, request operations.GetMeshRequest, o
 	}
 
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
 
 	for k, v := range o.SetHeaders {
 		req.Header.Set(k, v)
@@ -204,7 +208,7 @@ func (s *Mesh) PutMesh(ctx context.Context, request operations.PutMeshRequest, o
 		Context:        ctx,
 		OperationID:    "putMesh",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "MeshItem", "json", `request:"mediaType=application/json"`)
 	if err != nil {
@@ -230,6 +234,10 @@ func (s *Mesh) PutMesh(ctx context.Context, request operations.PutMeshRequest, o
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 	if reqContentType != "" {
 		req.Header.Set("Content-Type", reqContentType)
+	}
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
 	}
 
 	for k, v := range o.SetHeaders {
@@ -337,7 +345,7 @@ func (s *Mesh) DeleteMesh(ctx context.Context, request operations.DeleteMeshRequ
 		Context:        ctx,
 		OperationID:    "deleteMesh",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -362,6 +370,10 @@ func (s *Mesh) DeleteMesh(ctx context.Context, request operations.DeleteMeshRequ
 	}
 
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
 
 	for k, v := range o.SetHeaders {
 		req.Header.Set(k, v)
@@ -486,7 +498,7 @@ func (s *Mesh) GetMeshList(ctx context.Context, request operations.GetMeshListRe
 		Context:        ctx,
 		OperationID:    "getMeshList",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -509,6 +521,10 @@ func (s *Mesh) GetMeshList(ctx context.Context, request operations.GetMeshListRe
 
 	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
 		return nil, fmt.Errorf("error populating query params: %w", err)
+	}
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
 	}
 
 	for k, v := range o.SetHeaders {

@@ -44,7 +44,7 @@ func (r *MeshExternalServiceResourceModel) ToSharedMeshExternalServiceItemInput(
 			Port:    port,
 		})
 	}
-	var extension *shared.Extension
+	var extension *shared.MeshExternalServiceItemExtension
 	if r.Spec.Extension != nil {
 		var config interface{}
 		if !r.Spec.Extension.Config.IsUnknown() && !r.Spec.Extension.Config.IsNull() {
@@ -53,7 +53,7 @@ func (r *MeshExternalServiceResourceModel) ToSharedMeshExternalServiceItemInput(
 		var typeVar1 string
 		typeVar1 = r.Spec.Extension.Type.ValueString()
 
-		extension = &shared.Extension{
+		extension = &shared.MeshExternalServiceItemExtension{
 			Config: config,
 			Type:   typeVar1,
 		}
@@ -380,7 +380,7 @@ func (r *MeshExternalServiceResourceModel) RefreshFromSharedMeshExternalServiceI
 		if resp.Spec.Extension == nil {
 			r.Spec.Extension = nil
 		} else {
-			r.Spec.Extension = &tfTypes.Extension{}
+			r.Spec.Extension = &tfTypes.MeshExternalServiceItemExtension{}
 			if resp.Spec.Extension.Config == nil {
 				r.Spec.Extension.Config = types.StringNull()
 			} else {

@@ -54,7 +54,7 @@ func (s *MeshTrafficPermission) GetMeshTrafficPermission(ctx context.Context, re
 		Context:        ctx,
 		OperationID:    "getMeshTrafficPermission",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -79,6 +79,10 @@ func (s *MeshTrafficPermission) GetMeshTrafficPermission(ctx context.Context, re
 	}
 
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
 
 	for k, v := range o.SetHeaders {
 		req.Header.Set(k, v)
@@ -204,7 +208,7 @@ func (s *MeshTrafficPermission) DeleteMeshTrafficPermission(ctx context.Context,
 		Context:        ctx,
 		OperationID:    "deleteMeshTrafficPermission",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -229,6 +233,10 @@ func (s *MeshTrafficPermission) DeleteMeshTrafficPermission(ctx context.Context,
 	}
 
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
 
 	for k, v := range o.SetHeaders {
 		req.Header.Set(k, v)
@@ -353,7 +361,7 @@ func (s *MeshTrafficPermission) CreateMeshTrafficPermission(ctx context.Context,
 		Context:        ctx,
 		OperationID:    "createMeshTrafficPermission",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "MeshTrafficPermissionItem", "json", `request:"mediaType=application/json"`)
 	if err != nil {
@@ -379,6 +387,10 @@ func (s *MeshTrafficPermission) CreateMeshTrafficPermission(ctx context.Context,
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 	if reqContentType != "" {
 		req.Header.Set("Content-Type", reqContentType)
+	}
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
 	}
 
 	for k, v := range o.SetHeaders {
@@ -483,7 +495,7 @@ func (s *MeshTrafficPermission) UpdateMeshTrafficPermission(ctx context.Context,
 		Context:        ctx,
 		OperationID:    "updateMeshTrafficPermission",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "MeshTrafficPermissionItem", "json", `request:"mediaType=application/json"`)
 	if err != nil {
@@ -509,6 +521,10 @@ func (s *MeshTrafficPermission) UpdateMeshTrafficPermission(ctx context.Context,
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 	if reqContentType != "" {
 		req.Header.Set("Content-Type", reqContentType)
+	}
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
 	}
 
 	for k, v := range o.SetHeaders {
@@ -613,7 +629,7 @@ func (s *MeshTrafficPermission) GetMeshTrafficPermissionList(ctx context.Context
 		Context:        ctx,
 		OperationID:    "getMeshTrafficPermissionList",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -636,6 +652,10 @@ func (s *MeshTrafficPermission) GetMeshTrafficPermissionList(ctx context.Context
 
 	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
 		return nil, fmt.Errorf("error populating query params: %w", err)
+	}
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
 	}
 
 	for k, v := range o.SetHeaders {

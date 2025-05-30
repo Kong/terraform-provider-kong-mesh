@@ -54,7 +54,7 @@ func (s *MeshHealthCheck) GetMeshHealthCheck(ctx context.Context, request operat
 		Context:        ctx,
 		OperationID:    "getMeshHealthCheck",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -79,6 +79,10 @@ func (s *MeshHealthCheck) GetMeshHealthCheck(ctx context.Context, request operat
 	}
 
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
 
 	for k, v := range o.SetHeaders {
 		req.Header.Set(k, v)
@@ -204,7 +208,7 @@ func (s *MeshHealthCheck) DeleteMeshHealthCheck(ctx context.Context, request ope
 		Context:        ctx,
 		OperationID:    "deleteMeshHealthCheck",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -229,6 +233,10 @@ func (s *MeshHealthCheck) DeleteMeshHealthCheck(ctx context.Context, request ope
 	}
 
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
 
 	for k, v := range o.SetHeaders {
 		req.Header.Set(k, v)
@@ -353,7 +361,7 @@ func (s *MeshHealthCheck) CreateMeshHealthCheck(ctx context.Context, request ope
 		Context:        ctx,
 		OperationID:    "createMeshHealthCheck",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "MeshHealthCheckItem", "json", `request:"mediaType=application/json"`)
 	if err != nil {
@@ -379,6 +387,10 @@ func (s *MeshHealthCheck) CreateMeshHealthCheck(ctx context.Context, request ope
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 	if reqContentType != "" {
 		req.Header.Set("Content-Type", reqContentType)
+	}
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
 	}
 
 	for k, v := range o.SetHeaders {
@@ -483,7 +495,7 @@ func (s *MeshHealthCheck) UpdateMeshHealthCheck(ctx context.Context, request ope
 		Context:        ctx,
 		OperationID:    "updateMeshHealthCheck",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "MeshHealthCheckItem", "json", `request:"mediaType=application/json"`)
 	if err != nil {
@@ -509,6 +521,10 @@ func (s *MeshHealthCheck) UpdateMeshHealthCheck(ctx context.Context, request ope
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 	if reqContentType != "" {
 		req.Header.Set("Content-Type", reqContentType)
+	}
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
 	}
 
 	for k, v := range o.SetHeaders {
@@ -613,7 +629,7 @@ func (s *MeshHealthCheck) GetMeshHealthCheckList(ctx context.Context, request op
 		Context:        ctx,
 		OperationID:    "getMeshHealthCheckList",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -636,6 +652,10 @@ func (s *MeshHealthCheck) GetMeshHealthCheckList(ctx context.Context, request op
 
 	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
 		return nil, fmt.Errorf("error populating query params: %w", err)
+	}
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
 	}
 
 	for k, v := range o.SetHeaders {

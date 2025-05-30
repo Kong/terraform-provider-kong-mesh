@@ -56,7 +56,7 @@ func (s *GlobalInsight) GetGlobalInsight(ctx context.Context, opts ...operations
 		Context:        ctx,
 		OperationID:    "get-global-insight",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -81,6 +81,10 @@ func (s *GlobalInsight) GetGlobalInsight(ctx context.Context, opts ...operations
 	}
 
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
 
 	for k, v := range o.SetHeaders {
 		req.Header.Set(k, v)

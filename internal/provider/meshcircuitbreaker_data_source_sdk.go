@@ -99,7 +99,7 @@ func (r *MeshCircuitBreakerDataSourceModel) RefreshFromSharedMeshCircuitBreakerI
 							from.Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(fromItem.Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts))
 							from.Default.OutlierDetection.Detectors.SuccessRate.RequestVolume = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(fromItem.Default.OutlierDetection.Detectors.SuccessRate.RequestVolume))
 							if fromItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor != nil {
-								from.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor = &tfTypes.ConfMode{}
+								from.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor = &tfTypes.Mode{}
 								if fromItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer != nil {
 									from.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer = types.Int64PointerValue(fromItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer)
 								}
@@ -117,7 +117,7 @@ func (r *MeshCircuitBreakerDataSourceModel) RefreshFromSharedMeshCircuitBreakerI
 					}
 					from.Default.OutlierDetection.Disabled = types.BoolPointerValue(fromItem.Default.OutlierDetection.Disabled)
 					if fromItem.Default.OutlierDetection.HealthyPanicThreshold != nil {
-						from.Default.OutlierDetection.HealthyPanicThreshold = &tfTypes.ConfMode{}
+						from.Default.OutlierDetection.HealthyPanicThreshold = &tfTypes.Mode{}
 						if fromItem.Default.OutlierDetection.HealthyPanicThreshold.Integer != nil {
 							from.Default.OutlierDetection.HealthyPanicThreshold.Integer = types.Int64PointerValue(fromItem.Default.OutlierDetection.HealthyPanicThreshold.Integer)
 						}
@@ -214,7 +214,7 @@ func (r *MeshCircuitBreakerDataSourceModel) RefreshFromSharedMeshCircuitBreakerI
 							rules.Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(rulesItem.Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts))
 							rules.Default.OutlierDetection.Detectors.SuccessRate.RequestVolume = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(rulesItem.Default.OutlierDetection.Detectors.SuccessRate.RequestVolume))
 							if rulesItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor != nil {
-								rules.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor = &tfTypes.ConfMode{}
+								rules.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor = &tfTypes.Mode{}
 								if rulesItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer != nil {
 									rules.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer = types.Int64PointerValue(rulesItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer)
 								}
@@ -232,7 +232,7 @@ func (r *MeshCircuitBreakerDataSourceModel) RefreshFromSharedMeshCircuitBreakerI
 					}
 					rules.Default.OutlierDetection.Disabled = types.BoolPointerValue(rulesItem.Default.OutlierDetection.Disabled)
 					if rulesItem.Default.OutlierDetection.HealthyPanicThreshold != nil {
-						rules.Default.OutlierDetection.HealthyPanicThreshold = &tfTypes.ConfMode{}
+						rules.Default.OutlierDetection.HealthyPanicThreshold = &tfTypes.Mode{}
 						if rulesItem.Default.OutlierDetection.HealthyPanicThreshold.Integer != nil {
 							rules.Default.OutlierDetection.HealthyPanicThreshold.Integer = types.Int64PointerValue(rulesItem.Default.OutlierDetection.HealthyPanicThreshold.Integer)
 						}
@@ -333,7 +333,7 @@ func (r *MeshCircuitBreakerDataSourceModel) RefreshFromSharedMeshCircuitBreakerI
 							to.Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(toItem.Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts))
 							to.Default.OutlierDetection.Detectors.SuccessRate.RequestVolume = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(toItem.Default.OutlierDetection.Detectors.SuccessRate.RequestVolume))
 							if toItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor != nil {
-								to.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor = &tfTypes.ConfMode{}
+								to.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor = &tfTypes.Mode{}
 								if toItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer != nil {
 									to.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer = types.Int64PointerValue(toItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer)
 								}
@@ -351,7 +351,7 @@ func (r *MeshCircuitBreakerDataSourceModel) RefreshFromSharedMeshCircuitBreakerI
 					}
 					to.Default.OutlierDetection.Disabled = types.BoolPointerValue(toItem.Default.OutlierDetection.Disabled)
 					if toItem.Default.OutlierDetection.HealthyPanicThreshold != nil {
-						to.Default.OutlierDetection.HealthyPanicThreshold = &tfTypes.ConfMode{}
+						to.Default.OutlierDetection.HealthyPanicThreshold = &tfTypes.Mode{}
 						if toItem.Default.OutlierDetection.HealthyPanicThreshold.Integer != nil {
 							to.Default.OutlierDetection.HealthyPanicThreshold.Integer = types.Int64PointerValue(toItem.Default.OutlierDetection.HealthyPanicThreshold.Integer)
 						}

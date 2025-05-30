@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.0
+> Released on 2025/05/30
+>
+> - Add basic auth and bearer security schemas to be able to authenticate
+
 ## 0.4.0
 > Released on 2025/05/29
 >

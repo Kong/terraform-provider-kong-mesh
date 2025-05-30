@@ -56,7 +56,7 @@ func (s *System) Index(ctx context.Context, opts ...operations.Option) (*operati
 		Context:        ctx,
 		OperationID:    "index",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -81,6 +81,10 @@ func (s *System) Index(ctx context.Context, opts ...operations.Option) (*operati
 	}
 
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
 
 	for k, v := range o.SetHeaders {
 		req.Header.Set(k, v)
@@ -228,7 +232,7 @@ func (s *System) GetResourceTypeDescription(ctx context.Context, opts ...operati
 		Context:        ctx,
 		OperationID:    "get-resource-type-description",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -253,6 +257,10 @@ func (s *System) GetResourceTypeDescription(ctx context.Context, opts ...operati
 	}
 
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
 
 	for k, v := range o.SetHeaders {
 		req.Header.Set(k, v)

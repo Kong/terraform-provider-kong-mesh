@@ -4,6 +4,7 @@ package provider
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
@@ -25,6 +26,20 @@ func (r *MeshHostnameGeneratorResourceModel) ToSharedHostnameGeneratorItemInput(
 		labelsInst = labelsValue.ValueString()
 
 		labels[labelsKey] = labelsInst
+	}
+	var extension *shared.Extension
+	if r.Spec.Extension != nil {
+		var config interface{}
+		if !r.Spec.Extension.Config.IsUnknown() && !r.Spec.Extension.Config.IsNull() {
+			_ = json.Unmarshal([]byte(r.Spec.Extension.Config.ValueString()), &config)
+		}
+		var typeVar1 string
+		typeVar1 = r.Spec.Extension.Type.ValueString()
+
+		extension = &shared.Extension{
+			Config: config,
+			Type:   typeVar1,
+		}
 	}
 	var selector *shared.Selector
 	if r.Spec.Selector != nil {
@@ -80,8 +95,9 @@ func (r *MeshHostnameGeneratorResourceModel) ToSharedHostnameGeneratorItemInput(
 		template = nil
 	}
 	spec := shared.HostnameGeneratorItemSpec{
-		Selector: selector,
-		Template: template,
+		Extension: extension,
+		Selector:  selector,
+		Template:  template,
 	}
 	out := shared.HostnameGeneratorItemInput{
 		Type:   typeVar,
@@ -187,6 +203,18 @@ func (r *MeshHostnameGeneratorResourceModel) RefreshFromSharedHostnameGeneratorI
 		}
 		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
+		if resp.Spec.Extension == nil {
+			r.Spec.Extension = nil
+		} else {
+			r.Spec.Extension = &tfTypes.MeshExternalServiceItemExtension{}
+			if resp.Spec.Extension.Config == nil {
+				r.Spec.Extension.Config = types.StringNull()
+			} else {
+				configResult, _ := json.Marshal(resp.Spec.Extension.Config)
+				r.Spec.Extension.Config = types.StringValue(string(configResult))
+			}
+			r.Spec.Extension.Type = types.StringValue(resp.Spec.Extension.Type)
+		}
 		if resp.Spec.Selector == nil {
 			r.Spec.Selector = nil
 		} else {

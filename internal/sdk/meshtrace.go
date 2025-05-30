@@ -54,7 +54,7 @@ func (s *MeshTrace) GetMeshTrace(ctx context.Context, request operations.GetMesh
 		Context:        ctx,
 		OperationID:    "getMeshTrace",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -79,6 +79,10 @@ func (s *MeshTrace) GetMeshTrace(ctx context.Context, request operations.GetMesh
 	}
 
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
 
 	for k, v := range o.SetHeaders {
 		req.Header.Set(k, v)
@@ -204,7 +208,7 @@ func (s *MeshTrace) DeleteMeshTrace(ctx context.Context, request operations.Dele
 		Context:        ctx,
 		OperationID:    "deleteMeshTrace",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -229,6 +233,10 @@ func (s *MeshTrace) DeleteMeshTrace(ctx context.Context, request operations.Dele
 	}
 
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
 
 	for k, v := range o.SetHeaders {
 		req.Header.Set(k, v)
@@ -353,7 +361,7 @@ func (s *MeshTrace) CreateMeshTrace(ctx context.Context, request operations.Crea
 		Context:        ctx,
 		OperationID:    "createMeshTrace",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "MeshTraceItem", "json", `request:"mediaType=application/json"`)
 	if err != nil {
@@ -379,6 +387,10 @@ func (s *MeshTrace) CreateMeshTrace(ctx context.Context, request operations.Crea
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 	if reqContentType != "" {
 		req.Header.Set("Content-Type", reqContentType)
+	}
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
 	}
 
 	for k, v := range o.SetHeaders {
@@ -483,7 +495,7 @@ func (s *MeshTrace) UpdateMeshTrace(ctx context.Context, request operations.Upda
 		Context:        ctx,
 		OperationID:    "updateMeshTrace",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "MeshTraceItem", "json", `request:"mediaType=application/json"`)
 	if err != nil {
@@ -509,6 +521,10 @@ func (s *MeshTrace) UpdateMeshTrace(ctx context.Context, request operations.Upda
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 	if reqContentType != "" {
 		req.Header.Set("Content-Type", reqContentType)
+	}
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
 	}
 
 	for k, v := range o.SetHeaders {
@@ -613,7 +629,7 @@ func (s *MeshTrace) GetMeshTraceList(ctx context.Context, request operations.Get
 		Context:        ctx,
 		OperationID:    "getMeshTraceList",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -636,6 +652,10 @@ func (s *MeshTrace) GetMeshTraceList(ctx context.Context, request operations.Get
 
 	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
 		return nil, fmt.Errorf("error populating query params: %w", err)
+	}
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
 	}
 
 	for k, v := range o.SetHeaders {

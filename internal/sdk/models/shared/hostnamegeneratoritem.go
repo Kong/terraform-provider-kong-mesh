@@ -33,6 +33,28 @@ func (e *HostnameGeneratorItemType) UnmarshalJSON(data []byte) error {
 	}
 }
 
+// Extension struct for a plugin configuration
+type Extension struct {
+	// Config freeform configuration for the extension.
+	Config any `json:"config,omitempty"`
+	// Type of the extension.
+	Type string `json:"type"`
+}
+
+func (o *Extension) GetConfig() any {
+	if o == nil {
+		return nil
+	}
+	return o.Config
+}
+
+func (o *Extension) GetType() string {
+	if o == nil {
+		return ""
+	}
+	return o.Type
+}
+
 type MeshExternalService struct {
 	MatchLabels map[string]string `json:"matchLabels,omitempty"`
 }
@@ -95,8 +117,17 @@ func (o *Selector) GetMeshService() *MeshService {
 
 // HostnameGeneratorItemSpec - Spec is the specification of the Kuma HostnameGenerator resource.
 type HostnameGeneratorItemSpec struct {
-	Selector *Selector `json:"selector,omitempty"`
-	Template *string   `json:"template,omitempty"`
+	// Extension struct for a plugin configuration
+	Extension *Extension `json:"extension,omitempty"`
+	Selector  *Selector  `json:"selector,omitempty"`
+	Template  *string    `json:"template,omitempty"`
+}
+
+func (o *HostnameGeneratorItemSpec) GetExtension() *Extension {
+	if o == nil {
+		return nil
+	}
+	return o.Extension
 }
 
 func (o *HostnameGeneratorItemSpec) GetSelector() *Selector {

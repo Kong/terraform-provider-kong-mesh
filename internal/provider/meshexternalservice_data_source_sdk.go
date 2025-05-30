@@ -62,7 +62,7 @@ func (r *MeshExternalServiceDataSourceModel) RefreshFromSharedMeshExternalServic
 		if resp.Spec.Extension == nil {
 			r.Spec.Extension = nil
 		} else {
-			r.Spec.Extension = &tfTypes.Extension{}
+			r.Spec.Extension = &tfTypes.MeshExternalServiceItemExtension{}
 			if resp.Spec.Extension.Config == nil {
 				r.Spec.Extension.Config = types.StringNull()
 			} else {

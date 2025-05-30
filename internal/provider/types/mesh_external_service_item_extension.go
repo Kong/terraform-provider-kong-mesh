@@ -6,7 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type Extension struct {
+type MeshExternalServiceItemExtension struct {
 	Config types.String `tfsdk:"config"`
 	Type   types.String `tfsdk:"type"`
 }

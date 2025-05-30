@@ -8,5 +8,5 @@ import (
 
 type Abort struct {
 	HTTPStatus types.Int32 `tfsdk:"http_status"`
-	Percentage ConfMode    `tfsdk:"percentage"`
+	Percentage Mode        `tfsdk:"percentage"`
 }

@@ -48,7 +48,7 @@ func (r *MeshGatewayDataSourceModel) RefreshFromSharedMeshGatewayItem(ctx contex
 				listeners.Hostname = types.StringPointerValue(listenersItem.Hostname)
 				listeners.Port = types.Int64PointerValue(listenersItem.Port)
 				if listenersItem.Protocol != nil {
-					listeners.Protocol = &tfTypes.ConfMode{}
+					listeners.Protocol = &tfTypes.Mode{}
 					if listenersItem.Protocol.Str != nil {
 						listeners.Protocol.Str = types.StringPointerValue(listenersItem.Protocol.Str)
 					}
@@ -84,7 +84,7 @@ func (r *MeshGatewayDataSourceModel) RefreshFromSharedMeshGatewayItem(ctx contex
 						}
 					}
 					if listenersItem.TLS.Mode != nil {
-						listeners.TLS.Mode = &tfTypes.ConfMode{}
+						listeners.TLS.Mode = &tfTypes.Mode{}
 						if listenersItem.TLS.Mode.Str != nil {
 							listeners.TLS.Mode.Str = types.StringPointerValue(listenersItem.TLS.Mode.Str)
 						}
@@ -95,7 +95,7 @@ func (r *MeshGatewayDataSourceModel) RefreshFromSharedMeshGatewayItem(ctx contex
 					if listenersItem.TLS.Options == nil {
 						listeners.TLS.Options = nil
 					} else {
-						listeners.TLS.Options = &tfTypes.DataplaneItemTCP{}
+						listeners.TLS.Options = &tfTypes.OptionsObj{}
 					}
 				}
 				if listenersCount+1 > len(r.Conf.Listeners) {

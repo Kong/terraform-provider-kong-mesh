@@ -2,5 +2,6 @@
 
 package types
 
-type DataplaneItemTCP struct {
+type MeshServices struct {
+	Mode *Mode `tfsdk:"mode"`
 }

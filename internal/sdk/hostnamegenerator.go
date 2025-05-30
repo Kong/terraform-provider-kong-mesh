@@ -55,7 +55,7 @@ func (s *HostnameGenerator) GetHostnameGenerator(ctx context.Context, request op
 		Context:        ctx,
 		OperationID:    "getHostnameGenerator",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -80,6 +80,10 @@ func (s *HostnameGenerator) GetHostnameGenerator(ctx context.Context, request op
 	}
 
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
 
 	for k, v := range o.SetHeaders {
 		req.Header.Set(k, v)
@@ -205,7 +209,7 @@ func (s *HostnameGenerator) DeleteHostnameGenerator(ctx context.Context, request
 		Context:        ctx,
 		OperationID:    "deleteHostnameGenerator",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -230,6 +234,10 @@ func (s *HostnameGenerator) DeleteHostnameGenerator(ctx context.Context, request
 	}
 
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
 
 	for k, v := range o.SetHeaders {
 		req.Header.Set(k, v)
@@ -354,7 +362,7 @@ func (s *HostnameGenerator) CreateHostnameGenerator(ctx context.Context, request
 		Context:        ctx,
 		OperationID:    "createHostnameGenerator",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "HostnameGeneratorItem", "json", `request:"mediaType=application/json"`)
 	if err != nil {
@@ -380,6 +388,10 @@ func (s *HostnameGenerator) CreateHostnameGenerator(ctx context.Context, request
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 	if reqContentType != "" {
 		req.Header.Set("Content-Type", reqContentType)
+	}
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
 	}
 
 	for k, v := range o.SetHeaders {
@@ -484,7 +496,7 @@ func (s *HostnameGenerator) UpdateHostnameGenerator(ctx context.Context, request
 		Context:        ctx,
 		OperationID:    "updateHostnameGenerator",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "HostnameGeneratorItem", "json", `request:"mediaType=application/json"`)
 	if err != nil {
@@ -510,6 +522,10 @@ func (s *HostnameGenerator) UpdateHostnameGenerator(ctx context.Context, request
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 	if reqContentType != "" {
 		req.Header.Set("Content-Type", reqContentType)
+	}
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
 	}
 
 	for k, v := range o.SetHeaders {
@@ -614,7 +630,7 @@ func (s *HostnameGenerator) GetHostnameGeneratorList(ctx context.Context, reques
 		Context:        ctx,
 		OperationID:    "getHostnameGeneratorList",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -637,6 +653,10 @@ func (s *HostnameGenerator) GetHostnameGeneratorList(ctx context.Context, reques
 
 	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
 		return nil, fmt.Errorf("error populating query params: %w", err)
+	}
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
 	}
 
 	for k, v := range o.SetHeaders {

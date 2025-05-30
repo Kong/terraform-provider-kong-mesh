@@ -10,5 +10,5 @@ type MeshServiceItemPorts struct {
 	AppProtocol types.String `tfsdk:"app_protocol"`
 	Name        types.String `tfsdk:"name"`
 	Port        types.Int32  `tfsdk:"port"`
-	TargetPort  *ConfMode    `tfsdk:"target_port"`
+	TargetPort  *Mode        `tfsdk:"target_port"`
 }

@@ -545,7 +545,7 @@ func (r *MeshHealthCheckResourceModel) RefreshFromSharedMeshHealthCheckItem(ctx 
 					to.Default.Grpc.ServiceName = types.StringPointerValue(toItem.Default.Grpc.ServiceName)
 				}
 				if toItem.Default.HealthyPanicThreshold != nil {
-					to.Default.HealthyPanicThreshold = &tfTypes.ConfMode{}
+					to.Default.HealthyPanicThreshold = &tfTypes.Mode{}
 					if toItem.Default.HealthyPanicThreshold.Integer != nil {
 						to.Default.HealthyPanicThreshold.Integer = types.Int64PointerValue(toItem.Default.HealthyPanicThreshold.Integer)
 					}

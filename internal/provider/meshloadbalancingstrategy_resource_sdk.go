@@ -681,7 +681,7 @@ func (r *MeshLoadBalancingStrategyResourceModel) RefreshFromSharedMeshLoadBalanc
 					} else {
 						to.Default.LoadBalancer.LeastRequest = &tfTypes.LeastRequest{}
 						if toItem.Default.LoadBalancer.LeastRequest.ActiveRequestBias != nil {
-							to.Default.LoadBalancer.LeastRequest.ActiveRequestBias = &tfTypes.ConfMode{}
+							to.Default.LoadBalancer.LeastRequest.ActiveRequestBias = &tfTypes.Mode{}
 							if toItem.Default.LoadBalancer.LeastRequest.ActiveRequestBias.Integer != nil {
 								to.Default.LoadBalancer.LeastRequest.ActiveRequestBias.Integer = types.Int64PointerValue(toItem.Default.LoadBalancer.LeastRequest.ActiveRequestBias.Integer)
 							}
@@ -749,7 +749,7 @@ func (r *MeshLoadBalancingStrategyResourceModel) RefreshFromSharedMeshLoadBalanc
 					if toItem.Default.LoadBalancer.Random == nil {
 						to.Default.LoadBalancer.Random = nil
 					} else {
-						to.Default.LoadBalancer.Random = &tfTypes.DataplaneItemTCP{}
+						to.Default.LoadBalancer.Random = &tfTypes.OptionsObj{}
 					}
 					if toItem.Default.LoadBalancer.RingHash == nil {
 						to.Default.LoadBalancer.RingHash = nil
@@ -815,7 +815,7 @@ func (r *MeshLoadBalancingStrategyResourceModel) RefreshFromSharedMeshLoadBalanc
 					if toItem.Default.LoadBalancer.RoundRobin == nil {
 						to.Default.LoadBalancer.RoundRobin = nil
 					} else {
-						to.Default.LoadBalancer.RoundRobin = &tfTypes.DataplaneItemTCP{}
+						to.Default.LoadBalancer.RoundRobin = &tfTypes.OptionsObj{}
 					}
 					to.Default.LoadBalancer.Type = types.StringValue(string(toItem.Default.LoadBalancer.Type))
 				}

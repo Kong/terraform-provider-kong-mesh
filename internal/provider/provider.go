@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
+	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
 	"net/http"
 	"os"
 )
@@ -27,7 +28,10 @@ type KongMeshProvider struct {
 
 // KongMeshProviderModel describes the provider data model.
 type KongMeshProviderModel struct {
-	ServerURL types.String `tfsdk:"server_url"`
+	BearerAuth types.String `tfsdk:"bearer_auth"`
+	Password   types.String `tfsdk:"password"`
+	ServerURL  types.String `tfsdk:"server_url"`
+	Username   types.String `tfsdk:"username"`
 }
 
 func (p *KongMeshProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -38,9 +42,21 @@ func (p *KongMeshProvider) Metadata(ctx context.Context, req provider.MetadataRe
 func (p *KongMeshProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"bearer_auth": schema.StringAttribute{
+				Optional:  true,
+				Sensitive: true,
+			},
+			"password": schema.StringAttribute{
+				Optional:  true,
+				Sensitive: true,
+			},
 			"server_url": schema.StringAttribute{
 				Description: `Server URL`,
 				Required:    true,
+			},
+			"username": schema.StringAttribute{
+				Optional:  true,
+				Sensitive: true,
 			},
 		},
 		MarkdownDescription: `Kong Mesh: This is a BETA Mesh specification. Endpoints in this specification may change with zero notice`,
@@ -66,6 +82,26 @@ func (p *KongMeshProvider) Configure(ctx context.Context, req provider.Configure
 		return
 	}
 
+	security := shared.Security{}
+
+	basicAuth := &shared.SchemeBasicAuth{}
+
+	if !data.Username.IsUnknown() {
+		basicAuth.Username = data.Username.ValueString()
+	}
+
+	if !data.Password.IsUnknown() {
+		basicAuth.Password = data.Password.ValueString()
+	}
+
+	if basicAuth.Username != "" || basicAuth.Password != "" {
+		security.BasicAuth = basicAuth
+	}
+
+	if !data.BearerAuth.IsUnknown() {
+		security.BearerAuth = data.BearerAuth.ValueStringPointer()
+	}
+
 	providerHTTPTransportOpts := ProviderHTTPTransportOpts{
 		SetHeaders: make(map[string]string),
 		Transport:  http.DefaultTransport,
@@ -75,7 +111,7 @@ func (p *KongMeshProvider) Configure(ctx context.Context, req provider.Configure
 	httpClient.Transport = NewProviderHTTPTransport(providerHTTPTransportOpts)
 
 	opts := []sdk.SDKOption{
-
+		sdk.WithSecurity(security),
 		sdk.WithClient(httpClient),
 	}
 	client := sdk.New(ServerURL, opts...)
@@ -87,7 +123,6 @@ func (p *KongMeshProvider) Configure(ctx context.Context, req provider.Configure
 
 func (p *KongMeshProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
-		NewDataplaneResource,
 		NewMeshResource,
 		NewMeshAccessLogResource,
 		NewMeshCircuitBreakerResource,
@@ -117,10 +152,6 @@ func (p *KongMeshProvider) Resources(ctx context.Context) []func() resource.Reso
 
 func (p *KongMeshProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
-		NewDataplaneDataSource,
-		NewDataplaneListDataSource,
-		NewDataplaneOverviewDataSource,
-		NewDataplaneOverviewListDataSource,
 		NewHostnameGeneratorListDataSource,
 		NewMeshDataSource,
 		NewMeshAccessLogDataSource,

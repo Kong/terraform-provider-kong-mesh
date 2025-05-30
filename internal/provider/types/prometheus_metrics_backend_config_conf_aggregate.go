@@ -6,7 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type Aggregate struct {
+type PrometheusMetricsBackendConfigConfAggregate struct {
 	Address types.String `tfsdk:"address"`
 	Enabled types.Bool   `tfsdk:"enabled"`
 	Name    types.String `tfsdk:"name"`

@@ -67,6 +67,20 @@ func (r *MeshHostnameGeneratorDataSource) Schema(ctx context.Context, req dataso
 			"spec": schema.SingleNestedAttribute{
 				Computed: true,
 				Attributes: map[string]schema.Attribute{
+					"extension": schema.SingleNestedAttribute{
+						Computed: true,
+						Attributes: map[string]schema.Attribute{
+							"config": schema.StringAttribute{
+								Computed:    true,
+								Description: `Config freeform configuration for the extension. Parsed as JSON.`,
+							},
+							"type": schema.StringAttribute{
+								Computed:    true,
+								Description: `Type of the extension.`,
+							},
+						},
+						Description: `Extension struct for a plugin configuration`,
+					},
 					"selector": schema.SingleNestedAttribute{
 						Computed: true,
 						Attributes: map[string]schema.Attribute{

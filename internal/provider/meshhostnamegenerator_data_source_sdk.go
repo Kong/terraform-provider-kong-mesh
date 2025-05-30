@@ -4,6 +4,7 @@ package provider
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
@@ -38,6 +39,18 @@ func (r *MeshHostnameGeneratorDataSourceModel) RefreshFromSharedHostnameGenerato
 		}
 		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
+		if resp.Spec.Extension == nil {
+			r.Spec.Extension = nil
+		} else {
+			r.Spec.Extension = &tfTypes.MeshExternalServiceItemExtension{}
+			if resp.Spec.Extension.Config == nil {
+				r.Spec.Extension.Config = types.StringNull()
+			} else {
+				configResult, _ := json.Marshal(resp.Spec.Extension.Config)
+				r.Spec.Extension.Config = types.StringValue(string(configResult))
+			}
+			r.Spec.Extension.Type = types.StringValue(resp.Spec.Extension.Type)
+		}
 		if resp.Spec.Selector == nil {
 			r.Spec.Selector = nil
 		} else {

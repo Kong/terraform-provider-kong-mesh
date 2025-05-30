@@ -10,7 +10,7 @@ type MeshItem struct {
 	Constraints                 *Constraints            `tfsdk:"constraints"`
 	Labels                      map[string]types.String `tfsdk:"labels"`
 	Logging                     *Logging                `tfsdk:"logging"`
-	MeshServices                *ConfTLS                `tfsdk:"mesh_services"`
+	MeshServices                *MeshServices           `tfsdk:"mesh_services"`
 	Metrics                     *MeshItemMetrics        `tfsdk:"metrics"`
 	Mtls                        *Mtls                   `tfsdk:"mtls"`
 	Name                        types.String            `tfsdk:"name"`

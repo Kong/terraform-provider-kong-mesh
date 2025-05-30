@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-type UpdateDataplaneRequest struct {
+type PutDataplaneRequest struct {
 	// name of the mesh
 	Mesh string `pathParam:"style=simple,explode=false,name=mesh"`
 	// name of the Dataplane
@@ -16,28 +16,28 @@ type UpdateDataplaneRequest struct {
 	DataplaneItem shared.DataplaneItem `request:"mediaType=application/json"`
 }
 
-func (o *UpdateDataplaneRequest) GetMesh() string {
+func (o *PutDataplaneRequest) GetMesh() string {
 	if o == nil {
 		return ""
 	}
 	return o.Mesh
 }
 
-func (o *UpdateDataplaneRequest) GetName() string {
+func (o *PutDataplaneRequest) GetName() string {
 	if o == nil {
 		return ""
 	}
 	return o.Name
 }
 
-func (o *UpdateDataplaneRequest) GetDataplaneItem() shared.DataplaneItem {
+func (o *PutDataplaneRequest) GetDataplaneItem() shared.DataplaneItem {
 	if o == nil {
 		return shared.DataplaneItem{}
 	}
 	return o.DataplaneItem
 }
 
-type UpdateDataplaneResponse struct {
+type PutDataplaneResponse struct {
 	// HTTP response content type for this operation
 	ContentType string
 	// HTTP response status code for this operation
@@ -48,28 +48,28 @@ type UpdateDataplaneResponse struct {
 	DataplaneCreateOrUpdateSuccessResponse *shared.DataplaneCreateOrUpdateSuccessResponse
 }
 
-func (o *UpdateDataplaneResponse) GetContentType() string {
+func (o *PutDataplaneResponse) GetContentType() string {
 	if o == nil {
 		return ""
 	}
 	return o.ContentType
 }
 
-func (o *UpdateDataplaneResponse) GetStatusCode() int {
+func (o *PutDataplaneResponse) GetStatusCode() int {
 	if o == nil {
 		return 0
 	}
 	return o.StatusCode
 }
 
-func (o *UpdateDataplaneResponse) GetRawResponse() *http.Response {
+func (o *PutDataplaneResponse) GetRawResponse() *http.Response {
 	if o == nil {
 		return nil
 	}
 	return o.RawResponse
 }
 
-func (o *UpdateDataplaneResponse) GetDataplaneCreateOrUpdateSuccessResponse() *shared.DataplaneCreateOrUpdateSuccessResponse {
+func (o *PutDataplaneResponse) GetDataplaneCreateOrUpdateSuccessResponse() *shared.DataplaneCreateOrUpdateSuccessResponse {
 	if o == nil {
 		return nil
 	}

@@ -94,7 +94,7 @@ func (r *MeshTraceDataSourceModel) RefreshFromSharedMeshTraceItem(ctx context.Co
 			} else {
 				r.Spec.Default.Sampling = &tfTypes.Sampling{}
 				if resp.Spec.Default.Sampling.Client != nil {
-					r.Spec.Default.Sampling.Client = &tfTypes.ConfMode{}
+					r.Spec.Default.Sampling.Client = &tfTypes.Mode{}
 					if resp.Spec.Default.Sampling.Client.Integer != nil {
 						r.Spec.Default.Sampling.Client.Integer = types.Int64PointerValue(resp.Spec.Default.Sampling.Client.Integer)
 					}
@@ -103,7 +103,7 @@ func (r *MeshTraceDataSourceModel) RefreshFromSharedMeshTraceItem(ctx context.Co
 					}
 				}
 				if resp.Spec.Default.Sampling.Overall != nil {
-					r.Spec.Default.Sampling.Overall = &tfTypes.ConfMode{}
+					r.Spec.Default.Sampling.Overall = &tfTypes.Mode{}
 					if resp.Spec.Default.Sampling.Overall.Integer != nil {
 						r.Spec.Default.Sampling.Overall.Integer = types.Int64PointerValue(resp.Spec.Default.Sampling.Overall.Integer)
 					}
@@ -112,7 +112,7 @@ func (r *MeshTraceDataSourceModel) RefreshFromSharedMeshTraceItem(ctx context.Co
 					}
 				}
 				if resp.Spec.Default.Sampling.Random != nil {
-					r.Spec.Default.Sampling.Random = &tfTypes.ConfMode{}
+					r.Spec.Default.Sampling.Random = &tfTypes.Mode{}
 					if resp.Spec.Default.Sampling.Random.Integer != nil {
 						r.Spec.Default.Sampling.Random.Integer = types.Int64PointerValue(resp.Spec.Default.Sampling.Random.Integer)
 					}

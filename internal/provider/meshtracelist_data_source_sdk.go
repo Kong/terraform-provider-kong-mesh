@@ -107,7 +107,7 @@ func (r *MeshTraceListDataSourceModel) RefreshFromSharedMeshTraceList(ctx contex
 				} else {
 					items.Spec.Default.Sampling = &tfTypes.Sampling{}
 					if itemsItem.Spec.Default.Sampling.Client != nil {
-						items.Spec.Default.Sampling.Client = &tfTypes.ConfMode{}
+						items.Spec.Default.Sampling.Client = &tfTypes.Mode{}
 						if itemsItem.Spec.Default.Sampling.Client.Integer != nil {
 							items.Spec.Default.Sampling.Client.Integer = types.Int64PointerValue(itemsItem.Spec.Default.Sampling.Client.Integer)
 						}
@@ -116,7 +116,7 @@ func (r *MeshTraceListDataSourceModel) RefreshFromSharedMeshTraceList(ctx contex
 						}
 					}
 					if itemsItem.Spec.Default.Sampling.Overall != nil {
-						items.Spec.Default.Sampling.Overall = &tfTypes.ConfMode{}
+						items.Spec.Default.Sampling.Overall = &tfTypes.Mode{}
 						if itemsItem.Spec.Default.Sampling.Overall.Integer != nil {
 							items.Spec.Default.Sampling.Overall.Integer = types.Int64PointerValue(itemsItem.Spec.Default.Sampling.Overall.Integer)
 						}
@@ -125,7 +125,7 @@ func (r *MeshTraceListDataSourceModel) RefreshFromSharedMeshTraceList(ctx contex
 						}
 					}
 					if itemsItem.Spec.Default.Sampling.Random != nil {
-						items.Spec.Default.Sampling.Random = &tfTypes.ConfMode{}
+						items.Spec.Default.Sampling.Random = &tfTypes.Mode{}
 						if itemsItem.Spec.Default.Sampling.Random.Integer != nil {
 							items.Spec.Default.Sampling.Random.Integer = types.Int64PointerValue(itemsItem.Spec.Default.Sampling.Random.Integer)
 						}

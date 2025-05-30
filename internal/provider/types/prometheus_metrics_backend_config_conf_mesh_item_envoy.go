@@ -6,7 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type ConfEnvoy struct {
+type PrometheusMetricsBackendConfigConfMeshItemEnvoy struct {
 	FilterRegex types.String `tfsdk:"filter_regex"`
 	UsedOnly    types.Bool   `tfsdk:"used_only"`
 }

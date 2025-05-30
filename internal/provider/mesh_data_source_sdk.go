@@ -119,9 +119,9 @@ func (r *MeshDataSourceModel) RefreshFromSharedMeshItem(ctx context.Context, res
 		if resp.MeshServices == nil {
 			r.MeshServices = nil
 		} else {
-			r.MeshServices = &tfTypes.ConfTLS{}
+			r.MeshServices = &tfTypes.MeshServices{}
 			if resp.MeshServices.Mode != nil {
-				r.MeshServices.Mode = &tfTypes.ConfMode{}
+				r.MeshServices.Mode = &tfTypes.Mode{}
 				if resp.MeshServices.Mode.Str != nil {
 					r.MeshServices.Mode.Str = types.StringPointerValue(resp.MeshServices.Mode.Str)
 				}
@@ -134,19 +134,19 @@ func (r *MeshDataSourceModel) RefreshFromSharedMeshItem(ctx context.Context, res
 			r.Metrics = nil
 		} else {
 			r.Metrics = &tfTypes.MeshItemMetrics{}
-			r.Metrics.Backends = []tfTypes.Metrics{}
+			r.Metrics.Backends = []tfTypes.MeshItemBackends{}
 			if len(r.Metrics.Backends) > len(resp.Metrics.Backends) {
 				r.Metrics.Backends = r.Metrics.Backends[:len(resp.Metrics.Backends)]
 			}
 			for backendsCount1, backendsItem1 := range resp.Metrics.Backends {
-				var backends1 tfTypes.Metrics
+				var backends1 tfTypes.MeshItemBackends
 				if backendsItem1.Conf != nil {
-					backends1.Conf = &tfTypes.DataplaneItemConf{}
+					backends1.Conf = &tfTypes.MeshItemMetricsConf{}
 					if backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig != nil {
-						backends1.Conf.PrometheusMetricsBackendConfig = &tfTypes.PrometheusMetricsBackendConfig{}
-						backends1.Conf.PrometheusMetricsBackendConfig.Aggregate = []tfTypes.Aggregate{}
+						backends1.Conf.PrometheusMetricsBackendConfig = &tfTypes.MeshItemConfPrometheusMetricsBackendConfig{}
+						backends1.Conf.PrometheusMetricsBackendConfig.Aggregate = []tfTypes.PrometheusMetricsBackendConfigConfAggregate{}
 						for aggregateCount, aggregateItem := range backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.Aggregate {
-							var aggregate tfTypes.Aggregate
+							var aggregate tfTypes.PrometheusMetricsBackendConfigConfAggregate
 							aggregate.Address = types.StringPointerValue(aggregateItem.Address)
 							aggregate.Enabled = types.BoolPointerValue(aggregateItem.Enabled)
 							aggregate.Name = types.StringPointerValue(aggregateItem.Name)
@@ -165,7 +165,7 @@ func (r *MeshDataSourceModel) RefreshFromSharedMeshItem(ctx context.Context, res
 						if backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.Envoy == nil {
 							backends1.Conf.PrometheusMetricsBackendConfig.Envoy = nil
 						} else {
-							backends1.Conf.PrometheusMetricsBackendConfig.Envoy = &tfTypes.ConfEnvoy{}
+							backends1.Conf.PrometheusMetricsBackendConfig.Envoy = &tfTypes.PrometheusMetricsBackendConfigConfMeshItemEnvoy{}
 							backends1.Conf.PrometheusMetricsBackendConfig.Envoy.FilterRegex = types.StringPointerValue(backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.Envoy.FilterRegex)
 							backends1.Conf.PrometheusMetricsBackendConfig.Envoy.UsedOnly = types.BoolPointerValue(backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.Envoy.UsedOnly)
 						}
@@ -181,9 +181,9 @@ func (r *MeshDataSourceModel) RefreshFromSharedMeshItem(ctx context.Context, res
 						if backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.TLS == nil {
 							backends1.Conf.PrometheusMetricsBackendConfig.TLS = nil
 						} else {
-							backends1.Conf.PrometheusMetricsBackendConfig.TLS = &tfTypes.ConfTLS{}
+							backends1.Conf.PrometheusMetricsBackendConfig.TLS = &tfTypes.MeshServices{}
 							if backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.TLS.Mode != nil {
-								backends1.Conf.PrometheusMetricsBackendConfig.TLS.Mode = &tfTypes.ConfMode{}
+								backends1.Conf.PrometheusMetricsBackendConfig.TLS.Mode = &tfTypes.Mode{}
 								if backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.TLS.Mode.Str != nil {
 									backends1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Str = types.StringPointerValue(backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.TLS.Mode.Str)
 								}
@@ -321,7 +321,7 @@ func (r *MeshDataSourceModel) RefreshFromSharedMeshItem(ctx context.Context, res
 					if backendsItem2.DpCert.RequestTimeout == nil {
 						backends2.DpCert.RequestTimeout = nil
 					} else {
-						backends2.DpCert.RequestTimeout = &tfTypes.Interval{}
+						backends2.DpCert.RequestTimeout = &tfTypes.RequestTimeout{}
 						backends2.DpCert.RequestTimeout.Nanos = types.Int64PointerValue(backendsItem2.DpCert.RequestTimeout.Nanos)
 						backends2.DpCert.RequestTimeout.Seconds = types.Int64PointerValue(backendsItem2.DpCert.RequestTimeout.Seconds)
 					}
@@ -333,7 +333,7 @@ func (r *MeshDataSourceModel) RefreshFromSharedMeshItem(ctx context.Context, res
 					}
 				}
 				if backendsItem2.Mode != nil {
-					backends2.Mode = &tfTypes.ConfMode{}
+					backends2.Mode = &tfTypes.Mode{}
 					if backendsItem2.Mode.Str != nil {
 						backends2.Mode.Str = types.StringPointerValue(backendsItem2.Mode.Str)
 					}
@@ -349,7 +349,7 @@ func (r *MeshDataSourceModel) RefreshFromSharedMeshItem(ctx context.Context, res
 					if backendsItem2.RootChain.RequestTimeout == nil {
 						backends2.RootChain.RequestTimeout = nil
 					} else {
-						backends2.RootChain.RequestTimeout = &tfTypes.Interval{}
+						backends2.RootChain.RequestTimeout = &tfTypes.RequestTimeout{}
 						backends2.RootChain.RequestTimeout.Nanos = types.Int64PointerValue(backendsItem2.RootChain.RequestTimeout.Nanos)
 						backends2.RootChain.RequestTimeout.Seconds = types.Int64PointerValue(backendsItem2.RootChain.RequestTimeout.Seconds)
 					}

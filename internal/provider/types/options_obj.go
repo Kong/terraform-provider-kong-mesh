@@ -2,6 +2,5 @@
 
 package types
 
-type ReachableBackends struct {
-	Refs []Refs `tfsdk:"refs"`
+type OptionsObj struct {
 }

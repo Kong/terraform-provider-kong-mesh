@@ -55,7 +55,7 @@ func (s *Tenants) CreateTenant(ctx context.Context, request *shared.ProvisionMes
 		Context:        ctx,
 		OperationID:    "createTenant",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, true, "Request", "json", `request:"mediaType=application/json"`)
 	if err != nil {
@@ -81,6 +81,10 @@ func (s *Tenants) CreateTenant(ctx context.Context, request *shared.ProvisionMes
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 	if reqContentType != "" {
 		req.Header.Set("Content-Type", reqContentType)
+	}
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
 	}
 
 	for k, v := range o.SetHeaders {

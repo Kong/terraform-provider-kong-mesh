@@ -7,6 +7,10 @@ info:
   contact:
     name: Kong
     url: https://cloud.konghq.com
+security:
+  - BasicAuth: []
+  - BearerAuth: []
+  - {}
 paths:
   /:
     get:
@@ -112,7 +116,6 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '500':
           $ref: '#/components/responses/Internal'
-      x-speakeasy-entity-operation: DataplaneOverview#get
   /meshes/{mesh}/dataplanes/_overview:
     get:
       operationId: getDataplaneOverviewList
@@ -130,7 +133,6 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '500':
           $ref: '#/components/responses/Internal'
-      x-speakeasy-entity-operation: DataplaneOverviewList#get
   /meshes/{mesh}/dataplanes/{name}/_config:
     get:
       operationId: get-dataplanes-xds-config
@@ -2958,7 +2960,7 @@ paths:
         '200':
           $ref: '#/components/responses/MeshTrafficPermissionList'
       x-speakeasy-entity-operation: MeshTrafficPermissionList#get
-  /meshes/{mesh}/dataplanes/{name}#create:
+  /meshes/{mesh}/dataplanes/{name}:
     get:
       operationId: getDataplane
       summary: Returns Dataplane entity
@@ -2982,72 +2984,8 @@ paths:
           $ref: '#/components/responses/DataplaneItem'
         '404':
           $ref: '#/components/responses/NotFound'
-      x-speakeasy-entity-operation: Dataplane#get
-    delete:
-      operationId: deleteDataplane
-      summary: Deletes Dataplane entity
-      tags:
-        - Dataplane
-      parameters:
-        - in: path
-          name: mesh
-          schema:
-            type: string
-          required: true
-          description: name of the mesh
-        - in: path
-          name: name
-          schema:
-            type: string
-          required: true
-          description: name of the Dataplane
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DataplaneDeleteSuccessResponse'
-          description: Successful response
-        '404':
-          $ref: '#/components/responses/NotFound'
-      x-speakeasy-entity-operation: Dataplane#delete
     put:
-      operationId: createDataplane
-      summary: Creates or Updates Dataplane entity
-      tags:
-        - Dataplane
-      parameters:
-        - in: path
-          name: mesh
-          schema:
-            type: string
-          required: true
-          description: name of the mesh
-        - in: path
-          name: name
-          schema:
-            type: string
-          required: true
-          description: name of the Dataplane
-      requestBody:
-        description: Put request
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DataplaneItem'
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DataplaneCreateOrUpdateSuccessResponse'
-      x-speakeasy-entity-operation: Dataplane#create
-    parameters: []
-  /meshes/{mesh}/dataplanes/{name}#update:
-    put:
-      operationId: updateDataplane
+      operationId: putDataplane
       summary: Creates or Updates Dataplane entity
       tags:
         - Dataplane
@@ -3078,8 +3016,39 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DataplaneCreateOrUpdateSuccessResponse'
-      x-speakeasy-entity-operation: Dataplane#update
-    parameters: []
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataplaneCreateOrUpdateSuccessResponse'
+    delete:
+      operationId: deleteDataplane
+      summary: Deletes Dataplane entity
+      tags:
+        - Dataplane
+      parameters:
+        - in: path
+          name: mesh
+          schema:
+            type: string
+          required: true
+          description: name of the mesh
+        - in: path
+          name: name
+          schema:
+            type: string
+          required: true
+          description: name of the Dataplane
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataplaneDeleteSuccessResponse'
+          description: Successful response
+        '404':
+          $ref: '#/components/responses/NotFound'
   /meshes/{mesh}/dataplanes:
     get:
       operationId: getDataplaneList
@@ -3125,7 +3094,6 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/DataplaneList'
-      x-speakeasy-entity-operation: DataplaneList#get
   /meshes/{name}:
     get:
       operationId: getMesh
@@ -4407,6 +4375,13 @@ paths:
           $ref: '#/components/responses/MeshOPAList'
       x-speakeasy-entity-operation: MeshOPAList#get
 components:
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+    BearerAuth:
+      type: http
+      scheme: bearer
   schemas:
     Index:
       type: object
@@ -15739,6 +15714,20 @@ components:
         spec:
           description: Spec is the specification of the Kuma HostnameGenerator resource.
           properties:
+            extension:
+              description: Extension struct for a plugin configuration
+              properties:
+                config:
+                  description: Config freeform configuration for the extension.
+                  x-kubernetes-preserve-unknown-fields: true
+                type:
+                  description: Type of the extension.
+                  type: string
+                  x-speakeasy-param-computed: false
+              required:
+                - type
+              type: object
+              x-speakeasy-param-computed: false
             selector:
               properties:
                 meshExternalService:

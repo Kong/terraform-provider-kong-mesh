@@ -54,22 +54,22 @@ func (o *MeshExternalServiceItemEndpoints) GetPort() int64 {
 	return o.Port
 }
 
-// Extension struct for a plugin configuration, in the presence of an extension `endpoints` and `tls` are not required anymore - it's up to the extension to validate them independently.
-type Extension struct {
+// MeshExternalServiceItemExtension - Extension struct for a plugin configuration, in the presence of an extension `endpoints` and `tls` are not required anymore - it's up to the extension to validate them independently.
+type MeshExternalServiceItemExtension struct {
 	// Config freeform configuration for the extension.
 	Config any `json:"config,omitempty"`
 	// Type of the extension.
 	Type string `json:"type"`
 }
 
-func (o *Extension) GetConfig() any {
+func (o *MeshExternalServiceItemExtension) GetConfig() any {
 	if o == nil {
 		return nil
 	}
 	return o.Config
 }
 
-func (o *Extension) GetType() string {
+func (o *MeshExternalServiceItemExtension) GetType() string {
 	if o == nil {
 		return ""
 	}
@@ -591,7 +591,7 @@ type MeshExternalServiceItemSpec struct {
 	// Endpoints defines a list of destinations to send traffic to.
 	Endpoints []MeshExternalServiceItemEndpoints `json:"endpoints,omitempty"`
 	// Extension struct for a plugin configuration, in the presence of an extension `endpoints` and `tls` are not required anymore - it's up to the extension to validate them independently.
-	Extension *Extension `json:"extension,omitempty"`
+	Extension *MeshExternalServiceItemExtension `json:"extension,omitempty"`
 	// Match defines traffic that should be routed through the sidecar.
 	Match MeshExternalServiceItemMatch `json:"match"`
 	// Tls provides a TLS configuration when proxy is resposible for a TLS origination
@@ -605,7 +605,7 @@ func (o *MeshExternalServiceItemSpec) GetEndpoints() []MeshExternalServiceItemEn
 	return o.Endpoints
 }
 
-func (o *MeshExternalServiceItemSpec) GetExtension() *Extension {
+func (o *MeshExternalServiceItemSpec) GetExtension() *MeshExternalServiceItemExtension {
 	if o == nil {
 		return nil
 	}

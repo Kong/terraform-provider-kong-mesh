@@ -26,7 +26,7 @@ go:
       github.com/Kong/shared-speakeasy/planmodifiers/suppress_zero_null: v0.0.1
       github.com/Kong/shared-speakeasy/tfbuilder: v0.0.4
 terraform:
-  version: 0.4.0
+  version: 0.5.0
   additionalDataSources: []
   additionalDependencies: {}
   additionalEphemeralResources: []

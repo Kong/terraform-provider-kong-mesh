@@ -7,6 +7,6 @@ import (
 )
 
 type MeshItemMetrics struct {
-	Backends       []Metrics    `tfsdk:"backends"`
-	EnabledBackend types.String `tfsdk:"enabled_backend"`
+	Backends       []MeshItemBackends `tfsdk:"backends"`
+	EnabledBackend types.String       `tfsdk:"enabled_backend"`
 }

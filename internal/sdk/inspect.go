@@ -55,7 +55,7 @@ func (s *Inspect) InspectDataplanesRules(ctx context.Context, request operations
 		Context:        ctx,
 		OperationID:    "inspect-dataplanes-rules",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -80,6 +80,10 @@ func (s *Inspect) InspectDataplanesRules(ctx context.Context, request operations
 	}
 
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
 
 	for k, v := range o.SetHeaders {
 		req.Header.Set(k, v)
@@ -227,7 +231,7 @@ func (s *Inspect) InspectResources(ctx context.Context, request operations.Inspe
 		Context:        ctx,
 		OperationID:    "inspect-resources",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -255,6 +259,10 @@ func (s *Inspect) InspectResources(ctx context.Context, request operations.Inspe
 
 	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
 		return nil, fmt.Errorf("error populating query params: %w", err)
+	}
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
 	}
 
 	for k, v := range o.SetHeaders {
@@ -403,7 +411,7 @@ func (s *Inspect) InspectHostnames(ctx context.Context, request operations.Inspe
 		Context:        ctx,
 		OperationID:    "inspect-hostnames",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -428,6 +436,10 @@ func (s *Inspect) InspectHostnames(ctx context.Context, request operations.Inspe
 	}
 
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
 
 	for k, v := range o.SetHeaders {
 		req.Header.Set(k, v)

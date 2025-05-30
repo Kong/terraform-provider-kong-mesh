@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type Health struct {
-	Ready types.Bool `tfsdk:"ready"`
+type RequestTimeout struct {
+	Nanos   types.Int64 `tfsdk:"nanos"`
+	Seconds types.Int64 `tfsdk:"seconds"`
 }

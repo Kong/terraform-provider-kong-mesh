@@ -31,7 +31,7 @@ type MeshDataSourceModel struct {
 	Constraints                 *tfTypes.Constraints        `tfsdk:"constraints"`
 	Labels                      map[string]types.String     `tfsdk:"labels"`
 	Logging                     *tfTypes.Logging            `tfsdk:"logging"`
-	MeshServices                *tfTypes.ConfTLS            `tfsdk:"mesh_services"`
+	MeshServices                *tfTypes.MeshServices       `tfsdk:"mesh_services"`
 	Metrics                     *tfTypes.MeshItemMetrics    `tfsdk:"metrics"`
 	Mtls                        *tfTypes.Mtls               `tfsdk:"mtls"`
 	Name                        types.String                `tfsdk:"name"`

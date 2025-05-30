@@ -43,8 +43,8 @@ func Float64(f float64) *float64 { return &f }
 func Pointer[T any](v T) *T { return &v }
 
 type sdkConfiguration struct {
-	Client HTTPClient
-
+	Client            HTTPClient
+	Security          func(context.Context) (interface{}, error)
 	ServerURL         string
 	Language          string
 	OpenAPIDocVersion string
@@ -104,6 +104,22 @@ func WithClient(client HTTPClient) SDKOption {
 	}
 }
 
+// WithSecurity configures the SDK to use the provided security details
+func WithSecurity(security shared.Security) SDKOption {
+	return func(sdk *KongMesh) {
+		sdk.sdkConfiguration.Security = utils.AsSecuritySource(security)
+	}
+}
+
+// WithSecuritySource configures the SDK to invoke the Security Source function on each method call to determine authentication
+func WithSecuritySource(security func(context.Context) (shared.Security, error)) SDKOption {
+	return func(sdk *KongMesh) {
+		sdk.sdkConfiguration.Security = func(ctx context.Context) (interface{}, error) {
+			return security(ctx)
+		}
+	}
+}
+
 func WithRetryConfig(retryConfig retry.Config) SDKOption {
 	return func(sdk *KongMesh) {
 		sdk.sdkConfiguration.RetryConfig = &retryConfig
@@ -123,9 +139,9 @@ func New(serverURL string, opts ...SDKOption) *KongMesh {
 		sdkConfiguration: sdkConfiguration{
 			Language:          "go",
 			OpenAPIDocVersion: "2.0.0",
-			SDKVersion:        "0.4.0",
+			SDKVersion:        "0.5.0",
 			GenVersion:        "2.610.0",
-			UserAgent:         "speakeasy-sdk/terraform 0.4.0 2.610.0 2.0.0 github.com/kong/terraform-provider-kong-mesh/internal/sdk",
+			UserAgent:         "speakeasy-sdk/terraform 0.5.0 2.610.0 2.0.0 github.com/kong/terraform-provider-kong-mesh/internal/sdk",
 			ServerURL:         serverURL,
 			Hooks:             hooks.New(),
 		},
@@ -235,7 +251,7 @@ func (s *KongMesh) GetDataplaneOverview(ctx context.Context, request operations.
 		Context:        ctx,
 		OperationID:    "getDataplaneOverview",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -260,6 +276,10 @@ func (s *KongMesh) GetDataplaneOverview(ctx context.Context, request operations.
 	}
 
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
 
 	for k, v := range o.SetHeaders {
 		req.Header.Set(k, v)
@@ -405,7 +425,7 @@ func (s *KongMesh) GetDataplaneOverviewList(ctx context.Context, request operati
 		Context:        ctx,
 		OperationID:    "getDataplaneOverviewList",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -430,6 +450,10 @@ func (s *KongMesh) GetDataplaneOverviewList(ctx context.Context, request operati
 	}
 
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
 
 	for k, v := range o.SetHeaders {
 		req.Header.Set(k, v)
@@ -577,7 +601,7 @@ func (s *KongMesh) GetDataplanesXdsConfig(ctx context.Context, request operation
 		Context:        ctx,
 		OperationID:    "get-dataplanes-xds-config",
 		OAuth2Scopes:   []string{},
-		SecuritySource: nil,
+		SecuritySource: s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -605,6 +629,10 @@ func (s *KongMesh) GetDataplanesXdsConfig(ctx context.Context, request operation
 
 	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
 		return nil, fmt.Errorf("error populating query params: %w", err)
+	}
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
 	}
 
 	for k, v := range o.SetHeaders {

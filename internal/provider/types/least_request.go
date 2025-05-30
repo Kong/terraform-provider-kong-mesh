@@ -7,6 +7,6 @@ import (
 )
 
 type LeastRequest struct {
-	ActiveRequestBias *ConfMode   `tfsdk:"active_request_bias"`
+	ActiveRequestBias *Mode       `tfsdk:"active_request_bias"`
 	ChoiceCount       types.Int32 `tfsdk:"choice_count"`
 }
