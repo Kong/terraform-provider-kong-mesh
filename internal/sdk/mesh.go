@@ -106,10 +106,10 @@ func (s *Mesh) GetMesh(ctx context.Context, request operations.GetMeshRequest, o
 		} else {
 			retryConfig = &retry.Config{
 				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
-					InitialInterval: 1000,
-					MaxInterval:     5000,
+					InitialInterval: 100,
+					MaxInterval:     500,
 					Exponent:        1.5,
-					MaxElapsedTime:  10000,
+					MaxElapsedTime:  500,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -122,6 +122,12 @@ func (s *Mesh) GetMesh(ctx context.Context, request operations.GetMeshRequest, o
 			Config: retryConfig,
 			StatusCodes: []string{
 				"404",
+				"408",
+				"429",
+				"500",
+				"502",
+				"503",
+				"504",
 			},
 		}, func() (*http.Response, error) {
 			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
@@ -332,10 +338,10 @@ func (s *Mesh) PutMesh(ctx context.Context, request operations.PutMeshRequest, o
 		} else {
 			retryConfig = &retry.Config{
 				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
-					InitialInterval: 1000,
-					MaxInterval:     5000,
+					InitialInterval: 100,
+					MaxInterval:     500,
 					Exponent:        1.5,
-					MaxElapsedTime:  10000,
+					MaxElapsedTime:  500,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -348,6 +354,12 @@ func (s *Mesh) PutMesh(ctx context.Context, request operations.PutMeshRequest, o
 			Config: retryConfig,
 			StatusCodes: []string{
 				"404",
+				"408",
+				"429",
+				"500",
+				"502",
+				"503",
+				"504",
 			},
 		}, func() (*http.Response, error) {
 			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
@@ -538,10 +550,10 @@ func (s *Mesh) DeleteMesh(ctx context.Context, request operations.DeleteMeshRequ
 		} else {
 			retryConfig = &retry.Config{
 				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
-					InitialInterval: 1000,
-					MaxInterval:     5000,
+					InitialInterval: 100,
+					MaxInterval:     500,
 					Exponent:        1.5,
-					MaxElapsedTime:  10000,
+					MaxElapsedTime:  500,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -554,6 +566,12 @@ func (s *Mesh) DeleteMesh(ctx context.Context, request operations.DeleteMeshRequ
 			Config: retryConfig,
 			StatusCodes: []string{
 				"404",
+				"408",
+				"429",
+				"500",
+				"502",
+				"503",
+				"504",
 			},
 		}, func() (*http.Response, error) {
 			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
@@ -761,10 +779,10 @@ func (s *Mesh) GetMeshList(ctx context.Context, request operations.GetMeshListRe
 		} else {
 			retryConfig = &retry.Config{
 				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
-					InitialInterval: 1000,
-					MaxInterval:     5000,
+					InitialInterval: 100,
+					MaxInterval:     500,
 					Exponent:        1.5,
-					MaxElapsedTime:  10000,
+					MaxElapsedTime:  500,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -777,6 +795,12 @@ func (s *Mesh) GetMeshList(ctx context.Context, request operations.GetMeshListRe
 			Config: retryConfig,
 			StatusCodes: []string{
 				"404",
+				"408",
+				"429",
+				"500",
+				"502",
+				"503",
+				"504",
 			},
 		}, func() (*http.Response, error) {
 			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {

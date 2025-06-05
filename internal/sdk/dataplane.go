@@ -105,10 +105,10 @@ func (s *Dataplane) GetDataplane(ctx context.Context, request operations.GetData
 		} else {
 			retryConfig = &retry.Config{
 				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
-					InitialInterval: 1000,
-					MaxInterval:     5000,
+					InitialInterval: 100,
+					MaxInterval:     500,
 					Exponent:        1.5,
-					MaxElapsedTime:  10000,
+					MaxElapsedTime:  500,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -121,6 +121,12 @@ func (s *Dataplane) GetDataplane(ctx context.Context, request operations.GetData
 			Config: retryConfig,
 			StatusCodes: []string{
 				"404",
+				"408",
+				"429",
+				"500",
+				"502",
+				"503",
+				"504",
 			},
 		}, func() (*http.Response, error) {
 			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
@@ -331,10 +337,10 @@ func (s *Dataplane) PutDataplane(ctx context.Context, request operations.PutData
 		} else {
 			retryConfig = &retry.Config{
 				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
-					InitialInterval: 1000,
-					MaxInterval:     5000,
+					InitialInterval: 100,
+					MaxInterval:     500,
 					Exponent:        1.5,
-					MaxElapsedTime:  10000,
+					MaxElapsedTime:  500,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -347,6 +353,12 @@ func (s *Dataplane) PutDataplane(ctx context.Context, request operations.PutData
 			Config: retryConfig,
 			StatusCodes: []string{
 				"404",
+				"408",
+				"429",
+				"500",
+				"502",
+				"503",
+				"504",
 			},
 		}, func() (*http.Response, error) {
 			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
@@ -537,10 +549,10 @@ func (s *Dataplane) DeleteDataplane(ctx context.Context, request operations.Dele
 		} else {
 			retryConfig = &retry.Config{
 				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
-					InitialInterval: 1000,
-					MaxInterval:     5000,
+					InitialInterval: 100,
+					MaxInterval:     500,
 					Exponent:        1.5,
-					MaxElapsedTime:  10000,
+					MaxElapsedTime:  500,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -553,6 +565,12 @@ func (s *Dataplane) DeleteDataplane(ctx context.Context, request operations.Dele
 			Config: retryConfig,
 			StatusCodes: []string{
 				"404",
+				"408",
+				"429",
+				"500",
+				"502",
+				"503",
+				"504",
 			},
 		}, func() (*http.Response, error) {
 			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
@@ -760,10 +778,10 @@ func (s *Dataplane) GetDataplaneList(ctx context.Context, request operations.Get
 		} else {
 			retryConfig = &retry.Config{
 				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
-					InitialInterval: 1000,
-					MaxInterval:     5000,
+					InitialInterval: 100,
+					MaxInterval:     500,
 					Exponent:        1.5,
-					MaxElapsedTime:  10000,
+					MaxElapsedTime:  500,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -776,6 +794,12 @@ func (s *Dataplane) GetDataplaneList(ctx context.Context, request operations.Get
 			Config: retryConfig,
 			StatusCodes: []string{
 				"404",
+				"408",
+				"429",
+				"500",
+				"502",
+				"503",
+				"504",
 			},
 		}, func() (*http.Response, error) {
 			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {

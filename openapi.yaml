@@ -18818,10 +18818,8 @@ components:
 x-speakeasy-retries:
   strategy: backoff
   backoff:
-    initialInterval: 1000 # 1s
-    maxInterval: 5000 # 5s
-    maxElapsedTime: 10000 # 10s - replication shouldn't take that long
-    exponent: 1.5
-  statusCodes:
-    - 404
+    initialInterval: 100 # 100 ms
+    maxInterval: 500
+    maxElapsedTime: 500
+  statusCodes: [ 404, 408, 429, 500, 502, 503, 504 ]
   retryConnectionErrors: true

@@ -107,10 +107,10 @@ func (s *GlobalInsight) GetGlobalInsight(ctx context.Context, opts ...operations
 		} else {
 			retryConfig = &retry.Config{
 				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
-					InitialInterval: 1000,
-					MaxInterval:     5000,
+					InitialInterval: 100,
+					MaxInterval:     500,
 					Exponent:        1.5,
-					MaxElapsedTime:  10000,
+					MaxElapsedTime:  500,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -123,6 +123,12 @@ func (s *GlobalInsight) GetGlobalInsight(ctx context.Context, opts ...operations
 			Config: retryConfig,
 			StatusCodes: []string{
 				"404",
+				"408",
+				"429",
+				"500",
+				"502",
+				"503",
+				"504",
 			},
 		}, func() (*http.Response, error) {
 			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {

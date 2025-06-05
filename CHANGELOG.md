@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.1
+> Released on 2025/06/05
+>
+> - Add retries to all 404 returned from the API to combat replication lag
+
 ## 0.5.0
 > Released on 2025/05/30
 >

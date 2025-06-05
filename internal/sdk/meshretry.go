@@ -105,10 +105,10 @@ func (s *MeshRetry) GetMeshRetry(ctx context.Context, request operations.GetMesh
 		} else {
 			retryConfig = &retry.Config{
 				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
-					InitialInterval: 1000,
-					MaxInterval:     5000,
+					InitialInterval: 100,
+					MaxInterval:     500,
 					Exponent:        1.5,
-					MaxElapsedTime:  10000,
+					MaxElapsedTime:  500,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -121,6 +121,12 @@ func (s *MeshRetry) GetMeshRetry(ctx context.Context, request operations.GetMesh
 			Config: retryConfig,
 			StatusCodes: []string{
 				"404",
+				"408",
+				"429",
+				"500",
+				"502",
+				"503",
+				"504",
 			},
 		}, func() (*http.Response, error) {
 			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
@@ -330,10 +336,10 @@ func (s *MeshRetry) DeleteMeshRetry(ctx context.Context, request operations.Dele
 		} else {
 			retryConfig = &retry.Config{
 				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
-					InitialInterval: 1000,
-					MaxInterval:     5000,
+					InitialInterval: 100,
+					MaxInterval:     500,
 					Exponent:        1.5,
-					MaxElapsedTime:  10000,
+					MaxElapsedTime:  500,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -346,6 +352,12 @@ func (s *MeshRetry) DeleteMeshRetry(ctx context.Context, request operations.Dele
 			Config: retryConfig,
 			StatusCodes: []string{
 				"404",
+				"408",
+				"429",
+				"500",
+				"502",
+				"503",
+				"504",
 			},
 		}, func() (*http.Response, error) {
 			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
@@ -556,10 +568,10 @@ func (s *MeshRetry) CreateMeshRetry(ctx context.Context, request operations.Crea
 		} else {
 			retryConfig = &retry.Config{
 				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
-					InitialInterval: 1000,
-					MaxInterval:     5000,
+					InitialInterval: 100,
+					MaxInterval:     500,
 					Exponent:        1.5,
-					MaxElapsedTime:  10000,
+					MaxElapsedTime:  500,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -572,6 +584,12 @@ func (s *MeshRetry) CreateMeshRetry(ctx context.Context, request operations.Crea
 			Config: retryConfig,
 			StatusCodes: []string{
 				"404",
+				"408",
+				"429",
+				"500",
+				"502",
+				"503",
+				"504",
 			},
 		}, func() (*http.Response, error) {
 			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
@@ -761,10 +779,10 @@ func (s *MeshRetry) UpdateMeshRetry(ctx context.Context, request operations.Upda
 		} else {
 			retryConfig = &retry.Config{
 				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
-					InitialInterval: 1000,
-					MaxInterval:     5000,
+					InitialInterval: 100,
+					MaxInterval:     500,
 					Exponent:        1.5,
-					MaxElapsedTime:  10000,
+					MaxElapsedTime:  500,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -777,6 +795,12 @@ func (s *MeshRetry) UpdateMeshRetry(ctx context.Context, request operations.Upda
 			Config: retryConfig,
 			StatusCodes: []string{
 				"404",
+				"408",
+				"429",
+				"500",
+				"502",
+				"503",
+				"504",
 			},
 		}, func() (*http.Response, error) {
 			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
@@ -963,10 +987,10 @@ func (s *MeshRetry) GetMeshRetryList(ctx context.Context, request operations.Get
 		} else {
 			retryConfig = &retry.Config{
 				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
-					InitialInterval: 1000,
-					MaxInterval:     5000,
+					InitialInterval: 100,
+					MaxInterval:     500,
 					Exponent:        1.5,
-					MaxElapsedTime:  10000,
+					MaxElapsedTime:  500,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -979,6 +1003,12 @@ func (s *MeshRetry) GetMeshRetryList(ctx context.Context, request operations.Get
 			Config: retryConfig,
 			StatusCodes: []string{
 				"404",
+				"408",
+				"429",
+				"500",
+				"502",
+				"503",
+				"504",
 			},
 		}, func() (*http.Response, error) {
 			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {

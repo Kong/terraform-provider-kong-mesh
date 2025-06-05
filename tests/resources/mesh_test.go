@@ -1,32 +1,40 @@
 package tests
 
 import (
+	"fmt"
 	"github.com/Kong/shared-speakeasy/tfbuilder"
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
-	"io"
 	"net"
 	"testing"
-
-	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
+
+type TestLogConsumer struct{}
+
+func (g *TestLogConsumer) Accept(l testcontainers.Log) {
+	fmt.Printf("cpLog: %s", l.Content)
+}
 
 func TestMesh(t *testing.T) {
 	ctx := t.Context()
 	req := testcontainers.ContainerRequest{
-		Image:        "kong/kuma-cp:2.10.1",
+		Image:        "kumahq/kuma-cp:0.0.0-preview.vlocal-build-arm64",
 		ExposedPorts: []string{"5681/tcp"},
 		WaitingFor: wait.ForAll(
-			wait.ForLog("default AccessRoleBinding created"),
-			wait.ForLog("default AccessRole created"),
+			//wait.ForLog("default AccessRoleBinding created"),
+			//wait.ForLog("default AccessRole created"),
 			wait.ForLog("saving generated Admin User Token"),
 			wait.ForListeningPort("5681/tcp"),
 		),
-		Cmd: []string{"run"},
+		Cmd: []string{"run", "--log-level", "debug"},
+		LogConsumerCfg: &testcontainers.LogConsumerConfig{
+			Consumers: []testcontainers.LogConsumer{&TestLogConsumer{}},
+		},
 	}
 	cpContainer, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: req,
@@ -72,14 +80,6 @@ func TestMesh(t *testing.T) {
 		resource.ParallelTest(t, tfbuilder.NotImportedResourceShouldErrorOutWithMeaningfulMessage(providerFactory, builder, mtp, func() { createAnMTP(t, "http://"+net.JoinHostPort("localhost", port.Port()), meshName, mtpName) }))
 	})
 
-	if t.Failed() {
-		logs, err := cpContainer.Logs(ctx)
-		require.NoError(t, err)
-		defer logs.Close()
-		logContent, err := io.ReadAll(logs)
-		require.NoError(t, err)
-		t.Logf("Container logs: %s", logContent)
-	}
 }
 
 func createAnMTP(t *testing.T, url string, meshName string, mtpName string) {
