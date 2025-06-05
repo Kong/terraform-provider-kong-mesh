@@ -19,17 +19,16 @@ generation:
   baseServerURL: ""
 go:
   version: 1.24.1
-  additionalDependencies:
-    dependencies:
-      github.com/Kong/shared-speakeasy/customtypes: v0.2.2
-      github.com/Kong/shared-speakeasy/hooks/mesh_defaults: v0.0.3
-      github.com/Kong/shared-speakeasy/planmodifiers/arbitrary_json: v0.0.1
-      github.com/Kong/shared-speakeasy/planmodifiers/suppress_zero_null: v0.0.1
-      github.com/Kong/shared-speakeasy/tfbuilder: v0.0.4
 terraform:
-  version: 0.5.1
+  version: 0.5.2
   additionalDataSources: []
-  additionalDependencies: {}
+  additionalDependencies:
+    github.com/Kong/shared-speakeasy/customtypes: v0.2.2
+    github.com/Kong/shared-speakeasy/hooks/mesh_defaults: v0.0.3
+    github.com/Kong/shared-speakeasy/planmodifiers/arbitrary_json: v0.0.1
+    github.com/Kong/shared-speakeasy/planmodifiers/suppress_zero_null: v0.0.1
+    github.com/Kong/shared-speakeasy/tfbuilder: v0.0.4
+    github.com/hashicorp/terraform-plugin-testing: v1.13.1
   additionalEphemeralResources: []
   additionalProviderAttributes:
     httpHeaders: ""

@@ -2,6 +2,8 @@ module github.com/kong/terraform-provider-kong-mesh
 
 go 1.24.1
 
+toolchain go1.24.3
+
 require (
 	github.com/Kong/shared-speakeasy/customtypes v0.2.2
 	github.com/Kong/shared-speakeasy/hooks/mesh_defaults v0.0.3
