@@ -32,9 +32,10 @@ func TestMesh(t *testing.T) {
 			wait.ForLog("saving generated Admin User Token"),
 			wait.ForListeningPort("5681/tcp"),
 		),
-		Cmd: []string{"run", "--log-level", "debug"},
+		Cmd: []string{"run"},
 	}
 	if os.Getenv("RUNNER_DEBUG") == "1" {
+		req.Cmd = []string{"run", "--log-level", "debug"}
 		req.LogConsumerCfg = &testcontainers.LogConsumerConfig{
 			Consumers: []testcontainers.LogConsumer{&TestLogConsumer{}},
 		}
