@@ -2,10 +2,13 @@
 
 package sdk
 
+// Generated from OpenAPI doc version 2.0.0 and generator version 2.620.2
+
 import (
 	"bytes"
 	"context"
 	"fmt"
+	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/config"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/hooks"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/utils"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/errors"
@@ -16,7 +19,7 @@ import (
 	"time"
 )
 
-// HTTPClient provides an interface for suplying the SDK with a custom HTTP client
+// HTTPClient provides an interface for supplying the SDK with a custom HTTP client
 type HTTPClient interface {
 	Do(req *http.Request) (*http.Response, error)
 }
@@ -42,26 +45,9 @@ func Float64(f float64) *float64 { return &f }
 // Pointer provides a helper function to return a pointer to a type
 func Pointer[T any](v T) *T { return &v }
 
-type sdkConfiguration struct {
-	Client            HTTPClient
-	Security          func(context.Context) (interface{}, error)
-	ServerURL         string
-	Language          string
-	OpenAPIDocVersion string
-	SDKVersion        string
-	GenVersion        string
-	UserAgent         string
-	RetryConfig       *retry.Config
-	Hooks             *hooks.Hooks
-	Timeout           *time.Duration
-}
-
-func (c *sdkConfiguration) GetServerDetails() (string, map[string]string) {
-	return c.ServerURL, map[string]string{}
-}
-
 // KongMesh - Kong Mesh: This is a BETA Mesh specification. Endpoints in this specification may change with zero notice
 type KongMesh struct {
+	SDKVersion                string
 	System                    *System
 	GlobalInsight             *GlobalInsight
 	Inspect                   *Inspect
@@ -92,7 +78,8 @@ type KongMesh struct {
 	MeshGlobalRateLimit       *MeshGlobalRateLimit
 	MeshOPA                   *MeshOPA
 
-	sdkConfiguration sdkConfiguration
+	sdkConfiguration config.SDKConfiguration
+	hooks            *hooks.Hooks
 }
 
 type SDKOption func(*KongMesh)
@@ -136,15 +123,11 @@ func WithTimeout(timeout time.Duration) SDKOption {
 // New creates a new instance of the SDK with the provided serverURL and options
 func New(serverURL string, opts ...SDKOption) *KongMesh {
 	sdk := &KongMesh{
-		sdkConfiguration: sdkConfiguration{
-			Language:          "go",
-			OpenAPIDocVersion: "2.0.0",
-			SDKVersion:        "0.5.0",
-			GenVersion:        "2.610.0",
-			UserAgent:         "speakeasy-sdk/terraform 0.5.0 2.610.0 2.0.0 github.com/kong/terraform-provider-kong-mesh/internal/sdk",
-			ServerURL:         serverURL,
-			Hooks:             hooks.New(),
+		SDKVersion: "0.5.1",
+		sdkConfiguration: config.SDKConfiguration{
+			UserAgent: "speakeasy-sdk/terraform 0.5.1 2.620.2 2.0.0 github.com/kong/terraform-provider-kong-mesh/internal/sdk",
 		},
+		hooks: hooks.New(),
 	}
 	for _, opt := range opts {
 		opt(sdk)
@@ -155,69 +138,44 @@ func New(serverURL string, opts ...SDKOption) *KongMesh {
 		sdk.sdkConfiguration.Client = &http.Client{Timeout: 60 * time.Second}
 	}
 
-	currentServerURL := serverURL
-	serverURL, sdk.sdkConfiguration.Client = sdk.sdkConfiguration.Hooks.SDKInit(currentServerURL, sdk.sdkConfiguration.Client)
-	if serverURL != currentServerURL {
+	sdk.sdkConfiguration.ServerURL = serverURL
+
+	currentServerURL, _ := sdk.sdkConfiguration.GetServerDetails()
+	serverURL = currentServerURL
+	serverURL, sdk.sdkConfiguration.Client = sdk.hooks.SDKInit(currentServerURL, sdk.sdkConfiguration.Client)
+	if currentServerURL != serverURL {
 		sdk.sdkConfiguration.ServerURL = serverURL
 	}
 
-	sdk.System = newSystem(sdk.sdkConfiguration)
-
-	sdk.GlobalInsight = newGlobalInsight(sdk.sdkConfiguration)
-
-	sdk.Inspect = newInspect(sdk.sdkConfiguration)
-
-	sdk.MeshAccessLog = newMeshAccessLog(sdk.sdkConfiguration)
-
-	sdk.MeshCircuitBreaker = newMeshCircuitBreaker(sdk.sdkConfiguration)
-
-	sdk.MeshFaultInjection = newMeshFaultInjection(sdk.sdkConfiguration)
-
-	sdk.MeshHealthCheck = newMeshHealthCheck(sdk.sdkConfiguration)
-
-	sdk.MeshHTTPRoute = newMeshHTTPRoute(sdk.sdkConfiguration)
-
-	sdk.MeshLoadBalancingStrategy = newMeshLoadBalancingStrategy(sdk.sdkConfiguration)
-
-	sdk.MeshMetric = newMeshMetric(sdk.sdkConfiguration)
-
-	sdk.MeshPassthrough = newMeshPassthrough(sdk.sdkConfiguration)
-
-	sdk.MeshProxyPatch = newMeshProxyPatch(sdk.sdkConfiguration)
-
-	sdk.MeshRateLimit = newMeshRateLimit(sdk.sdkConfiguration)
-
-	sdk.MeshRetry = newMeshRetry(sdk.sdkConfiguration)
-
-	sdk.MeshTCPRoute = newMeshTCPRoute(sdk.sdkConfiguration)
-
-	sdk.MeshTimeout = newMeshTimeout(sdk.sdkConfiguration)
-
-	sdk.MeshTLS = newMeshTLS(sdk.sdkConfiguration)
-
-	sdk.MeshTrace = newMeshTrace(sdk.sdkConfiguration)
-
-	sdk.MeshTrafficPermission = newMeshTrafficPermission(sdk.sdkConfiguration)
-
-	sdk.Dataplane = newDataplane(sdk.sdkConfiguration)
-
-	sdk.Mesh = newMesh(sdk.sdkConfiguration)
-
-	sdk.MeshGateway = newMeshGateway(sdk.sdkConfiguration)
-
-	sdk.HostnameGenerator = newHostnameGenerator(sdk.sdkConfiguration)
-
-	sdk.MeshExternalService = newMeshExternalService(sdk.sdkConfiguration)
-
-	sdk.MeshMultiZoneService = newMeshMultiZoneService(sdk.sdkConfiguration)
-
-	sdk.MeshService = newMeshService(sdk.sdkConfiguration)
-
-	sdk.Tenants = newTenants(sdk.sdkConfiguration)
-
-	sdk.MeshGlobalRateLimit = newMeshGlobalRateLimit(sdk.sdkConfiguration)
-
-	sdk.MeshOPA = newMeshOPA(sdk.sdkConfiguration)
+	sdk.System = newSystem(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.GlobalInsight = newGlobalInsight(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Inspect = newInspect(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.MeshAccessLog = newMeshAccessLog(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.MeshCircuitBreaker = newMeshCircuitBreaker(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.MeshFaultInjection = newMeshFaultInjection(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.MeshHealthCheck = newMeshHealthCheck(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.MeshHTTPRoute = newMeshHTTPRoute(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.MeshLoadBalancingStrategy = newMeshLoadBalancingStrategy(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.MeshMetric = newMeshMetric(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.MeshPassthrough = newMeshPassthrough(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.MeshProxyPatch = newMeshProxyPatch(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.MeshRateLimit = newMeshRateLimit(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.MeshRetry = newMeshRetry(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.MeshTCPRoute = newMeshTCPRoute(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.MeshTimeout = newMeshTimeout(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.MeshTLS = newMeshTLS(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.MeshTrace = newMeshTrace(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.MeshTrafficPermission = newMeshTrafficPermission(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Dataplane = newDataplane(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Mesh = newMesh(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.MeshGateway = newMeshGateway(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.HostnameGenerator = newHostnameGenerator(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.MeshExternalService = newMeshExternalService(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.MeshMultiZoneService = newMeshMultiZoneService(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.MeshService = newMeshService(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Tenants = newTenants(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.MeshGlobalRateLimit = newMeshGlobalRateLimit(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.MeshOPA = newMeshOPA(sdk, sdk.sdkConfiguration, sdk.hooks)
 
 	return sdk
 }
@@ -248,11 +206,13 @@ func (s *KongMesh) GetDataplaneOverview(ctx context.Context, request operations.
 	}
 
 	hookCtx := hooks.HookContext{
-		BaseURL:        baseURL,
-		Context:        ctx,
-		OperationID:    "getDataplaneOverview",
-		OAuth2Scopes:   []string{},
-		SecuritySource: s.sdkConfiguration.Security,
+		SDK:              s,
+		SDKConfiguration: s.sdkConfiguration,
+		BaseURL:          baseURL,
+		Context:          ctx,
+		OperationID:      "getDataplaneOverview",
+		OAuth2Scopes:     []string{},
+		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -312,15 +272,17 @@ func (s *KongMesh) GetDataplaneOverview(ctx context.Context, request operations.
 				"404",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
-			req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+			req, err = s.hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
 			if err != nil {
 				if retry.IsPermanentError(err) || retry.IsTemporaryError(err) {
 					return nil, err
@@ -337,7 +299,7 @@ func (s *KongMesh) GetDataplaneOverview(ctx context.Context, request operations.
 					err = fmt.Errorf("error sending request: no response")
 				}
 
-				_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+				_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 			}
 			return httpRes, err
 		})
@@ -345,13 +307,13 @@ func (s *KongMesh) GetDataplaneOverview(ctx context.Context, request operations.
 		if err != nil {
 			return nil, err
 		} else {
-			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			httpRes, err = s.hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
 			if err != nil {
 				return nil, err
 			}
 		}
 	} else {
-		req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+		req, err = s.hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
 		if err != nil {
 			return nil, err
 		}
@@ -364,17 +326,17 @@ func (s *KongMesh) GetDataplaneOverview(ctx context.Context, request operations.
 				err = fmt.Errorf("error sending request: no response")
 			}
 
-			_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 			return nil, err
 		} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
-			_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
+			_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 			if err != nil {
 				return nil, err
 			} else if _httpRes != nil {
 				httpRes = _httpRes
 			}
 		} else {
-			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			httpRes, err = s.hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
 			if err != nil {
 				return nil, err
 			}
@@ -489,11 +451,13 @@ func (s *KongMesh) GetDataplaneOverviewList(ctx context.Context, request operati
 	}
 
 	hookCtx := hooks.HookContext{
-		BaseURL:        baseURL,
-		Context:        ctx,
-		OperationID:    "getDataplaneOverviewList",
-		OAuth2Scopes:   []string{},
-		SecuritySource: s.sdkConfiguration.Security,
+		SDK:              s,
+		SDKConfiguration: s.sdkConfiguration,
+		BaseURL:          baseURL,
+		Context:          ctx,
+		OperationID:      "getDataplaneOverviewList",
+		OAuth2Scopes:     []string{},
+		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -553,15 +517,17 @@ func (s *KongMesh) GetDataplaneOverviewList(ctx context.Context, request operati
 				"404",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
-			req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+			req, err = s.hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
 			if err != nil {
 				if retry.IsPermanentError(err) || retry.IsTemporaryError(err) {
 					return nil, err
@@ -578,7 +544,7 @@ func (s *KongMesh) GetDataplaneOverviewList(ctx context.Context, request operati
 					err = fmt.Errorf("error sending request: no response")
 				}
 
-				_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+				_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 			}
 			return httpRes, err
 		})
@@ -586,13 +552,13 @@ func (s *KongMesh) GetDataplaneOverviewList(ctx context.Context, request operati
 		if err != nil {
 			return nil, err
 		} else {
-			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			httpRes, err = s.hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
 			if err != nil {
 				return nil, err
 			}
 		}
 	} else {
-		req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+		req, err = s.hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
 		if err != nil {
 			return nil, err
 		}
@@ -605,17 +571,17 @@ func (s *KongMesh) GetDataplaneOverviewList(ctx context.Context, request operati
 				err = fmt.Errorf("error sending request: no response")
 			}
 
-			_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 			return nil, err
 		} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
-			_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
+			_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 			if err != nil {
 				return nil, err
 			} else if _httpRes != nil {
 				httpRes = _httpRes
 			}
 		} else {
-			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			httpRes, err = s.hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
 			if err != nil {
 				return nil, err
 			}
@@ -732,11 +698,13 @@ func (s *KongMesh) GetDataplanesXdsConfig(ctx context.Context, request operation
 	}
 
 	hookCtx := hooks.HookContext{
-		BaseURL:        baseURL,
-		Context:        ctx,
-		OperationID:    "get-dataplanes-xds-config",
-		OAuth2Scopes:   []string{},
-		SecuritySource: s.sdkConfiguration.Security,
+		SDK:              s,
+		SDKConfiguration: s.sdkConfiguration,
+		BaseURL:          baseURL,
+		Context:          ctx,
+		OperationID:      "get-dataplanes-xds-config",
+		OAuth2Scopes:     []string{},
+		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
 	timeout := o.Timeout
@@ -800,15 +768,17 @@ func (s *KongMesh) GetDataplanesXdsConfig(ctx context.Context, request operation
 				"404",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
-			req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+			req, err = s.hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
 			if err != nil {
 				if retry.IsPermanentError(err) || retry.IsTemporaryError(err) {
 					return nil, err
@@ -825,7 +795,7 @@ func (s *KongMesh) GetDataplanesXdsConfig(ctx context.Context, request operation
 					err = fmt.Errorf("error sending request: no response")
 				}
 
-				_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+				_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 			}
 			return httpRes, err
 		})
@@ -833,13 +803,13 @@ func (s *KongMesh) GetDataplanesXdsConfig(ctx context.Context, request operation
 		if err != nil {
 			return nil, err
 		} else {
-			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			httpRes, err = s.hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
 			if err != nil {
 				return nil, err
 			}
 		}
 	} else {
-		req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+		req, err = s.hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
 		if err != nil {
 			return nil, err
 		}
@@ -852,17 +822,17 @@ func (s *KongMesh) GetDataplanesXdsConfig(ctx context.Context, request operation
 				err = fmt.Errorf("error sending request: no response")
 			}
 
-			_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
 			return nil, err
 		} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
-			_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
+			_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
 			if err != nil {
 				return nil, err
 			} else if _httpRes != nil {
 				httpRes = _httpRes
 			}
 		} else {
-			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			httpRes, err = s.hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
 			if err != nil {
 				return nil, err
 			}
