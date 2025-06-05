@@ -11,6 +11,7 @@ import (
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 	"net"
+	"os"
 	"testing"
 )
 
@@ -23,18 +24,20 @@ func (g *TestLogConsumer) Accept(l testcontainers.Log) {
 func TestMesh(t *testing.T) {
 	ctx := t.Context()
 	req := testcontainers.ContainerRequest{
-		Image:        "kumahq/kuma-cp:0.0.0-preview.vlocal-build-arm64",
+		Image:        "kong/kuma-cp:2.10.1",
 		ExposedPorts: []string{"5681/tcp"},
 		WaitingFor: wait.ForAll(
-			//wait.ForLog("default AccessRoleBinding created"),
-			//wait.ForLog("default AccessRole created"),
+			wait.ForLog("default AccessRoleBinding created"),
+			wait.ForLog("default AccessRole created"),
 			wait.ForLog("saving generated Admin User Token"),
 			wait.ForListeningPort("5681/tcp"),
 		),
 		Cmd: []string{"run", "--log-level", "debug"},
-		LogConsumerCfg: &testcontainers.LogConsumerConfig{
+	}
+	if os.Getenv("RUNNER_DEBUG") == "1" {
+		req.LogConsumerCfg = &testcontainers.LogConsumerConfig{
 			Consumers: []testcontainers.LogConsumer{&TestLogConsumer{}},
-		},
+		}
 	}
 	cpContainer, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: req,
