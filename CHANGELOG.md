@@ -4,6 +4,7 @@
 > Released on 2025/06/05
 >
 > - Add retries to all 404 returned from the API to combat replication lag
+> - Add retries to other retriable status codes (408, 429, 500, 502, 503, 504)
 
 ## 0.5.0
 > Released on 2025/05/30
