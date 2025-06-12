@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.3
+> Released on 2025/06/05
+>
+> - Fix empty labels causing an error
+
 ## 0.5.2
 > Released on 2025/06/05
 >
