@@ -18,5 +18,5 @@ jobs:
     with:
       filesToIgnore: CONTRIBUTING.md
     secrets:
-      app_id: ${{ secrets.APP_ID }}
-      private_key: ${{ secrets.APP_PRIVATE_KEY }}
+      app_id: ${{ secrets.KONG_MESH_APP_ID }}
+      private_key: ${{ secrets.KONG_MESH_APP_PRIVATE_KEY }}
