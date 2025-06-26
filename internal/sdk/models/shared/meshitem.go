@@ -842,26 +842,218 @@ func (o *BuiltinCertificateAuthorityConfig) GetCaCert() *BuiltinCertificateAutho
 	return o.CaCert
 }
 
+type CertType string
+
+const (
+	CertTypeDataSourceFile         CertType = "DataSource_File"
+	CertTypeDataSourceInline       CertType = "DataSource_Inline"
+	CertTypeDataSourceInlineString CertType = "DataSource_InlineString"
+	CertTypeDataSourceSecret       CertType = "DataSource_Secret"
+)
+
 type Cert struct {
-	Type any `json:"Type"`
+	DataSourceFile         *DataSourceFile         `queryParam:"inline"`
+	DataSourceInline       *DataSourceInline       `queryParam:"inline"`
+	DataSourceInlineString *DataSourceInlineString `queryParam:"inline"`
+	DataSourceSecret       *DataSourceSecret       `queryParam:"inline"`
+
+	Type CertType
 }
 
-func (o *Cert) GetType() any {
-	if o == nil {
+func CreateCertDataSourceFile(dataSourceFile DataSourceFile) Cert {
+	typ := CertTypeDataSourceFile
+
+	return Cert{
+		DataSourceFile: &dataSourceFile,
+		Type:           typ,
+	}
+}
+
+func CreateCertDataSourceInline(dataSourceInline DataSourceInline) Cert {
+	typ := CertTypeDataSourceInline
+
+	return Cert{
+		DataSourceInline: &dataSourceInline,
+		Type:             typ,
+	}
+}
+
+func CreateCertDataSourceInlineString(dataSourceInlineString DataSourceInlineString) Cert {
+	typ := CertTypeDataSourceInlineString
+
+	return Cert{
+		DataSourceInlineString: &dataSourceInlineString,
+		Type:                   typ,
+	}
+}
+
+func CreateCertDataSourceSecret(dataSourceSecret DataSourceSecret) Cert {
+	typ := CertTypeDataSourceSecret
+
+	return Cert{
+		DataSourceSecret: &dataSourceSecret,
+		Type:             typ,
+	}
+}
+
+func (u *Cert) UnmarshalJSON(data []byte) error {
+
+	var dataSourceFile DataSourceFile = DataSourceFile{}
+	if err := utils.UnmarshalJSON(data, &dataSourceFile, "", true, true); err == nil {
+		u.DataSourceFile = &dataSourceFile
+		u.Type = CertTypeDataSourceFile
 		return nil
 	}
-	return o.Type
+
+	var dataSourceInline DataSourceInline = DataSourceInline{}
+	if err := utils.UnmarshalJSON(data, &dataSourceInline, "", true, true); err == nil {
+		u.DataSourceInline = &dataSourceInline
+		u.Type = CertTypeDataSourceInline
+		return nil
+	}
+
+	var dataSourceInlineString DataSourceInlineString = DataSourceInlineString{}
+	if err := utils.UnmarshalJSON(data, &dataSourceInlineString, "", true, true); err == nil {
+		u.DataSourceInlineString = &dataSourceInlineString
+		u.Type = CertTypeDataSourceInlineString
+		return nil
+	}
+
+	var dataSourceSecret DataSourceSecret = DataSourceSecret{}
+	if err := utils.UnmarshalJSON(data, &dataSourceSecret, "", true, true); err == nil {
+		u.DataSourceSecret = &dataSourceSecret
+		u.Type = CertTypeDataSourceSecret
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for Cert", string(data))
 }
+
+func (u Cert) MarshalJSON() ([]byte, error) {
+	if u.DataSourceFile != nil {
+		return utils.MarshalJSON(u.DataSourceFile, "", true)
+	}
+
+	if u.DataSourceInline != nil {
+		return utils.MarshalJSON(u.DataSourceInline, "", true)
+	}
+
+	if u.DataSourceInlineString != nil {
+		return utils.MarshalJSON(u.DataSourceInlineString, "", true)
+	}
+
+	if u.DataSourceSecret != nil {
+		return utils.MarshalJSON(u.DataSourceSecret, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type Cert: all fields are null")
+}
+
+type KeyType string
+
+const (
+	KeyTypeDataSourceFile         KeyType = "DataSource_File"
+	KeyTypeDataSourceInline       KeyType = "DataSource_Inline"
+	KeyTypeDataSourceInlineString KeyType = "DataSource_InlineString"
+	KeyTypeDataSourceSecret       KeyType = "DataSource_Secret"
+)
 
 type Key struct {
-	Type any `json:"Type"`
+	DataSourceFile         *DataSourceFile         `queryParam:"inline"`
+	DataSourceInline       *DataSourceInline       `queryParam:"inline"`
+	DataSourceInlineString *DataSourceInlineString `queryParam:"inline"`
+	DataSourceSecret       *DataSourceSecret       `queryParam:"inline"`
+
+	Type KeyType
 }
 
-func (o *Key) GetType() any {
-	if o == nil {
+func CreateKeyDataSourceFile(dataSourceFile DataSourceFile) Key {
+	typ := KeyTypeDataSourceFile
+
+	return Key{
+		DataSourceFile: &dataSourceFile,
+		Type:           typ,
+	}
+}
+
+func CreateKeyDataSourceInline(dataSourceInline DataSourceInline) Key {
+	typ := KeyTypeDataSourceInline
+
+	return Key{
+		DataSourceInline: &dataSourceInline,
+		Type:             typ,
+	}
+}
+
+func CreateKeyDataSourceInlineString(dataSourceInlineString DataSourceInlineString) Key {
+	typ := KeyTypeDataSourceInlineString
+
+	return Key{
+		DataSourceInlineString: &dataSourceInlineString,
+		Type:                   typ,
+	}
+}
+
+func CreateKeyDataSourceSecret(dataSourceSecret DataSourceSecret) Key {
+	typ := KeyTypeDataSourceSecret
+
+	return Key{
+		DataSourceSecret: &dataSourceSecret,
+		Type:             typ,
+	}
+}
+
+func (u *Key) UnmarshalJSON(data []byte) error {
+
+	var dataSourceFile DataSourceFile = DataSourceFile{}
+	if err := utils.UnmarshalJSON(data, &dataSourceFile, "", true, true); err == nil {
+		u.DataSourceFile = &dataSourceFile
+		u.Type = KeyTypeDataSourceFile
 		return nil
 	}
-	return o.Type
+
+	var dataSourceInline DataSourceInline = DataSourceInline{}
+	if err := utils.UnmarshalJSON(data, &dataSourceInline, "", true, true); err == nil {
+		u.DataSourceInline = &dataSourceInline
+		u.Type = KeyTypeDataSourceInline
+		return nil
+	}
+
+	var dataSourceInlineString DataSourceInlineString = DataSourceInlineString{}
+	if err := utils.UnmarshalJSON(data, &dataSourceInlineString, "", true, true); err == nil {
+		u.DataSourceInlineString = &dataSourceInlineString
+		u.Type = KeyTypeDataSourceInlineString
+		return nil
+	}
+
+	var dataSourceSecret DataSourceSecret = DataSourceSecret{}
+	if err := utils.UnmarshalJSON(data, &dataSourceSecret, "", true, true); err == nil {
+		u.DataSourceSecret = &dataSourceSecret
+		u.Type = KeyTypeDataSourceSecret
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for Key", string(data))
+}
+
+func (u Key) MarshalJSON() ([]byte, error) {
+	if u.DataSourceFile != nil {
+		return utils.MarshalJSON(u.DataSourceFile, "", true)
+	}
+
+	if u.DataSourceInline != nil {
+		return utils.MarshalJSON(u.DataSourceInline, "", true)
+	}
+
+	if u.DataSourceInlineString != nil {
+		return utils.MarshalJSON(u.DataSourceInlineString, "", true)
+	}
+
+	if u.DataSourceSecret != nil {
+		return utils.MarshalJSON(u.DataSourceSecret, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type Key: all fields are null")
 }
 
 type ProvidedCertificateAuthorityConfig struct {

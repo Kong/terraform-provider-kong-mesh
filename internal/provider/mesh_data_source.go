@@ -421,18 +421,84 @@ func (r *MeshDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 												"cert": schema.SingleNestedAttribute{
 													Computed: true,
 													Attributes: map[string]schema.Attribute{
-														"type": schema.StringAttribute{
-															Computed:    true,
-															Description: `Parsed as JSON.`,
+														"data_source_file": schema.SingleNestedAttribute{
+															Computed: true,
+															Attributes: map[string]schema.Attribute{
+																"file": schema.StringAttribute{
+																	Computed: true,
+																	MarkdownDescription: `Data source is a path to a file.` + "\n" +
+																		`Deprecated, use other sources of a data.`,
+																},
+															},
+														},
+														"data_source_inline": schema.SingleNestedAttribute{
+															Computed: true,
+															Attributes: map[string]schema.Attribute{
+																"inline": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `Data source is inline bytes.`,
+																},
+															},
+														},
+														"data_source_inline_string": schema.SingleNestedAttribute{
+															Computed: true,
+															Attributes: map[string]schema.Attribute{
+																"inline_string": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `Data source is inline string`,
+																},
+															},
+														},
+														"data_source_secret": schema.SingleNestedAttribute{
+															Computed: true,
+															Attributes: map[string]schema.Attribute{
+																"secret": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `Data source is a secret with given Secret key.`,
+																},
+															},
 														},
 													},
 												},
 												"key": schema.SingleNestedAttribute{
 													Computed: true,
 													Attributes: map[string]schema.Attribute{
-														"type": schema.StringAttribute{
-															Computed:    true,
-															Description: `Parsed as JSON.`,
+														"data_source_file": schema.SingleNestedAttribute{
+															Computed: true,
+															Attributes: map[string]schema.Attribute{
+																"file": schema.StringAttribute{
+																	Computed: true,
+																	MarkdownDescription: `Data source is a path to a file.` + "\n" +
+																		`Deprecated, use other sources of a data.`,
+																},
+															},
+														},
+														"data_source_inline": schema.SingleNestedAttribute{
+															Computed: true,
+															Attributes: map[string]schema.Attribute{
+																"inline": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `Data source is inline bytes.`,
+																},
+															},
+														},
+														"data_source_inline_string": schema.SingleNestedAttribute{
+															Computed: true,
+															Attributes: map[string]schema.Attribute{
+																"inline_string": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `Data source is inline string`,
+																},
+															},
+														},
+														"data_source_secret": schema.SingleNestedAttribute{
+															Computed: true,
+															Attributes: map[string]schema.Attribute{
+																"secret": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `Data source is a secret with given Secret key.`,
+																},
+															},
 														},
 													},
 												},

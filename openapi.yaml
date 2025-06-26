@@ -15082,6 +15082,33 @@ components:
     DataplaneDeleteSuccessResponse:
       type: object
       properties: {}
+    DataSource_File:
+      properties:
+        File:
+          description: |-
+            Data source is a path to a file.
+            Deprecated, use other sources of a data.
+          type: string
+      type: object
+    DataSource_Inline:
+      properties:
+        Inline:
+          description: Data source is inline bytes.
+          format: byte
+          type: string
+      type: object
+    DataSource_InlineString:
+      properties:
+        InlineString:
+          description: Data source is inline string
+          type: string
+      type: object
+    DataSource_Secret:
+      properties:
+        Secret:
+          description: Data source is a secret with given Secret key.
+          type: string
+      type: object
     FileLoggingBackendConfig:
       properties:
         path:
@@ -15463,20 +15490,19 @@ components:
     ProvidedCertificateAuthorityConfig:
       properties:
         cert:
-          properties:
-            Type: true
-          required:
-            - Type
-          type: object
-          x-speakeasy-param-computed: false
+          oneOf:
+            - $ref: '#/components/schemas/DataSource_File'
+            - $ref: '#/components/schemas/DataSource_Inline'
+            - $ref: '#/components/schemas/DataSource_InlineString'
+            - $ref: '#/components/schemas/DataSource_Secret'
         key:
-          properties:
-            Type: true
-          required:
-            - Type
-          type: object
-          x-speakeasy-param-computed: false
+          oneOf:
+            - $ref: '#/components/schemas/DataSource_File'
+            - $ref: '#/components/schemas/DataSource_Inline'
+            - $ref: '#/components/schemas/DataSource_InlineString'
+            - $ref: '#/components/schemas/DataSource_Secret'
       type: object
+      x-speakeasy-param-computed: false
     ZipkinTracingBackendConfig:
       properties:
         apiVersion:
@@ -15580,14 +15606,27 @@ components:
                           should contain an RSA key and certificate, and the other an
                           ECDSA key and certificate.
                         items:
-                          description: DataSource defines the source of bytes to use.
-                          properties:
-                            Type:
-                              description: "Types that are assignable to Type:\n\n\t*DataSource_Secret\n\t*DataSource_File\n\t*DataSource_Inline\n\t*DataSource_InlineString"
+                          oneOf:
+                            - properties:
+                                secret:
+                                  type: string
+                              type: object
                               x-speakeasy-param-computed: false
-                          required:
-                            - Type
-                          type: object
+                            - properties:
+                                file:
+                                  type: string
+                              type: object
+                              x-speakeasy-param-computed: false
+                            - properties:
+                                inline:
+                                  type: string
+                              type: object
+                              x-speakeasy-param-computed: false
+                            - properties:
+                                inlineString:
+                                  type: string
+                              type: object
+                              x-speakeasy-param-computed: false
                           x-speakeasy-param-computed: false
                         type: array
                         default: []

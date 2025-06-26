@@ -4,7 +4,6 @@ package provider
 
 import (
 	"context"
-	"encoding/json"
 	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -85,15 +84,32 @@ func (r *MeshGatewayListDataSourceModel) RefreshFromSharedMeshGatewayList(ctx co
 						listeners.TLS = nil
 					} else {
 						listeners.TLS = &tfTypes.MeshGatewayItemTLS{}
-						listeners.TLS.Certificates = []tfTypes.AccessKey{}
+						listeners.TLS.Certificates = []tfTypes.Certificates{}
 						for certificatesCount, certificatesItem := range listenersItem.TLS.Certificates {
-							var certificates tfTypes.AccessKey
-							typeVarResult, _ := json.Marshal(certificatesItem.Type)
-							certificates.Type = types.StringValue(string(typeVarResult))
+							var certificates tfTypes.Certificates
+							if certificatesItem.One != nil {
+								certificates.One = &tfTypes.DataSourceSecret{}
+								certificates.One.Secret = types.StringPointerValue(certificatesItem.One.Secret)
+							}
+							if certificatesItem.Two != nil {
+								certificates.Two = &tfTypes.DataSourceFile{}
+								certificates.Two.File = types.StringPointerValue(certificatesItem.Two.File)
+							}
+							if certificatesItem.Three != nil {
+								certificates.Three = &tfTypes.DataSourceInline{}
+								certificates.Three.Inline = types.StringPointerValue(certificatesItem.Three.Inline)
+							}
+							if certificatesItem.Four != nil {
+								certificates.Four = &tfTypes.DataSourceInlineString{}
+								certificates.Four.InlineString = types.StringPointerValue(certificatesItem.Four.InlineString)
+							}
 							if certificatesCount+1 > len(listeners.TLS.Certificates) {
 								listeners.TLS.Certificates = append(listeners.TLS.Certificates, certificates)
 							} else {
-								listeners.TLS.Certificates[certificatesCount].Type = certificates.Type
+								listeners.TLS.Certificates[certificatesCount].One = certificates.One
+								listeners.TLS.Certificates[certificatesCount].Two = certificates.Two
+								listeners.TLS.Certificates[certificatesCount].Three = certificates.Three
+								listeners.TLS.Certificates[certificatesCount].Four = certificates.Four
 							}
 						}
 						if listenersItem.TLS.Mode != nil {

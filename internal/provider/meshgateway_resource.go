@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -21,7 +22,6 @@ import (
 	custom_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
-	"github.com/kong/terraform-provider-kong-mesh/internal/validators"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -130,17 +130,68 @@ func (r *MeshGatewayResource) Schema(ctx context.Context, req resource.SchemaReq
 											Optional: true,
 											NestedObject: schema.NestedAttributeObject{
 												Attributes: map[string]schema.Attribute{
-													"type": schema.StringAttribute{
-														Required: true,
-														MarkdownDescription: `Types that are assignable to Type:` + "\n" +
-															`` + "\n" +
-															`	*DataSource_Secret` + "\n" +
-															`	*DataSource_File` + "\n" +
-															`	*DataSource_Inline` + "\n" +
-															`	*DataSource_InlineString` + "\n" +
-															`Parsed as JSON.`,
-														Validators: []validator.String{
-															validators.IsValidJSON(),
+													"four": schema.SingleNestedAttribute{
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"inline_string": schema.StringAttribute{
+																Computed: true,
+																Optional: true,
+															},
+														},
+														Validators: []validator.Object{
+															objectvalidator.ConflictsWith(path.Expressions{
+																path.MatchRelative().AtParent().AtName("one"),
+																path.MatchRelative().AtParent().AtName("two"),
+																path.MatchRelative().AtParent().AtName("three"),
+															}...),
+														},
+													},
+													"one": schema.SingleNestedAttribute{
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"secret": schema.StringAttribute{
+																Computed: true,
+																Optional: true,
+															},
+														},
+														Validators: []validator.Object{
+															objectvalidator.ConflictsWith(path.Expressions{
+																path.MatchRelative().AtParent().AtName("two"),
+																path.MatchRelative().AtParent().AtName("three"),
+																path.MatchRelative().AtParent().AtName("four"),
+															}...),
+														},
+													},
+													"three": schema.SingleNestedAttribute{
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"inline": schema.StringAttribute{
+																Computed: true,
+																Optional: true,
+															},
+														},
+														Validators: []validator.Object{
+															objectvalidator.ConflictsWith(path.Expressions{
+																path.MatchRelative().AtParent().AtName("one"),
+																path.MatchRelative().AtParent().AtName("two"),
+																path.MatchRelative().AtParent().AtName("four"),
+															}...),
+														},
+													},
+													"two": schema.SingleNestedAttribute{
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"file": schema.StringAttribute{
+																Computed: true,
+																Optional: true,
+															},
+														},
+														Validators: []validator.Object{
+															objectvalidator.ConflictsWith(path.Expressions{
+																path.MatchRelative().AtParent().AtName("one"),
+																path.MatchRelative().AtParent().AtName("three"),
+																path.MatchRelative().AtParent().AtName("four"),
+															}...),
 														},
 													},
 												},

@@ -17,7 +17,9 @@ resource "kong-mesh_mesh_gateway" "my_meshgateway" {
         tls = {
           certificates = [
             {
-              type = "{ \"see\": \"documentation\" }"
+              one = {
+                secret = "...my_secret..."
+              }
             }
           ]
           mode = {

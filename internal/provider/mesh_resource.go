@@ -500,25 +500,160 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 											Optional: true,
 											Attributes: map[string]schema.Attribute{
 												"cert": schema.SingleNestedAttribute{
+													Computed: true,
 													Optional: true,
 													Attributes: map[string]schema.Attribute{
-														"type": schema.StringAttribute{
-															Required:    true,
-															Description: `Parsed as JSON.`,
-															Validators: []validator.String{
-																validators.IsValidJSON(),
+														"data_source_file": schema.SingleNestedAttribute{
+															Computed: true,
+															Optional: true,
+															Attributes: map[string]schema.Attribute{
+																"file": schema.StringAttribute{
+																	Computed: true,
+																	Optional: true,
+																	MarkdownDescription: `Data source is a path to a file.` + "\n" +
+																		`Deprecated, use other sources of a data.`,
+																},
+															},
+															Validators: []validator.Object{
+																objectvalidator.ConflictsWith(path.Expressions{
+																	path.MatchRelative().AtParent().AtName("data_source_inline"),
+																	path.MatchRelative().AtParent().AtName("data_source_inline_string"),
+																	path.MatchRelative().AtParent().AtName("data_source_secret"),
+																}...),
+															},
+														},
+														"data_source_inline": schema.SingleNestedAttribute{
+															Computed: true,
+															Optional: true,
+															Attributes: map[string]schema.Attribute{
+																"inline": schema.StringAttribute{
+																	Computed:    true,
+																	Optional:    true,
+																	Description: `Data source is inline bytes.`,
+																},
+															},
+															Validators: []validator.Object{
+																objectvalidator.ConflictsWith(path.Expressions{
+																	path.MatchRelative().AtParent().AtName("data_source_file"),
+																	path.MatchRelative().AtParent().AtName("data_source_inline_string"),
+																	path.MatchRelative().AtParent().AtName("data_source_secret"),
+																}...),
+															},
+														},
+														"data_source_inline_string": schema.SingleNestedAttribute{
+															Computed: false,
+															Optional: true,
+															Attributes: map[string]schema.Attribute{
+																"inline_string": schema.StringAttribute{
+																	Computed:    false,
+																	Optional:    false,
+																	Required: true,
+																	Description: `Data source is inline string`,
+																},
+															},
+															Validators: []validator.Object{
+																objectvalidator.ConflictsWith(path.Expressions{
+																	path.MatchRelative().AtParent().AtName("data_source_file"),
+																	path.MatchRelative().AtParent().AtName("data_source_inline"),
+																	path.MatchRelative().AtParent().AtName("data_source_secret"),
+																}...),
+															},
+														},
+														"data_source_secret": schema.SingleNestedAttribute{
+															Computed: true,
+															Optional: true,
+															Attributes: map[string]schema.Attribute{
+																"secret": schema.StringAttribute{
+																	Computed:    true,
+																	Optional:    true,
+																	Description: `Data source is a secret with given Secret key.`,
+																},
+															},
+															Validators: []validator.Object{
+																objectvalidator.ConflictsWith(path.Expressions{
+																	path.MatchRelative().AtParent().AtName("data_source_file"),
+																	path.MatchRelative().AtParent().AtName("data_source_inline"),
+																	path.MatchRelative().AtParent().AtName("data_source_inline_string"),
+																}...),
 															},
 														},
 													},
 												},
 												"key": schema.SingleNestedAttribute{
+													Computed: true,
 													Optional: true,
 													Attributes: map[string]schema.Attribute{
-														"type": schema.StringAttribute{
-															Required:    true,
-															Description: `Parsed as JSON.`,
-															Validators: []validator.String{
-																validators.IsValidJSON(),
+														"data_source_file": schema.SingleNestedAttribute{
+															Computed: true,
+															Optional: true,
+															Attributes: map[string]schema.Attribute{
+																"file": schema.StringAttribute{
+																	Computed: true,
+																	Optional: true,
+																	MarkdownDescription: `Data source is a path to a file.` + "\n" +
+																		`Deprecated, use other sources of a data.`,
+																},
+															},
+															Validators: []validator.Object{
+																objectvalidator.ConflictsWith(path.Expressions{
+																	path.MatchRelative().AtParent().AtName("data_source_inline"),
+																	path.MatchRelative().AtParent().AtName("data_source_inline_string"),
+																	path.MatchRelative().AtParent().AtName("data_source_secret"),
+																}...),
+															},
+														},
+														"data_source_inline": schema.SingleNestedAttribute{
+															Computed: true,
+															Optional: true,
+															Attributes: map[string]schema.Attribute{
+																"inline": schema.StringAttribute{
+																	Computed:    true,
+																	Optional:    true,
+																	Description: `Data source is inline bytes.`,
+																},
+															},
+															Validators: []validator.Object{
+																objectvalidator.ConflictsWith(path.Expressions{
+																	path.MatchRelative().AtParent().AtName("data_source_file"),
+																	path.MatchRelative().AtParent().AtName("data_source_inline_string"),
+																	path.MatchRelative().AtParent().AtName("data_source_secret"),
+																}...),
+															},
+														},
+														"data_source_inline_string": schema.SingleNestedAttribute{
+															Computed: true,
+															Optional: true,
+															Attributes: map[string]schema.Attribute{
+																"inline_string": schema.StringAttribute{
+																	Computed:    true,
+																	Optional:    true,
+																	Description: `Data source is inline string`,
+																},
+															},
+															Validators: []validator.Object{
+																objectvalidator.ConflictsWith(path.Expressions{
+																	path.MatchRelative().AtParent().AtName("data_source_file"),
+																	path.MatchRelative().AtParent().AtName("data_source_inline"),
+																	path.MatchRelative().AtParent().AtName("data_source_secret"),
+																}...),
+															},
+														},
+														"data_source_secret": schema.SingleNestedAttribute{
+															Computed: true,
+															Optional: true,
+															Attributes: map[string]schema.Attribute{
+																"secret": schema.StringAttribute{
+																	Computed:    true,
+																	Optional:    true,
+																	Description: `Data source is a secret with given Secret key.`,
+																},
+															},
+															Validators: []validator.Object{
+																objectvalidator.ConflictsWith(path.Expressions{
+																	path.MatchRelative().AtParent().AtName("data_source_file"),
+																	path.MatchRelative().AtParent().AtName("data_source_inline"),
+																	path.MatchRelative().AtParent().AtName("data_source_inline_string"),
+																}...),
 															},
 														},
 													},

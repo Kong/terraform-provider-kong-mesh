@@ -84,22 +84,155 @@ func (o *Resources) GetConnectionLimit() *int64 {
 	return o.ConnectionLimit
 }
 
-// Certificates - DataSource defines the source of bytes to use.
-type Certificates struct {
-	// Types that are assignable to Type:
-	//
-	// 	*DataSource_Secret
-	// 	*DataSource_File
-	// 	*DataSource_Inline
-	// 	*DataSource_InlineString
-	Type any `json:"Type"`
+type Four struct {
+	InlineString *string `json:"inlineString,omitempty"`
 }
 
-func (o *Certificates) GetType() any {
+func (o *Four) GetInlineString() *string {
 	if o == nil {
 		return nil
 	}
-	return o.Type
+	return o.InlineString
+}
+
+type Three struct {
+	Inline *string `json:"inline,omitempty"`
+}
+
+func (o *Three) GetInline() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Inline
+}
+
+type Two struct {
+	File *string `json:"file,omitempty"`
+}
+
+func (o *Two) GetFile() *string {
+	if o == nil {
+		return nil
+	}
+	return o.File
+}
+
+type One struct {
+	Secret *string `json:"secret,omitempty"`
+}
+
+func (o *One) GetSecret() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Secret
+}
+
+type CertificatesType string
+
+const (
+	CertificatesTypeOne   CertificatesType = "1"
+	CertificatesTypeTwo   CertificatesType = "2"
+	CertificatesTypeThree CertificatesType = "3"
+	CertificatesTypeFour  CertificatesType = "4"
+)
+
+type Certificates struct {
+	One   *One   `queryParam:"inline"`
+	Two   *Two   `queryParam:"inline"`
+	Three *Three `queryParam:"inline"`
+	Four  *Four  `queryParam:"inline"`
+
+	Type CertificatesType
+}
+
+func CreateCertificatesOne(one One) Certificates {
+	typ := CertificatesTypeOne
+
+	return Certificates{
+		One:  &one,
+		Type: typ,
+	}
+}
+
+func CreateCertificatesTwo(two Two) Certificates {
+	typ := CertificatesTypeTwo
+
+	return Certificates{
+		Two:  &two,
+		Type: typ,
+	}
+}
+
+func CreateCertificatesThree(three Three) Certificates {
+	typ := CertificatesTypeThree
+
+	return Certificates{
+		Three: &three,
+		Type:  typ,
+	}
+}
+
+func CreateCertificatesFour(four Four) Certificates {
+	typ := CertificatesTypeFour
+
+	return Certificates{
+		Four: &four,
+		Type: typ,
+	}
+}
+
+func (u *Certificates) UnmarshalJSON(data []byte) error {
+
+	var one One = One{}
+	if err := utils.UnmarshalJSON(data, &one, "", true, true); err == nil {
+		u.One = &one
+		u.Type = CertificatesTypeOne
+		return nil
+	}
+
+	var two Two = Two{}
+	if err := utils.UnmarshalJSON(data, &two, "", true, true); err == nil {
+		u.Two = &two
+		u.Type = CertificatesTypeTwo
+		return nil
+	}
+
+	var three Three = Three{}
+	if err := utils.UnmarshalJSON(data, &three, "", true, true); err == nil {
+		u.Three = &three
+		u.Type = CertificatesTypeThree
+		return nil
+	}
+
+	var four Four = Four{}
+	if err := utils.UnmarshalJSON(data, &four, "", true, true); err == nil {
+		u.Four = &four
+		u.Type = CertificatesTypeFour
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for Certificates", string(data))
+}
+
+func (u Certificates) MarshalJSON() ([]byte, error) {
+	if u.One != nil {
+		return utils.MarshalJSON(u.One, "", true)
+	}
+
+	if u.Two != nil {
+		return utils.MarshalJSON(u.Two, "", true)
+	}
+
+	if u.Three != nil {
+		return utils.MarshalJSON(u.Three, "", true)
+	}
+
+	if u.Four != nil {
+		return utils.MarshalJSON(u.Four, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type Certificates: all fields are null")
 }
 
 type MeshGatewayItemModeType string
