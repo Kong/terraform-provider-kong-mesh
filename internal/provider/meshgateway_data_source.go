@@ -112,37 +112,15 @@ func (r *MeshGatewayDataSource) Schema(ctx context.Context, req datasource.Schem
 											Computed: true,
 											NestedObject: schema.NestedAttributeObject{
 												Attributes: map[string]schema.Attribute{
-													"four": schema.SingleNestedAttribute{
+													"type": schema.StringAttribute{
 														Computed: true,
-														Attributes: map[string]schema.Attribute{
-															"inline_string": schema.StringAttribute{
-																Computed: true,
-															},
-														},
-													},
-													"one": schema.SingleNestedAttribute{
-														Computed: true,
-														Attributes: map[string]schema.Attribute{
-															"secret": schema.StringAttribute{
-																Computed: true,
-															},
-														},
-													},
-													"three": schema.SingleNestedAttribute{
-														Computed: true,
-														Attributes: map[string]schema.Attribute{
-															"inline": schema.StringAttribute{
-																Computed: true,
-															},
-														},
-													},
-													"two": schema.SingleNestedAttribute{
-														Computed: true,
-														Attributes: map[string]schema.Attribute{
-															"file": schema.StringAttribute{
-																Computed: true,
-															},
-														},
+														MarkdownDescription: `Types that are assignable to Type:` + "\n" +
+															`` + "\n" +
+															`	*DataSource_Secret` + "\n" +
+															`	*DataSource_File` + "\n" +
+															`	*DataSource_Inline` + "\n" +
+															`	*DataSource_InlineString` + "\n" +
+															`Parsed as JSON.`,
 													},
 												},
 											},

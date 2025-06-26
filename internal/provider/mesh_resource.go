@@ -541,13 +541,12 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 															},
 														},
 														"data_source_inline_string": schema.SingleNestedAttribute{
-															Computed: false,
+															Computed: true,
 															Optional: true,
 															Attributes: map[string]schema.Attribute{
 																"inline_string": schema.StringAttribute{
-																	Computed:    false,
-																	Optional:    false,
-																	Required: true,
+																	Computed:    true,
+																	Optional:    true,
 																	Description: `Data source is inline string`,
 																},
 															},

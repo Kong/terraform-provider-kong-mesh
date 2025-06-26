@@ -1,7 +1,7 @@
 lockVersion: 2.0.0
 id: 322c4806-8b53-493c-a05f-50d4d113c747
 management:
-  docChecksum: 45d4b3268f26d86a932a391ddb2eb6d6
+  docChecksum: f2141b28c9eadb6537f4ce6c48a3bbfc
   docVersion: 2.0.0
   speakeasyVersion: 1.555.3
   generationVersion: 2.620.2
@@ -316,7 +316,6 @@ generatedFiles:
   - internal/provider/types/ca_cert.go
   - internal/provider/types/cert.go
   - internal/provider/types/cert_manager_certificate_authority_config.go
-  - internal/provider/types/certificates.go
   - internal/provider/types/cluster.go
   - internal/provider/types/conditions.go
   - internal/provider/types/conf.go

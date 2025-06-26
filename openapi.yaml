@@ -15502,7 +15502,6 @@ components:
             - $ref: '#/components/schemas/DataSource_InlineString'
             - $ref: '#/components/schemas/DataSource_Secret'
       type: object
-      x-speakeasy-param-computed: false
     ZipkinTracingBackendConfig:
       properties:
         apiVersion:
@@ -15606,27 +15605,14 @@ components:
                           should contain an RSA key and certificate, and the other an
                           ECDSA key and certificate.
                         items:
-                          oneOf:
-                            - properties:
-                                secret:
-                                  type: string
-                              type: object
+                          description: DataSource defines the source of bytes to use.
+                          properties:
+                            Type:
+                              description: "Types that are assignable to Type:\n\n\t*DataSource_Secret\n\t*DataSource_File\n\t*DataSource_Inline\n\t*DataSource_InlineString"
                               x-speakeasy-param-computed: false
-                            - properties:
-                                file:
-                                  type: string
-                              type: object
-                              x-speakeasy-param-computed: false
-                            - properties:
-                                inline:
-                                  type: string
-                              type: object
-                              x-speakeasy-param-computed: false
-                            - properties:
-                                inlineString:
-                                  type: string
-                              type: object
-                              x-speakeasy-param-computed: false
+                          required:
+                            - Type
+                          type: object
                           x-speakeasy-param-computed: false
                         type: array
                         default: []
