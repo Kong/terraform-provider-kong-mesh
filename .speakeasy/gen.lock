@@ -3,15 +3,15 @@ id: 322c4806-8b53-493c-a05f-50d4d113c747
 management:
   docChecksum: f2141b28c9eadb6537f4ce6c48a3bbfc
   docVersion: 2.0.0
-  speakeasyVersion: 1.555.3
-  generationVersion: 2.620.2
+  speakeasyVersion: 1.570.1
+  generationVersion: 2.638.1
   releaseVersion: 0.5.3
-  configChecksum: e2896aaaa4697a69b5ccc1329c9a2d44
+  configChecksum: 7ff44a5c00c768590e144f1378281a4a
 features:
   terraform:
     additionalDependencies: 0.1.0
     constsAndDefaults: 0.2.1
-    core: 3.41.10
+    core: 3.41.12
     globalSecurity: 2.81.12
     globalServerURLs: 2.82.2
     inputOutputModels: 2.83.0
@@ -961,6 +961,19 @@ examples:
           application/problem+json: {"status": 523112, "title": "<value>", "instance": "<value>", "detail": "<value>", "invalid_parameters": [{"field": "name", "rule": "max", "maximum": 8, "source": "body", "reason": "must not have more than 8 characters"}, {"field": "name", "rule": "max", "maximum": 8, "source": "body", "reason": "must not have more than 8 characters"}]}
         "500":
           application/problem+json: {"status": 368786, "title": "<value>", "instance": "<value>", "detail": "<value>"}
+    speakeasy-default-inspect-dataplanes-rules:
+      parameters:
+        path:
+          mesh: "default"
+          resourceType: "dataplanes"
+          resourceName: "my-dp"
+      responses:
+        "200":
+          application/json: {"resource": {"type": "Dataplane", "mesh": "default", "name": "my-resource", "labels": {"k8s.kuma.io/namespace": "kuma-system", "kuma.io/display-name": "mtp", "kuma.io/mesh": "default", "kuma.io/origin": "zone"}}, "rules": [{"type": "MeshRetry", "proxyRule": {"conf": {"key": "<value>", "key1": "<value>", "key2": "<value>"}, "origin": [{"type": "Dataplane", "mesh": "default", "name": "my-resource", "labels": {"k8s.kuma.io/namespace": "kuma-system", "kuma.io/display-name": "mtp", "kuma.io/mesh": "default", "kuma.io/origin": "zone"}}]}, "toRules": [{"matchers": [{"key": "kuma.io/service", "value": "my-cool-service", "not": false}], "conf": {"key": "<value>", "key1": "<value>"}, "origin": [{"type": "Dataplane", "mesh": "default", "name": "my-resource", "labels": {"k8s.kuma.io/namespace": "kuma-system", "kuma.io/display-name": "mtp", "kuma.io/mesh": "default", "kuma.io/origin": "zone"}}]}], "toResourceRules": [{"resourceMeta": {"type": "Dataplane", "mesh": "default", "name": "my-resource", "labels": {"k8s.kuma.io/namespace": "kuma-system", "kuma.io/display-name": "mtp", "kuma.io/mesh": "default", "kuma.io/origin": "zone"}}, "conf": [{}, {"key": "<value>", "key1": "<value>"}], "origin": []}], "fromRules": [{"inbound": {"tags": {"key": "<value>", "key1": "<value>", "key2": "<value>"}, "port": 655319}, "rules": []}], "inboundRules": [{"inbound": {"tags": {"key": "<value>", "key1": "<value>", "key2": "<value>"}, "port": 655319}, "rules": [{"conf": [], "origin": [{"resourceMeta": {"type": "Dataplane", "mesh": "default", "name": "my-resource", "labels": {"k8s.kuma.io/namespace": "kuma-system", "kuma.io/display-name": "mtp", "kuma.io/mesh": "default", "kuma.io/origin": "zone"}}}]}]}], "warnings": ["Mesh is not Mtls enabled this policy will have no effect"]}], "httpMatches": [{"hash": "<value>", "match": {}}]}
+        "400":
+          application/problem+json: {"status": 653914, "title": "<value>", "instance": "<value>", "detail": "<value>", "invalid_parameters": [{"field": "name", "rule": "max_items", "maximum": 8, "source": "body", "reason": "must not have more than 8 characters"}]}
+        "500":
+          application/problem+json: {"status": 560239, "title": "<value>", "instance": "<value>", "detail": "<value>"}
   inspect-resources:
     "":
       parameters:
@@ -984,6 +997,19 @@ examples:
       responses:
         "200":
           application/json: {"total": 100, "next": "http://localhost:5681/meshes/default/meshretries/_resources/dataplanes?offset=100", "items": [{"type": "Dataplane", "mesh": "default", "name": "dp-1", "labels": {"k8s.kuma.io/namespace": "kuma-system"}}, {"type": "Dataplane", "mesh": "default", "name": "dp-2", "labels": {"k8s.kuma.io/namespace": "kuma-system"}}]}
+    speakeasy-default-inspect-resources:
+      parameters:
+        path:
+          mesh: "default"
+          policyType: "meshretries"
+          policyName: "retry-all"
+      responses:
+        "200":
+          application/json: {"total": 200, "items": [{"type": "Dataplane", "mesh": "default", "name": "my-resource", "labels": {"k8s.kuma.io/namespace": "kuma-system", "kuma.io/display-name": "mtp", "kuma.io/mesh": "default", "kuma.io/origin": "zone"}}]}
+        "400":
+          application/problem+json: {"status": 162739, "title": "<value>", "instance": "<value>", "detail": "<value>", "invalid_parameters": []}
+        "500":
+          application/problem+json: {"status": 31092, "title": "<value>", "instance": "<value>", "detail": "<value>"}
   inspect-hostnames:
     "":
       parameters:
@@ -1018,6 +1044,21 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-inspect-hostnames:
+      parameters:
+        path:
+          mesh: "default"
+          serviceType: "meshservices"
+          serviceName: "redis"
+      responses:
+        "200":
+          application/json: {"total": 200, "items": [{"hostname": "redis.redis-system.svc.east.mesh.local", "zones": [{"name": "east"}]}]}
+        "400":
+          application/problem+json: {"status": 446583, "title": "<value>", "instance": "<value>", "detail": "<value>", "invalid_parameters": []}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
+        "500":
+          application/problem+json: {"status": 188361, "title": "<value>", "instance": "<value>", "detail": "<value>"}
   getMeshAccessLog:
     NotFoundExample:
       parameters:
@@ -1070,6 +1111,17 @@ examples:
       responses:
         "200":
           application/json: {"items": [{"type": "MeshAccessLog", "mesh": "default", "name": "<value>", "spec": {"from": [{"default": {"backends": [{"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}}, "type": "Tcp"}]}, "targetRef": {"kind": "MeshMultiZoneService"}}], "rules": [{"default": {"backends": [{"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}}, "type": "OpenTelemetry"}, {"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}}, "type": "OpenTelemetry"}]}}, {"default": {"backends": [{"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}}, "type": "OpenTelemetry"}, {"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}}, "type": "OpenTelemetry"}]}}], "to": [{"default": {"backends": [{"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}}, "type": "OpenTelemetry"}, {"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}}, "type": "OpenTelemetry"}]}, "targetRef": {"kind": "MeshExternalService"}}, {"default": {"backends": [{"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}}, "type": "OpenTelemetry"}, {"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}}, "type": "OpenTelemetry"}]}, "targetRef": {"kind": "MeshExternalService"}}, {"default": {"backends": [{"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}}, "type": "OpenTelemetry"}, {"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}}, "type": "OpenTelemetry"}]}, "targetRef": {"kind": "MeshExternalService"}}]}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}, {"type": "MeshAccessLog", "mesh": "default", "name": "<value>", "spec": {"from": [{"default": {"backends": [{"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}}, "type": "Tcp"}]}, "targetRef": {"kind": "MeshMultiZoneService"}}], "rules": [{"default": {"backends": [{"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}}, "type": "OpenTelemetry"}, {"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}}, "type": "OpenTelemetry"}]}}, {"default": {"backends": [{"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}}, "type": "OpenTelemetry"}, {"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}}, "type": "OpenTelemetry"}]}}], "to": [{"default": {"backends": [{"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}}, "type": "OpenTelemetry"}, {"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}}, "type": "OpenTelemetry"}]}, "targetRef": {"kind": "MeshExternalService"}}, {"default": {"backends": [{"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}}, "type": "OpenTelemetry"}, {"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}}, "type": "OpenTelemetry"}]}, "targetRef": {"kind": "MeshExternalService"}}, {"default": {"backends": [{"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}}, "type": "OpenTelemetry"}, {"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}}, "type": "OpenTelemetry"}]}, "targetRef": {"kind": "MeshExternalService"}}]}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
+    speakeasy-default-get-mesh-access-log-list:
+      parameters:
+        path:
+          mesh: "<value>"
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": [{"type": "MeshAccessLog", "mesh": "default", "name": "<value>", "spec": {"from": [{"default": {"backends": [{"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}}, "type": "Tcp"}]}, "targetRef": {"kind": "MeshHTTPRoute"}}], "rules": [{"default": {"backends": [{"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}}, "type": "File"}]}}], "to": [{"default": {"backends": [{"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}}, "type": "Tcp"}]}, "targetRef": {"kind": "MeshHTTPRoute"}}]}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
   getMeshCircuitBreaker:
     NotFoundExample:
       parameters:
@@ -1122,6 +1174,17 @@ examples:
       responses:
         "200":
           application/json: {"items": [{"type": "MeshCircuitBreaker", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}, {"type": "MeshCircuitBreaker", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
+    speakeasy-default-get-mesh-circuit-breaker-list:
+      parameters:
+        path:
+          mesh: "<value>"
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": [{"type": "MeshCircuitBreaker", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
   getMeshFaultInjection:
     NotFoundExample:
       parameters:
@@ -1164,6 +1227,17 @@ examples:
           application/json: {}
   getMeshFaultInjectionList:
     "":
+      parameters:
+        path:
+          mesh: "<value>"
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": [{"type": "MeshFaultInjection", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
+    speakeasy-default-get-mesh-fault-injection-list:
       parameters:
         path:
           mesh: "<value>"
@@ -1226,6 +1300,17 @@ examples:
       responses:
         "200":
           application/json: {"items": [{"type": "MeshHealthCheck", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
+    speakeasy-default-get-mesh-health-check-list:
+      parameters:
+        path:
+          mesh: "<value>"
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": [{"type": "MeshHealthCheck", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
   getMeshHTTPRoute:
     NotFoundExample:
       parameters:
@@ -1278,6 +1363,17 @@ examples:
       responses:
         "200":
           application/json: {"items": [{"type": "MeshHTTPRoute", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}, {"type": "MeshHTTPRoute", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
+    speakeasy-default-get-mesh-HTTP-route-list:
+      parameters:
+        path:
+          mesh: "<value>"
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": [{"type": "MeshHTTPRoute", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
   getMeshLoadBalancingStrategy:
     NotFoundExample:
       parameters:
@@ -1330,6 +1426,17 @@ examples:
       responses:
         "200":
           application/json: {"items": [{"type": "MeshLoadBalancingStrategy", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}, {"type": "MeshLoadBalancingStrategy", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
+    speakeasy-default-get-mesh-load-balancing-strategy-list:
+      parameters:
+        path:
+          mesh: "<value>"
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": [{"type": "MeshLoadBalancingStrategy", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
   getMeshMetric:
     NotFoundExample:
       parameters:
@@ -1382,6 +1489,17 @@ examples:
       responses:
         "200":
           application/json: {"items": [{"type": "MeshMetric", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}, {"type": "MeshMetric", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
+    speakeasy-default-get-mesh-metric-list:
+      parameters:
+        path:
+          mesh: "<value>"
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": [{"type": "MeshMetric", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
   getMeshPassthrough:
     NotFoundExample:
       parameters:
@@ -1434,6 +1552,17 @@ examples:
       responses:
         "200":
           application/json: {"items": [{"type": "MeshPassthrough", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}, {"type": "MeshPassthrough", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
+    speakeasy-default-get-mesh-passthrough-list:
+      parameters:
+        path:
+          mesh: "<value>"
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": [{"type": "MeshPassthrough", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
   getMeshProxyPatch:
     NotFoundExample:
       parameters:
@@ -1486,6 +1615,17 @@ examples:
       responses:
         "200":
           application/json: {"items": [{"type": "MeshProxyPatch", "mesh": "default", "name": "<value>", "spec": {"default": {}}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}, {"type": "MeshProxyPatch", "mesh": "default", "name": "<value>", "spec": {"default": {}}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
+    speakeasy-default-get-mesh-proxy-patch-list:
+      parameters:
+        path:
+          mesh: "<value>"
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": [{"type": "MeshProxyPatch", "mesh": "default", "name": "<value>", "spec": {"default": {}}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
   getMeshRateLimit:
     NotFoundExample:
       parameters:
@@ -1538,6 +1678,17 @@ examples:
       responses:
         "200":
           application/json: {"items": [{"type": "MeshRateLimit", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}, {"type": "MeshRateLimit", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
+    speakeasy-default-get-mesh-rate-limit-list:
+      parameters:
+        path:
+          mesh: "<value>"
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": [{"type": "MeshRateLimit", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
   getMeshRetry:
     NotFoundExample:
       parameters:
@@ -1590,6 +1741,17 @@ examples:
       responses:
         "200":
           application/json: {"items": [{"type": "MeshRetry", "mesh": "default", "name": "<value>", "spec": {"to": [{"default": {"grpc": {"retryOn": ["Canceled", "DeadlineExceeded", "Internal", "ResourceExhausted", "Unavailable"]}, "http": {"retryOn": ["5XX", "GatewayError", "Reset", "Retriable4xx", "ConnectFailure", "EnvoyRatelimited", "RefusedStream", "Http3PostConnectFailure", "HttpMethodConnect", "HttpMethodDelete", "HttpMethodGet", "HttpMethodHead", "HttpMethodOptions", "HttpMethodPatch", "HttpMethodPost", "HttpMethodPut", "HttpMethodTrace", "500", "503"]}}, "targetRef": {"kind": "MeshServiceSubset"}}, {"default": {"grpc": {"retryOn": ["Canceled", "DeadlineExceeded", "Internal", "ResourceExhausted", "Unavailable"]}, "http": {"retryOn": ["5XX", "GatewayError", "Reset", "Retriable4xx", "ConnectFailure", "EnvoyRatelimited", "RefusedStream", "Http3PostConnectFailure", "HttpMethodConnect", "HttpMethodDelete", "HttpMethodGet", "HttpMethodHead", "HttpMethodOptions", "HttpMethodPatch", "HttpMethodPost", "HttpMethodPut", "HttpMethodTrace", "500", "503"]}}, "targetRef": {"kind": "MeshServiceSubset"}}, {"default": {"grpc": {"retryOn": ["Canceled", "DeadlineExceeded", "Internal", "ResourceExhausted", "Unavailable"]}, "http": {"retryOn": ["5XX", "GatewayError", "Reset", "Retriable4xx", "ConnectFailure", "EnvoyRatelimited", "RefusedStream", "Http3PostConnectFailure", "HttpMethodConnect", "HttpMethodDelete", "HttpMethodGet", "HttpMethodHead", "HttpMethodOptions", "HttpMethodPatch", "HttpMethodPost", "HttpMethodPut", "HttpMethodTrace", "500", "503"]}}, "targetRef": {"kind": "MeshServiceSubset"}}]}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}, {"type": "MeshRetry", "mesh": "default", "name": "<value>", "spec": {"to": [{"default": {"grpc": {"retryOn": ["Canceled", "DeadlineExceeded", "Internal", "ResourceExhausted", "Unavailable"]}, "http": {"retryOn": ["5XX", "GatewayError", "Reset", "Retriable4xx", "ConnectFailure", "EnvoyRatelimited", "RefusedStream", "Http3PostConnectFailure", "HttpMethodConnect", "HttpMethodDelete", "HttpMethodGet", "HttpMethodHead", "HttpMethodOptions", "HttpMethodPatch", "HttpMethodPost", "HttpMethodPut", "HttpMethodTrace", "500", "503"]}}, "targetRef": {"kind": "MeshServiceSubset"}}, {"default": {"grpc": {"retryOn": ["Canceled", "DeadlineExceeded", "Internal", "ResourceExhausted", "Unavailable"]}, "http": {"retryOn": ["5XX", "GatewayError", "Reset", "Retriable4xx", "ConnectFailure", "EnvoyRatelimited", "RefusedStream", "Http3PostConnectFailure", "HttpMethodConnect", "HttpMethodDelete", "HttpMethodGet", "HttpMethodHead", "HttpMethodOptions", "HttpMethodPatch", "HttpMethodPost", "HttpMethodPut", "HttpMethodTrace", "500", "503"]}}, "targetRef": {"kind": "MeshServiceSubset"}}, {"default": {"grpc": {"retryOn": ["Canceled", "DeadlineExceeded", "Internal", "ResourceExhausted", "Unavailable"]}, "http": {"retryOn": ["5XX", "GatewayError", "Reset", "Retriable4xx", "ConnectFailure", "EnvoyRatelimited", "RefusedStream", "Http3PostConnectFailure", "HttpMethodConnect", "HttpMethodDelete", "HttpMethodGet", "HttpMethodHead", "HttpMethodOptions", "HttpMethodPatch", "HttpMethodPost", "HttpMethodPut", "HttpMethodTrace", "500", "503"]}}, "targetRef": {"kind": "MeshServiceSubset"}}]}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}, {"type": "MeshRetry", "mesh": "default", "name": "<value>", "spec": {"to": [{"default": {"grpc": {"retryOn": ["Canceled", "DeadlineExceeded", "Internal", "ResourceExhausted", "Unavailable"]}, "http": {"retryOn": ["5XX", "GatewayError", "Reset", "Retriable4xx", "ConnectFailure", "EnvoyRatelimited", "RefusedStream", "Http3PostConnectFailure", "HttpMethodConnect", "HttpMethodDelete", "HttpMethodGet", "HttpMethodHead", "HttpMethodOptions", "HttpMethodPatch", "HttpMethodPost", "HttpMethodPut", "HttpMethodTrace", "500", "503"]}}, "targetRef": {"kind": "MeshServiceSubset"}}, {"default": {"grpc": {"retryOn": ["Canceled", "DeadlineExceeded", "Internal", "ResourceExhausted", "Unavailable"]}, "http": {"retryOn": ["5XX", "GatewayError", "Reset", "Retriable4xx", "ConnectFailure", "EnvoyRatelimited", "RefusedStream", "Http3PostConnectFailure", "HttpMethodConnect", "HttpMethodDelete", "HttpMethodGet", "HttpMethodHead", "HttpMethodOptions", "HttpMethodPatch", "HttpMethodPost", "HttpMethodPut", "HttpMethodTrace", "500", "503"]}}, "targetRef": {"kind": "MeshServiceSubset"}}, {"default": {"grpc": {"retryOn": ["Canceled", "DeadlineExceeded", "Internal", "ResourceExhausted", "Unavailable"]}, "http": {"retryOn": ["5XX", "GatewayError", "Reset", "Retriable4xx", "ConnectFailure", "EnvoyRatelimited", "RefusedStream", "Http3PostConnectFailure", "HttpMethodConnect", "HttpMethodDelete", "HttpMethodGet", "HttpMethodHead", "HttpMethodOptions", "HttpMethodPatch", "HttpMethodPost", "HttpMethodPut", "HttpMethodTrace", "500", "503"]}}, "targetRef": {"kind": "MeshServiceSubset"}}]}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
+    speakeasy-default-get-mesh-retry-list:
+      parameters:
+        path:
+          mesh: "<value>"
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": [{"type": "MeshRetry", "mesh": "default", "name": "<value>", "spec": {"to": [{"default": {"grpc": {"retryOn": ["Canceled", "DeadlineExceeded", "Internal", "ResourceExhausted", "Unavailable"]}, "http": {"retryOn": ["5XX", "GatewayError", "Reset", "Retriable4xx", "ConnectFailure", "EnvoyRatelimited", "RefusedStream", "Http3PostConnectFailure", "HttpMethodConnect", "HttpMethodDelete", "HttpMethodGet", "HttpMethodHead", "HttpMethodOptions", "HttpMethodPatch", "HttpMethodPost", "HttpMethodPut", "HttpMethodTrace", "500", "503"]}}, "targetRef": {"kind": "MeshServiceSubset"}}]}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
   getMeshTCPRoute:
     NotFoundExample:
       parameters:
@@ -1642,6 +1804,17 @@ examples:
       responses:
         "200":
           application/json: {"items": [{"type": "MeshTCPRoute", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}, {"type": "MeshTCPRoute", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
+    speakeasy-default-get-mesh-TCP-route-list:
+      parameters:
+        path:
+          mesh: "<value>"
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": [{"type": "MeshTCPRoute", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
   getMeshTimeout:
     NotFoundExample:
       parameters:
@@ -1684,6 +1857,17 @@ examples:
           application/json: {}
   getMeshTimeoutList:
     "":
+      parameters:
+        path:
+          mesh: "<value>"
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": [{"type": "MeshTimeout", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
+    speakeasy-default-get-mesh-timeout-list:
       parameters:
         path:
           mesh: "<value>"
@@ -1746,6 +1930,17 @@ examples:
       responses:
         "200":
           application/json: {"items": [{"type": "MeshTLS", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}, {"type": "MeshTLS", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
+    speakeasy-default-get-mesh-TLS-list:
+      parameters:
+        path:
+          mesh: "<value>"
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": [{"type": "MeshTLS", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
   getMeshTrace:
     NotFoundExample:
       parameters:
@@ -1798,6 +1993,17 @@ examples:
       responses:
         "200":
           application/json: {"items": [{"type": "MeshTrace", "mesh": "default", "name": "<value>", "spec": {"default": {"backends": [{"openTelemetry": {"endpoint": "otel-collector:4317"}, "type": "Datadog"}, {"openTelemetry": {"endpoint": "otel-collector:4317"}, "type": "Datadog"}]}}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}, {"type": "MeshTrace", "mesh": "default", "name": "<value>", "spec": {"default": {"backends": [{"openTelemetry": {"endpoint": "otel-collector:4317"}, "type": "Datadog"}, {"openTelemetry": {"endpoint": "otel-collector:4317"}, "type": "Datadog"}]}}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
+    speakeasy-default-get-mesh-trace-list:
+      parameters:
+        path:
+          mesh: "<value>"
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": [{"type": "MeshTrace", "mesh": "default", "name": "<value>", "spec": {"default": {"backends": [{"openTelemetry": {"endpoint": "otel-collector:4317"}, "type": "Datadog"}]}}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
   getMeshTrafficPermission:
     NotFoundExample:
       parameters:
@@ -1850,6 +2056,17 @@ examples:
       responses:
         "200":
           application/json: {"items": [{"type": "MeshTrafficPermission", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
+    speakeasy-default-get-mesh-traffic-permission-list:
+      parameters:
+        path:
+          mesh: "<value>"
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": [{"type": "MeshTrafficPermission", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
   getMesh:
     NotFoundExample:
       parameters:
@@ -1878,6 +2095,15 @@ examples:
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
   getMeshList:
     "":
+      parameters:
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {}
+    speakeasy-default-get-mesh-list:
       parameters:
         query:
           offset: 0
@@ -1938,6 +2164,17 @@ examples:
       responses:
         "200":
           application/json: {}
+    speakeasy-default-get-mesh-gateway-list:
+      parameters:
+        path:
+          mesh: "<value>"
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {}
   getHostnameGenerator:
     NotFoundExample:
       parameters:
@@ -1984,6 +2221,15 @@ examples:
       responses:
         "200":
           application/json: {"items": [{"type": "HostnameGenerator", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}, {"type": "HostnameGenerator", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
+    speakeasy-default-get-hostname-generator-list:
+      parameters:
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": [{"type": "HostnameGenerator", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
   getMeshExternalService:
     NotFoundExample:
       parameters:
@@ -2036,6 +2282,17 @@ examples:
       responses:
         "200":
           application/json: {"items": [{"type": "MeshExternalService", "mesh": "default", "name": "<value>", "spec": {"endpoints": [{"address": "example.com", "port": 717874}], "match": {"port": 920900, "protocol": "tcp", "type": "HostnameGenerator"}}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}, {"type": "MeshExternalService", "mesh": "default", "name": "<value>", "spec": {"endpoints": [{"address": "example.com", "port": 717874}], "match": {"port": 920900, "protocol": "tcp", "type": "HostnameGenerator"}}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}, {"type": "MeshExternalService", "mesh": "default", "name": "<value>", "spec": {"endpoints": [{"address": "example.com", "port": 717874}], "match": {"port": 920900, "protocol": "tcp", "type": "HostnameGenerator"}}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
+    speakeasy-default-get-mesh-external-service-list:
+      parameters:
+        path:
+          mesh: "<value>"
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": [{"type": "MeshExternalService", "mesh": "default", "name": "<value>", "spec": {"endpoints": [{"address": "example.com", "port": 675432}], "match": {"port": 122649, "protocol": "tcp", "type": "HostnameGenerator"}}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
   getMeshMultiZoneService:
     NotFoundExample:
       parameters:
@@ -2088,6 +2345,17 @@ examples:
       responses:
         "200":
           application/json: {"items": [{"type": "MeshMultiZoneService", "mesh": "default", "name": "<value>", "spec": {"ports": [{"appProtocol": "tcp", "port": 553761}, {"appProtocol": "tcp", "port": 553761}, {"appProtocol": "tcp", "port": 553761}], "selector": {"meshService": {"matchLabels": {"key": "<value>", "key1": "<value>"}}}}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}, {"type": "MeshMultiZoneService", "mesh": "default", "name": "<value>", "spec": {"ports": [{"appProtocol": "tcp", "port": 553761}, {"appProtocol": "tcp", "port": 553761}, {"appProtocol": "tcp", "port": 553761}], "selector": {"meshService": {"matchLabels": {"key": "<value>", "key1": "<value>"}}}}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
+    speakeasy-default-get-mesh-multi-zone-service-list:
+      parameters:
+        path:
+          mesh: "<value>"
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": [{"type": "MeshMultiZoneService", "mesh": "default", "name": "<value>", "spec": {"ports": [], "selector": {"meshService": {"matchLabels": {"key": "<value>", "key1": "<value>", "key2": "<value>"}}}}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
   getMeshService:
     NotFoundExample:
       parameters:
@@ -2130,6 +2398,17 @@ examples:
           application/json: {}
   getMeshServiceList:
     "":
+      parameters:
+        path:
+          mesh: "<value>"
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": [{"type": "MeshService", "mesh": "default", "name": "<value>", "spec": {"state": "Unavailable"}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
+    speakeasy-default-get-mesh-service-list:
       parameters:
         path:
           mesh: "<value>"
@@ -2201,6 +2480,17 @@ examples:
       responses:
         "200":
           application/json: {"items": [{"type": "MeshGlobalRateLimit", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
+    speakeasy-default-get-mesh-global-rate-limit-list:
+      parameters:
+        path:
+          mesh: "<value>"
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": [{"type": "MeshGlobalRateLimit", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
   getMeshOPA:
     NotFoundExample:
       parameters:
@@ -2253,6 +2543,17 @@ examples:
       responses:
         "200":
           application/json: {"items": [{"type": "MeshOPA", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}, {"type": "MeshOPA", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}, {"type": "MeshOPA", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
+    speakeasy-default-get-mesh-OPA-list:
+      parameters:
+        path:
+          mesh: "<value>"
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": [{"type": "MeshOPA", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
   getDataplaneOverview:
     speakeasy-default-get-dataplane-overview:
       parameters:
@@ -2320,6 +2621,17 @@ examples:
           application/json: {}
   getDataplaneList:
     "":
+      parameters:
+        path:
+          mesh: "<value>"
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {}
+    speakeasy-default-get-dataplane-list:
       parameters:
         path:
           mesh: "<value>"

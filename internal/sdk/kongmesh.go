@@ -2,7 +2,7 @@
 
 package sdk
 
-// Generated from OpenAPI doc version 2.0.0 and generator version 2.620.2
+// Generated from OpenAPI doc version 2.0.0 and generator version 2.638.1
 
 import (
 	"bytes"
@@ -125,7 +125,7 @@ func New(serverURL string, opts ...SDKOption) *KongMesh {
 	sdk := &KongMesh{
 		SDKVersion: "0.5.3",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent: "speakeasy-sdk/terraform 0.5.3 2.620.2 2.0.0 github.com/kong/terraform-provider-kong-mesh/internal/sdk",
+			UserAgent: "speakeasy-sdk/terraform 0.5.3 2.638.1 2.0.0 github.com/kong/terraform-provider-kong-mesh/internal/sdk",
 		},
 		hooks: hooks.New(),
 	}
