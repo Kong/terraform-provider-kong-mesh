@@ -8,4 +8,5 @@ import (
 
 type DataSourceSecret struct {
 	Secret types.String `tfsdk:"secret"`
+	Type   types.String `tfsdk:"type"`
 }

@@ -420,7 +420,7 @@ func (r *MeshListDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 															"cert": schema.SingleNestedAttribute{
 																Computed: true,
 																Attributes: map[string]schema.Attribute{
-																	"data_source_file": schema.SingleNestedAttribute{
+																	"file": schema.SingleNestedAttribute{
 																		Computed: true,
 																		Attributes: map[string]schema.Attribute{
 																			"file": schema.StringAttribute{
@@ -428,32 +428,44 @@ func (r *MeshListDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 																				MarkdownDescription: `Data source is a path to a file.` + "\n" +
 																					`Deprecated, use other sources of a data.`,
 																			},
+																			"type": schema.StringAttribute{
+																				Computed: true,
+																			},
 																		},
 																	},
-																	"data_source_inline": schema.SingleNestedAttribute{
+																	"inline": schema.SingleNestedAttribute{
 																		Computed: true,
 																		Attributes: map[string]schema.Attribute{
 																			"inline": schema.StringAttribute{
 																				Computed:    true,
 																				Description: `Data source is inline bytes.`,
 																			},
+																			"type": schema.StringAttribute{
+																				Computed: true,
+																			},
 																		},
 																	},
-																	"data_source_inline_string": schema.SingleNestedAttribute{
+																	"inline_string": schema.SingleNestedAttribute{
 																		Computed: true,
 																		Attributes: map[string]schema.Attribute{
 																			"inline_string": schema.StringAttribute{
 																				Computed:    true,
 																				Description: `Data source is inline string`,
 																			},
+																			"type": schema.StringAttribute{
+																				Computed: true,
+																			},
 																		},
 																	},
-																	"data_source_secret": schema.SingleNestedAttribute{
+																	"secret": schema.SingleNestedAttribute{
 																		Computed: true,
 																		Attributes: map[string]schema.Attribute{
 																			"secret": schema.StringAttribute{
 																				Computed:    true,
 																				Description: `Data source is a secret with given Secret key.`,
+																			},
+																			"type": schema.StringAttribute{
+																				Computed: true,
 																			},
 																		},
 																	},
@@ -462,7 +474,7 @@ func (r *MeshListDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 															"key": schema.SingleNestedAttribute{
 																Computed: true,
 																Attributes: map[string]schema.Attribute{
-																	"data_source_file": schema.SingleNestedAttribute{
+																	"file": schema.SingleNestedAttribute{
 																		Computed: true,
 																		Attributes: map[string]schema.Attribute{
 																			"file": schema.StringAttribute{
@@ -470,32 +482,44 @@ func (r *MeshListDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 																				MarkdownDescription: `Data source is a path to a file.` + "\n" +
 																					`Deprecated, use other sources of a data.`,
 																			},
+																			"type": schema.StringAttribute{
+																				Computed: true,
+																			},
 																		},
 																	},
-																	"data_source_inline": schema.SingleNestedAttribute{
+																	"inline": schema.SingleNestedAttribute{
 																		Computed: true,
 																		Attributes: map[string]schema.Attribute{
 																			"inline": schema.StringAttribute{
 																				Computed:    true,
 																				Description: `Data source is inline bytes.`,
 																			},
+																			"type": schema.StringAttribute{
+																				Computed: true,
+																			},
 																		},
 																	},
-																	"data_source_inline_string": schema.SingleNestedAttribute{
+																	"inline_string": schema.SingleNestedAttribute{
 																		Computed: true,
 																		Attributes: map[string]schema.Attribute{
 																			"inline_string": schema.StringAttribute{
 																				Computed:    true,
 																				Description: `Data source is inline string`,
 																			},
+																			"type": schema.StringAttribute{
+																				Computed: true,
+																			},
 																		},
 																	},
-																	"data_source_secret": schema.SingleNestedAttribute{
+																	"secret": schema.SingleNestedAttribute{
 																		Computed: true,
 																		Attributes: map[string]schema.Attribute{
 																			"secret": schema.StringAttribute{
 																				Computed:    true,
 																				Description: `Data source is a secret with given Secret key.`,
+																			},
+																			"type": schema.StringAttribute{
+																				Computed: true,
 																			},
 																		},
 																	},

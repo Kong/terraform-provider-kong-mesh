@@ -3,9 +3,17 @@
 package shared
 
 type DataSourceFile struct {
+	Type *string `json:"type,omitempty"`
 	// Data source is a path to a file.
 	// Deprecated, use other sources of a data.
 	File *string `json:"File,omitempty"`
+}
+
+func (o *DataSourceFile) GetType() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Type
 }
 
 func (o *DataSourceFile) GetFile() *string {

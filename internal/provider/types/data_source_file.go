@@ -8,4 +8,5 @@ import (
 
 type DataSourceFile struct {
 	File types.String `tfsdk:"file"`
+	Type types.String `tfsdk:"type"`
 }

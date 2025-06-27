@@ -15084,6 +15084,8 @@ components:
       properties: {}
     DataSource_File:
       properties:
+        type:
+          type: string
         File:
           description: |-
             Data source is a path to a file.
@@ -15092,6 +15094,8 @@ components:
       type: object
     DataSource_Inline:
       properties:
+        type:
+          type: string
         Inline:
           description: Data source is inline bytes.
           format: byte
@@ -15099,12 +15103,16 @@ components:
       type: object
     DataSource_InlineString:
       properties:
+        type:
+          type: string
         InlineString:
           description: Data source is inline string
           type: string
       type: object
     DataSource_Secret:
       properties:
+        type:
+          type: string
         Secret:
           description: Data source is a secret with given Secret key.
           type: string
@@ -15490,12 +15498,26 @@ components:
     ProvidedCertificateAuthorityConfig:
       properties:
         cert:
+          discriminator:
+            propertyName: type
+            mapping:
+              file: '#/components/schemas/DataSource_File'
+              inline: '#/components/schemas/DataSource_Inline'
+              inlineString: '#/components/schemas/DataSource_InlineString'
+              secret: '#/components/schemas/DataSource_Secret'
           oneOf:
             - $ref: '#/components/schemas/DataSource_File'
             - $ref: '#/components/schemas/DataSource_Inline'
             - $ref: '#/components/schemas/DataSource_InlineString'
             - $ref: '#/components/schemas/DataSource_Secret'
         key:
+          discriminator:
+            propertyName: type
+            mapping:
+              file: '#/components/schemas/DataSource_File'
+              inline: '#/components/schemas/DataSource_Inline'
+              inlineString: '#/components/schemas/DataSource_InlineString'
+              secret: '#/components/schemas/DataSource_Secret'
           oneOf:
             - $ref: '#/components/schemas/DataSource_File'
             - $ref: '#/components/schemas/DataSource_Inline'

@@ -3,8 +3,8 @@
 package types
 
 type Cert struct {
-	DataSourceFile         *DataSourceFile         `queryParam:"inline" tfsdk:"data_source_file" tfPlanOnly:"true"`
-	DataSourceInline       *DataSourceInline       `queryParam:"inline" tfsdk:"data_source_inline" tfPlanOnly:"true"`
-	DataSourceInlineString *DataSourceInlineString `queryParam:"inline" tfsdk:"data_source_inline_string" tfPlanOnly:"true"`
-	DataSourceSecret       *DataSourceSecret       `queryParam:"inline" tfsdk:"data_source_secret" tfPlanOnly:"true"`
+	File         *DataSourceFile         `queryParam:"inline" tfsdk:"file" tfPlanOnly:"true"`
+	Inline       *DataSourceInline       `queryParam:"inline" tfsdk:"inline" tfPlanOnly:"true"`
+	InlineString *DataSourceInlineString `queryParam:"inline" tfsdk:"inline_string" tfPlanOnly:"true"`
+	Secret       *DataSourceSecret       `queryParam:"inline" tfsdk:"secret" tfPlanOnly:"true"`
 }

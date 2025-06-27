@@ -8,4 +8,5 @@ import (
 
 type DataSourceInlineString struct {
 	InlineString types.String `tfsdk:"inline_string"`
+	Type         types.String `tfsdk:"type"`
 }

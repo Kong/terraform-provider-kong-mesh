@@ -293,39 +293,47 @@ func (r *MeshListDataSourceModel) RefreshFromSharedMeshList(ctx context.Context,
 							if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert != nil {
 								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert = &tfTypes.Cert{}
 								if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceFile != nil {
-									backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceFile = &tfTypes.DataSourceFile{}
-									backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceFile.File = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceFile.File)
+									backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.File = &tfTypes.DataSourceFile{}
+									backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.File.File = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceFile.File)
+									backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.File.Type = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceFile.Type)
 								}
 								if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInline != nil {
-									backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInline = &tfTypes.DataSourceInline{}
-									backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInline.Inline = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInline.Inline)
+									backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.Inline = &tfTypes.DataSourceInline{}
+									backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.Inline.Inline = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInline.Inline)
+									backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.Inline.Type = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInline.Type)
 								}
 								if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInlineString != nil {
-									backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInlineString = &tfTypes.DataSourceInlineString{}
-									backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInlineString.InlineString = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInlineString.InlineString)
+									backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.InlineString = &tfTypes.DataSourceInlineString{}
+									backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.InlineString.InlineString = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInlineString.InlineString)
+									backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.InlineString.Type = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInlineString.Type)
 								}
 								if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceSecret != nil {
-									backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceSecret = &tfTypes.DataSourceSecret{}
-									backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceSecret.Secret = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceSecret.Secret)
+									backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.Secret = &tfTypes.DataSourceSecret{}
+									backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.Secret.Secret = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceSecret.Secret)
+									backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.Secret.Type = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceSecret.Type)
 								}
 							}
 							if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key != nil {
 								backends2.Conf.ProvidedCertificateAuthorityConfig.Key = &tfTypes.Cert{}
 								if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceFile != nil {
-									backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceFile = &tfTypes.DataSourceFile{}
-									backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceFile.File = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceFile.File)
+									backends2.Conf.ProvidedCertificateAuthorityConfig.Key.File = &tfTypes.DataSourceFile{}
+									backends2.Conf.ProvidedCertificateAuthorityConfig.Key.File.File = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceFile.File)
+									backends2.Conf.ProvidedCertificateAuthorityConfig.Key.File.Type = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceFile.Type)
 								}
 								if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInline != nil {
-									backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInline = &tfTypes.DataSourceInline{}
-									backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInline.Inline = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInline.Inline)
+									backends2.Conf.ProvidedCertificateAuthorityConfig.Key.Inline = &tfTypes.DataSourceInline{}
+									backends2.Conf.ProvidedCertificateAuthorityConfig.Key.Inline.Inline = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInline.Inline)
+									backends2.Conf.ProvidedCertificateAuthorityConfig.Key.Inline.Type = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInline.Type)
 								}
 								if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInlineString != nil {
-									backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInlineString = &tfTypes.DataSourceInlineString{}
-									backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInlineString.InlineString = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInlineString.InlineString)
+									backends2.Conf.ProvidedCertificateAuthorityConfig.Key.InlineString = &tfTypes.DataSourceInlineString{}
+									backends2.Conf.ProvidedCertificateAuthorityConfig.Key.InlineString.InlineString = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInlineString.InlineString)
+									backends2.Conf.ProvidedCertificateAuthorityConfig.Key.InlineString.Type = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInlineString.Type)
 								}
 								if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceSecret != nil {
-									backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceSecret = &tfTypes.DataSourceSecret{}
-									backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceSecret.Secret = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceSecret.Secret)
+									backends2.Conf.ProvidedCertificateAuthorityConfig.Key.Secret = &tfTypes.DataSourceSecret{}
+									backends2.Conf.ProvidedCertificateAuthorityConfig.Key.Secret.Secret = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceSecret.Secret)
+									backends2.Conf.ProvidedCertificateAuthorityConfig.Key.Secret.Type = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceSecret.Type)
 								}
 							}
 						}

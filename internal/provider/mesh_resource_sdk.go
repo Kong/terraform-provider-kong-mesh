@@ -348,14 +348,21 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 					var cert *shared.Cert
 					if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert != nil {
 						var dataSourceFile *shared.DataSourceFile
-						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceFile != nil {
+						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.File != nil {
+							typeVar1 := new(string)
+							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.File.Type.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.File.Type.IsNull() {
+								*typeVar1 = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.File.Type.ValueString()
+							} else {
+								typeVar1 = nil
+							}
 							file := new(string)
-							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceFile.File.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceFile.File.IsNull() {
-								*file = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceFile.File.ValueString()
+							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.File.File.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.File.File.IsNull() {
+								*file = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.File.File.ValueString()
 							} else {
 								file = nil
 							}
 							dataSourceFile = &shared.DataSourceFile{
+								Type: typeVar1,
 								File: file,
 							}
 						}
@@ -365,14 +372,21 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 							}
 						}
 						var dataSourceInline *shared.DataSourceInline
-						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInline != nil {
+						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.Inline != nil {
+							typeVar2 := new(string)
+							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.Inline.Type.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.Inline.Type.IsNull() {
+								*typeVar2 = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.Inline.Type.ValueString()
+							} else {
+								typeVar2 = nil
+							}
 							inline := new(string)
-							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInline.Inline.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInline.Inline.IsNull() {
-								*inline = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInline.Inline.ValueString()
+							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.Inline.Inline.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.Inline.Inline.IsNull() {
+								*inline = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.Inline.Inline.ValueString()
 							} else {
 								inline = nil
 							}
 							dataSourceInline = &shared.DataSourceInline{
+								Type:   typeVar2,
 								Inline: inline,
 							}
 						}
@@ -382,14 +396,21 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 							}
 						}
 						var dataSourceInlineString *shared.DataSourceInlineString
-						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInlineString != nil {
+						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.InlineString != nil {
+							typeVar3 := new(string)
+							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.InlineString.Type.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.InlineString.Type.IsNull() {
+								*typeVar3 = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.InlineString.Type.ValueString()
+							} else {
+								typeVar3 = nil
+							}
 							inlineString := new(string)
-							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInlineString.InlineString.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInlineString.InlineString.IsNull() {
-								*inlineString = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInlineString.InlineString.ValueString()
+							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.InlineString.InlineString.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.InlineString.InlineString.IsNull() {
+								*inlineString = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.InlineString.InlineString.ValueString()
 							} else {
 								inlineString = nil
 							}
 							dataSourceInlineString = &shared.DataSourceInlineString{
+								Type:         typeVar3,
 								InlineString: inlineString,
 							}
 						}
@@ -399,14 +420,21 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 							}
 						}
 						var dataSourceSecret *shared.DataSourceSecret
-						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceSecret != nil {
+						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.Secret != nil {
+							typeVar4 := new(string)
+							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.Secret.Type.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.Secret.Type.IsNull() {
+								*typeVar4 = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.Secret.Type.ValueString()
+							} else {
+								typeVar4 = nil
+							}
 							secret := new(string)
-							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceSecret.Secret.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceSecret.Secret.IsNull() {
-								*secret = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceSecret.Secret.ValueString()
+							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.Secret.Secret.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.Secret.Secret.IsNull() {
+								*secret = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.Secret.Secret.ValueString()
 							} else {
 								secret = nil
 							}
 							dataSourceSecret = &shared.DataSourceSecret{
+								Type:   typeVar4,
 								Secret: secret,
 							}
 						}
@@ -419,14 +447,21 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 					var key *shared.Key
 					if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key != nil {
 						var dataSourceFile1 *shared.DataSourceFile
-						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceFile != nil {
+						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.File != nil {
+							typeVar5 := new(string)
+							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.File.Type.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.File.Type.IsNull() {
+								*typeVar5 = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.File.Type.ValueString()
+							} else {
+								typeVar5 = nil
+							}
 							file1 := new(string)
-							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceFile.File.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceFile.File.IsNull() {
-								*file1 = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceFile.File.ValueString()
+							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.File.File.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.File.File.IsNull() {
+								*file1 = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.File.File.ValueString()
 							} else {
 								file1 = nil
 							}
 							dataSourceFile1 = &shared.DataSourceFile{
+								Type: typeVar5,
 								File: file1,
 							}
 						}
@@ -436,14 +471,21 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 							}
 						}
 						var dataSourceInline1 *shared.DataSourceInline
-						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInline != nil {
+						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.Inline != nil {
+							typeVar6 := new(string)
+							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.Inline.Type.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.Inline.Type.IsNull() {
+								*typeVar6 = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.Inline.Type.ValueString()
+							} else {
+								typeVar6 = nil
+							}
 							inline1 := new(string)
-							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInline.Inline.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInline.Inline.IsNull() {
-								*inline1 = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInline.Inline.ValueString()
+							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.Inline.Inline.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.Inline.Inline.IsNull() {
+								*inline1 = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.Inline.Inline.ValueString()
 							} else {
 								inline1 = nil
 							}
 							dataSourceInline1 = &shared.DataSourceInline{
+								Type:   typeVar6,
 								Inline: inline1,
 							}
 						}
@@ -453,14 +495,21 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 							}
 						}
 						var dataSourceInlineString1 *shared.DataSourceInlineString
-						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInlineString != nil {
+						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.InlineString != nil {
+							typeVar7 := new(string)
+							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.InlineString.Type.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.InlineString.Type.IsNull() {
+								*typeVar7 = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.InlineString.Type.ValueString()
+							} else {
+								typeVar7 = nil
+							}
 							inlineString1 := new(string)
-							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInlineString.InlineString.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInlineString.InlineString.IsNull() {
-								*inlineString1 = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInlineString.InlineString.ValueString()
+							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.InlineString.InlineString.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.InlineString.InlineString.IsNull() {
+								*inlineString1 = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.InlineString.InlineString.ValueString()
 							} else {
 								inlineString1 = nil
 							}
 							dataSourceInlineString1 = &shared.DataSourceInlineString{
+								Type:         typeVar7,
 								InlineString: inlineString1,
 							}
 						}
@@ -470,14 +519,21 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 							}
 						}
 						var dataSourceSecret1 *shared.DataSourceSecret
-						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceSecret != nil {
+						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.Secret != nil {
+							typeVar8 := new(string)
+							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.Secret.Type.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.Secret.Type.IsNull() {
+								*typeVar8 = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.Secret.Type.ValueString()
+							} else {
+								typeVar8 = nil
+							}
 							secret1 := new(string)
-							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceSecret.Secret.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceSecret.Secret.IsNull() {
-								*secret1 = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceSecret.Secret.ValueString()
+							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.Secret.Secret.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.Secret.Secret.IsNull() {
+								*secret1 = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.Secret.Secret.ValueString()
 							} else {
 								secret1 = nil
 							}
 							dataSourceSecret1 = &shared.DataSourceSecret{
+								Type:   typeVar8,
 								Secret: secret1,
 							}
 						}
@@ -556,18 +612,18 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 						if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials != nil {
 							var accessKey *shared.AccessKey
 							if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey != nil {
-								var typeVar1 interface{}
-								_ = json.Unmarshal([]byte(backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.Type.ValueString()), &typeVar1)
+								var typeVar9 interface{}
+								_ = json.Unmarshal([]byte(backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.Type.ValueString()), &typeVar9)
 								accessKey = &shared.AccessKey{
-									Type: typeVar1,
+									Type: typeVar9,
 								}
 							}
 							var accessKeySecret *shared.AccessKeySecret
 							if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret != nil {
-								var typeVar2 interface{}
-								_ = json.Unmarshal([]byte(backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.Type.ValueString()), &typeVar2)
+								var typeVar10 interface{}
+								_ = json.Unmarshal([]byte(backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.Type.ValueString()), &typeVar10)
 								accessKeySecret = &shared.AccessKeySecret{
-									Type: typeVar2,
+									Type: typeVar10,
 								}
 							}
 							awsCredentials = &shared.AwsCredentials{
@@ -581,10 +637,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 					}
 					var caCert1 *shared.ConfCaCert
 					if backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert != nil {
-						var typeVar3 interface{}
-						_ = json.Unmarshal([]byte(backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.Type.ValueString()), &typeVar3)
+						var typeVar11 interface{}
+						_ = json.Unmarshal([]byte(backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.Type.ValueString()), &typeVar11)
 						caCert1 = &shared.ConfCaCert{
-							Type: typeVar3,
+							Type: typeVar11,
 						}
 					}
 					commonName := new(string)
@@ -609,10 +665,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 				if backendsItem2.Conf.CertManagerCertificateAuthorityConfig != nil {
 					var caCert2 *shared.CertManagerCertificateAuthorityConfigConfCaCert
 					if backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert != nil {
-						var typeVar4 interface{}
-						_ = json.Unmarshal([]byte(backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.Type.ValueString()), &typeVar4)
+						var typeVar12 interface{}
+						_ = json.Unmarshal([]byte(backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.Type.ValueString()), &typeVar12)
 						caCert2 = &shared.CertManagerCertificateAuthorityConfigConfCaCert{
-							Type: typeVar4,
+							Type: typeVar12,
 						}
 					}
 					commonName1 := new(string)
@@ -954,8 +1010,8 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 			DefaultBackend: defaultBackend1,
 		}
 	}
-	var typeVar5 string
-	typeVar5 = r.Type.ValueString()
+	var typeVar13 string
+	typeVar13 = r.Type.ValueString()
 
 	out := shared.MeshItem{
 		Constraints:                 constraints,
@@ -969,7 +1025,7 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 		Routing:                     routing,
 		SkipCreatingInitialPolicies: skipCreatingInitialPolicies,
 		Tracing:                     tracing,
-		Type:                        typeVar5,
+		Type:                        typeVar13,
 	}
 
 	return &out, diags
@@ -1302,39 +1358,47 @@ func (r *MeshResourceModel) RefreshFromSharedMeshItem(ctx context.Context, resp 
 						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert != nil {
 							backends2.Conf.ProvidedCertificateAuthorityConfig.Cert = &tfTypes.Cert{}
 							if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceFile != nil {
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceFile = &tfTypes.DataSourceFile{}
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceFile.File = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceFile.File)
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.File = &tfTypes.DataSourceFile{}
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.File.File = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceFile.File)
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.File.Type = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceFile.Type)
 							}
 							if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInline != nil {
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInline = &tfTypes.DataSourceInline{}
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInline.Inline = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInline.Inline)
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.Inline = &tfTypes.DataSourceInline{}
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.Inline.Inline = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInline.Inline)
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.Inline.Type = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInline.Type)
 							}
 							if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInlineString != nil {
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInlineString = &tfTypes.DataSourceInlineString{}
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInlineString.InlineString = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInlineString.InlineString)
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.InlineString = &tfTypes.DataSourceInlineString{}
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.InlineString.InlineString = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInlineString.InlineString)
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.InlineString.Type = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInlineString.Type)
 							}
 							if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceSecret != nil {
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceSecret = &tfTypes.DataSourceSecret{}
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceSecret.Secret = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceSecret.Secret)
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.Secret = &tfTypes.DataSourceSecret{}
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.Secret.Secret = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceSecret.Secret)
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.Secret.Type = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceSecret.Type)
 							}
 						}
 						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key != nil {
 							backends2.Conf.ProvidedCertificateAuthorityConfig.Key = &tfTypes.Cert{}
 							if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceFile != nil {
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceFile = &tfTypes.DataSourceFile{}
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceFile.File = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceFile.File)
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.File = &tfTypes.DataSourceFile{}
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.File.File = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceFile.File)
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.File.Type = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceFile.Type)
 							}
 							if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInline != nil {
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInline = &tfTypes.DataSourceInline{}
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInline.Inline = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInline.Inline)
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.Inline = &tfTypes.DataSourceInline{}
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.Inline.Inline = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInline.Inline)
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.Inline.Type = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInline.Type)
 							}
 							if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInlineString != nil {
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInlineString = &tfTypes.DataSourceInlineString{}
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInlineString.InlineString = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInlineString.InlineString)
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.InlineString = &tfTypes.DataSourceInlineString{}
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.InlineString.InlineString = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInlineString.InlineString)
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.InlineString.Type = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInlineString.Type)
 							}
 							if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceSecret != nil {
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceSecret = &tfTypes.DataSourceSecret{}
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceSecret.Secret = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceSecret.Secret)
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.Secret = &tfTypes.DataSourceSecret{}
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.Secret.Secret = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceSecret.Secret)
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.Secret.Type = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceSecret.Type)
 							}
 						}
 					}

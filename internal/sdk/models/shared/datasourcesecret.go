@@ -3,8 +3,16 @@
 package shared
 
 type DataSourceSecret struct {
+	Type *string `json:"type,omitempty"`
 	// Data source is a secret with given Secret key.
 	Secret *string `json:"Secret,omitempty"`
+}
+
+func (o *DataSourceSecret) GetType() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Type
 }
 
 func (o *DataSourceSecret) GetSecret() *string {

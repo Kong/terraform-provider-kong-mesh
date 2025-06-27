@@ -3,8 +3,16 @@
 package shared
 
 type DataSourceInline struct {
+	Type *string `json:"type,omitempty"`
 	// Data source is inline bytes.
 	Inline *string `json:"Inline,omitempty"`
+}
+
+func (o *DataSourceInline) GetType() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Type
 }
 
 func (o *DataSourceInline) GetInline() *string {

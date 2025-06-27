@@ -503,7 +503,7 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 													Computed: true,
 													Optional: true,
 													Attributes: map[string]schema.Attribute{
-														"data_source_file": schema.SingleNestedAttribute{
+														"file": schema.SingleNestedAttribute{
 															Computed: true,
 															Optional: true,
 															Attributes: map[string]schema.Attribute{
@@ -513,16 +513,20 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 																	MarkdownDescription: `Data source is a path to a file.` + "\n" +
 																		`Deprecated, use other sources of a data.`,
 																},
+																"type": schema.StringAttribute{
+																	Computed: true,
+																	Optional: true,
+																},
 															},
 															Validators: []validator.Object{
 																objectvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("data_source_inline"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																	path.MatchRelative().AtParent().AtName("data_source_secret"),
+																	path.MatchRelative().AtParent().AtName("inline"),
+																	path.MatchRelative().AtParent().AtName("inline_string"),
+																	path.MatchRelative().AtParent().AtName("secret"),
 																}...),
 															},
 														},
-														"data_source_inline": schema.SingleNestedAttribute{
+														"inline": schema.SingleNestedAttribute{
 															Computed: true,
 															Optional: true,
 															Attributes: map[string]schema.Attribute{
@@ -531,16 +535,20 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 																	Optional:    true,
 																	Description: `Data source is inline bytes.`,
 																},
+																"type": schema.StringAttribute{
+																	Computed: true,
+																	Optional: true,
+																},
 															},
 															Validators: []validator.Object{
 																objectvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("data_source_file"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																	path.MatchRelative().AtParent().AtName("data_source_secret"),
+																	path.MatchRelative().AtParent().AtName("file"),
+																	path.MatchRelative().AtParent().AtName("inline_string"),
+																	path.MatchRelative().AtParent().AtName("secret"),
 																}...),
 															},
 														},
-														"data_source_inline_string": schema.SingleNestedAttribute{
+														"inline_string": schema.SingleNestedAttribute{
 															Computed: true,
 															Optional: true,
 															Attributes: map[string]schema.Attribute{
@@ -549,16 +557,20 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 																	Optional:    true,
 																	Description: `Data source is inline string`,
 																},
+																"type": schema.StringAttribute{
+																	Computed: true,
+																	Optional: true,
+																},
 															},
 															Validators: []validator.Object{
 																objectvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("data_source_file"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline"),
-																	path.MatchRelative().AtParent().AtName("data_source_secret"),
+																	path.MatchRelative().AtParent().AtName("file"),
+																	path.MatchRelative().AtParent().AtName("inline"),
+																	path.MatchRelative().AtParent().AtName("secret"),
 																}...),
 															},
 														},
-														"data_source_secret": schema.SingleNestedAttribute{
+														"secret": schema.SingleNestedAttribute{
 															Computed: true,
 															Optional: true,
 															Attributes: map[string]schema.Attribute{
@@ -567,12 +579,16 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 																	Optional:    true,
 																	Description: `Data source is a secret with given Secret key.`,
 																},
+																"type": schema.StringAttribute{
+																	Computed: true,
+																	Optional: true,
+																},
 															},
 															Validators: []validator.Object{
 																objectvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("data_source_file"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline_string"),
+																	path.MatchRelative().AtParent().AtName("file"),
+																	path.MatchRelative().AtParent().AtName("inline"),
+																	path.MatchRelative().AtParent().AtName("inline_string"),
 																}...),
 															},
 														},
@@ -582,7 +598,7 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 													Computed: true,
 													Optional: true,
 													Attributes: map[string]schema.Attribute{
-														"data_source_file": schema.SingleNestedAttribute{
+														"file": schema.SingleNestedAttribute{
 															Computed: true,
 															Optional: true,
 															Attributes: map[string]schema.Attribute{
@@ -592,16 +608,20 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 																	MarkdownDescription: `Data source is a path to a file.` + "\n" +
 																		`Deprecated, use other sources of a data.`,
 																},
+																"type": schema.StringAttribute{
+																	Computed: true,
+																	Optional: true,
+																},
 															},
 															Validators: []validator.Object{
 																objectvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("data_source_inline"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																	path.MatchRelative().AtParent().AtName("data_source_secret"),
+																	path.MatchRelative().AtParent().AtName("inline"),
+																	path.MatchRelative().AtParent().AtName("inline_string"),
+																	path.MatchRelative().AtParent().AtName("secret"),
 																}...),
 															},
 														},
-														"data_source_inline": schema.SingleNestedAttribute{
+														"inline": schema.SingleNestedAttribute{
 															Computed: true,
 															Optional: true,
 															Attributes: map[string]schema.Attribute{
@@ -610,16 +630,20 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 																	Optional:    true,
 																	Description: `Data source is inline bytes.`,
 																},
+																"type": schema.StringAttribute{
+																	Computed: true,
+																	Optional: true,
+																},
 															},
 															Validators: []validator.Object{
 																objectvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("data_source_file"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																	path.MatchRelative().AtParent().AtName("data_source_secret"),
+																	path.MatchRelative().AtParent().AtName("file"),
+																	path.MatchRelative().AtParent().AtName("inline_string"),
+																	path.MatchRelative().AtParent().AtName("secret"),
 																}...),
 															},
 														},
-														"data_source_inline_string": schema.SingleNestedAttribute{
+														"inline_string": schema.SingleNestedAttribute{
 															Computed: true,
 															Optional: true,
 															Attributes: map[string]schema.Attribute{
@@ -628,16 +652,20 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 																	Optional:    true,
 																	Description: `Data source is inline string`,
 																},
+																"type": schema.StringAttribute{
+																	Computed: true,
+																	Optional: true,
+																},
 															},
 															Validators: []validator.Object{
 																objectvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("data_source_file"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline"),
-																	path.MatchRelative().AtParent().AtName("data_source_secret"),
+																	path.MatchRelative().AtParent().AtName("file"),
+																	path.MatchRelative().AtParent().AtName("inline"),
+																	path.MatchRelative().AtParent().AtName("secret"),
 																}...),
 															},
 														},
-														"data_source_secret": schema.SingleNestedAttribute{
+														"secret": schema.SingleNestedAttribute{
 															Computed: true,
 															Optional: true,
 															Attributes: map[string]schema.Attribute{
@@ -646,12 +674,16 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 																	Optional:    true,
 																	Description: `Data source is a secret with given Secret key.`,
 																},
+																"type": schema.StringAttribute{
+																	Computed: true,
+																	Optional: true,
+																},
 															},
 															Validators: []validator.Object{
 																objectvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("data_source_file"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline_string"),
+																	path.MatchRelative().AtParent().AtName("file"),
+																	path.MatchRelative().AtParent().AtName("inline"),
+																	path.MatchRelative().AtParent().AtName("inline_string"),
 																}...),
 															},
 														},
