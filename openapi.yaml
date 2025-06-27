@@ -15082,6 +15082,41 @@ components:
     DataplaneDeleteSuccessResponse:
       type: object
       properties: {}
+    DataSource_File:
+      properties:
+        type:
+          type: string
+        File:
+          description: |-
+            Data source is a path to a file.
+            Deprecated, use other sources of a data.
+          type: string
+      type: object
+    DataSource_Inline:
+      properties:
+        type:
+          type: string
+        Inline:
+          description: Data source is inline bytes.
+          format: byte
+          type: string
+      type: object
+    DataSource_InlineString:
+      properties:
+        type:
+          type: string
+        InlineString:
+          description: Data source is inline string
+          type: string
+      type: object
+    DataSource_Secret:
+      properties:
+        type:
+          type: string
+        Secret:
+          description: Data source is a secret with given Secret key.
+          type: string
+      type: object
     FileLoggingBackendConfig:
       properties:
         path:
@@ -15463,19 +15498,31 @@ components:
     ProvidedCertificateAuthorityConfig:
       properties:
         cert:
-          properties:
-            Type: true
-          required:
-            - Type
-          type: object
-          x-speakeasy-param-computed: false
+          discriminator:
+            propertyName: type
+            mapping:
+              file: '#/components/schemas/DataSource_File'
+              inline: '#/components/schemas/DataSource_Inline'
+              inlineString: '#/components/schemas/DataSource_InlineString'
+              secret: '#/components/schemas/DataSource_Secret'
+          oneOf:
+            - $ref: '#/components/schemas/DataSource_File'
+            - $ref: '#/components/schemas/DataSource_Inline'
+            - $ref: '#/components/schemas/DataSource_InlineString'
+            - $ref: '#/components/schemas/DataSource_Secret'
         key:
-          properties:
-            Type: true
-          required:
-            - Type
-          type: object
-          x-speakeasy-param-computed: false
+          discriminator:
+            propertyName: type
+            mapping:
+              file: '#/components/schemas/DataSource_File'
+              inline: '#/components/schemas/DataSource_Inline'
+              inlineString: '#/components/schemas/DataSource_InlineString'
+              secret: '#/components/schemas/DataSource_Secret'
+          oneOf:
+            - $ref: '#/components/schemas/DataSource_File'
+            - $ref: '#/components/schemas/DataSource_Inline'
+            - $ref: '#/components/schemas/DataSource_InlineString'
+            - $ref: '#/components/schemas/DataSource_Secret'
       type: object
     ZipkinTracingBackendConfig:
       properties:
