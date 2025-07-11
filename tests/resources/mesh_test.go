@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/Kong/shared-speakeasy/tfbuilder"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
@@ -48,6 +49,35 @@ func TestMesh(t *testing.T) {
 	defer testcontainers.CleanupContainer(t, cpContainer)
 	port, err := cpContainer.MappedPort(ctx, "5681/tcp")
 	require.NoError(t, err)
+
+	t.Run("should create a mesh without initial policies", func(t *testing.T) {
+		builder := tfbuilder.NewBuilder(tfbuilder.KongMesh, "http", "localhost", port.Int())
+		mesh := tfbuilder.NewMeshBuilder("m0", "m0")
+
+		// if this grows move this to shared-speakeasy
+		resource.ParallelTest(t, resource.TestCase{
+			ProtoV6ProviderFactories: providerFactory,
+			Steps: []resource.TestStep{
+				{
+					Config: builder.AddMesh(mesh).Build(),
+					ConfigPlanChecks: resource.ConfigPlanChecks{
+						PreApply: []plancheck.PlanCheck{
+							plancheck.ExpectResourceAction(builder.ResourceAddress("mesh", mesh.ResourceName), plancheck.ResourceActionCreate),
+						},
+					},
+					ExpectNonEmptyPlan: true, // skip_creating_initial_policies was set by the hook
+				},
+				{
+					Config: builder.AddMesh(mesh.WithSpec(`skip_creating_initial_policies = [ "*" ]`)).Build(),
+					ConfigPlanChecks: resource.ConfigPlanChecks{
+						PreApply: []plancheck.PlanCheck{
+							plancheck.ExpectResourceAction(builder.ResourceAddress("mesh", mesh.ResourceName), plancheck.ResourceActionNoop),
+						},
+					},
+				},
+			},
+		})
+	})
 
 	t.Run("create a mesh and modify fields on it", func(t *testing.T) {
 		builder := tfbuilder.NewBuilder(tfbuilder.KongMesh, "http", "localhost", port.Int())

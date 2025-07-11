@@ -32,6 +32,9 @@ test:
 test-cleanup:
 	@cd tests/e2e; rm -rf local-plugins .terraform .terraform.lock.hcl terraform.tfstate terraform.tfstate.backup
 
+unit-test:
+	go test -v ./internal/sdk/internal/...
+
 dev/use-local-shared-speakeasy:
 	go mod edit -replace=github.com/Kong/shared-speakeasy=../shared-speakeasy
 	go mod tidy

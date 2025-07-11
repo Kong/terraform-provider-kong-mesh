@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.4
+> Released on 2025/07/11
+>
+> - Fix default mesh hook that did not set "skip-initial-policies" for a new Mesh
+
 ## 0.5.3
 > Released on 2025/06/05
 >

@@ -10,6 +10,8 @@ github.com/Kong/shared-speakeasy/customtypes v0.2.3 h1:q9fSWfVyOVBDzcrY5ICo6E9r6
 github.com/Kong/shared-speakeasy/customtypes v0.2.3/go.mod h1:fLy23iYs9rUWZqFGbu7yQYrWL8rbCOJrLISBzqpxVhk=
 github.com/Kong/shared-speakeasy/hooks/mesh_defaults v0.0.3 h1:+wYc79YT0VlV/7BbW9tcZSIfCBGj+4twtm2bPzVj+vo=
 github.com/Kong/shared-speakeasy/hooks/mesh_defaults v0.0.3/go.mod h1:Tu9kdp+k8JF7ES5gcXBi6jHyLEOr1EAAWq8ROOipWqg=
+github.com/Kong/shared-speakeasy/hooks/mesh_defaults v0.0.4-0.20250711140659-ee8503233241 h1:AIN7xzieSefPFk330ZwA2Lu2rHJqoMHma+9WQd6bMMs=
+github.com/Kong/shared-speakeasy/hooks/mesh_defaults v0.0.4-0.20250711140659-ee8503233241/go.mod h1:Tu9kdp+k8JF7ES5gcXBi6jHyLEOr1EAAWq8ROOipWqg=
 github.com/Kong/shared-speakeasy/planmodifiers/arbitrary_json v0.0.1 h1:S3f3RAPNv274Yd8ShkGjSTXLWS55AY1SHNKfcX8sQjU=
 github.com/Kong/shared-speakeasy/planmodifiers/arbitrary_json v0.0.1/go.mod h1:exogJpiSOmoVk8BTkYA2wlkvqhYlOP+LJpXc4CacHuU=
 github.com/Kong/shared-speakeasy/planmodifiers/suppress_zero_null v0.0.1 h1:2PxZAhqgCU0dz+qjghtay2XkNLx2F3oEuh90U/acijc=
