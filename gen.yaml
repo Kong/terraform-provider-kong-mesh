@@ -20,7 +20,7 @@ generation:
 go:
   version: 1.24.1
 terraform:
-  version: 0.5.3
+  version: 0.5.4
   additionalDataSources: []
   additionalDependencies:
     github.com/Kong/shared-speakeasy/customtypes: v0.2.3
