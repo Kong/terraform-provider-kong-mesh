@@ -103,58 +103,58 @@ func (o *FileLoggingBackendConfig) GetPath() *string {
 	return o.Path
 }
 
-type MeshItemConfType string
+type MeshItemLoggingConfType string
 
 const (
-	MeshItemConfTypeFileLoggingBackendConfig MeshItemConfType = "FileLoggingBackendConfig"
-	MeshItemConfTypeTCPLoggingBackendConfig  MeshItemConfType = "TcpLoggingBackendConfig"
+	MeshItemLoggingConfTypeFileLoggingBackendConfig MeshItemLoggingConfType = "FileLoggingBackendConfig"
+	MeshItemLoggingConfTypeTCPLoggingBackendConfig  MeshItemLoggingConfType = "TcpLoggingBackendConfig"
 )
 
-type MeshItemConf struct {
+type MeshItemLoggingConf struct {
 	FileLoggingBackendConfig *FileLoggingBackendConfig `queryParam:"inline"`
 	TCPLoggingBackendConfig  *TCPLoggingBackendConfig  `queryParam:"inline"`
 
-	Type MeshItemConfType
+	Type MeshItemLoggingConfType
 }
 
-func CreateMeshItemConfFileLoggingBackendConfig(fileLoggingBackendConfig FileLoggingBackendConfig) MeshItemConf {
-	typ := MeshItemConfTypeFileLoggingBackendConfig
+func CreateMeshItemLoggingConfFileLoggingBackendConfig(fileLoggingBackendConfig FileLoggingBackendConfig) MeshItemLoggingConf {
+	typ := MeshItemLoggingConfTypeFileLoggingBackendConfig
 
-	return MeshItemConf{
+	return MeshItemLoggingConf{
 		FileLoggingBackendConfig: &fileLoggingBackendConfig,
 		Type:                     typ,
 	}
 }
 
-func CreateMeshItemConfTCPLoggingBackendConfig(tcpLoggingBackendConfig TCPLoggingBackendConfig) MeshItemConf {
-	typ := MeshItemConfTypeTCPLoggingBackendConfig
+func CreateMeshItemLoggingConfTCPLoggingBackendConfig(tcpLoggingBackendConfig TCPLoggingBackendConfig) MeshItemLoggingConf {
+	typ := MeshItemLoggingConfTypeTCPLoggingBackendConfig
 
-	return MeshItemConf{
+	return MeshItemLoggingConf{
 		TCPLoggingBackendConfig: &tcpLoggingBackendConfig,
 		Type:                    typ,
 	}
 }
 
-func (u *MeshItemConf) UnmarshalJSON(data []byte) error {
+func (u *MeshItemLoggingConf) UnmarshalJSON(data []byte) error {
 
 	var fileLoggingBackendConfig FileLoggingBackendConfig = FileLoggingBackendConfig{}
 	if err := utils.UnmarshalJSON(data, &fileLoggingBackendConfig, "", true, true); err == nil {
 		u.FileLoggingBackendConfig = &fileLoggingBackendConfig
-		u.Type = MeshItemConfTypeFileLoggingBackendConfig
+		u.Type = MeshItemLoggingConfTypeFileLoggingBackendConfig
 		return nil
 	}
 
 	var tcpLoggingBackendConfig TCPLoggingBackendConfig = TCPLoggingBackendConfig{}
 	if err := utils.UnmarshalJSON(data, &tcpLoggingBackendConfig, "", true, true); err == nil {
 		u.TCPLoggingBackendConfig = &tcpLoggingBackendConfig
-		u.Type = MeshItemConfTypeTCPLoggingBackendConfig
+		u.Type = MeshItemLoggingConfTypeTCPLoggingBackendConfig
 		return nil
 	}
 
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshItemConf", string(data))
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshItemLoggingConf", string(data))
 }
 
-func (u MeshItemConf) MarshalJSON() ([]byte, error) {
+func (u MeshItemLoggingConf) MarshalJSON() ([]byte, error) {
 	if u.FileLoggingBackendConfig != nil {
 		return utils.MarshalJSON(u.FileLoggingBackendConfig, "", true)
 	}
@@ -163,12 +163,12 @@ func (u MeshItemConf) MarshalJSON() ([]byte, error) {
 		return utils.MarshalJSON(u.TCPLoggingBackendConfig, "", true)
 	}
 
-	return nil, errors.New("could not marshal union type MeshItemConf: all fields are null")
+	return nil, errors.New("could not marshal union type MeshItemLoggingConf: all fields are null")
 }
 
 // Backends - LoggingBackend defines logging backend available to mesh.
 type Backends struct {
-	Conf *MeshItemConf `json:"conf,omitempty"`
+	Conf *MeshItemLoggingConf `json:"conf,omitempty"`
 	// Format of access logs. Placeholders available on
 	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log
 	Format *string `json:"format,omitempty"`
@@ -179,7 +179,7 @@ type Backends struct {
 	Type *string `json:"type,omitempty"`
 }
 
-func (o *Backends) GetConf() *MeshItemConf {
+func (o *Backends) GetConf() *MeshItemLoggingConf {
 	if o == nil {
 		return nil
 	}
@@ -304,8 +304,8 @@ func (o *MeshServices) GetMode() *Mode {
 	return o.Mode
 }
 
-// PrometheusMetricsBackendConfigConfAggregate - PrometheusAggregateMetricsConfig defines endpoints that should be scrapped by kuma-dp for prometheus metrics.
-type PrometheusMetricsBackendConfigConfAggregate struct {
+// Aggregate - PrometheusAggregateMetricsConfig defines endpoints that should be scrapped by kuma-dp for prometheus metrics.
+type Aggregate struct {
 	// Address on which a service expose HTTP endpoint with Prometheus metrics.
 	Address *string `json:"address,omitempty"`
 	// If false then the application won't be scrapped. If nil, then it is treated
@@ -319,43 +319,43 @@ type PrometheusMetricsBackendConfigConfAggregate struct {
 	Port *int64 `json:"port,omitempty"`
 }
 
-func (o *PrometheusMetricsBackendConfigConfAggregate) GetAddress() *string {
+func (o *Aggregate) GetAddress() *string {
 	if o == nil {
 		return nil
 	}
 	return o.Address
 }
 
-func (o *PrometheusMetricsBackendConfigConfAggregate) GetEnabled() *bool {
+func (o *Aggregate) GetEnabled() *bool {
 	if o == nil {
 		return nil
 	}
 	return o.Enabled
 }
 
-func (o *PrometheusMetricsBackendConfigConfAggregate) GetName() *string {
+func (o *Aggregate) GetName() *string {
 	if o == nil {
 		return nil
 	}
 	return o.Name
 }
 
-func (o *PrometheusMetricsBackendConfigConfAggregate) GetPath() *string {
+func (o *Aggregate) GetPath() *string {
 	if o == nil {
 		return nil
 	}
 	return o.Path
 }
 
-func (o *PrometheusMetricsBackendConfigConfAggregate) GetPort() *int64 {
+func (o *Aggregate) GetPort() *int64 {
 	if o == nil {
 		return nil
 	}
 	return o.Port
 }
 
-// PrometheusMetricsBackendConfigConfMeshItemEnvoy - Configuration of Envoy's metrics.
-type PrometheusMetricsBackendConfigConfMeshItemEnvoy struct {
+// Envoy - Configuration of Envoy's metrics.
+type Envoy struct {
 	// FilterRegex value that is going to be passed to Envoy for filtering
 	// Envoy metrics.
 	FilterRegex *string `json:"filterRegex,omitempty"`
@@ -365,75 +365,75 @@ type PrometheusMetricsBackendConfigConfMeshItemEnvoy struct {
 	UsedOnly *bool `json:"usedOnly,omitempty"`
 }
 
-func (o *PrometheusMetricsBackendConfigConfMeshItemEnvoy) GetFilterRegex() *string {
+func (o *Envoy) GetFilterRegex() *string {
 	if o == nil {
 		return nil
 	}
 	return o.FilterRegex
 }
 
-func (o *PrometheusMetricsBackendConfigConfMeshItemEnvoy) GetUsedOnly() *bool {
+func (o *Envoy) GetUsedOnly() *bool {
 	if o == nil {
 		return nil
 	}
 	return o.UsedOnly
 }
 
-type PrometheusMetricsBackendConfigConfMeshItemModeType string
+type ConfModeType string
 
 const (
-	PrometheusMetricsBackendConfigConfMeshItemModeTypeStr     PrometheusMetricsBackendConfigConfMeshItemModeType = "str"
-	PrometheusMetricsBackendConfigConfMeshItemModeTypeInteger PrometheusMetricsBackendConfigConfMeshItemModeType = "integer"
+	ConfModeTypeStr     ConfModeType = "str"
+	ConfModeTypeInteger ConfModeType = "integer"
 )
 
-// PrometheusMetricsBackendConfigConfMeshItemMode - mode defines how configured is the TLS for Prometheus.
+// ConfMode - mode defines how configured is the TLS for Prometheus.
 // Supported values, delegated, disabled, activeMTLSBackend. Default to
 // `activeMTLSBackend`.
-type PrometheusMetricsBackendConfigConfMeshItemMode struct {
+type ConfMode struct {
 	Str     *string `queryParam:"inline"`
 	Integer *int64  `queryParam:"inline"`
 
-	Type PrometheusMetricsBackendConfigConfMeshItemModeType
+	Type ConfModeType
 }
 
-func CreatePrometheusMetricsBackendConfigConfMeshItemModeStr(str string) PrometheusMetricsBackendConfigConfMeshItemMode {
-	typ := PrometheusMetricsBackendConfigConfMeshItemModeTypeStr
+func CreateConfModeStr(str string) ConfMode {
+	typ := ConfModeTypeStr
 
-	return PrometheusMetricsBackendConfigConfMeshItemMode{
+	return ConfMode{
 		Str:  &str,
 		Type: typ,
 	}
 }
 
-func CreatePrometheusMetricsBackendConfigConfMeshItemModeInteger(integer int64) PrometheusMetricsBackendConfigConfMeshItemMode {
-	typ := PrometheusMetricsBackendConfigConfMeshItemModeTypeInteger
+func CreateConfModeInteger(integer int64) ConfMode {
+	typ := ConfModeTypeInteger
 
-	return PrometheusMetricsBackendConfigConfMeshItemMode{
+	return ConfMode{
 		Integer: &integer,
 		Type:    typ,
 	}
 }
 
-func (u *PrometheusMetricsBackendConfigConfMeshItemMode) UnmarshalJSON(data []byte) error {
+func (u *ConfMode) UnmarshalJSON(data []byte) error {
 
 	var str string = ""
 	if err := utils.UnmarshalJSON(data, &str, "", true, true); err == nil {
 		u.Str = &str
-		u.Type = PrometheusMetricsBackendConfigConfMeshItemModeTypeStr
+		u.Type = ConfModeTypeStr
 		return nil
 	}
 
 	var integer int64 = int64(0)
 	if err := utils.UnmarshalJSON(data, &integer, "", true, true); err == nil {
 		u.Integer = &integer
-		u.Type = PrometheusMetricsBackendConfigConfMeshItemModeTypeInteger
+		u.Type = ConfModeTypeInteger
 		return nil
 	}
 
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for PrometheusMetricsBackendConfigConfMeshItemMode", string(data))
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for ConfMode", string(data))
 }
 
-func (u PrometheusMetricsBackendConfigConfMeshItemMode) MarshalJSON() ([]byte, error) {
+func (u ConfMode) MarshalJSON() ([]byte, error) {
 	if u.Str != nil {
 		return utils.MarshalJSON(u.Str, "", true)
 	}
@@ -442,30 +442,30 @@ func (u PrometheusMetricsBackendConfigConfMeshItemMode) MarshalJSON() ([]byte, e
 		return utils.MarshalJSON(u.Integer, "", true)
 	}
 
-	return nil, errors.New("could not marshal union type PrometheusMetricsBackendConfigConfMeshItemMode: all fields are null")
+	return nil, errors.New("could not marshal union type ConfMode: all fields are null")
 }
 
-// PrometheusMetricsBackendConfigConfTLS - Configuration of TLS for prometheus listener.
-type PrometheusMetricsBackendConfigConfTLS struct {
+// ConfTLS - Configuration of TLS for prometheus listener.
+type ConfTLS struct {
 	// mode defines how configured is the TLS for Prometheus.
 	// Supported values, delegated, disabled, activeMTLSBackend. Default to
 	// `activeMTLSBackend`.
-	Mode *PrometheusMetricsBackendConfigConfMeshItemMode `json:"mode,omitempty"`
+	Mode *ConfMode `json:"mode,omitempty"`
 }
 
-func (o *PrometheusMetricsBackendConfigConfTLS) GetMode() *PrometheusMetricsBackendConfigConfMeshItemMode {
+func (o *ConfTLS) GetMode() *ConfMode {
 	if o == nil {
 		return nil
 	}
 	return o.Mode
 }
 
-type MeshItemConfPrometheusMetricsBackendConfig struct {
+type PrometheusMetricsBackendConfig struct {
 	// Map with the configuration of applications which metrics are going to be
 	// scrapped by kuma-dp.
-	Aggregate []PrometheusMetricsBackendConfigConfAggregate `json:"aggregate,omitempty"`
+	Aggregate []Aggregate `json:"aggregate,omitempty"`
 	// Configuration of Envoy's metrics.
-	Envoy *PrometheusMetricsBackendConfigConfMeshItemEnvoy `json:"envoy,omitempty"`
+	Envoy *Envoy `json:"envoy,omitempty"`
 	// Path on which a dataplane should expose HTTP endpoint with Prometheus
 	// metrics.
 	Path *string `json:"path,omitempty"`
@@ -480,109 +480,109 @@ type MeshItemConfPrometheusMetricsBackendConfig struct {
 	// `service` tag is mandatory.
 	Tags map[string]string `json:"tags,omitempty"`
 	// Configuration of TLS for prometheus listener.
-	TLS *PrometheusMetricsBackendConfigConfTLS `json:"tls,omitempty"`
+	TLS *ConfTLS `json:"tls,omitempty"`
 }
 
-func (o *MeshItemConfPrometheusMetricsBackendConfig) GetAggregate() []PrometheusMetricsBackendConfigConfAggregate {
+func (o *PrometheusMetricsBackendConfig) GetAggregate() []Aggregate {
 	if o == nil {
 		return nil
 	}
 	return o.Aggregate
 }
 
-func (o *MeshItemConfPrometheusMetricsBackendConfig) GetEnvoy() *PrometheusMetricsBackendConfigConfMeshItemEnvoy {
+func (o *PrometheusMetricsBackendConfig) GetEnvoy() *Envoy {
 	if o == nil {
 		return nil
 	}
 	return o.Envoy
 }
 
-func (o *MeshItemConfPrometheusMetricsBackendConfig) GetPath() *string {
+func (o *PrometheusMetricsBackendConfig) GetPath() *string {
 	if o == nil {
 		return nil
 	}
 	return o.Path
 }
 
-func (o *MeshItemConfPrometheusMetricsBackendConfig) GetPort() *int64 {
+func (o *PrometheusMetricsBackendConfig) GetPort() *int64 {
 	if o == nil {
 		return nil
 	}
 	return o.Port
 }
 
-func (o *MeshItemConfPrometheusMetricsBackendConfig) GetSkipMTLS() *bool {
+func (o *PrometheusMetricsBackendConfig) GetSkipMTLS() *bool {
 	if o == nil {
 		return nil
 	}
 	return o.SkipMTLS
 }
 
-func (o *MeshItemConfPrometheusMetricsBackendConfig) GetTags() map[string]string {
+func (o *PrometheusMetricsBackendConfig) GetTags() map[string]string {
 	if o == nil {
 		return nil
 	}
 	return o.Tags
 }
 
-func (o *MeshItemConfPrometheusMetricsBackendConfig) GetTLS() *PrometheusMetricsBackendConfigConfTLS {
+func (o *PrometheusMetricsBackendConfig) GetTLS() *ConfTLS {
 	if o == nil {
 		return nil
 	}
 	return o.TLS
 }
 
-type MeshItemMetricsConfType string
+type MeshItemConfType string
 
 const (
-	MeshItemMetricsConfTypeMeshItemConfPrometheusMetricsBackendConfig MeshItemMetricsConfType = "MeshItem_conf_PrometheusMetricsBackendConfig"
+	MeshItemConfTypePrometheusMetricsBackendConfig MeshItemConfType = "PrometheusMetricsBackendConfig"
 )
 
-type MeshItemMetricsConf struct {
-	MeshItemConfPrometheusMetricsBackendConfig *MeshItemConfPrometheusMetricsBackendConfig `queryParam:"inline"`
+type MeshItemConf struct {
+	PrometheusMetricsBackendConfig *PrometheusMetricsBackendConfig `queryParam:"inline"`
 
-	Type MeshItemMetricsConfType
+	Type MeshItemConfType
 }
 
-func CreateMeshItemMetricsConfMeshItemConfPrometheusMetricsBackendConfig(meshItemConfPrometheusMetricsBackendConfig MeshItemConfPrometheusMetricsBackendConfig) MeshItemMetricsConf {
-	typ := MeshItemMetricsConfTypeMeshItemConfPrometheusMetricsBackendConfig
+func CreateMeshItemConfPrometheusMetricsBackendConfig(prometheusMetricsBackendConfig PrometheusMetricsBackendConfig) MeshItemConf {
+	typ := MeshItemConfTypePrometheusMetricsBackendConfig
 
-	return MeshItemMetricsConf{
-		MeshItemConfPrometheusMetricsBackendConfig: &meshItemConfPrometheusMetricsBackendConfig,
-		Type: typ,
+	return MeshItemConf{
+		PrometheusMetricsBackendConfig: &prometheusMetricsBackendConfig,
+		Type:                           typ,
 	}
 }
 
-func (u *MeshItemMetricsConf) UnmarshalJSON(data []byte) error {
+func (u *MeshItemConf) UnmarshalJSON(data []byte) error {
 
-	var meshItemConfPrometheusMetricsBackendConfig MeshItemConfPrometheusMetricsBackendConfig = MeshItemConfPrometheusMetricsBackendConfig{}
-	if err := utils.UnmarshalJSON(data, &meshItemConfPrometheusMetricsBackendConfig, "", true, true); err == nil {
-		u.MeshItemConfPrometheusMetricsBackendConfig = &meshItemConfPrometheusMetricsBackendConfig
-		u.Type = MeshItemMetricsConfTypeMeshItemConfPrometheusMetricsBackendConfig
+	var prometheusMetricsBackendConfig PrometheusMetricsBackendConfig = PrometheusMetricsBackendConfig{}
+	if err := utils.UnmarshalJSON(data, &prometheusMetricsBackendConfig, "", true, true); err == nil {
+		u.PrometheusMetricsBackendConfig = &prometheusMetricsBackendConfig
+		u.Type = MeshItemConfTypePrometheusMetricsBackendConfig
 		return nil
 	}
 
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshItemMetricsConf", string(data))
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshItemConf", string(data))
 }
 
-func (u MeshItemMetricsConf) MarshalJSON() ([]byte, error) {
-	if u.MeshItemConfPrometheusMetricsBackendConfig != nil {
-		return utils.MarshalJSON(u.MeshItemConfPrometheusMetricsBackendConfig, "", true)
+func (u MeshItemConf) MarshalJSON() ([]byte, error) {
+	if u.PrometheusMetricsBackendConfig != nil {
+		return utils.MarshalJSON(u.PrometheusMetricsBackendConfig, "", true)
 	}
 
-	return nil, errors.New("could not marshal union type MeshItemMetricsConf: all fields are null")
+	return nil, errors.New("could not marshal union type MeshItemConf: all fields are null")
 }
 
 // MeshItemBackends - MetricsBackend defines metric backends
 type MeshItemBackends struct {
-	Conf *MeshItemMetricsConf `json:"conf,omitempty"`
+	Conf *MeshItemConf `json:"conf,omitempty"`
 	// Name of the backend, can be then used in Mesh.metrics.enabledBackend
 	Name *string `json:"name,omitempty"`
 	// Type of the backend (Kuma ships with 'prometheus')
 	Type *string `json:"type,omitempty"`
 }
 
-func (o *MeshItemBackends) GetConf() *MeshItemMetricsConf {
+func (o *MeshItemBackends) GetConf() *MeshItemConf {
 	if o == nil {
 		return nil
 	}
@@ -603,27 +603,27 @@ func (o *MeshItemBackends) GetType() *string {
 	return o.Type
 }
 
-// MeshItemMetrics - Configuration for metrics collected and exposed by dataplanes.
+// Metrics - Configuration for metrics collected and exposed by dataplanes.
 //
 // Settings defined here become defaults for every dataplane in a given Mesh.
 // Additionally, it is also possible to further customize this configuration
 // for each dataplane individually using Dataplane resource.
 // +optional
-type MeshItemMetrics struct {
+type Metrics struct {
 	// List of available Metrics backends
 	Backends []MeshItemBackends `json:"backends,omitempty"`
 	// Name of the enabled backend
 	EnabledBackend *string `json:"enabledBackend,omitempty"`
 }
 
-func (o *MeshItemMetrics) GetBackends() []MeshItemBackends {
+func (o *Metrics) GetBackends() []MeshItemBackends {
 	if o == nil {
 		return nil
 	}
 	return o.Backends
 }
 
-func (o *MeshItemMetrics) GetEnabledBackend() *string {
+func (o *Metrics) GetEnabledBackend() *string {
 	if o == nil {
 		return nil
 	}
@@ -1256,26 +1256,26 @@ func (o *Mtls) GetSkipValidation() *bool {
 	return o.SkipValidation
 }
 
-// MeshItemOutbound - Outbound settings
-type MeshItemOutbound struct {
+// Outbound settings
+type Outbound struct {
 	// Control the passthrough cluster
 	Passthrough *bool `json:"passthrough,omitempty"`
 }
 
-func (o *MeshItemOutbound) GetPassthrough() *bool {
+func (o *Outbound) GetPassthrough() *bool {
 	if o == nil {
 		return nil
 	}
 	return o.Passthrough
 }
 
-// MeshItemNetworking - Networking settings of the mesh
-type MeshItemNetworking struct {
+// Networking settings of the mesh
+type Networking struct {
 	// Outbound settings
-	Outbound *MeshItemOutbound `json:"outbound,omitempty"`
+	Outbound *Outbound `json:"outbound,omitempty"`
 }
 
-func (o *MeshItemNetworking) GetOutbound() *MeshItemOutbound {
+func (o *Networking) GetOutbound() *Outbound {
 	if o == nil {
 		return nil
 	}
@@ -1534,13 +1534,13 @@ type MeshItem struct {
 	// Additionally, it is also possible to further customize this configuration
 	// for each dataplane individually using Dataplane resource.
 	// +optional
-	Metrics *MeshItemMetrics `json:"metrics,omitempty"`
+	Metrics *Metrics `json:"metrics,omitempty"`
 	// mTLS settings.
 	// +optional
 	Mtls *Mtls  `json:"mtls,omitempty"`
 	Name string `json:"name"`
 	// Networking settings of the mesh
-	Networking *MeshItemNetworking `json:"networking,omitempty"`
+	Networking *Networking `json:"networking,omitempty"`
 	// Routing settings of the mesh
 	Routing *Routing `json:"routing,omitempty"`
 	// List of policies to skip creating by default when the mesh is created.
@@ -1581,7 +1581,7 @@ func (o *MeshItem) GetMeshServices() *MeshServices {
 	return o.MeshServices
 }
 
-func (o *MeshItem) GetMetrics() *MeshItemMetrics {
+func (o *MeshItem) GetMetrics() *Metrics {
 	if o == nil {
 		return nil
 	}
@@ -1602,7 +1602,7 @@ func (o *MeshItem) GetName() string {
 	return o.Name
 }
 
-func (o *MeshItem) GetNetworking() *MeshItemNetworking {
+func (o *MeshItem) GetNetworking() *Networking {
 	if o == nil {
 		return nil
 	}

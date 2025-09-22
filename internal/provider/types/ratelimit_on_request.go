@@ -7,7 +7,7 @@ import (
 )
 
 type RatelimitOnRequest struct {
-	Kind   types.String                    `tfsdk:"kind"`
-	Limits []MeshGlobalRateLimitItemLimits `tfsdk:"limits"`
-	Name   types.String                    `tfsdk:"name"`
+	Kind   types.String `tfsdk:"kind"`
+	Limits []Limits     `tfsdk:"limits"`
+	Name   types.String `tfsdk:"name"`
 }

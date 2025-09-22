@@ -5,19 +5,26 @@ package sdk
 // Generated from OpenAPI doc version 2.0.0 and generator version 2.620.2
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/config"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/hooks"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/utils"
-	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/errors"
-	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/retry"
 	"net/http"
 	"time"
 )
+
+// ServerList contains the list of servers available to the SDK
+var ServerList = []string{
+	"https://global.api.konghq.com",
+	"https://us.api.konghq.com",
+	"https://eu.api.konghq.com",
+	"https://au.api.konghq.com",
+	"https://me.api.konghq.com",
+	"https://in.api.konghq.com",
+}
 
 // HTTPClient provides an interface for supplying the SDK with a custom HTTP client
 type HTTPClient interface {
@@ -45,12 +52,9 @@ func Float64(f float64) *float64 { return &f }
 // Pointer provides a helper function to return a pointer to a type
 func Pointer[T any](v T) *T { return &v }
 
-// KongMesh - Kong Mesh: This is a BETA Mesh specification. Endpoints in this specification may change with zero notice
+// KongMesh - Konnect API: The Konnect platform API
 type KongMesh struct {
 	SDKVersion                string
-	System                    *System
-	GlobalInsight             *GlobalInsight
-	Inspect                   *Inspect
 	MeshAccessLog             *MeshAccessLog
 	MeshCircuitBreaker        *MeshCircuitBreaker
 	MeshFaultInjection        *MeshFaultInjection
@@ -67,14 +71,12 @@ type KongMesh struct {
 	MeshTLS                   *MeshTLS
 	MeshTrace                 *MeshTrace
 	MeshTrafficPermission     *MeshTrafficPermission
-	Dataplane                 *Dataplane
 	Mesh                      *Mesh
 	MeshGateway               *MeshGateway
 	HostnameGenerator         *HostnameGenerator
 	MeshExternalService       *MeshExternalService
 	MeshMultiZoneService      *MeshMultiZoneService
 	MeshService               *MeshService
-	Tenants                   *Tenants
 	MeshGlobalRateLimit       *MeshGlobalRateLimit
 	MeshOPA                   *MeshOPA
 
@@ -83,6 +85,35 @@ type KongMesh struct {
 }
 
 type SDKOption func(*KongMesh)
+
+// WithServerURL allows the overriding of the default server URL
+func WithServerURL(serverURL string) SDKOption {
+	return func(sdk *KongMesh) {
+		sdk.sdkConfiguration.ServerURL = serverURL
+	}
+}
+
+// WithTemplatedServerURL allows the overriding of the default server URL with a templated URL populated with the provided parameters
+func WithTemplatedServerURL(serverURL string, params map[string]string) SDKOption {
+	return func(sdk *KongMesh) {
+		if params != nil {
+			serverURL = utils.ReplaceParameters(serverURL, params)
+		}
+
+		sdk.sdkConfiguration.ServerURL = serverURL
+	}
+}
+
+// WithServerIndex allows the overriding of the default server by index
+func WithServerIndex(serverIndex int) SDKOption {
+	return func(sdk *KongMesh) {
+		if serverIndex < 0 || serverIndex >= len(ServerList) {
+			panic(fmt.Errorf("server index %d out of range", serverIndex))
+		}
+
+		sdk.sdkConfiguration.ServerIndex = serverIndex
+	}
+}
 
 // WithClient allows the overriding of the default HTTP client used by the SDK
 func WithClient(client HTTPClient) SDKOption {
@@ -120,12 +151,13 @@ func WithTimeout(timeout time.Duration) SDKOption {
 	}
 }
 
-// New creates a new instance of the SDK with the provided serverURL and options
-func New(serverURL string, opts ...SDKOption) *KongMesh {
+// New creates a new instance of the SDK with the provided options
+func New(opts ...SDKOption) *KongMesh {
 	sdk := &KongMesh{
 		SDKVersion: "0.5.4",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent: "speakeasy-sdk/terraform 0.5.4 2.620.2 2.0.0 github.com/kong/terraform-provider-kong-mesh/internal/sdk",
+			UserAgent:  "speakeasy-sdk/terraform 0.5.4 2.620.2 2.0.0 github.com/kong/terraform-provider-kong-mesh/internal/sdk",
+			ServerList: ServerList,
 		},
 		hooks: hooks.New(),
 	}
@@ -138,18 +170,13 @@ func New(serverURL string, opts ...SDKOption) *KongMesh {
 		sdk.sdkConfiguration.Client = &http.Client{Timeout: 60 * time.Second}
 	}
 
-	sdk.sdkConfiguration.ServerURL = serverURL
-
 	currentServerURL, _ := sdk.sdkConfiguration.GetServerDetails()
-	serverURL = currentServerURL
+	serverURL := currentServerURL
 	serverURL, sdk.sdkConfiguration.Client = sdk.hooks.SDKInit(currentServerURL, sdk.sdkConfiguration.Client)
 	if currentServerURL != serverURL {
 		sdk.sdkConfiguration.ServerURL = serverURL
 	}
 
-	sdk.System = newSystem(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.GlobalInsight = newGlobalInsight(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.Inspect = newInspect(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MeshAccessLog = newMeshAccessLog(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MeshCircuitBreaker = newMeshCircuitBreaker(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MeshFaultInjection = newMeshFaultInjection(sdk, sdk.sdkConfiguration, sdk.hooks)
@@ -166,775 +193,14 @@ func New(serverURL string, opts ...SDKOption) *KongMesh {
 	sdk.MeshTLS = newMeshTLS(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MeshTrace = newMeshTrace(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MeshTrafficPermission = newMeshTrafficPermission(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.Dataplane = newDataplane(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Mesh = newMesh(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MeshGateway = newMeshGateway(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.HostnameGenerator = newHostnameGenerator(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MeshExternalService = newMeshExternalService(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MeshMultiZoneService = newMeshMultiZoneService(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MeshService = newMeshService(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.Tenants = newTenants(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MeshGlobalRateLimit = newMeshGlobalRateLimit(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MeshOPA = newMeshOPA(sdk, sdk.sdkConfiguration, sdk.hooks)
 
 	return sdk
-}
-
-func (s *KongMesh) GetDataplaneOverview(ctx context.Context, request operations.GetDataplaneOverviewRequest, opts ...operations.Option) (*operations.GetDataplaneOverviewResponse, error) {
-	o := operations.Options{}
-	supportedOptions := []string{
-		operations.SupportedOptionRetries,
-		operations.SupportedOptionTimeout,
-		operations.SupportedOptionAcceptHeaderOverride,
-	}
-
-	for _, opt := range opts {
-		if err := opt(&o, supportedOptions...); err != nil {
-			return nil, fmt.Errorf("error applying option: %w", err)
-		}
-	}
-
-	var baseURL string
-	if o.ServerURL == nil {
-		baseURL = utils.ReplaceParameters(s.sdkConfiguration.GetServerDetails())
-	} else {
-		baseURL = *o.ServerURL
-	}
-	opURL, err := utils.GenerateURL(ctx, baseURL, "/meshes/{mesh}/dataplanes/{name}/_overview", request, nil)
-	if err != nil {
-		return nil, fmt.Errorf("error generating URL: %w", err)
-	}
-
-	hookCtx := hooks.HookContext{
-		SDK:              s,
-		SDKConfiguration: s.sdkConfiguration,
-		BaseURL:          baseURL,
-		Context:          ctx,
-		OperationID:      "getDataplaneOverview",
-		OAuth2Scopes:     []string{},
-		SecuritySource:   s.sdkConfiguration.Security,
-	}
-
-	timeout := o.Timeout
-	if timeout == nil {
-		timeout = s.sdkConfiguration.Timeout
-	}
-
-	if timeout != nil {
-		var cancel context.CancelFunc
-		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
-	}
-
-	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
-	if err != nil {
-		return nil, fmt.Errorf("error creating request: %w", err)
-	}
-	if o.AcceptHeaderOverride != nil {
-		req.Header.Set("Accept", string(*o.AcceptHeaderOverride))
-	} else {
-		req.Header.Set("Accept", "application/json;q=1, application/problem+json;q=0")
-	}
-
-	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
-
-	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
-		return nil, err
-	}
-
-	for k, v := range o.SetHeaders {
-		req.Header.Set(k, v)
-	}
-
-	globalRetryConfig := s.sdkConfiguration.RetryConfig
-	retryConfig := o.Retries
-	if retryConfig == nil {
-		if globalRetryConfig != nil {
-			retryConfig = globalRetryConfig
-		} else {
-			retryConfig = &retry.Config{
-				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
-					InitialInterval: 100,
-					MaxInterval:     500,
-					Exponent:        1.5,
-					MaxElapsedTime:  500,
-				},
-				RetryConnectionErrors: true,
-			}
-		}
-	}
-
-	var httpRes *http.Response
-	if retryConfig != nil {
-		httpRes, err = utils.Retry(ctx, utils.Retries{
-			Config: retryConfig,
-			StatusCodes: []string{
-				"404",
-				"408",
-				"429",
-				"500",
-				"502",
-				"503",
-				"504",
-			},
-		}, func() (*http.Response, error) {
-			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
-				copyBody, err := req.GetBody()
-
-				if err != nil {
-					return nil, err
-				}
-
-				req.Body = copyBody
-			}
-
-			req, err = s.hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
-			if err != nil {
-				if retry.IsPermanentError(err) || retry.IsTemporaryError(err) {
-					return nil, err
-				}
-
-				return nil, retry.Permanent(err)
-			}
-
-			httpRes, err := s.sdkConfiguration.Client.Do(req)
-			if err != nil || httpRes == nil {
-				if err != nil {
-					err = fmt.Errorf("error sending request: %w", err)
-				} else {
-					err = fmt.Errorf("error sending request: no response")
-				}
-
-				_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
-			}
-			return httpRes, err
-		})
-
-		if err != nil {
-			return nil, err
-		} else {
-			httpRes, err = s.hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
-			if err != nil {
-				return nil, err
-			}
-		}
-	} else {
-		req, err = s.hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
-		if err != nil {
-			return nil, err
-		}
-
-		httpRes, err = s.sdkConfiguration.Client.Do(req)
-		if err != nil || httpRes == nil {
-			if err != nil {
-				err = fmt.Errorf("error sending request: %w", err)
-			} else {
-				err = fmt.Errorf("error sending request: no response")
-			}
-
-			_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
-			return nil, err
-		} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
-			_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
-			if err != nil {
-				return nil, err
-			} else if _httpRes != nil {
-				httpRes = _httpRes
-			}
-		} else {
-			httpRes, err = s.hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
-			if err != nil {
-				return nil, err
-			}
-		}
-	}
-
-	res := &operations.GetDataplaneOverviewResponse{
-		StatusCode:  httpRes.StatusCode,
-		ContentType: httpRes.Header.Get("Content-Type"),
-		RawResponse: httpRes,
-	}
-
-	switch {
-	case httpRes.StatusCode == 200:
-		switch {
-		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			rawBody, err := utils.ConsumeRawBody(httpRes)
-			if err != nil {
-				return nil, err
-			}
-
-			var out shared.DataplaneOverviewWithMeta
-			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
-			}
-
-			res.DataplaneOverviewWithMeta = &out
-		default:
-			rawBody, err := utils.ConsumeRawBody(httpRes)
-			if err != nil {
-				return nil, err
-			}
-			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
-		}
-	case httpRes.StatusCode == 400:
-		switch {
-		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/problem+json`):
-			rawBody, err := utils.ConsumeRawBody(httpRes)
-			if err != nil {
-				return nil, err
-			}
-
-			var out shared.BadRequestError
-			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
-			}
-
-			res.BadRequestError = &out
-		default:
-			rawBody, err := utils.ConsumeRawBody(httpRes)
-			if err != nil {
-				return nil, err
-			}
-			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
-		}
-	case httpRes.StatusCode == 500:
-		switch {
-		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/problem+json`):
-			rawBody, err := utils.ConsumeRawBody(httpRes)
-			if err != nil {
-				return nil, err
-			}
-
-			var out shared.BaseError
-			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
-			}
-
-			res.BaseError = &out
-		default:
-			rawBody, err := utils.ConsumeRawBody(httpRes)
-			if err != nil {
-				return nil, err
-			}
-			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
-		}
-	default:
-		rawBody, err := utils.ConsumeRawBody(httpRes)
-		if err != nil {
-			return nil, err
-		}
-		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
-	}
-
-	return res, nil
-
-}
-
-func (s *KongMesh) GetDataplaneOverviewList(ctx context.Context, request operations.GetDataplaneOverviewListRequest, opts ...operations.Option) (*operations.GetDataplaneOverviewListResponse, error) {
-	o := operations.Options{}
-	supportedOptions := []string{
-		operations.SupportedOptionRetries,
-		operations.SupportedOptionTimeout,
-		operations.SupportedOptionAcceptHeaderOverride,
-	}
-
-	for _, opt := range opts {
-		if err := opt(&o, supportedOptions...); err != nil {
-			return nil, fmt.Errorf("error applying option: %w", err)
-		}
-	}
-
-	var baseURL string
-	if o.ServerURL == nil {
-		baseURL = utils.ReplaceParameters(s.sdkConfiguration.GetServerDetails())
-	} else {
-		baseURL = *o.ServerURL
-	}
-	opURL, err := utils.GenerateURL(ctx, baseURL, "/meshes/{mesh}/dataplanes/_overview", request, nil)
-	if err != nil {
-		return nil, fmt.Errorf("error generating URL: %w", err)
-	}
-
-	hookCtx := hooks.HookContext{
-		SDK:              s,
-		SDKConfiguration: s.sdkConfiguration,
-		BaseURL:          baseURL,
-		Context:          ctx,
-		OperationID:      "getDataplaneOverviewList",
-		OAuth2Scopes:     []string{},
-		SecuritySource:   s.sdkConfiguration.Security,
-	}
-
-	timeout := o.Timeout
-	if timeout == nil {
-		timeout = s.sdkConfiguration.Timeout
-	}
-
-	if timeout != nil {
-		var cancel context.CancelFunc
-		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
-	}
-
-	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
-	if err != nil {
-		return nil, fmt.Errorf("error creating request: %w", err)
-	}
-	if o.AcceptHeaderOverride != nil {
-		req.Header.Set("Accept", string(*o.AcceptHeaderOverride))
-	} else {
-		req.Header.Set("Accept", "application/json;q=1, application/problem+json;q=0")
-	}
-
-	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
-
-	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
-		return nil, err
-	}
-
-	for k, v := range o.SetHeaders {
-		req.Header.Set(k, v)
-	}
-
-	globalRetryConfig := s.sdkConfiguration.RetryConfig
-	retryConfig := o.Retries
-	if retryConfig == nil {
-		if globalRetryConfig != nil {
-			retryConfig = globalRetryConfig
-		} else {
-			retryConfig = &retry.Config{
-				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
-					InitialInterval: 100,
-					MaxInterval:     500,
-					Exponent:        1.5,
-					MaxElapsedTime:  500,
-				},
-				RetryConnectionErrors: true,
-			}
-		}
-	}
-
-	var httpRes *http.Response
-	if retryConfig != nil {
-		httpRes, err = utils.Retry(ctx, utils.Retries{
-			Config: retryConfig,
-			StatusCodes: []string{
-				"404",
-				"408",
-				"429",
-				"500",
-				"502",
-				"503",
-				"504",
-			},
-		}, func() (*http.Response, error) {
-			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
-				copyBody, err := req.GetBody()
-
-				if err != nil {
-					return nil, err
-				}
-
-				req.Body = copyBody
-			}
-
-			req, err = s.hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
-			if err != nil {
-				if retry.IsPermanentError(err) || retry.IsTemporaryError(err) {
-					return nil, err
-				}
-
-				return nil, retry.Permanent(err)
-			}
-
-			httpRes, err := s.sdkConfiguration.Client.Do(req)
-			if err != nil || httpRes == nil {
-				if err != nil {
-					err = fmt.Errorf("error sending request: %w", err)
-				} else {
-					err = fmt.Errorf("error sending request: no response")
-				}
-
-				_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
-			}
-			return httpRes, err
-		})
-
-		if err != nil {
-			return nil, err
-		} else {
-			httpRes, err = s.hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
-			if err != nil {
-				return nil, err
-			}
-		}
-	} else {
-		req, err = s.hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
-		if err != nil {
-			return nil, err
-		}
-
-		httpRes, err = s.sdkConfiguration.Client.Do(req)
-		if err != nil || httpRes == nil {
-			if err != nil {
-				err = fmt.Errorf("error sending request: %w", err)
-			} else {
-				err = fmt.Errorf("error sending request: no response")
-			}
-
-			_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
-			return nil, err
-		} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
-			_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
-			if err != nil {
-				return nil, err
-			} else if _httpRes != nil {
-				httpRes = _httpRes
-			}
-		} else {
-			httpRes, err = s.hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
-			if err != nil {
-				return nil, err
-			}
-		}
-	}
-
-	res := &operations.GetDataplaneOverviewListResponse{
-		StatusCode:  httpRes.StatusCode,
-		ContentType: httpRes.Header.Get("Content-Type"),
-		RawResponse: httpRes,
-	}
-
-	switch {
-	case httpRes.StatusCode == 200:
-		switch {
-		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			rawBody, err := utils.ConsumeRawBody(httpRes)
-			if err != nil {
-				return nil, err
-			}
-
-			var out shared.GetDataplaneOverviewListResponse
-			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
-			}
-
-			res.GetDataplaneOverviewListResponse = &out
-		default:
-			rawBody, err := utils.ConsumeRawBody(httpRes)
-			if err != nil {
-				return nil, err
-			}
-			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
-		}
-	case httpRes.StatusCode == 400:
-		switch {
-		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/problem+json`):
-			rawBody, err := utils.ConsumeRawBody(httpRes)
-			if err != nil {
-				return nil, err
-			}
-
-			var out shared.BadRequestError
-			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
-			}
-
-			res.BadRequestError = &out
-		default:
-			rawBody, err := utils.ConsumeRawBody(httpRes)
-			if err != nil {
-				return nil, err
-			}
-			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
-		}
-	case httpRes.StatusCode == 500:
-		switch {
-		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/problem+json`):
-			rawBody, err := utils.ConsumeRawBody(httpRes)
-			if err != nil {
-				return nil, err
-			}
-
-			var out shared.BaseError
-			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
-			}
-
-			res.BaseError = &out
-		default:
-			rawBody, err := utils.ConsumeRawBody(httpRes)
-			if err != nil {
-				return nil, err
-			}
-			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
-		}
-	default:
-		rawBody, err := utils.ConsumeRawBody(httpRes)
-		if err != nil {
-			return nil, err
-		}
-		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
-	}
-
-	return res, nil
-
-}
-
-// GetDataplanesXdsConfig - Get a proxy XDS config on a CP, this endpoint is only available on zone CPs.
-// Returns the [xds](https://www.envoyproxy.io/docs/envoy/latest/api-docs/xds_protocol) configuration of the proxy.
-func (s *KongMesh) GetDataplanesXdsConfig(ctx context.Context, request operations.GetDataplanesXdsConfigRequest, opts ...operations.Option) (*operations.GetDataplanesXdsConfigResponse, error) {
-	o := operations.Options{}
-	supportedOptions := []string{
-		operations.SupportedOptionRetries,
-		operations.SupportedOptionTimeout,
-		operations.SupportedOptionAcceptHeaderOverride,
-	}
-
-	for _, opt := range opts {
-		if err := opt(&o, supportedOptions...); err != nil {
-			return nil, fmt.Errorf("error applying option: %w", err)
-		}
-	}
-
-	var baseURL string
-	if o.ServerURL == nil {
-		baseURL = utils.ReplaceParameters(s.sdkConfiguration.GetServerDetails())
-	} else {
-		baseURL = *o.ServerURL
-	}
-	opURL, err := utils.GenerateURL(ctx, baseURL, "/meshes/{mesh}/dataplanes/{name}/_config", request, nil)
-	if err != nil {
-		return nil, fmt.Errorf("error generating URL: %w", err)
-	}
-
-	hookCtx := hooks.HookContext{
-		SDK:              s,
-		SDKConfiguration: s.sdkConfiguration,
-		BaseURL:          baseURL,
-		Context:          ctx,
-		OperationID:      "get-dataplanes-xds-config",
-		OAuth2Scopes:     []string{},
-		SecuritySource:   s.sdkConfiguration.Security,
-	}
-
-	timeout := o.Timeout
-	if timeout == nil {
-		timeout = s.sdkConfiguration.Timeout
-	}
-
-	if timeout != nil {
-		var cancel context.CancelFunc
-		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
-	}
-
-	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
-	if err != nil {
-		return nil, fmt.Errorf("error creating request: %w", err)
-	}
-	if o.AcceptHeaderOverride != nil {
-		req.Header.Set("Accept", string(*o.AcceptHeaderOverride))
-	} else {
-		req.Header.Set("Accept", "application/json;q=1, application/problem+json;q=0")
-	}
-
-	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
-
-	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
-		return nil, fmt.Errorf("error populating query params: %w", err)
-	}
-
-	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
-		return nil, err
-	}
-
-	for k, v := range o.SetHeaders {
-		req.Header.Set(k, v)
-	}
-
-	globalRetryConfig := s.sdkConfiguration.RetryConfig
-	retryConfig := o.Retries
-	if retryConfig == nil {
-		if globalRetryConfig != nil {
-			retryConfig = globalRetryConfig
-		} else {
-			retryConfig = &retry.Config{
-				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
-					InitialInterval: 100,
-					MaxInterval:     500,
-					Exponent:        1.5,
-					MaxElapsedTime:  500,
-				},
-				RetryConnectionErrors: true,
-			}
-		}
-	}
-
-	var httpRes *http.Response
-	if retryConfig != nil {
-		httpRes, err = utils.Retry(ctx, utils.Retries{
-			Config: retryConfig,
-			StatusCodes: []string{
-				"404",
-				"408",
-				"429",
-				"500",
-				"502",
-				"503",
-				"504",
-			},
-		}, func() (*http.Response, error) {
-			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
-				copyBody, err := req.GetBody()
-
-				if err != nil {
-					return nil, err
-				}
-
-				req.Body = copyBody
-			}
-
-			req, err = s.hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
-			if err != nil {
-				if retry.IsPermanentError(err) || retry.IsTemporaryError(err) {
-					return nil, err
-				}
-
-				return nil, retry.Permanent(err)
-			}
-
-			httpRes, err := s.sdkConfiguration.Client.Do(req)
-			if err != nil || httpRes == nil {
-				if err != nil {
-					err = fmt.Errorf("error sending request: %w", err)
-				} else {
-					err = fmt.Errorf("error sending request: no response")
-				}
-
-				_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
-			}
-			return httpRes, err
-		})
-
-		if err != nil {
-			return nil, err
-		} else {
-			httpRes, err = s.hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
-			if err != nil {
-				return nil, err
-			}
-		}
-	} else {
-		req, err = s.hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
-		if err != nil {
-			return nil, err
-		}
-
-		httpRes, err = s.sdkConfiguration.Client.Do(req)
-		if err != nil || httpRes == nil {
-			if err != nil {
-				err = fmt.Errorf("error sending request: %w", err)
-			} else {
-				err = fmt.Errorf("error sending request: no response")
-			}
-
-			_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
-			return nil, err
-		} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
-			_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
-			if err != nil {
-				return nil, err
-			} else if _httpRes != nil {
-				httpRes = _httpRes
-			}
-		} else {
-			httpRes, err = s.hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
-			if err != nil {
-				return nil, err
-			}
-		}
-	}
-
-	res := &operations.GetDataplanesXdsConfigResponse{
-		StatusCode:  httpRes.StatusCode,
-		ContentType: httpRes.Header.Get("Content-Type"),
-		RawResponse: httpRes,
-	}
-
-	switch {
-	case httpRes.StatusCode == 200:
-		switch {
-		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			rawBody, err := utils.ConsumeRawBody(httpRes)
-			if err != nil {
-				return nil, err
-			}
-
-			var out shared.DataplaneXDSConfig
-			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
-			}
-
-			res.DataplaneXDSConfig = &out
-		default:
-			rawBody, err := utils.ConsumeRawBody(httpRes)
-			if err != nil {
-				return nil, err
-			}
-			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
-		}
-	case httpRes.StatusCode == 400:
-		switch {
-		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/problem+json`):
-			rawBody, err := utils.ConsumeRawBody(httpRes)
-			if err != nil {
-				return nil, err
-			}
-
-			var out shared.BadRequestError
-			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
-			}
-
-			res.BadRequestError = &out
-		default:
-			rawBody, err := utils.ConsumeRawBody(httpRes)
-			if err != nil {
-				return nil, err
-			}
-			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
-		}
-	case httpRes.StatusCode == 500:
-		switch {
-		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/problem+json`):
-			rawBody, err := utils.ConsumeRawBody(httpRes)
-			if err != nil {
-				return nil, err
-			}
-
-			var out shared.BaseError
-			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
-			}
-
-			res.BaseError = &out
-		default:
-			rawBody, err := utils.ConsumeRawBody(httpRes)
-			if err != nil {
-				return nil, err
-			}
-			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
-		}
-	default:
-		rawBody, err := utils.ConsumeRawBody(httpRes)
-		if err != nil {
-			return nil, err
-		}
-		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
-	}
-
-	return res, nil
-
 }

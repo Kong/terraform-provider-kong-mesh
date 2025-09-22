@@ -7,8 +7,8 @@ import (
 )
 
 type Backends struct {
-	Conf   *MeshItemConf `tfsdk:"conf"`
-	Format types.String  `tfsdk:"format"`
-	Name   types.String  `tfsdk:"name"`
-	Type   types.String  `tfsdk:"type"`
+	Conf   *MeshItemLoggingConf `tfsdk:"conf"`
+	Format types.String         `tfsdk:"format"`
+	Name   types.String         `tfsdk:"name"`
+	Type   types.String         `tfsdk:"type"`
 }

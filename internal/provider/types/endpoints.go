@@ -6,8 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type MeshItemBackends struct {
-	Conf *MeshItemConf `tfsdk:"conf"`
-	Name types.String  `tfsdk:"name"`
-	Type types.String  `tfsdk:"type"`
+type Endpoints struct {
+	Address types.String `tfsdk:"address"`
+	Port    types.Int64  `tfsdk:"port"`
 }

@@ -43,7 +43,7 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 				} else {
 					from = nil
 				}
-				op := shared.MeshProxyPatchItemOp(jsonPatchesItem.Op.ValueString())
+				op := shared.Op(jsonPatchesItem.Op.ValueString())
 				var path string
 				path = jsonPatchesItem.Path.ValueString()
 
@@ -58,7 +58,7 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 					Value: value,
 				})
 			}
-			var match *shared.MeshProxyPatchItemMatch
+			var match *shared.MeshProxyPatchItemSpecDefaultAppendModificationsClusterMatch
 			if appendModificationsItem.Cluster.Match != nil {
 				name1 := new(string)
 				if !appendModificationsItem.Cluster.Match.Name.IsUnknown() && !appendModificationsItem.Cluster.Match.Name.IsNull() {
@@ -72,7 +72,7 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 				} else {
 					origin = nil
 				}
-				match = &shared.MeshProxyPatchItemMatch{
+				match = &shared.MeshProxyPatchItemSpecDefaultAppendModificationsClusterMatch{
 					Name:   name1,
 					Origin: origin,
 				}
@@ -101,7 +101,7 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 				} else {
 					from1 = nil
 				}
-				op1 := shared.MeshProxyPatchItemSpecOp(jsonPatchesItem1.Op.ValueString())
+				op1 := shared.MeshProxyPatchItemOp(jsonPatchesItem1.Op.ValueString())
 				var path1 string
 				path1 = jsonPatchesItem1.Path.ValueString()
 
@@ -116,7 +116,7 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 					Value: value2,
 				})
 			}
-			var match1 *shared.MeshProxyPatchItemSpecMatch
+			var match1 *shared.MeshProxyPatchItemMatch
 			if appendModificationsItem.HTTPFilter.Match != nil {
 				listenerName := new(string)
 				if !appendModificationsItem.HTTPFilter.Match.ListenerName.IsUnknown() && !appendModificationsItem.HTTPFilter.Match.ListenerName.IsNull() {
@@ -143,7 +143,7 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 				} else {
 					origin1 = nil
 				}
-				match1 = &shared.MeshProxyPatchItemSpecMatch{
+				match1 = &shared.MeshProxyPatchItemMatch{
 					ListenerName: listenerName,
 					ListenerTags: listenerTags,
 					Name:         name2,
@@ -174,7 +174,7 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 				} else {
 					from2 = nil
 				}
-				op2 := shared.MeshProxyPatchItemSpecDefaultOp(jsonPatchesItem2.Op.ValueString())
+				op2 := shared.MeshProxyPatchItemSpecOp(jsonPatchesItem2.Op.ValueString())
 				var path2 string
 				path2 = jsonPatchesItem2.Path.ValueString()
 
@@ -189,7 +189,7 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 					Value: value4,
 				})
 			}
-			var match2 *shared.MeshProxyPatchItemSpecDefaultMatch
+			var match2 *shared.MeshProxyPatchItemSpecMatch
 			if appendModificationsItem.Listener.Match != nil {
 				name3 := new(string)
 				if !appendModificationsItem.Listener.Match.Name.IsUnknown() && !appendModificationsItem.Listener.Match.Name.IsNull() {
@@ -210,7 +210,7 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 
 					tags[tagsKey] = tagsInst
 				}
-				match2 = &shared.MeshProxyPatchItemSpecDefaultMatch{
+				match2 = &shared.MeshProxyPatchItemSpecMatch{
 					Name:   name3,
 					Origin: origin2,
 					Tags:   tags,
@@ -240,7 +240,7 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 				} else {
 					from3 = nil
 				}
-				op3 := shared.MeshProxyPatchItemSpecDefaultAppendModificationsOp(jsonPatchesItem3.Op.ValueString())
+				op3 := shared.MeshProxyPatchItemSpecDefaultOp(jsonPatchesItem3.Op.ValueString())
 				var path3 string
 				path3 = jsonPatchesItem3.Path.ValueString()
 
@@ -255,7 +255,7 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 					Value: value6,
 				})
 			}
-			var match3 *shared.MeshProxyPatchItemSpecDefaultAppendModificationsMatch
+			var match3 *shared.MeshProxyPatchItemSpecDefaultMatch
 			if appendModificationsItem.NetworkFilter.Match != nil {
 				listenerName1 := new(string)
 				if !appendModificationsItem.NetworkFilter.Match.ListenerName.IsUnknown() && !appendModificationsItem.NetworkFilter.Match.ListenerName.IsNull() {
@@ -282,7 +282,7 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 				} else {
 					origin3 = nil
 				}
-				match3 = &shared.MeshProxyPatchItemSpecDefaultAppendModificationsMatch{
+				match3 = &shared.MeshProxyPatchItemSpecDefaultMatch{
 					ListenerName: listenerName1,
 					ListenerTags: listenerTags1,
 					Name:         name4,
@@ -313,7 +313,7 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 				} else {
 					from4 = nil
 				}
-				op4 := shared.MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostOp(jsonPatchesItem4.Op.ValueString())
+				op4 := shared.MeshProxyPatchItemSpecDefaultAppendModificationsOp(jsonPatchesItem4.Op.ValueString())
 				var path4 string
 				path4 = jsonPatchesItem4.Path.ValueString()
 
@@ -346,7 +346,7 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 			} else {
 				routeConfigurationName = nil
 			}
-			match4 := shared.MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostMatch{
+			match4 := shared.MeshProxyPatchItemSpecDefaultAppendModificationsMatch{
 				Name:                   name5,
 				Origin:                 origin4,
 				RouteConfigurationName: routeConfigurationName,
@@ -591,7 +591,7 @@ func (r *MeshProxyPatchResourceModel) RefreshFromSharedMeshProxyPatchItem(ctx co
 				if appendModificationsItem.Cluster.Match == nil {
 					appendModifications.Cluster.Match = nil
 				} else {
-					appendModifications.Cluster.Match = &tfTypes.MeshProxyPatchItemMatch{}
+					appendModifications.Cluster.Match = &tfTypes.MeshProxyPatchItemSpecDefaultAppendModificationsClusterMatch{}
 					appendModifications.Cluster.Match.Name = types.StringPointerValue(appendModificationsItem.Cluster.Match.Name)
 					appendModifications.Cluster.Match.Origin = types.StringPointerValue(appendModificationsItem.Cluster.Match.Origin)
 				}
@@ -626,7 +626,7 @@ func (r *MeshProxyPatchResourceModel) RefreshFromSharedMeshProxyPatchItem(ctx co
 				if appendModificationsItem.HTTPFilter.Match == nil {
 					appendModifications.HTTPFilter.Match = nil
 				} else {
-					appendModifications.HTTPFilter.Match = &tfTypes.MeshProxyPatchItemSpecMatch{}
+					appendModifications.HTTPFilter.Match = &tfTypes.MeshProxyPatchItemMatch{}
 					appendModifications.HTTPFilter.Match.ListenerName = types.StringPointerValue(appendModificationsItem.HTTPFilter.Match.ListenerName)
 					if len(appendModificationsItem.HTTPFilter.Match.ListenerTags) > 0 {
 						appendModifications.HTTPFilter.Match.ListenerTags = make(map[string]types.String, len(appendModificationsItem.HTTPFilter.Match.ListenerTags))
@@ -668,7 +668,7 @@ func (r *MeshProxyPatchResourceModel) RefreshFromSharedMeshProxyPatchItem(ctx co
 				if appendModificationsItem.Listener.Match == nil {
 					appendModifications.Listener.Match = nil
 				} else {
-					appendModifications.Listener.Match = &tfTypes.MeshProxyPatchItemSpecDefaultMatch{}
+					appendModifications.Listener.Match = &tfTypes.MeshProxyPatchItemSpecMatch{}
 					appendModifications.Listener.Match.Name = types.StringPointerValue(appendModificationsItem.Listener.Match.Name)
 					appendModifications.Listener.Match.Origin = types.StringPointerValue(appendModificationsItem.Listener.Match.Origin)
 					if len(appendModificationsItem.Listener.Match.Tags) > 0 {
@@ -709,7 +709,7 @@ func (r *MeshProxyPatchResourceModel) RefreshFromSharedMeshProxyPatchItem(ctx co
 				if appendModificationsItem.NetworkFilter.Match == nil {
 					appendModifications.NetworkFilter.Match = nil
 				} else {
-					appendModifications.NetworkFilter.Match = &tfTypes.MeshProxyPatchItemSpecMatch{}
+					appendModifications.NetworkFilter.Match = &tfTypes.MeshProxyPatchItemMatch{}
 					appendModifications.NetworkFilter.Match.ListenerName = types.StringPointerValue(appendModificationsItem.NetworkFilter.Match.ListenerName)
 					if len(appendModificationsItem.NetworkFilter.Match.ListenerTags) > 0 {
 						appendModifications.NetworkFilter.Match.ListenerTags = make(map[string]types.String, len(appendModificationsItem.NetworkFilter.Match.ListenerTags))

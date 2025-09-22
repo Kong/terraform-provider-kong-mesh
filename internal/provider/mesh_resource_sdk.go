@@ -65,7 +65,7 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 	if r.Logging != nil {
 		backends := make([]shared.Backends, 0, len(r.Logging.Backends))
 		for _, backendsItem := range r.Logging.Backends {
-			var conf *shared.MeshItemConf
+			var conf *shared.MeshItemLoggingConf
 			if backendsItem.Conf != nil {
 				var fileLoggingBackendConfig *shared.FileLoggingBackendConfig
 				if backendsItem.Conf.FileLoggingBackendConfig != nil {
@@ -80,7 +80,7 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 					}
 				}
 				if fileLoggingBackendConfig != nil {
-					conf = &shared.MeshItemConf{
+					conf = &shared.MeshItemLoggingConf{
 						FileLoggingBackendConfig: fileLoggingBackendConfig,
 					}
 				}
@@ -97,7 +97,7 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 					}
 				}
 				if tcpLoggingBackendConfig != nil {
-					conf = &shared.MeshItemConf{
+					conf = &shared.MeshItemLoggingConf{
 						TCPLoggingBackendConfig: tcpLoggingBackendConfig,
 					}
 				}
@@ -169,15 +169,15 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 			Mode: mode,
 		}
 	}
-	var metrics *shared.MeshItemMetrics
+	var metrics *shared.Metrics
 	if r.Metrics != nil {
 		backends1 := make([]shared.MeshItemBackends, 0, len(r.Metrics.Backends))
 		for _, backendsItem1 := range r.Metrics.Backends {
-			var conf1 *shared.MeshItemMetricsConf
+			var conf1 *shared.MeshItemConf
 			if backendsItem1.Conf != nil {
-				var meshItemConfPrometheusMetricsBackendConfig *shared.MeshItemConfPrometheusMetricsBackendConfig
+				var prometheusMetricsBackendConfig *shared.PrometheusMetricsBackendConfig
 				if backendsItem1.Conf.PrometheusMetricsBackendConfig != nil {
-					aggregate := make([]shared.PrometheusMetricsBackendConfigConfAggregate, 0, len(backendsItem1.Conf.PrometheusMetricsBackendConfig.Aggregate))
+					aggregate := make([]shared.Aggregate, 0, len(backendsItem1.Conf.PrometheusMetricsBackendConfig.Aggregate))
 					for _, aggregateItem := range backendsItem1.Conf.PrometheusMetricsBackendConfig.Aggregate {
 						address1 := new(string)
 						if !aggregateItem.Address.IsUnknown() && !aggregateItem.Address.IsNull() {
@@ -209,7 +209,7 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 						} else {
 							port = nil
 						}
-						aggregate = append(aggregate, shared.PrometheusMetricsBackendConfigConfAggregate{
+						aggregate = append(aggregate, shared.Aggregate{
 							Address: address1,
 							Enabled: enabled,
 							Name:    name1,
@@ -217,7 +217,7 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 							Port:    port,
 						})
 					}
-					var envoy *shared.PrometheusMetricsBackendConfigConfMeshItemEnvoy
+					var envoy *shared.Envoy
 					if backendsItem1.Conf.PrometheusMetricsBackendConfig.Envoy != nil {
 						filterRegex := new(string)
 						if !backendsItem1.Conf.PrometheusMetricsBackendConfig.Envoy.FilterRegex.IsUnknown() && !backendsItem1.Conf.PrometheusMetricsBackendConfig.Envoy.FilterRegex.IsNull() {
@@ -231,7 +231,7 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 						} else {
 							usedOnly = nil
 						}
-						envoy = &shared.PrometheusMetricsBackendConfigConfMeshItemEnvoy{
+						envoy = &shared.Envoy{
 							FilterRegex: filterRegex,
 							UsedOnly:    usedOnly,
 						}
@@ -261,9 +261,9 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 
 						tags2[tagsKey2] = tagsInst2
 					}
-					var tls *shared.PrometheusMetricsBackendConfigConfTLS
+					var tls *shared.ConfTLS
 					if backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS != nil {
-						var mode1 *shared.PrometheusMetricsBackendConfigConfMeshItemMode
+						var mode1 *shared.ConfMode
 						if backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS.Mode != nil {
 							str1 := new(string)
 							if !backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Str.IsUnknown() && !backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Str.IsNull() {
@@ -272,7 +272,7 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 								str1 = nil
 							}
 							if str1 != nil {
-								mode1 = &shared.PrometheusMetricsBackendConfigConfMeshItemMode{
+								mode1 = &shared.ConfMode{
 									Str: str1,
 								}
 							}
@@ -283,16 +283,16 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 								integer1 = nil
 							}
 							if integer1 != nil {
-								mode1 = &shared.PrometheusMetricsBackendConfigConfMeshItemMode{
+								mode1 = &shared.ConfMode{
 									Integer: integer1,
 								}
 							}
 						}
-						tls = &shared.PrometheusMetricsBackendConfigConfTLS{
+						tls = &shared.ConfTLS{
 							Mode: mode1,
 						}
 					}
-					meshItemConfPrometheusMetricsBackendConfig = &shared.MeshItemConfPrometheusMetricsBackendConfig{
+					prometheusMetricsBackendConfig = &shared.PrometheusMetricsBackendConfig{
 						Aggregate: aggregate,
 						Envoy:     envoy,
 						Path:      path2,
@@ -302,9 +302,9 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 						TLS:       tls,
 					}
 				}
-				if meshItemConfPrometheusMetricsBackendConfig != nil {
-					conf1 = &shared.MeshItemMetricsConf{
-						MeshItemConfPrometheusMetricsBackendConfig: meshItemConfPrometheusMetricsBackendConfig,
+				if prometheusMetricsBackendConfig != nil {
+					conf1 = &shared.MeshItemConf{
+						PrometheusMetricsBackendConfig: prometheusMetricsBackendConfig,
 					}
 				}
 			}
@@ -332,7 +332,7 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 		} else {
 			enabledBackend = nil
 		}
-		metrics = &shared.MeshItemMetrics{
+		metrics = &shared.Metrics{
 			Backends:       backends1,
 			EnabledBackend: enabledBackend,
 		}
@@ -668,9 +668,9 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 	var name5 string
 	name5 = r.Name.ValueString()
 
-	var networking *shared.MeshItemNetworking
+	var networking *shared.Networking
 	if r.Networking != nil {
-		var outbound *shared.MeshItemOutbound
+		var outbound *shared.Outbound
 		if r.Networking.Outbound != nil {
 			passthrough := new(bool)
 			if !r.Networking.Outbound.Passthrough.IsUnknown() && !r.Networking.Outbound.Passthrough.IsNull() {
@@ -678,11 +678,11 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 			} else {
 				passthrough = nil
 			}
-			outbound = &shared.MeshItemOutbound{
+			outbound = &shared.Outbound{
 				Passthrough: passthrough,
 			}
 		}
-		networking = &shared.MeshItemNetworking{
+		networking = &shared.Networking{
 			Outbound: outbound,
 		}
 	}
@@ -976,7 +976,7 @@ func (r *MeshResourceModel) RefreshFromSharedMeshItem(ctx context.Context, resp 
 			for backendsCount, backendsItem := range resp.Logging.Backends {
 				var backends tfTypes.Backends
 				if backendsItem.Conf != nil {
-					backends.Conf = &tfTypes.MeshItemConf{}
+					backends.Conf = &tfTypes.MeshItemLoggingConf{}
 					if backendsItem.Conf.FileLoggingBackendConfig != nil {
 						backends.Conf.FileLoggingBackendConfig = &tfTypes.FileLoggingBackendConfig{}
 						backends.Conf.FileLoggingBackendConfig.Path = types.StringPointerValue(backendsItem.Conf.FileLoggingBackendConfig.Path)
@@ -1017,7 +1017,7 @@ func (r *MeshResourceModel) RefreshFromSharedMeshItem(ctx context.Context, resp 
 		if resp.Metrics == nil {
 			r.Metrics = nil
 		} else {
-			r.Metrics = &tfTypes.MeshItemMetrics{}
+			r.Metrics = &tfTypes.Metrics{}
 			r.Metrics.Backends = []tfTypes.MeshItemBackends{}
 			if len(r.Metrics.Backends) > len(resp.Metrics.Backends) {
 				r.Metrics.Backends = r.Metrics.Backends[:len(resp.Metrics.Backends)]
@@ -1025,12 +1025,12 @@ func (r *MeshResourceModel) RefreshFromSharedMeshItem(ctx context.Context, resp 
 			for backendsCount1, backendsItem1 := range resp.Metrics.Backends {
 				var backends1 tfTypes.MeshItemBackends
 				if backendsItem1.Conf != nil {
-					backends1.Conf = &tfTypes.MeshItemMetricsConf{}
-					if backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig != nil {
-						backends1.Conf.PrometheusMetricsBackendConfig = &tfTypes.MeshItemConfPrometheusMetricsBackendConfig{}
-						backends1.Conf.PrometheusMetricsBackendConfig.Aggregate = []tfTypes.PrometheusMetricsBackendConfigConfAggregate{}
-						for aggregateCount, aggregateItem := range backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.Aggregate {
-							var aggregate tfTypes.PrometheusMetricsBackendConfigConfAggregate
+					backends1.Conf = &tfTypes.MeshItemConf{}
+					if backendsItem1.Conf.PrometheusMetricsBackendConfig != nil {
+						backends1.Conf.PrometheusMetricsBackendConfig = &tfTypes.PrometheusMetricsBackendConfig{}
+						backends1.Conf.PrometheusMetricsBackendConfig.Aggregate = []tfTypes.Aggregate{}
+						for aggregateCount, aggregateItem := range backendsItem1.Conf.PrometheusMetricsBackendConfig.Aggregate {
+							var aggregate tfTypes.Aggregate
 							aggregate.Address = types.StringPointerValue(aggregateItem.Address)
 							aggregate.Enabled = types.BoolPointerValue(aggregateItem.Enabled)
 							aggregate.Name = types.StringPointerValue(aggregateItem.Name)
@@ -1046,33 +1046,33 @@ func (r *MeshResourceModel) RefreshFromSharedMeshItem(ctx context.Context, resp 
 								backends1.Conf.PrometheusMetricsBackendConfig.Aggregate[aggregateCount].Port = aggregate.Port
 							}
 						}
-						if backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.Envoy == nil {
+						if backendsItem1.Conf.PrometheusMetricsBackendConfig.Envoy == nil {
 							backends1.Conf.PrometheusMetricsBackendConfig.Envoy = nil
 						} else {
-							backends1.Conf.PrometheusMetricsBackendConfig.Envoy = &tfTypes.PrometheusMetricsBackendConfigConfMeshItemEnvoy{}
-							backends1.Conf.PrometheusMetricsBackendConfig.Envoy.FilterRegex = types.StringPointerValue(backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.Envoy.FilterRegex)
-							backends1.Conf.PrometheusMetricsBackendConfig.Envoy.UsedOnly = types.BoolPointerValue(backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.Envoy.UsedOnly)
+							backends1.Conf.PrometheusMetricsBackendConfig.Envoy = &tfTypes.Envoy{}
+							backends1.Conf.PrometheusMetricsBackendConfig.Envoy.FilterRegex = types.StringPointerValue(backendsItem1.Conf.PrometheusMetricsBackendConfig.Envoy.FilterRegex)
+							backends1.Conf.PrometheusMetricsBackendConfig.Envoy.UsedOnly = types.BoolPointerValue(backendsItem1.Conf.PrometheusMetricsBackendConfig.Envoy.UsedOnly)
 						}
-						backends1.Conf.PrometheusMetricsBackendConfig.Path = types.StringPointerValue(backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.Path)
-						backends1.Conf.PrometheusMetricsBackendConfig.Port = types.Int64PointerValue(backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.Port)
-						backends1.Conf.PrometheusMetricsBackendConfig.SkipMTLS = types.BoolPointerValue(backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.SkipMTLS)
-						if len(backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.Tags) > 0 {
-							backends1.Conf.PrometheusMetricsBackendConfig.Tags = make(map[string]types.String, len(backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.Tags))
-							for key3, value3 := range backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.Tags {
+						backends1.Conf.PrometheusMetricsBackendConfig.Path = types.StringPointerValue(backendsItem1.Conf.PrometheusMetricsBackendConfig.Path)
+						backends1.Conf.PrometheusMetricsBackendConfig.Port = types.Int64PointerValue(backendsItem1.Conf.PrometheusMetricsBackendConfig.Port)
+						backends1.Conf.PrometheusMetricsBackendConfig.SkipMTLS = types.BoolPointerValue(backendsItem1.Conf.PrometheusMetricsBackendConfig.SkipMTLS)
+						if len(backendsItem1.Conf.PrometheusMetricsBackendConfig.Tags) > 0 {
+							backends1.Conf.PrometheusMetricsBackendConfig.Tags = make(map[string]types.String, len(backendsItem1.Conf.PrometheusMetricsBackendConfig.Tags))
+							for key3, value3 := range backendsItem1.Conf.PrometheusMetricsBackendConfig.Tags {
 								backends1.Conf.PrometheusMetricsBackendConfig.Tags[key3] = types.StringValue(value3)
 							}
 						}
-						if backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.TLS == nil {
+						if backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS == nil {
 							backends1.Conf.PrometheusMetricsBackendConfig.TLS = nil
 						} else {
 							backends1.Conf.PrometheusMetricsBackendConfig.TLS = &tfTypes.MeshServices{}
-							if backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.TLS.Mode != nil {
+							if backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS.Mode != nil {
 								backends1.Conf.PrometheusMetricsBackendConfig.TLS.Mode = &tfTypes.Mode{}
-								if backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.TLS.Mode.Str != nil {
-									backends1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Str = types.StringPointerValue(backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.TLS.Mode.Str)
+								if backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Str != nil {
+									backends1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Str = types.StringPointerValue(backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Str)
 								}
-								if backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.TLS.Mode.Integer != nil {
-									backends1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Integer = types.Int64PointerValue(backendsItem1.Conf.MeshItemConfPrometheusMetricsBackendConfig.TLS.Mode.Integer)
+								if backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Integer != nil {
+									backends1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Integer = types.Int64PointerValue(backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Integer)
 								}
 							}
 						}
@@ -1257,11 +1257,11 @@ func (r *MeshResourceModel) RefreshFromSharedMeshItem(ctx context.Context, resp 
 		if resp.Networking == nil {
 			r.Networking = nil
 		} else {
-			r.Networking = &tfTypes.MeshItemNetworking{}
+			r.Networking = &tfTypes.Networking{}
 			if resp.Networking.Outbound == nil {
 				r.Networking.Outbound = nil
 			} else {
-				r.Networking.Outbound = &tfTypes.MeshItemOutbound{}
+				r.Networking.Outbound = &tfTypes.Outbound{}
 				r.Networking.Outbound.Passthrough = types.BoolPointerValue(resp.Networking.Outbound.Passthrough)
 			}
 		}

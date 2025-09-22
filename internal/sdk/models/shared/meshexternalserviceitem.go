@@ -33,21 +33,21 @@ func (e *MeshExternalServiceItemType) UnmarshalJSON(data []byte) error {
 	}
 }
 
-type MeshExternalServiceItemEndpoints struct {
+type Endpoints struct {
 	// Address defines an address to which a user want to send a request. Is possible to provide `domain`, `ip`.
 	Address string `json:"address"`
 	// Port of the endpoint
 	Port int64 `json:"port"`
 }
 
-func (o *MeshExternalServiceItemEndpoints) GetAddress() string {
+func (o *Endpoints) GetAddress() string {
 	if o == nil {
 		return ""
 	}
 	return o.Address
 }
 
-func (o *MeshExternalServiceItemEndpoints) GetPort() int64 {
+func (o *Endpoints) GetPort() int64 {
 	if o == nil {
 		return 0
 	}
@@ -133,8 +133,8 @@ func (e *MeshExternalServiceItemSpecType) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// MeshExternalServiceItemMatch - Match defines traffic that should be routed through the sidecar.
-type MeshExternalServiceItemMatch struct {
+// Match defines traffic that should be routed through the sidecar.
+type Match struct {
 	// Port defines a port to which a user does request.
 	Port int64 `json:"port"`
 	// Protocol defines a protocol of the communication. Possible values: `tcp`, `grpc`, `http`, `http2`.
@@ -143,32 +143,32 @@ type MeshExternalServiceItemMatch struct {
 	Type *MeshExternalServiceItemSpecType `default:"HostnameGenerator" json:"type"`
 }
 
-func (m MeshExternalServiceItemMatch) MarshalJSON() ([]byte, error) {
+func (m Match) MarshalJSON() ([]byte, error) {
 	return utils.MarshalJSON(m, "", false)
 }
 
-func (m *MeshExternalServiceItemMatch) UnmarshalJSON(data []byte) error {
+func (m *Match) UnmarshalJSON(data []byte) error {
 	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshExternalServiceItemMatch) GetPort() int64 {
+func (o *Match) GetPort() int64 {
 	if o == nil {
 		return 0
 	}
 	return o.Port
 }
 
-func (o *MeshExternalServiceItemMatch) GetProtocol() *MeshExternalServiceItemProtocol {
+func (o *Match) GetProtocol() *MeshExternalServiceItemProtocol {
 	if o == nil {
 		return nil
 	}
 	return o.Protocol
 }
 
-func (o *MeshExternalServiceItemMatch) GetType() *MeshExternalServiceItemSpecType {
+func (o *Match) GetType() *MeshExternalServiceItemSpecType {
 	if o == nil {
 		return nil
 	}
@@ -501,33 +501,33 @@ func (e *Min) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// MeshExternalServiceItemVersion - Version section for providing version specification.
-type MeshExternalServiceItemVersion struct {
+// Version section for providing version specification.
+type Version struct {
 	// Max defines maximum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`.
 	Max *Max `default:"TLSAuto" json:"max"`
 	// Min defines minimum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`.
 	Min *Min `default:"TLSAuto" json:"min"`
 }
 
-func (m MeshExternalServiceItemVersion) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(m, "", false)
+func (v Version) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(v, "", false)
 }
 
-func (m *MeshExternalServiceItemVersion) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+func (v *Version) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &v, "", false, false); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshExternalServiceItemVersion) GetMax() *Max {
+func (o *Version) GetMax() *Max {
 	if o == nil {
 		return nil
 	}
 	return o.Max
 }
 
-func (o *MeshExternalServiceItemVersion) GetMin() *Min {
+func (o *Version) GetMin() *Min {
 	if o == nil {
 		return nil
 	}
@@ -544,7 +544,7 @@ type TLS struct {
 	// Verification section for providing TLS verification details.
 	Verification *Verification `json:"verification,omitempty"`
 	// Version section for providing version specification.
-	Version *MeshExternalServiceItemVersion `json:"version,omitempty"`
+	Version *Version `json:"version,omitempty"`
 }
 
 func (t TLS) MarshalJSON() ([]byte, error) {
@@ -579,7 +579,7 @@ func (o *TLS) GetVerification() *Verification {
 	return o.Verification
 }
 
-func (o *TLS) GetVersion() *MeshExternalServiceItemVersion {
+func (o *TLS) GetVersion() *Version {
 	if o == nil {
 		return nil
 	}
@@ -589,16 +589,16 @@ func (o *TLS) GetVersion() *MeshExternalServiceItemVersion {
 // MeshExternalServiceItemSpec - Spec is the specification of the Kuma MeshExternalService resource.
 type MeshExternalServiceItemSpec struct {
 	// Endpoints defines a list of destinations to send traffic to.
-	Endpoints []MeshExternalServiceItemEndpoints `json:"endpoints,omitempty"`
+	Endpoints []Endpoints `json:"endpoints,omitempty"`
 	// Extension struct for a plugin configuration, in the presence of an extension `endpoints` and `tls` are not required anymore - it's up to the extension to validate them independently.
 	Extension *MeshExternalServiceItemExtension `json:"extension,omitempty"`
 	// Match defines traffic that should be routed through the sidecar.
-	Match MeshExternalServiceItemMatch `json:"match"`
+	Match Match `json:"match"`
 	// Tls provides a TLS configuration when proxy is resposible for a TLS origination
 	TLS *TLS `json:"tls,omitempty"`
 }
 
-func (o *MeshExternalServiceItemSpec) GetEndpoints() []MeshExternalServiceItemEndpoints {
+func (o *MeshExternalServiceItemSpec) GetEndpoints() []Endpoints {
 	if o == nil {
 		return nil
 	}
@@ -612,9 +612,9 @@ func (o *MeshExternalServiceItemSpec) GetExtension() *MeshExternalServiceItemExt
 	return o.Extension
 }
 
-func (o *MeshExternalServiceItemSpec) GetMatch() MeshExternalServiceItemMatch {
+func (o *MeshExternalServiceItemSpec) GetMatch() Match {
 	if o == nil {
-		return MeshExternalServiceItemMatch{}
+		return Match{}
 	}
 	return o.Match
 }

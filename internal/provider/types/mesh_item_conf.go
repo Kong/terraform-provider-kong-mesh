@@ -3,6 +3,5 @@
 package types
 
 type MeshItemConf struct {
-	FileLoggingBackendConfig *FileLoggingBackendConfig `queryParam:"inline" tfsdk:"file_logging_backend_config" tfPlanOnly:"true"`
-	TCPLoggingBackendConfig  *TCPLoggingBackendConfig  `queryParam:"inline" tfsdk:"tcp_logging_backend_config" tfPlanOnly:"true"`
+	PrometheusMetricsBackendConfig *PrometheusMetricsBackendConfig `queryParam:"inline" tfsdk:"prometheus_metrics_backend_config" tfPlanOnly:"true"`
 }

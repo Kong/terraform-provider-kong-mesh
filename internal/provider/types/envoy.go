@@ -6,8 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type MeshItemBackends struct {
-	Conf *MeshItemConf `tfsdk:"conf"`
-	Name types.String  `tfsdk:"name"`
-	Type types.String  `tfsdk:"type"`
+type Envoy struct {
+	FilterRegex types.String `tfsdk:"filter_regex"`
+	UsedOnly    types.Bool   `tfsdk:"used_only"`
 }

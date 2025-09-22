@@ -7,8 +7,7 @@ import (
 )
 
 type MeshProxyPatchItemSpecMatch struct {
-	ListenerName types.String            `tfsdk:"listener_name"`
-	ListenerTags map[string]types.String `tfsdk:"listener_tags"`
-	Name         types.String            `tfsdk:"name"`
-	Origin       types.String            `tfsdk:"origin"`
+	Name   types.String            `tfsdk:"name"`
+	Origin types.String            `tfsdk:"origin"`
+	Tags   map[string]types.String `tfsdk:"tags"`
 }

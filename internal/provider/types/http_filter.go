@@ -7,8 +7,8 @@ import (
 )
 
 type HTTPFilter struct {
-	JSONPatches []JSONPatches                `tfsdk:"json_patches"`
-	Match       *MeshProxyPatchItemSpecMatch `tfsdk:"match"`
-	Operation   types.String                 `tfsdk:"operation"`
-	Value       types.String                 `tfsdk:"value"`
+	JSONPatches []JSONPatches            `tfsdk:"json_patches"`
+	Match       *MeshProxyPatchItemMatch `tfsdk:"match"`
+	Operation   types.String             `tfsdk:"operation"`
+	Value       types.String             `tfsdk:"value"`
 }

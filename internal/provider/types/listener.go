@@ -7,8 +7,8 @@ import (
 )
 
 type Listener struct {
-	JSONPatches []JSONPatches                       `tfsdk:"json_patches"`
-	Match       *MeshProxyPatchItemSpecDefaultMatch `tfsdk:"match"`
-	Operation   types.String                        `tfsdk:"operation"`
-	Value       types.String                        `tfsdk:"value"`
+	JSONPatches []JSONPatches                `tfsdk:"json_patches"`
+	Match       *MeshProxyPatchItemSpecMatch `tfsdk:"match"`
+	Operation   types.String                 `tfsdk:"operation"`
+	Value       types.String                 `tfsdk:"value"`
 }

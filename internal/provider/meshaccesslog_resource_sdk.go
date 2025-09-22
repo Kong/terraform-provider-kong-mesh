@@ -108,7 +108,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 					Endpoint:   endpoint,
 				}
 			}
-			var tcp *shared.MeshAccessLogItemTCP
+			var tcp *shared.MeshAccessLogItemSpecFromTCP
 			if backendsItem.TCP != nil {
 				var address string
 				address = backendsItem.TCP.Address.ValueString()
@@ -148,7 +148,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 						Type:            typeVar2,
 					}
 				}
-				tcp = &shared.MeshAccessLogItemTCP{
+				tcp = &shared.MeshAccessLogItemSpecFromTCP{
 					Address: address,
 					Format:  format1,
 				}
@@ -299,7 +299,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 					Endpoint:   endpoint1,
 				}
 			}
-			var tcp1 *shared.MeshAccessLogItemSpecTCP
+			var tcp1 *shared.MeshAccessLogItemTCP
 			if backendsItem1.TCP != nil {
 				var address1 string
 				address1 = backendsItem1.TCP.Address.ValueString()
@@ -339,7 +339,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 						Type:            typeVar4,
 					}
 				}
-				tcp1 = &shared.MeshAccessLogItemSpecTCP{
+				tcp1 = &shared.MeshAccessLogItemTCP{
 					Address: address1,
 					Format:  format3,
 				}
@@ -492,7 +492,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 					Endpoint:   endpoint2,
 				}
 			}
-			var tcp2 *shared.MeshAccessLogItemSpecToTCP
+			var tcp2 *shared.MeshAccessLogItemSpecTCP
 			if backendsItem2.TCP != nil {
 				var address2 string
 				address2 = backendsItem2.TCP.Address.ValueString()
@@ -532,7 +532,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 						Type:            typeVar6,
 					}
 				}
-				tcp2 = &shared.MeshAccessLogItemSpecToTCP{
+				tcp2 = &shared.MeshAccessLogItemSpecTCP{
 					Address: address2,
 					Format:  format5,
 				}
@@ -795,7 +795,7 @@ func (r *MeshAccessLogResourceModel) RefreshFromSharedMeshAccessLogItem(ctx cont
 				if backendsItem.TCP == nil {
 					backends.TCP = nil
 				} else {
-					backends.TCP = &tfTypes.MeshAccessLogItemTCP{}
+					backends.TCP = &tfTypes.MeshAccessLogItemSpecFromTCP{}
 					backends.TCP.Address = types.StringValue(backendsItem.TCP.Address)
 					if backendsItem.TCP.Format == nil {
 						backends.TCP.Format = nil
@@ -918,7 +918,7 @@ func (r *MeshAccessLogResourceModel) RefreshFromSharedMeshAccessLogItem(ctx cont
 				if backendsItem1.TCP == nil {
 					backends1.TCP = nil
 				} else {
-					backends1.TCP = &tfTypes.MeshAccessLogItemTCP{}
+					backends1.TCP = &tfTypes.MeshAccessLogItemSpecFromTCP{}
 					backends1.TCP.Address = types.StringValue(backendsItem1.TCP.Address)
 					if backendsItem1.TCP.Format == nil {
 						backends1.TCP.Format = nil
@@ -1045,7 +1045,7 @@ func (r *MeshAccessLogResourceModel) RefreshFromSharedMeshAccessLogItem(ctx cont
 				if backendsItem2.TCP == nil {
 					backends2.TCP = nil
 				} else {
-					backends2.TCP = &tfTypes.MeshAccessLogItemTCP{}
+					backends2.TCP = &tfTypes.MeshAccessLogItemSpecFromTCP{}
 					backends2.TCP.Address = types.StringValue(backendsItem2.TCP.Address)
 					if backendsItem2.TCP.Format == nil {
 						backends2.TCP.Format = nil

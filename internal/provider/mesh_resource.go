@@ -40,19 +40,19 @@ type MeshResource struct {
 
 // MeshResourceModel describes the resource data model.
 type MeshResourceModel struct {
-	Constraints                 *tfTypes.Constraints        `tfsdk:"constraints"`
-	Labels                      map[string]types.String     `tfsdk:"labels"`
-	Logging                     *tfTypes.Logging            `tfsdk:"logging"`
-	MeshServices                *tfTypes.MeshServices       `tfsdk:"mesh_services"`
-	Metrics                     *tfTypes.MeshItemMetrics    `tfsdk:"metrics"`
-	Mtls                        *tfTypes.Mtls               `tfsdk:"mtls"`
-	Name                        types.String                `tfsdk:"name"`
-	Networking                  *tfTypes.MeshItemNetworking `tfsdk:"networking"`
-	Routing                     *tfTypes.Routing            `tfsdk:"routing"`
-	SkipCreatingInitialPolicies []types.String              `tfsdk:"skip_creating_initial_policies"`
-	Tracing                     *tfTypes.Tracing            `tfsdk:"tracing"`
-	Type                        types.String                `tfsdk:"type"`
-	Warnings                    []types.String              `tfsdk:"warnings"`
+	Constraints                 *tfTypes.Constraints    `tfsdk:"constraints"`
+	Labels                      map[string]types.String `tfsdk:"labels"`
+	Logging                     *tfTypes.Logging        `tfsdk:"logging"`
+	MeshServices                *tfTypes.MeshServices   `tfsdk:"mesh_services"`
+	Metrics                     *tfTypes.Metrics        `tfsdk:"metrics"`
+	Mtls                        *tfTypes.Mtls           `tfsdk:"mtls"`
+	Name                        types.String            `tfsdk:"name"`
+	Networking                  *tfTypes.Networking     `tfsdk:"networking"`
+	Routing                     *tfTypes.Routing        `tfsdk:"routing"`
+	SkipCreatingInitialPolicies []types.String          `tfsdk:"skip_creating_initial_policies"`
+	Tracing                     *tfTypes.Tracing        `tfsdk:"tracing"`
+	Type                        types.String            `tfsdk:"type"`
+	Warnings                    []types.String          `tfsdk:"warnings"`
 }
 
 func (r *MeshResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {

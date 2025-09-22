@@ -31,7 +31,7 @@ func (r *MeshExternalServiceResourceModel) ToSharedMeshExternalServiceItemInput(
 	if !r.Labels.IsUnknown() && !r.Labels.IsNull() {
 		diags.Append(r.Labels.ElementsAs(ctx, &labels, true)...)
 	}
-	endpoints := make([]shared.MeshExternalServiceItemEndpoints, 0, len(r.Spec.Endpoints))
+	endpoints := make([]shared.Endpoints, 0, len(r.Spec.Endpoints))
 	for _, endpointsItem := range r.Spec.Endpoints {
 		var address string
 		address = endpointsItem.Address.ValueString()
@@ -39,7 +39,7 @@ func (r *MeshExternalServiceResourceModel) ToSharedMeshExternalServiceItemInput(
 		var port int64
 		port = endpointsItem.Port.ValueInt64()
 
-		endpoints = append(endpoints, shared.MeshExternalServiceItemEndpoints{
+		endpoints = append(endpoints, shared.Endpoints{
 			Address: address,
 			Port:    port,
 		})
@@ -73,7 +73,7 @@ func (r *MeshExternalServiceResourceModel) ToSharedMeshExternalServiceItemInput(
 	} else {
 		typeVar2 = nil
 	}
-	match := shared.MeshExternalServiceItemMatch{
+	match := shared.Match{
 		Port:     port1,
 		Protocol: protocol,
 		Type:     typeVar2,
@@ -209,7 +209,7 @@ func (r *MeshExternalServiceResourceModel) ToSharedMeshExternalServiceItemInput(
 				SubjectAltNames: subjectAltNames,
 			}
 		}
-		var version *shared.MeshExternalServiceItemVersion
+		var version *shared.Version
 		if r.Spec.TLS.Version != nil {
 			max := new(shared.Max)
 			if !r.Spec.TLS.Version.Max.IsUnknown() && !r.Spec.TLS.Version.Max.IsNull() {
@@ -223,7 +223,7 @@ func (r *MeshExternalServiceResourceModel) ToSharedMeshExternalServiceItemInput(
 			} else {
 				min = nil
 			}
-			version = &shared.MeshExternalServiceItemVersion{
+			version = &shared.Version{
 				Max: max,
 				Min: min,
 			}
@@ -362,12 +362,12 @@ func (r *MeshExternalServiceResourceModel) RefreshFromSharedMeshExternalServiceI
 		r.Mesh = types.StringPointerValue(resp.Mesh)
 		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
-		r.Spec.Endpoints = []tfTypes.MeshExternalServiceItemEndpoints{}
+		r.Spec.Endpoints = []tfTypes.Endpoints{}
 		if len(r.Spec.Endpoints) > len(resp.Spec.Endpoints) {
 			r.Spec.Endpoints = r.Spec.Endpoints[:len(resp.Spec.Endpoints)]
 		}
 		for endpointsCount, endpointsItem := range resp.Spec.Endpoints {
-			var endpoints tfTypes.MeshExternalServiceItemEndpoints
+			var endpoints tfTypes.Endpoints
 			endpoints.Address = types.StringValue(endpointsItem.Address)
 			endpoints.Port = types.Int64Value(endpointsItem.Port)
 			if endpointsCount+1 > len(r.Spec.Endpoints) {
@@ -463,7 +463,7 @@ func (r *MeshExternalServiceResourceModel) RefreshFromSharedMeshExternalServiceI
 			if resp.Spec.TLS.Version == nil {
 				r.Spec.TLS.Version = nil
 			} else {
-				r.Spec.TLS.Version = &tfTypes.MeshExternalServiceItemVersion{}
+				r.Spec.TLS.Version = &tfTypes.Version{}
 				if resp.Spec.TLS.Version.Max != nil {
 					r.Spec.TLS.Version.Max = types.StringValue(string(*resp.Spec.TLS.Version.Max))
 				} else {

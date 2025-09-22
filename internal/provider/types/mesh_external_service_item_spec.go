@@ -3,8 +3,8 @@
 package types
 
 type MeshExternalServiceItemSpec struct {
-	Endpoints []MeshExternalServiceItemEndpoints `tfsdk:"endpoints"`
-	Extension *MeshExternalServiceItemExtension  `tfsdk:"extension"`
-	Match     MeshExternalServiceItemMatch       `tfsdk:"match"`
-	TLS       *TLS                               `tfsdk:"tls"`
+	Endpoints []Endpoints                       `tfsdk:"endpoints"`
+	Extension *MeshExternalServiceItemExtension `tfsdk:"extension"`
+	Match     Match                             `tfsdk:"match"`
+	TLS       *TLS                              `tfsdk:"tls"`
 }

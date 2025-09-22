@@ -261,7 +261,7 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.
 					} else {
 						weight1 = nil
 					}
-					backendRef := shared.MeshHTTPRouteItemBackendRef{
+					backendRef := shared.BackendRef{
 						Kind:        kind2,
 						Labels:      labels3,
 						Mesh:        mesh3,
