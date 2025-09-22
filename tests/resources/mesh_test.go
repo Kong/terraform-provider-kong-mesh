@@ -118,7 +118,7 @@ func TestMesh(t *testing.T) {
 
 func createAnMTP(t *testing.T, url string, meshName string, mtpName string) {
 	ctx := t.Context()
-	client := sdk.New(url)
+	client := sdk.New(sdk.WithServerURL(url))
 	action := shared.ActionAllow
 	resp, err := client.MeshTrafficPermission.CreateMeshTrafficPermission(ctx, operations.CreateMeshTrafficPermissionRequest{
 		Mesh: meshName,
