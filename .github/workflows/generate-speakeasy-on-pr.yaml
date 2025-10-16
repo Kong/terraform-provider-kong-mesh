@@ -2,8 +2,7 @@ name: Run Speakeasy on PR Open
 
 on:
   pull_request:
-    types: [opened]
-  workflow_dispatch:
+    types: [opened, reopened]
 
 permissions:
   contents: write
