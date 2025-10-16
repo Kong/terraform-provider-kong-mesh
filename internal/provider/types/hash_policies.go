@@ -7,11 +7,11 @@ import (
 )
 
 type HashPolicies struct {
-	Connection     *Connection                              `tfsdk:"connection"`
-	Cookie         *Cookie                                  `tfsdk:"cookie"`
-	FilterState    *FilterState                             `tfsdk:"filter_state"`
-	Header         *MeshLoadBalancingStrategyItemSpecHeader `tfsdk:"header"`
-	QueryParameter *MeshLoadBalancingStrategyItemSpecHeader `tfsdk:"query_parameter"`
-	Terminal       types.Bool                               `tfsdk:"terminal"`
-	Type           types.String                             `tfsdk:"type"`
+	Connection     *Connection  `tfsdk:"connection"`
+	Cookie         *Cookie      `tfsdk:"cookie"`
+	FilterState    *FilterState `tfsdk:"filter_state"`
+	Header         *EnvVar      `tfsdk:"header"`
+	QueryParameter *EnvVar      `tfsdk:"query_parameter"`
+	Terminal       types.Bool   `tfsdk:"terminal"`
+	Type           types.String `tfsdk:"type"`
 }

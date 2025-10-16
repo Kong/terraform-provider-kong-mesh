@@ -922,7 +922,7 @@ func (r *MeshCircuitBreakerResourceModel) ToSharedMeshCircuitBreakerItemInput(ct
 	return &out, diags
 }
 
-func (r *MeshCircuitBreakerResourceModel) ToOperationsCreateMeshCircuitBreakerRequest(ctx context.Context) (*operations.CreateMeshCircuitBreakerRequest, diag.Diagnostics) {
+func (r *MeshCircuitBreakerResourceModel) ToOperationsPutMeshCircuitBreakerRequest(ctx context.Context) (*operations.PutMeshCircuitBreakerRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var mesh string
@@ -938,32 +938,7 @@ func (r *MeshCircuitBreakerResourceModel) ToOperationsCreateMeshCircuitBreakerRe
 		return nil, diags
 	}
 
-	out := operations.CreateMeshCircuitBreakerRequest{
-		Mesh:                   mesh,
-		Name:                   name,
-		MeshCircuitBreakerItem: *meshCircuitBreakerItem,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshCircuitBreakerResourceModel) ToOperationsUpdateMeshCircuitBreakerRequest(ctx context.Context) (*operations.UpdateMeshCircuitBreakerRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	meshCircuitBreakerItem, meshCircuitBreakerItemDiags := r.ToSharedMeshCircuitBreakerItemInput(ctx)
-	diags.Append(meshCircuitBreakerItemDiags...)
-
-	if diags.HasError() {
-		return nil, diags
-	}
-
-	out := operations.UpdateMeshCircuitBreakerRequest{
+	out := operations.PutMeshCircuitBreakerRequest{
 		Mesh:                   mesh,
 		Name:                   name,
 		MeshCircuitBreakerItem: *meshCircuitBreakerItem,

@@ -202,21 +202,21 @@ func (o *MeshGlobalRateLimitItemSpecFromRequestRate) GetNum() int {
 	return o.Num
 }
 
-type MeshGlobalRateLimitItemLimits struct {
+type Limits struct {
 	// Defines how many requests are allowed per interval.
 	RequestRate *MeshGlobalRateLimitItemSpecFromRequestRate `json:"requestRate,omitempty"`
 	// Value of the request element on which rate limit should apply. E.g. header value.
 	Value string `json:"value"`
 }
 
-func (o *MeshGlobalRateLimitItemLimits) GetRequestRate() *MeshGlobalRateLimitItemSpecFromRequestRate {
+func (o *Limits) GetRequestRate() *MeshGlobalRateLimitItemSpecFromRequestRate {
 	if o == nil {
 		return nil
 	}
 	return o.RequestRate
 }
 
-func (o *MeshGlobalRateLimitItemLimits) GetValue() string {
+func (o *Limits) GetValue() string {
 	if o == nil {
 		return ""
 	}
@@ -227,7 +227,7 @@ type RatelimitOnRequest struct {
 	// Kind defines type of rate limit config. Possible options: OnHeader.
 	Kind MeshGlobalRateLimitItemSpecFromKind `json:"kind"`
 	// Limits defines limit configuration.
-	Limits []MeshGlobalRateLimitItemLimits `json:"limits"`
+	Limits []Limits `json:"limits"`
 	// Name of the request element on which rate limit should apply. E.g. header name.
 	Name string `json:"name"`
 }
@@ -239,9 +239,9 @@ func (o *RatelimitOnRequest) GetKind() MeshGlobalRateLimitItemSpecFromKind {
 	return o.Kind
 }
 
-func (o *RatelimitOnRequest) GetLimits() []MeshGlobalRateLimitItemLimits {
+func (o *RatelimitOnRequest) GetLimits() []Limits {
 	if o == nil {
-		return []MeshGlobalRateLimitItemLimits{}
+		return []Limits{}
 	}
 	return o.Limits
 }
@@ -882,21 +882,21 @@ func (o *MeshGlobalRateLimitItemSpecRequestRate) GetNum() int {
 	return o.Num
 }
 
-type MeshGlobalRateLimitItemSpecLimits struct {
+type MeshGlobalRateLimitItemLimits struct {
 	// Defines how many requests are allowed per interval.
 	RequestRate *MeshGlobalRateLimitItemSpecRequestRate `json:"requestRate,omitempty"`
 	// Value of the request element on which rate limit should apply. E.g. header value.
 	Value string `json:"value"`
 }
 
-func (o *MeshGlobalRateLimitItemSpecLimits) GetRequestRate() *MeshGlobalRateLimitItemSpecRequestRate {
+func (o *MeshGlobalRateLimitItemLimits) GetRequestRate() *MeshGlobalRateLimitItemSpecRequestRate {
 	if o == nil {
 		return nil
 	}
 	return o.RequestRate
 }
 
-func (o *MeshGlobalRateLimitItemSpecLimits) GetValue() string {
+func (o *MeshGlobalRateLimitItemLimits) GetValue() string {
 	if o == nil {
 		return ""
 	}
@@ -907,7 +907,7 @@ type MeshGlobalRateLimitItemRatelimitOnRequest struct {
 	// Kind defines type of rate limit config. Possible options: OnHeader.
 	Kind MeshGlobalRateLimitItemSpecToDefaultKind `json:"kind"`
 	// Limits defines limit configuration.
-	Limits []MeshGlobalRateLimitItemSpecLimits `json:"limits"`
+	Limits []MeshGlobalRateLimitItemLimits `json:"limits"`
 	// Name of the request element on which rate limit should apply. E.g. header name.
 	Name string `json:"name"`
 }
@@ -919,9 +919,9 @@ func (o *MeshGlobalRateLimitItemRatelimitOnRequest) GetKind() MeshGlobalRateLimi
 	return o.Kind
 }
 
-func (o *MeshGlobalRateLimitItemRatelimitOnRequest) GetLimits() []MeshGlobalRateLimitItemSpecLimits {
+func (o *MeshGlobalRateLimitItemRatelimitOnRequest) GetLimits() []MeshGlobalRateLimitItemLimits {
 	if o == nil {
-		return []MeshGlobalRateLimitItemSpecLimits{}
+		return []MeshGlobalRateLimitItemLimits{}
 	}
 	return o.Limits
 }

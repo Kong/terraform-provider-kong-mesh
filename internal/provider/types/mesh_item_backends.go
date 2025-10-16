@@ -7,7 +7,7 @@ import (
 )
 
 type MeshItemBackends struct {
-	Conf *MeshItemMetricsConf `tfsdk:"conf"`
-	Name types.String         `tfsdk:"name"`
-	Type types.String         `tfsdk:"type"`
+	Conf *MeshItemConf `tfsdk:"conf"`
+	Name types.String  `tfsdk:"name"`
+	Type types.String  `tfsdk:"type"`
 }

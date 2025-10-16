@@ -20,6 +20,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	custom_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
+	speakeasy_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
@@ -146,6 +147,7 @@ func (r *MeshRetryResource) Schema(ctx context.Context, req resource.SchemaReque
 									`will be targeted.`,
 							},
 							"proxy_types": schema.ListAttribute{
+								Computed: true,
 								Optional: true,
 								PlanModifiers: []planmodifier.List{
 									custom_listplanmodifier.SupressZeroNullModifier(),
@@ -171,6 +173,7 @@ func (r *MeshRetryResource) Schema(ctx context.Context, req resource.SchemaReque
 							`defined inplace.`,
 					},
 					"to": schema.ListNestedAttribute{
+						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.List{
 							custom_listplanmodifier.SupressZeroNullModifier(),
@@ -224,6 +227,7 @@ func (r *MeshRetryResource) Schema(ctx context.Context, req resource.SchemaReque
 																`If not specified then the default value is "300s".`,
 														},
 														"reset_headers": schema.ListNestedAttribute{
+															Computed: true,
 															Optional: true,
 															PlanModifiers: []planmodifier.List{
 																custom_listplanmodifier.SupressZeroNullModifier(),
@@ -265,6 +269,7 @@ func (r *MeshRetryResource) Schema(ctx context.Context, req resource.SchemaReque
 														`the upstream returns one of the headers configured.`,
 												},
 												"retry_on": schema.ListAttribute{
+													Computed: true,
 													Optional: true,
 													PlanModifiers: []planmodifier.List{
 														custom_listplanmodifier.SupressZeroNullModifier(),
@@ -297,6 +302,7 @@ func (r *MeshRetryResource) Schema(ctx context.Context, req resource.SchemaReque
 														`backoff strategy between retries.`,
 												},
 												"host_selection": schema.ListNestedAttribute{
+													Computed: true,
 													Optional: true,
 													PlanModifiers: []planmodifier.List{
 														custom_listplanmodifier.SupressZeroNullModifier(),
@@ -365,6 +371,7 @@ func (r *MeshRetryResource) Schema(ctx context.Context, req resource.SchemaReque
 																`If not specified then the default value is "300s".`,
 														},
 														"reset_headers": schema.ListNestedAttribute{
+															Computed: true,
 															Optional: true,
 															PlanModifiers: []planmodifier.List{
 																custom_listplanmodifier.SupressZeroNullModifier(),
@@ -406,6 +413,7 @@ func (r *MeshRetryResource) Schema(ctx context.Context, req resource.SchemaReque
 														`when the upstream returns one of the headers configured.`,
 												},
 												"retriable_request_headers": schema.ListNestedAttribute{
+													Computed: true,
 													Optional: true,
 													PlanModifiers: []planmodifier.List{
 														custom_listplanmodifier.SupressZeroNullModifier(),
@@ -451,6 +459,7 @@ func (r *MeshRetryResource) Schema(ctx context.Context, req resource.SchemaReque
 														`for retries to be attempted.`,
 												},
 												"retriable_response_headers": schema.ListNestedAttribute{
+													Computed: true,
 													Optional: true,
 													PlanModifiers: []planmodifier.List{
 														custom_listplanmodifier.SupressZeroNullModifier(),
@@ -497,6 +506,7 @@ func (r *MeshRetryResource) Schema(ctx context.Context, req resource.SchemaReque
 														`matches the upstream response headers.`,
 												},
 												"retry_on": schema.ListAttribute{
+													Computed: true,
 													Optional: true,
 													PlanModifiers: []planmodifier.List{
 														custom_listplanmodifier.SupressZeroNullModifier(),
@@ -569,6 +579,7 @@ func (r *MeshRetryResource) Schema(ctx context.Context, req resource.SchemaReque
 												`will be targeted.`,
 										},
 										"proxy_types": schema.ListAttribute{
+											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.List{
 												custom_listplanmodifier.SupressZeroNullModifier(),
@@ -616,6 +627,7 @@ func (r *MeshRetryResource) Schema(ctx context.Context, req resource.SchemaReque
 				Computed: true,
 				PlanModifiers: []planmodifier.List{
 					custom_listplanmodifier.SupressZeroNullModifier(),
+					speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
 				},
 				ElementType: types.StringType,
 				MarkdownDescription: `warnings is a list of warning messages to return to the requesting Kuma API clients.` + "\n" +
@@ -663,13 +675,13 @@ func (r *MeshRetryResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
-	request, requestDiags := data.ToOperationsCreateMeshRetryRequest(ctx)
+	request, requestDiags := data.ToOperationsPutMeshRetryRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshRetry.CreateMeshRetry(ctx, *request)
+	res, err := r.client.MeshRetry.PutMeshRetry(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -681,7 +693,10 @@ func (r *MeshRetryResource) Create(ctx context.Context, req resource.CreateReque
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 201 {
+	switch res.StatusCode {
+	case 200, 201:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
@@ -814,13 +829,13 @@ func (r *MeshRetryResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
-	request, requestDiags := data.ToOperationsUpdateMeshRetryRequest(ctx)
+	request, requestDiags := data.ToOperationsPutMeshRetryRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshRetry.UpdateMeshRetry(ctx, *request)
+	res, err := r.client.MeshRetry.PutMeshRetry(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -832,7 +847,10 @@ func (r *MeshRetryResource) Update(ctx context.Context, req resource.UpdateReque
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 200 {
+	switch res.StatusCode {
+	case 200, 201:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}

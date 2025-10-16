@@ -20,6 +20,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	custom_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
+	speakeasy_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
@@ -146,6 +147,7 @@ func (r *MeshTCPRouteResource) Schema(ctx context.Context, req resource.SchemaRe
 									`will be targeted.`,
 							},
 							"proxy_types": schema.ListAttribute{
+								Computed: true,
 								Optional: true,
 								PlanModifiers: []planmodifier.List{
 									custom_listplanmodifier.SupressZeroNullModifier(),
@@ -171,6 +173,7 @@ func (r *MeshTCPRouteResource) Schema(ctx context.Context, req resource.SchemaRe
 							`defined in-place.`,
 					},
 					"to": schema.ListNestedAttribute{
+						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.List{
 							custom_listplanmodifier.SupressZeroNullModifier(),
@@ -181,6 +184,7 @@ func (r *MeshTCPRouteResource) Schema(ctx context.Context, req resource.SchemaRe
 							},
 							Attributes: map[string]schema.Attribute{
 								"rules": schema.ListNestedAttribute{
+									Computed: true,
 									Optional: true,
 									PlanModifiers: []planmodifier.List{
 										custom_listplanmodifier.SupressZeroNullModifier(),
@@ -194,6 +198,7 @@ func (r *MeshTCPRouteResource) Schema(ctx context.Context, req resource.SchemaRe
 												Optional: true,
 												Attributes: map[string]schema.Attribute{
 													"backend_refs": schema.ListNestedAttribute{
+														Computed: true,
 														Optional: true,
 														PlanModifiers: []planmodifier.List{
 															custom_listplanmodifier.SupressZeroNullModifier(),
@@ -246,6 +251,7 @@ func (r *MeshTCPRouteResource) Schema(ctx context.Context, req resource.SchemaRe
 																	Description: `Port is only supported when this ref refers to a real MeshService object`,
 																},
 																"proxy_types": schema.ListAttribute{
+																	Computed: true,
 																	Optional: true,
 																	PlanModifiers: []planmodifier.List{
 																		custom_listplanmodifier.SupressZeroNullModifier(),
@@ -334,6 +340,7 @@ func (r *MeshTCPRouteResource) Schema(ctx context.Context, req resource.SchemaRe
 												`will be targeted.`,
 										},
 										"proxy_types": schema.ListAttribute{
+											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.List{
 												custom_listplanmodifier.SupressZeroNullModifier(),
@@ -385,6 +392,7 @@ func (r *MeshTCPRouteResource) Schema(ctx context.Context, req resource.SchemaRe
 				Computed: true,
 				PlanModifiers: []planmodifier.List{
 					custom_listplanmodifier.SupressZeroNullModifier(),
+					speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
 				},
 				ElementType: types.StringType,
 				MarkdownDescription: `warnings is a list of warning messages to return to the requesting Kuma API clients.` + "\n" +
@@ -432,13 +440,13 @@ func (r *MeshTCPRouteResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
-	request, requestDiags := data.ToOperationsCreateMeshTCPRouteRequest(ctx)
+	request, requestDiags := data.ToOperationsPutMeshTCPRouteRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshTCPRoute.CreateMeshTCPRoute(ctx, *request)
+	res, err := r.client.MeshTCPRoute.PutMeshTCPRoute(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -450,7 +458,10 @@ func (r *MeshTCPRouteResource) Create(ctx context.Context, req resource.CreateRe
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 201 {
+	switch res.StatusCode {
+	case 200, 201:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
@@ -583,13 +594,13 @@ func (r *MeshTCPRouteResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 
-	request, requestDiags := data.ToOperationsUpdateMeshTCPRouteRequest(ctx)
+	request, requestDiags := data.ToOperationsPutMeshTCPRouteRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshTCPRoute.UpdateMeshTCPRoute(ctx, *request)
+	res, err := r.client.MeshTCPRoute.PutMeshTCPRoute(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -601,7 +612,10 @@ func (r *MeshTCPRouteResource) Update(ctx context.Context, req resource.UpdateRe
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 200 {
+	switch res.StatusCode {
+	case 200, 201:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}

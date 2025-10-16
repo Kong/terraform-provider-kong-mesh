@@ -20,6 +20,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	custom_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
+	speakeasy_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
 	speakeasy_objectplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/objectplanmodifier"
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
@@ -147,9 +148,8 @@ func (r *MeshMultiZoneServiceResource) Schema(ctx context.Context, req resource.
 								Required: true,
 								Attributes: map[string]schema.Attribute{
 									"match_labels": schema.MapAttribute{
-										Required:    true,
+										Optional:    true,
 										ElementType: types.StringType,
-										Description: `MatchLabels matches multiple MeshServices by labels`,
 									},
 								},
 								Description: `MeshService selects MeshServices`,
@@ -170,6 +170,7 @@ func (r *MeshMultiZoneServiceResource) Schema(ctx context.Context, req resource.
 						Computed: true,
 						PlanModifiers: []planmodifier.List{
 							custom_listplanmodifier.SupressZeroNullModifier(),
+							speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
 						},
 						NestedObject: schema.NestedAttributeObject{
 							PlanModifiers: []planmodifier.Object{
@@ -198,6 +199,7 @@ func (r *MeshMultiZoneServiceResource) Schema(ctx context.Context, req resource.
 						Computed: true,
 						PlanModifiers: []planmodifier.List{
 							custom_listplanmodifier.SupressZeroNullModifier(),
+							speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
 						},
 						NestedObject: schema.NestedAttributeObject{
 							PlanModifiers: []planmodifier.Object{
@@ -208,6 +210,7 @@ func (r *MeshMultiZoneServiceResource) Schema(ctx context.Context, req resource.
 									Computed: true,
 									PlanModifiers: []planmodifier.List{
 										custom_listplanmodifier.SupressZeroNullModifier(),
+										speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
 									},
 									NestedObject: schema.NestedAttributeObject{
 										PlanModifiers: []planmodifier.Object{
@@ -276,6 +279,7 @@ func (r *MeshMultiZoneServiceResource) Schema(ctx context.Context, req resource.
 						Computed: true,
 						PlanModifiers: []planmodifier.List{
 							custom_listplanmodifier.SupressZeroNullModifier(),
+							speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
 						},
 						NestedObject: schema.NestedAttributeObject{
 							PlanModifiers: []planmodifier.Object{
@@ -303,6 +307,7 @@ func (r *MeshMultiZoneServiceResource) Schema(ctx context.Context, req resource.
 						Computed: true,
 						PlanModifiers: []planmodifier.List{
 							custom_listplanmodifier.SupressZeroNullModifier(),
+							speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
 						},
 						NestedObject: schema.NestedAttributeObject{
 							PlanModifiers: []planmodifier.Object{
@@ -332,6 +337,7 @@ func (r *MeshMultiZoneServiceResource) Schema(ctx context.Context, req resource.
 				Computed: true,
 				PlanModifiers: []planmodifier.List{
 					custom_listplanmodifier.SupressZeroNullModifier(),
+					speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
 				},
 				ElementType: types.StringType,
 				MarkdownDescription: `warnings is a list of warning messages to return to the requesting Kuma API clients.` + "\n" +
@@ -379,13 +385,13 @@ func (r *MeshMultiZoneServiceResource) Create(ctx context.Context, req resource.
 		return
 	}
 
-	request, requestDiags := data.ToOperationsCreateMeshMultiZoneServiceRequest(ctx)
+	request, requestDiags := data.ToOperationsPutMeshMultiZoneServiceRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshMultiZoneService.CreateMeshMultiZoneService(ctx, *request)
+	res, err := r.client.MeshMultiZoneService.PutMeshMultiZoneService(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -397,7 +403,10 @@ func (r *MeshMultiZoneServiceResource) Create(ctx context.Context, req resource.
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 201 {
+	switch res.StatusCode {
+	case 200, 201:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
@@ -530,13 +539,13 @@ func (r *MeshMultiZoneServiceResource) Update(ctx context.Context, req resource.
 		return
 	}
 
-	request, requestDiags := data.ToOperationsUpdateMeshMultiZoneServiceRequest(ctx)
+	request, requestDiags := data.ToOperationsPutMeshMultiZoneServiceRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshMultiZoneService.UpdateMeshMultiZoneService(ctx, *request)
+	res, err := r.client.MeshMultiZoneService.PutMeshMultiZoneService(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -548,7 +557,10 @@ func (r *MeshMultiZoneServiceResource) Update(ctx context.Context, req resource.
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 200 {
+	switch res.StatusCode {
+	case 200, 201:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}

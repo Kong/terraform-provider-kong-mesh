@@ -240,7 +240,7 @@ func (r *MeshTCPRouteResourceModel) ToSharedMeshTCPRouteItemInput(ctx context.Co
 	return &out, diags
 }
 
-func (r *MeshTCPRouteResourceModel) ToOperationsCreateMeshTCPRouteRequest(ctx context.Context) (*operations.CreateMeshTCPRouteRequest, diag.Diagnostics) {
+func (r *MeshTCPRouteResourceModel) ToOperationsPutMeshTCPRouteRequest(ctx context.Context) (*operations.PutMeshTCPRouteRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var mesh string
@@ -256,32 +256,7 @@ func (r *MeshTCPRouteResourceModel) ToOperationsCreateMeshTCPRouteRequest(ctx co
 		return nil, diags
 	}
 
-	out := operations.CreateMeshTCPRouteRequest{
-		Mesh:             mesh,
-		Name:             name,
-		MeshTCPRouteItem: *meshTCPRouteItem,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshTCPRouteResourceModel) ToOperationsUpdateMeshTCPRouteRequest(ctx context.Context) (*operations.UpdateMeshTCPRouteRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	meshTCPRouteItem, meshTCPRouteItemDiags := r.ToSharedMeshTCPRouteItemInput(ctx)
-	diags.Append(meshTCPRouteItemDiags...)
-
-	if diags.HasError() {
-		return nil, diags
-	}
-
-	out := operations.UpdateMeshTCPRouteRequest{
+	out := operations.PutMeshTCPRouteRequest{
 		Mesh:             mesh,
 		Name:             name,
 		MeshTCPRouteItem: *meshTCPRouteItem,

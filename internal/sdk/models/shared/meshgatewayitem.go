@@ -84,22 +84,160 @@ func (o *Resources) GetConnectionLimit() *int64 {
 	return o.ConnectionLimit
 }
 
-// Certificates - DataSource defines the source of bytes to use.
-type Certificates struct {
-	// Types that are assignable to Type:
-	//
-	// 	*DataSource_Secret
-	// 	*DataSource_File
-	// 	*DataSource_Inline
-	// 	*DataSource_InlineString
-	Type any `json:"Type"`
+type DataSourceSecret struct {
+	// Data source is a secret with given Secret key.
+	Secret *string `json:"secret,omitempty"`
 }
 
-func (o *Certificates) GetType() any {
+func (o *DataSourceSecret) GetSecret() *string {
 	if o == nil {
 		return nil
 	}
-	return o.Type
+	return o.Secret
+}
+
+type DataSourceInlineString struct {
+	// Data source is inline string
+	InlineString *string `json:"inlineString,omitempty"`
+}
+
+func (o *DataSourceInlineString) GetInlineString() *string {
+	if o == nil {
+		return nil
+	}
+	return o.InlineString
+}
+
+type DataSourceInline struct {
+	// Data source is inline bytes.
+	Inline *string `json:"inline,omitempty"`
+}
+
+func (o *DataSourceInline) GetInline() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Inline
+}
+
+type DataSourceFile struct {
+	// Data source is a path to a file.
+	// Deprecated, use other sources of a data.
+	File *string `json:"file,omitempty"`
+}
+
+func (o *DataSourceFile) GetFile() *string {
+	if o == nil {
+		return nil
+	}
+	return o.File
+}
+
+type CertificatesType string
+
+const (
+	CertificatesTypeDataSourceFile         CertificatesType = "DataSource_File"
+	CertificatesTypeDataSourceInline       CertificatesType = "DataSource_Inline"
+	CertificatesTypeDataSourceInlineString CertificatesType = "DataSource_InlineString"
+	CertificatesTypeDataSourceSecret       CertificatesType = "DataSource_Secret"
+)
+
+type Certificates struct {
+	DataSourceFile         *DataSourceFile         `queryParam:"inline"`
+	DataSourceInline       *DataSourceInline       `queryParam:"inline"`
+	DataSourceInlineString *DataSourceInlineString `queryParam:"inline"`
+	DataSourceSecret       *DataSourceSecret       `queryParam:"inline"`
+
+	Type CertificatesType
+}
+
+func CreateCertificatesDataSourceFile(dataSourceFile DataSourceFile) Certificates {
+	typ := CertificatesTypeDataSourceFile
+
+	return Certificates{
+		DataSourceFile: &dataSourceFile,
+		Type:           typ,
+	}
+}
+
+func CreateCertificatesDataSourceInline(dataSourceInline DataSourceInline) Certificates {
+	typ := CertificatesTypeDataSourceInline
+
+	return Certificates{
+		DataSourceInline: &dataSourceInline,
+		Type:             typ,
+	}
+}
+
+func CreateCertificatesDataSourceInlineString(dataSourceInlineString DataSourceInlineString) Certificates {
+	typ := CertificatesTypeDataSourceInlineString
+
+	return Certificates{
+		DataSourceInlineString: &dataSourceInlineString,
+		Type:                   typ,
+	}
+}
+
+func CreateCertificatesDataSourceSecret(dataSourceSecret DataSourceSecret) Certificates {
+	typ := CertificatesTypeDataSourceSecret
+
+	return Certificates{
+		DataSourceSecret: &dataSourceSecret,
+		Type:             typ,
+	}
+}
+
+func (u *Certificates) UnmarshalJSON(data []byte) error {
+
+	var dataSourceFile DataSourceFile = DataSourceFile{}
+	if err := utils.UnmarshalJSON(data, &dataSourceFile, "", true, true); err == nil {
+		u.DataSourceFile = &dataSourceFile
+		u.Type = CertificatesTypeDataSourceFile
+		return nil
+	}
+
+	var dataSourceInline DataSourceInline = DataSourceInline{}
+	if err := utils.UnmarshalJSON(data, &dataSourceInline, "", true, true); err == nil {
+		u.DataSourceInline = &dataSourceInline
+		u.Type = CertificatesTypeDataSourceInline
+		return nil
+	}
+
+	var dataSourceInlineString DataSourceInlineString = DataSourceInlineString{}
+	if err := utils.UnmarshalJSON(data, &dataSourceInlineString, "", true, true); err == nil {
+		u.DataSourceInlineString = &dataSourceInlineString
+		u.Type = CertificatesTypeDataSourceInlineString
+		return nil
+	}
+
+	var dataSourceSecret DataSourceSecret = DataSourceSecret{}
+	if err := utils.UnmarshalJSON(data, &dataSourceSecret, "", true, true); err == nil {
+		u.DataSourceSecret = &dataSourceSecret
+		u.Type = CertificatesTypeDataSourceSecret
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for Certificates", string(data))
+}
+
+func (u Certificates) MarshalJSON() ([]byte, error) {
+	if u.DataSourceFile != nil {
+		return utils.MarshalJSON(u.DataSourceFile, "", true)
+	}
+
+	if u.DataSourceInline != nil {
+		return utils.MarshalJSON(u.DataSourceInline, "", true)
+	}
+
+	if u.DataSourceInlineString != nil {
+		return utils.MarshalJSON(u.DataSourceInlineString, "", true)
+	}
+
+	if u.DataSourceSecret != nil {
+		return utils.MarshalJSON(u.DataSourceSecret, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type Certificates: all fields are null")
 }
 
 type MeshGatewayItemModeType string

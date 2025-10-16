@@ -530,6 +530,403 @@ func (o *MeshFaultInjectionItemFrom) GetTargetRef() MeshFaultInjectionItemSpecTa
 	return o.TargetRef
 }
 
+type MeshFaultInjectionItemSpecRulesPercentageType string
+
+const (
+	MeshFaultInjectionItemSpecRulesPercentageTypeInteger MeshFaultInjectionItemSpecRulesPercentageType = "integer"
+	MeshFaultInjectionItemSpecRulesPercentageTypeStr     MeshFaultInjectionItemSpecRulesPercentageType = "str"
+)
+
+// MeshFaultInjectionItemSpecRulesPercentage - Percentage of requests on which abort will be injected, has to be
+// either int or decimal represented as string.
+type MeshFaultInjectionItemSpecRulesPercentage struct {
+	Integer *int64  `queryParam:"inline"`
+	Str     *string `queryParam:"inline"`
+
+	Type MeshFaultInjectionItemSpecRulesPercentageType
+}
+
+func CreateMeshFaultInjectionItemSpecRulesPercentageInteger(integer int64) MeshFaultInjectionItemSpecRulesPercentage {
+	typ := MeshFaultInjectionItemSpecRulesPercentageTypeInteger
+
+	return MeshFaultInjectionItemSpecRulesPercentage{
+		Integer: &integer,
+		Type:    typ,
+	}
+}
+
+func CreateMeshFaultInjectionItemSpecRulesPercentageStr(str string) MeshFaultInjectionItemSpecRulesPercentage {
+	typ := MeshFaultInjectionItemSpecRulesPercentageTypeStr
+
+	return MeshFaultInjectionItemSpecRulesPercentage{
+		Str:  &str,
+		Type: typ,
+	}
+}
+
+func (u *MeshFaultInjectionItemSpecRulesPercentage) UnmarshalJSON(data []byte) error {
+
+	var integer int64 = int64(0)
+	if err := utils.UnmarshalJSON(data, &integer, "", true, true); err == nil {
+		u.Integer = &integer
+		u.Type = MeshFaultInjectionItemSpecRulesPercentageTypeInteger
+		return nil
+	}
+
+	var str string = ""
+	if err := utils.UnmarshalJSON(data, &str, "", true, true); err == nil {
+		u.Str = &str
+		u.Type = MeshFaultInjectionItemSpecRulesPercentageTypeStr
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshFaultInjectionItemSpecRulesPercentage", string(data))
+}
+
+func (u MeshFaultInjectionItemSpecRulesPercentage) MarshalJSON() ([]byte, error) {
+	if u.Integer != nil {
+		return utils.MarshalJSON(u.Integer, "", true)
+	}
+
+	if u.Str != nil {
+		return utils.MarshalJSON(u.Str, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type MeshFaultInjectionItemSpecRulesPercentage: all fields are null")
+}
+
+// MeshFaultInjectionItemAbort - Abort defines a configuration of not delivering requests to destination
+// service and replacing the responses from destination dataplane by
+// predefined status code
+type MeshFaultInjectionItemAbort struct {
+	// HTTP status code which will be returned to source side
+	HTTPStatus int `json:"httpStatus"`
+	// Percentage of requests on which abort will be injected, has to be
+	// either int or decimal represented as string.
+	Percentage MeshFaultInjectionItemSpecRulesPercentage `json:"percentage"`
+}
+
+func (o *MeshFaultInjectionItemAbort) GetHTTPStatus() int {
+	if o == nil {
+		return 0
+	}
+	return o.HTTPStatus
+}
+
+func (o *MeshFaultInjectionItemAbort) GetPercentage() MeshFaultInjectionItemSpecRulesPercentage {
+	if o == nil {
+		return MeshFaultInjectionItemSpecRulesPercentage{}
+	}
+	return o.Percentage
+}
+
+type MeshFaultInjectionItemSpecRulesDefaultPercentageType string
+
+const (
+	MeshFaultInjectionItemSpecRulesDefaultPercentageTypeInteger MeshFaultInjectionItemSpecRulesDefaultPercentageType = "integer"
+	MeshFaultInjectionItemSpecRulesDefaultPercentageTypeStr     MeshFaultInjectionItemSpecRulesDefaultPercentageType = "str"
+)
+
+// MeshFaultInjectionItemSpecRulesDefaultPercentage - Percentage of requests on which delay will be injected, has to be
+// either int or decimal represented as string.
+type MeshFaultInjectionItemSpecRulesDefaultPercentage struct {
+	Integer *int64  `queryParam:"inline"`
+	Str     *string `queryParam:"inline"`
+
+	Type MeshFaultInjectionItemSpecRulesDefaultPercentageType
+}
+
+func CreateMeshFaultInjectionItemSpecRulesDefaultPercentageInteger(integer int64) MeshFaultInjectionItemSpecRulesDefaultPercentage {
+	typ := MeshFaultInjectionItemSpecRulesDefaultPercentageTypeInteger
+
+	return MeshFaultInjectionItemSpecRulesDefaultPercentage{
+		Integer: &integer,
+		Type:    typ,
+	}
+}
+
+func CreateMeshFaultInjectionItemSpecRulesDefaultPercentageStr(str string) MeshFaultInjectionItemSpecRulesDefaultPercentage {
+	typ := MeshFaultInjectionItemSpecRulesDefaultPercentageTypeStr
+
+	return MeshFaultInjectionItemSpecRulesDefaultPercentage{
+		Str:  &str,
+		Type: typ,
+	}
+}
+
+func (u *MeshFaultInjectionItemSpecRulesDefaultPercentage) UnmarshalJSON(data []byte) error {
+
+	var integer int64 = int64(0)
+	if err := utils.UnmarshalJSON(data, &integer, "", true, true); err == nil {
+		u.Integer = &integer
+		u.Type = MeshFaultInjectionItemSpecRulesDefaultPercentageTypeInteger
+		return nil
+	}
+
+	var str string = ""
+	if err := utils.UnmarshalJSON(data, &str, "", true, true); err == nil {
+		u.Str = &str
+		u.Type = MeshFaultInjectionItemSpecRulesDefaultPercentageTypeStr
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshFaultInjectionItemSpecRulesDefaultPercentage", string(data))
+}
+
+func (u MeshFaultInjectionItemSpecRulesDefaultPercentage) MarshalJSON() ([]byte, error) {
+	if u.Integer != nil {
+		return utils.MarshalJSON(u.Integer, "", true)
+	}
+
+	if u.Str != nil {
+		return utils.MarshalJSON(u.Str, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type MeshFaultInjectionItemSpecRulesDefaultPercentage: all fields are null")
+}
+
+// MeshFaultInjectionItemDelay - Delay defines configuration of delaying a response from a destination
+type MeshFaultInjectionItemDelay struct {
+	// Percentage of requests on which delay will be injected, has to be
+	// either int or decimal represented as string.
+	Percentage MeshFaultInjectionItemSpecRulesDefaultPercentage `json:"percentage"`
+	// The duration during which the response will be delayed
+	Value string `json:"value"`
+}
+
+func (o *MeshFaultInjectionItemDelay) GetPercentage() MeshFaultInjectionItemSpecRulesDefaultPercentage {
+	if o == nil {
+		return MeshFaultInjectionItemSpecRulesDefaultPercentage{}
+	}
+	return o.Percentage
+}
+
+func (o *MeshFaultInjectionItemDelay) GetValue() string {
+	if o == nil {
+		return ""
+	}
+	return o.Value
+}
+
+type MeshFaultInjectionItemSpecRulesDefaultHTTPPercentageType string
+
+const (
+	MeshFaultInjectionItemSpecRulesDefaultHTTPPercentageTypeInteger MeshFaultInjectionItemSpecRulesDefaultHTTPPercentageType = "integer"
+	MeshFaultInjectionItemSpecRulesDefaultHTTPPercentageTypeStr     MeshFaultInjectionItemSpecRulesDefaultHTTPPercentageType = "str"
+)
+
+// MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage - Percentage of requests on which response bandwidth limit will be
+// either int or decimal represented as string.
+type MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage struct {
+	Integer *int64  `queryParam:"inline"`
+	Str     *string `queryParam:"inline"`
+
+	Type MeshFaultInjectionItemSpecRulesDefaultHTTPPercentageType
+}
+
+func CreateMeshFaultInjectionItemSpecRulesDefaultHTTPPercentageInteger(integer int64) MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage {
+	typ := MeshFaultInjectionItemSpecRulesDefaultHTTPPercentageTypeInteger
+
+	return MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage{
+		Integer: &integer,
+		Type:    typ,
+	}
+}
+
+func CreateMeshFaultInjectionItemSpecRulesDefaultHTTPPercentageStr(str string) MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage {
+	typ := MeshFaultInjectionItemSpecRulesDefaultHTTPPercentageTypeStr
+
+	return MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage{
+		Str:  &str,
+		Type: typ,
+	}
+}
+
+func (u *MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage) UnmarshalJSON(data []byte) error {
+
+	var integer int64 = int64(0)
+	if err := utils.UnmarshalJSON(data, &integer, "", true, true); err == nil {
+		u.Integer = &integer
+		u.Type = MeshFaultInjectionItemSpecRulesDefaultHTTPPercentageTypeInteger
+		return nil
+	}
+
+	var str string = ""
+	if err := utils.UnmarshalJSON(data, &str, "", true, true); err == nil {
+		u.Str = &str
+		u.Type = MeshFaultInjectionItemSpecRulesDefaultHTTPPercentageTypeStr
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage", string(data))
+}
+
+func (u MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage) MarshalJSON() ([]byte, error) {
+	if u.Integer != nil {
+		return utils.MarshalJSON(u.Integer, "", true)
+	}
+
+	if u.Str != nil {
+		return utils.MarshalJSON(u.Str, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage: all fields are null")
+}
+
+// MeshFaultInjectionItemResponseBandwidth - ResponseBandwidth defines a configuration to limit the speed of
+// responding to the requests
+type MeshFaultInjectionItemResponseBandwidth struct {
+	// Limit is represented by value measure in Gbps, Mbps, kbps, e.g.
+	// 10kbps
+	Limit string `json:"limit"`
+	// Percentage of requests on which response bandwidth limit will be
+	// either int or decimal represented as string.
+	Percentage MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage `json:"percentage"`
+}
+
+func (o *MeshFaultInjectionItemResponseBandwidth) GetLimit() string {
+	if o == nil {
+		return ""
+	}
+	return o.Limit
+}
+
+func (o *MeshFaultInjectionItemResponseBandwidth) GetPercentage() MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage {
+	if o == nil {
+		return MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage{}
+	}
+	return o.Percentage
+}
+
+// MeshFaultInjectionItemHTTP - FaultInjection defines the configuration of faults between dataplanes.
+type MeshFaultInjectionItemHTTP struct {
+	// Abort defines a configuration of not delivering requests to destination
+	// service and replacing the responses from destination dataplane by
+	// predefined status code
+	Abort *MeshFaultInjectionItemAbort `json:"abort,omitempty"`
+	// Delay defines configuration of delaying a response from a destination
+	Delay *MeshFaultInjectionItemDelay `json:"delay,omitempty"`
+	// ResponseBandwidth defines a configuration to limit the speed of
+	// responding to the requests
+	ResponseBandwidth *MeshFaultInjectionItemResponseBandwidth `json:"responseBandwidth,omitempty"`
+}
+
+func (o *MeshFaultInjectionItemHTTP) GetAbort() *MeshFaultInjectionItemAbort {
+	if o == nil {
+		return nil
+	}
+	return o.Abort
+}
+
+func (o *MeshFaultInjectionItemHTTP) GetDelay() *MeshFaultInjectionItemDelay {
+	if o == nil {
+		return nil
+	}
+	return o.Delay
+}
+
+func (o *MeshFaultInjectionItemHTTP) GetResponseBandwidth() *MeshFaultInjectionItemResponseBandwidth {
+	if o == nil {
+		return nil
+	}
+	return o.ResponseBandwidth
+}
+
+// MeshFaultInjectionItemSpecDefault - Default defines fault configuration
+type MeshFaultInjectionItemSpecDefault struct {
+	// Http allows to define list of Http faults between dataplanes.
+	HTTP []MeshFaultInjectionItemHTTP `json:"http,omitempty"`
+}
+
+func (o *MeshFaultInjectionItemSpecDefault) GetHTTP() []MeshFaultInjectionItemHTTP {
+	if o == nil {
+		return nil
+	}
+	return o.HTTP
+}
+
+// MeshFaultInjectionItemSpecType - Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
+type MeshFaultInjectionItemSpecType string
+
+const (
+	MeshFaultInjectionItemSpecTypeExact  MeshFaultInjectionItemSpecType = "Exact"
+	MeshFaultInjectionItemSpecTypePrefix MeshFaultInjectionItemSpecType = "Prefix"
+)
+
+func (e MeshFaultInjectionItemSpecType) ToPointer() *MeshFaultInjectionItemSpecType {
+	return &e
+}
+func (e *MeshFaultInjectionItemSpecType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "Exact":
+		fallthrough
+	case "Prefix":
+		*e = MeshFaultInjectionItemSpecType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshFaultInjectionItemSpecType: %v", v)
+	}
+}
+
+// MeshFaultInjectionItemSpiffeID - SpiffeID defines a matcher configuration for SpiffeID matching
+type MeshFaultInjectionItemSpiffeID struct {
+	// Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
+	Type MeshFaultInjectionItemSpecType `json:"type"`
+	// Value is SpiffeId of a client that needs to match for the configuration to be applied
+	Value string `json:"value"`
+}
+
+func (o *MeshFaultInjectionItemSpiffeID) GetType() MeshFaultInjectionItemSpecType {
+	if o == nil {
+		return MeshFaultInjectionItemSpecType("")
+	}
+	return o.Type
+}
+
+func (o *MeshFaultInjectionItemSpiffeID) GetValue() string {
+	if o == nil {
+		return ""
+	}
+	return o.Value
+}
+
+type Matches struct {
+	// SpiffeID defines a matcher configuration for SpiffeID matching
+	SpiffeID *MeshFaultInjectionItemSpiffeID `json:"spiffeID,omitempty"`
+}
+
+func (o *Matches) GetSpiffeID() *MeshFaultInjectionItemSpiffeID {
+	if o == nil {
+		return nil
+	}
+	return o.SpiffeID
+}
+
+type MeshFaultInjectionItemRules struct {
+	// Default defines fault configuration
+	Default MeshFaultInjectionItemSpecDefault `json:"default"`
+	// Matches defines list of matches for which fault injection will be applied
+	Matches []Matches `json:"matches,omitempty"`
+}
+
+func (o *MeshFaultInjectionItemRules) GetDefault() MeshFaultInjectionItemSpecDefault {
+	if o == nil {
+		return MeshFaultInjectionItemSpecDefault{}
+	}
+	return o.Default
+}
+
+func (o *MeshFaultInjectionItemRules) GetMatches() []Matches {
+	if o == nil {
+		return nil
+	}
+	return o.Matches
+}
+
 // MeshFaultInjectionItemKind - Kind of the referenced resource
 type MeshFaultInjectionItemKind string
 
@@ -753,10 +1150,10 @@ func (u MeshFaultInjectionItemSpecToPercentage) MarshalJSON() ([]byte, error) {
 	return nil, errors.New("could not marshal union type MeshFaultInjectionItemSpecToPercentage: all fields are null")
 }
 
-// MeshFaultInjectionItemAbort - Abort defines a configuration of not delivering requests to destination
+// MeshFaultInjectionItemSpecAbort - Abort defines a configuration of not delivering requests to destination
 // service and replacing the responses from destination dataplane by
 // predefined status code
-type MeshFaultInjectionItemAbort struct {
+type MeshFaultInjectionItemSpecAbort struct {
 	// HTTP status code which will be returned to source side
 	HTTPStatus int `json:"httpStatus"`
 	// Percentage of requests on which abort will be injected, has to be
@@ -764,14 +1161,14 @@ type MeshFaultInjectionItemAbort struct {
 	Percentage MeshFaultInjectionItemSpecToPercentage `json:"percentage"`
 }
 
-func (o *MeshFaultInjectionItemAbort) GetHTTPStatus() int {
+func (o *MeshFaultInjectionItemSpecAbort) GetHTTPStatus() int {
 	if o == nil {
 		return 0
 	}
 	return o.HTTPStatus
 }
 
-func (o *MeshFaultInjectionItemAbort) GetPercentage() MeshFaultInjectionItemSpecToPercentage {
+func (o *MeshFaultInjectionItemSpecAbort) GetPercentage() MeshFaultInjectionItemSpecToPercentage {
 	if o == nil {
 		return MeshFaultInjectionItemSpecToPercentage{}
 	}
@@ -843,8 +1240,8 @@ func (u MeshFaultInjectionItemSpecToDefaultPercentage) MarshalJSON() ([]byte, er
 	return nil, errors.New("could not marshal union type MeshFaultInjectionItemSpecToDefaultPercentage: all fields are null")
 }
 
-// MeshFaultInjectionItemDelay - Delay defines configuration of delaying a response from a destination
-type MeshFaultInjectionItemDelay struct {
+// MeshFaultInjectionItemSpecDelay - Delay defines configuration of delaying a response from a destination
+type MeshFaultInjectionItemSpecDelay struct {
 	// Percentage of requests on which delay will be injected, has to be
 	// either int or decimal represented as string.
 	Percentage MeshFaultInjectionItemSpecToDefaultPercentage `json:"percentage"`
@@ -852,14 +1249,14 @@ type MeshFaultInjectionItemDelay struct {
 	Value string `json:"value"`
 }
 
-func (o *MeshFaultInjectionItemDelay) GetPercentage() MeshFaultInjectionItemSpecToDefaultPercentage {
+func (o *MeshFaultInjectionItemSpecDelay) GetPercentage() MeshFaultInjectionItemSpecToDefaultPercentage {
 	if o == nil {
 		return MeshFaultInjectionItemSpecToDefaultPercentage{}
 	}
 	return o.Percentage
 }
 
-func (o *MeshFaultInjectionItemDelay) GetValue() string {
+func (o *MeshFaultInjectionItemSpecDelay) GetValue() string {
 	if o == nil {
 		return ""
 	}
@@ -931,9 +1328,9 @@ func (u MeshFaultInjectionItemSpecToDefaultHTTPPercentage) MarshalJSON() ([]byte
 	return nil, errors.New("could not marshal union type MeshFaultInjectionItemSpecToDefaultHTTPPercentage: all fields are null")
 }
 
-// MeshFaultInjectionItemResponseBandwidth - ResponseBandwidth defines a configuration to limit the speed of
+// MeshFaultInjectionItemSpecResponseBandwidth - ResponseBandwidth defines a configuration to limit the speed of
 // responding to the requests
-type MeshFaultInjectionItemResponseBandwidth struct {
+type MeshFaultInjectionItemSpecResponseBandwidth struct {
 	// Limit is represented by value measure in Gbps, Mbps, kbps, e.g.
 	// 10kbps
 	Limit string `json:"limit"`
@@ -942,62 +1339,62 @@ type MeshFaultInjectionItemResponseBandwidth struct {
 	Percentage MeshFaultInjectionItemSpecToDefaultHTTPPercentage `json:"percentage"`
 }
 
-func (o *MeshFaultInjectionItemResponseBandwidth) GetLimit() string {
+func (o *MeshFaultInjectionItemSpecResponseBandwidth) GetLimit() string {
 	if o == nil {
 		return ""
 	}
 	return o.Limit
 }
 
-func (o *MeshFaultInjectionItemResponseBandwidth) GetPercentage() MeshFaultInjectionItemSpecToDefaultHTTPPercentage {
+func (o *MeshFaultInjectionItemSpecResponseBandwidth) GetPercentage() MeshFaultInjectionItemSpecToDefaultHTTPPercentage {
 	if o == nil {
 		return MeshFaultInjectionItemSpecToDefaultHTTPPercentage{}
 	}
 	return o.Percentage
 }
 
-// MeshFaultInjectionItemHTTP - FaultInjection defines the configuration of faults between dataplanes.
-type MeshFaultInjectionItemHTTP struct {
+// MeshFaultInjectionItemSpecHTTP - FaultInjection defines the configuration of faults between dataplanes.
+type MeshFaultInjectionItemSpecHTTP struct {
 	// Abort defines a configuration of not delivering requests to destination
 	// service and replacing the responses from destination dataplane by
 	// predefined status code
-	Abort *MeshFaultInjectionItemAbort `json:"abort,omitempty"`
+	Abort *MeshFaultInjectionItemSpecAbort `json:"abort,omitempty"`
 	// Delay defines configuration of delaying a response from a destination
-	Delay *MeshFaultInjectionItemDelay `json:"delay,omitempty"`
+	Delay *MeshFaultInjectionItemSpecDelay `json:"delay,omitempty"`
 	// ResponseBandwidth defines a configuration to limit the speed of
 	// responding to the requests
-	ResponseBandwidth *MeshFaultInjectionItemResponseBandwidth `json:"responseBandwidth,omitempty"`
+	ResponseBandwidth *MeshFaultInjectionItemSpecResponseBandwidth `json:"responseBandwidth,omitempty"`
 }
 
-func (o *MeshFaultInjectionItemHTTP) GetAbort() *MeshFaultInjectionItemAbort {
+func (o *MeshFaultInjectionItemSpecHTTP) GetAbort() *MeshFaultInjectionItemSpecAbort {
 	if o == nil {
 		return nil
 	}
 	return o.Abort
 }
 
-func (o *MeshFaultInjectionItemHTTP) GetDelay() *MeshFaultInjectionItemDelay {
+func (o *MeshFaultInjectionItemSpecHTTP) GetDelay() *MeshFaultInjectionItemSpecDelay {
 	if o == nil {
 		return nil
 	}
 	return o.Delay
 }
 
-func (o *MeshFaultInjectionItemHTTP) GetResponseBandwidth() *MeshFaultInjectionItemResponseBandwidth {
+func (o *MeshFaultInjectionItemSpecHTTP) GetResponseBandwidth() *MeshFaultInjectionItemSpecResponseBandwidth {
 	if o == nil {
 		return nil
 	}
 	return o.ResponseBandwidth
 }
 
-// MeshFaultInjectionItemSpecDefault - Default is a configuration specific to the group of destinations referenced in
+// MeshFaultInjectionItemSpecToDefault - Default is a configuration specific to the group of destinations referenced in
 // 'targetRef'
-type MeshFaultInjectionItemSpecDefault struct {
+type MeshFaultInjectionItemSpecToDefault struct {
 	// Http allows to define list of Http faults between dataplanes.
-	HTTP []MeshFaultInjectionItemHTTP `json:"http,omitempty"`
+	HTTP []MeshFaultInjectionItemSpecHTTP `json:"http,omitempty"`
 }
 
-func (o *MeshFaultInjectionItemSpecDefault) GetHTTP() []MeshFaultInjectionItemHTTP {
+func (o *MeshFaultInjectionItemSpecToDefault) GetHTTP() []MeshFaultInjectionItemSpecHTTP {
 	if o == nil {
 		return nil
 	}
@@ -1164,13 +1561,13 @@ func (o *MeshFaultInjectionItemSpecToTargetRef) GetTags() map[string]string {
 type MeshFaultInjectionItemTo struct {
 	// Default is a configuration specific to the group of destinations referenced in
 	// 'targetRef'
-	Default *MeshFaultInjectionItemSpecDefault `json:"default,omitempty"`
+	Default *MeshFaultInjectionItemSpecToDefault `json:"default,omitempty"`
 	// TargetRef is a reference to the resource that represents a group of
 	// destinations.
 	TargetRef MeshFaultInjectionItemSpecToTargetRef `json:"targetRef"`
 }
 
-func (o *MeshFaultInjectionItemTo) GetDefault() *MeshFaultInjectionItemSpecDefault {
+func (o *MeshFaultInjectionItemTo) GetDefault() *MeshFaultInjectionItemSpecToDefault {
 	if o == nil {
 		return nil
 	}
@@ -1188,6 +1585,8 @@ func (o *MeshFaultInjectionItemTo) GetTargetRef() MeshFaultInjectionItemSpecToTa
 type MeshFaultInjectionItemSpec struct {
 	// From list makes a match between clients and corresponding configurations
 	From []MeshFaultInjectionItemFrom `json:"from,omitempty"`
+	// Rules defines inbound fault injection configuration
+	Rules []MeshFaultInjectionItemRules `json:"rules,omitempty"`
 	// TargetRef is a reference to the resource the policy takes an effect on.
 	// The resource could be either a real store object or virtual resource
 	// defined inplace.
@@ -1201,6 +1600,13 @@ func (o *MeshFaultInjectionItemSpec) GetFrom() []MeshFaultInjectionItemFrom {
 		return nil
 	}
 	return o.From
+}
+
+func (o *MeshFaultInjectionItemSpec) GetRules() []MeshFaultInjectionItemRules {
+	if o == nil {
+		return nil
+	}
+	return o.Rules
 }
 
 func (o *MeshFaultInjectionItemSpec) GetTargetRef() *MeshFaultInjectionItemTargetRef {

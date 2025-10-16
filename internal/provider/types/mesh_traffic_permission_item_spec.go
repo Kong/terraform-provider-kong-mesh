@@ -3,6 +3,7 @@
 package types
 
 type MeshTrafficPermissionItemSpec struct {
-	From      []MeshTrafficPermissionItemFrom `tfsdk:"from"`
-	TargetRef *MeshAccessLogItemTargetRef     `tfsdk:"target_ref"`
+	From      []MeshTrafficPermissionItemFrom  `tfsdk:"from"`
+	Rules     []MeshTrafficPermissionItemRules `tfsdk:"rules"`
+	TargetRef *MeshAccessLogItemTargetRef      `tfsdk:"target_ref"`
 }

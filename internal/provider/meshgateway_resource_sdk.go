@@ -4,7 +4,6 @@ package provider
 
 import (
 	"context"
-	"encoding/json"
 	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -86,11 +85,62 @@ func (r *MeshGatewayResourceModel) ToSharedMeshGatewayItem(ctx context.Context) 
 			if listenersItem.TLS != nil {
 				certificates := make([]shared.Certificates, 0, len(listenersItem.TLS.Certificates))
 				for _, certificatesItem := range listenersItem.TLS.Certificates {
-					var typeVar interface{}
-					_ = json.Unmarshal([]byte(certificatesItem.Type.ValueString()), &typeVar)
-					certificates = append(certificates, shared.Certificates{
-						Type: typeVar,
-					})
+					if certificatesItem.DataSourceFile != nil {
+						file := new(string)
+						if !certificatesItem.DataSourceFile.File.IsUnknown() && !certificatesItem.DataSourceFile.File.IsNull() {
+							*file = certificatesItem.DataSourceFile.File.ValueString()
+						} else {
+							file = nil
+						}
+						dataSourceFile := shared.DataSourceFile{
+							File: file,
+						}
+						certificates = append(certificates, shared.Certificates{
+							DataSourceFile: &dataSourceFile,
+						})
+					}
+					if certificatesItem.DataSourceInline != nil {
+						inline := new(string)
+						if !certificatesItem.DataSourceInline.Inline.IsUnknown() && !certificatesItem.DataSourceInline.Inline.IsNull() {
+							*inline = certificatesItem.DataSourceInline.Inline.ValueString()
+						} else {
+							inline = nil
+						}
+						dataSourceInline := shared.DataSourceInline{
+							Inline: inline,
+						}
+						certificates = append(certificates, shared.Certificates{
+							DataSourceInline: &dataSourceInline,
+						})
+					}
+					if certificatesItem.DataSourceInlineString != nil {
+						inlineString := new(string)
+						if !certificatesItem.DataSourceInlineString.InlineString.IsUnknown() && !certificatesItem.DataSourceInlineString.InlineString.IsNull() {
+							*inlineString = certificatesItem.DataSourceInlineString.InlineString.ValueString()
+						} else {
+							inlineString = nil
+						}
+						dataSourceInlineString := shared.DataSourceInlineString{
+							InlineString: inlineString,
+						}
+						certificates = append(certificates, shared.Certificates{
+							DataSourceInlineString: &dataSourceInlineString,
+						})
+					}
+					if certificatesItem.DataSourceSecret != nil {
+						secret := new(string)
+						if !certificatesItem.DataSourceSecret.Secret.IsUnknown() && !certificatesItem.DataSourceSecret.Secret.IsNull() {
+							*secret = certificatesItem.DataSourceSecret.Secret.ValueString()
+						} else {
+							secret = nil
+						}
+						dataSourceSecret := shared.DataSourceSecret{
+							Secret: secret,
+						}
+						certificates = append(certificates, shared.Certificates{
+							DataSourceSecret: &dataSourceSecret,
+						})
+					}
 				}
 				var mode *shared.MeshGatewayItemMode
 				if listenersItem.TLS.Mode != nil {
@@ -171,8 +221,8 @@ func (r *MeshGatewayResourceModel) ToSharedMeshGatewayItem(ctx context.Context) 
 
 		tags1[tagsKey1] = tagsInst1
 	}
-	var typeVar1 string
-	typeVar1 = r.Type.ValueString()
+	var typeVar string
+	typeVar = r.Type.ValueString()
 
 	out := shared.MeshGatewayItem{
 		Conf:      conf,
@@ -181,13 +231,13 @@ func (r *MeshGatewayResourceModel) ToSharedMeshGatewayItem(ctx context.Context) 
 		Name:      name,
 		Selectors: selectors,
 		Tags:      tags1,
-		Type:      typeVar1,
+		Type:      typeVar,
 	}
 
 	return &out, diags
 }
 
-func (r *MeshGatewayResourceModel) ToOperationsCreateMeshGatewayRequest(ctx context.Context) (*operations.CreateMeshGatewayRequest, diag.Diagnostics) {
+func (r *MeshGatewayResourceModel) ToOperationsPutMeshGatewayRequest(ctx context.Context) (*operations.PutMeshGatewayRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var mesh string
@@ -203,32 +253,7 @@ func (r *MeshGatewayResourceModel) ToOperationsCreateMeshGatewayRequest(ctx cont
 		return nil, diags
 	}
 
-	out := operations.CreateMeshGatewayRequest{
-		Mesh:            mesh,
-		Name:            name,
-		MeshGatewayItem: *meshGatewayItem,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshGatewayResourceModel) ToOperationsUpdateMeshGatewayRequest(ctx context.Context) (*operations.UpdateMeshGatewayRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	meshGatewayItem, meshGatewayItemDiags := r.ToSharedMeshGatewayItem(ctx)
-	diags.Append(meshGatewayItemDiags...)
-
-	if diags.HasError() {
-		return nil, diags
-	}
-
-	out := operations.UpdateMeshGatewayRequest{
+	out := operations.PutMeshGatewayRequest{
 		Mesh:            mesh,
 		Name:            name,
 		MeshGatewayItem: *meshGatewayItem,
@@ -329,12 +354,29 @@ func (r *MeshGatewayResourceModel) RefreshFromSharedMeshGatewayItem(ctx context.
 					listeners.TLS.Certificates = []tfTypes.AccessKey{}
 					for certificatesCount, certificatesItem := range listenersItem.TLS.Certificates {
 						var certificates tfTypes.AccessKey
-						typeVarResult, _ := json.Marshal(certificatesItem.Type)
-						certificates.Type = types.StringValue(string(typeVarResult))
+						if certificatesItem.DataSourceFile != nil {
+							certificates.DataSourceFile = &tfTypes.AccessKeyDataSourceFile{}
+							certificates.DataSourceFile.File = types.StringPointerValue(certificatesItem.DataSourceFile.File)
+						}
+						if certificatesItem.DataSourceInline != nil {
+							certificates.DataSourceInline = &tfTypes.AccessKeyDataSourceInline{}
+							certificates.DataSourceInline.Inline = types.StringPointerValue(certificatesItem.DataSourceInline.Inline)
+						}
+						if certificatesItem.DataSourceInlineString != nil {
+							certificates.DataSourceInlineString = &tfTypes.AccessKeyDataSourceInlineString{}
+							certificates.DataSourceInlineString.InlineString = types.StringPointerValue(certificatesItem.DataSourceInlineString.InlineString)
+						}
+						if certificatesItem.DataSourceSecret != nil {
+							certificates.DataSourceSecret = &tfTypes.AccessKeyDataSourceSecret{}
+							certificates.DataSourceSecret.Secret = types.StringPointerValue(certificatesItem.DataSourceSecret.Secret)
+						}
 						if certificatesCount+1 > len(listeners.TLS.Certificates) {
 							listeners.TLS.Certificates = append(listeners.TLS.Certificates, certificates)
 						} else {
-							listeners.TLS.Certificates[certificatesCount].Type = certificates.Type
+							listeners.TLS.Certificates[certificatesCount].DataSourceFile = certificates.DataSourceFile
+							listeners.TLS.Certificates[certificatesCount].DataSourceInline = certificates.DataSourceInline
+							listeners.TLS.Certificates[certificatesCount].DataSourceInlineString = certificates.DataSourceInlineString
+							listeners.TLS.Certificates[certificatesCount].DataSourceSecret = certificates.DataSourceSecret
 						}
 					}
 					if listenersItem.TLS.Mode != nil {

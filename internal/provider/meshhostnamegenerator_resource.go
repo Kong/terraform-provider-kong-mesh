@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	custom_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
+	speakeasy_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
@@ -88,7 +89,6 @@ func (r *MeshHostnameGeneratorResource) Schema(ctx context.Context, req resource
 						Optional: true,
 						Attributes: map[string]schema.Attribute{
 							"config": schema.StringAttribute{
-								Computed:    true,
 								Optional:    true,
 								Description: `Config freeform configuration for the extension. Parsed as JSON.`,
 								Validators: []validator.String{
@@ -135,7 +135,7 @@ func (r *MeshHostnameGeneratorResource) Schema(ctx context.Context, req resource
 						},
 					},
 					"template": schema.StringAttribute{
-						Optional: true,
+						Required: true,
 					},
 				},
 				Description: `Spec is the specification of the Kuma HostnameGenerator resource.`,
@@ -153,6 +153,7 @@ func (r *MeshHostnameGeneratorResource) Schema(ctx context.Context, req resource
 				Computed: true,
 				PlanModifiers: []planmodifier.List{
 					custom_listplanmodifier.SupressZeroNullModifier(),
+					speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
 				},
 				ElementType: types.StringType,
 				MarkdownDescription: `warnings is a list of warning messages to return to the requesting Kuma API clients.` + "\n" +
@@ -200,13 +201,13 @@ func (r *MeshHostnameGeneratorResource) Create(ctx context.Context, req resource
 		return
 	}
 
-	request, requestDiags := data.ToOperationsCreateHostnameGeneratorRequest(ctx)
+	request, requestDiags := data.ToOperationsPutHostnameGeneratorRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.HostnameGenerator.CreateHostnameGenerator(ctx, *request)
+	res, err := r.client.HostnameGenerator.PutHostnameGenerator(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -218,7 +219,10 @@ func (r *MeshHostnameGeneratorResource) Create(ctx context.Context, req resource
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 201 {
+	switch res.StatusCode {
+	case 200, 201:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
@@ -351,13 +355,13 @@ func (r *MeshHostnameGeneratorResource) Update(ctx context.Context, req resource
 		return
 	}
 
-	request, requestDiags := data.ToOperationsUpdateHostnameGeneratorRequest(ctx)
+	request, requestDiags := data.ToOperationsPutHostnameGeneratorRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.HostnameGenerator.UpdateHostnameGenerator(ctx, *request)
+	res, err := r.client.HostnameGenerator.PutHostnameGenerator(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -369,7 +373,10 @@ func (r *MeshHostnameGeneratorResource) Update(ctx context.Context, req resource
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 200 {
+	switch res.StatusCode {
+	case 200, 201:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}

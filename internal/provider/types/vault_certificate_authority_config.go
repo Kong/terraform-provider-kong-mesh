@@ -2,10 +2,6 @@
 
 package types
 
-import (
-	"github.com/hashicorp/terraform-plugin-framework/types"
-)
-
 type VaultCertificateAuthorityConfig struct {
-	Mode types.String `tfsdk:"mode"`
+	VaultCertificateAuthorityConfigFromCp *VaultCertificateAuthorityConfigFromCp `queryParam:"inline" tfsdk:"vault_certificate_authority_config_from_cp" tfPlanOnly:"true"`
 }

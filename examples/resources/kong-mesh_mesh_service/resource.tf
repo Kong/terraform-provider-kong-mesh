@@ -7,7 +7,7 @@ resource "kong-mesh_mesh_service" "my_meshservice" {
   spec = {
     identities = [
       {
-        type  = "ServiceTag"
+        type  = "SpiffeID"
         value = "...my_value..."
       }
     ]

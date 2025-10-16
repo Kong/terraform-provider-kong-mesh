@@ -82,7 +82,34 @@ resource "kong-mesh_mesh" "my_mesh" {
       {
         conf = {
           vault_certificate_authority_config = {
-            mode = "{ \"see\": \"documentation\" }"
+            vault_certificate_authority_config_from_cp = {
+              from_cp = {
+                address       = "...my_address..."
+                agent_address = "...my_agent_address..."
+                auth = {
+                  vault_certificate_authority_config_from_cp_auth_token = {
+                    token = {
+                      data_source_secret = {
+                        secret = "...my_secret..."
+                      }
+                    }
+                  }
+                }
+                common_name = "...my_common_name..."
+                namespace   = "...my_namespace..."
+                pki         = "...my_pki..."
+                role        = "...my_role..."
+                tls = {
+                  ca_cert = {
+                    data_source_secret = {
+                      secret = "...my_secret..."
+                    }
+                  }
+                  server_name = "...my_server_name..."
+                  skip_verify = false
+                }
+              }
+            }
           }
         }
         dp_cert = {

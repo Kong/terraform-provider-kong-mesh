@@ -261,7 +261,7 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.
 					} else {
 						weight1 = nil
 					}
-					backendRef := shared.MeshHTTPRouteItemBackendRef{
+					backendRef := shared.BackendRef{
 						Kind:        kind2,
 						Labels:      labels3,
 						Mesh:        mesh3,
@@ -451,7 +451,7 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.
 				BackendRefs: backendRefs,
 				Filters:     filters,
 			}
-			matches := make([]shared.Matches, 0, len(rulesItem.Matches))
+			matches := make([]shared.MeshHTTPRouteItemMatches, 0, len(rulesItem.Matches))
 			for _, matchesItem := range rulesItem.Matches {
 				headers := make([]shared.Headers, 0, len(matchesItem.Headers))
 				for _, headersItem := range matchesItem.Headers {
@@ -508,7 +508,7 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.
 						Value: value6,
 					})
 				}
-				matches = append(matches, shared.Matches{
+				matches = append(matches, shared.MeshHTTPRouteItemMatches{
 					Headers:     headers,
 					Method:      method,
 					Path:        path2,
@@ -594,7 +594,7 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.
 	return &out, diags
 }
 
-func (r *MeshHTTPRouteResourceModel) ToOperationsCreateMeshHTTPRouteRequest(ctx context.Context) (*operations.CreateMeshHTTPRouteRequest, diag.Diagnostics) {
+func (r *MeshHTTPRouteResourceModel) ToOperationsPutMeshHTTPRouteRequest(ctx context.Context) (*operations.PutMeshHTTPRouteRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var mesh string
@@ -610,32 +610,7 @@ func (r *MeshHTTPRouteResourceModel) ToOperationsCreateMeshHTTPRouteRequest(ctx 
 		return nil, diags
 	}
 
-	out := operations.CreateMeshHTTPRouteRequest{
-		Mesh:              mesh,
-		Name:              name,
-		MeshHTTPRouteItem: *meshHTTPRouteItem,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshHTTPRouteResourceModel) ToOperationsUpdateMeshHTTPRouteRequest(ctx context.Context) (*operations.UpdateMeshHTTPRouteRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	meshHTTPRouteItem, meshHTTPRouteItemDiags := r.ToSharedMeshHTTPRouteItemInput(ctx)
-	diags.Append(meshHTTPRouteItemDiags...)
-
-	if diags.HasError() {
-		return nil, diags
-	}
-
-	out := operations.UpdateMeshHTTPRouteRequest{
+	out := operations.PutMeshHTTPRouteRequest{
 		Mesh:              mesh,
 		Name:              name,
 		MeshHTTPRouteItem: *meshHTTPRouteItem,
@@ -942,9 +917,9 @@ func (r *MeshHTTPRouteResourceModel) RefreshFromSharedMeshHTTPRouteItem(ctx cont
 						rules.Default.Filters[filtersCount].URLRewrite = filters.URLRewrite
 					}
 				}
-				rules.Matches = []tfTypes.Matches{}
+				rules.Matches = []tfTypes.MeshHTTPRouteItemMatches{}
 				for matchesCount, matchesItem := range rulesItem.Matches {
-					var matches tfTypes.Matches
+					var matches tfTypes.MeshHTTPRouteItemMatches
 					matches.Headers = []tfTypes.Headers{}
 					for headersCount, headersItem := range matchesItem.Headers {
 						var headers tfTypes.Headers
@@ -971,7 +946,7 @@ func (r *MeshHTTPRouteResourceModel) RefreshFromSharedMeshHTTPRouteItem(ctx cont
 					if matchesItem.Path == nil {
 						matches.Path = nil
 					} else {
-						matches.Path = &tfTypes.Path{}
+						matches.Path = &tfTypes.MeshFaultInjectionItemSpiffeID{}
 						matches.Path.Type = types.StringValue(string(matchesItem.Path.Type))
 						matches.Path.Value = types.StringValue(matchesItem.Path.Value)
 					}

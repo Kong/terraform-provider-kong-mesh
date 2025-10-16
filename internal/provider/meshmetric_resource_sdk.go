@@ -253,7 +253,7 @@ func (r *MeshMetricResourceModel) ToSharedMeshMetricItemInput(ctx context.Contex
 	return &out, diags
 }
 
-func (r *MeshMetricResourceModel) ToOperationsCreateMeshMetricRequest(ctx context.Context) (*operations.CreateMeshMetricRequest, diag.Diagnostics) {
+func (r *MeshMetricResourceModel) ToOperationsPutMeshMetricRequest(ctx context.Context) (*operations.PutMeshMetricRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var mesh string
@@ -269,32 +269,7 @@ func (r *MeshMetricResourceModel) ToOperationsCreateMeshMetricRequest(ctx contex
 		return nil, diags
 	}
 
-	out := operations.CreateMeshMetricRequest{
-		Mesh:           mesh,
-		Name:           name,
-		MeshMetricItem: *meshMetricItem,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshMetricResourceModel) ToOperationsUpdateMeshMetricRequest(ctx context.Context) (*operations.UpdateMeshMetricRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	meshMetricItem, meshMetricItemDiags := r.ToSharedMeshMetricItemInput(ctx)
-	diags.Append(meshMetricItemDiags...)
-
-	if diags.HasError() {
-		return nil, diags
-	}
-
-	out := operations.UpdateMeshMetricRequest{
+	out := operations.PutMeshMetricRequest{
 		Mesh:           mesh,
 		Name:           name,
 		MeshMetricItem: *meshMetricItem,
@@ -435,12 +410,12 @@ func (r *MeshMetricResourceModel) RefreshFromSharedMeshMetricItem(ctx context.Co
 					r.Spec.Default.Sidecar.Profiles = nil
 				} else {
 					r.Spec.Default.Sidecar.Profiles = &tfTypes.Profiles{}
-					r.Spec.Default.Sidecar.Profiles.AppendProfiles = []tfTypes.MeshLoadBalancingStrategyItemSpecHeader{}
+					r.Spec.Default.Sidecar.Profiles.AppendProfiles = []tfTypes.EnvVar{}
 					if len(r.Spec.Default.Sidecar.Profiles.AppendProfiles) > len(resp.Spec.Default.Sidecar.Profiles.AppendProfiles) {
 						r.Spec.Default.Sidecar.Profiles.AppendProfiles = r.Spec.Default.Sidecar.Profiles.AppendProfiles[:len(resp.Spec.Default.Sidecar.Profiles.AppendProfiles)]
 					}
 					for appendProfilesCount, appendProfilesItem := range resp.Spec.Default.Sidecar.Profiles.AppendProfiles {
-						var appendProfiles tfTypes.MeshLoadBalancingStrategyItemSpecHeader
+						var appendProfiles tfTypes.EnvVar
 						appendProfiles.Name = types.StringValue(string(appendProfilesItem.Name))
 						if appendProfilesCount+1 > len(r.Spec.Default.Sidecar.Profiles.AppendProfiles) {
 							r.Spec.Default.Sidecar.Profiles.AppendProfiles = append(r.Spec.Default.Sidecar.Profiles.AppendProfiles, appendProfiles)

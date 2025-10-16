@@ -192,6 +192,189 @@ func (o *MeshLoadBalancingStrategyItemTargetRef) GetTags() map[string]string {
 	return o.Tags
 }
 
+type Connection struct {
+	// Hash on source IP address.
+	SourceIP *bool `json:"sourceIP,omitempty"`
+}
+
+func (o *Connection) GetSourceIP() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.SourceIP
+}
+
+type Cookie struct {
+	// The name of the cookie that will be used to obtain the hash key.
+	Name string `json:"name"`
+	// The name of the path for the cookie.
+	Path *string `json:"path,omitempty"`
+	// If specified, a cookie with the TTL will be generated if the cookie is not present.
+	TTL *string `json:"ttl,omitempty"`
+}
+
+func (o *Cookie) GetName() string {
+	if o == nil {
+		return ""
+	}
+	return o.Name
+}
+
+func (o *Cookie) GetPath() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Path
+}
+
+func (o *Cookie) GetTTL() *string {
+	if o == nil {
+		return nil
+	}
+	return o.TTL
+}
+
+type FilterState struct {
+	// The name of the Object in the per-request filterState, which is
+	// an Envoy::Hashable object. If there is no data associated with the key,
+	// or the stored object is not Envoy::Hashable, no hash will be produced.
+	Key string `json:"key"`
+}
+
+func (o *FilterState) GetKey() string {
+	if o == nil {
+		return ""
+	}
+	return o.Key
+}
+
+type MeshLoadBalancingStrategyItemHeader struct {
+	// The name of the request header that will be used to obtain the hash key.
+	Name string `json:"name"`
+}
+
+func (o *MeshLoadBalancingStrategyItemHeader) GetName() string {
+	if o == nil {
+		return ""
+	}
+	return o.Name
+}
+
+type QueryParameter struct {
+	// The name of the URL query parameter that will be used to obtain the hash key.
+	// If the parameter is not present, no hash will be produced. Query parameter names
+	// are case-sensitive.
+	Name string `json:"name"`
+}
+
+func (o *QueryParameter) GetName() string {
+	if o == nil {
+		return ""
+	}
+	return o.Name
+}
+
+type MeshLoadBalancingStrategyItemSpecType string
+
+const (
+	MeshLoadBalancingStrategyItemSpecTypeHeader         MeshLoadBalancingStrategyItemSpecType = "Header"
+	MeshLoadBalancingStrategyItemSpecTypeCookie         MeshLoadBalancingStrategyItemSpecType = "Cookie"
+	MeshLoadBalancingStrategyItemSpecTypeConnection     MeshLoadBalancingStrategyItemSpecType = "Connection"
+	MeshLoadBalancingStrategyItemSpecTypeSourceIP       MeshLoadBalancingStrategyItemSpecType = "SourceIP"
+	MeshLoadBalancingStrategyItemSpecTypeQueryParameter MeshLoadBalancingStrategyItemSpecType = "QueryParameter"
+	MeshLoadBalancingStrategyItemSpecTypeFilterState    MeshLoadBalancingStrategyItemSpecType = "FilterState"
+)
+
+func (e MeshLoadBalancingStrategyItemSpecType) ToPointer() *MeshLoadBalancingStrategyItemSpecType {
+	return &e
+}
+func (e *MeshLoadBalancingStrategyItemSpecType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "Header":
+		fallthrough
+	case "Cookie":
+		fallthrough
+	case "Connection":
+		fallthrough
+	case "SourceIP":
+		fallthrough
+	case "QueryParameter":
+		fallthrough
+	case "FilterState":
+		*e = MeshLoadBalancingStrategyItemSpecType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshLoadBalancingStrategyItemSpecType: %v", v)
+	}
+}
+
+type HashPolicies struct {
+	Connection     *Connection                          `json:"connection,omitempty"`
+	Cookie         *Cookie                              `json:"cookie,omitempty"`
+	FilterState    *FilterState                         `json:"filterState,omitempty"`
+	Header         *MeshLoadBalancingStrategyItemHeader `json:"header,omitempty"`
+	QueryParameter *QueryParameter                      `json:"queryParameter,omitempty"`
+	// Terminal is a flag that short-circuits the hash computing. This field provides
+	// a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback
+	// to rest of the policy list”, it saves time when the terminal policy works.
+	// If true, and there is already a hash computed, ignore rest of the list of hash polices.
+	Terminal *bool                                 `json:"terminal,omitempty"`
+	Type     MeshLoadBalancingStrategyItemSpecType `json:"type"`
+}
+
+func (o *HashPolicies) GetConnection() *Connection {
+	if o == nil {
+		return nil
+	}
+	return o.Connection
+}
+
+func (o *HashPolicies) GetCookie() *Cookie {
+	if o == nil {
+		return nil
+	}
+	return o.Cookie
+}
+
+func (o *HashPolicies) GetFilterState() *FilterState {
+	if o == nil {
+		return nil
+	}
+	return o.FilterState
+}
+
+func (o *HashPolicies) GetHeader() *MeshLoadBalancingStrategyItemHeader {
+	if o == nil {
+		return nil
+	}
+	return o.Header
+}
+
+func (o *HashPolicies) GetQueryParameter() *QueryParameter {
+	if o == nil {
+		return nil
+	}
+	return o.QueryParameter
+}
+
+func (o *HashPolicies) GetTerminal() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.Terminal
+}
+
+func (o *HashPolicies) GetType() MeshLoadBalancingStrategyItemSpecType {
+	if o == nil {
+		return MeshLoadBalancingStrategyItemSpecType("")
+	}
+	return o.Type
+}
+
 type ActiveRequestBiasType string
 
 const (
@@ -289,255 +472,6 @@ func (o *LeastRequest) GetChoiceCount() *int {
 	return o.ChoiceCount
 }
 
-type Connection struct {
-	// Hash on source IP address.
-	SourceIP *bool `json:"sourceIP,omitempty"`
-}
-
-func (o *Connection) GetSourceIP() *bool {
-	if o == nil {
-		return nil
-	}
-	return o.SourceIP
-}
-
-type Cookie struct {
-	// The name of the cookie that will be used to obtain the hash key.
-	Name string `json:"name"`
-	// The name of the path for the cookie.
-	Path *string `json:"path,omitempty"`
-	// If specified, a cookie with the TTL will be generated if the cookie is not present.
-	TTL *string `json:"ttl,omitempty"`
-}
-
-func (o *Cookie) GetName() string {
-	if o == nil {
-		return ""
-	}
-	return o.Name
-}
-
-func (o *Cookie) GetPath() *string {
-	if o == nil {
-		return nil
-	}
-	return o.Path
-}
-
-func (o *Cookie) GetTTL() *string {
-	if o == nil {
-		return nil
-	}
-	return o.TTL
-}
-
-type FilterState struct {
-	// The name of the Object in the per-request filterState, which is
-	// an Envoy::Hashable object. If there is no data associated with the key,
-	// or the stored object is not Envoy::Hashable, no hash will be produced.
-	Key string `json:"key"`
-}
-
-func (o *FilterState) GetKey() string {
-	if o == nil {
-		return ""
-	}
-	return o.Key
-}
-
-type MeshLoadBalancingStrategyItemSpecHeader struct {
-	// The name of the request header that will be used to obtain the hash key.
-	Name string `json:"name"`
-}
-
-func (o *MeshLoadBalancingStrategyItemSpecHeader) GetName() string {
-	if o == nil {
-		return ""
-	}
-	return o.Name
-}
-
-type QueryParameter struct {
-	// The name of the URL query parameter that will be used to obtain the hash key.
-	// If the parameter is not present, no hash will be produced. Query parameter names
-	// are case-sensitive.
-	Name string `json:"name"`
-}
-
-func (o *QueryParameter) GetName() string {
-	if o == nil {
-		return ""
-	}
-	return o.Name
-}
-
-type MeshLoadBalancingStrategyItemSpecToDefaultType string
-
-const (
-	MeshLoadBalancingStrategyItemSpecToDefaultTypeHeader         MeshLoadBalancingStrategyItemSpecToDefaultType = "Header"
-	MeshLoadBalancingStrategyItemSpecToDefaultTypeCookie         MeshLoadBalancingStrategyItemSpecToDefaultType = "Cookie"
-	MeshLoadBalancingStrategyItemSpecToDefaultTypeConnection     MeshLoadBalancingStrategyItemSpecToDefaultType = "Connection"
-	MeshLoadBalancingStrategyItemSpecToDefaultTypeSourceIP       MeshLoadBalancingStrategyItemSpecToDefaultType = "SourceIP"
-	MeshLoadBalancingStrategyItemSpecToDefaultTypeQueryParameter MeshLoadBalancingStrategyItemSpecToDefaultType = "QueryParameter"
-	MeshLoadBalancingStrategyItemSpecToDefaultTypeFilterState    MeshLoadBalancingStrategyItemSpecToDefaultType = "FilterState"
-)
-
-func (e MeshLoadBalancingStrategyItemSpecToDefaultType) ToPointer() *MeshLoadBalancingStrategyItemSpecToDefaultType {
-	return &e
-}
-func (e *MeshLoadBalancingStrategyItemSpecToDefaultType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "Header":
-		fallthrough
-	case "Cookie":
-		fallthrough
-	case "Connection":
-		fallthrough
-	case "SourceIP":
-		fallthrough
-	case "QueryParameter":
-		fallthrough
-	case "FilterState":
-		*e = MeshLoadBalancingStrategyItemSpecToDefaultType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshLoadBalancingStrategyItemSpecToDefaultType: %v", v)
-	}
-}
-
-type HashPolicies struct {
-	Connection     *Connection                              `json:"connection,omitempty"`
-	Cookie         *Cookie                                  `json:"cookie,omitempty"`
-	FilterState    *FilterState                             `json:"filterState,omitempty"`
-	Header         *MeshLoadBalancingStrategyItemSpecHeader `json:"header,omitempty"`
-	QueryParameter *QueryParameter                          `json:"queryParameter,omitempty"`
-	// Terminal is a flag that short-circuits the hash computing. This field provides
-	// a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback
-	// to rest of the policy list”, it saves time when the terminal policy works.
-	// If true, and there is already a hash computed, ignore rest of the list of hash polices.
-	Terminal *bool                                          `json:"terminal,omitempty"`
-	Type     MeshLoadBalancingStrategyItemSpecToDefaultType `json:"type"`
-}
-
-func (o *HashPolicies) GetConnection() *Connection {
-	if o == nil {
-		return nil
-	}
-	return o.Connection
-}
-
-func (o *HashPolicies) GetCookie() *Cookie {
-	if o == nil {
-		return nil
-	}
-	return o.Cookie
-}
-
-func (o *HashPolicies) GetFilterState() *FilterState {
-	if o == nil {
-		return nil
-	}
-	return o.FilterState
-}
-
-func (o *HashPolicies) GetHeader() *MeshLoadBalancingStrategyItemSpecHeader {
-	if o == nil {
-		return nil
-	}
-	return o.Header
-}
-
-func (o *HashPolicies) GetQueryParameter() *QueryParameter {
-	if o == nil {
-		return nil
-	}
-	return o.QueryParameter
-}
-
-func (o *HashPolicies) GetTerminal() *bool {
-	if o == nil {
-		return nil
-	}
-	return o.Terminal
-}
-
-func (o *HashPolicies) GetType() MeshLoadBalancingStrategyItemSpecToDefaultType {
-	if o == nil {
-		return MeshLoadBalancingStrategyItemSpecToDefaultType("")
-	}
-	return o.Type
-}
-
-// Maglev implements consistent hashing to upstream hosts. Maglev can be used as
-// a drop in replacement for the ring hash load balancer any place in which
-// consistent hashing is desired.
-type Maglev struct {
-	// HashPolicies specify a list of request/connection properties that are used to calculate a hash.
-	// These hash policies are executed in the specified order. If a hash policy has the “terminal” attribute
-	// set to true, and there is already a hash generated, the hash is returned immediately,
-	// ignoring the rest of the hash policy list.
-	HashPolicies []HashPolicies `json:"hashPolicies,omitempty"`
-	// The table size for Maglev hashing. Maglev aims for “minimal disruption”
-	// rather than an absolute guarantee. Minimal disruption means that when
-	// the set of upstream hosts change, a connection will likely be sent
-	// to the same upstream as it was before. Increasing the table size reduces
-	// the amount of disruption. The table size must be prime number limited to 5000011.
-	// If it is not specified, the default is 65537.
-	TableSize *int `json:"tableSize,omitempty"`
-}
-
-func (o *Maglev) GetHashPolicies() []HashPolicies {
-	if o == nil {
-		return nil
-	}
-	return o.HashPolicies
-}
-
-func (o *Maglev) GetTableSize() *int {
-	if o == nil {
-		return nil
-	}
-	return o.TableSize
-}
-
-// MeshLoadBalancingStrategyItemRandom - Random selects a random available host. The random load balancer generally
-// performs better than round-robin if no health checking policy is configured.
-// Random selection avoids bias towards the host in the set that comes after a failed host.
-type MeshLoadBalancingStrategyItemRandom struct {
-}
-
-// HashFunction is a function used to hash hosts onto the ketama ring.
-// The value defaults to XX_HASH. Available values – XX_HASH, MURMUR_HASH_2.
-type HashFunction string
-
-const (
-	HashFunctionXxHash      HashFunction = "XXHash"
-	HashFunctionMurmurHash2 HashFunction = "MurmurHash2"
-)
-
-func (e HashFunction) ToPointer() *HashFunction {
-	return &e
-}
-func (e *HashFunction) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "XXHash":
-		fallthrough
-	case "MurmurHash2":
-		*e = HashFunction(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for HashFunction: %v", v)
-	}
-}
-
 type MeshLoadBalancingStrategyItemConnection struct {
 	// Hash on source IP address.
 	SourceIP *bool `json:"sourceIP,omitempty"`
@@ -594,12 +528,12 @@ func (o *MeshLoadBalancingStrategyItemFilterState) GetKey() string {
 	return o.Key
 }
 
-type MeshLoadBalancingStrategyItemHeader struct {
+type MeshLoadBalancingStrategyItemSpecToHeader struct {
 	// The name of the request header that will be used to obtain the hash key.
 	Name string `json:"name"`
 }
 
-func (o *MeshLoadBalancingStrategyItemHeader) GetName() string {
+func (o *MeshLoadBalancingStrategyItemSpecToHeader) GetName() string {
 	if o == nil {
 		return ""
 	}
@@ -620,21 +554,21 @@ func (o *MeshLoadBalancingStrategyItemQueryParameter) GetName() string {
 	return o.Name
 }
 
-type MeshLoadBalancingStrategyItemSpecToType string
+type MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType string
 
 const (
-	MeshLoadBalancingStrategyItemSpecToTypeHeader         MeshLoadBalancingStrategyItemSpecToType = "Header"
-	MeshLoadBalancingStrategyItemSpecToTypeCookie         MeshLoadBalancingStrategyItemSpecToType = "Cookie"
-	MeshLoadBalancingStrategyItemSpecToTypeConnection     MeshLoadBalancingStrategyItemSpecToType = "Connection"
-	MeshLoadBalancingStrategyItemSpecToTypeSourceIP       MeshLoadBalancingStrategyItemSpecToType = "SourceIP"
-	MeshLoadBalancingStrategyItemSpecToTypeQueryParameter MeshLoadBalancingStrategyItemSpecToType = "QueryParameter"
-	MeshLoadBalancingStrategyItemSpecToTypeFilterState    MeshLoadBalancingStrategyItemSpecToType = "FilterState"
+	MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerTypeHeader         MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType = "Header"
+	MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerTypeCookie         MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType = "Cookie"
+	MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerTypeConnection     MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType = "Connection"
+	MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerTypeSourceIP       MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType = "SourceIP"
+	MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerTypeQueryParameter MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType = "QueryParameter"
+	MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerTypeFilterState    MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType = "FilterState"
 )
 
-func (e MeshLoadBalancingStrategyItemSpecToType) ToPointer() *MeshLoadBalancingStrategyItemSpecToType {
+func (e MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType) ToPointer() *MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType {
 	return &e
 }
-func (e *MeshLoadBalancingStrategyItemSpecToType) UnmarshalJSON(data []byte) error {
+func (e *MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -651,10 +585,10 @@ func (e *MeshLoadBalancingStrategyItemSpecToType) UnmarshalJSON(data []byte) err
 	case "QueryParameter":
 		fallthrough
 	case "FilterState":
-		*e = MeshLoadBalancingStrategyItemSpecToType(v)
+		*e = MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for MeshLoadBalancingStrategyItemSpecToType: %v", v)
+		return fmt.Errorf("invalid value for MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType: %v", v)
 	}
 }
 
@@ -662,14 +596,14 @@ type MeshLoadBalancingStrategyItemHashPolicies struct {
 	Connection     *MeshLoadBalancingStrategyItemConnection     `json:"connection,omitempty"`
 	Cookie         *MeshLoadBalancingStrategyItemCookie         `json:"cookie,omitempty"`
 	FilterState    *MeshLoadBalancingStrategyItemFilterState    `json:"filterState,omitempty"`
-	Header         *MeshLoadBalancingStrategyItemHeader         `json:"header,omitempty"`
+	Header         *MeshLoadBalancingStrategyItemSpecToHeader   `json:"header,omitempty"`
 	QueryParameter *MeshLoadBalancingStrategyItemQueryParameter `json:"queryParameter,omitempty"`
 	// Terminal is a flag that short-circuits the hash computing. This field provides
 	// a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback
 	// to rest of the policy list”, it saves time when the terminal policy works.
 	// If true, and there is already a hash computed, ignore rest of the list of hash polices.
-	Terminal *bool                                   `json:"terminal,omitempty"`
-	Type     MeshLoadBalancingStrategyItemSpecToType `json:"type"`
+	Terminal *bool                                                      `json:"terminal,omitempty"`
+	Type     MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType `json:"type"`
 }
 
 func (o *MeshLoadBalancingStrategyItemHashPolicies) GetConnection() *MeshLoadBalancingStrategyItemConnection {
@@ -693,7 +627,7 @@ func (o *MeshLoadBalancingStrategyItemHashPolicies) GetFilterState() *MeshLoadBa
 	return o.FilterState
 }
 
-func (o *MeshLoadBalancingStrategyItemHashPolicies) GetHeader() *MeshLoadBalancingStrategyItemHeader {
+func (o *MeshLoadBalancingStrategyItemHashPolicies) GetHeader() *MeshLoadBalancingStrategyItemSpecToHeader {
 	if o == nil {
 		return nil
 	}
@@ -714,9 +648,258 @@ func (o *MeshLoadBalancingStrategyItemHashPolicies) GetTerminal() *bool {
 	return o.Terminal
 }
 
-func (o *MeshLoadBalancingStrategyItemHashPolicies) GetType() MeshLoadBalancingStrategyItemSpecToType {
+func (o *MeshLoadBalancingStrategyItemHashPolicies) GetType() MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType {
 	if o == nil {
-		return MeshLoadBalancingStrategyItemSpecToType("")
+		return MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType("")
+	}
+	return o.Type
+}
+
+// Maglev implements consistent hashing to upstream hosts. Maglev can be used as
+// a drop in replacement for the ring hash load balancer any place in which
+// consistent hashing is desired.
+type Maglev struct {
+	// HashPolicies specify a list of request/connection properties that are used to calculate a hash.
+	// These hash policies are executed in the specified order. If a hash policy has the “terminal” attribute
+	// set to true, and there is already a hash generated, the hash is returned immediately,
+	// ignoring the rest of the hash policy list.
+	HashPolicies []MeshLoadBalancingStrategyItemHashPolicies `json:"hashPolicies,omitempty"`
+	// The table size for Maglev hashing. Maglev aims for “minimal disruption”
+	// rather than an absolute guarantee. Minimal disruption means that when
+	// the set of upstream hosts change, a connection will likely be sent
+	// to the same upstream as it was before. Increasing the table size reduces
+	// the amount of disruption. The table size must be prime number limited to 5000011.
+	// If it is not specified, the default is 65537.
+	TableSize *int `json:"tableSize,omitempty"`
+}
+
+func (o *Maglev) GetHashPolicies() []MeshLoadBalancingStrategyItemHashPolicies {
+	if o == nil {
+		return nil
+	}
+	return o.HashPolicies
+}
+
+func (o *Maglev) GetTableSize() *int {
+	if o == nil {
+		return nil
+	}
+	return o.TableSize
+}
+
+// MeshLoadBalancingStrategyItemRandom - Random selects a random available host. The random load balancer generally
+// performs better than round-robin if no health checking policy is configured.
+// Random selection avoids bias towards the host in the set that comes after a failed host.
+type MeshLoadBalancingStrategyItemRandom struct {
+}
+
+// HashFunction is a function used to hash hosts onto the ketama ring.
+// The value defaults to XX_HASH. Available values – XX_HASH, MURMUR_HASH_2.
+type HashFunction string
+
+const (
+	HashFunctionXxHash      HashFunction = "XXHash"
+	HashFunctionMurmurHash2 HashFunction = "MurmurHash2"
+)
+
+func (e HashFunction) ToPointer() *HashFunction {
+	return &e
+}
+func (e *HashFunction) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "XXHash":
+		fallthrough
+	case "MurmurHash2":
+		*e = HashFunction(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for HashFunction: %v", v)
+	}
+}
+
+type MeshLoadBalancingStrategyItemSpecConnection struct {
+	// Hash on source IP address.
+	SourceIP *bool `json:"sourceIP,omitempty"`
+}
+
+func (o *MeshLoadBalancingStrategyItemSpecConnection) GetSourceIP() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.SourceIP
+}
+
+type MeshLoadBalancingStrategyItemSpecCookie struct {
+	// The name of the cookie that will be used to obtain the hash key.
+	Name string `json:"name"`
+	// The name of the path for the cookie.
+	Path *string `json:"path,omitempty"`
+	// If specified, a cookie with the TTL will be generated if the cookie is not present.
+	TTL *string `json:"ttl,omitempty"`
+}
+
+func (o *MeshLoadBalancingStrategyItemSpecCookie) GetName() string {
+	if o == nil {
+		return ""
+	}
+	return o.Name
+}
+
+func (o *MeshLoadBalancingStrategyItemSpecCookie) GetPath() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Path
+}
+
+func (o *MeshLoadBalancingStrategyItemSpecCookie) GetTTL() *string {
+	if o == nil {
+		return nil
+	}
+	return o.TTL
+}
+
+type MeshLoadBalancingStrategyItemSpecFilterState struct {
+	// The name of the Object in the per-request filterState, which is
+	// an Envoy::Hashable object. If there is no data associated with the key,
+	// or the stored object is not Envoy::Hashable, no hash will be produced.
+	Key string `json:"key"`
+}
+
+func (o *MeshLoadBalancingStrategyItemSpecFilterState) GetKey() string {
+	if o == nil {
+		return ""
+	}
+	return o.Key
+}
+
+type MeshLoadBalancingStrategyItemSpecHeader struct {
+	// The name of the request header that will be used to obtain the hash key.
+	Name string `json:"name"`
+}
+
+func (o *MeshLoadBalancingStrategyItemSpecHeader) GetName() string {
+	if o == nil {
+		return ""
+	}
+	return o.Name
+}
+
+type MeshLoadBalancingStrategyItemSpecQueryParameter struct {
+	// The name of the URL query parameter that will be used to obtain the hash key.
+	// If the parameter is not present, no hash will be produced. Query parameter names
+	// are case-sensitive.
+	Name string `json:"name"`
+}
+
+func (o *MeshLoadBalancingStrategyItemSpecQueryParameter) GetName() string {
+	if o == nil {
+		return ""
+	}
+	return o.Name
+}
+
+type MeshLoadBalancingStrategyItemSpecToDefaultType string
+
+const (
+	MeshLoadBalancingStrategyItemSpecToDefaultTypeHeader         MeshLoadBalancingStrategyItemSpecToDefaultType = "Header"
+	MeshLoadBalancingStrategyItemSpecToDefaultTypeCookie         MeshLoadBalancingStrategyItemSpecToDefaultType = "Cookie"
+	MeshLoadBalancingStrategyItemSpecToDefaultTypeConnection     MeshLoadBalancingStrategyItemSpecToDefaultType = "Connection"
+	MeshLoadBalancingStrategyItemSpecToDefaultTypeSourceIP       MeshLoadBalancingStrategyItemSpecToDefaultType = "SourceIP"
+	MeshLoadBalancingStrategyItemSpecToDefaultTypeQueryParameter MeshLoadBalancingStrategyItemSpecToDefaultType = "QueryParameter"
+	MeshLoadBalancingStrategyItemSpecToDefaultTypeFilterState    MeshLoadBalancingStrategyItemSpecToDefaultType = "FilterState"
+)
+
+func (e MeshLoadBalancingStrategyItemSpecToDefaultType) ToPointer() *MeshLoadBalancingStrategyItemSpecToDefaultType {
+	return &e
+}
+func (e *MeshLoadBalancingStrategyItemSpecToDefaultType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "Header":
+		fallthrough
+	case "Cookie":
+		fallthrough
+	case "Connection":
+		fallthrough
+	case "SourceIP":
+		fallthrough
+	case "QueryParameter":
+		fallthrough
+	case "FilterState":
+		*e = MeshLoadBalancingStrategyItemSpecToDefaultType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshLoadBalancingStrategyItemSpecToDefaultType: %v", v)
+	}
+}
+
+type MeshLoadBalancingStrategyItemSpecHashPolicies struct {
+	Connection     *MeshLoadBalancingStrategyItemSpecConnection     `json:"connection,omitempty"`
+	Cookie         *MeshLoadBalancingStrategyItemSpecCookie         `json:"cookie,omitempty"`
+	FilterState    *MeshLoadBalancingStrategyItemSpecFilterState    `json:"filterState,omitempty"`
+	Header         *MeshLoadBalancingStrategyItemSpecHeader         `json:"header,omitempty"`
+	QueryParameter *MeshLoadBalancingStrategyItemSpecQueryParameter `json:"queryParameter,omitempty"`
+	// Terminal is a flag that short-circuits the hash computing. This field provides
+	// a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback
+	// to rest of the policy list”, it saves time when the terminal policy works.
+	// If true, and there is already a hash computed, ignore rest of the list of hash polices.
+	Terminal *bool                                          `json:"terminal,omitempty"`
+	Type     MeshLoadBalancingStrategyItemSpecToDefaultType `json:"type"`
+}
+
+func (o *MeshLoadBalancingStrategyItemSpecHashPolicies) GetConnection() *MeshLoadBalancingStrategyItemSpecConnection {
+	if o == nil {
+		return nil
+	}
+	return o.Connection
+}
+
+func (o *MeshLoadBalancingStrategyItemSpecHashPolicies) GetCookie() *MeshLoadBalancingStrategyItemSpecCookie {
+	if o == nil {
+		return nil
+	}
+	return o.Cookie
+}
+
+func (o *MeshLoadBalancingStrategyItemSpecHashPolicies) GetFilterState() *MeshLoadBalancingStrategyItemSpecFilterState {
+	if o == nil {
+		return nil
+	}
+	return o.FilterState
+}
+
+func (o *MeshLoadBalancingStrategyItemSpecHashPolicies) GetHeader() *MeshLoadBalancingStrategyItemSpecHeader {
+	if o == nil {
+		return nil
+	}
+	return o.Header
+}
+
+func (o *MeshLoadBalancingStrategyItemSpecHashPolicies) GetQueryParameter() *MeshLoadBalancingStrategyItemSpecQueryParameter {
+	if o == nil {
+		return nil
+	}
+	return o.QueryParameter
+}
+
+func (o *MeshLoadBalancingStrategyItemSpecHashPolicies) GetTerminal() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.Terminal
+}
+
+func (o *MeshLoadBalancingStrategyItemSpecHashPolicies) GetType() MeshLoadBalancingStrategyItemSpecToDefaultType {
+	if o == nil {
+		return MeshLoadBalancingStrategyItemSpecToDefaultType("")
 	}
 	return o.Type
 }
@@ -733,7 +916,7 @@ type RingHash struct {
 	// These hash policies are executed in the specified order. If a hash policy has the “terminal” attribute
 	// set to true, and there is already a hash generated, the hash is returned immediately,
 	// ignoring the rest of the hash policy list.
-	HashPolicies []MeshLoadBalancingStrategyItemHashPolicies `json:"hashPolicies,omitempty"`
+	HashPolicies []MeshLoadBalancingStrategyItemSpecHashPolicies `json:"hashPolicies,omitempty"`
 	// Maximum hash ring size. Defaults to 8M entries, and limited to 8M entries,
 	// but can be lowered to further constrain resource use.
 	MaxRingSize *int `json:"maxRingSize,omitempty"`
@@ -750,7 +933,7 @@ func (o *RingHash) GetHashFunction() *HashFunction {
 	return o.HashFunction
 }
 
-func (o *RingHash) GetHashPolicies() []MeshLoadBalancingStrategyItemHashPolicies {
+func (o *RingHash) GetHashPolicies() []MeshLoadBalancingStrategyItemSpecHashPolicies {
 	if o == nil {
 		return nil
 	}
@@ -776,20 +959,20 @@ func (o *RingHash) GetMinRingSize() *int {
 type RoundRobin struct {
 }
 
-type MeshLoadBalancingStrategyItemSpecType string
+type MeshLoadBalancingStrategyItemSpecToType string
 
 const (
-	MeshLoadBalancingStrategyItemSpecTypeRoundRobin   MeshLoadBalancingStrategyItemSpecType = "RoundRobin"
-	MeshLoadBalancingStrategyItemSpecTypeLeastRequest MeshLoadBalancingStrategyItemSpecType = "LeastRequest"
-	MeshLoadBalancingStrategyItemSpecTypeRingHash     MeshLoadBalancingStrategyItemSpecType = "RingHash"
-	MeshLoadBalancingStrategyItemSpecTypeRandom       MeshLoadBalancingStrategyItemSpecType = "Random"
-	MeshLoadBalancingStrategyItemSpecTypeMaglev       MeshLoadBalancingStrategyItemSpecType = "Maglev"
+	MeshLoadBalancingStrategyItemSpecToTypeRoundRobin   MeshLoadBalancingStrategyItemSpecToType = "RoundRobin"
+	MeshLoadBalancingStrategyItemSpecToTypeLeastRequest MeshLoadBalancingStrategyItemSpecToType = "LeastRequest"
+	MeshLoadBalancingStrategyItemSpecToTypeRingHash     MeshLoadBalancingStrategyItemSpecToType = "RingHash"
+	MeshLoadBalancingStrategyItemSpecToTypeRandom       MeshLoadBalancingStrategyItemSpecToType = "Random"
+	MeshLoadBalancingStrategyItemSpecToTypeMaglev       MeshLoadBalancingStrategyItemSpecToType = "Maglev"
 )
 
-func (e MeshLoadBalancingStrategyItemSpecType) ToPointer() *MeshLoadBalancingStrategyItemSpecType {
+func (e MeshLoadBalancingStrategyItemSpecToType) ToPointer() *MeshLoadBalancingStrategyItemSpecToType {
 	return &e
 }
-func (e *MeshLoadBalancingStrategyItemSpecType) UnmarshalJSON(data []byte) error {
+func (e *MeshLoadBalancingStrategyItemSpecToType) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -804,10 +987,10 @@ func (e *MeshLoadBalancingStrategyItemSpecType) UnmarshalJSON(data []byte) error
 	case "Random":
 		fallthrough
 	case "Maglev":
-		*e = MeshLoadBalancingStrategyItemSpecType(v)
+		*e = MeshLoadBalancingStrategyItemSpecToType(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for MeshLoadBalancingStrategyItemSpecType: %v", v)
+		return fmt.Errorf("invalid value for MeshLoadBalancingStrategyItemSpecToType: %v", v)
 	}
 }
 
@@ -831,8 +1014,8 @@ type LoadBalancer struct {
 	RingHash *RingHash `json:"ringHash,omitempty"`
 	// RoundRobin is a load balancing algorithm that distributes requests
 	// across available upstream hosts in round-robin order.
-	RoundRobin *RoundRobin                           `json:"roundRobin,omitempty"`
-	Type       MeshLoadBalancingStrategyItemSpecType `json:"type"`
+	RoundRobin *RoundRobin                             `json:"roundRobin,omitempty"`
+	Type       MeshLoadBalancingStrategyItemSpecToType `json:"type"`
 }
 
 func (o *LoadBalancer) GetLeastRequest() *LeastRequest {
@@ -870,9 +1053,9 @@ func (o *LoadBalancer) GetRoundRobin() *RoundRobin {
 	return o.RoundRobin
 }
 
-func (o *LoadBalancer) GetType() MeshLoadBalancingStrategyItemSpecType {
+func (o *LoadBalancer) GetType() MeshLoadBalancingStrategyItemSpecToType {
 	if o == nil {
-		return MeshLoadBalancingStrategyItemSpecType("")
+		return MeshLoadBalancingStrategyItemSpecToType("")
 	}
 	return o.Type
 }
@@ -1145,10 +1328,22 @@ func (o *LocalityAwareness) GetLocalZone() *LocalZone {
 // MeshLoadBalancingStrategyItemDefault - Default is a configuration specific to the group of destinations referenced in
 // 'targetRef'
 type MeshLoadBalancingStrategyItemDefault struct {
+	// HashPolicies specify a list of request/connection properties that are used to calculate a hash.
+	// These hash policies are executed in the specified order. If a hash policy has the “terminal” attribute
+	// set to true, and there is already a hash generated, the hash is returned immediately,
+	// ignoring the rest of the hash policy list.
+	HashPolicies []HashPolicies `json:"hashPolicies,omitempty"`
 	// LoadBalancer allows to specify load balancing algorithm.
 	LoadBalancer *LoadBalancer `json:"loadBalancer,omitempty"`
 	// LocalityAwareness contains configuration for locality aware load balancing.
 	LocalityAwareness *LocalityAwareness `json:"localityAwareness,omitempty"`
+}
+
+func (o *MeshLoadBalancingStrategyItemDefault) GetHashPolicies() []HashPolicies {
+	if o == nil {
+		return nil
+	}
+	return o.HashPolicies
 }
 
 func (o *MeshLoadBalancingStrategyItemDefault) GetLoadBalancer() *LoadBalancer {

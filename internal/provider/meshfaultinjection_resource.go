@@ -19,6 +19,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	custom_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
+	speakeasy_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
@@ -105,6 +106,7 @@ func (r *MeshFaultInjectionResource) Schema(ctx context.Context, req resource.Sc
 				Required: true,
 				Attributes: map[string]schema.Attribute{
 					"from": schema.ListNestedAttribute{
+						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.List{
 							custom_listplanmodifier.SupressZeroNullModifier(),
@@ -118,6 +120,7 @@ func (r *MeshFaultInjectionResource) Schema(ctx context.Context, req resource.Sc
 									Optional: true,
 									Attributes: map[string]schema.Attribute{
 										"http": schema.ListNestedAttribute{
+											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.List{
 												custom_listplanmodifier.SupressZeroNullModifier(),
@@ -302,6 +305,7 @@ func (r *MeshFaultInjectionResource) Schema(ctx context.Context, req resource.Sc
 												`will be targeted.`,
 										},
 										"proxy_types": schema.ListAttribute{
+											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.List{
 												custom_listplanmodifier.SupressZeroNullModifier(),
@@ -332,6 +336,209 @@ func (r *MeshFaultInjectionResource) Schema(ctx context.Context, req resource.Sc
 							},
 						},
 						Description: `From list makes a match between clients and corresponding configurations`,
+					},
+					"rules": schema.ListNestedAttribute{
+						Computed: true,
+						Optional: true,
+						PlanModifiers: []planmodifier.List{
+							custom_listplanmodifier.SupressZeroNullModifier(),
+						},
+						NestedObject: schema.NestedAttributeObject{
+							Validators: []validator.Object{
+								speakeasy_objectvalidators.NotNull(),
+							},
+							Attributes: map[string]schema.Attribute{
+								"default": schema.SingleNestedAttribute{
+									Optional: true,
+									Attributes: map[string]schema.Attribute{
+										"http": schema.ListNestedAttribute{
+											Computed: true,
+											Optional: true,
+											PlanModifiers: []planmodifier.List{
+												custom_listplanmodifier.SupressZeroNullModifier(),
+											},
+											NestedObject: schema.NestedAttributeObject{
+												Validators: []validator.Object{
+													speakeasy_objectvalidators.NotNull(),
+												},
+												Attributes: map[string]schema.Attribute{
+													"abort": schema.SingleNestedAttribute{
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"http_status": schema.Int32Attribute{
+																Optional:    true,
+																Description: `HTTP status code which will be returned to source side. Not Null`,
+																Validators: []validator.Int32{
+																	speakeasy_int32validators.NotNull(),
+																},
+															},
+															"percentage": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"integer": schema.Int64Attribute{
+																		Optional: true,
+																		Validators: []validator.Int64{
+																			int64validator.ConflictsWith(path.Expressions{
+																				path.MatchRelative().AtParent().AtName("str"),
+																			}...),
+																		},
+																	},
+																	"str": schema.StringAttribute{
+																		Optional: true,
+																		Validators: []validator.String{
+																			stringvalidator.ConflictsWith(path.Expressions{
+																				path.MatchRelative().AtParent().AtName("integer"),
+																			}...),
+																		},
+																	},
+																},
+																MarkdownDescription: `Percentage of requests on which abort will be injected, has to be` + "\n" +
+																	`either int or decimal represented as string.` + "\n" +
+																	`Not Null`,
+																Validators: []validator.Object{
+																	speakeasy_objectvalidators.NotNull(),
+																},
+															},
+														},
+														MarkdownDescription: `Abort defines a configuration of not delivering requests to destination` + "\n" +
+															`service and replacing the responses from destination dataplane by` + "\n" +
+															`predefined status code`,
+													},
+													"delay": schema.SingleNestedAttribute{
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"percentage": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"integer": schema.Int64Attribute{
+																		Optional: true,
+																		Validators: []validator.Int64{
+																			int64validator.ConflictsWith(path.Expressions{
+																				path.MatchRelative().AtParent().AtName("str"),
+																			}...),
+																		},
+																	},
+																	"str": schema.StringAttribute{
+																		Optional: true,
+																		Validators: []validator.String{
+																			stringvalidator.ConflictsWith(path.Expressions{
+																				path.MatchRelative().AtParent().AtName("integer"),
+																			}...),
+																		},
+																	},
+																},
+																MarkdownDescription: `Percentage of requests on which delay will be injected, has to be` + "\n" +
+																	`either int or decimal represented as string.` + "\n" +
+																	`Not Null`,
+																Validators: []validator.Object{
+																	speakeasy_objectvalidators.NotNull(),
+																},
+															},
+															"value": schema.StringAttribute{
+																Optional:    true,
+																Description: `The duration during which the response will be delayed. Not Null`,
+																Validators: []validator.String{
+																	speakeasy_stringvalidators.NotNull(),
+																},
+															},
+														},
+														Description: `Delay defines configuration of delaying a response from a destination`,
+													},
+													"response_bandwidth": schema.SingleNestedAttribute{
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"limit": schema.StringAttribute{
+																Optional: true,
+																MarkdownDescription: `Limit is represented by value measure in Gbps, Mbps, kbps, e.g.` + "\n" +
+																	`10kbps` + "\n" +
+																	`Not Null`,
+																Validators: []validator.String{
+																	speakeasy_stringvalidators.NotNull(),
+																},
+															},
+															"percentage": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"integer": schema.Int64Attribute{
+																		Optional: true,
+																		Validators: []validator.Int64{
+																			int64validator.ConflictsWith(path.Expressions{
+																				path.MatchRelative().AtParent().AtName("str"),
+																			}...),
+																		},
+																	},
+																	"str": schema.StringAttribute{
+																		Optional: true,
+																		Validators: []validator.String{
+																			stringvalidator.ConflictsWith(path.Expressions{
+																				path.MatchRelative().AtParent().AtName("integer"),
+																			}...),
+																		},
+																	},
+																},
+																MarkdownDescription: `Percentage of requests on which response bandwidth limit will be` + "\n" +
+																	`either int or decimal represented as string.` + "\n" +
+																	`Not Null`,
+																Validators: []validator.Object{
+																	speakeasy_objectvalidators.NotNull(),
+																},
+															},
+														},
+														MarkdownDescription: `ResponseBandwidth defines a configuration to limit the speed of` + "\n" +
+															`responding to the requests`,
+													},
+												},
+											},
+											Description: `Http allows to define list of Http faults between dataplanes.`,
+										},
+									},
+									Description: `Default defines fault configuration. Not Null`,
+									Validators: []validator.Object{
+										speakeasy_objectvalidators.NotNull(),
+									},
+								},
+								"matches": schema.ListNestedAttribute{
+									Computed: true,
+									Optional: true,
+									PlanModifiers: []planmodifier.List{
+										custom_listplanmodifier.SupressZeroNullModifier(),
+									},
+									NestedObject: schema.NestedAttributeObject{
+										Validators: []validator.Object{
+											speakeasy_objectvalidators.NotNull(),
+										},
+										Attributes: map[string]schema.Attribute{
+											"spiffe_id": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"type": schema.StringAttribute{
+														Optional:    true,
+														Description: `Type defines how to match incoming traffic by SpiffeID. ` + "`" + `Exact` + "`" + ` or ` + "`" + `Prefix` + "`" + ` are allowed. Not Null; must be one of ["Exact", "Prefix"]`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+															stringvalidator.OneOf(
+																"Exact",
+																"Prefix",
+															),
+														},
+													},
+													"value": schema.StringAttribute{
+														Optional:    true,
+														Description: `Value is SpiffeId of a client that needs to match for the configuration to be applied. Not Null`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+														},
+													},
+												},
+												Description: `SpiffeID defines a matcher configuration for SpiffeID matching`,
+											},
+										},
+									},
+									Description: `Matches defines list of matches for which fault injection will be applied`,
+								},
+							},
+						},
+						Description: `Rules defines inbound fault injection configuration`,
 					},
 					"target_ref": schema.SingleNestedAttribute{
 						Optional: true,
@@ -374,6 +581,7 @@ func (r *MeshFaultInjectionResource) Schema(ctx context.Context, req resource.Sc
 									`will be targeted.`,
 							},
 							"proxy_types": schema.ListAttribute{
+								Computed: true,
 								Optional: true,
 								PlanModifiers: []planmodifier.List{
 									custom_listplanmodifier.SupressZeroNullModifier(),
@@ -399,6 +607,7 @@ func (r *MeshFaultInjectionResource) Schema(ctx context.Context, req resource.Sc
 							`defined inplace.`,
 					},
 					"to": schema.ListNestedAttribute{
+						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.List{
 							custom_listplanmodifier.SupressZeroNullModifier(),
@@ -412,6 +621,7 @@ func (r *MeshFaultInjectionResource) Schema(ctx context.Context, req resource.Sc
 									Optional: true,
 									Attributes: map[string]schema.Attribute{
 										"http": schema.ListNestedAttribute{
+											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.List{
 												custom_listplanmodifier.SupressZeroNullModifier(),
@@ -596,6 +806,7 @@ func (r *MeshFaultInjectionResource) Schema(ctx context.Context, req resource.Sc
 												`will be targeted.`,
 										},
 										"proxy_types": schema.ListAttribute{
+											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.List{
 												custom_listplanmodifier.SupressZeroNullModifier(),
@@ -643,6 +854,7 @@ func (r *MeshFaultInjectionResource) Schema(ctx context.Context, req resource.Sc
 				Computed: true,
 				PlanModifiers: []planmodifier.List{
 					custom_listplanmodifier.SupressZeroNullModifier(),
+					speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
 				},
 				ElementType: types.StringType,
 				MarkdownDescription: `warnings is a list of warning messages to return to the requesting Kuma API clients.` + "\n" +
@@ -690,13 +902,13 @@ func (r *MeshFaultInjectionResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 
-	request, requestDiags := data.ToOperationsCreateMeshFaultInjectionRequest(ctx)
+	request, requestDiags := data.ToOperationsPutMeshFaultInjectionRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshFaultInjection.CreateMeshFaultInjection(ctx, *request)
+	res, err := r.client.MeshFaultInjection.PutMeshFaultInjection(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -708,7 +920,10 @@ func (r *MeshFaultInjectionResource) Create(ctx context.Context, req resource.Cr
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 201 {
+	switch res.StatusCode {
+	case 200, 201:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
@@ -841,13 +1056,13 @@ func (r *MeshFaultInjectionResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 
-	request, requestDiags := data.ToOperationsUpdateMeshFaultInjectionRequest(ctx)
+	request, requestDiags := data.ToOperationsPutMeshFaultInjectionRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshFaultInjection.UpdateMeshFaultInjection(ctx, *request)
+	res, err := r.client.MeshFaultInjection.PutMeshFaultInjection(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -859,7 +1074,10 @@ func (r *MeshFaultInjectionResource) Update(ctx context.Context, req resource.Up
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 200 {
+	switch res.StatusCode {
+	case 200, 201:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}

@@ -115,7 +115,7 @@ func (r *MeshGlobalRateLimitResourceModel) ToSharedMeshGlobalRateLimitItemInput(
 			ratelimitOnRequest := make([]shared.RatelimitOnRequest, 0, len(fromItem.Default.HTTP.RatelimitOnRequest))
 			for _, ratelimitOnRequestItem := range fromItem.Default.HTTP.RatelimitOnRequest {
 				kind := shared.MeshGlobalRateLimitItemSpecFromKind(ratelimitOnRequestItem.Kind.ValueString())
-				limits := make([]shared.MeshGlobalRateLimitItemLimits, 0, len(ratelimitOnRequestItem.Limits))
+				limits := make([]shared.Limits, 0, len(ratelimitOnRequestItem.Limits))
 				for _, limitsItem := range ratelimitOnRequestItem.Limits {
 					var requestRate *shared.MeshGlobalRateLimitItemSpecFromRequestRate
 					if limitsItem.RequestRate != nil {
@@ -133,7 +133,7 @@ func (r *MeshGlobalRateLimitResourceModel) ToSharedMeshGlobalRateLimitItemInput(
 					var value2 string
 					value2 = limitsItem.Value.ValueString()
 
-					limits = append(limits, shared.MeshGlobalRateLimitItemLimits{
+					limits = append(limits, shared.Limits{
 						RequestRate: requestRate,
 						Value:       value2,
 					})
@@ -377,7 +377,7 @@ func (r *MeshGlobalRateLimitResourceModel) ToSharedMeshGlobalRateLimitItemInput(
 			ratelimitOnRequest1 := make([]shared.MeshGlobalRateLimitItemRatelimitOnRequest, 0, len(toItem.Default.HTTP.RatelimitOnRequest))
 			for _, ratelimitOnRequestItem1 := range toItem.Default.HTTP.RatelimitOnRequest {
 				kind3 := shared.MeshGlobalRateLimitItemSpecToDefaultKind(ratelimitOnRequestItem1.Kind.ValueString())
-				limits1 := make([]shared.MeshGlobalRateLimitItemSpecLimits, 0, len(ratelimitOnRequestItem1.Limits))
+				limits1 := make([]shared.MeshGlobalRateLimitItemLimits, 0, len(ratelimitOnRequestItem1.Limits))
 				for _, limitsItem1 := range ratelimitOnRequestItem1.Limits {
 					var requestRate2 *shared.MeshGlobalRateLimitItemSpecRequestRate
 					if limitsItem1.RequestRate != nil {
@@ -395,7 +395,7 @@ func (r *MeshGlobalRateLimitResourceModel) ToSharedMeshGlobalRateLimitItemInput(
 					var value5 string
 					value5 = limitsItem1.Value.ValueString()
 
-					limits1 = append(limits1, shared.MeshGlobalRateLimitItemSpecLimits{
+					limits1 = append(limits1, shared.MeshGlobalRateLimitItemLimits{
 						RequestRate: requestRate2,
 						Value:       value5,
 					})
@@ -514,7 +514,7 @@ func (r *MeshGlobalRateLimitResourceModel) ToSharedMeshGlobalRateLimitItemInput(
 	return &out, diags
 }
 
-func (r *MeshGlobalRateLimitResourceModel) ToOperationsCreateMeshGlobalRateLimitRequest(ctx context.Context) (*operations.CreateMeshGlobalRateLimitRequest, diag.Diagnostics) {
+func (r *MeshGlobalRateLimitResourceModel) ToOperationsPutMeshGlobalRateLimitRequest(ctx context.Context) (*operations.PutMeshGlobalRateLimitRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var mesh string
@@ -530,32 +530,7 @@ func (r *MeshGlobalRateLimitResourceModel) ToOperationsCreateMeshGlobalRateLimit
 		return nil, diags
 	}
 
-	out := operations.CreateMeshGlobalRateLimitRequest{
-		Mesh:                    mesh,
-		Name:                    name,
-		MeshGlobalRateLimitItem: *meshGlobalRateLimitItem,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshGlobalRateLimitResourceModel) ToOperationsUpdateMeshGlobalRateLimitRequest(ctx context.Context) (*operations.UpdateMeshGlobalRateLimitRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	meshGlobalRateLimitItem, meshGlobalRateLimitItemDiags := r.ToSharedMeshGlobalRateLimitItemInput(ctx)
-	diags.Append(meshGlobalRateLimitItemDiags...)
-
-	if diags.HasError() {
-		return nil, diags
-	}
-
-	out := operations.UpdateMeshGlobalRateLimitRequest{
+	out := operations.PutMeshGlobalRateLimitRequest{
 		Mesh:                    mesh,
 		Name:                    name,
 		MeshGlobalRateLimitItem: *meshGlobalRateLimitItem,
@@ -677,9 +652,9 @@ func (r *MeshGlobalRateLimitResourceModel) RefreshFromSharedMeshGlobalRateLimitI
 				for ratelimitOnRequestCount, ratelimitOnRequestItem := range fromItem.Default.HTTP.RatelimitOnRequest {
 					var ratelimitOnRequest tfTypes.RatelimitOnRequest
 					ratelimitOnRequest.Kind = types.StringValue(string(ratelimitOnRequestItem.Kind))
-					ratelimitOnRequest.Limits = []tfTypes.MeshGlobalRateLimitItemLimits{}
+					ratelimitOnRequest.Limits = []tfTypes.Limits{}
 					for limitsCount, limitsItem := range ratelimitOnRequestItem.Limits {
-						var limits tfTypes.MeshGlobalRateLimitItemLimits
+						var limits tfTypes.Limits
 						if limitsItem.RequestRate == nil {
 							limits.RequestRate = nil
 						} else {
@@ -824,9 +799,9 @@ func (r *MeshGlobalRateLimitResourceModel) RefreshFromSharedMeshGlobalRateLimitI
 				for ratelimitOnRequestCount1, ratelimitOnRequestItem1 := range toItem.Default.HTTP.RatelimitOnRequest {
 					var ratelimitOnRequest1 tfTypes.RatelimitOnRequest
 					ratelimitOnRequest1.Kind = types.StringValue(string(ratelimitOnRequestItem1.Kind))
-					ratelimitOnRequest1.Limits = []tfTypes.MeshGlobalRateLimitItemLimits{}
+					ratelimitOnRequest1.Limits = []tfTypes.Limits{}
 					for limitsCount1, limitsItem1 := range ratelimitOnRequestItem1.Limits {
-						var limits1 tfTypes.MeshGlobalRateLimitItemLimits
+						var limits1 tfTypes.Limits
 						if limitsItem1.RequestRate == nil {
 							limits1.RequestRate = nil
 						} else {

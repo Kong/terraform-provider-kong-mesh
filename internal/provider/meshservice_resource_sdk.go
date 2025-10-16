@@ -139,7 +139,7 @@ func (r *MeshServiceResourceModel) ToSharedMeshServiceItemInput(ctx context.Cont
 	return &out, diags
 }
 
-func (r *MeshServiceResourceModel) ToOperationsCreateMeshServiceRequest(ctx context.Context) (*operations.CreateMeshServiceRequest, diag.Diagnostics) {
+func (r *MeshServiceResourceModel) ToOperationsPutMeshServiceRequest(ctx context.Context) (*operations.PutMeshServiceRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var mesh string
@@ -155,32 +155,7 @@ func (r *MeshServiceResourceModel) ToOperationsCreateMeshServiceRequest(ctx cont
 		return nil, diags
 	}
 
-	out := operations.CreateMeshServiceRequest{
-		Mesh:            mesh,
-		Name:            name,
-		MeshServiceItem: *meshServiceItem,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshServiceResourceModel) ToOperationsUpdateMeshServiceRequest(ctx context.Context) (*operations.UpdateMeshServiceRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	meshServiceItem, meshServiceItemDiags := r.ToSharedMeshServiceItemInput(ctx)
-	diags.Append(meshServiceItemDiags...)
-
-	if diags.HasError() {
-		return nil, diags
-	}
-
-	out := operations.UpdateMeshServiceRequest{
+	out := operations.PutMeshServiceRequest{
 		Mesh:            mesh,
 		Name:            name,
 		MeshServiceItem: *meshServiceItem,
@@ -249,12 +224,12 @@ func (r *MeshServiceResourceModel) RefreshFromSharedMeshServiceItem(ctx context.
 		r.Mesh = types.StringPointerValue(resp.Mesh)
 		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
-		r.Spec.Identities = []tfTypes.Path{}
+		r.Spec.Identities = []tfTypes.MeshFaultInjectionItemSpiffeID{}
 		if len(r.Spec.Identities) > len(resp.Spec.Identities) {
 			r.Spec.Identities = r.Spec.Identities[:len(resp.Spec.Identities)]
 		}
 		for identitiesCount, identitiesItem := range resp.Spec.Identities {
-			var identities tfTypes.Path
+			var identities tfTypes.MeshFaultInjectionItemSpiffeID
 			identities.Type = types.StringValue(string(identitiesItem.Type))
 			identities.Value = types.StringValue(identitiesItem.Value)
 			if identitiesCount+1 > len(r.Spec.Identities) {
@@ -353,9 +328,9 @@ func (r *MeshServiceResourceModel) RefreshFromSharedMeshServiceItem(ctx context.
 			}
 			for hostnameGeneratorsCount, hostnameGeneratorsItem := range resp.Status.HostnameGenerators {
 				var hostnameGenerators tfTypes.HostnameGenerators
-				hostnameGenerators.Conditions = []tfTypes.Conditions{}
+				hostnameGenerators.Conditions = []tfTypes.MeshExternalServiceItemConditions{}
 				for conditionsCount, conditionsItem := range hostnameGeneratorsItem.Conditions {
-					var conditions tfTypes.Conditions
+					var conditions tfTypes.MeshExternalServiceItemConditions
 					conditions.Message = types.StringValue(conditionsItem.Message)
 					conditions.Reason = types.StringValue(conditionsItem.Reason)
 					conditions.Status = types.StringValue(string(conditionsItem.Status))

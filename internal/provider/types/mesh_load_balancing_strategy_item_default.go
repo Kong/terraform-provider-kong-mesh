@@ -3,6 +3,7 @@
 package types
 
 type MeshLoadBalancingStrategyItemDefault struct {
+	HashPolicies      []HashPolicies     `tfsdk:"hash_policies"`
 	LoadBalancer      *LoadBalancer      `tfsdk:"load_balancer"`
 	LocalityAwareness *LocalityAwareness `tfsdk:"locality_awareness"`
 }

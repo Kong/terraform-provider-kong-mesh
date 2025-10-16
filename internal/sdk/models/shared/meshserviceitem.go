@@ -38,6 +38,7 @@ type MeshServiceItemSpecType string
 
 const (
 	MeshServiceItemSpecTypeServiceTag MeshServiceItemSpecType = "ServiceTag"
+	MeshServiceItemSpecTypeSpiffeID   MeshServiceItemSpecType = "SpiffeID"
 )
 
 func (e MeshServiceItemSpecType) ToPointer() *MeshServiceItemSpecType {
@@ -50,6 +51,8 @@ func (e *MeshServiceItemSpecType) UnmarshalJSON(data []byte) error {
 	}
 	switch v {
 	case "ServiceTag":
+		fallthrough
+	case "SpiffeID":
 		*e = MeshServiceItemSpecType(v)
 		return nil
 	default:

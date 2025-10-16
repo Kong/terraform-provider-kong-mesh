@@ -88,12 +88,9 @@ func (r *MeshHostnameGeneratorResourceModel) ToSharedHostnameGeneratorItemInput(
 			MeshService:          meshService,
 		}
 	}
-	template := new(string)
-	if !r.Spec.Template.IsUnknown() && !r.Spec.Template.IsNull() {
-		*template = r.Spec.Template.ValueString()
-	} else {
-		template = nil
-	}
+	var template string
+	template = r.Spec.Template.ValueString()
+
 	spec := shared.HostnameGeneratorItemSpec{
 		Extension: extension,
 		Selector:  selector,
@@ -109,7 +106,7 @@ func (r *MeshHostnameGeneratorResourceModel) ToSharedHostnameGeneratorItemInput(
 	return &out, diags
 }
 
-func (r *MeshHostnameGeneratorResourceModel) ToOperationsCreateHostnameGeneratorRequest(ctx context.Context) (*operations.CreateHostnameGeneratorRequest, diag.Diagnostics) {
+func (r *MeshHostnameGeneratorResourceModel) ToOperationsPutHostnameGeneratorRequest(ctx context.Context) (*operations.PutHostnameGeneratorRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var name string
@@ -122,28 +119,7 @@ func (r *MeshHostnameGeneratorResourceModel) ToOperationsCreateHostnameGenerator
 		return nil, diags
 	}
 
-	out := operations.CreateHostnameGeneratorRequest{
-		Name:                  name,
-		HostnameGeneratorItem: *hostnameGeneratorItem,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshHostnameGeneratorResourceModel) ToOperationsUpdateHostnameGeneratorRequest(ctx context.Context) (*operations.UpdateHostnameGeneratorRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var name string
-	name = r.Name.ValueString()
-
-	hostnameGeneratorItem, hostnameGeneratorItemDiags := r.ToSharedHostnameGeneratorItemInput(ctx)
-	diags.Append(hostnameGeneratorItemDiags...)
-
-	if diags.HasError() {
-		return nil, diags
-	}
-
-	out := operations.UpdateHostnameGeneratorRequest{
+	out := operations.PutHostnameGeneratorRequest{
 		Name:                  name,
 		HostnameGeneratorItem: *hostnameGeneratorItem,
 	}
@@ -206,7 +182,7 @@ func (r *MeshHostnameGeneratorResourceModel) RefreshFromSharedHostnameGeneratorI
 		if resp.Spec.Extension == nil {
 			r.Spec.Extension = nil
 		} else {
-			r.Spec.Extension = &tfTypes.MeshExternalServiceItemExtension{}
+			r.Spec.Extension = &tfTypes.Extension{}
 			if resp.Spec.Extension.Config == nil {
 				r.Spec.Extension.Config = types.StringNull()
 			} else {
@@ -253,7 +229,7 @@ func (r *MeshHostnameGeneratorResourceModel) RefreshFromSharedHostnameGeneratorI
 				}
 			}
 		}
-		r.Spec.Template = types.StringPointerValue(resp.Spec.Template)
+		r.Spec.Template = types.StringValue(resp.Spec.Template)
 		r.Type = types.StringValue(string(resp.Type))
 	}
 

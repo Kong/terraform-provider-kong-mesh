@@ -28,6 +28,36 @@ resource "kong-mesh_mesh_traffic_permission" "my_meshtrafficpermission" {
         }
       }
     ]
+    rules = [
+      {
+        default = {
+          allow = [
+            {
+              spiffe_id = {
+                type  = "Exact"
+                value = "...my_value..."
+              }
+            }
+          ]
+          allow_with_shadow_deny = [
+            {
+              spiffe_id = {
+                type  = "Prefix"
+                value = "...my_value..."
+              }
+            }
+          ]
+          deny = [
+            {
+              spiffe_id = {
+                type  = "Prefix"
+                value = "...my_value..."
+              }
+            }
+          ]
+        }
+      }
+    ]
     target_ref = {
       kind = "MeshHTTPRoute"
       labels = {

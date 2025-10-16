@@ -257,6 +257,231 @@ func (o *MeshTrafficPermissionItemFrom) GetTargetRef() MeshTrafficPermissionItem
 	return o.TargetRef
 }
 
+// MeshTrafficPermissionItemSpecType - Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
+type MeshTrafficPermissionItemSpecType string
+
+const (
+	MeshTrafficPermissionItemSpecTypeExact  MeshTrafficPermissionItemSpecType = "Exact"
+	MeshTrafficPermissionItemSpecTypePrefix MeshTrafficPermissionItemSpecType = "Prefix"
+)
+
+func (e MeshTrafficPermissionItemSpecType) ToPointer() *MeshTrafficPermissionItemSpecType {
+	return &e
+}
+func (e *MeshTrafficPermissionItemSpecType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "Exact":
+		fallthrough
+	case "Prefix":
+		*e = MeshTrafficPermissionItemSpecType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshTrafficPermissionItemSpecType: %v", v)
+	}
+}
+
+// MeshTrafficPermissionItemSpiffeID - SpiffeID defines a matcher configuration for SpiffeID matching
+type MeshTrafficPermissionItemSpiffeID struct {
+	// Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
+	Type MeshTrafficPermissionItemSpecType `json:"type"`
+	// Value is SpiffeId of a client that needs to match for the configuration to be applied
+	Value string `json:"value"`
+}
+
+func (o *MeshTrafficPermissionItemSpiffeID) GetType() MeshTrafficPermissionItemSpecType {
+	if o == nil {
+		return MeshTrafficPermissionItemSpecType("")
+	}
+	return o.Type
+}
+
+func (o *MeshTrafficPermissionItemSpiffeID) GetValue() string {
+	if o == nil {
+		return ""
+	}
+	return o.Value
+}
+
+type Allow struct {
+	// SpiffeID defines a matcher configuration for SpiffeID matching
+	SpiffeID *MeshTrafficPermissionItemSpiffeID `json:"spiffeID,omitempty"`
+}
+
+func (o *Allow) GetSpiffeID() *MeshTrafficPermissionItemSpiffeID {
+	if o == nil {
+		return nil
+	}
+	return o.SpiffeID
+}
+
+// MeshTrafficPermissionItemSpecRulesType - Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
+type MeshTrafficPermissionItemSpecRulesType string
+
+const (
+	MeshTrafficPermissionItemSpecRulesTypeExact  MeshTrafficPermissionItemSpecRulesType = "Exact"
+	MeshTrafficPermissionItemSpecRulesTypePrefix MeshTrafficPermissionItemSpecRulesType = "Prefix"
+)
+
+func (e MeshTrafficPermissionItemSpecRulesType) ToPointer() *MeshTrafficPermissionItemSpecRulesType {
+	return &e
+}
+func (e *MeshTrafficPermissionItemSpecRulesType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "Exact":
+		fallthrough
+	case "Prefix":
+		*e = MeshTrafficPermissionItemSpecRulesType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshTrafficPermissionItemSpecRulesType: %v", v)
+	}
+}
+
+// MeshTrafficPermissionItemSpecSpiffeID - SpiffeID defines a matcher configuration for SpiffeID matching
+type MeshTrafficPermissionItemSpecSpiffeID struct {
+	// Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
+	Type MeshTrafficPermissionItemSpecRulesType `json:"type"`
+	// Value is SpiffeId of a client that needs to match for the configuration to be applied
+	Value string `json:"value"`
+}
+
+func (o *MeshTrafficPermissionItemSpecSpiffeID) GetType() MeshTrafficPermissionItemSpecRulesType {
+	if o == nil {
+		return MeshTrafficPermissionItemSpecRulesType("")
+	}
+	return o.Type
+}
+
+func (o *MeshTrafficPermissionItemSpecSpiffeID) GetValue() string {
+	if o == nil {
+		return ""
+	}
+	return o.Value
+}
+
+type AllowWithShadowDeny struct {
+	// SpiffeID defines a matcher configuration for SpiffeID matching
+	SpiffeID *MeshTrafficPermissionItemSpecSpiffeID `json:"spiffeID,omitempty"`
+}
+
+func (o *AllowWithShadowDeny) GetSpiffeID() *MeshTrafficPermissionItemSpecSpiffeID {
+	if o == nil {
+		return nil
+	}
+	return o.SpiffeID
+}
+
+// MeshTrafficPermissionItemSpecRulesDefaultType - Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
+type MeshTrafficPermissionItemSpecRulesDefaultType string
+
+const (
+	MeshTrafficPermissionItemSpecRulesDefaultTypeExact  MeshTrafficPermissionItemSpecRulesDefaultType = "Exact"
+	MeshTrafficPermissionItemSpecRulesDefaultTypePrefix MeshTrafficPermissionItemSpecRulesDefaultType = "Prefix"
+)
+
+func (e MeshTrafficPermissionItemSpecRulesDefaultType) ToPointer() *MeshTrafficPermissionItemSpecRulesDefaultType {
+	return &e
+}
+func (e *MeshTrafficPermissionItemSpecRulesDefaultType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "Exact":
+		fallthrough
+	case "Prefix":
+		*e = MeshTrafficPermissionItemSpecRulesDefaultType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshTrafficPermissionItemSpecRulesDefaultType: %v", v)
+	}
+}
+
+// MeshTrafficPermissionItemSpecRulesSpiffeID - SpiffeID defines a matcher configuration for SpiffeID matching
+type MeshTrafficPermissionItemSpecRulesSpiffeID struct {
+	// Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
+	Type MeshTrafficPermissionItemSpecRulesDefaultType `json:"type"`
+	// Value is SpiffeId of a client that needs to match for the configuration to be applied
+	Value string `json:"value"`
+}
+
+func (o *MeshTrafficPermissionItemSpecRulesSpiffeID) GetType() MeshTrafficPermissionItemSpecRulesDefaultType {
+	if o == nil {
+		return MeshTrafficPermissionItemSpecRulesDefaultType("")
+	}
+	return o.Type
+}
+
+func (o *MeshTrafficPermissionItemSpecRulesSpiffeID) GetValue() string {
+	if o == nil {
+		return ""
+	}
+	return o.Value
+}
+
+type Deny struct {
+	// SpiffeID defines a matcher configuration for SpiffeID matching
+	SpiffeID *MeshTrafficPermissionItemSpecRulesSpiffeID `json:"spiffeID,omitempty"`
+}
+
+func (o *Deny) GetSpiffeID() *MeshTrafficPermissionItemSpecRulesSpiffeID {
+	if o == nil {
+		return nil
+	}
+	return o.SpiffeID
+}
+
+type MeshTrafficPermissionItemSpecDefault struct {
+	// Allow definees a list of matches for which access will be allowed
+	Allow []Allow `json:"allow,omitempty"`
+	// AllowWithShadowDeny defines a list of matches for which access will be allowed but emits logs as if
+	// requests are denied
+	AllowWithShadowDeny []AllowWithShadowDeny `json:"allowWithShadowDeny,omitempty"`
+	// Deny defines a list of matches for which access will be denied
+	Deny []Deny `json:"deny,omitempty"`
+}
+
+func (o *MeshTrafficPermissionItemSpecDefault) GetAllow() []Allow {
+	if o == nil {
+		return nil
+	}
+	return o.Allow
+}
+
+func (o *MeshTrafficPermissionItemSpecDefault) GetAllowWithShadowDeny() []AllowWithShadowDeny {
+	if o == nil {
+		return nil
+	}
+	return o.AllowWithShadowDeny
+}
+
+func (o *MeshTrafficPermissionItemSpecDefault) GetDeny() []Deny {
+	if o == nil {
+		return nil
+	}
+	return o.Deny
+}
+
+type MeshTrafficPermissionItemRules struct {
+	Default MeshTrafficPermissionItemSpecDefault `json:"default"`
+}
+
+func (o *MeshTrafficPermissionItemRules) GetDefault() MeshTrafficPermissionItemSpecDefault {
+	if o == nil {
+		return MeshTrafficPermissionItemSpecDefault{}
+	}
+	return o.Default
+}
+
 // MeshTrafficPermissionItemKind - Kind of the referenced resource
 type MeshTrafficPermissionItemKind string
 
@@ -419,6 +644,8 @@ func (o *MeshTrafficPermissionItemTargetRef) GetTags() map[string]string {
 type MeshTrafficPermissionItemSpec struct {
 	// From list makes a match between clients and corresponding configurations
 	From []MeshTrafficPermissionItemFrom `json:"from,omitempty"`
+	// Rules defines inbound permissions configuration
+	Rules []MeshTrafficPermissionItemRules `json:"rules,omitempty"`
 	// TargetRef is a reference to the resource the policy takes an effect on.
 	// The resource could be either a real store object or virtual resource
 	// defined inplace.
@@ -430,6 +657,13 @@ func (o *MeshTrafficPermissionItemSpec) GetFrom() []MeshTrafficPermissionItemFro
 		return nil
 	}
 	return o.From
+}
+
+func (o *MeshTrafficPermissionItemSpec) GetRules() []MeshTrafficPermissionItemRules {
+	if o == nil {
+		return nil
+	}
+	return o.Rules
 }
 
 func (o *MeshTrafficPermissionItemSpec) GetTargetRef() *MeshTrafficPermissionItemTargetRef {

@@ -19,6 +19,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	custom_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
+	speakeasy_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
@@ -106,6 +107,7 @@ func (r *MeshRateLimitResource) Schema(ctx context.Context, req resource.SchemaR
 				Required: true,
 				Attributes: map[string]schema.Attribute{
 					"from": schema.ListNestedAttribute{
+						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.List{
 							custom_listplanmodifier.SupressZeroNullModifier(),
@@ -135,6 +137,7 @@ func (r *MeshRateLimitResource) Schema(ctx context.Context, req resource.SchemaR
 																	Optional: true,
 																	Attributes: map[string]schema.Attribute{
 																		"add": schema.ListNestedAttribute{
+																			Computed: true,
 																			Optional: true,
 																			PlanModifiers: []planmodifier.List{
 																				custom_listplanmodifier.SupressZeroNullModifier(),
@@ -167,6 +170,7 @@ func (r *MeshRateLimitResource) Schema(ctx context.Context, req resource.SchemaR
 																			},
 																		},
 																		"set": schema.ListNestedAttribute{
+																			Computed: true,
 																			Optional: true,
 																			PlanModifiers: []planmodifier.List{
 																				custom_listplanmodifier.SupressZeroNullModifier(),
@@ -318,6 +322,7 @@ func (r *MeshRateLimitResource) Schema(ctx context.Context, req resource.SchemaR
 												`will be targeted.`,
 										},
 										"proxy_types": schema.ListAttribute{
+											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.List{
 												custom_listplanmodifier.SupressZeroNullModifier(),
@@ -350,6 +355,7 @@ func (r *MeshRateLimitResource) Schema(ctx context.Context, req resource.SchemaR
 						Description: `From list makes a match between clients and corresponding configurations`,
 					},
 					"rules": schema.ListNestedAttribute{
+						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.List{
 							custom_listplanmodifier.SupressZeroNullModifier(),
@@ -379,6 +385,7 @@ func (r *MeshRateLimitResource) Schema(ctx context.Context, req resource.SchemaR
 																	Optional: true,
 																	Attributes: map[string]schema.Attribute{
 																		"add": schema.ListNestedAttribute{
+																			Computed: true,
 																			Optional: true,
 																			PlanModifiers: []planmodifier.List{
 																				custom_listplanmodifier.SupressZeroNullModifier(),
@@ -411,6 +418,7 @@ func (r *MeshRateLimitResource) Schema(ctx context.Context, req resource.SchemaR
 																			},
 																		},
 																		"set": schema.ListNestedAttribute{
+																			Computed: true,
 																			Optional: true,
 																			PlanModifiers: []planmodifier.List{
 																				custom_listplanmodifier.SupressZeroNullModifier(),
@@ -565,6 +573,7 @@ func (r *MeshRateLimitResource) Schema(ctx context.Context, req resource.SchemaR
 									`will be targeted.`,
 							},
 							"proxy_types": schema.ListAttribute{
+								Computed: true,
 								Optional: true,
 								PlanModifiers: []planmodifier.List{
 									custom_listplanmodifier.SupressZeroNullModifier(),
@@ -590,6 +599,7 @@ func (r *MeshRateLimitResource) Schema(ctx context.Context, req resource.SchemaR
 							`defined inplace.`,
 					},
 					"to": schema.ListNestedAttribute{
+						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.List{
 							custom_listplanmodifier.SupressZeroNullModifier(),
@@ -619,6 +629,7 @@ func (r *MeshRateLimitResource) Schema(ctx context.Context, req resource.SchemaR
 																	Optional: true,
 																	Attributes: map[string]schema.Attribute{
 																		"add": schema.ListNestedAttribute{
+																			Computed: true,
 																			Optional: true,
 																			PlanModifiers: []planmodifier.List{
 																				custom_listplanmodifier.SupressZeroNullModifier(),
@@ -651,6 +662,7 @@ func (r *MeshRateLimitResource) Schema(ctx context.Context, req resource.SchemaR
 																			},
 																		},
 																		"set": schema.ListNestedAttribute{
+																			Computed: true,
 																			Optional: true,
 																			PlanModifiers: []planmodifier.List{
 																				custom_listplanmodifier.SupressZeroNullModifier(),
@@ -802,6 +814,7 @@ func (r *MeshRateLimitResource) Schema(ctx context.Context, req resource.SchemaR
 												`will be targeted.`,
 										},
 										"proxy_types": schema.ListAttribute{
+											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.List{
 												custom_listplanmodifier.SupressZeroNullModifier(),
@@ -849,6 +862,7 @@ func (r *MeshRateLimitResource) Schema(ctx context.Context, req resource.SchemaR
 				Computed: true,
 				PlanModifiers: []planmodifier.List{
 					custom_listplanmodifier.SupressZeroNullModifier(),
+					speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
 				},
 				ElementType: types.StringType,
 				MarkdownDescription: `warnings is a list of warning messages to return to the requesting Kuma API clients.` + "\n" +
@@ -896,13 +910,13 @@ func (r *MeshRateLimitResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	request, requestDiags := data.ToOperationsCreateMeshRateLimitRequest(ctx)
+	request, requestDiags := data.ToOperationsPutMeshRateLimitRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshRateLimit.CreateMeshRateLimit(ctx, *request)
+	res, err := r.client.MeshRateLimit.PutMeshRateLimit(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -914,7 +928,10 @@ func (r *MeshRateLimitResource) Create(ctx context.Context, req resource.CreateR
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 201 {
+	switch res.StatusCode {
+	case 200, 201:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
@@ -1047,13 +1064,13 @@ func (r *MeshRateLimitResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
-	request, requestDiags := data.ToOperationsUpdateMeshRateLimitRequest(ctx)
+	request, requestDiags := data.ToOperationsPutMeshRateLimitRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshRateLimit.UpdateMeshRateLimit(ctx, *request)
+	res, err := r.client.MeshRateLimit.PutMeshRateLimit(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -1065,7 +1082,10 @@ func (r *MeshRateLimitResource) Update(ctx context.Context, req resource.UpdateR
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 200 {
+	switch res.StatusCode {
+	case 200, 201:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}

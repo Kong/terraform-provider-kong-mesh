@@ -19,6 +19,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	custom_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
+	speakeasy_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
 	custom_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
@@ -105,6 +106,7 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 				Required: true,
 				Attributes: map[string]schema.Attribute{
 					"from": schema.ListNestedAttribute{
+						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.List{
 							custom_listplanmodifier.SupressZeroNullModifier(),
@@ -118,6 +120,7 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 									Optional: true,
 									Attributes: map[string]schema.Attribute{
 										"backends": schema.ListNestedAttribute{
+											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.List{
 												custom_listplanmodifier.SupressZeroNullModifier(),
@@ -134,6 +137,7 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 																Optional: true,
 																Attributes: map[string]schema.Attribute{
 																	"json": schema.ListNestedAttribute{
+																		Computed: true,
 																		Optional: true,
 																		PlanModifiers: []planmodifier.List{
 																			custom_listplanmodifier.SupressZeroNullModifier(),
@@ -199,6 +203,7 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 														Optional: true,
 														Attributes: map[string]schema.Attribute{
 															"attributes": schema.ListNestedAttribute{
+																Computed: true,
 																Optional: true,
 																PlanModifiers: []planmodifier.List{
 																	custom_listplanmodifier.SupressZeroNullModifier(),
@@ -268,6 +273,7 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 																Optional: true,
 																Attributes: map[string]schema.Attribute{
 																	"json": schema.ListNestedAttribute{
+																		Computed: true,
 																		Optional: true,
 																		PlanModifiers: []planmodifier.List{
 																			custom_listplanmodifier.SupressZeroNullModifier(),
@@ -386,6 +392,7 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 												`will be targeted.`,
 										},
 										"proxy_types": schema.ListAttribute{
+											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.List{
 												custom_listplanmodifier.SupressZeroNullModifier(),
@@ -418,6 +425,7 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 						Description: `From list makes a match between clients and corresponding configurations`,
 					},
 					"rules": schema.ListNestedAttribute{
+						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.List{
 							custom_listplanmodifier.SupressZeroNullModifier(),
@@ -431,6 +439,7 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 									Optional: true,
 									Attributes: map[string]schema.Attribute{
 										"backends": schema.ListNestedAttribute{
+											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.List{
 												custom_listplanmodifier.SupressZeroNullModifier(),
@@ -447,6 +456,7 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 																Optional: true,
 																Attributes: map[string]schema.Attribute{
 																	"json": schema.ListNestedAttribute{
+																		Computed: true,
 																		Optional: true,
 																		PlanModifiers: []planmodifier.List{
 																			custom_listplanmodifier.SupressZeroNullModifier(),
@@ -512,6 +522,7 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 														Optional: true,
 														Attributes: map[string]schema.Attribute{
 															"attributes": schema.ListNestedAttribute{
+																Computed: true,
 																Optional: true,
 																PlanModifiers: []planmodifier.List{
 																	custom_listplanmodifier.SupressZeroNullModifier(),
@@ -578,6 +589,7 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 																Optional: true,
 																Attributes: map[string]schema.Attribute{
 																	"json": schema.ListNestedAttribute{
+																		Computed: true,
 																		Optional: true,
 																		PlanModifiers: []planmodifier.List{
 																			custom_listplanmodifier.SupressZeroNullModifier(),
@@ -698,6 +710,7 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 									`will be targeted.`,
 							},
 							"proxy_types": schema.ListAttribute{
+								Computed: true,
 								Optional: true,
 								PlanModifiers: []planmodifier.List{
 									custom_listplanmodifier.SupressZeroNullModifier(),
@@ -723,6 +736,7 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 							`defined in-place.`,
 					},
 					"to": schema.ListNestedAttribute{
+						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.List{
 							custom_listplanmodifier.SupressZeroNullModifier(),
@@ -736,6 +750,7 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 									Optional: true,
 									Attributes: map[string]schema.Attribute{
 										"backends": schema.ListNestedAttribute{
+											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.List{
 												custom_listplanmodifier.SupressZeroNullModifier(),
@@ -752,6 +767,7 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 																Optional: true,
 																Attributes: map[string]schema.Attribute{
 																	"json": schema.ListNestedAttribute{
+																		Computed: true,
 																		Optional: true,
 																		PlanModifiers: []planmodifier.List{
 																			custom_listplanmodifier.SupressZeroNullModifier(),
@@ -817,6 +833,7 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 														Optional: true,
 														Attributes: map[string]schema.Attribute{
 															"attributes": schema.ListNestedAttribute{
+																Computed: true,
 																Optional: true,
 																PlanModifiers: []planmodifier.List{
 																	custom_listplanmodifier.SupressZeroNullModifier(),
@@ -886,6 +903,7 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 																Optional: true,
 																Attributes: map[string]schema.Attribute{
 																	"json": schema.ListNestedAttribute{
+																		Computed: true,
 																		Optional: true,
 																		PlanModifiers: []planmodifier.List{
 																			custom_listplanmodifier.SupressZeroNullModifier(),
@@ -1004,6 +1022,7 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 												`will be targeted.`,
 										},
 										"proxy_types": schema.ListAttribute{
+											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.List{
 												custom_listplanmodifier.SupressZeroNullModifier(),
@@ -1051,6 +1070,7 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 				Computed: true,
 				PlanModifiers: []planmodifier.List{
 					custom_listplanmodifier.SupressZeroNullModifier(),
+					speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
 				},
 				ElementType: types.StringType,
 				MarkdownDescription: `warnings is a list of warning messages to return to the requesting Kuma API clients.` + "\n" +
@@ -1098,13 +1118,13 @@ func (r *MeshAccessLogResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	request, requestDiags := data.ToOperationsCreateMeshAccessLogRequest(ctx)
+	request, requestDiags := data.ToOperationsPutMeshAccessLogRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshAccessLog.CreateMeshAccessLog(ctx, *request)
+	res, err := r.client.MeshAccessLog.PutMeshAccessLog(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -1116,7 +1136,10 @@ func (r *MeshAccessLogResource) Create(ctx context.Context, req resource.CreateR
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 201 {
+	switch res.StatusCode {
+	case 200, 201:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
@@ -1249,13 +1272,13 @@ func (r *MeshAccessLogResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
-	request, requestDiags := data.ToOperationsUpdateMeshAccessLogRequest(ctx)
+	request, requestDiags := data.ToOperationsPutMeshAccessLogRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshAccessLog.UpdateMeshAccessLog(ctx, *request)
+	res, err := r.client.MeshAccessLog.PutMeshAccessLog(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -1267,7 +1290,10 @@ func (r *MeshAccessLogResource) Update(ctx context.Context, req resource.UpdateR
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 200 {
+	switch res.StatusCode {
+	case 200, 201:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}

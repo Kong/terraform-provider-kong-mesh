@@ -20,6 +20,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	custom_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
+	speakeasy_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
@@ -146,6 +147,7 @@ func (r *MeshHealthCheckResource) Schema(ctx context.Context, req resource.Schem
 									`will be targeted.`,
 							},
 							"proxy_types": schema.ListAttribute{
+								Computed: true,
 								Optional: true,
 								PlanModifiers: []planmodifier.List{
 									custom_listplanmodifier.SupressZeroNullModifier(),
@@ -171,6 +173,7 @@ func (r *MeshHealthCheckResource) Schema(ctx context.Context, req resource.Schem
 							`defined inplace.`,
 					},
 					"to": schema.ListNestedAttribute{
+						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.List{
 							custom_listplanmodifier.SupressZeroNullModifier(),
@@ -260,6 +263,7 @@ func (r *MeshHealthCheckResource) Schema(ctx context.Context, req resource.Schem
 													Description: `If true the HttpHealthCheck is disabled`,
 												},
 												"expected_statuses": schema.ListAttribute{
+													Computed: true,
 													Optional: true,
 													PlanModifiers: []planmodifier.List{
 														custom_listplanmodifier.SupressZeroNullModifier(),
@@ -277,6 +281,7 @@ func (r *MeshHealthCheckResource) Schema(ctx context.Context, req resource.Schem
 													Optional: true,
 													Attributes: map[string]schema.Attribute{
 														"add": schema.ListNestedAttribute{
+															Computed: true,
 															Optional: true,
 															PlanModifiers: []planmodifier.List{
 																custom_listplanmodifier.SupressZeroNullModifier(),
@@ -309,6 +314,7 @@ func (r *MeshHealthCheckResource) Schema(ctx context.Context, req resource.Schem
 															},
 														},
 														"set": schema.ListNestedAttribute{
+															Computed: true,
 															Optional: true,
 															PlanModifiers: []planmodifier.List{
 																custom_listplanmodifier.SupressZeroNullModifier(),
@@ -394,6 +400,7 @@ func (r *MeshHealthCheckResource) Schema(ctx context.Context, req resource.Schem
 													Description: `If true the TcpHealthCheck is disabled`,
 												},
 												"receive": schema.ListAttribute{
+													Computed: true,
 													Optional: true,
 													PlanModifiers: []planmodifier.List{
 														custom_listplanmodifier.SupressZeroNullModifier(),
@@ -469,6 +476,7 @@ func (r *MeshHealthCheckResource) Schema(ctx context.Context, req resource.Schem
 												`will be targeted.`,
 										},
 										"proxy_types": schema.ListAttribute{
+											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.List{
 												custom_listplanmodifier.SupressZeroNullModifier(),
@@ -516,6 +524,7 @@ func (r *MeshHealthCheckResource) Schema(ctx context.Context, req resource.Schem
 				Computed: true,
 				PlanModifiers: []planmodifier.List{
 					custom_listplanmodifier.SupressZeroNullModifier(),
+					speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
 				},
 				ElementType: types.StringType,
 				MarkdownDescription: `warnings is a list of warning messages to return to the requesting Kuma API clients.` + "\n" +
@@ -563,13 +572,13 @@ func (r *MeshHealthCheckResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
-	request, requestDiags := data.ToOperationsCreateMeshHealthCheckRequest(ctx)
+	request, requestDiags := data.ToOperationsPutMeshHealthCheckRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshHealthCheck.CreateMeshHealthCheck(ctx, *request)
+	res, err := r.client.MeshHealthCheck.PutMeshHealthCheck(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -581,7 +590,10 @@ func (r *MeshHealthCheckResource) Create(ctx context.Context, req resource.Creat
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 201 {
+	switch res.StatusCode {
+	case 200, 201:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
@@ -714,13 +726,13 @@ func (r *MeshHealthCheckResource) Update(ctx context.Context, req resource.Updat
 		return
 	}
 
-	request, requestDiags := data.ToOperationsUpdateMeshHealthCheckRequest(ctx)
+	request, requestDiags := data.ToOperationsPutMeshHealthCheckRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshHealthCheck.UpdateMeshHealthCheck(ctx, *request)
+	res, err := r.client.MeshHealthCheck.PutMeshHealthCheck(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -732,7 +744,10 @@ func (r *MeshHealthCheckResource) Update(ctx context.Context, req resource.Updat
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 200 {
+	switch res.StatusCode {
+	case 200, 201:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}

@@ -24,6 +24,29 @@ resource "kong-mesh_mesh_load_balancing_strategy" "my_meshloadbalancingstrategy"
     to = [
       {
         default = {
+          hash_policies = [
+            {
+              connection = {
+                source_ip = false
+              }
+              cookie = {
+                name = "...my_name..."
+                path = "...my_path..."
+                ttl  = "...my_ttl..."
+              }
+              filter_state = {
+                key = "...my_key..."
+              }
+              header = {
+                name = "...my_name..."
+              }
+              query_parameter = {
+                name = "...my_name..."
+              }
+              terminal = true
+              type     = "FilterState"
+            }
+          ]
           load_balancer = {
             least_request = {
               active_request_bias = {

@@ -23,6 +23,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	custom_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
+	speakeasy_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
@@ -150,6 +151,7 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 									`will be targeted.`,
 							},
 							"proxy_types": schema.ListAttribute{
+								Computed: true,
 								Optional: true,
 								PlanModifiers: []planmodifier.List{
 									custom_listplanmodifier.SupressZeroNullModifier(),
@@ -175,6 +177,7 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 							`defined inplace.`,
 					},
 					"to": schema.ListNestedAttribute{
+						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.List{
 							custom_listplanmodifier.SupressZeroNullModifier(),
@@ -185,6 +188,7 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 							},
 							Attributes: map[string]schema.Attribute{
 								"hostnames": schema.ListAttribute{
+									Computed: true,
 									Optional: true,
 									PlanModifiers: []planmodifier.List{
 										custom_listplanmodifier.SupressZeroNullModifier(),
@@ -196,6 +200,7 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 										`route attaches to.`,
 								},
 								"rules": schema.ListNestedAttribute{
+									Computed: true,
 									Optional: true,
 									PlanModifiers: []planmodifier.List{
 										custom_listplanmodifier.SupressZeroNullModifier(),
@@ -209,6 +214,7 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 												Optional: true,
 												Attributes: map[string]schema.Attribute{
 													"backend_refs": schema.ListNestedAttribute{
+														Computed: true,
 														Optional: true,
 														PlanModifiers: []planmodifier.List{
 															custom_listplanmodifier.SupressZeroNullModifier(),
@@ -261,6 +267,7 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 																	Description: `Port is only supported when this ref refers to a real MeshService object`,
 																},
 																"proxy_types": schema.ListAttribute{
+																	Computed: true,
 																	Optional: true,
 																	PlanModifiers: []planmodifier.List{
 																		custom_listplanmodifier.SupressZeroNullModifier(),
@@ -290,6 +297,7 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 														},
 													},
 													"filters": schema.ListNestedAttribute{
+														Computed: true,
 														Optional: true,
 														PlanModifiers: []planmodifier.List{
 															custom_listplanmodifier.SupressZeroNullModifier(),
@@ -303,6 +311,7 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 																	Optional: true,
 																	Attributes: map[string]schema.Attribute{
 																		"add": schema.ListNestedAttribute{
+																			Computed: true,
 																			Optional: true,
 																			PlanModifiers: []planmodifier.List{
 																				custom_listplanmodifier.SupressZeroNullModifier(),
@@ -335,6 +344,7 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 																			},
 																		},
 																		"remove": schema.ListAttribute{
+																			Computed: true,
 																			Optional: true,
 																			PlanModifiers: []planmodifier.List{
 																				custom_listplanmodifier.SupressZeroNullModifier(),
@@ -345,6 +355,7 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 																			},
 																		},
 																		"set": schema.ListNestedAttribute{
+																			Computed: true,
 																			Optional: true,
 																			PlanModifiers: []planmodifier.List{
 																				custom_listplanmodifier.SupressZeroNullModifier(),
@@ -430,6 +441,7 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 																					Description: `Port is only supported when this ref refers to a real MeshService object`,
 																				},
 																				"proxy_types": schema.ListAttribute{
+																					Computed: true,
 																					Optional: true,
 																					PlanModifiers: []planmodifier.List{
 																						custom_listplanmodifier.SupressZeroNullModifier(),
@@ -568,6 +580,7 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 																	Optional: true,
 																	Attributes: map[string]schema.Attribute{
 																		"add": schema.ListNestedAttribute{
+																			Computed: true,
 																			Optional: true,
 																			PlanModifiers: []planmodifier.List{
 																				custom_listplanmodifier.SupressZeroNullModifier(),
@@ -600,6 +613,7 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 																			},
 																		},
 																		"remove": schema.ListAttribute{
+																			Computed: true,
 																			Optional: true,
 																			PlanModifiers: []planmodifier.List{
 																				custom_listplanmodifier.SupressZeroNullModifier(),
@@ -610,6 +624,7 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 																			},
 																		},
 																		"set": schema.ListNestedAttribute{
+																			Computed: true,
 																			Optional: true,
 																			PlanModifiers: []planmodifier.List{
 																				custom_listplanmodifier.SupressZeroNullModifier(),
@@ -713,6 +728,7 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 												},
 											},
 											"matches": schema.ListNestedAttribute{
+												Computed: true,
 												Optional: true,
 												PlanModifiers: []planmodifier.List{
 													custom_listplanmodifier.SupressZeroNullModifier(),
@@ -723,6 +739,7 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 													},
 													Attributes: map[string]schema.Attribute{
 														"headers": schema.ListNestedAttribute{
+															Computed: true,
 															Optional: true,
 															PlanModifiers: []planmodifier.List{
 																custom_listplanmodifier.SupressZeroNullModifier(),
@@ -810,6 +827,7 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 															},
 														},
 														"query_params": schema.ListNestedAttribute{
+															Computed: true,
 															Optional: true,
 															PlanModifiers: []planmodifier.List{
 																custom_listplanmodifier.SupressZeroNullModifier(),
@@ -911,6 +929,7 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 												`will be targeted.`,
 										},
 										"proxy_types": schema.ListAttribute{
+											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.List{
 												custom_listplanmodifier.SupressZeroNullModifier(),
@@ -958,6 +977,7 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 				Computed: true,
 				PlanModifiers: []planmodifier.List{
 					custom_listplanmodifier.SupressZeroNullModifier(),
+					speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
 				},
 				ElementType: types.StringType,
 				MarkdownDescription: `warnings is a list of warning messages to return to the requesting Kuma API clients.` + "\n" +
@@ -1005,13 +1025,13 @@ func (r *MeshHTTPRouteResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	request, requestDiags := data.ToOperationsCreateMeshHTTPRouteRequest(ctx)
+	request, requestDiags := data.ToOperationsPutMeshHTTPRouteRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshHTTPRoute.CreateMeshHTTPRoute(ctx, *request)
+	res, err := r.client.MeshHTTPRoute.PutMeshHTTPRoute(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -1023,7 +1043,10 @@ func (r *MeshHTTPRouteResource) Create(ctx context.Context, req resource.CreateR
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 201 {
+	switch res.StatusCode {
+	case 200, 201:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
@@ -1156,13 +1179,13 @@ func (r *MeshHTTPRouteResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
-	request, requestDiags := data.ToOperationsUpdateMeshHTTPRouteRequest(ctx)
+	request, requestDiags := data.ToOperationsPutMeshHTTPRouteRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshHTTPRoute.UpdateMeshHTTPRoute(ctx, *request)
+	res, err := r.client.MeshHTTPRoute.PutMeshHTTPRoute(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -1174,7 +1197,10 @@ func (r *MeshHTTPRouteResource) Update(ctx context.Context, req resource.UpdateR
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 200 {
+	switch res.StatusCode {
+	case 200, 201:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}

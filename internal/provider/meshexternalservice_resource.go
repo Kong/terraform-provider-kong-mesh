@@ -8,7 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
-	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int32validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -21,13 +21,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	custom_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
+	speakeasy_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
 	speakeasy_objectplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/objectplanmodifier"
 	custom_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
 	"github.com/kong/terraform-provider-kong-mesh/internal/validators"
-	speakeasy_int64validators "github.com/kong/terraform-provider-kong-mesh/internal/validators/int64validators"
+	speakeasy_int32validators "github.com/kong/terraform-provider-kong-mesh/internal/validators/int32validators"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/stringvalidators"
 	"regexp"
@@ -111,6 +112,7 @@ func (r *MeshExternalServiceResource) Schema(ctx context.Context, req resource.S
 				Required: true,
 				Attributes: map[string]schema.Attribute{
 					"endpoints": schema.ListNestedAttribute{
+						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.List{
 							custom_listplanmodifier.SupressZeroNullModifier(),
@@ -128,12 +130,12 @@ func (r *MeshExternalServiceResource) Schema(ctx context.Context, req resource.S
 										stringvalidator.UTF8LengthAtLeast(1),
 									},
 								},
-								"port": schema.Int64Attribute{
+								"port": schema.Int32Attribute{
 									Optional:    true,
 									Description: `Port of the endpoint. Not Null`,
-									Validators: []validator.Int64{
-										speakeasy_int64validators.NotNull(),
-										int64validator.Between(1, 65535),
+									Validators: []validator.Int32{
+										speakeasy_int32validators.NotNull(),
+										int32validator.Between(1, 65535),
 									},
 								},
 							},
@@ -164,11 +166,11 @@ func (r *MeshExternalServiceResource) Schema(ctx context.Context, req resource.S
 					"match": schema.SingleNestedAttribute{
 						Required: true,
 						Attributes: map[string]schema.Attribute{
-							"port": schema.Int64Attribute{
+							"port": schema.Int32Attribute{
 								Required:    true,
 								Description: `Port defines a port to which a user does request.`,
-								Validators: []validator.Int64{
-									int64validator.Between(1, 65535),
+								Validators: []validator.Int32{
+									int32validator.Between(1, 65535),
 								},
 							},
 							"protocol": schema.StringAttribute{
@@ -292,6 +294,7 @@ func (r *MeshExternalServiceResource) Schema(ctx context.Context, req resource.S
 										Description: `ServerName overrides the default Server Name Indicator set by Kuma.`,
 									},
 									"subject_alt_names": schema.ListNestedAttribute{
+										Computed: true,
 										Optional: true,
 										PlanModifiers: []planmodifier.List{
 											custom_listplanmodifier.SupressZeroNullModifier(),
@@ -379,6 +382,7 @@ func (r *MeshExternalServiceResource) Schema(ctx context.Context, req resource.S
 						Computed: true,
 						PlanModifiers: []planmodifier.List{
 							custom_listplanmodifier.SupressZeroNullModifier(),
+							speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
 						},
 						NestedObject: schema.NestedAttributeObject{
 							PlanModifiers: []planmodifier.Object{
@@ -407,6 +411,7 @@ func (r *MeshExternalServiceResource) Schema(ctx context.Context, req resource.S
 						Computed: true,
 						PlanModifiers: []planmodifier.List{
 							custom_listplanmodifier.SupressZeroNullModifier(),
+							speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
 						},
 						NestedObject: schema.NestedAttributeObject{
 							PlanModifiers: []planmodifier.Object{
@@ -417,6 +422,7 @@ func (r *MeshExternalServiceResource) Schema(ctx context.Context, req resource.S
 									Computed: true,
 									PlanModifiers: []planmodifier.List{
 										custom_listplanmodifier.SupressZeroNullModifier(),
+										speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
 									},
 									NestedObject: schema.NestedAttributeObject{
 										PlanModifiers: []planmodifier.Object{
@@ -506,6 +512,7 @@ func (r *MeshExternalServiceResource) Schema(ctx context.Context, req resource.S
 				Computed: true,
 				PlanModifiers: []planmodifier.List{
 					custom_listplanmodifier.SupressZeroNullModifier(),
+					speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
 				},
 				ElementType: types.StringType,
 				MarkdownDescription: `warnings is a list of warning messages to return to the requesting Kuma API clients.` + "\n" +
@@ -553,13 +560,13 @@ func (r *MeshExternalServiceResource) Create(ctx context.Context, req resource.C
 		return
 	}
 
-	request, requestDiags := data.ToOperationsCreateMeshExternalServiceRequest(ctx)
+	request, requestDiags := data.ToOperationsPutMeshExternalServiceRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshExternalService.CreateMeshExternalService(ctx, *request)
+	res, err := r.client.MeshExternalService.PutMeshExternalService(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -571,7 +578,10 @@ func (r *MeshExternalServiceResource) Create(ctx context.Context, req resource.C
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 201 {
+	switch res.StatusCode {
+	case 200, 201:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
@@ -704,13 +714,13 @@ func (r *MeshExternalServiceResource) Update(ctx context.Context, req resource.U
 		return
 	}
 
-	request, requestDiags := data.ToOperationsUpdateMeshExternalServiceRequest(ctx)
+	request, requestDiags := data.ToOperationsPutMeshExternalServiceRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshExternalService.UpdateMeshExternalService(ctx, *request)
+	res, err := r.client.MeshExternalService.PutMeshExternalService(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -722,7 +732,10 @@ func (r *MeshExternalServiceResource) Update(ctx context.Context, req resource.U
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 200 {
+	switch res.StatusCode {
+	case 200, 201:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}

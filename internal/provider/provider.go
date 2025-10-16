@@ -51,15 +51,15 @@ func (p *KongMeshProvider) Schema(ctx context.Context, req provider.SchemaReques
 				Sensitive: true,
 			},
 			"server_url": schema.StringAttribute{
-				Description: `Server URL`,
-				Required:    true,
+				Description: `Server URL (defaults to https://global.api.konghq.com)`,
+				Optional:    true,
 			},
 			"username": schema.StringAttribute{
 				Optional:  true,
 				Sensitive: true,
 			},
 		},
-		MarkdownDescription: `Kong Mesh: This is a BETA Mesh specification. Endpoints in this specification may change with zero notice`,
+		MarkdownDescription: `Konnect API: The Konnect platform API`,
 	}
 }
 
@@ -78,8 +78,7 @@ func (p *KongMeshProvider) Configure(ctx context.Context, req provider.Configure
 		ServerURL = os.Getenv("SERVER_URL")
 	}
 	if ServerURL == "" {
-		resp.Diagnostics.AddError("server_url is required", "The server_url attribute must be provided in the provider configuration.")
-		return
+		ServerURL = "https://global.api.konghq.com"
 	}
 
 	security := shared.Security{}
@@ -111,10 +110,11 @@ func (p *KongMeshProvider) Configure(ctx context.Context, req provider.Configure
 	httpClient.Transport = NewProviderHTTPTransport(providerHTTPTransportOpts)
 
 	opts := []sdk.SDKOption{
+		sdk.WithServerURL(ServerURL),
 		sdk.WithSecurity(security),
 		sdk.WithClient(httpClient),
 	}
-	client := sdk.New(ServerURL, opts...)
+	client := sdk.New(opts...)
 
 	resp.DataSourceData = client
 	resp.EphemeralResourceData = client
@@ -133,6 +133,7 @@ func (p *KongMeshProvider) Resources(ctx context.Context) []func() resource.Reso
 		NewMeshHealthCheckResource,
 		NewMeshHostnameGeneratorResource,
 		NewMeshHTTPRouteResource,
+		NewMeshIdentityResource,
 		NewMeshLoadBalancingStrategyResource,
 		NewMeshMetricResource,
 		NewMeshMultiZoneServiceResource,
@@ -147,60 +148,12 @@ func (p *KongMeshProvider) Resources(ctx context.Context) []func() resource.Reso
 		NewMeshTLSResource,
 		NewMeshTraceResource,
 		NewMeshTrafficPermissionResource,
+		NewMeshTrustResource,
 	}
 }
 
 func (p *KongMeshProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
-	return []func() datasource.DataSource{
-		NewHostnameGeneratorListDataSource,
-		NewMeshDataSource,
-		NewMeshAccessLogDataSource,
-		NewMeshAccessLogListDataSource,
-		NewMeshCircuitBreakerDataSource,
-		NewMeshCircuitBreakerListDataSource,
-		NewMeshExternalServiceDataSource,
-		NewMeshExternalServiceListDataSource,
-		NewMeshFaultInjectionDataSource,
-		NewMeshFaultInjectionListDataSource,
-		NewMeshGatewayDataSource,
-		NewMeshGatewayListDataSource,
-		NewMeshGlobalRateLimitDataSource,
-		NewMeshGlobalRateLimitListDataSource,
-		NewMeshHealthCheckDataSource,
-		NewMeshHealthCheckListDataSource,
-		NewMeshHostnameGeneratorDataSource,
-		NewMeshHTTPRouteDataSource,
-		NewMeshHTTPRouteListDataSource,
-		NewMeshListDataSource,
-		NewMeshLoadBalancingStrategyDataSource,
-		NewMeshLoadBalancingStrategyListDataSource,
-		NewMeshMetricDataSource,
-		NewMeshMetricListDataSource,
-		NewMeshMultiZoneServiceDataSource,
-		NewMeshMultiZoneServiceListDataSource,
-		NewMeshOPADataSource,
-		NewMeshOPAListDataSource,
-		NewMeshPassthroughDataSource,
-		NewMeshPassthroughListDataSource,
-		NewMeshProxyPatchDataSource,
-		NewMeshProxyPatchListDataSource,
-		NewMeshRateLimitDataSource,
-		NewMeshRateLimitListDataSource,
-		NewMeshRetryDataSource,
-		NewMeshRetryListDataSource,
-		NewMeshServiceDataSource,
-		NewMeshServiceListDataSource,
-		NewMeshTCPRouteDataSource,
-		NewMeshTCPRouteListDataSource,
-		NewMeshTimeoutDataSource,
-		NewMeshTimeoutListDataSource,
-		NewMeshTLSDataSource,
-		NewMeshTLSListDataSource,
-		NewMeshTraceDataSource,
-		NewMeshTraceListDataSource,
-		NewMeshTrafficPermissionDataSource,
-		NewMeshTrafficPermissionListDataSource,
-	}
+	return []func() datasource.DataSource{}
 }
 
 func (p *KongMeshProvider) EphemeralResources(ctx context.Context) []func() ephemeral.EphemeralResource {

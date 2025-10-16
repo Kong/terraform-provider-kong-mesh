@@ -18,6 +18,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	custom_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
+	speakeasy_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
@@ -103,6 +104,7 @@ func (r *MeshTrafficPermissionResource) Schema(ctx context.Context, req resource
 				Required: true,
 				Attributes: map[string]schema.Attribute{
 					"from": schema.ListNestedAttribute{
+						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.List{
 							custom_listplanmodifier.SupressZeroNullModifier(),
@@ -172,6 +174,7 @@ func (r *MeshTrafficPermissionResource) Schema(ctx context.Context, req resource
 												`will be targeted.`,
 										},
 										"proxy_types": schema.ListAttribute{
+											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.List{
 												custom_listplanmodifier.SupressZeroNullModifier(),
@@ -202,6 +205,148 @@ func (r *MeshTrafficPermissionResource) Schema(ctx context.Context, req resource
 							},
 						},
 						Description: `From list makes a match between clients and corresponding configurations`,
+					},
+					"rules": schema.ListNestedAttribute{
+						Computed: true,
+						Optional: true,
+						PlanModifiers: []planmodifier.List{
+							custom_listplanmodifier.SupressZeroNullModifier(),
+						},
+						NestedObject: schema.NestedAttributeObject{
+							Validators: []validator.Object{
+								speakeasy_objectvalidators.NotNull(),
+							},
+							Attributes: map[string]schema.Attribute{
+								"default": schema.SingleNestedAttribute{
+									Optional: true,
+									Attributes: map[string]schema.Attribute{
+										"allow": schema.ListNestedAttribute{
+											Computed: true,
+											Optional: true,
+											PlanModifiers: []planmodifier.List{
+												custom_listplanmodifier.SupressZeroNullModifier(),
+											},
+											NestedObject: schema.NestedAttributeObject{
+												Validators: []validator.Object{
+													speakeasy_objectvalidators.NotNull(),
+												},
+												Attributes: map[string]schema.Attribute{
+													"spiffe_id": schema.SingleNestedAttribute{
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"type": schema.StringAttribute{
+																Optional:    true,
+																Description: `Type defines how to match incoming traffic by SpiffeID. ` + "`" + `Exact` + "`" + ` or ` + "`" + `Prefix` + "`" + ` are allowed. Not Null; must be one of ["Exact", "Prefix"]`,
+																Validators: []validator.String{
+																	speakeasy_stringvalidators.NotNull(),
+																	stringvalidator.OneOf(
+																		"Exact",
+																		"Prefix",
+																	),
+																},
+															},
+															"value": schema.StringAttribute{
+																Optional:    true,
+																Description: `Value is SpiffeId of a client that needs to match for the configuration to be applied. Not Null`,
+																Validators: []validator.String{
+																	speakeasy_stringvalidators.NotNull(),
+																},
+															},
+														},
+														Description: `SpiffeID defines a matcher configuration for SpiffeID matching`,
+													},
+												},
+											},
+											Description: `Allow definees a list of matches for which access will be allowed`,
+										},
+										"allow_with_shadow_deny": schema.ListNestedAttribute{
+											Computed: true,
+											Optional: true,
+											PlanModifiers: []planmodifier.List{
+												custom_listplanmodifier.SupressZeroNullModifier(),
+											},
+											NestedObject: schema.NestedAttributeObject{
+												Validators: []validator.Object{
+													speakeasy_objectvalidators.NotNull(),
+												},
+												Attributes: map[string]schema.Attribute{
+													"spiffe_id": schema.SingleNestedAttribute{
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"type": schema.StringAttribute{
+																Optional:    true,
+																Description: `Type defines how to match incoming traffic by SpiffeID. ` + "`" + `Exact` + "`" + ` or ` + "`" + `Prefix` + "`" + ` are allowed. Not Null; must be one of ["Exact", "Prefix"]`,
+																Validators: []validator.String{
+																	speakeasy_stringvalidators.NotNull(),
+																	stringvalidator.OneOf(
+																		"Exact",
+																		"Prefix",
+																	),
+																},
+															},
+															"value": schema.StringAttribute{
+																Optional:    true,
+																Description: `Value is SpiffeId of a client that needs to match for the configuration to be applied. Not Null`,
+																Validators: []validator.String{
+																	speakeasy_stringvalidators.NotNull(),
+																},
+															},
+														},
+														Description: `SpiffeID defines a matcher configuration for SpiffeID matching`,
+													},
+												},
+											},
+											MarkdownDescription: `AllowWithShadowDeny defines a list of matches for which access will be allowed but emits logs as if` + "\n" +
+												`requests are denied`,
+										},
+										"deny": schema.ListNestedAttribute{
+											Computed: true,
+											Optional: true,
+											PlanModifiers: []planmodifier.List{
+												custom_listplanmodifier.SupressZeroNullModifier(),
+											},
+											NestedObject: schema.NestedAttributeObject{
+												Validators: []validator.Object{
+													speakeasy_objectvalidators.NotNull(),
+												},
+												Attributes: map[string]schema.Attribute{
+													"spiffe_id": schema.SingleNestedAttribute{
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"type": schema.StringAttribute{
+																Optional:    true,
+																Description: `Type defines how to match incoming traffic by SpiffeID. ` + "`" + `Exact` + "`" + ` or ` + "`" + `Prefix` + "`" + ` are allowed. Not Null; must be one of ["Exact", "Prefix"]`,
+																Validators: []validator.String{
+																	speakeasy_stringvalidators.NotNull(),
+																	stringvalidator.OneOf(
+																		"Exact",
+																		"Prefix",
+																	),
+																},
+															},
+															"value": schema.StringAttribute{
+																Optional:    true,
+																Description: `Value is SpiffeId of a client that needs to match for the configuration to be applied. Not Null`,
+																Validators: []validator.String{
+																	speakeasy_stringvalidators.NotNull(),
+																},
+															},
+														},
+														Description: `SpiffeID defines a matcher configuration for SpiffeID matching`,
+													},
+												},
+											},
+											Description: `Deny defines a list of matches for which access will be denied`,
+										},
+									},
+									Description: `Not Null`,
+									Validators: []validator.Object{
+										speakeasy_objectvalidators.NotNull(),
+									},
+								},
+							},
+						},
+						Description: `Rules defines inbound permissions configuration`,
 					},
 					"target_ref": schema.SingleNestedAttribute{
 						Optional: true,
@@ -244,6 +389,7 @@ func (r *MeshTrafficPermissionResource) Schema(ctx context.Context, req resource
 									`will be targeted.`,
 							},
 							"proxy_types": schema.ListAttribute{
+								Computed: true,
 								Optional: true,
 								PlanModifiers: []planmodifier.List{
 									custom_listplanmodifier.SupressZeroNullModifier(),
@@ -284,6 +430,7 @@ func (r *MeshTrafficPermissionResource) Schema(ctx context.Context, req resource
 				Computed: true,
 				PlanModifiers: []planmodifier.List{
 					custom_listplanmodifier.SupressZeroNullModifier(),
+					speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
 				},
 				ElementType: types.StringType,
 				MarkdownDescription: `warnings is a list of warning messages to return to the requesting Kuma API clients.` + "\n" +
@@ -331,13 +478,13 @@ func (r *MeshTrafficPermissionResource) Create(ctx context.Context, req resource
 		return
 	}
 
-	request, requestDiags := data.ToOperationsCreateMeshTrafficPermissionRequest(ctx)
+	request, requestDiags := data.ToOperationsPutMeshTrafficPermissionRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshTrafficPermission.CreateMeshTrafficPermission(ctx, *request)
+	res, err := r.client.MeshTrafficPermission.PutMeshTrafficPermission(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -349,7 +496,10 @@ func (r *MeshTrafficPermissionResource) Create(ctx context.Context, req resource
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 201 {
+	switch res.StatusCode {
+	case 200, 201:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
@@ -482,13 +632,13 @@ func (r *MeshTrafficPermissionResource) Update(ctx context.Context, req resource
 		return
 	}
 
-	request, requestDiags := data.ToOperationsUpdateMeshTrafficPermissionRequest(ctx)
+	request, requestDiags := data.ToOperationsPutMeshTrafficPermissionRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshTrafficPermission.UpdateMeshTrafficPermission(ctx, *request)
+	res, err := r.client.MeshTrafficPermission.PutMeshTrafficPermission(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -500,7 +650,10 @@ func (r *MeshTrafficPermissionResource) Update(ctx context.Context, req resource
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 200 {
+	switch res.StatusCode {
+	case 200, 201:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}

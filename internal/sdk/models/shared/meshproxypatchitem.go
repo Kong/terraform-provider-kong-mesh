@@ -33,21 +33,21 @@ func (e *MeshProxyPatchItemType) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// MeshProxyPatchItemOp - Op is a jsonpatch operation string.
-type MeshProxyPatchItemOp string
+// Op is a jsonpatch operation string.
+type Op string
 
 const (
-	MeshProxyPatchItemOpAdd     MeshProxyPatchItemOp = "add"
-	MeshProxyPatchItemOpRemove  MeshProxyPatchItemOp = "remove"
-	MeshProxyPatchItemOpReplace MeshProxyPatchItemOp = "replace"
-	MeshProxyPatchItemOpMove    MeshProxyPatchItemOp = "move"
-	MeshProxyPatchItemOpCopy    MeshProxyPatchItemOp = "copy"
+	OpAdd     Op = "add"
+	OpRemove  Op = "remove"
+	OpReplace Op = "replace"
+	OpMove    Op = "move"
+	OpCopy    Op = "copy"
 )
 
-func (e MeshProxyPatchItemOp) ToPointer() *MeshProxyPatchItemOp {
+func (e Op) ToPointer() *Op {
 	return &e
 }
-func (e *MeshProxyPatchItemOp) UnmarshalJSON(data []byte) error {
+func (e *Op) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -62,10 +62,10 @@ func (e *MeshProxyPatchItemOp) UnmarshalJSON(data []byte) error {
 	case "move":
 		fallthrough
 	case "copy":
-		*e = MeshProxyPatchItemOp(v)
+		*e = Op(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for MeshProxyPatchItemOp: %v", v)
+		return fmt.Errorf("invalid value for Op: %v", v)
 	}
 }
 
@@ -74,7 +74,7 @@ type JSONPatches struct {
 	// From is a jsonpatch from string, used by move and copy operations.
 	From *string `json:"from,omitempty"`
 	// Op is a jsonpatch operation string.
-	Op MeshProxyPatchItemOp `json:"op"`
+	Op Op `json:"op"`
 	// Path is a jsonpatch path string.
 	Path string `json:"path"`
 	// Value must be a valid json value used by replace and add operations.
@@ -88,9 +88,9 @@ func (o *JSONPatches) GetFrom() *string {
 	return o.From
 }
 
-func (o *JSONPatches) GetOp() MeshProxyPatchItemOp {
+func (o *JSONPatches) GetOp() Op {
 	if o == nil {
-		return MeshProxyPatchItemOp("")
+		return Op("")
 	}
 	return o.Op
 }
@@ -109,8 +109,8 @@ func (o *JSONPatches) GetValue() any {
 	return o.Value
 }
 
-// MeshProxyPatchItemMatch - Match is a set of conditions that have to be matched for modification operation to happen.
-type MeshProxyPatchItemMatch struct {
+// MeshProxyPatchItemSpecDefaultAppendModificationsClusterMatch - Match is a set of conditions that have to be matched for modification operation to happen.
+type MeshProxyPatchItemSpecDefaultAppendModificationsClusterMatch struct {
 	// Name of the cluster to match.
 	Name *string `json:"name,omitempty"`
 	// Origin is the name of the component or plugin that generated the resource.
@@ -130,14 +130,14 @@ type MeshProxyPatchItemMatch struct {
 	Origin *string `json:"origin,omitempty"`
 }
 
-func (o *MeshProxyPatchItemMatch) GetName() *string {
+func (o *MeshProxyPatchItemSpecDefaultAppendModificationsClusterMatch) GetName() *string {
 	if o == nil {
 		return nil
 	}
 	return o.Name
 }
 
-func (o *MeshProxyPatchItemMatch) GetOrigin() *string {
+func (o *MeshProxyPatchItemSpecDefaultAppendModificationsClusterMatch) GetOrigin() *string {
 	if o == nil {
 		return nil
 	}
@@ -180,7 +180,7 @@ type Cluster struct {
 	// resource
 	JSONPatches []JSONPatches `json:"jsonPatches,omitempty"`
 	// Match is a set of conditions that have to be matched for modification operation to happen.
-	Match *MeshProxyPatchItemMatch `json:"match,omitempty"`
+	Match *MeshProxyPatchItemSpecDefaultAppendModificationsClusterMatch `json:"match,omitempty"`
 	// Operation to execute on matched cluster.
 	Operation Operation `json:"operation"`
 	// Value of xDS resource in YAML format to add or patch.
@@ -194,7 +194,7 @@ func (o *Cluster) GetJSONPatches() []JSONPatches {
 	return o.JSONPatches
 }
 
-func (o *Cluster) GetMatch() *MeshProxyPatchItemMatch {
+func (o *Cluster) GetMatch() *MeshProxyPatchItemSpecDefaultAppendModificationsClusterMatch {
 	if o == nil {
 		return nil
 	}
@@ -215,21 +215,21 @@ func (o *Cluster) GetValue() *string {
 	return o.Value
 }
 
-// MeshProxyPatchItemSpecOp - Op is a jsonpatch operation string.
-type MeshProxyPatchItemSpecOp string
+// MeshProxyPatchItemOp - Op is a jsonpatch operation string.
+type MeshProxyPatchItemOp string
 
 const (
-	MeshProxyPatchItemSpecOpAdd     MeshProxyPatchItemSpecOp = "add"
-	MeshProxyPatchItemSpecOpRemove  MeshProxyPatchItemSpecOp = "remove"
-	MeshProxyPatchItemSpecOpReplace MeshProxyPatchItemSpecOp = "replace"
-	MeshProxyPatchItemSpecOpMove    MeshProxyPatchItemSpecOp = "move"
-	MeshProxyPatchItemSpecOpCopy    MeshProxyPatchItemSpecOp = "copy"
+	MeshProxyPatchItemOpAdd     MeshProxyPatchItemOp = "add"
+	MeshProxyPatchItemOpRemove  MeshProxyPatchItemOp = "remove"
+	MeshProxyPatchItemOpReplace MeshProxyPatchItemOp = "replace"
+	MeshProxyPatchItemOpMove    MeshProxyPatchItemOp = "move"
+	MeshProxyPatchItemOpCopy    MeshProxyPatchItemOp = "copy"
 )
 
-func (e MeshProxyPatchItemSpecOp) ToPointer() *MeshProxyPatchItemSpecOp {
+func (e MeshProxyPatchItemOp) ToPointer() *MeshProxyPatchItemOp {
 	return &e
 }
-func (e *MeshProxyPatchItemSpecOp) UnmarshalJSON(data []byte) error {
+func (e *MeshProxyPatchItemOp) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -244,10 +244,10 @@ func (e *MeshProxyPatchItemSpecOp) UnmarshalJSON(data []byte) error {
 	case "move":
 		fallthrough
 	case "copy":
-		*e = MeshProxyPatchItemSpecOp(v)
+		*e = MeshProxyPatchItemOp(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for MeshProxyPatchItemSpecOp: %v", v)
+		return fmt.Errorf("invalid value for MeshProxyPatchItemOp: %v", v)
 	}
 }
 
@@ -256,7 +256,7 @@ type MeshProxyPatchItemJSONPatches struct {
 	// From is a jsonpatch from string, used by move and copy operations.
 	From *string `json:"from,omitempty"`
 	// Op is a jsonpatch operation string.
-	Op MeshProxyPatchItemSpecOp `json:"op"`
+	Op MeshProxyPatchItemOp `json:"op"`
 	// Path is a jsonpatch path string.
 	Path string `json:"path"`
 	// Value must be a valid json value used by replace and add operations.
@@ -270,9 +270,9 @@ func (o *MeshProxyPatchItemJSONPatches) GetFrom() *string {
 	return o.From
 }
 
-func (o *MeshProxyPatchItemJSONPatches) GetOp() MeshProxyPatchItemSpecOp {
+func (o *MeshProxyPatchItemJSONPatches) GetOp() MeshProxyPatchItemOp {
 	if o == nil {
-		return MeshProxyPatchItemSpecOp("")
+		return MeshProxyPatchItemOp("")
 	}
 	return o.Op
 }
@@ -291,8 +291,8 @@ func (o *MeshProxyPatchItemJSONPatches) GetValue() any {
 	return o.Value
 }
 
-// MeshProxyPatchItemSpecMatch - Match is a set of conditions that have to be matched for modification operation to happen.
-type MeshProxyPatchItemSpecMatch struct {
+// MeshProxyPatchItemMatch - Match is a set of conditions that have to be matched for modification operation to happen.
+type MeshProxyPatchItemMatch struct {
 	// Name of the listener to match.
 	ListenerName *string `json:"listenerName,omitempty"`
 	// Listener tags available in Listener#Metadata#FilterMetadata[io.kuma.tags]
@@ -316,28 +316,28 @@ type MeshProxyPatchItemSpecMatch struct {
 	Origin *string `json:"origin,omitempty"`
 }
 
-func (o *MeshProxyPatchItemSpecMatch) GetListenerName() *string {
+func (o *MeshProxyPatchItemMatch) GetListenerName() *string {
 	if o == nil {
 		return nil
 	}
 	return o.ListenerName
 }
 
-func (o *MeshProxyPatchItemSpecMatch) GetListenerTags() map[string]string {
+func (o *MeshProxyPatchItemMatch) GetListenerTags() map[string]string {
 	if o == nil {
 		return nil
 	}
 	return o.ListenerTags
 }
 
-func (o *MeshProxyPatchItemSpecMatch) GetName() *string {
+func (o *MeshProxyPatchItemMatch) GetName() *string {
 	if o == nil {
 		return nil
 	}
 	return o.Name
 }
 
-func (o *MeshProxyPatchItemSpecMatch) GetOrigin() *string {
+func (o *MeshProxyPatchItemMatch) GetOrigin() *string {
 	if o == nil {
 		return nil
 	}
@@ -390,7 +390,7 @@ type HTTPFilter struct {
 	// HTTP Filter available in HTTP Connection Manager in a Listener resource.
 	JSONPatches []MeshProxyPatchItemJSONPatches `json:"jsonPatches,omitempty"`
 	// Match is a set of conditions that have to be matched for modification operation to happen.
-	Match *MeshProxyPatchItemSpecMatch `json:"match,omitempty"`
+	Match *MeshProxyPatchItemMatch `json:"match,omitempty"`
 	// Operation to execute on matched listener.
 	Operation MeshProxyPatchItemOperation `json:"operation"`
 	// Value of xDS resource in YAML format to add or patch.
@@ -404,7 +404,7 @@ func (o *HTTPFilter) GetJSONPatches() []MeshProxyPatchItemJSONPatches {
 	return o.JSONPatches
 }
 
-func (o *HTTPFilter) GetMatch() *MeshProxyPatchItemSpecMatch {
+func (o *HTTPFilter) GetMatch() *MeshProxyPatchItemMatch {
 	if o == nil {
 		return nil
 	}
@@ -425,21 +425,21 @@ func (o *HTTPFilter) GetValue() *string {
 	return o.Value
 }
 
-// MeshProxyPatchItemSpecDefaultOp - Op is a jsonpatch operation string.
-type MeshProxyPatchItemSpecDefaultOp string
+// MeshProxyPatchItemSpecOp - Op is a jsonpatch operation string.
+type MeshProxyPatchItemSpecOp string
 
 const (
-	MeshProxyPatchItemSpecDefaultOpAdd     MeshProxyPatchItemSpecDefaultOp = "add"
-	MeshProxyPatchItemSpecDefaultOpRemove  MeshProxyPatchItemSpecDefaultOp = "remove"
-	MeshProxyPatchItemSpecDefaultOpReplace MeshProxyPatchItemSpecDefaultOp = "replace"
-	MeshProxyPatchItemSpecDefaultOpMove    MeshProxyPatchItemSpecDefaultOp = "move"
-	MeshProxyPatchItemSpecDefaultOpCopy    MeshProxyPatchItemSpecDefaultOp = "copy"
+	MeshProxyPatchItemSpecOpAdd     MeshProxyPatchItemSpecOp = "add"
+	MeshProxyPatchItemSpecOpRemove  MeshProxyPatchItemSpecOp = "remove"
+	MeshProxyPatchItemSpecOpReplace MeshProxyPatchItemSpecOp = "replace"
+	MeshProxyPatchItemSpecOpMove    MeshProxyPatchItemSpecOp = "move"
+	MeshProxyPatchItemSpecOpCopy    MeshProxyPatchItemSpecOp = "copy"
 )
 
-func (e MeshProxyPatchItemSpecDefaultOp) ToPointer() *MeshProxyPatchItemSpecDefaultOp {
+func (e MeshProxyPatchItemSpecOp) ToPointer() *MeshProxyPatchItemSpecOp {
 	return &e
 }
-func (e *MeshProxyPatchItemSpecDefaultOp) UnmarshalJSON(data []byte) error {
+func (e *MeshProxyPatchItemSpecOp) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -454,10 +454,10 @@ func (e *MeshProxyPatchItemSpecDefaultOp) UnmarshalJSON(data []byte) error {
 	case "move":
 		fallthrough
 	case "copy":
-		*e = MeshProxyPatchItemSpecDefaultOp(v)
+		*e = MeshProxyPatchItemSpecOp(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for MeshProxyPatchItemSpecDefaultOp: %v", v)
+		return fmt.Errorf("invalid value for MeshProxyPatchItemSpecOp: %v", v)
 	}
 }
 
@@ -466,7 +466,7 @@ type MeshProxyPatchItemSpecJSONPatches struct {
 	// From is a jsonpatch from string, used by move and copy operations.
 	From *string `json:"from,omitempty"`
 	// Op is a jsonpatch operation string.
-	Op MeshProxyPatchItemSpecDefaultOp `json:"op"`
+	Op MeshProxyPatchItemSpecOp `json:"op"`
 	// Path is a jsonpatch path string.
 	Path string `json:"path"`
 	// Value must be a valid json value used by replace and add operations.
@@ -480,9 +480,9 @@ func (o *MeshProxyPatchItemSpecJSONPatches) GetFrom() *string {
 	return o.From
 }
 
-func (o *MeshProxyPatchItemSpecJSONPatches) GetOp() MeshProxyPatchItemSpecDefaultOp {
+func (o *MeshProxyPatchItemSpecJSONPatches) GetOp() MeshProxyPatchItemSpecOp {
 	if o == nil {
-		return MeshProxyPatchItemSpecDefaultOp("")
+		return MeshProxyPatchItemSpecOp("")
 	}
 	return o.Op
 }
@@ -501,8 +501,8 @@ func (o *MeshProxyPatchItemSpecJSONPatches) GetValue() any {
 	return o.Value
 }
 
-// MeshProxyPatchItemSpecDefaultMatch - Match is a set of conditions that have to be matched for modification operation to happen.
-type MeshProxyPatchItemSpecDefaultMatch struct {
+// MeshProxyPatchItemSpecMatch - Match is a set of conditions that have to be matched for modification operation to happen.
+type MeshProxyPatchItemSpecMatch struct {
 	// Name of the listener to match.
 	Name *string `json:"name,omitempty"`
 	// Origin is the name of the component or plugin that generated the resource.
@@ -524,21 +524,21 @@ type MeshProxyPatchItemSpecDefaultMatch struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (o *MeshProxyPatchItemSpecDefaultMatch) GetName() *string {
+func (o *MeshProxyPatchItemSpecMatch) GetName() *string {
 	if o == nil {
 		return nil
 	}
 	return o.Name
 }
 
-func (o *MeshProxyPatchItemSpecDefaultMatch) GetOrigin() *string {
+func (o *MeshProxyPatchItemSpecMatch) GetOrigin() *string {
 	if o == nil {
 		return nil
 	}
 	return o.Origin
 }
 
-func (o *MeshProxyPatchItemSpecDefaultMatch) GetTags() map[string]string {
+func (o *MeshProxyPatchItemSpecMatch) GetTags() map[string]string {
 	if o == nil {
 		return nil
 	}
@@ -581,7 +581,7 @@ type Listener struct {
 	// resource
 	JSONPatches []MeshProxyPatchItemSpecJSONPatches `json:"jsonPatches,omitempty"`
 	// Match is a set of conditions that have to be matched for modification operation to happen.
-	Match *MeshProxyPatchItemSpecDefaultMatch `json:"match,omitempty"`
+	Match *MeshProxyPatchItemSpecMatch `json:"match,omitempty"`
 	// Operation to execute on matched listener.
 	Operation MeshProxyPatchItemSpecOperation `json:"operation"`
 	// Value of xDS resource in YAML format to add or patch.
@@ -595,7 +595,7 @@ func (o *Listener) GetJSONPatches() []MeshProxyPatchItemSpecJSONPatches {
 	return o.JSONPatches
 }
 
-func (o *Listener) GetMatch() *MeshProxyPatchItemSpecDefaultMatch {
+func (o *Listener) GetMatch() *MeshProxyPatchItemSpecMatch {
 	if o == nil {
 		return nil
 	}
@@ -616,21 +616,21 @@ func (o *Listener) GetValue() *string {
 	return o.Value
 }
 
-// MeshProxyPatchItemSpecDefaultAppendModificationsOp - Op is a jsonpatch operation string.
-type MeshProxyPatchItemSpecDefaultAppendModificationsOp string
+// MeshProxyPatchItemSpecDefaultOp - Op is a jsonpatch operation string.
+type MeshProxyPatchItemSpecDefaultOp string
 
 const (
-	MeshProxyPatchItemSpecDefaultAppendModificationsOpAdd     MeshProxyPatchItemSpecDefaultAppendModificationsOp = "add"
-	MeshProxyPatchItemSpecDefaultAppendModificationsOpRemove  MeshProxyPatchItemSpecDefaultAppendModificationsOp = "remove"
-	MeshProxyPatchItemSpecDefaultAppendModificationsOpReplace MeshProxyPatchItemSpecDefaultAppendModificationsOp = "replace"
-	MeshProxyPatchItemSpecDefaultAppendModificationsOpMove    MeshProxyPatchItemSpecDefaultAppendModificationsOp = "move"
-	MeshProxyPatchItemSpecDefaultAppendModificationsOpCopy    MeshProxyPatchItemSpecDefaultAppendModificationsOp = "copy"
+	MeshProxyPatchItemSpecDefaultOpAdd     MeshProxyPatchItemSpecDefaultOp = "add"
+	MeshProxyPatchItemSpecDefaultOpRemove  MeshProxyPatchItemSpecDefaultOp = "remove"
+	MeshProxyPatchItemSpecDefaultOpReplace MeshProxyPatchItemSpecDefaultOp = "replace"
+	MeshProxyPatchItemSpecDefaultOpMove    MeshProxyPatchItemSpecDefaultOp = "move"
+	MeshProxyPatchItemSpecDefaultOpCopy    MeshProxyPatchItemSpecDefaultOp = "copy"
 )
 
-func (e MeshProxyPatchItemSpecDefaultAppendModificationsOp) ToPointer() *MeshProxyPatchItemSpecDefaultAppendModificationsOp {
+func (e MeshProxyPatchItemSpecDefaultOp) ToPointer() *MeshProxyPatchItemSpecDefaultOp {
 	return &e
 }
-func (e *MeshProxyPatchItemSpecDefaultAppendModificationsOp) UnmarshalJSON(data []byte) error {
+func (e *MeshProxyPatchItemSpecDefaultOp) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -645,10 +645,10 @@ func (e *MeshProxyPatchItemSpecDefaultAppendModificationsOp) UnmarshalJSON(data 
 	case "move":
 		fallthrough
 	case "copy":
-		*e = MeshProxyPatchItemSpecDefaultAppendModificationsOp(v)
+		*e = MeshProxyPatchItemSpecDefaultOp(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for MeshProxyPatchItemSpecDefaultAppendModificationsOp: %v", v)
+		return fmt.Errorf("invalid value for MeshProxyPatchItemSpecDefaultOp: %v", v)
 	}
 }
 
@@ -657,7 +657,7 @@ type MeshProxyPatchItemSpecDefaultJSONPatches struct {
 	// From is a jsonpatch from string, used by move and copy operations.
 	From *string `json:"from,omitempty"`
 	// Op is a jsonpatch operation string.
-	Op MeshProxyPatchItemSpecDefaultAppendModificationsOp `json:"op"`
+	Op MeshProxyPatchItemSpecDefaultOp `json:"op"`
 	// Path is a jsonpatch path string.
 	Path string `json:"path"`
 	// Value must be a valid json value used by replace and add operations.
@@ -671,9 +671,9 @@ func (o *MeshProxyPatchItemSpecDefaultJSONPatches) GetFrom() *string {
 	return o.From
 }
 
-func (o *MeshProxyPatchItemSpecDefaultJSONPatches) GetOp() MeshProxyPatchItemSpecDefaultAppendModificationsOp {
+func (o *MeshProxyPatchItemSpecDefaultJSONPatches) GetOp() MeshProxyPatchItemSpecDefaultOp {
 	if o == nil {
-		return MeshProxyPatchItemSpecDefaultAppendModificationsOp("")
+		return MeshProxyPatchItemSpecDefaultOp("")
 	}
 	return o.Op
 }
@@ -692,8 +692,8 @@ func (o *MeshProxyPatchItemSpecDefaultJSONPatches) GetValue() any {
 	return o.Value
 }
 
-// MeshProxyPatchItemSpecDefaultAppendModificationsMatch - Match is a set of conditions that have to be matched for modification operation to happen.
-type MeshProxyPatchItemSpecDefaultAppendModificationsMatch struct {
+// MeshProxyPatchItemSpecDefaultMatch - Match is a set of conditions that have to be matched for modification operation to happen.
+type MeshProxyPatchItemSpecDefaultMatch struct {
 	// Name of the listener to match.
 	ListenerName *string `json:"listenerName,omitempty"`
 	// Listener tags available in Listener#Metadata#FilterMetadata[io.kuma.tags]
@@ -717,28 +717,28 @@ type MeshProxyPatchItemSpecDefaultAppendModificationsMatch struct {
 	Origin *string `json:"origin,omitempty"`
 }
 
-func (o *MeshProxyPatchItemSpecDefaultAppendModificationsMatch) GetListenerName() *string {
+func (o *MeshProxyPatchItemSpecDefaultMatch) GetListenerName() *string {
 	if o == nil {
 		return nil
 	}
 	return o.ListenerName
 }
 
-func (o *MeshProxyPatchItemSpecDefaultAppendModificationsMatch) GetListenerTags() map[string]string {
+func (o *MeshProxyPatchItemSpecDefaultMatch) GetListenerTags() map[string]string {
 	if o == nil {
 		return nil
 	}
 	return o.ListenerTags
 }
 
-func (o *MeshProxyPatchItemSpecDefaultAppendModificationsMatch) GetName() *string {
+func (o *MeshProxyPatchItemSpecDefaultMatch) GetName() *string {
 	if o == nil {
 		return nil
 	}
 	return o.Name
 }
 
-func (o *MeshProxyPatchItemSpecDefaultAppendModificationsMatch) GetOrigin() *string {
+func (o *MeshProxyPatchItemSpecDefaultMatch) GetOrigin() *string {
 	if o == nil {
 		return nil
 	}
@@ -790,7 +790,7 @@ type NetworkFilter struct {
 	// filter.
 	JSONPatches []MeshProxyPatchItemSpecDefaultJSONPatches `json:"jsonPatches,omitempty"`
 	// Match is a set of conditions that have to be matched for modification operation to happen.
-	Match *MeshProxyPatchItemSpecDefaultAppendModificationsMatch `json:"match,omitempty"`
+	Match *MeshProxyPatchItemSpecDefaultMatch `json:"match,omitempty"`
 	// Operation to execute on matched listener.
 	Operation MeshProxyPatchItemSpecDefaultOperation `json:"operation"`
 	// Value of xDS resource in YAML format to add or patch.
@@ -804,7 +804,7 @@ func (o *NetworkFilter) GetJSONPatches() []MeshProxyPatchItemSpecDefaultJSONPatc
 	return o.JSONPatches
 }
 
-func (o *NetworkFilter) GetMatch() *MeshProxyPatchItemSpecDefaultAppendModificationsMatch {
+func (o *NetworkFilter) GetMatch() *MeshProxyPatchItemSpecDefaultMatch {
 	if o == nil {
 		return nil
 	}
@@ -825,21 +825,21 @@ func (o *NetworkFilter) GetValue() *string {
 	return o.Value
 }
 
-// MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostOp - Op is a jsonpatch operation string.
-type MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostOp string
+// MeshProxyPatchItemSpecDefaultAppendModificationsOp - Op is a jsonpatch operation string.
+type MeshProxyPatchItemSpecDefaultAppendModificationsOp string
 
 const (
-	MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostOpAdd     MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostOp = "add"
-	MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostOpRemove  MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostOp = "remove"
-	MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostOpReplace MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostOp = "replace"
-	MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostOpMove    MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostOp = "move"
-	MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostOpCopy    MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostOp = "copy"
+	MeshProxyPatchItemSpecDefaultAppendModificationsOpAdd     MeshProxyPatchItemSpecDefaultAppendModificationsOp = "add"
+	MeshProxyPatchItemSpecDefaultAppendModificationsOpRemove  MeshProxyPatchItemSpecDefaultAppendModificationsOp = "remove"
+	MeshProxyPatchItemSpecDefaultAppendModificationsOpReplace MeshProxyPatchItemSpecDefaultAppendModificationsOp = "replace"
+	MeshProxyPatchItemSpecDefaultAppendModificationsOpMove    MeshProxyPatchItemSpecDefaultAppendModificationsOp = "move"
+	MeshProxyPatchItemSpecDefaultAppendModificationsOpCopy    MeshProxyPatchItemSpecDefaultAppendModificationsOp = "copy"
 )
 
-func (e MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostOp) ToPointer() *MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostOp {
+func (e MeshProxyPatchItemSpecDefaultAppendModificationsOp) ToPointer() *MeshProxyPatchItemSpecDefaultAppendModificationsOp {
 	return &e
 }
-func (e *MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostOp) UnmarshalJSON(data []byte) error {
+func (e *MeshProxyPatchItemSpecDefaultAppendModificationsOp) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -854,10 +854,10 @@ func (e *MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostOp) Unmarsha
 	case "move":
 		fallthrough
 	case "copy":
-		*e = MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostOp(v)
+		*e = MeshProxyPatchItemSpecDefaultAppendModificationsOp(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostOp: %v", v)
+		return fmt.Errorf("invalid value for MeshProxyPatchItemSpecDefaultAppendModificationsOp: %v", v)
 	}
 }
 
@@ -866,7 +866,7 @@ type MeshProxyPatchItemSpecDefaultAppendModificationsJSONPatches struct {
 	// From is a jsonpatch from string, used by move and copy operations.
 	From *string `json:"from,omitempty"`
 	// Op is a jsonpatch operation string.
-	Op MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostOp `json:"op"`
+	Op MeshProxyPatchItemSpecDefaultAppendModificationsOp `json:"op"`
 	// Path is a jsonpatch path string.
 	Path string `json:"path"`
 	// Value must be a valid json value used by replace and add operations.
@@ -880,9 +880,9 @@ func (o *MeshProxyPatchItemSpecDefaultAppendModificationsJSONPatches) GetFrom() 
 	return o.From
 }
 
-func (o *MeshProxyPatchItemSpecDefaultAppendModificationsJSONPatches) GetOp() MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostOp {
+func (o *MeshProxyPatchItemSpecDefaultAppendModificationsJSONPatches) GetOp() MeshProxyPatchItemSpecDefaultAppendModificationsOp {
 	if o == nil {
-		return MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostOp("")
+		return MeshProxyPatchItemSpecDefaultAppendModificationsOp("")
 	}
 	return o.Op
 }
@@ -901,8 +901,8 @@ func (o *MeshProxyPatchItemSpecDefaultAppendModificationsJSONPatches) GetValue()
 	return o.Value
 }
 
-// MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostMatch - Match is a set of conditions that have to be matched for modification operation to happen.
-type MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostMatch struct {
+// MeshProxyPatchItemSpecDefaultAppendModificationsMatch - Match is a set of conditions that have to be matched for modification operation to happen.
+type MeshProxyPatchItemSpecDefaultAppendModificationsMatch struct {
 	// Name of the VirtualHost to match.
 	Name *string `json:"name,omitempty"`
 	// Origin is the name of the component or plugin that generated the resource.
@@ -924,21 +924,21 @@ type MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostMatch struct {
 	RouteConfigurationName *string `json:"routeConfigurationName,omitempty"`
 }
 
-func (o *MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostMatch) GetName() *string {
+func (o *MeshProxyPatchItemSpecDefaultAppendModificationsMatch) GetName() *string {
 	if o == nil {
 		return nil
 	}
 	return o.Name
 }
 
-func (o *MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostMatch) GetOrigin() *string {
+func (o *MeshProxyPatchItemSpecDefaultAppendModificationsMatch) GetOrigin() *string {
 	if o == nil {
 		return nil
 	}
 	return o.Origin
 }
 
-func (o *MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostMatch) GetRouteConfigurationName() *string {
+func (o *MeshProxyPatchItemSpecDefaultAppendModificationsMatch) GetRouteConfigurationName() *string {
 	if o == nil {
 		return nil
 	}
@@ -982,7 +982,7 @@ type VirtualHost struct {
 	// VirtualHost resource
 	JSONPatches []MeshProxyPatchItemSpecDefaultAppendModificationsJSONPatches `json:"jsonPatches,omitempty"`
 	// Match is a set of conditions that have to be matched for modification operation to happen.
-	Match MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostMatch `json:"match"`
+	Match MeshProxyPatchItemSpecDefaultAppendModificationsMatch `json:"match"`
 	// Operation to execute on matched listener.
 	Operation MeshProxyPatchItemSpecDefaultAppendModificationsOperation `json:"operation"`
 	// Value of xDS resource in YAML format to add or patch.
@@ -996,9 +996,9 @@ func (o *VirtualHost) GetJSONPatches() []MeshProxyPatchItemSpecDefaultAppendModi
 	return o.JSONPatches
 }
 
-func (o *VirtualHost) GetMatch() MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostMatch {
+func (o *VirtualHost) GetMatch() MeshProxyPatchItemSpecDefaultAppendModificationsMatch {
 	if o == nil {
-		return MeshProxyPatchItemSpecDefaultAppendModificationsVirtualHostMatch{}
+		return MeshProxyPatchItemSpecDefaultAppendModificationsMatch{}
 	}
 	return o.Match
 }

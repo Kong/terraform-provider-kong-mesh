@@ -1,7 +1,7 @@
 lockVersion: 2.0.0
 id: 322c4806-8b53-493c-a05f-50d4d113c747
 management:
-  docChecksum: a1c39f3bb422e4440a3d5e954c32d216
+  docChecksum: 64c078e688c5be2bed8685043756a3f0
   docVersion: 2.0.0
   speakeasyVersion: 1.555.3
   generationVersion: 2.620.2
@@ -22,54 +22,6 @@ generatedFiles:
   - .gitattributes
   - USAGE.md
   - examples/README.md
-  - examples/data-sources/kong-mesh_hostname_generator_list/data-source.tf
-  - examples/data-sources/kong-mesh_mesh/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_access_log/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_access_log_list/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_circuit_breaker/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_circuit_breaker_list/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_external_service/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_external_service_list/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_fault_injection/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_fault_injection_list/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_gateway/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_gateway_list/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_global_rate_limit/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_global_rate_limit_list/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_health_check/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_health_check_list/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_hostname_generator/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_http_route/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_http_route_list/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_list/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_load_balancing_strategy/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_load_balancing_strategy_list/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_metric/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_metric_list/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_multi_zone_service/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_multi_zone_service_list/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_opa/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_opa_list/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_passthrough/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_passthrough_list/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_proxy_patch/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_proxy_patch_list/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_rate_limit/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_rate_limit_list/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_retry/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_retry_list/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_service/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_service_list/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_tcp_route/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_tcp_route_list/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_timeout/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_timeout_list/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_tls/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_tls_list/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_trace/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_trace_list/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_traffic_permission/data-source.tf
-  - examples/data-sources/kong-mesh_mesh_traffic_permission_list/data-source.tf
   - examples/provider/provider.tf
   - examples/resources/kong-mesh_mesh/import.sh
   - examples/resources/kong-mesh_mesh/resource.tf
@@ -91,6 +43,8 @@ generatedFiles:
   - examples/resources/kong-mesh_mesh_hostname_generator/resource.tf
   - examples/resources/kong-mesh_mesh_http_route/import.sh
   - examples/resources/kong-mesh_mesh_http_route/resource.tf
+  - examples/resources/kong-mesh_mesh_identity/import.sh
+  - examples/resources/kong-mesh_mesh_identity/resource.tf
   - examples/resources/kong-mesh_mesh_load_balancing_strategy/import.sh
   - examples/resources/kong-mesh_mesh_load_balancing_strategy/resource.tf
   - examples/resources/kong-mesh_mesh_metric/import.sh
@@ -119,6 +73,8 @@ generatedFiles:
   - examples/resources/kong-mesh_mesh_trace/resource.tf
   - examples/resources/kong-mesh_mesh_traffic_permission/import.sh
   - examples/resources/kong-mesh_mesh_traffic_permission/resource.tf
+  - examples/resources/kong-mesh_mesh_trust/import.sh
+  - examples/resources/kong-mesh_mesh_trust/resource.tf
   - go.mod
   - go.sum
   - internal/planmodifiers/boolplanmodifier/suppress_diff.go
@@ -133,150 +89,58 @@ generatedFiles:
   - internal/planmodifiers/setplanmodifier/suppress_diff.go
   - internal/planmodifiers/stringplanmodifier/suppress_diff.go
   - internal/planmodifiers/utils/state_check.go
-  - internal/provider/hostnamegeneratorlist_data_source.go
-  - internal/provider/hostnamegeneratorlist_data_source_sdk.go
-  - internal/provider/mesh_data_source.go
-  - internal/provider/mesh_data_source_sdk.go
   - internal/provider/mesh_resource.go
   - internal/provider/mesh_resource_sdk.go
-  - internal/provider/meshaccesslog_data_source.go
-  - internal/provider/meshaccesslog_data_source_sdk.go
   - internal/provider/meshaccesslog_resource.go
   - internal/provider/meshaccesslog_resource_sdk.go
-  - internal/provider/meshaccessloglist_data_source.go
-  - internal/provider/meshaccessloglist_data_source_sdk.go
-  - internal/provider/meshcircuitbreaker_data_source.go
-  - internal/provider/meshcircuitbreaker_data_source_sdk.go
   - internal/provider/meshcircuitbreaker_resource.go
   - internal/provider/meshcircuitbreaker_resource_sdk.go
-  - internal/provider/meshcircuitbreakerlist_data_source.go
-  - internal/provider/meshcircuitbreakerlist_data_source_sdk.go
-  - internal/provider/meshexternalservice_data_source.go
-  - internal/provider/meshexternalservice_data_source_sdk.go
   - internal/provider/meshexternalservice_resource.go
   - internal/provider/meshexternalservice_resource_sdk.go
-  - internal/provider/meshexternalservicelist_data_source.go
-  - internal/provider/meshexternalservicelist_data_source_sdk.go
-  - internal/provider/meshfaultinjection_data_source.go
-  - internal/provider/meshfaultinjection_data_source_sdk.go
   - internal/provider/meshfaultinjection_resource.go
   - internal/provider/meshfaultinjection_resource_sdk.go
-  - internal/provider/meshfaultinjectionlist_data_source.go
-  - internal/provider/meshfaultinjectionlist_data_source_sdk.go
-  - internal/provider/meshgateway_data_source.go
-  - internal/provider/meshgateway_data_source_sdk.go
   - internal/provider/meshgateway_resource.go
   - internal/provider/meshgateway_resource_sdk.go
-  - internal/provider/meshgatewaylist_data_source.go
-  - internal/provider/meshgatewaylist_data_source_sdk.go
-  - internal/provider/meshglobalratelimit_data_source.go
-  - internal/provider/meshglobalratelimit_data_source_sdk.go
   - internal/provider/meshglobalratelimit_resource.go
   - internal/provider/meshglobalratelimit_resource_sdk.go
-  - internal/provider/meshglobalratelimitlist_data_source.go
-  - internal/provider/meshglobalratelimitlist_data_source_sdk.go
-  - internal/provider/meshhealthcheck_data_source.go
-  - internal/provider/meshhealthcheck_data_source_sdk.go
   - internal/provider/meshhealthcheck_resource.go
   - internal/provider/meshhealthcheck_resource_sdk.go
-  - internal/provider/meshhealthchecklist_data_source.go
-  - internal/provider/meshhealthchecklist_data_source_sdk.go
-  - internal/provider/meshhostnamegenerator_data_source.go
-  - internal/provider/meshhostnamegenerator_data_source_sdk.go
   - internal/provider/meshhostnamegenerator_resource.go
   - internal/provider/meshhostnamegenerator_resource_sdk.go
-  - internal/provider/meshhttproute_data_source.go
-  - internal/provider/meshhttproute_data_source_sdk.go
   - internal/provider/meshhttproute_resource.go
   - internal/provider/meshhttproute_resource_sdk.go
-  - internal/provider/meshhttproutelist_data_source.go
-  - internal/provider/meshhttproutelist_data_source_sdk.go
-  - internal/provider/meshlist_data_source.go
-  - internal/provider/meshlist_data_source_sdk.go
-  - internal/provider/meshloadbalancingstrategy_data_source.go
-  - internal/provider/meshloadbalancingstrategy_data_source_sdk.go
+  - internal/provider/meshidentity_resource.go
+  - internal/provider/meshidentity_resource_sdk.go
   - internal/provider/meshloadbalancingstrategy_resource.go
   - internal/provider/meshloadbalancingstrategy_resource_sdk.go
-  - internal/provider/meshloadbalancingstrategylist_data_source.go
-  - internal/provider/meshloadbalancingstrategylist_data_source_sdk.go
-  - internal/provider/meshmetric_data_source.go
-  - internal/provider/meshmetric_data_source_sdk.go
   - internal/provider/meshmetric_resource.go
   - internal/provider/meshmetric_resource_sdk.go
-  - internal/provider/meshmetriclist_data_source.go
-  - internal/provider/meshmetriclist_data_source_sdk.go
-  - internal/provider/meshmultizoneservice_data_source.go
-  - internal/provider/meshmultizoneservice_data_source_sdk.go
   - internal/provider/meshmultizoneservice_resource.go
   - internal/provider/meshmultizoneservice_resource_sdk.go
-  - internal/provider/meshmultizoneservicelist_data_source.go
-  - internal/provider/meshmultizoneservicelist_data_source_sdk.go
-  - internal/provider/meshopa_data_source.go
-  - internal/provider/meshopa_data_source_sdk.go
   - internal/provider/meshopa_resource.go
   - internal/provider/meshopa_resource_sdk.go
-  - internal/provider/meshopalist_data_source.go
-  - internal/provider/meshopalist_data_source_sdk.go
-  - internal/provider/meshpassthrough_data_source.go
-  - internal/provider/meshpassthrough_data_source_sdk.go
   - internal/provider/meshpassthrough_resource.go
   - internal/provider/meshpassthrough_resource_sdk.go
-  - internal/provider/meshpassthroughlist_data_source.go
-  - internal/provider/meshpassthroughlist_data_source_sdk.go
-  - internal/provider/meshproxypatch_data_source.go
-  - internal/provider/meshproxypatch_data_source_sdk.go
   - internal/provider/meshproxypatch_resource.go
   - internal/provider/meshproxypatch_resource_sdk.go
-  - internal/provider/meshproxypatchlist_data_source.go
-  - internal/provider/meshproxypatchlist_data_source_sdk.go
-  - internal/provider/meshratelimit_data_source.go
-  - internal/provider/meshratelimit_data_source_sdk.go
   - internal/provider/meshratelimit_resource.go
   - internal/provider/meshratelimit_resource_sdk.go
-  - internal/provider/meshratelimitlist_data_source.go
-  - internal/provider/meshratelimitlist_data_source_sdk.go
-  - internal/provider/meshretry_data_source.go
-  - internal/provider/meshretry_data_source_sdk.go
   - internal/provider/meshretry_resource.go
   - internal/provider/meshretry_resource_sdk.go
-  - internal/provider/meshretrylist_data_source.go
-  - internal/provider/meshretrylist_data_source_sdk.go
-  - internal/provider/meshservice_data_source.go
-  - internal/provider/meshservice_data_source_sdk.go
   - internal/provider/meshservice_resource.go
   - internal/provider/meshservice_resource_sdk.go
-  - internal/provider/meshservicelist_data_source.go
-  - internal/provider/meshservicelist_data_source_sdk.go
-  - internal/provider/meshtcproute_data_source.go
-  - internal/provider/meshtcproute_data_source_sdk.go
   - internal/provider/meshtcproute_resource.go
   - internal/provider/meshtcproute_resource_sdk.go
-  - internal/provider/meshtcproutelist_data_source.go
-  - internal/provider/meshtcproutelist_data_source_sdk.go
-  - internal/provider/meshtimeout_data_source.go
-  - internal/provider/meshtimeout_data_source_sdk.go
   - internal/provider/meshtimeout_resource.go
   - internal/provider/meshtimeout_resource_sdk.go
-  - internal/provider/meshtimeoutlist_data_source.go
-  - internal/provider/meshtimeoutlist_data_source_sdk.go
-  - internal/provider/meshtls_data_source.go
-  - internal/provider/meshtls_data_source_sdk.go
   - internal/provider/meshtls_resource.go
   - internal/provider/meshtls_resource_sdk.go
-  - internal/provider/meshtlslist_data_source.go
-  - internal/provider/meshtlslist_data_source_sdk.go
-  - internal/provider/meshtrace_data_source.go
-  - internal/provider/meshtrace_data_source_sdk.go
   - internal/provider/meshtrace_resource.go
   - internal/provider/meshtrace_resource_sdk.go
-  - internal/provider/meshtracelist_data_source.go
-  - internal/provider/meshtracelist_data_source_sdk.go
-  - internal/provider/meshtrafficpermission_data_source.go
-  - internal/provider/meshtrafficpermission_data_source_sdk.go
   - internal/provider/meshtrafficpermission_resource.go
   - internal/provider/meshtrafficpermission_resource_sdk.go
-  - internal/provider/meshtrafficpermissionlist_data_source.go
-  - internal/provider/meshtrafficpermissionlist_data_source_sdk.go
+  - internal/provider/meshtrust_resource.go
+  - internal/provider/meshtrust_resource_sdk.go
   - internal/provider/provider.go
   - internal/provider/reflect/diags.go
   - internal/provider/reflect/doc.go
@@ -297,15 +161,24 @@ generatedFiles:
   - internal/provider/typeconvert/int.go
   - internal/provider/types/abort.go
   - internal/provider/types/access_key.go
+  - internal/provider/types/access_key_data_source_file.go
+  - internal/provider/types/access_key_data_source_inline.go
+  - internal/provider/types/access_key_data_source_inline_string.go
+  - internal/provider/types/access_key_data_source_secret.go
   - internal/provider/types/acm_certificate_authority_config.go
   - internal/provider/types/addresses.go
   - internal/provider/types/affinity_tags.go
+  - internal/provider/types/agent.go
+  - internal/provider/types/aggregate.go
   - internal/provider/types/append_match.go
   - internal/provider/types/append_modifications.go
   - internal/provider/types/append_policies.go
   - internal/provider/types/applications.go
   - internal/provider/types/auth.go
   - internal/provider/types/auth_config.go
+  - internal/provider/types/auth_tls.go
+  - internal/provider/types/autogenerate.go
+  - internal/provider/types/aws.go
   - internal/provider/types/aws_credentials.go
   - internal/provider/types/back_off.go
   - internal/provider/types/backend.go
@@ -313,10 +186,14 @@ generatedFiles:
   - internal/provider/types/backends.go
   - internal/provider/types/builtin_certificate_authority_config.go
   - internal/provider/types/builtin_certificate_authority_config_conf_ca_cert.go
+  - internal/provider/types/bundled.go
+  - internal/provider/types/ca.go
+  - internal/provider/types/ca_bundles.go
   - internal/provider/types/ca_cert.go
   - internal/provider/types/cert_manager_certificate_authority_config.go
+  - internal/provider/types/certificate.go
+  - internal/provider/types/certificate_parameters.go
   - internal/provider/types/cluster.go
-  - internal/provider/types/conditions.go
   - internal/provider/types/conf.go
   - internal/provider/types/connection.go
   - internal/provider/types/connection_limits.go
@@ -332,7 +209,11 @@ generatedFiles:
   - internal/provider/types/delay.go
   - internal/provider/types/detectors.go
   - internal/provider/types/dp_cert.go
+  - internal/provider/types/endpoints.go
+  - internal/provider/types/env_var.go
+  - internal/provider/types/envoy.go
   - internal/provider/types/exclude.go
+  - internal/provider/types/extension.go
   - internal/provider/types/failover.go
   - internal/provider/types/failover_threshold.go
   - internal/provider/types/failure_percentage.go
@@ -342,22 +223,24 @@ generatedFiles:
   - internal/provider/types/filters.go
   - internal/provider/types/format.go
   - internal/provider/types/from.go
+  - internal/provider/types/from_cp.go
   - internal/provider/types/gateway_failures.go
   - internal/provider/types/grpc.go
   - internal/provider/types/hash_policies.go
   - internal/provider/types/header.go
   - internal/provider/types/headers.go
   - internal/provider/types/host_selection.go
-  - internal/provider/types/hostname_generator_item.go
   - internal/provider/types/hostname_generator_item_spec.go
   - internal/provider/types/hostname_generator_ref.go
   - internal/provider/types/hostname_generators.go
   - internal/provider/types/http.go
   - internal/provider/types/http_filter.go
+  - internal/provider/types/insecure_inline.go
   - internal/provider/types/issuer_ref.go
   - internal/provider/types/json.go
   - internal/provider/types/json_patches.go
   - internal/provider/types/least_request.go
+  - internal/provider/types/limits.go
   - internal/provider/types/listener.go
   - internal/provider/types/listeners.go
   - internal/provider/types/load_balancer.go
@@ -366,152 +249,134 @@ generatedFiles:
   - internal/provider/types/locality_awareness.go
   - internal/provider/types/logging.go
   - internal/provider/types/maglev.go
+  - internal/provider/types/match.go
   - internal/provider/types/matches.go
-  - internal/provider/types/mesh_access_log_item.go
   - internal/provider/types/mesh_access_log_item_spec_from_backends.go
   - internal/provider/types/mesh_access_log_item_spec_from_default.go
   - internal/provider/types/mesh_access_log_item_spec_from_open_telemetry.go
+  - internal/provider/types/mesh_access_log_item_spec_from_tcp.go
   - internal/provider/types/mesh_access_log_item_target_ref.go
-  - internal/provider/types/mesh_access_log_item_tcp.go
-  - internal/provider/types/mesh_circuit_breaker_item.go
   - internal/provider/types/mesh_circuit_breaker_item_default.go
   - internal/provider/types/mesh_circuit_breaker_item_from.go
   - internal/provider/types/mesh_circuit_breaker_item_rules.go
   - internal/provider/types/mesh_circuit_breaker_item_spec.go
   - internal/provider/types/mesh_external_service.go
-  - internal/provider/types/mesh_external_service_item.go
-  - internal/provider/types/mesh_external_service_item_endpoints.go
+  - internal/provider/types/mesh_external_service_item_conditions.go
   - internal/provider/types/mesh_external_service_item_extension.go
-  - internal/provider/types/mesh_external_service_item_match.go
   - internal/provider/types/mesh_external_service_item_spec.go
-  - internal/provider/types/mesh_external_service_item_version.go
-  - internal/provider/types/mesh_fault_injection_item.go
   - internal/provider/types/mesh_fault_injection_item_default.go
   - internal/provider/types/mesh_fault_injection_item_from.go
+  - internal/provider/types/mesh_fault_injection_item_rules.go
   - internal/provider/types/mesh_fault_injection_item_spec.go
-  - internal/provider/types/mesh_gateway_item.go
+  - internal/provider/types/mesh_fault_injection_item_spiffe_id.go
   - internal/provider/types/mesh_gateway_item_tls.go
-  - internal/provider/types/mesh_global_rate_limit_item.go
   - internal/provider/types/mesh_global_rate_limit_item_add.go
   - internal/provider/types/mesh_global_rate_limit_item_default.go
   - internal/provider/types/mesh_global_rate_limit_item_from.go
   - internal/provider/types/mesh_global_rate_limit_item_headers.go
   - internal/provider/types/mesh_global_rate_limit_item_http.go
-  - internal/provider/types/mesh_global_rate_limit_item_limits.go
   - internal/provider/types/mesh_global_rate_limit_item_spec.go
   - internal/provider/types/mesh_global_rate_limit_item_spec_from_request_rate.go
-  - internal/provider/types/mesh_health_check_item.go
   - internal/provider/types/mesh_health_check_item_default.go
   - internal/provider/types/mesh_health_check_item_http.go
   - internal/provider/types/mesh_health_check_item_spec.go
   - internal/provider/types/mesh_health_check_item_to.go
-  - internal/provider/types/mesh_http_route_item.go
   - internal/provider/types/mesh_http_route_item_default.go
+  - internal/provider/types/mesh_http_route_item_matches.go
   - internal/provider/types/mesh_http_route_item_rules.go
   - internal/provider/types/mesh_http_route_item_spec.go
   - internal/provider/types/mesh_http_route_item_spec_path.go
   - internal/provider/types/mesh_http_route_item_to.go
-  - internal/provider/types/mesh_item.go
+  - internal/provider/types/mesh_identity_item_file.go
+  - internal/provider/types/mesh_identity_item_selector.go
+  - internal/provider/types/mesh_identity_item_spec.go
+  - internal/provider/types/mesh_identity_item_status.go
   - internal/provider/types/mesh_item_backends.go
   - internal/provider/types/mesh_item_conf.go
-  - internal/provider/types/mesh_item_conf_prometheus_metrics_backend_config.go
-  - internal/provider/types/mesh_item_metrics.go
-  - internal/provider/types/mesh_item_metrics_conf.go
+  - internal/provider/types/mesh_item_logging_conf.go
   - internal/provider/types/mesh_item_mtls_backends.go
   - internal/provider/types/mesh_item_mtls_conf.go
-  - internal/provider/types/mesh_item_networking.go
-  - internal/provider/types/mesh_item_outbound.go
   - internal/provider/types/mesh_item_tracing_backends.go
   - internal/provider/types/mesh_item_tracing_conf.go
-  - internal/provider/types/mesh_load_balancing_strategy_item.go
   - internal/provider/types/mesh_load_balancing_strategy_item_default.go
   - internal/provider/types/mesh_load_balancing_strategy_item_from.go
   - internal/provider/types/mesh_load_balancing_strategy_item_spec.go
-  - internal/provider/types/mesh_load_balancing_strategy_item_spec_header.go
   - internal/provider/types/mesh_load_balancing_strategy_item_spec_to.go
   - internal/provider/types/mesh_load_balancing_strategy_item_to.go
-  - internal/provider/types/mesh_metric_item.go
   - internal/provider/types/mesh_metric_item_backends.go
   - internal/provider/types/mesh_metric_item_spec.go
   - internal/provider/types/mesh_metric_item_tls.go
-  - internal/provider/types/mesh_multi_zone_service_item.go
-  - internal/provider/types/mesh_multi_zone_service_item_mesh_service.go
   - internal/provider/types/mesh_multi_zone_service_item_mesh_services.go
   - internal/provider/types/mesh_multi_zone_service_item_selector.go
   - internal/provider/types/mesh_multi_zone_service_item_spec.go
   - internal/provider/types/mesh_multi_zone_service_item_status.go
-  - internal/provider/types/mesh_opa_item.go
   - internal/provider/types/mesh_opa_item_default.go
   - internal/provider/types/mesh_opa_item_spec.go
-  - internal/provider/types/mesh_passthrough_item.go
   - internal/provider/types/mesh_passthrough_item_default.go
   - internal/provider/types/mesh_passthrough_item_spec.go
-  - internal/provider/types/mesh_proxy_patch_item.go
   - internal/provider/types/mesh_proxy_patch_item_default.go
   - internal/provider/types/mesh_proxy_patch_item_match.go
   - internal/provider/types/mesh_proxy_patch_item_spec.go
-  - internal/provider/types/mesh_proxy_patch_item_spec_default_append_modifications_virtual_host_match.go
-  - internal/provider/types/mesh_proxy_patch_item_spec_default_match.go
+  - internal/provider/types/mesh_proxy_patch_item_spec_default_append_modifications_cluster_match.go
+  - internal/provider/types/mesh_proxy_patch_item_spec_default_append_modifications_match.go
   - internal/provider/types/mesh_proxy_patch_item_spec_match.go
-  - internal/provider/types/mesh_rate_limit_item.go
   - internal/provider/types/mesh_rate_limit_item_default.go
   - internal/provider/types/mesh_rate_limit_item_from.go
   - internal/provider/types/mesh_rate_limit_item_http.go
   - internal/provider/types/mesh_rate_limit_item_rules.go
   - internal/provider/types/mesh_rate_limit_item_spec.go
   - internal/provider/types/mesh_rate_limit_item_tcp.go
-  - internal/provider/types/mesh_retry_item.go
   - internal/provider/types/mesh_retry_item_default.go
   - internal/provider/types/mesh_retry_item_grpc.go
   - internal/provider/types/mesh_retry_item_http.go
   - internal/provider/types/mesh_retry_item_spec.go
   - internal/provider/types/mesh_retry_item_tcp.go
   - internal/provider/types/mesh_retry_item_to.go
-  - internal/provider/types/mesh_service_item.go
   - internal/provider/types/mesh_service_item_ports.go
   - internal/provider/types/mesh_service_item_selector.go
   - internal/provider/types/mesh_service_item_spec.go
   - internal/provider/types/mesh_service_item_status.go
   - internal/provider/types/mesh_service_item_tls.go
   - internal/provider/types/mesh_services.go
-  - internal/provider/types/mesh_tcp_route_item.go
   - internal/provider/types/mesh_tcp_route_item_default.go
   - internal/provider/types/mesh_tcp_route_item_rules.go
   - internal/provider/types/mesh_tcp_route_item_spec.go
   - internal/provider/types/mesh_tcp_route_item_to.go
-  - internal/provider/types/mesh_timeout_item.go
   - internal/provider/types/mesh_timeout_item_default.go
   - internal/provider/types/mesh_timeout_item_from.go
   - internal/provider/types/mesh_timeout_item_http.go
   - internal/provider/types/mesh_timeout_item_rules.go
   - internal/provider/types/mesh_timeout_item_spec.go
-  - internal/provider/types/mesh_tls_item.go
   - internal/provider/types/mesh_tls_item_default.go
   - internal/provider/types/mesh_tls_item_from.go
   - internal/provider/types/mesh_tls_item_rules.go
   - internal/provider/types/mesh_tls_item_spec.go
-  - internal/provider/types/mesh_trace_item.go
   - internal/provider/types/mesh_trace_item_backends.go
   - internal/provider/types/mesh_trace_item_default.go
   - internal/provider/types/mesh_trace_item_open_telemetry.go
   - internal/provider/types/mesh_trace_item_spec.go
-  - internal/provider/types/mesh_traffic_permission_item.go
   - internal/provider/types/mesh_traffic_permission_item_default.go
   - internal/provider/types/mesh_traffic_permission_item_from.go
+  - internal/provider/types/mesh_traffic_permission_item_rules.go
   - internal/provider/types/mesh_traffic_permission_item_spec.go
+  - internal/provider/types/mesh_traffic_permission_item_spec_default.go
+  - internal/provider/types/mesh_trust_item_spec.go
+  - internal/provider/types/metrics.go
   - internal/provider/types/mode.go
   - internal/provider/types/mtls.go
+  - internal/provider/types/networking.go
   - internal/provider/types/on_rate_limit.go
   - internal/provider/types/open_telemetry.go
   - internal/provider/types/options_obj.go
+  - internal/provider/types/origin.go
+  - internal/provider/types/outbound.go
   - internal/provider/types/outlier_detection.go
-  - internal/provider/types/path.go
   - internal/provider/types/ports.go
   - internal/provider/types/profiles.go
   - internal/provider/types/prometheus.go
-  - internal/provider/types/prometheus_metrics_backend_config_conf_aggregate.go
-  - internal/provider/types/prometheus_metrics_backend_config_conf_mesh_item_envoy.go
+  - internal/provider/types/prometheus_metrics_backend_config.go
   - internal/provider/types/provided_certificate_authority_config.go
+  - internal/provider/types/provider.go
   - internal/provider/types/query_params.go
   - internal/provider/types/rate_limit_service.go
   - internal/provider/types/rate_limited_back_off.go
@@ -531,10 +396,13 @@ generatedFiles:
   - internal/provider/types/routing.go
   - internal/provider/types/rules.go
   - internal/provider/types/sampling.go
+  - internal/provider/types/secret_ref.go
   - internal/provider/types/selector.go
   - internal/provider/types/selectors.go
   - internal/provider/types/sidecar.go
   - internal/provider/types/spec.go
+  - internal/provider/types/spiffe_id.go
+  - internal/provider/types/spire.go
   - internal/provider/types/status.go
   - internal/provider/types/subject_alt_names.go
   - internal/provider/types/success_rate.go
@@ -545,18 +413,22 @@ generatedFiles:
   - internal/provider/types/tracing.go
   - internal/provider/types/url_rewrite.go
   - internal/provider/types/vault_certificate_authority_config.go
+  - internal/provider/types/vault_certificate_authority_config_auth.go
+  - internal/provider/types/vault_certificate_authority_config_from_cp.go
+  - internal/provider/types/vault_certificate_authority_config_from_cp_auth_aws.go
+  - internal/provider/types/vault_certificate_authority_config_from_cp_auth_tls.go
+  - internal/provider/types/vault_certificate_authority_config_from_cp_auth_token.go
+  - internal/provider/types/vault_certificate_authority_config_tls.go
   - internal/provider/types/verification.go
+  - internal/provider/types/version.go
   - internal/provider/types/vip.go
   - internal/provider/types/virtual_host.go
   - internal/provider/types/zipkin.go
   - internal/provider/types/zipkin_tracing_backend_config.go
   - internal/provider/utils.go
   - internal/sdk/.gitattributes
-  - internal/sdk/dataplane.go
   - internal/sdk/docs/models/operations/option.md
-  - internal/sdk/globalinsight.go
   - internal/sdk/hostnamegenerator.go
-  - internal/sdk/inspect.go
   - internal/sdk/internal/config/sdkconfiguration.go
   - internal/sdk/internal/hooks/hooks.go
   - internal/sdk/internal/utils/contenttype.go
@@ -580,6 +452,7 @@ generatedFiles:
   - internal/sdk/meshglobalratelimit.go
   - internal/sdk/meshhealthcheck.go
   - internal/sdk/meshhttproute.go
+  - internal/sdk/meshidentity.go
   - internal/sdk/meshloadbalancingstrategy.go
   - internal/sdk/meshmetric.go
   - internal/sdk/meshmultizoneservice.go
@@ -594,32 +467,8 @@ generatedFiles:
   - internal/sdk/meshtls.go
   - internal/sdk/meshtrace.go
   - internal/sdk/meshtrafficpermission.go
+  - internal/sdk/meshtrust.go
   - internal/sdk/models/errors/sdkerror.go
-  - internal/sdk/models/operations/createhostnamegenerator.go
-  - internal/sdk/models/operations/createmeshaccesslog.go
-  - internal/sdk/models/operations/createmeshcircuitbreaker.go
-  - internal/sdk/models/operations/createmeshexternalservice.go
-  - internal/sdk/models/operations/createmeshfaultinjection.go
-  - internal/sdk/models/operations/createmeshgateway.go
-  - internal/sdk/models/operations/createmeshglobalratelimit.go
-  - internal/sdk/models/operations/createmeshhealthcheck.go
-  - internal/sdk/models/operations/createmeshhttproute.go
-  - internal/sdk/models/operations/createmeshloadbalancingstrategy.go
-  - internal/sdk/models/operations/createmeshmetric.go
-  - internal/sdk/models/operations/createmeshmultizoneservice.go
-  - internal/sdk/models/operations/createmeshopa.go
-  - internal/sdk/models/operations/createmeshpassthrough.go
-  - internal/sdk/models/operations/createmeshproxypatch.go
-  - internal/sdk/models/operations/createmeshratelimit.go
-  - internal/sdk/models/operations/createmeshretry.go
-  - internal/sdk/models/operations/createmeshservice.go
-  - internal/sdk/models/operations/createmeshtcproute.go
-  - internal/sdk/models/operations/createmeshtimeout.go
-  - internal/sdk/models/operations/createmeshtls.go
-  - internal/sdk/models/operations/createmeshtrace.go
-  - internal/sdk/models/operations/createmeshtrafficpermission.go
-  - internal/sdk/models/operations/createtenant.go
-  - internal/sdk/models/operations/deletedataplane.go
   - internal/sdk/models/operations/deletehostnamegenerator.go
   - internal/sdk/models/operations/deletemesh.go
   - internal/sdk/models/operations/deletemeshaccesslog.go
@@ -630,6 +479,7 @@ generatedFiles:
   - internal/sdk/models/operations/deletemeshglobalratelimit.go
   - internal/sdk/models/operations/deletemeshhealthcheck.go
   - internal/sdk/models/operations/deletemeshhttproute.go
+  - internal/sdk/models/operations/deletemeshidentity.go
   - internal/sdk/models/operations/deletemeshloadbalancingstrategy.go
   - internal/sdk/models/operations/deletemeshmetric.go
   - internal/sdk/models/operations/deletemeshmultizoneservice.go
@@ -644,12 +494,7 @@ generatedFiles:
   - internal/sdk/models/operations/deletemeshtls.go
   - internal/sdk/models/operations/deletemeshtrace.go
   - internal/sdk/models/operations/deletemeshtrafficpermission.go
-  - internal/sdk/models/operations/getdataplane.go
-  - internal/sdk/models/operations/getdataplanelist.go
-  - internal/sdk/models/operations/getdataplaneoverview.go
-  - internal/sdk/models/operations/getdataplaneoverviewlist.go
-  - internal/sdk/models/operations/getdataplanesxdsconfig.go
-  - internal/sdk/models/operations/getglobalinsight.go
+  - internal/sdk/models/operations/deletemeshtrust.go
   - internal/sdk/models/operations/gethostnamegenerator.go
   - internal/sdk/models/operations/gethostnamegeneratorlist.go
   - internal/sdk/models/operations/getmesh.go
@@ -669,6 +514,8 @@ generatedFiles:
   - internal/sdk/models/operations/getmeshhealthchecklist.go
   - internal/sdk/models/operations/getmeshhttproute.go
   - internal/sdk/models/operations/getmeshhttproutelist.go
+  - internal/sdk/models/operations/getmeshidentity.go
+  - internal/sdk/models/operations/getmeshidentitylist.go
   - internal/sdk/models/operations/getmeshlist.go
   - internal/sdk/models/operations/getmeshloadbalancingstrategy.go
   - internal/sdk/models/operations/getmeshloadbalancingstrategylist.go
@@ -698,72 +545,39 @@ generatedFiles:
   - internal/sdk/models/operations/getmeshtracelist.go
   - internal/sdk/models/operations/getmeshtrafficpermission.go
   - internal/sdk/models/operations/getmeshtrafficpermissionlist.go
-  - internal/sdk/models/operations/getresourcetypedescription.go
-  - internal/sdk/models/operations/index.go
-  - internal/sdk/models/operations/inspectdataplanesrules.go
-  - internal/sdk/models/operations/inspecthostnames.go
-  - internal/sdk/models/operations/inspectresources.go
+  - internal/sdk/models/operations/getmeshtrust.go
+  - internal/sdk/models/operations/getmeshtrustlist.go
   - internal/sdk/models/operations/options.go
-  - internal/sdk/models/operations/putdataplane.go
+  - internal/sdk/models/operations/puthostnamegenerator.go
   - internal/sdk/models/operations/putmesh.go
-  - internal/sdk/models/operations/updatehostnamegenerator.go
-  - internal/sdk/models/operations/updatemeshaccesslog.go
-  - internal/sdk/models/operations/updatemeshcircuitbreaker.go
-  - internal/sdk/models/operations/updatemeshexternalservice.go
-  - internal/sdk/models/operations/updatemeshfaultinjection.go
-  - internal/sdk/models/operations/updatemeshgateway.go
-  - internal/sdk/models/operations/updatemeshglobalratelimit.go
-  - internal/sdk/models/operations/updatemeshhealthcheck.go
-  - internal/sdk/models/operations/updatemeshhttproute.go
-  - internal/sdk/models/operations/updatemeshloadbalancingstrategy.go
-  - internal/sdk/models/operations/updatemeshmetric.go
-  - internal/sdk/models/operations/updatemeshmultizoneservice.go
-  - internal/sdk/models/operations/updatemeshopa.go
-  - internal/sdk/models/operations/updatemeshpassthrough.go
-  - internal/sdk/models/operations/updatemeshproxypatch.go
-  - internal/sdk/models/operations/updatemeshratelimit.go
-  - internal/sdk/models/operations/updatemeshretry.go
-  - internal/sdk/models/operations/updatemeshservice.go
-  - internal/sdk/models/operations/updatemeshtcproute.go
-  - internal/sdk/models/operations/updatemeshtimeout.go
-  - internal/sdk/models/operations/updatemeshtls.go
-  - internal/sdk/models/operations/updatemeshtrace.go
-  - internal/sdk/models/operations/updatemeshtrafficpermission.go
-  - internal/sdk/models/shared/badrequesterror.go
-  - internal/sdk/models/shared/baseerror.go
-  - internal/sdk/models/shared/dataplanecreateorupdatesuccessresponse.go
-  - internal/sdk/models/shared/dataplanedeletesuccessresponse.go
-  - internal/sdk/models/shared/dataplaneitem.go
-  - internal/sdk/models/shared/dataplanelist.go
-  - internal/sdk/models/shared/dataplaneoverviewwithmeta.go
-  - internal/sdk/models/shared/dataplanexdsconfig.go
-  - internal/sdk/models/shared/fromrule.go
-  - internal/sdk/models/shared/getdataplaneoverviewlistresponse.go
-  - internal/sdk/models/shared/globalinsight.go
+  - internal/sdk/models/operations/putmeshaccesslog.go
+  - internal/sdk/models/operations/putmeshcircuitbreaker.go
+  - internal/sdk/models/operations/putmeshexternalservice.go
+  - internal/sdk/models/operations/putmeshfaultinjection.go
+  - internal/sdk/models/operations/putmeshgateway.go
+  - internal/sdk/models/operations/putmeshglobalratelimit.go
+  - internal/sdk/models/operations/putmeshhealthcheck.go
+  - internal/sdk/models/operations/putmeshhttproute.go
+  - internal/sdk/models/operations/putmeshidentity.go
+  - internal/sdk/models/operations/putmeshloadbalancingstrategy.go
+  - internal/sdk/models/operations/putmeshmetric.go
+  - internal/sdk/models/operations/putmeshmultizoneservice.go
+  - internal/sdk/models/operations/putmeshopa.go
+  - internal/sdk/models/operations/putmeshpassthrough.go
+  - internal/sdk/models/operations/putmeshproxypatch.go
+  - internal/sdk/models/operations/putmeshratelimit.go
+  - internal/sdk/models/operations/putmeshretry.go
+  - internal/sdk/models/operations/putmeshservice.go
+  - internal/sdk/models/operations/putmeshtcproute.go
+  - internal/sdk/models/operations/putmeshtimeout.go
+  - internal/sdk/models/operations/putmeshtls.go
+  - internal/sdk/models/operations/putmeshtrace.go
+  - internal/sdk/models/operations/putmeshtrafficpermission.go
+  - internal/sdk/models/operations/putmeshtrust.go
   - internal/sdk/models/shared/hostnamegeneratorcreateorupdatesuccessresponse.go
   - internal/sdk/models/shared/hostnamegeneratordeletesuccessresponse.go
   - internal/sdk/models/shared/hostnamegeneratoritem.go
   - internal/sdk/models/shared/hostnamegeneratorlist.go
-  - internal/sdk/models/shared/httpmatch.go
-  - internal/sdk/models/shared/inbound.go
-  - internal/sdk/models/shared/inboundrule.go
-  - internal/sdk/models/shared/inboundrulesentry.go
-  - internal/sdk/models/shared/index.go
-  - internal/sdk/models/shared/inspectdataplanesforpolicy.go
-  - internal/sdk/models/shared/inspecthostname.go
-  - internal/sdk/models/shared/inspecthostnames.go
-  - internal/sdk/models/shared/inspecthostnamezone.go
-  - internal/sdk/models/shared/inspectrule.go
-  - internal/sdk/models/shared/inspectrules.go
-  - internal/sdk/models/shared/invalidparameterchoiceitem.go
-  - internal/sdk/models/shared/invalidparameterdependentitem.go
-  - internal/sdk/models/shared/invalidparametermaximumlength.go
-  - internal/sdk/models/shared/invalidparameterminimumlength.go
-  - internal/sdk/models/shared/invalidparameters.go
-  - internal/sdk/models/shared/invalidparameterstandard.go
-  - internal/sdk/models/shared/invalidrules.go
-  - internal/sdk/models/shared/jsonpatchitem.go
-  - internal/sdk/models/shared/limits.go
   - internal/sdk/models/shared/meshaccesslogcreateorupdatesuccessresponse.go
   - internal/sdk/models/shared/meshaccesslogdeletesuccessresponse.go
   - internal/sdk/models/shared/meshaccesslogitem.go
@@ -772,9 +586,6 @@ generatedFiles:
   - internal/sdk/models/shared/meshcircuitbreakerdeletesuccessresponse.go
   - internal/sdk/models/shared/meshcircuitbreakeritem.go
   - internal/sdk/models/shared/meshcircuitbreakerlist.go
-  - internal/sdk/models/shared/meshcontrolplanefeature.go
-  - internal/sdk/models/shared/meshcontrolplanefeaturehostnamegenerationcreation.go
-  - internal/sdk/models/shared/meshcontrolplanefeaturemeshcreation.go
   - internal/sdk/models/shared/meshcreateorupdatesuccessresponse.go
   - internal/sdk/models/shared/meshdeletesuccessresponse.go
   - internal/sdk/models/shared/meshexternalservicecreateorupdatesuccessresponse.go
@@ -801,6 +612,10 @@ generatedFiles:
   - internal/sdk/models/shared/meshhttproutedeletesuccessresponse.go
   - internal/sdk/models/shared/meshhttprouteitem.go
   - internal/sdk/models/shared/meshhttproutelist.go
+  - internal/sdk/models/shared/meshidentitycreateorupdatesuccessresponse.go
+  - internal/sdk/models/shared/meshidentitydeletesuccessresponse.go
+  - internal/sdk/models/shared/meshidentityitem.go
+  - internal/sdk/models/shared/meshidentitylist.go
   - internal/sdk/models/shared/meshitem.go
   - internal/sdk/models/shared/meshlist.go
   - internal/sdk/models/shared/meshloadbalancingstrategycreateorupdatesuccessresponse.go
@@ -859,23 +674,14 @@ generatedFiles:
   - internal/sdk/models/shared/meshtrafficpermissiondeletesuccessresponse.go
   - internal/sdk/models/shared/meshtrafficpermissionitem.go
   - internal/sdk/models/shared/meshtrafficpermissionlist.go
-  - internal/sdk/models/shared/meta.go
+  - internal/sdk/models/shared/meshtrustcreateorupdatesuccessresponse.go
+  - internal/sdk/models/shared/meshtrustdeletesuccessresponse.go
+  - internal/sdk/models/shared/meshtrustitem.go
+  - internal/sdk/models/shared/meshtrustlist.go
   - internal/sdk/models/shared/notfounderror.go
-  - internal/sdk/models/shared/policydescription.go
-  - internal/sdk/models/shared/provisionmeshcontrolplanerequest.go
-  - internal/sdk/models/shared/proxyrule.go
-  - internal/sdk/models/shared/resourcerule.go
-  - internal/sdk/models/shared/resourceruleorigin.go
-  - internal/sdk/models/shared/resourcestats.go
-  - internal/sdk/models/shared/resourcetypedescription.go
-  - internal/sdk/models/shared/resourcetypedescriptionlist.go
-  - internal/sdk/models/shared/rule.go
-  - internal/sdk/models/shared/rulematcher.go
   - internal/sdk/models/shared/schemebasicauth.go
   - internal/sdk/models/shared/security.go
   - internal/sdk/retry/config.go
-  - internal/sdk/system.go
-  - internal/sdk/tenants.go
   - internal/sdk/types/bigint.go
   - internal/sdk/types/date.go
   - internal/sdk/types/datetime.go
@@ -1018,6 +824,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-get-mesh-access-log:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"type": "MeshAccessLog", "mesh": "default", "name": "<value>", "spec": {"from": [{"default": {"backends": [{"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}}, "type": "OpenTelemetry"}]}, "targetRef": {"kind": "MeshGateway"}}], "rules": [{"default": {"backends": [{"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}}, "type": "OpenTelemetry"}]}}], "to": [{"default": {"backends": [{"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}}, "type": "OpenTelemetry"}]}, "targetRef": {"kind": "MeshExternalService"}}]}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   deleteMeshAccessLog:
     NotFoundExample:
       parameters:
@@ -1027,6 +843,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-delete-mesh-access-log:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   createMeshAccessLog:
     speakeasy-default-create-mesh-access-log:
       parameters:
@@ -1070,6 +896,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-get-mesh-circuit-breaker:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"type": "MeshCircuitBreaker", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   deleteMeshCircuitBreaker:
     NotFoundExample:
       parameters:
@@ -1079,6 +915,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-delete-mesh-circuit-breaker:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   createMeshCircuitBreaker:
     speakeasy-default-create-mesh-circuit-breaker:
       parameters:
@@ -1122,6 +968,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-get-mesh-fault-injection:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"type": "MeshFaultInjection", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   deleteMeshFaultInjection:
     NotFoundExample:
       parameters:
@@ -1131,6 +987,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-delete-mesh-fault-injection:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   createMeshFaultInjection:
     speakeasy-default-create-mesh-fault-injection:
       parameters:
@@ -1174,6 +1040,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-get-mesh-health-check:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"type": "MeshHealthCheck", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   deleteMeshHealthCheck:
     NotFoundExample:
       parameters:
@@ -1183,6 +1059,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-delete-mesh-health-check:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   createMeshHealthCheck:
     speakeasy-default-create-mesh-health-check:
       parameters:
@@ -1226,6 +1112,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-get-mesh-HTTP-route:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"type": "MeshHTTPRoute", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   deleteMeshHTTPRoute:
     NotFoundExample:
       parameters:
@@ -1235,6 +1131,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-delete-mesh-HTTP-route:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   createMeshHTTPRoute:
     speakeasy-default-create-mesh-HTTP-route:
       parameters:
@@ -1278,6 +1184,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-get-mesh-load-balancing-strategy:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"type": "MeshLoadBalancingStrategy", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   deleteMeshLoadBalancingStrategy:
     NotFoundExample:
       parameters:
@@ -1287,6 +1203,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-delete-mesh-load-balancing-strategy:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   createMeshLoadBalancingStrategy:
     speakeasy-default-create-mesh-load-balancing-strategy:
       parameters:
@@ -1330,6 +1256,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-get-mesh-metric:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"type": "MeshMetric", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   deleteMeshMetric:
     NotFoundExample:
       parameters:
@@ -1339,6 +1275,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-delete-mesh-metric:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   createMeshMetric:
     speakeasy-default-create-mesh-metric:
       parameters:
@@ -1382,6 +1328,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-get-mesh-passthrough:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"type": "MeshPassthrough", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   deleteMeshPassthrough:
     NotFoundExample:
       parameters:
@@ -1391,6 +1347,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-delete-mesh-passthrough:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   createMeshPassthrough:
     speakeasy-default-create-mesh-passthrough:
       parameters:
@@ -1434,6 +1400,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-get-mesh-proxy-patch:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"type": "MeshProxyPatch", "mesh": "default", "name": "<value>", "spec": {"default": {}}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   deleteMeshProxyPatch:
     NotFoundExample:
       parameters:
@@ -1443,6 +1419,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-delete-mesh-proxy-patch:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   createMeshProxyPatch:
     speakeasy-default-create-mesh-proxy-patch:
       parameters:
@@ -1486,6 +1472,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-get-mesh-rate-limit:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"type": "MeshRateLimit", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   deleteMeshRateLimit:
     NotFoundExample:
       parameters:
@@ -1495,6 +1491,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-delete-mesh-rate-limit:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   createMeshRateLimit:
     speakeasy-default-create-mesh-rate-limit:
       parameters:
@@ -1538,6 +1544,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-get-mesh-retry:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"type": "MeshRetry", "mesh": "default", "name": "<value>", "spec": {"to": [{"default": {"grpc": {"retryOn": ["Canceled", "DeadlineExceeded", "Internal", "ResourceExhausted", "Unavailable"]}, "http": {"retryOn": ["5XX", "GatewayError", "Reset", "Retriable4xx", "ConnectFailure", "EnvoyRatelimited", "RefusedStream", "Http3PostConnectFailure", "HttpMethodConnect", "HttpMethodDelete", "HttpMethodGet", "HttpMethodHead", "HttpMethodOptions", "HttpMethodPatch", "HttpMethodPost", "HttpMethodPut", "HttpMethodTrace", "500", "503"]}}, "targetRef": {"kind": "MeshSubset"}}]}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   deleteMeshRetry:
     NotFoundExample:
       parameters:
@@ -1547,6 +1563,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-delete-mesh-retry:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   createMeshRetry:
     speakeasy-default-create-mesh-retry:
       parameters:
@@ -1590,6 +1616,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-get-mesh-TCP-route:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"type": "MeshTCPRoute", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   deleteMeshTCPRoute:
     NotFoundExample:
       parameters:
@@ -1599,6 +1635,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-delete-mesh-TCP-route:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   createMeshTCPRoute:
     speakeasy-default-create-mesh-TCP-route:
       parameters:
@@ -1642,6 +1688,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-get-mesh-timeout:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"type": "MeshTimeout", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   deleteMeshTimeout:
     NotFoundExample:
       parameters:
@@ -1651,6 +1707,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-delete-mesh-timeout:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   createMeshTimeout:
     speakeasy-default-create-mesh-timeout:
       parameters:
@@ -1694,6 +1760,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-get-mesh-TLS:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"type": "MeshTLS", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   deleteMeshTLS:
     NotFoundExample:
       parameters:
@@ -1703,6 +1779,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-delete-mesh-TLS:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   createMeshTLS:
     speakeasy-default-create-mesh-TLS:
       parameters:
@@ -1746,6 +1832,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-get-mesh-trace:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"type": "MeshTrace", "mesh": "default", "name": "<value>", "spec": {"default": {"backends": [{"openTelemetry": {"endpoint": "otel-collector:4317"}, "type": "OpenTelemetry"}]}}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   deleteMeshTrace:
     NotFoundExample:
       parameters:
@@ -1755,6 +1851,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-delete-mesh-trace:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   createMeshTrace:
     speakeasy-default-create-mesh-trace:
       parameters:
@@ -1798,6 +1904,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-get-mesh-traffic-permission:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"type": "MeshTrafficPermission", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   deleteMeshTrafficPermission:
     NotFoundExample:
       parameters:
@@ -1807,6 +1923,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-delete-mesh-traffic-permission:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   createMeshTrafficPermission:
     speakeasy-default-create-mesh-traffic-permission:
       parameters:
@@ -1849,6 +1975,15 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-get-mesh:
+      parameters:
+        path:
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"name": "<value>", "skipCreatingInitialPolicies": [], "type": "<value>"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   putMesh:
     speakeasy-default-put-mesh:
       parameters:
@@ -1867,6 +2002,15 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-delete-mesh:
+      parameters:
+        path:
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   getMeshList:
     "":
       parameters:
@@ -1886,6 +2030,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-get-mesh-gateway:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"mesh": "<value>", "name": "<value>", "selectors": [], "type": "<value>"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   deleteMeshGateway:
     NotFoundExample:
       parameters:
@@ -1895,6 +2049,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-delete-mesh-gateway:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   createMeshGateway:
     speakeasy-default-create-mesh-gateway:
       parameters:
@@ -1937,6 +2101,15 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-get-hostname-generator:
+      parameters:
+        path:
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"type": "HostnameGenerator", "name": "<value>", "spec": {"template": "<value>"}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   deleteHostnameGenerator:
     NotFoundExample:
       parameters:
@@ -1945,6 +2118,15 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-delete-hostname-generator:
+      parameters:
+        path:
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   createHostnameGenerator:
     speakeasy-default-create-hostname-generator:
       parameters:
@@ -1974,7 +2156,7 @@ examples:
           filter: {}
       responses:
         "200":
-          application/json: {"items": [{"type": "HostnameGenerator", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}, {"type": "HostnameGenerator", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
+          application/json: {"items": null, "total": null, "next": null}
   getMeshExternalService:
     NotFoundExample:
       parameters:
@@ -1984,6 +2166,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-get-mesh-external-service:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"type": "MeshExternalService", "mesh": "default", "name": "<value>", "spec": {"endpoints": [{"address": "example.com", "port": 525825}], "match": {"port": 882453, "protocol": "tcp", "type": "HostnameGenerator"}}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   deleteMeshExternalService:
     NotFoundExample:
       parameters:
@@ -1993,6 +2185,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-delete-mesh-external-service:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   createMeshExternalService:
     speakeasy-default-create-mesh-external-service:
       parameters:
@@ -2036,6 +2238,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-get-mesh-multi-zone-service:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"type": "MeshMultiZoneService", "mesh": "default", "name": "<value>", "spec": {"ports": [{"appProtocol": "tcp", "port": 585793}], "selector": {"meshService": {}}}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   deleteMeshMultiZoneService:
     NotFoundExample:
       parameters:
@@ -2045,6 +2257,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-delete-mesh-multi-zone-service:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   createMeshMultiZoneService:
     speakeasy-default-create-mesh-multi-zone-service:
       parameters:
@@ -2088,6 +2310,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-get-mesh-service:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"type": "MeshService", "mesh": "default", "name": "<value>", "spec": {"state": "Unavailable"}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   deleteMeshService:
     NotFoundExample:
       parameters:
@@ -2097,6 +2329,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-delete-mesh-service:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   createMeshService:
     speakeasy-default-create-mesh-service:
       parameters:
@@ -2149,6 +2391,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-get-mesh-global-rate-limit:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"type": "MeshGlobalRateLimit", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   deleteMeshGlobalRateLimit:
     NotFoundExample:
       parameters:
@@ -2158,6 +2410,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-delete-mesh-global-rate-limit:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   createMeshGlobalRateLimit:
     speakeasy-default-create-mesh-global-rate-limit:
       parameters:
@@ -2201,6 +2463,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-get-mesh-OPA:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"type": "MeshOPA", "mesh": "default", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   deleteMeshOPA:
     NotFoundExample:
       parameters:
@@ -2210,6 +2482,16 @@ examples:
       responses:
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "instance": "kong:trace:6816496025408232265", "detail": "Not Found"}
+    speakeasy-default-delete-mesh-OPA:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   createMeshOPA:
     speakeasy-default-create-mesh-OPA:
       parameters:
@@ -2329,6 +2611,348 @@ examples:
           name: "<value>"
       requestBody:
         application/json: {"mesh": "<value>", "name": "<value>", "type": "<value>"}
+      responses:
+        "200":
+          application/json: {}
+  putMeshAccessLog:
+    speakeasy-default-put-mesh-access-log:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      requestBody:
+        application/json: {"type": "MeshAccessLog", "mesh": "default", "name": "<value>", "spec": {"from": [{"default": {"backends": [{"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}}, "type": "File"}]}, "targetRef": {"kind": "Mesh"}}], "rules": [{"default": {"backends": [{"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}}, "type": "File"}]}}], "to": [{"default": {"backends": [{"file": {"format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Json"}, "path": "/tmp/access.log"}, "openTelemetry": {"attributes": [{"key": "mesh", "value": "%KUMA_MESH%"}], "body": {"kvlistValue": {"values": [{"key": "mesh", "value": {"stringValue": "%KUMA_MESH%"}}]}}, "endpoint": "otel-collector:4317"}, "tcp": {"address": "127.0.0.1:5000", "format": {"json": [{"key": "start_time", "value": "%START_TIME%"}, {"key": "bytes_received", "value": "%BYTES_RECEIVED%"}], "omitEmptyValues": false, "plain": "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%", "type": "Plain"}}, "type": "OpenTelemetry"}]}, "targetRef": {"kind": "MeshMultiZoneService"}}]}}
+      responses:
+        "200":
+          application/json: {}
+  putMeshCircuitBreaker:
+    speakeasy-default-put-mesh-circuit-breaker:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      requestBody:
+        application/json: {"type": "MeshCircuitBreaker", "mesh": "default", "name": "<value>", "spec": {}}
+      responses:
+        "200":
+          application/json: {}
+  putMeshFaultInjection:
+    speakeasy-default-put-mesh-fault-injection:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      requestBody:
+        application/json: {"type": "MeshFaultInjection", "mesh": "default", "name": "<value>", "spec": {}}
+      responses:
+        "200":
+          application/json: {}
+  putMeshHealthCheck:
+    speakeasy-default-put-mesh-health-check:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      requestBody:
+        application/json: {"type": "MeshHealthCheck", "mesh": "default", "name": "<value>", "spec": {}}
+      responses:
+        "200":
+          application/json: {}
+  putMeshHTTPRoute:
+    speakeasy-default-put-mesh-HTTP-route:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      requestBody:
+        application/json: {"type": "MeshHTTPRoute", "mesh": "default", "name": "<value>", "spec": {}}
+      responses:
+        "200":
+          application/json: {}
+  putMeshLoadBalancingStrategy:
+    speakeasy-default-put-mesh-load-balancing-strategy:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      requestBody:
+        application/json: {"type": "MeshLoadBalancingStrategy", "mesh": "default", "name": "<value>", "spec": {}}
+      responses:
+        "200":
+          application/json: {}
+  putMeshMetric:
+    speakeasy-default-put-mesh-metric:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      requestBody:
+        application/json: {"type": "MeshMetric", "mesh": "default", "name": "<value>", "spec": {}}
+      responses:
+        "200":
+          application/json: {}
+  putMeshPassthrough:
+    speakeasy-default-put-mesh-passthrough:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      requestBody:
+        application/json: {"type": "MeshPassthrough", "mesh": "default", "name": "<value>", "spec": {}}
+      responses:
+        "200":
+          application/json: {}
+  putMeshProxyPatch:
+    speakeasy-default-put-mesh-proxy-patch:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      requestBody:
+        application/json: {"type": "MeshProxyPatch", "mesh": "default", "name": "<value>", "spec": {"default": {}}}
+      responses:
+        "200":
+          application/json: {}
+  putMeshRateLimit:
+    speakeasy-default-put-mesh-rate-limit:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      requestBody:
+        application/json: {"type": "MeshRateLimit", "mesh": "default", "name": "<value>", "spec": {}}
+      responses:
+        "200":
+          application/json: {}
+  putMeshRetry:
+    speakeasy-default-put-mesh-retry:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      requestBody:
+        application/json: {"type": "MeshRetry", "mesh": "default", "name": "<value>", "spec": {"to": [{"default": {"grpc": {"retryOn": ["Canceled", "DeadlineExceeded", "Internal", "ResourceExhausted", "Unavailable"]}, "http": {"retryOn": ["5XX", "GatewayError", "Reset", "Retriable4xx", "ConnectFailure", "EnvoyRatelimited", "RefusedStream", "Http3PostConnectFailure", "HttpMethodConnect", "HttpMethodDelete", "HttpMethodGet", "HttpMethodHead", "HttpMethodOptions", "HttpMethodPatch", "HttpMethodPost", "HttpMethodPut", "HttpMethodTrace", "500", "503"]}}, "targetRef": {"kind": "MeshExternalService"}}]}}
+      responses:
+        "200":
+          application/json: {}
+  putMeshTCPRoute:
+    speakeasy-default-put-mesh-TCP-route:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      requestBody:
+        application/json: {"type": "MeshTCPRoute", "mesh": "default", "name": "<value>", "spec": {}}
+      responses:
+        "200":
+          application/json: {}
+  putMeshTimeout:
+    speakeasy-default-put-mesh-timeout:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      requestBody:
+        application/json: {"type": "MeshTimeout", "mesh": "default", "name": "<value>", "spec": {}}
+      responses:
+        "200":
+          application/json: {}
+  putMeshTLS:
+    speakeasy-default-put-mesh-TLS:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      requestBody:
+        application/json: {"type": "MeshTLS", "mesh": "default", "name": "<value>", "spec": {}}
+      responses:
+        "200":
+          application/json: {}
+  putMeshTrace:
+    speakeasy-default-put-mesh-trace:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      requestBody:
+        application/json: {"type": "MeshTrace", "mesh": "default", "name": "<value>", "spec": {"default": {"backends": [{"openTelemetry": {"endpoint": "otel-collector:4317"}, "type": "Datadog"}]}}}
+      responses:
+        "200":
+          application/json: {}
+  putMeshTrafficPermission:
+    speakeasy-default-put-mesh-traffic-permission:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      requestBody:
+        application/json: {"type": "MeshTrafficPermission", "mesh": "default", "name": "<value>", "spec": {}}
+      responses:
+        "200":
+          application/json: {}
+  putMeshGateway:
+    speakeasy-default-put-mesh-gateway:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      requestBody:
+        application/json: {"mesh": "<value>", "name": "<value>", "selectors": [], "type": "<value>"}
+      responses:
+        "200":
+          application/json: {}
+  putHostnameGenerator:
+    speakeasy-default-put-hostname-generator:
+      parameters:
+        path:
+          name: "<value>"
+      requestBody:
+        application/json: {"type": "HostnameGenerator", "name": "<value>", "spec": {"template": "<value>"}}
+      responses:
+        "200":
+          application/json: {}
+  putMeshExternalService:
+    speakeasy-default-put-mesh-external-service:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      requestBody:
+        application/json: {"type": "MeshExternalService", "mesh": "default", "name": "<value>", "spec": {"endpoints": [{"address": "example.com", "port": 623172}], "match": {"port": 740935, "protocol": "tcp", "type": "HostnameGenerator"}}}
+      responses:
+        "200":
+          application/json: {}
+  getMeshIdentity:
+    speakeasy-default-get-mesh-identity:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"type": "MeshIdentity", "mesh": "default", "name": "<value>", "spec": {"provider": {"type": "Spire"}}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
+  putMeshIdentity:
+    speakeasy-default-put-mesh-identity:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      requestBody:
+        application/json: {"type": "MeshIdentity", "mesh": "default", "name": "<value>", "spec": {"provider": {"type": "Bundled"}}}
+      responses:
+        "200":
+          application/json: {}
+  deleteMeshIdentity:
+    speakeasy-default-delete-mesh-identity:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
+  getMeshIdentityList:
+    "":
+      parameters:
+        path:
+          mesh: "<value>"
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": [{"type": "MeshIdentity", "mesh": "default", "name": "<value>", "spec": {"provider": {"type": "Spire"}}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
+  putMeshMultiZoneService:
+    speakeasy-default-put-mesh-multi-zone-service:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      requestBody:
+        application/json: {"type": "MeshMultiZoneService", "mesh": "default", "name": "<value>", "spec": {"ports": [{"appProtocol": "tcp", "port": 156296}], "selector": {"meshService": {}}}}
+      responses:
+        "200":
+          application/json: {}
+  putMeshService:
+    speakeasy-default-put-mesh-service:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      requestBody:
+        application/json: {"type": "MeshService", "mesh": "default", "name": "<value>", "spec": {"state": "Unavailable"}}
+      responses:
+        "200":
+          application/json: {}
+  getMeshTrust:
+    speakeasy-default-get-mesh-trust:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"type": "MeshTrust", "mesh": "default", "name": "<value>", "spec": {"caBundles": [], "trustDomain": "<value>"}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
+  putMeshTrust:
+    speakeasy-default-put-mesh-trust:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      requestBody:
+        application/json: {"type": "MeshTrust", "mesh": "default", "name": "<value>", "spec": {"caBundles": [], "trustDomain": "<value>"}}
+      responses:
+        "200":
+          application/json: {}
+  deleteMeshTrust:
+    speakeasy-default-delete-mesh-trust:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
+  getMeshTrustList:
+    "":
+      parameters:
+        path:
+          mesh: "<value>"
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": [{"type": "MeshTrust", "mesh": "default", "name": "<value>", "spec": {"caBundles": [], "trustDomain": "<value>"}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}]}
+  putMeshGlobalRateLimit:
+    speakeasy-default-put-mesh-global-rate-limit:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      requestBody:
+        application/json: {"type": "MeshGlobalRateLimit", "mesh": "default", "name": "<value>", "spec": {}}
+      responses:
+        "200":
+          application/json: {}
+  putMeshOPA:
+    speakeasy-default-put-mesh-OPA:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      requestBody:
+        application/json: {"type": "MeshOPA", "mesh": "default", "name": "<value>", "spec": {}}
       responses:
         "200":
           application/json: {}

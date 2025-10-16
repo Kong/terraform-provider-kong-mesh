@@ -7,7 +7,7 @@ import (
 )
 
 type HostnameGeneratorItemSpec struct {
-	Extension *MeshExternalServiceItemExtension `tfsdk:"extension"`
-	Selector  *Selector                         `tfsdk:"selector"`
-	Template  types.String                      `tfsdk:"template"`
+	Extension *Extension   `tfsdk:"extension"`
+	Selector  *Selector    `tfsdk:"selector"`
+	Template  types.String `tfsdk:"template"`
 }

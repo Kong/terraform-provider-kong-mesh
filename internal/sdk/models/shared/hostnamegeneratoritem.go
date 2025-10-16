@@ -36,9 +36,20 @@ func (e *HostnameGeneratorItemType) UnmarshalJSON(data []byte) error {
 // Extension struct for a plugin configuration
 type Extension struct {
 	// Config freeform configuration for the extension.
-	Config any `json:"config,omitempty"`
+	Config any `default:"null" json:"config"`
 	// Type of the extension.
 	Type string `json:"type"`
+}
+
+func (e Extension) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(e, "", false)
+}
+
+func (e *Extension) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &e, "", false, false); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (o *Extension) GetConfig() any {
@@ -120,7 +131,7 @@ type HostnameGeneratorItemSpec struct {
 	// Extension struct for a plugin configuration
 	Extension *Extension `json:"extension,omitempty"`
 	Selector  *Selector  `json:"selector,omitempty"`
-	Template  *string    `json:"template,omitempty"`
+	Template  string     `json:"template"`
 }
 
 func (o *HostnameGeneratorItemSpec) GetExtension() *Extension {
@@ -137,9 +148,9 @@ func (o *HostnameGeneratorItemSpec) GetSelector() *Selector {
 	return o.Selector
 }
 
-func (o *HostnameGeneratorItemSpec) GetTemplate() *string {
+func (o *HostnameGeneratorItemSpec) GetTemplate() string {
 	if o == nil {
-		return nil
+		return ""
 	}
 	return o.Template
 }

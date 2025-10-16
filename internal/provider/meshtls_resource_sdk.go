@@ -242,7 +242,7 @@ func (r *MeshTLSResourceModel) ToSharedMeshTLSItemInput(ctx context.Context) (*s
 	return &out, diags
 }
 
-func (r *MeshTLSResourceModel) ToOperationsCreateMeshTLSRequest(ctx context.Context) (*operations.CreateMeshTLSRequest, diag.Diagnostics) {
+func (r *MeshTLSResourceModel) ToOperationsPutMeshTLSRequest(ctx context.Context) (*operations.PutMeshTLSRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var mesh string
@@ -258,32 +258,7 @@ func (r *MeshTLSResourceModel) ToOperationsCreateMeshTLSRequest(ctx context.Cont
 		return nil, diags
 	}
 
-	out := operations.CreateMeshTLSRequest{
-		Mesh:        mesh,
-		Name:        name,
-		MeshTLSItem: *meshTLSItem,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshTLSResourceModel) ToOperationsUpdateMeshTLSRequest(ctx context.Context) (*operations.UpdateMeshTLSRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	meshTLSItem, meshTLSItemDiags := r.ToSharedMeshTLSItemInput(ctx)
-	diags.Append(meshTLSItemDiags...)
-
-	if diags.HasError() {
-		return nil, diags
-	}
-
-	out := operations.UpdateMeshTLSRequest{
+	out := operations.PutMeshTLSRequest{
 		Mesh:        mesh,
 		Name:        name,
 		MeshTLSItem: *meshTLSItem,
@@ -374,7 +349,7 @@ func (r *MeshTLSResourceModel) RefreshFromSharedMeshTLSItem(ctx context.Context,
 				if fromItem.Default.TLSVersion == nil {
 					from.Default.TLSVersion = nil
 				} else {
-					from.Default.TLSVersion = &tfTypes.MeshExternalServiceItemVersion{}
+					from.Default.TLSVersion = &tfTypes.Version{}
 					if fromItem.Default.TLSVersion.Max != nil {
 						from.Default.TLSVersion.Max = types.StringValue(string(*fromItem.Default.TLSVersion.Max))
 					} else {
@@ -437,7 +412,7 @@ func (r *MeshTLSResourceModel) RefreshFromSharedMeshTLSItem(ctx context.Context,
 				if rulesItem.Default.TLSVersion == nil {
 					rules.Default.TLSVersion = nil
 				} else {
-					rules.Default.TLSVersion = &tfTypes.MeshExternalServiceItemVersion{}
+					rules.Default.TLSVersion = &tfTypes.Version{}
 					if rulesItem.Default.TLSVersion.Max != nil {
 						rules.Default.TLSVersion.Max = types.StringValue(string(*rulesItem.Default.TLSVersion.Max))
 					} else {

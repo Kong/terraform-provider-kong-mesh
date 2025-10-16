@@ -139,7 +139,7 @@ func (r *MeshPassthroughResourceModel) ToSharedMeshPassthroughItemInput(ctx cont
 	return &out, diags
 }
 
-func (r *MeshPassthroughResourceModel) ToOperationsCreateMeshPassthroughRequest(ctx context.Context) (*operations.CreateMeshPassthroughRequest, diag.Diagnostics) {
+func (r *MeshPassthroughResourceModel) ToOperationsPutMeshPassthroughRequest(ctx context.Context) (*operations.PutMeshPassthroughRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var mesh string
@@ -155,32 +155,7 @@ func (r *MeshPassthroughResourceModel) ToOperationsCreateMeshPassthroughRequest(
 		return nil, diags
 	}
 
-	out := operations.CreateMeshPassthroughRequest{
-		Mesh:                mesh,
-		Name:                name,
-		MeshPassthroughItem: *meshPassthroughItem,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshPassthroughResourceModel) ToOperationsUpdateMeshPassthroughRequest(ctx context.Context) (*operations.UpdateMeshPassthroughRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	meshPassthroughItem, meshPassthroughItemDiags := r.ToSharedMeshPassthroughItemInput(ctx)
-	diags.Append(meshPassthroughItemDiags...)
-
-	if diags.HasError() {
-		return nil, diags
-	}
-
-	out := operations.UpdateMeshPassthroughRequest{
+	out := operations.PutMeshPassthroughRequest{
 		Mesh:                mesh,
 		Name:                name,
 		MeshPassthroughItem: *meshPassthroughItem,

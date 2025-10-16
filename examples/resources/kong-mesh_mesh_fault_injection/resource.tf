@@ -49,6 +49,42 @@ resource "kong-mesh_mesh_fault_injection" "my_meshfaultinjection" {
         }
       }
     ]
+    rules = [
+      {
+        default = {
+          http = [
+            {
+              abort = {
+                http_status = 4
+                percentage = {
+                  integer = 5
+                }
+              }
+              delay = {
+                percentage = {
+                  integer = 7
+                }
+                value = "...my_value..."
+              }
+              response_bandwidth = {
+                limit = "...my_limit..."
+                percentage = {
+                  str = "...my_str..."
+                }
+              }
+            }
+          ]
+        }
+        matches = [
+          {
+            spiffe_id = {
+              type  = "Exact"
+              value = "...my_value..."
+            }
+          }
+        ]
+      }
+    ]
     target_ref = {
       kind = "Dataplane"
       labels = {

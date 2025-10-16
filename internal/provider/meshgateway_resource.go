@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -19,9 +20,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	custom_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
+	speakeasy_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
-	"github.com/kong/terraform-provider-kong-mesh/internal/validators"
+	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -61,8 +63,12 @@ func (r *MeshGatewayResource) Schema(ctx context.Context, req resource.SchemaReq
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"listeners": schema.ListNestedAttribute{
+						Computed: true,
 						Optional: true,
 						NestedObject: schema.NestedAttributeObject{
+							Validators: []validator.Object{
+								speakeasy_objectvalidators.NotNull(),
+							},
 							Attributes: map[string]schema.Attribute{
 								"cross_mesh": schema.BoolAttribute{
 									Optional: true,
@@ -127,20 +133,76 @@ func (r *MeshGatewayResource) Schema(ctx context.Context, req resource.SchemaReq
 									Optional: true,
 									Attributes: map[string]schema.Attribute{
 										"certificates": schema.ListNestedAttribute{
+											Computed: true,
 											Optional: true,
 											NestedObject: schema.NestedAttributeObject{
+												Validators: []validator.Object{
+													speakeasy_objectvalidators.NotNull(),
+												},
 												Attributes: map[string]schema.Attribute{
-													"type": schema.StringAttribute{
-														Required: true,
-														MarkdownDescription: `Types that are assignable to Type:` + "\n" +
-															`` + "\n" +
-															`	*DataSource_Secret` + "\n" +
-															`	*DataSource_File` + "\n" +
-															`	*DataSource_Inline` + "\n" +
-															`	*DataSource_InlineString` + "\n" +
-															`Parsed as JSON.`,
-														Validators: []validator.String{
-															validators.IsValidJSON(),
+													"data_source_file": schema.SingleNestedAttribute{
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"file": schema.StringAttribute{
+																Optional: true,
+																MarkdownDescription: `Data source is a path to a file.` + "\n" +
+																	`Deprecated, use other sources of a data.`,
+															},
+														},
+														Validators: []validator.Object{
+															objectvalidator.ConflictsWith(path.Expressions{
+																path.MatchRelative().AtParent().AtName("data_source_inline"),
+																path.MatchRelative().AtParent().AtName("data_source_inline_string"),
+																path.MatchRelative().AtParent().AtName("data_source_secret"),
+															}...),
+														},
+													},
+													"data_source_inline": schema.SingleNestedAttribute{
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"inline": schema.StringAttribute{
+																Optional:    true,
+																Description: `Data source is inline bytes.`,
+															},
+														},
+														Validators: []validator.Object{
+															objectvalidator.ConflictsWith(path.Expressions{
+																path.MatchRelative().AtParent().AtName("data_source_file"),
+																path.MatchRelative().AtParent().AtName("data_source_inline_string"),
+																path.MatchRelative().AtParent().AtName("data_source_secret"),
+															}...),
+														},
+													},
+													"data_source_inline_string": schema.SingleNestedAttribute{
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"inline_string": schema.StringAttribute{
+																Optional:    true,
+																Description: `Data source is inline string`,
+															},
+														},
+														Validators: []validator.Object{
+															objectvalidator.ConflictsWith(path.Expressions{
+																path.MatchRelative().AtParent().AtName("data_source_file"),
+																path.MatchRelative().AtParent().AtName("data_source_inline"),
+																path.MatchRelative().AtParent().AtName("data_source_secret"),
+															}...),
+														},
+													},
+													"data_source_secret": schema.SingleNestedAttribute{
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"secret": schema.StringAttribute{
+																Optional:    true,
+																Description: `Data source is a secret with given Secret key.`,
+															},
+														},
+														Validators: []validator.Object{
+															objectvalidator.ConflictsWith(path.Expressions{
+																path.MatchRelative().AtParent().AtName("data_source_file"),
+																path.MatchRelative().AtParent().AtName("data_source_inline"),
+																path.MatchRelative().AtParent().AtName("data_source_inline_string"),
+															}...),
 														},
 													},
 												},
@@ -219,8 +281,12 @@ func (r *MeshGatewayResource) Schema(ctx context.Context, req resource.SchemaReq
 				Description: `name of the MeshGateway. Requires replacement if changed.`,
 			},
 			"selectors": schema.ListNestedAttribute{
+				Computed: true,
 				Optional: true,
 				NestedObject: schema.NestedAttributeObject{
+					Validators: []validator.Object{
+						speakeasy_objectvalidators.NotNull(),
+					},
 					Attributes: map[string]schema.Attribute{
 						"match": schema.MapAttribute{
 							Optional:    true,
@@ -247,6 +313,7 @@ func (r *MeshGatewayResource) Schema(ctx context.Context, req resource.SchemaReq
 				Computed: true,
 				PlanModifiers: []planmodifier.List{
 					custom_listplanmodifier.SupressZeroNullModifier(),
+					speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
 				},
 				ElementType: types.StringType,
 				MarkdownDescription: `warnings is a list of warning messages to return to the requesting Kuma API clients.` + "\n" +
@@ -294,13 +361,13 @@ func (r *MeshGatewayResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 
-	request, requestDiags := data.ToOperationsCreateMeshGatewayRequest(ctx)
+	request, requestDiags := data.ToOperationsPutMeshGatewayRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshGateway.CreateMeshGateway(ctx, *request)
+	res, err := r.client.MeshGateway.PutMeshGateway(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -312,7 +379,10 @@ func (r *MeshGatewayResource) Create(ctx context.Context, req resource.CreateReq
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 201 {
+	switch res.StatusCode {
+	case 200, 201:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
@@ -445,13 +515,13 @@ func (r *MeshGatewayResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
-	request, requestDiags := data.ToOperationsUpdateMeshGatewayRequest(ctx)
+	request, requestDiags := data.ToOperationsPutMeshGatewayRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshGateway.UpdateMeshGateway(ctx, *request)
+	res, err := r.client.MeshGateway.PutMeshGateway(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -463,7 +533,10 @@ func (r *MeshGatewayResource) Update(ctx context.Context, req resource.UpdateReq
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 200 {
+	switch res.StatusCode {
+	case 200, 201:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}

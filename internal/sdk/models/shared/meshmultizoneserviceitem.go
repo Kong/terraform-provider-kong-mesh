@@ -74,13 +74,12 @@ func (o *Ports) GetPort() int {
 
 // MeshMultiZoneServiceItemMeshService - MeshService selects MeshServices
 type MeshMultiZoneServiceItemMeshService struct {
-	// MatchLabels matches multiple MeshServices by labels
-	MatchLabels map[string]string `json:"matchLabels"`
+	MatchLabels map[string]string `json:"matchLabels,omitempty"`
 }
 
 func (o *MeshMultiZoneServiceItemMeshService) GetMatchLabels() map[string]string {
 	if o == nil {
-		return map[string]string{}
+		return nil
 	}
 	return o.MatchLabels
 }

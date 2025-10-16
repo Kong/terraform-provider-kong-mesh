@@ -217,7 +217,7 @@ func (r *MeshOPAResourceModel) ToSharedMeshOPAItemInput(ctx context.Context) (*s
 	return &out, diags
 }
 
-func (r *MeshOPAResourceModel) ToOperationsCreateMeshOPARequest(ctx context.Context) (*operations.CreateMeshOPARequest, diag.Diagnostics) {
+func (r *MeshOPAResourceModel) ToOperationsPutMeshOPARequest(ctx context.Context) (*operations.PutMeshOPARequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var mesh string
@@ -233,32 +233,7 @@ func (r *MeshOPAResourceModel) ToOperationsCreateMeshOPARequest(ctx context.Cont
 		return nil, diags
 	}
 
-	out := operations.CreateMeshOPARequest{
-		Mesh:        mesh,
-		Name:        name,
-		MeshOPAItem: *meshOPAItem,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshOPAResourceModel) ToOperationsUpdateMeshOPARequest(ctx context.Context) (*operations.UpdateMeshOPARequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	meshOPAItem, meshOPAItemDiags := r.ToSharedMeshOPAItemInput(ctx)
-	diags.Append(meshOPAItemDiags...)
-
-	if diags.HasError() {
-		return nil, diags
-	}
-
-	out := operations.UpdateMeshOPARequest{
+	out := operations.PutMeshOPARequest{
 		Mesh:        mesh,
 		Name:        name,
 		MeshOPAItem: *meshOPAItem,
