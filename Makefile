@@ -1,6 +1,9 @@
 .PHONY: *
 
-all: speakeasy generate-plan-modifiers
+all: generate
+
+.PHONY: generate
+generate: speakeasy generate-plan-modifiers
 
 speakeasy: check-speakeasy
 	speakeasy run --skip-versioning --output console --minimal

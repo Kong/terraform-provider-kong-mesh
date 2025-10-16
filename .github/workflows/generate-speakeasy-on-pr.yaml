@@ -1,0 +1,73 @@
+name: Run Speakeasy on PR Open
+
+on:
+  pull_request:
+    types: [opened]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  speakeasy-on-pr-open:
+    name: Run Speakeasy on PR Open
+    if: ${{ github.event.pull_request.head.ref == 'feat/platform-api-automated-update' }}
+    runs-on: ubuntu-latest
+    concurrency:
+      group: speakeasy-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
+    steps:
+      - name: Install Speakeasy
+        uses: mheap/setup-go-cli@fa9b01cdd4115eac636164f0de43bf7d51c82697 # v1
+        with:
+          owner: speakeasy-api
+          repo: speakeasy
+          cli_name: speakeasy
+          package_type: zip
+
+      - name: Configure speakeasy CLI
+        run: |
+          mkdir -p ~/.speakeasy
+          echo 'speakeasy_api_key: ${{ secrets.SPEAKEASY_API_KEY }}' > ~/.speakeasy/config.yaml
+
+      - name: Checkout PR branch
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          ref: ${{ github.head_ref }}
+          path: repo
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
+        with:
+          go-version-file: repo/go.mod
+
+      - name: Install staticcheck
+        working-directory: repo
+        run: |
+          set -x
+          go install honnef.co/go/tools/cmd/staticcheck@v0.6.1
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+
+      - name: Set up Git identity
+        working-directory: repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Run Generators
+        working-directory: repo
+        run: make generate
+
+      - name: Commit & push changes (if any)
+        working-directory: repo
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git add -A
+            git commit -m "chore(ci): speakeasy auto-update on PR open"
+            git push
+          else
+            echo "No changes to commit."
+          fi
+
