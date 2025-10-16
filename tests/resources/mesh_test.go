@@ -2,6 +2,10 @@ package tests
 
 import (
 	"fmt"
+	"net"
+	"os"
+	"testing"
+
 	"github.com/Kong/shared-speakeasy/tfbuilder"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
@@ -11,9 +15,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
-	"net"
-	"os"
-	"testing"
 )
 
 type TestLogConsumer struct{}
@@ -118,9 +119,12 @@ func TestMesh(t *testing.T) {
 
 func createAnMTP(t *testing.T, url string, meshName string, mtpName string) {
 	ctx := t.Context()
-	client := sdk.New(url)
+	opts := []sdk.SDKOption{
+		sdk.WithServerURL(url),
+	}
+	client := sdk.New(opts...)
 	action := shared.ActionAllow
-	resp, err := client.MeshTrafficPermission.CreateMeshTrafficPermission(ctx, operations.CreateMeshTrafficPermissionRequest{
+	resp, err := client.MeshTrafficPermission.PutMeshTrafficPermission(ctx, operations.PutMeshTrafficPermissionRequest{
 		Mesh: meshName,
 		Name: mtpName,
 		MeshTrafficPermissionItem: shared.MeshTrafficPermissionItemInput{
