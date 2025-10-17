@@ -3,11 +3,14 @@ package provider
 import (
 	"context"
 	"errors"
-	"github.com/hashicorp/terraform-plugin-framework/resource"
-	sdkerrors "github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/errors"
-	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"net/http"
 	"strconv"
+
+	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+	sdkerrors "github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/errors"
+	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 )
 
 var _ resource.ResourceWithModifyPlan = &MeshResource{}
@@ -21,18 +24,22 @@ func (r *MeshResource) ModifyPlan(
 		return
 	}
 
-	var plannedResource MeshResourceModel
-	diags := req.Plan.Get(ctx, &plannedResource)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
+	var name types.String
+	if diags := req.Plan.GetAttribute(ctx, path.Root("name"), &name); diags.HasError() {
+		resp.Diagnostics.Append(diags...)
+		return
+	}
+	var cpID types.String
+	if diags := req.Plan.GetAttribute(ctx, path.Root("cp_id"), &cpID); diags.HasError() {
+		resp.Diagnostics.Append(diags...)
 		return
 	}
 
-	if plannedResource.Name.IsUnknown() {
+	if name.IsUnknown() {
 		return
 	}
 	request := operations.GetMeshRequest{
-		Name: plannedResource.Name.ValueString(),
+		Name: name.ValueString(),
 	}
 	res, err := r.client.Mesh.GetMesh(ctx, request)
 
@@ -60,7 +67,7 @@ func (r *MeshResource) ModifyPlan(
 	if res.StatusCode != http.StatusNotFound {
 		resp.Diagnostics.AddError(
 			"Mesh already exists",
-			"A resource with the name "+plannedResource.Name.String()+" already exists - to be managed via Terraform it needs to be imported first",
+			"A resource with the name "+name.String()+" already exists - to be managed via Terraform it needs to be imported first",
 		)
 	}
 }
