@@ -35,7 +35,7 @@ jobs:
           git tag -a v$TAG -m "Release v$TAG"
           git push origin v$TAG
       - name: Import GPG key
-        uses: crazy-max/ghaction-import-gpg@111c56156bcc6918c056dbef52164cfa583dc549 # v5.2.0
+        uses: crazy-max/ghaction-import-gpg@d6f3f49f3345e29369fe57596a3ca8f94c4d2ca7 # v5.4.0
         id: import_gpg
         with:
           gpg_private_key: ${{ secrets.TERRAFORM_GPG_PRIVATE_KEY }}
