@@ -45,6 +45,9 @@ dev/use-local-shared-speakeasy:
 acceptance:
 	@TF_ACC=1 go test -count=1 -v ./tests/resources
 
+# renovate: datasource=go depName=Kong/shared-speakeasy/resource_plan_modifier packageName=github.com/Kong/shared-speakeasy/generators/resource_plan_modifier
+RESOURCE_PLAN_MODIFIER_VERSION := v0.0.7
+
 .PHONY: generate-plan-modifiers
 generate-plan-modifiers:
 	mkdir -p "resouce-plan-modifiers"
@@ -53,5 +56,5 @@ generate-plan-modifiers:
 	| cut -d ' ' -f 2 \
 	| sed 's/Resource$$//' \
 	| xargs -n1 -I{} sh -c '\
-		go run github.com/Kong/shared-speakeasy/generators/resource_plan_modifier@v0.0.7 \
+		go run github.com/Kong/shared-speakeasy/generators/resource_plan_modifier@$(RESOURCE_PLAN_MODIFIER_VERSION) \
 		internal/provider/$$(echo {} | tr A-Z a-z)_resource_plan_modify.go {} terraform-provider-kong-mesh'

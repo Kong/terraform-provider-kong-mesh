@@ -1,0 +1,69 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "Kong/public-shared-renovate",
+    "Kong/public-shared-renovate//overrides/security-labels(area/security)",
+    ":combinePatchMinorReleases",
+    ":disableRateLimiting",
+    ":semanticCommitTypeAll(chore)",
+    "docker:pinDigests",
+    "schedule:daily"
+  ],
+  "enabledManagers": [
+    "custom.jsonata",
+    "custom.regex",
+    "github-actions"
+  ],
+  "internalChecksFilter": "strict",
+  "keepUpdatedLabel": "renovate/keep-updated",
+  "rebaseWhen": "conflicted",
+  "prTitleStrict": true,
+  "vulnerabilityAlerts": { "commitMessageSuffix": "" },
+  "gitIgnoredAuthors": ["41898282+github-actions[bot]@users.noreply.github.com"],
+  "customManagers": [
+    {
+      "description": "Manage Go module versions inside terraform.additionalDependencies in gen.yaml",
+      "customType": "jsonata",
+      "fileFormat": "yaml",
+      "managerFilePatterns": ["/^gen\\.yaml$/"],
+      "matchStrings": [
+        "$each(terraform.additionalDependencies, function($v, $k) { {\"depName\":$k, \"currentValue\": $v}})"
+      ],
+      "datasourceTemplate": "go"
+    },
+    {
+      "description": "Manage speakeasyVersion in .speakeasy/workflow.yaml",
+      "customType": "jsonata",
+      "fileFormat": "yaml",
+      "managerFilePatterns": ["/^\\.speakeasy/workflow\\.yaml$/"],
+      "matchStrings": [
+        "{ \"depName\": \"speakeasy-api/speakeasy\", \"currentValue\": speakeasyVersion }"
+      ],
+      "datasourceTemplate": "github-tags",
+      "extractVersionTemplate": "v(?<version>.*)"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchDepNames": ["speakeasy-api/speakeasy"],
+      "minimumReleaseAge": "24h"
+    },
+    {
+      "matchPackageNames": ["{github.com/,}[Kk]ong/shared-speakeasy/**"],
+      "minimumReleaseAge": "0"
+    },
+    {
+      "description": [
+        "Catch-all rule that applies the standard commit message format for all dependencies",
+        "",
+        "This rule extends the shared baseline preset to ensure consistent commit message",
+        "action/topic/extra rendering across all updates. It must be the last packageRule",
+        "in renovate.json, so it takes precedence after any more specific rules."
+      ],
+      "matchDepNames": "*",
+      "extends": [
+        "Kong/public-shared-renovate//scoped/kuma/commit-message-baseline"
+      ]
+    }
+  ]
+}
