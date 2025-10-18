@@ -135,60 +135,60 @@ type MeshTCPRouteItemTargetRef struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (o *MeshTCPRouteItemTargetRef) GetKind() MeshTCPRouteItemKind {
-	if o == nil {
+func (m *MeshTCPRouteItemTargetRef) GetKind() MeshTCPRouteItemKind {
+	if m == nil {
 		return MeshTCPRouteItemKind("")
 	}
-	return o.Kind
+	return m.Kind
 }
 
-func (o *MeshTCPRouteItemTargetRef) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshTCPRouteItemTargetRef) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshTCPRouteItemTargetRef) GetMesh() *string {
-	if o == nil {
+func (m *MeshTCPRouteItemTargetRef) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshTCPRouteItemTargetRef) GetName() *string {
-	if o == nil {
+func (m *MeshTCPRouteItemTargetRef) GetName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshTCPRouteItemTargetRef) GetNamespace() *string {
-	if o == nil {
+func (m *MeshTCPRouteItemTargetRef) GetNamespace() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Namespace
+	return m.Namespace
 }
 
-func (o *MeshTCPRouteItemTargetRef) GetProxyTypes() []MeshTCPRouteItemProxyTypes {
-	if o == nil {
+func (m *MeshTCPRouteItemTargetRef) GetProxyTypes() []MeshTCPRouteItemProxyTypes {
+	if m == nil {
 		return nil
 	}
-	return o.ProxyTypes
+	return m.ProxyTypes
 }
 
-func (o *MeshTCPRouteItemTargetRef) GetSectionName() *string {
-	if o == nil {
+func (m *MeshTCPRouteItemTargetRef) GetSectionName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.SectionName
+	return m.SectionName
 }
 
-func (o *MeshTCPRouteItemTargetRef) GetTags() map[string]string {
-	if o == nil {
+func (m *MeshTCPRouteItemTargetRef) GetTags() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Tags
+	return m.Tags
 }
 
 // MeshTCPRouteItemSpecToKind - Kind of the referenced resource
@@ -299,80 +299,80 @@ func (m MeshTCPRouteItemBackendRefs) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshTCPRouteItemBackendRefs) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"kind"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshTCPRouteItemBackendRefs) GetKind() MeshTCPRouteItemSpecToKind {
-	if o == nil {
+func (m *MeshTCPRouteItemBackendRefs) GetKind() MeshTCPRouteItemSpecToKind {
+	if m == nil {
 		return MeshTCPRouteItemSpecToKind("")
 	}
-	return o.Kind
+	return m.Kind
 }
 
-func (o *MeshTCPRouteItemBackendRefs) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshTCPRouteItemBackendRefs) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshTCPRouteItemBackendRefs) GetMesh() *string {
-	if o == nil {
+func (m *MeshTCPRouteItemBackendRefs) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshTCPRouteItemBackendRefs) GetName() *string {
-	if o == nil {
+func (m *MeshTCPRouteItemBackendRefs) GetName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshTCPRouteItemBackendRefs) GetNamespace() *string {
-	if o == nil {
+func (m *MeshTCPRouteItemBackendRefs) GetNamespace() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Namespace
+	return m.Namespace
 }
 
-func (o *MeshTCPRouteItemBackendRefs) GetPort() *int {
-	if o == nil {
+func (m *MeshTCPRouteItemBackendRefs) GetPort() *int {
+	if m == nil {
 		return nil
 	}
-	return o.Port
+	return m.Port
 }
 
-func (o *MeshTCPRouteItemBackendRefs) GetProxyTypes() []MeshTCPRouteItemSpecToProxyTypes {
-	if o == nil {
+func (m *MeshTCPRouteItemBackendRefs) GetProxyTypes() []MeshTCPRouteItemSpecToProxyTypes {
+	if m == nil {
 		return nil
 	}
-	return o.ProxyTypes
+	return m.ProxyTypes
 }
 
-func (o *MeshTCPRouteItemBackendRefs) GetSectionName() *string {
-	if o == nil {
+func (m *MeshTCPRouteItemBackendRefs) GetSectionName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.SectionName
+	return m.SectionName
 }
 
-func (o *MeshTCPRouteItemBackendRefs) GetTags() map[string]string {
-	if o == nil {
+func (m *MeshTCPRouteItemBackendRefs) GetTags() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Tags
+	return m.Tags
 }
 
-func (o *MeshTCPRouteItemBackendRefs) GetWeight() *int64 {
-	if o == nil {
+func (m *MeshTCPRouteItemBackendRefs) GetWeight() *int64 {
+	if m == nil {
 		return nil
 	}
-	return o.Weight
+	return m.Weight
 }
 
 // MeshTCPRouteItemDefault - Default holds routing rules that can be merged with rules from other
@@ -381,11 +381,11 @@ type MeshTCPRouteItemDefault struct {
 	BackendRefs []MeshTCPRouteItemBackendRefs `json:"backendRefs,omitempty"`
 }
 
-func (o *MeshTCPRouteItemDefault) GetBackendRefs() []MeshTCPRouteItemBackendRefs {
-	if o == nil {
+func (m *MeshTCPRouteItemDefault) GetBackendRefs() []MeshTCPRouteItemBackendRefs {
+	if m == nil {
 		return nil
 	}
-	return o.BackendRefs
+	return m.BackendRefs
 }
 
 type MeshTCPRouteItemRules struct {
@@ -394,11 +394,11 @@ type MeshTCPRouteItemRules struct {
 	Default MeshTCPRouteItemDefault `json:"default"`
 }
 
-func (o *MeshTCPRouteItemRules) GetDefault() MeshTCPRouteItemDefault {
-	if o == nil {
+func (m *MeshTCPRouteItemRules) GetDefault() MeshTCPRouteItemDefault {
+	if m == nil {
 		return MeshTCPRouteItemDefault{}
 	}
-	return o.Default
+	return m.Default
 }
 
 // MeshTCPRouteItemSpecKind - Kind of the referenced resource
@@ -502,60 +502,60 @@ type MeshTCPRouteItemSpecTargetRef struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (o *MeshTCPRouteItemSpecTargetRef) GetKind() MeshTCPRouteItemSpecKind {
-	if o == nil {
+func (m *MeshTCPRouteItemSpecTargetRef) GetKind() MeshTCPRouteItemSpecKind {
+	if m == nil {
 		return MeshTCPRouteItemSpecKind("")
 	}
-	return o.Kind
+	return m.Kind
 }
 
-func (o *MeshTCPRouteItemSpecTargetRef) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshTCPRouteItemSpecTargetRef) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshTCPRouteItemSpecTargetRef) GetMesh() *string {
-	if o == nil {
+func (m *MeshTCPRouteItemSpecTargetRef) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshTCPRouteItemSpecTargetRef) GetName() *string {
-	if o == nil {
+func (m *MeshTCPRouteItemSpecTargetRef) GetName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshTCPRouteItemSpecTargetRef) GetNamespace() *string {
-	if o == nil {
+func (m *MeshTCPRouteItemSpecTargetRef) GetNamespace() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Namespace
+	return m.Namespace
 }
 
-func (o *MeshTCPRouteItemSpecTargetRef) GetProxyTypes() []MeshTCPRouteItemSpecProxyTypes {
-	if o == nil {
+func (m *MeshTCPRouteItemSpecTargetRef) GetProxyTypes() []MeshTCPRouteItemSpecProxyTypes {
+	if m == nil {
 		return nil
 	}
-	return o.ProxyTypes
+	return m.ProxyTypes
 }
 
-func (o *MeshTCPRouteItemSpecTargetRef) GetSectionName() *string {
-	if o == nil {
+func (m *MeshTCPRouteItemSpecTargetRef) GetSectionName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.SectionName
+	return m.SectionName
 }
 
-func (o *MeshTCPRouteItemSpecTargetRef) GetTags() map[string]string {
-	if o == nil {
+func (m *MeshTCPRouteItemSpecTargetRef) GetTags() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Tags
+	return m.Tags
 }
 
 type MeshTCPRouteItemTo struct {
@@ -567,18 +567,18 @@ type MeshTCPRouteItemTo struct {
 	TargetRef MeshTCPRouteItemSpecTargetRef `json:"targetRef"`
 }
 
-func (o *MeshTCPRouteItemTo) GetRules() []MeshTCPRouteItemRules {
-	if o == nil {
+func (m *MeshTCPRouteItemTo) GetRules() []MeshTCPRouteItemRules {
+	if m == nil {
 		return []MeshTCPRouteItemRules{}
 	}
-	return o.Rules
+	return m.Rules
 }
 
-func (o *MeshTCPRouteItemTo) GetTargetRef() MeshTCPRouteItemSpecTargetRef {
-	if o == nil {
+func (m *MeshTCPRouteItemTo) GetTargetRef() MeshTCPRouteItemSpecTargetRef {
+	if m == nil {
 		return MeshTCPRouteItemSpecTargetRef{}
 	}
-	return o.TargetRef
+	return m.TargetRef
 }
 
 // MeshTCPRouteItemSpec - Spec is the specification of the Kuma MeshTCPRoute resource.
@@ -592,18 +592,18 @@ type MeshTCPRouteItemSpec struct {
 	To []MeshTCPRouteItemTo `json:"to,omitempty"`
 }
 
-func (o *MeshTCPRouteItemSpec) GetTargetRef() *MeshTCPRouteItemTargetRef {
-	if o == nil {
+func (m *MeshTCPRouteItemSpec) GetTargetRef() *MeshTCPRouteItemTargetRef {
+	if m == nil {
 		return nil
 	}
-	return o.TargetRef
+	return m.TargetRef
 }
 
-func (o *MeshTCPRouteItemSpec) GetTo() []MeshTCPRouteItemTo {
-	if o == nil {
+func (m *MeshTCPRouteItemSpec) GetTo() []MeshTCPRouteItemTo {
+	if m == nil {
 		return nil
 	}
-	return o.To
+	return m.To
 }
 
 // MeshTCPRouteItem - Successful response
@@ -629,59 +629,59 @@ func (m MeshTCPRouteItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshTCPRouteItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshTCPRouteItem) GetType() MeshTCPRouteItemType {
-	if o == nil {
+func (m *MeshTCPRouteItem) GetType() MeshTCPRouteItemType {
+	if m == nil {
 		return MeshTCPRouteItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshTCPRouteItem) GetMesh() *string {
-	if o == nil {
+func (m *MeshTCPRouteItem) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshTCPRouteItem) GetName() string {
-	if o == nil {
+func (m *MeshTCPRouteItem) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshTCPRouteItem) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshTCPRouteItem) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshTCPRouteItem) GetSpec() MeshTCPRouteItemSpec {
-	if o == nil {
+func (m *MeshTCPRouteItem) GetSpec() MeshTCPRouteItemSpec {
+	if m == nil {
 		return MeshTCPRouteItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }
 
-func (o *MeshTCPRouteItem) GetCreationTime() *time.Time {
-	if o == nil {
+func (m *MeshTCPRouteItem) GetCreationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.CreationTime
+	return m.CreationTime
 }
 
-func (o *MeshTCPRouteItem) GetModificationTime() *time.Time {
-	if o == nil {
+func (m *MeshTCPRouteItem) GetModificationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.ModificationTime
+	return m.ModificationTime
 }
 
 type MeshTCPRouteItemInput struct {
@@ -702,43 +702,43 @@ func (m MeshTCPRouteItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshTCPRouteItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshTCPRouteItemInput) GetType() MeshTCPRouteItemType {
-	if o == nil {
+func (m *MeshTCPRouteItemInput) GetType() MeshTCPRouteItemType {
+	if m == nil {
 		return MeshTCPRouteItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshTCPRouteItemInput) GetMesh() *string {
-	if o == nil {
+func (m *MeshTCPRouteItemInput) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshTCPRouteItemInput) GetName() string {
-	if o == nil {
+func (m *MeshTCPRouteItemInput) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshTCPRouteItemInput) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshTCPRouteItemInput) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshTCPRouteItemInput) GetSpec() MeshTCPRouteItemSpec {
-	if o == nil {
+func (m *MeshTCPRouteItemInput) GetSpec() MeshTCPRouteItemSpec {
+	if m == nil {
 		return MeshTCPRouteItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }

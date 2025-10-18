@@ -16,25 +16,25 @@ type PutMeshMetricRequest struct {
 	MeshMetricItem shared.MeshMetricItemInput `request:"mediaType=application/json"`
 }
 
-func (o *PutMeshMetricRequest) GetMesh() string {
-	if o == nil {
+func (p *PutMeshMetricRequest) GetMesh() string {
+	if p == nil {
 		return ""
 	}
-	return o.Mesh
+	return p.Mesh
 }
 
-func (o *PutMeshMetricRequest) GetName() string {
-	if o == nil {
+func (p *PutMeshMetricRequest) GetName() string {
+	if p == nil {
 		return ""
 	}
-	return o.Name
+	return p.Name
 }
 
-func (o *PutMeshMetricRequest) GetMeshMetricItem() shared.MeshMetricItemInput {
-	if o == nil {
+func (p *PutMeshMetricRequest) GetMeshMetricItem() shared.MeshMetricItemInput {
+	if p == nil {
 		return shared.MeshMetricItemInput{}
 	}
-	return o.MeshMetricItem
+	return p.MeshMetricItem
 }
 
 type PutMeshMetricResponse struct {
@@ -48,30 +48,30 @@ type PutMeshMetricResponse struct {
 	MeshMetricCreateOrUpdateSuccessResponse *shared.MeshMetricCreateOrUpdateSuccessResponse
 }
 
-func (o *PutMeshMetricResponse) GetContentType() string {
-	if o == nil {
+func (p *PutMeshMetricResponse) GetContentType() string {
+	if p == nil {
 		return ""
 	}
-	return o.ContentType
+	return p.ContentType
 }
 
-func (o *PutMeshMetricResponse) GetStatusCode() int {
-	if o == nil {
+func (p *PutMeshMetricResponse) GetStatusCode() int {
+	if p == nil {
 		return 0
 	}
-	return o.StatusCode
+	return p.StatusCode
 }
 
-func (o *PutMeshMetricResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *PutMeshMetricResponse) GetRawResponse() *http.Response {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.RawResponse
 }
 
-func (o *PutMeshMetricResponse) GetMeshMetricCreateOrUpdateSuccessResponse() *shared.MeshMetricCreateOrUpdateSuccessResponse {
-	if o == nil {
+func (p *PutMeshMetricResponse) GetMeshMetricCreateOrUpdateSuccessResponse() *shared.MeshMetricCreateOrUpdateSuccessResponse {
+	if p == nil {
 		return nil
 	}
-	return o.MeshMetricCreateOrUpdateSuccessResponse
+	return p.MeshMetricCreateOrUpdateSuccessResponse
 }

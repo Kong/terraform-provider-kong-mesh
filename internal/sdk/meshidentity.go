@@ -62,7 +62,7 @@ func (s *MeshIdentity) GetMeshIdentity(ctx context.Context, request operations.G
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getMeshIdentity",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -292,7 +292,7 @@ func (s *MeshIdentity) PutMeshIdentity(ctx context.Context, request operations.P
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "putMeshIdentity",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "MeshIdentityItem", "json", `request:"mediaType=application/json"`)
@@ -506,7 +506,7 @@ func (s *MeshIdentity) DeleteMeshIdentity(ctx context.Context, request operation
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "deleteMeshIdentity",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -736,7 +736,7 @@ func (s *MeshIdentity) GetMeshIdentityList(ctx context.Context, request operatio
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getMeshIdentityList",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 

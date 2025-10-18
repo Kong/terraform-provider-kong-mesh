@@ -12,11 +12,11 @@ type GetHostnameGeneratorRequest struct {
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 }
 
-func (o *GetHostnameGeneratorRequest) GetName() string {
-	if o == nil {
+func (g *GetHostnameGeneratorRequest) GetName() string {
+	if g == nil {
 		return ""
 	}
-	return o.Name
+	return g.Name
 }
 
 type GetHostnameGeneratorResponse struct {
@@ -32,37 +32,37 @@ type GetHostnameGeneratorResponse struct {
 	NotFoundError *shared.NotFoundError
 }
 
-func (o *GetHostnameGeneratorResponse) GetContentType() string {
-	if o == nil {
+func (g *GetHostnameGeneratorResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetHostnameGeneratorResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetHostnameGeneratorResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetHostnameGeneratorResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetHostnameGeneratorResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetHostnameGeneratorResponse) GetHostnameGeneratorItem() *shared.HostnameGeneratorItem {
-	if o == nil {
+func (g *GetHostnameGeneratorResponse) GetHostnameGeneratorItem() *shared.HostnameGeneratorItem {
+	if g == nil {
 		return nil
 	}
-	return o.HostnameGeneratorItem
+	return g.HostnameGeneratorItem
 }
 
-func (o *GetHostnameGeneratorResponse) GetNotFoundError() *shared.NotFoundError {
-	if o == nil {
+func (g *GetHostnameGeneratorResponse) GetNotFoundError() *shared.NotFoundError {
+	if g == nil {
 		return nil
 	}
-	return o.NotFoundError
+	return g.NotFoundError
 }

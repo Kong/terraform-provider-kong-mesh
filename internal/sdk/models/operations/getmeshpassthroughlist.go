@@ -14,18 +14,18 @@ type GetMeshPassthroughListQueryParamFilter struct {
 	Value *string `queryParam:"name=value"`
 }
 
-func (o *GetMeshPassthroughListQueryParamFilter) GetKey() *string {
-	if o == nil {
+func (g *GetMeshPassthroughListQueryParamFilter) GetKey() *string {
+	if g == nil {
 		return nil
 	}
-	return o.Key
+	return g.Key
 }
 
-func (o *GetMeshPassthroughListQueryParamFilter) GetValue() *string {
-	if o == nil {
+func (g *GetMeshPassthroughListQueryParamFilter) GetValue() *string {
+	if g == nil {
 		return nil
 	}
-	return o.Value
+	return g.Value
 }
 
 type GetMeshPassthroughListRequest struct {
@@ -44,38 +44,38 @@ func (g GetMeshPassthroughListRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetMeshPassthroughListRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &g, "", false, []string{"mesh"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *GetMeshPassthroughListRequest) GetOffset() *int64 {
-	if o == nil {
+func (g *GetMeshPassthroughListRequest) GetOffset() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Offset
+	return g.Offset
 }
 
-func (o *GetMeshPassthroughListRequest) GetSize() *int64 {
-	if o == nil {
+func (g *GetMeshPassthroughListRequest) GetSize() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Size
+	return g.Size
 }
 
-func (o *GetMeshPassthroughListRequest) GetFilter() *GetMeshPassthroughListQueryParamFilter {
-	if o == nil {
+func (g *GetMeshPassthroughListRequest) GetFilter() *GetMeshPassthroughListQueryParamFilter {
+	if g == nil {
 		return nil
 	}
-	return o.Filter
+	return g.Filter
 }
 
-func (o *GetMeshPassthroughListRequest) GetMesh() string {
-	if o == nil {
+func (g *GetMeshPassthroughListRequest) GetMesh() string {
+	if g == nil {
 		return ""
 	}
-	return o.Mesh
+	return g.Mesh
 }
 
 type GetMeshPassthroughListResponse struct {
@@ -89,30 +89,30 @@ type GetMeshPassthroughListResponse struct {
 	MeshPassthroughList *shared.MeshPassthroughList
 }
 
-func (o *GetMeshPassthroughListResponse) GetContentType() string {
-	if o == nil {
+func (g *GetMeshPassthroughListResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetMeshPassthroughListResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetMeshPassthroughListResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetMeshPassthroughListResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetMeshPassthroughListResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetMeshPassthroughListResponse) GetMeshPassthroughList() *shared.MeshPassthroughList {
-	if o == nil {
+func (g *GetMeshPassthroughListResponse) GetMeshPassthroughList() *shared.MeshPassthroughList {
+	if g == nil {
 		return nil
 	}
-	return o.MeshPassthroughList
+	return g.MeshPassthroughList
 }

@@ -14,18 +14,18 @@ type DeleteMeshCircuitBreakerRequest struct {
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 }
 
-func (o *DeleteMeshCircuitBreakerRequest) GetMesh() string {
-	if o == nil {
+func (d *DeleteMeshCircuitBreakerRequest) GetMesh() string {
+	if d == nil {
 		return ""
 	}
-	return o.Mesh
+	return d.Mesh
 }
 
-func (o *DeleteMeshCircuitBreakerRequest) GetName() string {
-	if o == nil {
+func (d *DeleteMeshCircuitBreakerRequest) GetName() string {
+	if d == nil {
 		return ""
 	}
-	return o.Name
+	return d.Name
 }
 
 type DeleteMeshCircuitBreakerResponse struct {
@@ -41,37 +41,37 @@ type DeleteMeshCircuitBreakerResponse struct {
 	NotFoundError *shared.NotFoundError
 }
 
-func (o *DeleteMeshCircuitBreakerResponse) GetContentType() string {
-	if o == nil {
+func (d *DeleteMeshCircuitBreakerResponse) GetContentType() string {
+	if d == nil {
 		return ""
 	}
-	return o.ContentType
+	return d.ContentType
 }
 
-func (o *DeleteMeshCircuitBreakerResponse) GetStatusCode() int {
-	if o == nil {
+func (d *DeleteMeshCircuitBreakerResponse) GetStatusCode() int {
+	if d == nil {
 		return 0
 	}
-	return o.StatusCode
+	return d.StatusCode
 }
 
-func (o *DeleteMeshCircuitBreakerResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (d *DeleteMeshCircuitBreakerResponse) GetRawResponse() *http.Response {
+	if d == nil {
 		return nil
 	}
-	return o.RawResponse
+	return d.RawResponse
 }
 
-func (o *DeleteMeshCircuitBreakerResponse) GetMeshCircuitBreakerDeleteSuccessResponse() *shared.MeshCircuitBreakerDeleteSuccessResponse {
-	if o == nil {
+func (d *DeleteMeshCircuitBreakerResponse) GetMeshCircuitBreakerDeleteSuccessResponse() *shared.MeshCircuitBreakerDeleteSuccessResponse {
+	if d == nil {
 		return nil
 	}
-	return o.MeshCircuitBreakerDeleteSuccessResponse
+	return d.MeshCircuitBreakerDeleteSuccessResponse
 }
 
-func (o *DeleteMeshCircuitBreakerResponse) GetNotFoundError() *shared.NotFoundError {
-	if o == nil {
+func (d *DeleteMeshCircuitBreakerResponse) GetNotFoundError() *shared.NotFoundError {
+	if d == nil {
 		return nil
 	}
-	return o.NotFoundError
+	return d.NotFoundError
 }

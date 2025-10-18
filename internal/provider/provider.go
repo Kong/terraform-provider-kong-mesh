@@ -43,20 +43,23 @@ func (p *KongMeshProvider) Schema(ctx context.Context, req provider.SchemaReques
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"bearer_auth": schema.StringAttribute{
-				Optional:  true,
-				Sensitive: true,
+				MarkdownDescription: `HTTP Bearer.`,
+				Optional:            true,
+				Sensitive:           true,
 			},
 			"password": schema.StringAttribute{
-				Optional:  true,
-				Sensitive: true,
+				MarkdownDescription: `HTTP Basic password.`,
+				Optional:            true,
+				Sensitive:           true,
 			},
 			"server_url": schema.StringAttribute{
 				Description: `Server URL (defaults to https://global.api.konghq.com)`,
 				Optional:    true,
 			},
 			"username": schema.StringAttribute{
-				Optional:  true,
-				Sensitive: true,
+				MarkdownDescription: `HTTP Basic username.`,
+				Optional:            true,
+				Sensitive:           true,
 			},
 		},
 		MarkdownDescription: `Konnect API: The Konnect platform API`,
@@ -72,13 +75,14 @@ func (p *KongMeshProvider) Configure(ctx context.Context, req provider.Configure
 		return
 	}
 
-	ServerURL := data.ServerURL.ValueString()
+	serverUrl := data.ServerURL.ValueString()
 
-	if ServerURL == "" && len(os.Getenv("SERVER_URL")) > 0 {
-		ServerURL = os.Getenv("SERVER_URL")
+	if serverUrl == "" && os.Getenv("SERVER_URL") != "" {
+		serverUrl = os.Getenv("SERVER_URL")
 	}
-	if ServerURL == "" {
-		ServerURL = "https://global.api.konghq.com"
+
+	if serverUrl == "" {
+		serverUrl = "https://global.api.konghq.com"
 	}
 
 	security := shared.Security{}
@@ -110,12 +114,12 @@ func (p *KongMeshProvider) Configure(ctx context.Context, req provider.Configure
 	httpClient.Transport = NewProviderHTTPTransport(providerHTTPTransportOpts)
 
 	opts := []sdk.SDKOption{
-		sdk.WithServerURL(ServerURL),
+		sdk.WithServerURL(serverUrl),
 		sdk.WithSecurity(security),
 		sdk.WithClient(httpClient),
 	}
-	client := sdk.New(opts...)
 
+	client := sdk.New(opts...)
 	resp.DataSourceData = client
 	resp.EphemeralResourceData = client
 	resp.ResourceData = client

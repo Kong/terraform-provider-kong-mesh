@@ -36,6 +36,7 @@ func NewMeshOPAResource() resource.Resource {
 
 // MeshOPAResource defines the resource implementation.
 type MeshOPAResource struct {
+	// Provider configured SDK client.
 	client *sdk.KongMesh
 }
 
@@ -626,7 +627,7 @@ func (r *MeshOPAResource) ImportState(ctx context.Context, req resource.ImportSt
 	}
 
 	if err := dec.Decode(&data); err != nil {
-		resp.Diagnostics.AddError("Invalid ID", `The import ID is not valid. It is expected to be a JSON object string with the format: '{ "mesh": "",  "name": ""}': `+err.Error())
+		resp.Diagnostics.AddError("Invalid ID", `The import ID is not valid. It is expected to be a JSON object string with the format: '{"mesh": "...", "name": "..."}': `+err.Error())
 		return
 	}
 
@@ -640,5 +641,4 @@ func (r *MeshOPAResource) ImportState(ctx context.Context, req resource.ImportSt
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("name"), data.Name)...)
-
 }

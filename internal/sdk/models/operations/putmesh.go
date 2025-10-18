@@ -14,18 +14,18 @@ type PutMeshRequest struct {
 	MeshItem shared.MeshItem `request:"mediaType=application/json"`
 }
 
-func (o *PutMeshRequest) GetName() string {
-	if o == nil {
+func (p *PutMeshRequest) GetName() string {
+	if p == nil {
 		return ""
 	}
-	return o.Name
+	return p.Name
 }
 
-func (o *PutMeshRequest) GetMeshItem() shared.MeshItem {
-	if o == nil {
+func (p *PutMeshRequest) GetMeshItem() shared.MeshItem {
+	if p == nil {
 		return shared.MeshItem{}
 	}
-	return o.MeshItem
+	return p.MeshItem
 }
 
 type PutMeshResponse struct {
@@ -39,30 +39,30 @@ type PutMeshResponse struct {
 	MeshCreateOrUpdateSuccessResponse *shared.MeshCreateOrUpdateSuccessResponse
 }
 
-func (o *PutMeshResponse) GetContentType() string {
-	if o == nil {
+func (p *PutMeshResponse) GetContentType() string {
+	if p == nil {
 		return ""
 	}
-	return o.ContentType
+	return p.ContentType
 }
 
-func (o *PutMeshResponse) GetStatusCode() int {
-	if o == nil {
+func (p *PutMeshResponse) GetStatusCode() int {
+	if p == nil {
 		return 0
 	}
-	return o.StatusCode
+	return p.StatusCode
 }
 
-func (o *PutMeshResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *PutMeshResponse) GetRawResponse() *http.Response {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.RawResponse
 }
 
-func (o *PutMeshResponse) GetMeshCreateOrUpdateSuccessResponse() *shared.MeshCreateOrUpdateSuccessResponse {
-	if o == nil {
+func (p *PutMeshResponse) GetMeshCreateOrUpdateSuccessResponse() *shared.MeshCreateOrUpdateSuccessResponse {
+	if p == nil {
 		return nil
 	}
-	return o.MeshCreateOrUpdateSuccessResponse
+	return p.MeshCreateOrUpdateSuccessResponse
 }

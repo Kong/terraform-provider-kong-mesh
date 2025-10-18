@@ -14,18 +14,18 @@ type GetMeshRetryRequest struct {
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 }
 
-func (o *GetMeshRetryRequest) GetMesh() string {
-	if o == nil {
+func (g *GetMeshRetryRequest) GetMesh() string {
+	if g == nil {
 		return ""
 	}
-	return o.Mesh
+	return g.Mesh
 }
 
-func (o *GetMeshRetryRequest) GetName() string {
-	if o == nil {
+func (g *GetMeshRetryRequest) GetName() string {
+	if g == nil {
 		return ""
 	}
-	return o.Name
+	return g.Name
 }
 
 type GetMeshRetryResponse struct {
@@ -41,37 +41,37 @@ type GetMeshRetryResponse struct {
 	NotFoundError *shared.NotFoundError
 }
 
-func (o *GetMeshRetryResponse) GetContentType() string {
-	if o == nil {
+func (g *GetMeshRetryResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetMeshRetryResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetMeshRetryResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetMeshRetryResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetMeshRetryResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetMeshRetryResponse) GetMeshRetryItem() *shared.MeshRetryItem {
-	if o == nil {
+func (g *GetMeshRetryResponse) GetMeshRetryItem() *shared.MeshRetryItem {
+	if g == nil {
 		return nil
 	}
-	return o.MeshRetryItem
+	return g.MeshRetryItem
 }
 
-func (o *GetMeshRetryResponse) GetNotFoundError() *shared.NotFoundError {
-	if o == nil {
+func (g *GetMeshRetryResponse) GetNotFoundError() *shared.NotFoundError {
+	if g == nil {
 		return nil
 	}
-	return o.NotFoundError
+	return g.NotFoundError
 }

@@ -62,7 +62,7 @@ func (s *MeshTrust) GetMeshTrust(ctx context.Context, request operations.GetMesh
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getMeshTrust",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -292,7 +292,7 @@ func (s *MeshTrust) PutMeshTrust(ctx context.Context, request operations.PutMesh
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "putMeshTrust",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "MeshTrustItem", "json", `request:"mediaType=application/json"`)
@@ -506,7 +506,7 @@ func (s *MeshTrust) DeleteMeshTrust(ctx context.Context, request operations.Dele
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "deleteMeshTrust",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -736,7 +736,7 @@ func (s *MeshTrust) GetMeshTrustList(ctx context.Context, request operations.Get
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getMeshTrustList",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 

@@ -62,7 +62,7 @@ func (s *MeshOPA) GetMeshOPA(ctx context.Context, request operations.GetMeshOPAR
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getMeshOPA",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -292,7 +292,7 @@ func (s *MeshOPA) PutMeshOPA(ctx context.Context, request operations.PutMeshOPAR
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "putMeshOPA",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "MeshOPAItem", "json", `request:"mediaType=application/json"`)
@@ -506,7 +506,7 @@ func (s *MeshOPA) DeleteMeshOPA(ctx context.Context, request operations.DeleteMe
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "deleteMeshOPA",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -736,7 +736,7 @@ func (s *MeshOPA) GetMeshOPAList(ctx context.Context, request operations.GetMesh
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getMeshOPAList",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 

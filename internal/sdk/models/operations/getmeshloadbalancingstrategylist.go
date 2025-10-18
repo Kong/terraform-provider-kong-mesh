@@ -14,18 +14,18 @@ type GetMeshLoadBalancingStrategyListQueryParamFilter struct {
 	Value *string `queryParam:"name=value"`
 }
 
-func (o *GetMeshLoadBalancingStrategyListQueryParamFilter) GetKey() *string {
-	if o == nil {
+func (g *GetMeshLoadBalancingStrategyListQueryParamFilter) GetKey() *string {
+	if g == nil {
 		return nil
 	}
-	return o.Key
+	return g.Key
 }
 
-func (o *GetMeshLoadBalancingStrategyListQueryParamFilter) GetValue() *string {
-	if o == nil {
+func (g *GetMeshLoadBalancingStrategyListQueryParamFilter) GetValue() *string {
+	if g == nil {
 		return nil
 	}
-	return o.Value
+	return g.Value
 }
 
 type GetMeshLoadBalancingStrategyListRequest struct {
@@ -44,38 +44,38 @@ func (g GetMeshLoadBalancingStrategyListRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetMeshLoadBalancingStrategyListRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &g, "", false, []string{"mesh"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *GetMeshLoadBalancingStrategyListRequest) GetOffset() *int64 {
-	if o == nil {
+func (g *GetMeshLoadBalancingStrategyListRequest) GetOffset() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Offset
+	return g.Offset
 }
 
-func (o *GetMeshLoadBalancingStrategyListRequest) GetSize() *int64 {
-	if o == nil {
+func (g *GetMeshLoadBalancingStrategyListRequest) GetSize() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Size
+	return g.Size
 }
 
-func (o *GetMeshLoadBalancingStrategyListRequest) GetFilter() *GetMeshLoadBalancingStrategyListQueryParamFilter {
-	if o == nil {
+func (g *GetMeshLoadBalancingStrategyListRequest) GetFilter() *GetMeshLoadBalancingStrategyListQueryParamFilter {
+	if g == nil {
 		return nil
 	}
-	return o.Filter
+	return g.Filter
 }
 
-func (o *GetMeshLoadBalancingStrategyListRequest) GetMesh() string {
-	if o == nil {
+func (g *GetMeshLoadBalancingStrategyListRequest) GetMesh() string {
+	if g == nil {
 		return ""
 	}
-	return o.Mesh
+	return g.Mesh
 }
 
 type GetMeshLoadBalancingStrategyListResponse struct {
@@ -89,30 +89,30 @@ type GetMeshLoadBalancingStrategyListResponse struct {
 	MeshLoadBalancingStrategyList *shared.MeshLoadBalancingStrategyList
 }
 
-func (o *GetMeshLoadBalancingStrategyListResponse) GetContentType() string {
-	if o == nil {
+func (g *GetMeshLoadBalancingStrategyListResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetMeshLoadBalancingStrategyListResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetMeshLoadBalancingStrategyListResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetMeshLoadBalancingStrategyListResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetMeshLoadBalancingStrategyListResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetMeshLoadBalancingStrategyListResponse) GetMeshLoadBalancingStrategyList() *shared.MeshLoadBalancingStrategyList {
-	if o == nil {
+func (g *GetMeshLoadBalancingStrategyListResponse) GetMeshLoadBalancingStrategyList() *shared.MeshLoadBalancingStrategyList {
+	if g == nil {
 		return nil
 	}
-	return o.MeshLoadBalancingStrategyList
+	return g.MeshLoadBalancingStrategyList
 }

@@ -14,18 +14,18 @@ type GetMeshTimeoutListQueryParamFilter struct {
 	Value *string `queryParam:"name=value"`
 }
 
-func (o *GetMeshTimeoutListQueryParamFilter) GetKey() *string {
-	if o == nil {
+func (g *GetMeshTimeoutListQueryParamFilter) GetKey() *string {
+	if g == nil {
 		return nil
 	}
-	return o.Key
+	return g.Key
 }
 
-func (o *GetMeshTimeoutListQueryParamFilter) GetValue() *string {
-	if o == nil {
+func (g *GetMeshTimeoutListQueryParamFilter) GetValue() *string {
+	if g == nil {
 		return nil
 	}
-	return o.Value
+	return g.Value
 }
 
 type GetMeshTimeoutListRequest struct {
@@ -44,38 +44,38 @@ func (g GetMeshTimeoutListRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetMeshTimeoutListRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &g, "", false, []string{"mesh"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *GetMeshTimeoutListRequest) GetOffset() *int64 {
-	if o == nil {
+func (g *GetMeshTimeoutListRequest) GetOffset() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Offset
+	return g.Offset
 }
 
-func (o *GetMeshTimeoutListRequest) GetSize() *int64 {
-	if o == nil {
+func (g *GetMeshTimeoutListRequest) GetSize() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Size
+	return g.Size
 }
 
-func (o *GetMeshTimeoutListRequest) GetFilter() *GetMeshTimeoutListQueryParamFilter {
-	if o == nil {
+func (g *GetMeshTimeoutListRequest) GetFilter() *GetMeshTimeoutListQueryParamFilter {
+	if g == nil {
 		return nil
 	}
-	return o.Filter
+	return g.Filter
 }
 
-func (o *GetMeshTimeoutListRequest) GetMesh() string {
-	if o == nil {
+func (g *GetMeshTimeoutListRequest) GetMesh() string {
+	if g == nil {
 		return ""
 	}
-	return o.Mesh
+	return g.Mesh
 }
 
 type GetMeshTimeoutListResponse struct {
@@ -89,30 +89,30 @@ type GetMeshTimeoutListResponse struct {
 	MeshTimeoutList *shared.MeshTimeoutList
 }
 
-func (o *GetMeshTimeoutListResponse) GetContentType() string {
-	if o == nil {
+func (g *GetMeshTimeoutListResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetMeshTimeoutListResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetMeshTimeoutListResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetMeshTimeoutListResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetMeshTimeoutListResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetMeshTimeoutListResponse) GetMeshTimeoutList() *shared.MeshTimeoutList {
-	if o == nil {
+func (g *GetMeshTimeoutListResponse) GetMeshTimeoutList() *shared.MeshTimeoutList {
+	if g == nil {
 		return nil
 	}
-	return o.MeshTimeoutList
+	return g.MeshTimeoutList
 }

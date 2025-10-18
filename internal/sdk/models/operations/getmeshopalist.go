@@ -14,18 +14,18 @@ type GetMeshOPAListQueryParamFilter struct {
 	Value *string `queryParam:"name=value"`
 }
 
-func (o *GetMeshOPAListQueryParamFilter) GetKey() *string {
-	if o == nil {
+func (g *GetMeshOPAListQueryParamFilter) GetKey() *string {
+	if g == nil {
 		return nil
 	}
-	return o.Key
+	return g.Key
 }
 
-func (o *GetMeshOPAListQueryParamFilter) GetValue() *string {
-	if o == nil {
+func (g *GetMeshOPAListQueryParamFilter) GetValue() *string {
+	if g == nil {
 		return nil
 	}
-	return o.Value
+	return g.Value
 }
 
 type GetMeshOPAListRequest struct {
@@ -44,38 +44,38 @@ func (g GetMeshOPAListRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetMeshOPAListRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &g, "", false, []string{"mesh"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *GetMeshOPAListRequest) GetOffset() *int64 {
-	if o == nil {
+func (g *GetMeshOPAListRequest) GetOffset() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Offset
+	return g.Offset
 }
 
-func (o *GetMeshOPAListRequest) GetSize() *int64 {
-	if o == nil {
+func (g *GetMeshOPAListRequest) GetSize() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Size
+	return g.Size
 }
 
-func (o *GetMeshOPAListRequest) GetFilter() *GetMeshOPAListQueryParamFilter {
-	if o == nil {
+func (g *GetMeshOPAListRequest) GetFilter() *GetMeshOPAListQueryParamFilter {
+	if g == nil {
 		return nil
 	}
-	return o.Filter
+	return g.Filter
 }
 
-func (o *GetMeshOPAListRequest) GetMesh() string {
-	if o == nil {
+func (g *GetMeshOPAListRequest) GetMesh() string {
+	if g == nil {
 		return ""
 	}
-	return o.Mesh
+	return g.Mesh
 }
 
 type GetMeshOPAListResponse struct {
@@ -89,30 +89,30 @@ type GetMeshOPAListResponse struct {
 	MeshOPAList *shared.MeshOPAList
 }
 
-func (o *GetMeshOPAListResponse) GetContentType() string {
-	if o == nil {
+func (g *GetMeshOPAListResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetMeshOPAListResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetMeshOPAListResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetMeshOPAListResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetMeshOPAListResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetMeshOPAListResponse) GetMeshOPAList() *shared.MeshOPAList {
-	if o == nil {
+func (g *GetMeshOPAListResponse) GetMeshOPAList() *shared.MeshOPAList {
+	if g == nil {
 		return nil
 	}
-	return o.MeshOPAList
+	return g.MeshOPAList
 }

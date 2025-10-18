@@ -62,7 +62,7 @@ func (s *MeshTrace) GetMeshTrace(ctx context.Context, request operations.GetMesh
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getMeshTrace",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -292,7 +292,7 @@ func (s *MeshTrace) PutMeshTrace(ctx context.Context, request operations.PutMesh
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "putMeshTrace",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "MeshTraceItem", "json", `request:"mediaType=application/json"`)
@@ -506,7 +506,7 @@ func (s *MeshTrace) DeleteMeshTrace(ctx context.Context, request operations.Dele
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "deleteMeshTrace",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -736,7 +736,7 @@ func (s *MeshTrace) GetMeshTraceList(ctx context.Context, request operations.Get
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getMeshTraceList",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
