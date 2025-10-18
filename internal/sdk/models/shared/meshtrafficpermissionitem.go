@@ -70,11 +70,11 @@ type MeshTrafficPermissionItemDefault struct {
 	Action *Action `json:"action,omitempty"`
 }
 
-func (o *MeshTrafficPermissionItemDefault) GetAction() *Action {
-	if o == nil {
+func (m *MeshTrafficPermissionItemDefault) GetAction() *Action {
+	if m == nil {
 		return nil
 	}
-	return o.Action
+	return m.Action
 }
 
 // MeshTrafficPermissionItemSpecKind - Kind of the referenced resource
@@ -178,60 +178,60 @@ type MeshTrafficPermissionItemSpecTargetRef struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (o *MeshTrafficPermissionItemSpecTargetRef) GetKind() MeshTrafficPermissionItemSpecKind {
-	if o == nil {
+func (m *MeshTrafficPermissionItemSpecTargetRef) GetKind() MeshTrafficPermissionItemSpecKind {
+	if m == nil {
 		return MeshTrafficPermissionItemSpecKind("")
 	}
-	return o.Kind
+	return m.Kind
 }
 
-func (o *MeshTrafficPermissionItemSpecTargetRef) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshTrafficPermissionItemSpecTargetRef) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshTrafficPermissionItemSpecTargetRef) GetMesh() *string {
-	if o == nil {
+func (m *MeshTrafficPermissionItemSpecTargetRef) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshTrafficPermissionItemSpecTargetRef) GetName() *string {
-	if o == nil {
+func (m *MeshTrafficPermissionItemSpecTargetRef) GetName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshTrafficPermissionItemSpecTargetRef) GetNamespace() *string {
-	if o == nil {
+func (m *MeshTrafficPermissionItemSpecTargetRef) GetNamespace() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Namespace
+	return m.Namespace
 }
 
-func (o *MeshTrafficPermissionItemSpecTargetRef) GetProxyTypes() []MeshTrafficPermissionItemSpecProxyTypes {
-	if o == nil {
+func (m *MeshTrafficPermissionItemSpecTargetRef) GetProxyTypes() []MeshTrafficPermissionItemSpecProxyTypes {
+	if m == nil {
 		return nil
 	}
-	return o.ProxyTypes
+	return m.ProxyTypes
 }
 
-func (o *MeshTrafficPermissionItemSpecTargetRef) GetSectionName() *string {
-	if o == nil {
+func (m *MeshTrafficPermissionItemSpecTargetRef) GetSectionName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.SectionName
+	return m.SectionName
 }
 
-func (o *MeshTrafficPermissionItemSpecTargetRef) GetTags() map[string]string {
-	if o == nil {
+func (m *MeshTrafficPermissionItemSpecTargetRef) GetTags() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Tags
+	return m.Tags
 }
 
 type MeshTrafficPermissionItemFrom struct {
@@ -243,18 +243,18 @@ type MeshTrafficPermissionItemFrom struct {
 	TargetRef MeshTrafficPermissionItemSpecTargetRef `json:"targetRef"`
 }
 
-func (o *MeshTrafficPermissionItemFrom) GetDefault() *MeshTrafficPermissionItemDefault {
-	if o == nil {
+func (m *MeshTrafficPermissionItemFrom) GetDefault() *MeshTrafficPermissionItemDefault {
+	if m == nil {
 		return nil
 	}
-	return o.Default
+	return m.Default
 }
 
-func (o *MeshTrafficPermissionItemFrom) GetTargetRef() MeshTrafficPermissionItemSpecTargetRef {
-	if o == nil {
+func (m *MeshTrafficPermissionItemFrom) GetTargetRef() MeshTrafficPermissionItemSpecTargetRef {
+	if m == nil {
 		return MeshTrafficPermissionItemSpecTargetRef{}
 	}
-	return o.TargetRef
+	return m.TargetRef
 }
 
 // MeshTrafficPermissionItemSpecType - Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
@@ -292,18 +292,18 @@ type MeshTrafficPermissionItemSpiffeID struct {
 	Value string `json:"value"`
 }
 
-func (o *MeshTrafficPermissionItemSpiffeID) GetType() MeshTrafficPermissionItemSpecType {
-	if o == nil {
+func (m *MeshTrafficPermissionItemSpiffeID) GetType() MeshTrafficPermissionItemSpecType {
+	if m == nil {
 		return MeshTrafficPermissionItemSpecType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshTrafficPermissionItemSpiffeID) GetValue() string {
-	if o == nil {
+func (m *MeshTrafficPermissionItemSpiffeID) GetValue() string {
+	if m == nil {
 		return ""
 	}
-	return o.Value
+	return m.Value
 }
 
 type Allow struct {
@@ -311,11 +311,11 @@ type Allow struct {
 	SpiffeID *MeshTrafficPermissionItemSpiffeID `json:"spiffeID,omitempty"`
 }
 
-func (o *Allow) GetSpiffeID() *MeshTrafficPermissionItemSpiffeID {
-	if o == nil {
+func (a *Allow) GetSpiffeID() *MeshTrafficPermissionItemSpiffeID {
+	if a == nil {
 		return nil
 	}
-	return o.SpiffeID
+	return a.SpiffeID
 }
 
 // MeshTrafficPermissionItemSpecRulesType - Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
@@ -353,18 +353,18 @@ type MeshTrafficPermissionItemSpecSpiffeID struct {
 	Value string `json:"value"`
 }
 
-func (o *MeshTrafficPermissionItemSpecSpiffeID) GetType() MeshTrafficPermissionItemSpecRulesType {
-	if o == nil {
+func (m *MeshTrafficPermissionItemSpecSpiffeID) GetType() MeshTrafficPermissionItemSpecRulesType {
+	if m == nil {
 		return MeshTrafficPermissionItemSpecRulesType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshTrafficPermissionItemSpecSpiffeID) GetValue() string {
-	if o == nil {
+func (m *MeshTrafficPermissionItemSpecSpiffeID) GetValue() string {
+	if m == nil {
 		return ""
 	}
-	return o.Value
+	return m.Value
 }
 
 type AllowWithShadowDeny struct {
@@ -372,11 +372,11 @@ type AllowWithShadowDeny struct {
 	SpiffeID *MeshTrafficPermissionItemSpecSpiffeID `json:"spiffeID,omitempty"`
 }
 
-func (o *AllowWithShadowDeny) GetSpiffeID() *MeshTrafficPermissionItemSpecSpiffeID {
-	if o == nil {
+func (a *AllowWithShadowDeny) GetSpiffeID() *MeshTrafficPermissionItemSpecSpiffeID {
+	if a == nil {
 		return nil
 	}
-	return o.SpiffeID
+	return a.SpiffeID
 }
 
 // MeshTrafficPermissionItemSpecRulesDefaultType - Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
@@ -414,18 +414,18 @@ type MeshTrafficPermissionItemSpecRulesSpiffeID struct {
 	Value string `json:"value"`
 }
 
-func (o *MeshTrafficPermissionItemSpecRulesSpiffeID) GetType() MeshTrafficPermissionItemSpecRulesDefaultType {
-	if o == nil {
+func (m *MeshTrafficPermissionItemSpecRulesSpiffeID) GetType() MeshTrafficPermissionItemSpecRulesDefaultType {
+	if m == nil {
 		return MeshTrafficPermissionItemSpecRulesDefaultType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshTrafficPermissionItemSpecRulesSpiffeID) GetValue() string {
-	if o == nil {
+func (m *MeshTrafficPermissionItemSpecRulesSpiffeID) GetValue() string {
+	if m == nil {
 		return ""
 	}
-	return o.Value
+	return m.Value
 }
 
 type Deny struct {
@@ -433,11 +433,11 @@ type Deny struct {
 	SpiffeID *MeshTrafficPermissionItemSpecRulesSpiffeID `json:"spiffeID,omitempty"`
 }
 
-func (o *Deny) GetSpiffeID() *MeshTrafficPermissionItemSpecRulesSpiffeID {
-	if o == nil {
+func (d *Deny) GetSpiffeID() *MeshTrafficPermissionItemSpecRulesSpiffeID {
+	if d == nil {
 		return nil
 	}
-	return o.SpiffeID
+	return d.SpiffeID
 }
 
 type MeshTrafficPermissionItemSpecDefault struct {
@@ -450,36 +450,36 @@ type MeshTrafficPermissionItemSpecDefault struct {
 	Deny []Deny `json:"deny,omitempty"`
 }
 
-func (o *MeshTrafficPermissionItemSpecDefault) GetAllow() []Allow {
-	if o == nil {
+func (m *MeshTrafficPermissionItemSpecDefault) GetAllow() []Allow {
+	if m == nil {
 		return nil
 	}
-	return o.Allow
+	return m.Allow
 }
 
-func (o *MeshTrafficPermissionItemSpecDefault) GetAllowWithShadowDeny() []AllowWithShadowDeny {
-	if o == nil {
+func (m *MeshTrafficPermissionItemSpecDefault) GetAllowWithShadowDeny() []AllowWithShadowDeny {
+	if m == nil {
 		return nil
 	}
-	return o.AllowWithShadowDeny
+	return m.AllowWithShadowDeny
 }
 
-func (o *MeshTrafficPermissionItemSpecDefault) GetDeny() []Deny {
-	if o == nil {
+func (m *MeshTrafficPermissionItemSpecDefault) GetDeny() []Deny {
+	if m == nil {
 		return nil
 	}
-	return o.Deny
+	return m.Deny
 }
 
 type MeshTrafficPermissionItemRules struct {
 	Default MeshTrafficPermissionItemSpecDefault `json:"default"`
 }
 
-func (o *MeshTrafficPermissionItemRules) GetDefault() MeshTrafficPermissionItemSpecDefault {
-	if o == nil {
+func (m *MeshTrafficPermissionItemRules) GetDefault() MeshTrafficPermissionItemSpecDefault {
+	if m == nil {
 		return MeshTrafficPermissionItemSpecDefault{}
 	}
-	return o.Default
+	return m.Default
 }
 
 // MeshTrafficPermissionItemKind - Kind of the referenced resource
@@ -584,60 +584,60 @@ type MeshTrafficPermissionItemTargetRef struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (o *MeshTrafficPermissionItemTargetRef) GetKind() MeshTrafficPermissionItemKind {
-	if o == nil {
+func (m *MeshTrafficPermissionItemTargetRef) GetKind() MeshTrafficPermissionItemKind {
+	if m == nil {
 		return MeshTrafficPermissionItemKind("")
 	}
-	return o.Kind
+	return m.Kind
 }
 
-func (o *MeshTrafficPermissionItemTargetRef) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshTrafficPermissionItemTargetRef) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshTrafficPermissionItemTargetRef) GetMesh() *string {
-	if o == nil {
+func (m *MeshTrafficPermissionItemTargetRef) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshTrafficPermissionItemTargetRef) GetName() *string {
-	if o == nil {
+func (m *MeshTrafficPermissionItemTargetRef) GetName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshTrafficPermissionItemTargetRef) GetNamespace() *string {
-	if o == nil {
+func (m *MeshTrafficPermissionItemTargetRef) GetNamespace() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Namespace
+	return m.Namespace
 }
 
-func (o *MeshTrafficPermissionItemTargetRef) GetProxyTypes() []MeshTrafficPermissionItemProxyTypes {
-	if o == nil {
+func (m *MeshTrafficPermissionItemTargetRef) GetProxyTypes() []MeshTrafficPermissionItemProxyTypes {
+	if m == nil {
 		return nil
 	}
-	return o.ProxyTypes
+	return m.ProxyTypes
 }
 
-func (o *MeshTrafficPermissionItemTargetRef) GetSectionName() *string {
-	if o == nil {
+func (m *MeshTrafficPermissionItemTargetRef) GetSectionName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.SectionName
+	return m.SectionName
 }
 
-func (o *MeshTrafficPermissionItemTargetRef) GetTags() map[string]string {
-	if o == nil {
+func (m *MeshTrafficPermissionItemTargetRef) GetTags() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Tags
+	return m.Tags
 }
 
 // MeshTrafficPermissionItemSpec - Spec is the specification of the Kuma MeshTrafficPermission resource.
@@ -652,25 +652,25 @@ type MeshTrafficPermissionItemSpec struct {
 	TargetRef *MeshTrafficPermissionItemTargetRef `json:"targetRef,omitempty"`
 }
 
-func (o *MeshTrafficPermissionItemSpec) GetFrom() []MeshTrafficPermissionItemFrom {
-	if o == nil {
+func (m *MeshTrafficPermissionItemSpec) GetFrom() []MeshTrafficPermissionItemFrom {
+	if m == nil {
 		return nil
 	}
-	return o.From
+	return m.From
 }
 
-func (o *MeshTrafficPermissionItemSpec) GetRules() []MeshTrafficPermissionItemRules {
-	if o == nil {
+func (m *MeshTrafficPermissionItemSpec) GetRules() []MeshTrafficPermissionItemRules {
+	if m == nil {
 		return nil
 	}
-	return o.Rules
+	return m.Rules
 }
 
-func (o *MeshTrafficPermissionItemSpec) GetTargetRef() *MeshTrafficPermissionItemTargetRef {
-	if o == nil {
+func (m *MeshTrafficPermissionItemSpec) GetTargetRef() *MeshTrafficPermissionItemTargetRef {
+	if m == nil {
 		return nil
 	}
-	return o.TargetRef
+	return m.TargetRef
 }
 
 // MeshTrafficPermissionItem - Successful response
@@ -696,59 +696,59 @@ func (m MeshTrafficPermissionItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshTrafficPermissionItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshTrafficPermissionItem) GetType() MeshTrafficPermissionItemType {
-	if o == nil {
+func (m *MeshTrafficPermissionItem) GetType() MeshTrafficPermissionItemType {
+	if m == nil {
 		return MeshTrafficPermissionItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshTrafficPermissionItem) GetMesh() *string {
-	if o == nil {
+func (m *MeshTrafficPermissionItem) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshTrafficPermissionItem) GetName() string {
-	if o == nil {
+func (m *MeshTrafficPermissionItem) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshTrafficPermissionItem) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshTrafficPermissionItem) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshTrafficPermissionItem) GetSpec() MeshTrafficPermissionItemSpec {
-	if o == nil {
+func (m *MeshTrafficPermissionItem) GetSpec() MeshTrafficPermissionItemSpec {
+	if m == nil {
 		return MeshTrafficPermissionItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }
 
-func (o *MeshTrafficPermissionItem) GetCreationTime() *time.Time {
-	if o == nil {
+func (m *MeshTrafficPermissionItem) GetCreationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.CreationTime
+	return m.CreationTime
 }
 
-func (o *MeshTrafficPermissionItem) GetModificationTime() *time.Time {
-	if o == nil {
+func (m *MeshTrafficPermissionItem) GetModificationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.ModificationTime
+	return m.ModificationTime
 }
 
 type MeshTrafficPermissionItemInput struct {
@@ -769,43 +769,43 @@ func (m MeshTrafficPermissionItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshTrafficPermissionItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshTrafficPermissionItemInput) GetType() MeshTrafficPermissionItemType {
-	if o == nil {
+func (m *MeshTrafficPermissionItemInput) GetType() MeshTrafficPermissionItemType {
+	if m == nil {
 		return MeshTrafficPermissionItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshTrafficPermissionItemInput) GetMesh() *string {
-	if o == nil {
+func (m *MeshTrafficPermissionItemInput) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshTrafficPermissionItemInput) GetName() string {
-	if o == nil {
+func (m *MeshTrafficPermissionItemInput) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshTrafficPermissionItemInput) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshTrafficPermissionItemInput) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshTrafficPermissionItemInput) GetSpec() MeshTrafficPermissionItemSpec {
-	if o == nil {
+func (m *MeshTrafficPermissionItemInput) GetSpec() MeshTrafficPermissionItemSpec {
+	if m == nil {
 		return MeshTrafficPermissionItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }

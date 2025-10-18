@@ -14,18 +14,18 @@ type GetMeshFaultInjectionRequest struct {
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 }
 
-func (o *GetMeshFaultInjectionRequest) GetMesh() string {
-	if o == nil {
+func (g *GetMeshFaultInjectionRequest) GetMesh() string {
+	if g == nil {
 		return ""
 	}
-	return o.Mesh
+	return g.Mesh
 }
 
-func (o *GetMeshFaultInjectionRequest) GetName() string {
-	if o == nil {
+func (g *GetMeshFaultInjectionRequest) GetName() string {
+	if g == nil {
 		return ""
 	}
-	return o.Name
+	return g.Name
 }
 
 type GetMeshFaultInjectionResponse struct {
@@ -41,37 +41,37 @@ type GetMeshFaultInjectionResponse struct {
 	NotFoundError *shared.NotFoundError
 }
 
-func (o *GetMeshFaultInjectionResponse) GetContentType() string {
-	if o == nil {
+func (g *GetMeshFaultInjectionResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetMeshFaultInjectionResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetMeshFaultInjectionResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetMeshFaultInjectionResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetMeshFaultInjectionResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetMeshFaultInjectionResponse) GetMeshFaultInjectionItem() *shared.MeshFaultInjectionItem {
-	if o == nil {
+func (g *GetMeshFaultInjectionResponse) GetMeshFaultInjectionItem() *shared.MeshFaultInjectionItem {
+	if g == nil {
 		return nil
 	}
-	return o.MeshFaultInjectionItem
+	return g.MeshFaultInjectionItem
 }
 
-func (o *GetMeshFaultInjectionResponse) GetNotFoundError() *shared.NotFoundError {
-	if o == nil {
+func (g *GetMeshFaultInjectionResponse) GetNotFoundError() *shared.NotFoundError {
+	if g == nil {
 		return nil
 	}
-	return o.NotFoundError
+	return g.NotFoundError
 }

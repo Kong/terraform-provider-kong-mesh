@@ -16,25 +16,25 @@ type PutMeshTraceRequest struct {
 	MeshTraceItem shared.MeshTraceItemInput `request:"mediaType=application/json"`
 }
 
-func (o *PutMeshTraceRequest) GetMesh() string {
-	if o == nil {
+func (p *PutMeshTraceRequest) GetMesh() string {
+	if p == nil {
 		return ""
 	}
-	return o.Mesh
+	return p.Mesh
 }
 
-func (o *PutMeshTraceRequest) GetName() string {
-	if o == nil {
+func (p *PutMeshTraceRequest) GetName() string {
+	if p == nil {
 		return ""
 	}
-	return o.Name
+	return p.Name
 }
 
-func (o *PutMeshTraceRequest) GetMeshTraceItem() shared.MeshTraceItemInput {
-	if o == nil {
+func (p *PutMeshTraceRequest) GetMeshTraceItem() shared.MeshTraceItemInput {
+	if p == nil {
 		return shared.MeshTraceItemInput{}
 	}
-	return o.MeshTraceItem
+	return p.MeshTraceItem
 }
 
 type PutMeshTraceResponse struct {
@@ -48,30 +48,30 @@ type PutMeshTraceResponse struct {
 	MeshTraceCreateOrUpdateSuccessResponse *shared.MeshTraceCreateOrUpdateSuccessResponse
 }
 
-func (o *PutMeshTraceResponse) GetContentType() string {
-	if o == nil {
+func (p *PutMeshTraceResponse) GetContentType() string {
+	if p == nil {
 		return ""
 	}
-	return o.ContentType
+	return p.ContentType
 }
 
-func (o *PutMeshTraceResponse) GetStatusCode() int {
-	if o == nil {
+func (p *PutMeshTraceResponse) GetStatusCode() int {
+	if p == nil {
 		return 0
 	}
-	return o.StatusCode
+	return p.StatusCode
 }
 
-func (o *PutMeshTraceResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *PutMeshTraceResponse) GetRawResponse() *http.Response {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.RawResponse
 }
 
-func (o *PutMeshTraceResponse) GetMeshTraceCreateOrUpdateSuccessResponse() *shared.MeshTraceCreateOrUpdateSuccessResponse {
-	if o == nil {
+func (p *PutMeshTraceResponse) GetMeshTraceCreateOrUpdateSuccessResponse() *shared.MeshTraceCreateOrUpdateSuccessResponse {
+	if p == nil {
 		return nil
 	}
-	return o.MeshTraceCreateOrUpdateSuccessResponse
+	return p.MeshTraceCreateOrUpdateSuccessResponse
 }

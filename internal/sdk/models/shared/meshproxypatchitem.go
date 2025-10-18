@@ -81,32 +81,32 @@ type JSONPatches struct {
 	Value any `json:"value,omitempty"`
 }
 
-func (o *JSONPatches) GetFrom() *string {
-	if o == nil {
+func (j *JSONPatches) GetFrom() *string {
+	if j == nil {
 		return nil
 	}
-	return o.From
+	return j.From
 }
 
-func (o *JSONPatches) GetOp() Op {
-	if o == nil {
+func (j *JSONPatches) GetOp() Op {
+	if j == nil {
 		return Op("")
 	}
-	return o.Op
+	return j.Op
 }
 
-func (o *JSONPatches) GetPath() string {
-	if o == nil {
+func (j *JSONPatches) GetPath() string {
+	if j == nil {
 		return ""
 	}
-	return o.Path
+	return j.Path
 }
 
-func (o *JSONPatches) GetValue() any {
-	if o == nil {
+func (j *JSONPatches) GetValue() any {
+	if j == nil {
 		return nil
 	}
-	return o.Value
+	return j.Value
 }
 
 // MeshProxyPatchItemSpecDefaultAppendModificationsClusterMatch - Match is a set of conditions that have to be matched for modification operation to happen.
@@ -130,18 +130,18 @@ type MeshProxyPatchItemSpecDefaultAppendModificationsClusterMatch struct {
 	Origin *string `json:"origin,omitempty"`
 }
 
-func (o *MeshProxyPatchItemSpecDefaultAppendModificationsClusterMatch) GetName() *string {
-	if o == nil {
+func (m *MeshProxyPatchItemSpecDefaultAppendModificationsClusterMatch) GetName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshProxyPatchItemSpecDefaultAppendModificationsClusterMatch) GetOrigin() *string {
-	if o == nil {
+func (m *MeshProxyPatchItemSpecDefaultAppendModificationsClusterMatch) GetOrigin() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Origin
+	return m.Origin
 }
 
 // Operation to execute on matched cluster.
@@ -187,32 +187,32 @@ type Cluster struct {
 	Value *string `json:"value,omitempty"`
 }
 
-func (o *Cluster) GetJSONPatches() []JSONPatches {
-	if o == nil {
+func (c *Cluster) GetJSONPatches() []JSONPatches {
+	if c == nil {
 		return nil
 	}
-	return o.JSONPatches
+	return c.JSONPatches
 }
 
-func (o *Cluster) GetMatch() *MeshProxyPatchItemSpecDefaultAppendModificationsClusterMatch {
-	if o == nil {
+func (c *Cluster) GetMatch() *MeshProxyPatchItemSpecDefaultAppendModificationsClusterMatch {
+	if c == nil {
 		return nil
 	}
-	return o.Match
+	return c.Match
 }
 
-func (o *Cluster) GetOperation() Operation {
-	if o == nil {
+func (c *Cluster) GetOperation() Operation {
+	if c == nil {
 		return Operation("")
 	}
-	return o.Operation
+	return c.Operation
 }
 
-func (o *Cluster) GetValue() *string {
-	if o == nil {
+func (c *Cluster) GetValue() *string {
+	if c == nil {
 		return nil
 	}
-	return o.Value
+	return c.Value
 }
 
 // MeshProxyPatchItemOp - Op is a jsonpatch operation string.
@@ -263,32 +263,32 @@ type MeshProxyPatchItemJSONPatches struct {
 	Value any `json:"value,omitempty"`
 }
 
-func (o *MeshProxyPatchItemJSONPatches) GetFrom() *string {
-	if o == nil {
+func (m *MeshProxyPatchItemJSONPatches) GetFrom() *string {
+	if m == nil {
 		return nil
 	}
-	return o.From
+	return m.From
 }
 
-func (o *MeshProxyPatchItemJSONPatches) GetOp() MeshProxyPatchItemOp {
-	if o == nil {
+func (m *MeshProxyPatchItemJSONPatches) GetOp() MeshProxyPatchItemOp {
+	if m == nil {
 		return MeshProxyPatchItemOp("")
 	}
-	return o.Op
+	return m.Op
 }
 
-func (o *MeshProxyPatchItemJSONPatches) GetPath() string {
-	if o == nil {
+func (m *MeshProxyPatchItemJSONPatches) GetPath() string {
+	if m == nil {
 		return ""
 	}
-	return o.Path
+	return m.Path
 }
 
-func (o *MeshProxyPatchItemJSONPatches) GetValue() any {
-	if o == nil {
+func (m *MeshProxyPatchItemJSONPatches) GetValue() any {
+	if m == nil {
 		return nil
 	}
-	return o.Value
+	return m.Value
 }
 
 // MeshProxyPatchItemMatch - Match is a set of conditions that have to be matched for modification operation to happen.
@@ -316,32 +316,32 @@ type MeshProxyPatchItemMatch struct {
 	Origin *string `json:"origin,omitempty"`
 }
 
-func (o *MeshProxyPatchItemMatch) GetListenerName() *string {
-	if o == nil {
+func (m *MeshProxyPatchItemMatch) GetListenerName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.ListenerName
+	return m.ListenerName
 }
 
-func (o *MeshProxyPatchItemMatch) GetListenerTags() map[string]string {
-	if o == nil {
+func (m *MeshProxyPatchItemMatch) GetListenerTags() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.ListenerTags
+	return m.ListenerTags
 }
 
-func (o *MeshProxyPatchItemMatch) GetName() *string {
-	if o == nil {
+func (m *MeshProxyPatchItemMatch) GetName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshProxyPatchItemMatch) GetOrigin() *string {
-	if o == nil {
+func (m *MeshProxyPatchItemMatch) GetOrigin() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Origin
+	return m.Origin
 }
 
 // MeshProxyPatchItemOperation - Operation to execute on matched listener.
@@ -397,32 +397,32 @@ type HTTPFilter struct {
 	Value *string `json:"value,omitempty"`
 }
 
-func (o *HTTPFilter) GetJSONPatches() []MeshProxyPatchItemJSONPatches {
-	if o == nil {
+func (h *HTTPFilter) GetJSONPatches() []MeshProxyPatchItemJSONPatches {
+	if h == nil {
 		return nil
 	}
-	return o.JSONPatches
+	return h.JSONPatches
 }
 
-func (o *HTTPFilter) GetMatch() *MeshProxyPatchItemMatch {
-	if o == nil {
+func (h *HTTPFilter) GetMatch() *MeshProxyPatchItemMatch {
+	if h == nil {
 		return nil
 	}
-	return o.Match
+	return h.Match
 }
 
-func (o *HTTPFilter) GetOperation() MeshProxyPatchItemOperation {
-	if o == nil {
+func (h *HTTPFilter) GetOperation() MeshProxyPatchItemOperation {
+	if h == nil {
 		return MeshProxyPatchItemOperation("")
 	}
-	return o.Operation
+	return h.Operation
 }
 
-func (o *HTTPFilter) GetValue() *string {
-	if o == nil {
+func (h *HTTPFilter) GetValue() *string {
+	if h == nil {
 		return nil
 	}
-	return o.Value
+	return h.Value
 }
 
 // MeshProxyPatchItemSpecOp - Op is a jsonpatch operation string.
@@ -473,32 +473,32 @@ type MeshProxyPatchItemSpecJSONPatches struct {
 	Value any `json:"value,omitempty"`
 }
 
-func (o *MeshProxyPatchItemSpecJSONPatches) GetFrom() *string {
-	if o == nil {
+func (m *MeshProxyPatchItemSpecJSONPatches) GetFrom() *string {
+	if m == nil {
 		return nil
 	}
-	return o.From
+	return m.From
 }
 
-func (o *MeshProxyPatchItemSpecJSONPatches) GetOp() MeshProxyPatchItemSpecOp {
-	if o == nil {
+func (m *MeshProxyPatchItemSpecJSONPatches) GetOp() MeshProxyPatchItemSpecOp {
+	if m == nil {
 		return MeshProxyPatchItemSpecOp("")
 	}
-	return o.Op
+	return m.Op
 }
 
-func (o *MeshProxyPatchItemSpecJSONPatches) GetPath() string {
-	if o == nil {
+func (m *MeshProxyPatchItemSpecJSONPatches) GetPath() string {
+	if m == nil {
 		return ""
 	}
-	return o.Path
+	return m.Path
 }
 
-func (o *MeshProxyPatchItemSpecJSONPatches) GetValue() any {
-	if o == nil {
+func (m *MeshProxyPatchItemSpecJSONPatches) GetValue() any {
+	if m == nil {
 		return nil
 	}
-	return o.Value
+	return m.Value
 }
 
 // MeshProxyPatchItemSpecMatch - Match is a set of conditions that have to be matched for modification operation to happen.
@@ -524,25 +524,25 @@ type MeshProxyPatchItemSpecMatch struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (o *MeshProxyPatchItemSpecMatch) GetName() *string {
-	if o == nil {
+func (m *MeshProxyPatchItemSpecMatch) GetName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshProxyPatchItemSpecMatch) GetOrigin() *string {
-	if o == nil {
+func (m *MeshProxyPatchItemSpecMatch) GetOrigin() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Origin
+	return m.Origin
 }
 
-func (o *MeshProxyPatchItemSpecMatch) GetTags() map[string]string {
-	if o == nil {
+func (m *MeshProxyPatchItemSpecMatch) GetTags() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Tags
+	return m.Tags
 }
 
 // MeshProxyPatchItemSpecOperation - Operation to execute on matched listener.
@@ -588,32 +588,32 @@ type Listener struct {
 	Value *string `json:"value,omitempty"`
 }
 
-func (o *Listener) GetJSONPatches() []MeshProxyPatchItemSpecJSONPatches {
-	if o == nil {
+func (l *Listener) GetJSONPatches() []MeshProxyPatchItemSpecJSONPatches {
+	if l == nil {
 		return nil
 	}
-	return o.JSONPatches
+	return l.JSONPatches
 }
 
-func (o *Listener) GetMatch() *MeshProxyPatchItemSpecMatch {
-	if o == nil {
+func (l *Listener) GetMatch() *MeshProxyPatchItemSpecMatch {
+	if l == nil {
 		return nil
 	}
-	return o.Match
+	return l.Match
 }
 
-func (o *Listener) GetOperation() MeshProxyPatchItemSpecOperation {
-	if o == nil {
+func (l *Listener) GetOperation() MeshProxyPatchItemSpecOperation {
+	if l == nil {
 		return MeshProxyPatchItemSpecOperation("")
 	}
-	return o.Operation
+	return l.Operation
 }
 
-func (o *Listener) GetValue() *string {
-	if o == nil {
+func (l *Listener) GetValue() *string {
+	if l == nil {
 		return nil
 	}
-	return o.Value
+	return l.Value
 }
 
 // MeshProxyPatchItemSpecDefaultOp - Op is a jsonpatch operation string.
@@ -664,32 +664,32 @@ type MeshProxyPatchItemSpecDefaultJSONPatches struct {
 	Value any `json:"value,omitempty"`
 }
 
-func (o *MeshProxyPatchItemSpecDefaultJSONPatches) GetFrom() *string {
-	if o == nil {
+func (m *MeshProxyPatchItemSpecDefaultJSONPatches) GetFrom() *string {
+	if m == nil {
 		return nil
 	}
-	return o.From
+	return m.From
 }
 
-func (o *MeshProxyPatchItemSpecDefaultJSONPatches) GetOp() MeshProxyPatchItemSpecDefaultOp {
-	if o == nil {
+func (m *MeshProxyPatchItemSpecDefaultJSONPatches) GetOp() MeshProxyPatchItemSpecDefaultOp {
+	if m == nil {
 		return MeshProxyPatchItemSpecDefaultOp("")
 	}
-	return o.Op
+	return m.Op
 }
 
-func (o *MeshProxyPatchItemSpecDefaultJSONPatches) GetPath() string {
-	if o == nil {
+func (m *MeshProxyPatchItemSpecDefaultJSONPatches) GetPath() string {
+	if m == nil {
 		return ""
 	}
-	return o.Path
+	return m.Path
 }
 
-func (o *MeshProxyPatchItemSpecDefaultJSONPatches) GetValue() any {
-	if o == nil {
+func (m *MeshProxyPatchItemSpecDefaultJSONPatches) GetValue() any {
+	if m == nil {
 		return nil
 	}
-	return o.Value
+	return m.Value
 }
 
 // MeshProxyPatchItemSpecDefaultMatch - Match is a set of conditions that have to be matched for modification operation to happen.
@@ -717,32 +717,32 @@ type MeshProxyPatchItemSpecDefaultMatch struct {
 	Origin *string `json:"origin,omitempty"`
 }
 
-func (o *MeshProxyPatchItemSpecDefaultMatch) GetListenerName() *string {
-	if o == nil {
+func (m *MeshProxyPatchItemSpecDefaultMatch) GetListenerName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.ListenerName
+	return m.ListenerName
 }
 
-func (o *MeshProxyPatchItemSpecDefaultMatch) GetListenerTags() map[string]string {
-	if o == nil {
+func (m *MeshProxyPatchItemSpecDefaultMatch) GetListenerTags() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.ListenerTags
+	return m.ListenerTags
 }
 
-func (o *MeshProxyPatchItemSpecDefaultMatch) GetName() *string {
-	if o == nil {
+func (m *MeshProxyPatchItemSpecDefaultMatch) GetName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshProxyPatchItemSpecDefaultMatch) GetOrigin() *string {
-	if o == nil {
+func (m *MeshProxyPatchItemSpecDefaultMatch) GetOrigin() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Origin
+	return m.Origin
 }
 
 // MeshProxyPatchItemSpecDefaultOperation - Operation to execute on matched listener.
@@ -797,32 +797,32 @@ type NetworkFilter struct {
 	Value *string `json:"value,omitempty"`
 }
 
-func (o *NetworkFilter) GetJSONPatches() []MeshProxyPatchItemSpecDefaultJSONPatches {
-	if o == nil {
+func (n *NetworkFilter) GetJSONPatches() []MeshProxyPatchItemSpecDefaultJSONPatches {
+	if n == nil {
 		return nil
 	}
-	return o.JSONPatches
+	return n.JSONPatches
 }
 
-func (o *NetworkFilter) GetMatch() *MeshProxyPatchItemSpecDefaultMatch {
-	if o == nil {
+func (n *NetworkFilter) GetMatch() *MeshProxyPatchItemSpecDefaultMatch {
+	if n == nil {
 		return nil
 	}
-	return o.Match
+	return n.Match
 }
 
-func (o *NetworkFilter) GetOperation() MeshProxyPatchItemSpecDefaultOperation {
-	if o == nil {
+func (n *NetworkFilter) GetOperation() MeshProxyPatchItemSpecDefaultOperation {
+	if n == nil {
 		return MeshProxyPatchItemSpecDefaultOperation("")
 	}
-	return o.Operation
+	return n.Operation
 }
 
-func (o *NetworkFilter) GetValue() *string {
-	if o == nil {
+func (n *NetworkFilter) GetValue() *string {
+	if n == nil {
 		return nil
 	}
-	return o.Value
+	return n.Value
 }
 
 // MeshProxyPatchItemSpecDefaultAppendModificationsOp - Op is a jsonpatch operation string.
@@ -873,32 +873,32 @@ type MeshProxyPatchItemSpecDefaultAppendModificationsJSONPatches struct {
 	Value any `json:"value,omitempty"`
 }
 
-func (o *MeshProxyPatchItemSpecDefaultAppendModificationsJSONPatches) GetFrom() *string {
-	if o == nil {
+func (m *MeshProxyPatchItemSpecDefaultAppendModificationsJSONPatches) GetFrom() *string {
+	if m == nil {
 		return nil
 	}
-	return o.From
+	return m.From
 }
 
-func (o *MeshProxyPatchItemSpecDefaultAppendModificationsJSONPatches) GetOp() MeshProxyPatchItemSpecDefaultAppendModificationsOp {
-	if o == nil {
+func (m *MeshProxyPatchItemSpecDefaultAppendModificationsJSONPatches) GetOp() MeshProxyPatchItemSpecDefaultAppendModificationsOp {
+	if m == nil {
 		return MeshProxyPatchItemSpecDefaultAppendModificationsOp("")
 	}
-	return o.Op
+	return m.Op
 }
 
-func (o *MeshProxyPatchItemSpecDefaultAppendModificationsJSONPatches) GetPath() string {
-	if o == nil {
+func (m *MeshProxyPatchItemSpecDefaultAppendModificationsJSONPatches) GetPath() string {
+	if m == nil {
 		return ""
 	}
-	return o.Path
+	return m.Path
 }
 
-func (o *MeshProxyPatchItemSpecDefaultAppendModificationsJSONPatches) GetValue() any {
-	if o == nil {
+func (m *MeshProxyPatchItemSpecDefaultAppendModificationsJSONPatches) GetValue() any {
+	if m == nil {
 		return nil
 	}
-	return o.Value
+	return m.Value
 }
 
 // MeshProxyPatchItemSpecDefaultAppendModificationsMatch - Match is a set of conditions that have to be matched for modification operation to happen.
@@ -924,25 +924,25 @@ type MeshProxyPatchItemSpecDefaultAppendModificationsMatch struct {
 	RouteConfigurationName *string `json:"routeConfigurationName,omitempty"`
 }
 
-func (o *MeshProxyPatchItemSpecDefaultAppendModificationsMatch) GetName() *string {
-	if o == nil {
+func (m *MeshProxyPatchItemSpecDefaultAppendModificationsMatch) GetName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshProxyPatchItemSpecDefaultAppendModificationsMatch) GetOrigin() *string {
-	if o == nil {
+func (m *MeshProxyPatchItemSpecDefaultAppendModificationsMatch) GetOrigin() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Origin
+	return m.Origin
 }
 
-func (o *MeshProxyPatchItemSpecDefaultAppendModificationsMatch) GetRouteConfigurationName() *string {
-	if o == nil {
+func (m *MeshProxyPatchItemSpecDefaultAppendModificationsMatch) GetRouteConfigurationName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.RouteConfigurationName
+	return m.RouteConfigurationName
 }
 
 // MeshProxyPatchItemSpecDefaultAppendModificationsOperation - Operation to execute on matched listener.
@@ -989,32 +989,32 @@ type VirtualHost struct {
 	Value *string `json:"value,omitempty"`
 }
 
-func (o *VirtualHost) GetJSONPatches() []MeshProxyPatchItemSpecDefaultAppendModificationsJSONPatches {
-	if o == nil {
+func (v *VirtualHost) GetJSONPatches() []MeshProxyPatchItemSpecDefaultAppendModificationsJSONPatches {
+	if v == nil {
 		return nil
 	}
-	return o.JSONPatches
+	return v.JSONPatches
 }
 
-func (o *VirtualHost) GetMatch() MeshProxyPatchItemSpecDefaultAppendModificationsMatch {
-	if o == nil {
+func (v *VirtualHost) GetMatch() MeshProxyPatchItemSpecDefaultAppendModificationsMatch {
+	if v == nil {
 		return MeshProxyPatchItemSpecDefaultAppendModificationsMatch{}
 	}
-	return o.Match
+	return v.Match
 }
 
-func (o *VirtualHost) GetOperation() MeshProxyPatchItemSpecDefaultAppendModificationsOperation {
-	if o == nil {
+func (v *VirtualHost) GetOperation() MeshProxyPatchItemSpecDefaultAppendModificationsOperation {
+	if v == nil {
 		return MeshProxyPatchItemSpecDefaultAppendModificationsOperation("")
 	}
-	return o.Operation
+	return v.Operation
 }
 
-func (o *VirtualHost) GetValue() *string {
-	if o == nil {
+func (v *VirtualHost) GetValue() *string {
+	if v == nil {
 		return nil
 	}
-	return o.Value
+	return v.Value
 }
 
 type AppendModifications struct {
@@ -1032,39 +1032,39 @@ type AppendModifications struct {
 	VirtualHost *VirtualHost `json:"virtualHost,omitempty"`
 }
 
-func (o *AppendModifications) GetCluster() *Cluster {
-	if o == nil {
+func (a *AppendModifications) GetCluster() *Cluster {
+	if a == nil {
 		return nil
 	}
-	return o.Cluster
+	return a.Cluster
 }
 
-func (o *AppendModifications) GetHTTPFilter() *HTTPFilter {
-	if o == nil {
+func (a *AppendModifications) GetHTTPFilter() *HTTPFilter {
+	if a == nil {
 		return nil
 	}
-	return o.HTTPFilter
+	return a.HTTPFilter
 }
 
-func (o *AppendModifications) GetListener() *Listener {
-	if o == nil {
+func (a *AppendModifications) GetListener() *Listener {
+	if a == nil {
 		return nil
 	}
-	return o.Listener
+	return a.Listener
 }
 
-func (o *AppendModifications) GetNetworkFilter() *NetworkFilter {
-	if o == nil {
+func (a *AppendModifications) GetNetworkFilter() *NetworkFilter {
+	if a == nil {
 		return nil
 	}
-	return o.NetworkFilter
+	return a.NetworkFilter
 }
 
-func (o *AppendModifications) GetVirtualHost() *VirtualHost {
-	if o == nil {
+func (a *AppendModifications) GetVirtualHost() *VirtualHost {
+	if a == nil {
 		return nil
 	}
-	return o.VirtualHost
+	return a.VirtualHost
 }
 
 // MeshProxyPatchItemDefault - Default is a configuration specific to the group of destinations
@@ -1074,11 +1074,11 @@ type MeshProxyPatchItemDefault struct {
 	AppendModifications []AppendModifications `json:"appendModifications,omitempty"`
 }
 
-func (o *MeshProxyPatchItemDefault) GetAppendModifications() []AppendModifications {
-	if o == nil {
+func (m *MeshProxyPatchItemDefault) GetAppendModifications() []AppendModifications {
+	if m == nil {
 		return nil
 	}
-	return o.AppendModifications
+	return m.AppendModifications
 }
 
 // MeshProxyPatchItemKind - Kind of the referenced resource
@@ -1183,60 +1183,60 @@ type MeshProxyPatchItemTargetRef struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (o *MeshProxyPatchItemTargetRef) GetKind() MeshProxyPatchItemKind {
-	if o == nil {
+func (m *MeshProxyPatchItemTargetRef) GetKind() MeshProxyPatchItemKind {
+	if m == nil {
 		return MeshProxyPatchItemKind("")
 	}
-	return o.Kind
+	return m.Kind
 }
 
-func (o *MeshProxyPatchItemTargetRef) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshProxyPatchItemTargetRef) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshProxyPatchItemTargetRef) GetMesh() *string {
-	if o == nil {
+func (m *MeshProxyPatchItemTargetRef) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshProxyPatchItemTargetRef) GetName() *string {
-	if o == nil {
+func (m *MeshProxyPatchItemTargetRef) GetName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshProxyPatchItemTargetRef) GetNamespace() *string {
-	if o == nil {
+func (m *MeshProxyPatchItemTargetRef) GetNamespace() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Namespace
+	return m.Namespace
 }
 
-func (o *MeshProxyPatchItemTargetRef) GetProxyTypes() []MeshProxyPatchItemProxyTypes {
-	if o == nil {
+func (m *MeshProxyPatchItemTargetRef) GetProxyTypes() []MeshProxyPatchItemProxyTypes {
+	if m == nil {
 		return nil
 	}
-	return o.ProxyTypes
+	return m.ProxyTypes
 }
 
-func (o *MeshProxyPatchItemTargetRef) GetSectionName() *string {
-	if o == nil {
+func (m *MeshProxyPatchItemTargetRef) GetSectionName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.SectionName
+	return m.SectionName
 }
 
-func (o *MeshProxyPatchItemTargetRef) GetTags() map[string]string {
-	if o == nil {
+func (m *MeshProxyPatchItemTargetRef) GetTags() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Tags
+	return m.Tags
 }
 
 // MeshProxyPatchItemSpec - Spec is the specification of the Kuma MeshProxyPatch resource.
@@ -1250,18 +1250,18 @@ type MeshProxyPatchItemSpec struct {
 	TargetRef *MeshProxyPatchItemTargetRef `json:"targetRef,omitempty"`
 }
 
-func (o *MeshProxyPatchItemSpec) GetDefault() MeshProxyPatchItemDefault {
-	if o == nil {
+func (m *MeshProxyPatchItemSpec) GetDefault() MeshProxyPatchItemDefault {
+	if m == nil {
 		return MeshProxyPatchItemDefault{}
 	}
-	return o.Default
+	return m.Default
 }
 
-func (o *MeshProxyPatchItemSpec) GetTargetRef() *MeshProxyPatchItemTargetRef {
-	if o == nil {
+func (m *MeshProxyPatchItemSpec) GetTargetRef() *MeshProxyPatchItemTargetRef {
+	if m == nil {
 		return nil
 	}
-	return o.TargetRef
+	return m.TargetRef
 }
 
 // MeshProxyPatchItem - Successful response
@@ -1287,59 +1287,59 @@ func (m MeshProxyPatchItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshProxyPatchItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshProxyPatchItem) GetType() MeshProxyPatchItemType {
-	if o == nil {
+func (m *MeshProxyPatchItem) GetType() MeshProxyPatchItemType {
+	if m == nil {
 		return MeshProxyPatchItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshProxyPatchItem) GetMesh() *string {
-	if o == nil {
+func (m *MeshProxyPatchItem) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshProxyPatchItem) GetName() string {
-	if o == nil {
+func (m *MeshProxyPatchItem) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshProxyPatchItem) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshProxyPatchItem) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshProxyPatchItem) GetSpec() MeshProxyPatchItemSpec {
-	if o == nil {
+func (m *MeshProxyPatchItem) GetSpec() MeshProxyPatchItemSpec {
+	if m == nil {
 		return MeshProxyPatchItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }
 
-func (o *MeshProxyPatchItem) GetCreationTime() *time.Time {
-	if o == nil {
+func (m *MeshProxyPatchItem) GetCreationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.CreationTime
+	return m.CreationTime
 }
 
-func (o *MeshProxyPatchItem) GetModificationTime() *time.Time {
-	if o == nil {
+func (m *MeshProxyPatchItem) GetModificationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.ModificationTime
+	return m.ModificationTime
 }
 
 type MeshProxyPatchItemInput struct {
@@ -1360,43 +1360,43 @@ func (m MeshProxyPatchItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshProxyPatchItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshProxyPatchItemInput) GetType() MeshProxyPatchItemType {
-	if o == nil {
+func (m *MeshProxyPatchItemInput) GetType() MeshProxyPatchItemType {
+	if m == nil {
 		return MeshProxyPatchItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshProxyPatchItemInput) GetMesh() *string {
-	if o == nil {
+func (m *MeshProxyPatchItemInput) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshProxyPatchItemInput) GetName() string {
-	if o == nil {
+func (m *MeshProxyPatchItemInput) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshProxyPatchItemInput) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshProxyPatchItemInput) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshProxyPatchItemInput) GetSpec() MeshProxyPatchItemSpec {
-	if o == nil {
+func (m *MeshProxyPatchItemInput) GetSpec() MeshProxyPatchItemSpec {
+	if m == nil {
 		return MeshProxyPatchItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }

@@ -62,7 +62,7 @@ func (s *MeshLoadBalancingStrategy) GetMeshLoadBalancingStrategy(ctx context.Con
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getMeshLoadBalancingStrategy",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -292,7 +292,7 @@ func (s *MeshLoadBalancingStrategy) PutMeshLoadBalancingStrategy(ctx context.Con
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "putMeshLoadBalancingStrategy",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "MeshLoadBalancingStrategyItem", "json", `request:"mediaType=application/json"`)
@@ -506,7 +506,7 @@ func (s *MeshLoadBalancingStrategy) DeleteMeshLoadBalancingStrategy(ctx context.
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "deleteMeshLoadBalancingStrategy",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -736,7 +736,7 @@ func (s *MeshLoadBalancingStrategy) GetMeshLoadBalancingStrategyList(ctx context
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getMeshLoadBalancingStrategyList",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 

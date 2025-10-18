@@ -11,23 +11,23 @@ type MeshIdentityList struct {
 	Next *string `json:"next,omitempty"`
 }
 
-func (o *MeshIdentityList) GetItems() []MeshIdentityItem {
-	if o == nil {
+func (m *MeshIdentityList) GetItems() []MeshIdentityItem {
+	if m == nil {
 		return nil
 	}
-	return o.Items
+	return m.Items
 }
 
-func (o *MeshIdentityList) GetTotal() *float64 {
-	if o == nil {
+func (m *MeshIdentityList) GetTotal() *float64 {
+	if m == nil {
 		return nil
 	}
-	return o.Total
+	return m.Total
 }
 
-func (o *MeshIdentityList) GetNext() *string {
-	if o == nil {
+func (m *MeshIdentityList) GetNext() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Next
+	return m.Next
 }

@@ -14,18 +14,18 @@ type DeleteMeshProxyPatchRequest struct {
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 }
 
-func (o *DeleteMeshProxyPatchRequest) GetMesh() string {
-	if o == nil {
+func (d *DeleteMeshProxyPatchRequest) GetMesh() string {
+	if d == nil {
 		return ""
 	}
-	return o.Mesh
+	return d.Mesh
 }
 
-func (o *DeleteMeshProxyPatchRequest) GetName() string {
-	if o == nil {
+func (d *DeleteMeshProxyPatchRequest) GetName() string {
+	if d == nil {
 		return ""
 	}
-	return o.Name
+	return d.Name
 }
 
 type DeleteMeshProxyPatchResponse struct {
@@ -41,37 +41,37 @@ type DeleteMeshProxyPatchResponse struct {
 	NotFoundError *shared.NotFoundError
 }
 
-func (o *DeleteMeshProxyPatchResponse) GetContentType() string {
-	if o == nil {
+func (d *DeleteMeshProxyPatchResponse) GetContentType() string {
+	if d == nil {
 		return ""
 	}
-	return o.ContentType
+	return d.ContentType
 }
 
-func (o *DeleteMeshProxyPatchResponse) GetStatusCode() int {
-	if o == nil {
+func (d *DeleteMeshProxyPatchResponse) GetStatusCode() int {
+	if d == nil {
 		return 0
 	}
-	return o.StatusCode
+	return d.StatusCode
 }
 
-func (o *DeleteMeshProxyPatchResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (d *DeleteMeshProxyPatchResponse) GetRawResponse() *http.Response {
+	if d == nil {
 		return nil
 	}
-	return o.RawResponse
+	return d.RawResponse
 }
 
-func (o *DeleteMeshProxyPatchResponse) GetMeshProxyPatchDeleteSuccessResponse() *shared.MeshProxyPatchDeleteSuccessResponse {
-	if o == nil {
+func (d *DeleteMeshProxyPatchResponse) GetMeshProxyPatchDeleteSuccessResponse() *shared.MeshProxyPatchDeleteSuccessResponse {
+	if d == nil {
 		return nil
 	}
-	return o.MeshProxyPatchDeleteSuccessResponse
+	return d.MeshProxyPatchDeleteSuccessResponse
 }
 
-func (o *DeleteMeshProxyPatchResponse) GetNotFoundError() *shared.NotFoundError {
-	if o == nil {
+func (d *DeleteMeshProxyPatchResponse) GetNotFoundError() *shared.NotFoundError {
+	if d == nil {
 		return nil
 	}
-	return o.NotFoundError
+	return d.NotFoundError
 }

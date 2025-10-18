@@ -14,18 +14,18 @@ type GetMeshHealthCheckRequest struct {
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 }
 
-func (o *GetMeshHealthCheckRequest) GetMesh() string {
-	if o == nil {
+func (g *GetMeshHealthCheckRequest) GetMesh() string {
+	if g == nil {
 		return ""
 	}
-	return o.Mesh
+	return g.Mesh
 }
 
-func (o *GetMeshHealthCheckRequest) GetName() string {
-	if o == nil {
+func (g *GetMeshHealthCheckRequest) GetName() string {
+	if g == nil {
 		return ""
 	}
-	return o.Name
+	return g.Name
 }
 
 type GetMeshHealthCheckResponse struct {
@@ -41,37 +41,37 @@ type GetMeshHealthCheckResponse struct {
 	NotFoundError *shared.NotFoundError
 }
 
-func (o *GetMeshHealthCheckResponse) GetContentType() string {
-	if o == nil {
+func (g *GetMeshHealthCheckResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetMeshHealthCheckResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetMeshHealthCheckResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetMeshHealthCheckResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetMeshHealthCheckResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetMeshHealthCheckResponse) GetMeshHealthCheckItem() *shared.MeshHealthCheckItem {
-	if o == nil {
+func (g *GetMeshHealthCheckResponse) GetMeshHealthCheckItem() *shared.MeshHealthCheckItem {
+	if g == nil {
 		return nil
 	}
-	return o.MeshHealthCheckItem
+	return g.MeshHealthCheckItem
 }
 
-func (o *GetMeshHealthCheckResponse) GetNotFoundError() *shared.NotFoundError {
-	if o == nil {
+func (g *GetMeshHealthCheckResponse) GetNotFoundError() *shared.NotFoundError {
+	if g == nil {
 		return nil
 	}
-	return o.NotFoundError
+	return g.NotFoundError
 }

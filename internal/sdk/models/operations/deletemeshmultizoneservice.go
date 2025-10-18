@@ -14,18 +14,18 @@ type DeleteMeshMultiZoneServiceRequest struct {
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 }
 
-func (o *DeleteMeshMultiZoneServiceRequest) GetMesh() string {
-	if o == nil {
+func (d *DeleteMeshMultiZoneServiceRequest) GetMesh() string {
+	if d == nil {
 		return ""
 	}
-	return o.Mesh
+	return d.Mesh
 }
 
-func (o *DeleteMeshMultiZoneServiceRequest) GetName() string {
-	if o == nil {
+func (d *DeleteMeshMultiZoneServiceRequest) GetName() string {
+	if d == nil {
 		return ""
 	}
-	return o.Name
+	return d.Name
 }
 
 type DeleteMeshMultiZoneServiceResponse struct {
@@ -41,37 +41,37 @@ type DeleteMeshMultiZoneServiceResponse struct {
 	NotFoundError *shared.NotFoundError
 }
 
-func (o *DeleteMeshMultiZoneServiceResponse) GetContentType() string {
-	if o == nil {
+func (d *DeleteMeshMultiZoneServiceResponse) GetContentType() string {
+	if d == nil {
 		return ""
 	}
-	return o.ContentType
+	return d.ContentType
 }
 
-func (o *DeleteMeshMultiZoneServiceResponse) GetStatusCode() int {
-	if o == nil {
+func (d *DeleteMeshMultiZoneServiceResponse) GetStatusCode() int {
+	if d == nil {
 		return 0
 	}
-	return o.StatusCode
+	return d.StatusCode
 }
 
-func (o *DeleteMeshMultiZoneServiceResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (d *DeleteMeshMultiZoneServiceResponse) GetRawResponse() *http.Response {
+	if d == nil {
 		return nil
 	}
-	return o.RawResponse
+	return d.RawResponse
 }
 
-func (o *DeleteMeshMultiZoneServiceResponse) GetMeshMultiZoneServiceDeleteSuccessResponse() *shared.MeshMultiZoneServiceDeleteSuccessResponse {
-	if o == nil {
+func (d *DeleteMeshMultiZoneServiceResponse) GetMeshMultiZoneServiceDeleteSuccessResponse() *shared.MeshMultiZoneServiceDeleteSuccessResponse {
+	if d == nil {
 		return nil
 	}
-	return o.MeshMultiZoneServiceDeleteSuccessResponse
+	return d.MeshMultiZoneServiceDeleteSuccessResponse
 }
 
-func (o *DeleteMeshMultiZoneServiceResponse) GetNotFoundError() *shared.NotFoundError {
-	if o == nil {
+func (d *DeleteMeshMultiZoneServiceResponse) GetNotFoundError() *shared.NotFoundError {
+	if d == nil {
 		return nil
 	}
-	return o.NotFoundError
+	return d.NotFoundError
 }

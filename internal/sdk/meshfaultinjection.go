@@ -62,7 +62,7 @@ func (s *MeshFaultInjection) GetMeshFaultInjection(ctx context.Context, request 
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getMeshFaultInjection",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -292,7 +292,7 @@ func (s *MeshFaultInjection) PutMeshFaultInjection(ctx context.Context, request 
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "putMeshFaultInjection",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "MeshFaultInjectionItem", "json", `request:"mediaType=application/json"`)
@@ -506,7 +506,7 @@ func (s *MeshFaultInjection) DeleteMeshFaultInjection(ctx context.Context, reque
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "deleteMeshFaultInjection",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -736,7 +736,7 @@ func (s *MeshFaultInjection) GetMeshFaultInjectionList(ctx context.Context, requ
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getMeshFaultInjectionList",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 

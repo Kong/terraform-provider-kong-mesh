@@ -45,31 +45,31 @@ func (p Ports) MarshalJSON() ([]byte, error) {
 }
 
 func (p *Ports) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &p, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &p, "", false, []string{"port"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *Ports) GetAppProtocol() *string {
-	if o == nil {
+func (p *Ports) GetAppProtocol() *string {
+	if p == nil {
 		return nil
 	}
-	return o.AppProtocol
+	return p.AppProtocol
 }
 
-func (o *Ports) GetName() *string {
-	if o == nil {
+func (p *Ports) GetName() *string {
+	if p == nil {
 		return nil
 	}
-	return o.Name
+	return p.Name
 }
 
-func (o *Ports) GetPort() int {
-	if o == nil {
+func (p *Ports) GetPort() int {
+	if p == nil {
 		return 0
 	}
-	return o.Port
+	return p.Port
 }
 
 // MeshMultiZoneServiceItemMeshService - MeshService selects MeshServices
@@ -77,11 +77,11 @@ type MeshMultiZoneServiceItemMeshService struct {
 	MatchLabels map[string]string `json:"matchLabels,omitempty"`
 }
 
-func (o *MeshMultiZoneServiceItemMeshService) GetMatchLabels() map[string]string {
-	if o == nil {
+func (m *MeshMultiZoneServiceItemMeshService) GetMatchLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.MatchLabels
+	return m.MatchLabels
 }
 
 // MeshMultiZoneServiceItemSelector - Selector is a way to select multiple MeshServices
@@ -90,11 +90,11 @@ type MeshMultiZoneServiceItemSelector struct {
 	MeshService MeshMultiZoneServiceItemMeshService `json:"meshService"`
 }
 
-func (o *MeshMultiZoneServiceItemSelector) GetMeshService() MeshMultiZoneServiceItemMeshService {
-	if o == nil {
+func (m *MeshMultiZoneServiceItemSelector) GetMeshService() MeshMultiZoneServiceItemMeshService {
+	if m == nil {
 		return MeshMultiZoneServiceItemMeshService{}
 	}
-	return o.MeshService
+	return m.MeshService
 }
 
 // MeshMultiZoneServiceItemSpec - Spec is the specification of the Kuma MeshMultiZoneService resource.
@@ -105,29 +105,29 @@ type MeshMultiZoneServiceItemSpec struct {
 	Selector MeshMultiZoneServiceItemSelector `json:"selector"`
 }
 
-func (o *MeshMultiZoneServiceItemSpec) GetPorts() []Ports {
-	if o == nil {
+func (m *MeshMultiZoneServiceItemSpec) GetPorts() []Ports {
+	if m == nil {
 		return []Ports{}
 	}
-	return o.Ports
+	return m.Ports
 }
 
-func (o *MeshMultiZoneServiceItemSpec) GetSelector() MeshMultiZoneServiceItemSelector {
-	if o == nil {
+func (m *MeshMultiZoneServiceItemSpec) GetSelector() MeshMultiZoneServiceItemSelector {
+	if m == nil {
 		return MeshMultiZoneServiceItemSelector{}
 	}
-	return o.Selector
+	return m.Selector
 }
 
 type MeshMultiZoneServiceItemHostnameGeneratorRef struct {
 	CoreName string `json:"coreName"`
 }
 
-func (o *MeshMultiZoneServiceItemHostnameGeneratorRef) GetCoreName() string {
-	if o == nil {
+func (m *MeshMultiZoneServiceItemHostnameGeneratorRef) GetCoreName() string {
+	if m == nil {
 		return ""
 	}
-	return o.CoreName
+	return m.CoreName
 }
 
 type MeshMultiZoneServiceItemAddresses struct {
@@ -136,25 +136,25 @@ type MeshMultiZoneServiceItemAddresses struct {
 	Origin               *string                                       `json:"origin,omitempty"`
 }
 
-func (o *MeshMultiZoneServiceItemAddresses) GetHostname() *string {
-	if o == nil {
+func (m *MeshMultiZoneServiceItemAddresses) GetHostname() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Hostname
+	return m.Hostname
 }
 
-func (o *MeshMultiZoneServiceItemAddresses) GetHostnameGeneratorRef() *MeshMultiZoneServiceItemHostnameGeneratorRef {
-	if o == nil {
+func (m *MeshMultiZoneServiceItemAddresses) GetHostnameGeneratorRef() *MeshMultiZoneServiceItemHostnameGeneratorRef {
+	if m == nil {
 		return nil
 	}
-	return o.HostnameGeneratorRef
+	return m.HostnameGeneratorRef
 }
 
-func (o *MeshMultiZoneServiceItemAddresses) GetOrigin() *string {
-	if o == nil {
+func (m *MeshMultiZoneServiceItemAddresses) GetOrigin() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Origin
+	return m.Origin
 }
 
 // MeshMultiZoneServiceItemStatusStatus - status of the condition, one of True, False, Unknown.
@@ -203,43 +203,43 @@ type MeshMultiZoneServiceItemConditions struct {
 	Type string `json:"type"`
 }
 
-func (o *MeshMultiZoneServiceItemConditions) GetMessage() string {
-	if o == nil {
+func (m *MeshMultiZoneServiceItemConditions) GetMessage() string {
+	if m == nil {
 		return ""
 	}
-	return o.Message
+	return m.Message
 }
 
-func (o *MeshMultiZoneServiceItemConditions) GetReason() string {
-	if o == nil {
+func (m *MeshMultiZoneServiceItemConditions) GetReason() string {
+	if m == nil {
 		return ""
 	}
-	return o.Reason
+	return m.Reason
 }
 
-func (o *MeshMultiZoneServiceItemConditions) GetStatus() MeshMultiZoneServiceItemStatusStatus {
-	if o == nil {
+func (m *MeshMultiZoneServiceItemConditions) GetStatus() MeshMultiZoneServiceItemStatusStatus {
+	if m == nil {
 		return MeshMultiZoneServiceItemStatusStatus("")
 	}
-	return o.Status
+	return m.Status
 }
 
-func (o *MeshMultiZoneServiceItemConditions) GetType() string {
-	if o == nil {
+func (m *MeshMultiZoneServiceItemConditions) GetType() string {
+	if m == nil {
 		return ""
 	}
-	return o.Type
+	return m.Type
 }
 
 type MeshMultiZoneServiceItemStatusHostnameGeneratorRef struct {
 	CoreName string `json:"coreName"`
 }
 
-func (o *MeshMultiZoneServiceItemStatusHostnameGeneratorRef) GetCoreName() string {
-	if o == nil {
+func (m *MeshMultiZoneServiceItemStatusHostnameGeneratorRef) GetCoreName() string {
+	if m == nil {
 		return ""
 	}
-	return o.CoreName
+	return m.CoreName
 }
 
 type MeshMultiZoneServiceItemHostnameGenerators struct {
@@ -248,18 +248,18 @@ type MeshMultiZoneServiceItemHostnameGenerators struct {
 	HostnameGeneratorRef MeshMultiZoneServiceItemStatusHostnameGeneratorRef `json:"hostnameGeneratorRef"`
 }
 
-func (o *MeshMultiZoneServiceItemHostnameGenerators) GetConditions() []MeshMultiZoneServiceItemConditions {
-	if o == nil {
+func (m *MeshMultiZoneServiceItemHostnameGenerators) GetConditions() []MeshMultiZoneServiceItemConditions {
+	if m == nil {
 		return nil
 	}
-	return o.Conditions
+	return m.Conditions
 }
 
-func (o *MeshMultiZoneServiceItemHostnameGenerators) GetHostnameGeneratorRef() MeshMultiZoneServiceItemStatusHostnameGeneratorRef {
-	if o == nil {
+func (m *MeshMultiZoneServiceItemHostnameGenerators) GetHostnameGeneratorRef() MeshMultiZoneServiceItemStatusHostnameGeneratorRef {
+	if m == nil {
 		return MeshMultiZoneServiceItemStatusHostnameGeneratorRef{}
 	}
-	return o.HostnameGeneratorRef
+	return m.HostnameGeneratorRef
 }
 
 type MeshMultiZoneServiceItemMeshServices struct {
@@ -270,43 +270,43 @@ type MeshMultiZoneServiceItemMeshServices struct {
 	Zone      string `json:"zone"`
 }
 
-func (o *MeshMultiZoneServiceItemMeshServices) GetMesh() string {
-	if o == nil {
+func (m *MeshMultiZoneServiceItemMeshServices) GetMesh() string {
+	if m == nil {
 		return ""
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshMultiZoneServiceItemMeshServices) GetName() string {
-	if o == nil {
+func (m *MeshMultiZoneServiceItemMeshServices) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshMultiZoneServiceItemMeshServices) GetNamespace() string {
-	if o == nil {
+func (m *MeshMultiZoneServiceItemMeshServices) GetNamespace() string {
+	if m == nil {
 		return ""
 	}
-	return o.Namespace
+	return m.Namespace
 }
 
-func (o *MeshMultiZoneServiceItemMeshServices) GetZone() string {
-	if o == nil {
+func (m *MeshMultiZoneServiceItemMeshServices) GetZone() string {
+	if m == nil {
 		return ""
 	}
-	return o.Zone
+	return m.Zone
 }
 
 type Vips struct {
 	IP *string `json:"ip,omitempty"`
 }
 
-func (o *Vips) GetIP() *string {
-	if o == nil {
+func (v *Vips) GetIP() *string {
+	if v == nil {
 		return nil
 	}
-	return o.IP
+	return v.IP
 }
 
 // MeshMultiZoneServiceItemStatus - Status is the current status of the Kuma MeshMultiZoneService resource.
@@ -321,32 +321,32 @@ type MeshMultiZoneServiceItemStatus struct {
 	Vips []Vips `json:"vips,omitempty"`
 }
 
-func (o *MeshMultiZoneServiceItemStatus) GetAddresses() []MeshMultiZoneServiceItemAddresses {
-	if o == nil {
+func (m *MeshMultiZoneServiceItemStatus) GetAddresses() []MeshMultiZoneServiceItemAddresses {
+	if m == nil {
 		return nil
 	}
-	return o.Addresses
+	return m.Addresses
 }
 
-func (o *MeshMultiZoneServiceItemStatus) GetHostnameGenerators() []MeshMultiZoneServiceItemHostnameGenerators {
-	if o == nil {
+func (m *MeshMultiZoneServiceItemStatus) GetHostnameGenerators() []MeshMultiZoneServiceItemHostnameGenerators {
+	if m == nil {
 		return nil
 	}
-	return o.HostnameGenerators
+	return m.HostnameGenerators
 }
 
-func (o *MeshMultiZoneServiceItemStatus) GetMeshServices() []MeshMultiZoneServiceItemMeshServices {
-	if o == nil {
+func (m *MeshMultiZoneServiceItemStatus) GetMeshServices() []MeshMultiZoneServiceItemMeshServices {
+	if m == nil {
 		return nil
 	}
-	return o.MeshServices
+	return m.MeshServices
 }
 
-func (o *MeshMultiZoneServiceItemStatus) GetVips() []Vips {
-	if o == nil {
+func (m *MeshMultiZoneServiceItemStatus) GetVips() []Vips {
+	if m == nil {
 		return nil
 	}
-	return o.Vips
+	return m.Vips
 }
 
 // MeshMultiZoneServiceItem - Successful response
@@ -374,66 +374,66 @@ func (m MeshMultiZoneServiceItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshMultiZoneServiceItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshMultiZoneServiceItem) GetType() MeshMultiZoneServiceItemType {
-	if o == nil {
+func (m *MeshMultiZoneServiceItem) GetType() MeshMultiZoneServiceItemType {
+	if m == nil {
 		return MeshMultiZoneServiceItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshMultiZoneServiceItem) GetMesh() *string {
-	if o == nil {
+func (m *MeshMultiZoneServiceItem) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshMultiZoneServiceItem) GetName() string {
-	if o == nil {
+func (m *MeshMultiZoneServiceItem) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshMultiZoneServiceItem) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshMultiZoneServiceItem) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshMultiZoneServiceItem) GetSpec() MeshMultiZoneServiceItemSpec {
-	if o == nil {
+func (m *MeshMultiZoneServiceItem) GetSpec() MeshMultiZoneServiceItemSpec {
+	if m == nil {
 		return MeshMultiZoneServiceItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }
 
-func (o *MeshMultiZoneServiceItem) GetCreationTime() *time.Time {
-	if o == nil {
+func (m *MeshMultiZoneServiceItem) GetCreationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.CreationTime
+	return m.CreationTime
 }
 
-func (o *MeshMultiZoneServiceItem) GetModificationTime() *time.Time {
-	if o == nil {
+func (m *MeshMultiZoneServiceItem) GetModificationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.ModificationTime
+	return m.ModificationTime
 }
 
-func (o *MeshMultiZoneServiceItem) GetStatus() *MeshMultiZoneServiceItemStatus {
-	if o == nil {
+func (m *MeshMultiZoneServiceItem) GetStatus() *MeshMultiZoneServiceItemStatus {
+	if m == nil {
 		return nil
 	}
-	return o.Status
+	return m.Status
 }
 
 type MeshMultiZoneServiceItemInput struct {
@@ -454,43 +454,43 @@ func (m MeshMultiZoneServiceItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshMultiZoneServiceItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshMultiZoneServiceItemInput) GetType() MeshMultiZoneServiceItemType {
-	if o == nil {
+func (m *MeshMultiZoneServiceItemInput) GetType() MeshMultiZoneServiceItemType {
+	if m == nil {
 		return MeshMultiZoneServiceItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshMultiZoneServiceItemInput) GetMesh() *string {
-	if o == nil {
+func (m *MeshMultiZoneServiceItemInput) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshMultiZoneServiceItemInput) GetName() string {
-	if o == nil {
+func (m *MeshMultiZoneServiceItemInput) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshMultiZoneServiceItemInput) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshMultiZoneServiceItemInput) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshMultiZoneServiceItemInput) GetSpec() MeshMultiZoneServiceItemSpec {
-	if o == nil {
+func (m *MeshMultiZoneServiceItemInput) GetSpec() MeshMultiZoneServiceItemSpec {
+	if m == nil {
 		return MeshMultiZoneServiceItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }

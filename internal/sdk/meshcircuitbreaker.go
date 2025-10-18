@@ -62,7 +62,7 @@ func (s *MeshCircuitBreaker) GetMeshCircuitBreaker(ctx context.Context, request 
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getMeshCircuitBreaker",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -292,7 +292,7 @@ func (s *MeshCircuitBreaker) PutMeshCircuitBreaker(ctx context.Context, request 
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "putMeshCircuitBreaker",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "MeshCircuitBreakerItem", "json", `request:"mediaType=application/json"`)
@@ -506,7 +506,7 @@ func (s *MeshCircuitBreaker) DeleteMeshCircuitBreaker(ctx context.Context, reque
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "deleteMeshCircuitBreaker",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -736,7 +736,7 @@ func (s *MeshCircuitBreaker) GetMeshCircuitBreakerList(ctx context.Context, requ
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getMeshCircuitBreakerList",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 

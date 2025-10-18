@@ -14,18 +14,18 @@ type GetHostnameGeneratorListQueryParamFilter struct {
 	Value *string `queryParam:"name=value"`
 }
 
-func (o *GetHostnameGeneratorListQueryParamFilter) GetKey() *string {
-	if o == nil {
+func (g *GetHostnameGeneratorListQueryParamFilter) GetKey() *string {
+	if g == nil {
 		return nil
 	}
-	return o.Key
+	return g.Key
 }
 
-func (o *GetHostnameGeneratorListQueryParamFilter) GetValue() *string {
-	if o == nil {
+func (g *GetHostnameGeneratorListQueryParamFilter) GetValue() *string {
+	if g == nil {
 		return nil
 	}
-	return o.Value
+	return g.Value
 }
 
 type GetHostnameGeneratorListRequest struct {
@@ -42,31 +42,31 @@ func (g GetHostnameGeneratorListRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetHostnameGeneratorListRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *GetHostnameGeneratorListRequest) GetOffset() *int64 {
-	if o == nil {
+func (g *GetHostnameGeneratorListRequest) GetOffset() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Offset
+	return g.Offset
 }
 
-func (o *GetHostnameGeneratorListRequest) GetSize() *int64 {
-	if o == nil {
+func (g *GetHostnameGeneratorListRequest) GetSize() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Size
+	return g.Size
 }
 
-func (o *GetHostnameGeneratorListRequest) GetFilter() *GetHostnameGeneratorListQueryParamFilter {
-	if o == nil {
+func (g *GetHostnameGeneratorListRequest) GetFilter() *GetHostnameGeneratorListQueryParamFilter {
+	if g == nil {
 		return nil
 	}
-	return o.Filter
+	return g.Filter
 }
 
 type GetHostnameGeneratorListResponse struct {
@@ -80,30 +80,30 @@ type GetHostnameGeneratorListResponse struct {
 	HostnameGeneratorList *shared.HostnameGeneratorList
 }
 
-func (o *GetHostnameGeneratorListResponse) GetContentType() string {
-	if o == nil {
+func (g *GetHostnameGeneratorListResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetHostnameGeneratorListResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetHostnameGeneratorListResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetHostnameGeneratorListResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetHostnameGeneratorListResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetHostnameGeneratorListResponse) GetHostnameGeneratorList() *shared.HostnameGeneratorList {
-	if o == nil {
+func (g *GetHostnameGeneratorListResponse) GetHostnameGeneratorList() *shared.HostnameGeneratorList {
+	if g == nil {
 		return nil
 	}
-	return o.HostnameGeneratorList
+	return g.HostnameGeneratorList
 }

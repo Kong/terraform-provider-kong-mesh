@@ -3,11 +3,12 @@
 package types
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type MeshAccessLogItemSpecFromOpenTelemetry struct {
-	Attributes []JSON       `tfsdk:"attributes"`
-	Body       types.String `tfsdk:"body"`
-	Endpoint   types.String `tfsdk:"endpoint"`
+	Attributes []JSON               `tfsdk:"attributes"`
+	Body       jsontypes.Normalized `tfsdk:"body"`
+	Endpoint   types.String         `tfsdk:"endpoint"`
 }

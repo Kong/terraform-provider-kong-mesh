@@ -16,25 +16,25 @@ type PutMeshIdentityRequest struct {
 	MeshIdentityItem shared.MeshIdentityItemInput `request:"mediaType=application/json"`
 }
 
-func (o *PutMeshIdentityRequest) GetMesh() string {
-	if o == nil {
+func (p *PutMeshIdentityRequest) GetMesh() string {
+	if p == nil {
 		return ""
 	}
-	return o.Mesh
+	return p.Mesh
 }
 
-func (o *PutMeshIdentityRequest) GetName() string {
-	if o == nil {
+func (p *PutMeshIdentityRequest) GetName() string {
+	if p == nil {
 		return ""
 	}
-	return o.Name
+	return p.Name
 }
 
-func (o *PutMeshIdentityRequest) GetMeshIdentityItem() shared.MeshIdentityItemInput {
-	if o == nil {
+func (p *PutMeshIdentityRequest) GetMeshIdentityItem() shared.MeshIdentityItemInput {
+	if p == nil {
 		return shared.MeshIdentityItemInput{}
 	}
-	return o.MeshIdentityItem
+	return p.MeshIdentityItem
 }
 
 type PutMeshIdentityResponse struct {
@@ -48,30 +48,30 @@ type PutMeshIdentityResponse struct {
 	MeshIdentityCreateOrUpdateSuccessResponse *shared.MeshIdentityCreateOrUpdateSuccessResponse
 }
 
-func (o *PutMeshIdentityResponse) GetContentType() string {
-	if o == nil {
+func (p *PutMeshIdentityResponse) GetContentType() string {
+	if p == nil {
 		return ""
 	}
-	return o.ContentType
+	return p.ContentType
 }
 
-func (o *PutMeshIdentityResponse) GetStatusCode() int {
-	if o == nil {
+func (p *PutMeshIdentityResponse) GetStatusCode() int {
+	if p == nil {
 		return 0
 	}
-	return o.StatusCode
+	return p.StatusCode
 }
 
-func (o *PutMeshIdentityResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *PutMeshIdentityResponse) GetRawResponse() *http.Response {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.RawResponse
 }
 
-func (o *PutMeshIdentityResponse) GetMeshIdentityCreateOrUpdateSuccessResponse() *shared.MeshIdentityCreateOrUpdateSuccessResponse {
-	if o == nil {
+func (p *PutMeshIdentityResponse) GetMeshIdentityCreateOrUpdateSuccessResponse() *shared.MeshIdentityCreateOrUpdateSuccessResponse {
+	if p == nil {
 		return nil
 	}
-	return o.MeshIdentityCreateOrUpdateSuccessResponse
+	return p.MeshIdentityCreateOrUpdateSuccessResponse
 }

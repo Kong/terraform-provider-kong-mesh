@@ -63,7 +63,7 @@ func (s *HostnameGenerator) GetHostnameGenerator(ctx context.Context, request op
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getHostnameGenerator",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -293,7 +293,7 @@ func (s *HostnameGenerator) PutHostnameGenerator(ctx context.Context, request op
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "putHostnameGenerator",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "HostnameGeneratorItem", "json", `request:"mediaType=application/json"`)
@@ -507,7 +507,7 @@ func (s *HostnameGenerator) DeleteHostnameGenerator(ctx context.Context, request
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "deleteHostnameGenerator",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -737,7 +737,7 @@ func (s *HostnameGenerator) GetHostnameGeneratorList(ctx context.Context, reques
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getHostnameGeneratorList",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
