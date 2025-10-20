@@ -3,11 +3,14 @@ package provider
 import (
 	"context"
 	"errors"
-	"github.com/hashicorp/terraform-plugin-framework/resource"
-	sdkerrors "github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/errors"
-	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"net/http"
 	"strconv"
+
+	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+	sdkerrors "github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/errors"
+	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 )
 
 var _ resource.ResourceWithModifyPlan = &MeshRateLimitResource{}
@@ -21,23 +24,27 @@ func (r *MeshRateLimitResource) ModifyPlan(
 		return
 	}
 
-	var plannedResource MeshRateLimitResourceModel
-	diags := req.Plan.Get(ctx, &plannedResource)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
+	var name types.String
+	if diags := req.Plan.GetAttribute(ctx, path.Root("name"), &name); diags.HasError() {
+		resp.Diagnostics.Append(diags...)
+		return
+	}
+	var mesh types.String
+	if diags := req.Plan.GetAttribute(ctx, path.Root("mesh"), &mesh); diags.HasError() {
+		resp.Diagnostics.Append(diags...)
 		return
 	}
 
-	if plannedResource.Name.IsUnknown() {
+	if name.IsUnknown() {
 		return
 	}
-	if plannedResource.Mesh.IsUnknown() {
+	if mesh.IsUnknown() {
 		return
 	}
 	request := operations.GetMeshRateLimitRequest{
-		Name: plannedResource.Name.ValueString(),
+		Name: name.ValueString(),
 	}
-	request.Mesh = plannedResource.Mesh.ValueString()
+	request.Mesh = mesh.ValueString()
 	res, err := r.client.MeshRateLimit.GetMeshRateLimit(ctx, request)
 
 	if err != nil {
@@ -64,7 +71,7 @@ func (r *MeshRateLimitResource) ModifyPlan(
 	if res.StatusCode != http.StatusNotFound {
 		resp.Diagnostics.AddError(
 			"MeshRateLimit already exists",
-			"A resource with the name "+plannedResource.Name.String()+" already exists in the mesh "+plannedResource.Mesh.String()+" - to be managed via Terraform it needs to be imported first",
+			"A resource with the name "+name.String()+" already exists in the mesh "+mesh.String()+" - to be managed via Terraform it needs to be imported first",
 		)
 	}
 }
