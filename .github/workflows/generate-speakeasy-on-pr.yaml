@@ -5,9 +5,9 @@ on:
   workflow_dispatch:
     inputs:
       branch:
-        description: 'Branch to run the workflow on (optional)'
-        required: false
-        default: ''
+        description: 'Branch to run the workflow on'
+        required: true
+        default: 'feat/platform-api-automated-update'
 
 permissions:
   contents: write
@@ -15,9 +15,11 @@ permissions:
 
 jobs:
   speakeasy-on-pr-open:
+    env:
+      REF: ${{ github.event.pull_request.head.ref || github.event.inputs.branch }}
     name: Run Speakeasy on PR Open
     if: github.event.pull_request.head.ref == 'feat/platform-api-automated-update' ||
-      github.event.inputs.branch != '' ||
+      github.event_name == 'workflow_dispatch' ||
       github.actor == 'renovate[bot]' ||
       github.actor == 'mend[bot]'
     runs-on: ubuntu-latest
@@ -49,7 +51,7 @@ jobs:
       - name: Checkout PR branch
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.branch || github.head_ref }}
+          ref: ${{ env.REF }}
           path: repo
           fetch-depth: 0
           token: ${{ steps.github-app-token.outputs.token }}
