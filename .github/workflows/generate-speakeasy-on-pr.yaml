@@ -24,7 +24,7 @@ jobs:
       github.actor == 'mend[bot]'
     runs-on: ubuntu-latest
     concurrency:
-      group: speakeasy-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.event.inputs.branch || github.run_id }}
+      group: speakeasy-${{ github.event.pull_request.number }}
       cancel-in-progress: false
     steps:
       - name: Install Speakeasy
