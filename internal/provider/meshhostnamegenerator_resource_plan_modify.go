@@ -29,11 +29,6 @@ func (r *MeshHostnameGeneratorResource) ModifyPlan(
 		resp.Diagnostics.Append(diags...)
 		return
 	}
-	var cpID types.String
-	if diags := req.Plan.GetAttribute(ctx, path.Root("cp_id"), &cpID); diags.HasError() {
-		resp.Diagnostics.Append(diags...)
-		return
-	}
 
 	if name.IsUnknown() {
 		return
