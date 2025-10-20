@@ -16,25 +16,25 @@ type PutMeshHealthCheckRequest struct {
 	MeshHealthCheckItem shared.MeshHealthCheckItemInput `request:"mediaType=application/json"`
 }
 
-func (o *PutMeshHealthCheckRequest) GetMesh() string {
-	if o == nil {
+func (p *PutMeshHealthCheckRequest) GetMesh() string {
+	if p == nil {
 		return ""
 	}
-	return o.Mesh
+	return p.Mesh
 }
 
-func (o *PutMeshHealthCheckRequest) GetName() string {
-	if o == nil {
+func (p *PutMeshHealthCheckRequest) GetName() string {
+	if p == nil {
 		return ""
 	}
-	return o.Name
+	return p.Name
 }
 
-func (o *PutMeshHealthCheckRequest) GetMeshHealthCheckItem() shared.MeshHealthCheckItemInput {
-	if o == nil {
+func (p *PutMeshHealthCheckRequest) GetMeshHealthCheckItem() shared.MeshHealthCheckItemInput {
+	if p == nil {
 		return shared.MeshHealthCheckItemInput{}
 	}
-	return o.MeshHealthCheckItem
+	return p.MeshHealthCheckItem
 }
 
 type PutMeshHealthCheckResponse struct {
@@ -48,30 +48,30 @@ type PutMeshHealthCheckResponse struct {
 	MeshHealthCheckCreateOrUpdateSuccessResponse *shared.MeshHealthCheckCreateOrUpdateSuccessResponse
 }
 
-func (o *PutMeshHealthCheckResponse) GetContentType() string {
-	if o == nil {
+func (p *PutMeshHealthCheckResponse) GetContentType() string {
+	if p == nil {
 		return ""
 	}
-	return o.ContentType
+	return p.ContentType
 }
 
-func (o *PutMeshHealthCheckResponse) GetStatusCode() int {
-	if o == nil {
+func (p *PutMeshHealthCheckResponse) GetStatusCode() int {
+	if p == nil {
 		return 0
 	}
-	return o.StatusCode
+	return p.StatusCode
 }
 
-func (o *PutMeshHealthCheckResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *PutMeshHealthCheckResponse) GetRawResponse() *http.Response {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.RawResponse
 }
 
-func (o *PutMeshHealthCheckResponse) GetMeshHealthCheckCreateOrUpdateSuccessResponse() *shared.MeshHealthCheckCreateOrUpdateSuccessResponse {
-	if o == nil {
+func (p *PutMeshHealthCheckResponse) GetMeshHealthCheckCreateOrUpdateSuccessResponse() *shared.MeshHealthCheckCreateOrUpdateSuccessResponse {
+	if p == nil {
 		return nil
 	}
-	return o.MeshHealthCheckCreateOrUpdateSuccessResponse
+	return p.MeshHealthCheckCreateOrUpdateSuccessResponse
 }

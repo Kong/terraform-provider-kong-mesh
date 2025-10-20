@@ -11,23 +11,23 @@ type MeshFaultInjectionList struct {
 	Next *string `json:"next,omitempty"`
 }
 
-func (o *MeshFaultInjectionList) GetItems() []MeshFaultInjectionItem {
-	if o == nil {
+func (m *MeshFaultInjectionList) GetItems() []MeshFaultInjectionItem {
+	if m == nil {
 		return nil
 	}
-	return o.Items
+	return m.Items
 }
 
-func (o *MeshFaultInjectionList) GetTotal() *float64 {
-	if o == nil {
+func (m *MeshFaultInjectionList) GetTotal() *float64 {
+	if m == nil {
 		return nil
 	}
-	return o.Total
+	return m.Total
 }
 
-func (o *MeshFaultInjectionList) GetNext() *string {
-	if o == nil {
+func (m *MeshFaultInjectionList) GetNext() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Next
+	return m.Next
 }

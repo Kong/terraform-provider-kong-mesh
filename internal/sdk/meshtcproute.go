@@ -62,7 +62,7 @@ func (s *MeshTCPRoute) GetMeshTCPRoute(ctx context.Context, request operations.G
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getMeshTCPRoute",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -292,7 +292,7 @@ func (s *MeshTCPRoute) PutMeshTCPRoute(ctx context.Context, request operations.P
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "putMeshTCPRoute",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "MeshTCPRouteItem", "json", `request:"mediaType=application/json"`)
@@ -506,7 +506,7 @@ func (s *MeshTCPRoute) DeleteMeshTCPRoute(ctx context.Context, request operation
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "deleteMeshTCPRoute",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -736,7 +736,7 @@ func (s *MeshTCPRoute) GetMeshTCPRouteList(ctx context.Context, request operatio
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getMeshTCPRouteList",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 

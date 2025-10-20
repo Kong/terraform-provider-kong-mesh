@@ -136,60 +136,60 @@ type MeshLoadBalancingStrategyItemTargetRef struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (o *MeshLoadBalancingStrategyItemTargetRef) GetKind() MeshLoadBalancingStrategyItemKind {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemTargetRef) GetKind() MeshLoadBalancingStrategyItemKind {
+	if m == nil {
 		return MeshLoadBalancingStrategyItemKind("")
 	}
-	return o.Kind
+	return m.Kind
 }
 
-func (o *MeshLoadBalancingStrategyItemTargetRef) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemTargetRef) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshLoadBalancingStrategyItemTargetRef) GetMesh() *string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemTargetRef) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshLoadBalancingStrategyItemTargetRef) GetName() *string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemTargetRef) GetName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshLoadBalancingStrategyItemTargetRef) GetNamespace() *string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemTargetRef) GetNamespace() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Namespace
+	return m.Namespace
 }
 
-func (o *MeshLoadBalancingStrategyItemTargetRef) GetProxyTypes() []MeshLoadBalancingStrategyItemProxyTypes {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemTargetRef) GetProxyTypes() []MeshLoadBalancingStrategyItemProxyTypes {
+	if m == nil {
 		return nil
 	}
-	return o.ProxyTypes
+	return m.ProxyTypes
 }
 
-func (o *MeshLoadBalancingStrategyItemTargetRef) GetSectionName() *string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemTargetRef) GetSectionName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.SectionName
+	return m.SectionName
 }
 
-func (o *MeshLoadBalancingStrategyItemTargetRef) GetTags() map[string]string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemTargetRef) GetTags() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Tags
+	return m.Tags
 }
 
 type Connection struct {
@@ -197,11 +197,11 @@ type Connection struct {
 	SourceIP *bool `json:"sourceIP,omitempty"`
 }
 
-func (o *Connection) GetSourceIP() *bool {
-	if o == nil {
+func (c *Connection) GetSourceIP() *bool {
+	if c == nil {
 		return nil
 	}
-	return o.SourceIP
+	return c.SourceIP
 }
 
 type Cookie struct {
@@ -213,25 +213,25 @@ type Cookie struct {
 	TTL *string `json:"ttl,omitempty"`
 }
 
-func (o *Cookie) GetName() string {
-	if o == nil {
+func (c *Cookie) GetName() string {
+	if c == nil {
 		return ""
 	}
-	return o.Name
+	return c.Name
 }
 
-func (o *Cookie) GetPath() *string {
-	if o == nil {
+func (c *Cookie) GetPath() *string {
+	if c == nil {
 		return nil
 	}
-	return o.Path
+	return c.Path
 }
 
-func (o *Cookie) GetTTL() *string {
-	if o == nil {
+func (c *Cookie) GetTTL() *string {
+	if c == nil {
 		return nil
 	}
-	return o.TTL
+	return c.TTL
 }
 
 type FilterState struct {
@@ -241,11 +241,11 @@ type FilterState struct {
 	Key string `json:"key"`
 }
 
-func (o *FilterState) GetKey() string {
-	if o == nil {
+func (f *FilterState) GetKey() string {
+	if f == nil {
 		return ""
 	}
-	return o.Key
+	return f.Key
 }
 
 type MeshLoadBalancingStrategyItemHeader struct {
@@ -253,11 +253,11 @@ type MeshLoadBalancingStrategyItemHeader struct {
 	Name string `json:"name"`
 }
 
-func (o *MeshLoadBalancingStrategyItemHeader) GetName() string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemHeader) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
 type QueryParameter struct {
@@ -267,11 +267,11 @@ type QueryParameter struct {
 	Name string `json:"name"`
 }
 
-func (o *QueryParameter) GetName() string {
-	if o == nil {
+func (q *QueryParameter) GetName() string {
+	if q == nil {
 		return ""
 	}
-	return o.Name
+	return q.Name
 }
 
 type MeshLoadBalancingStrategyItemSpecType string
@@ -326,53 +326,53 @@ type HashPolicies struct {
 	Type     MeshLoadBalancingStrategyItemSpecType `json:"type"`
 }
 
-func (o *HashPolicies) GetConnection() *Connection {
-	if o == nil {
+func (h *HashPolicies) GetConnection() *Connection {
+	if h == nil {
 		return nil
 	}
-	return o.Connection
+	return h.Connection
 }
 
-func (o *HashPolicies) GetCookie() *Cookie {
-	if o == nil {
+func (h *HashPolicies) GetCookie() *Cookie {
+	if h == nil {
 		return nil
 	}
-	return o.Cookie
+	return h.Cookie
 }
 
-func (o *HashPolicies) GetFilterState() *FilterState {
-	if o == nil {
+func (h *HashPolicies) GetFilterState() *FilterState {
+	if h == nil {
 		return nil
 	}
-	return o.FilterState
+	return h.FilterState
 }
 
-func (o *HashPolicies) GetHeader() *MeshLoadBalancingStrategyItemHeader {
-	if o == nil {
+func (h *HashPolicies) GetHeader() *MeshLoadBalancingStrategyItemHeader {
+	if h == nil {
 		return nil
 	}
-	return o.Header
+	return h.Header
 }
 
-func (o *HashPolicies) GetQueryParameter() *QueryParameter {
-	if o == nil {
+func (h *HashPolicies) GetQueryParameter() *QueryParameter {
+	if h == nil {
 		return nil
 	}
-	return o.QueryParameter
+	return h.QueryParameter
 }
 
-func (o *HashPolicies) GetTerminal() *bool {
-	if o == nil {
+func (h *HashPolicies) GetTerminal() *bool {
+	if h == nil {
 		return nil
 	}
-	return o.Terminal
+	return h.Terminal
 }
 
-func (o *HashPolicies) GetType() MeshLoadBalancingStrategyItemSpecType {
-	if o == nil {
+func (h *HashPolicies) GetType() MeshLoadBalancingStrategyItemSpecType {
+	if h == nil {
 		return MeshLoadBalancingStrategyItemSpecType("")
 	}
-	return o.Type
+	return h.Type
 }
 
 type ActiveRequestBiasType string
@@ -388,8 +388,8 @@ const (
 // value, the more forcefully it reduces the load balancing weight of endpoints that are
 // actively serving requests.
 type ActiveRequestBias struct {
-	Integer *int64  `queryParam:"inline"`
-	Str     *string `queryParam:"inline"`
+	Integer *int64  `queryParam:"inline,name=activeRequestBias"`
+	Str     *string `queryParam:"inline,name=activeRequestBias"`
 
 	Type ActiveRequestBiasType
 }
@@ -415,14 +415,14 @@ func CreateActiveRequestBiasStr(str string) ActiveRequestBias {
 func (u *ActiveRequestBias) UnmarshalJSON(data []byte) error {
 
 	var integer int64 = int64(0)
-	if err := utils.UnmarshalJSON(data, &integer, "", true, true); err == nil {
+	if err := utils.UnmarshalJSON(data, &integer, "", true, nil); err == nil {
 		u.Integer = &integer
 		u.Type = ActiveRequestBiasTypeInteger
 		return nil
 	}
 
 	var str string = ""
-	if err := utils.UnmarshalJSON(data, &str, "", true, true); err == nil {
+	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
 		u.Str = &str
 		u.Type = ActiveRequestBiasTypeStr
 		return nil
@@ -458,18 +458,18 @@ type LeastRequest struct {
 	ChoiceCount *int `json:"choiceCount,omitempty"`
 }
 
-func (o *LeastRequest) GetActiveRequestBias() *ActiveRequestBias {
-	if o == nil {
+func (l *LeastRequest) GetActiveRequestBias() *ActiveRequestBias {
+	if l == nil {
 		return nil
 	}
-	return o.ActiveRequestBias
+	return l.ActiveRequestBias
 }
 
-func (o *LeastRequest) GetChoiceCount() *int {
-	if o == nil {
+func (l *LeastRequest) GetChoiceCount() *int {
+	if l == nil {
 		return nil
 	}
-	return o.ChoiceCount
+	return l.ChoiceCount
 }
 
 type MeshLoadBalancingStrategyItemConnection struct {
@@ -477,11 +477,11 @@ type MeshLoadBalancingStrategyItemConnection struct {
 	SourceIP *bool `json:"sourceIP,omitempty"`
 }
 
-func (o *MeshLoadBalancingStrategyItemConnection) GetSourceIP() *bool {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemConnection) GetSourceIP() *bool {
+	if m == nil {
 		return nil
 	}
-	return o.SourceIP
+	return m.SourceIP
 }
 
 type MeshLoadBalancingStrategyItemCookie struct {
@@ -493,25 +493,25 @@ type MeshLoadBalancingStrategyItemCookie struct {
 	TTL *string `json:"ttl,omitempty"`
 }
 
-func (o *MeshLoadBalancingStrategyItemCookie) GetName() string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemCookie) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshLoadBalancingStrategyItemCookie) GetPath() *string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemCookie) GetPath() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Path
+	return m.Path
 }
 
-func (o *MeshLoadBalancingStrategyItemCookie) GetTTL() *string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemCookie) GetTTL() *string {
+	if m == nil {
 		return nil
 	}
-	return o.TTL
+	return m.TTL
 }
 
 type MeshLoadBalancingStrategyItemFilterState struct {
@@ -521,11 +521,11 @@ type MeshLoadBalancingStrategyItemFilterState struct {
 	Key string `json:"key"`
 }
 
-func (o *MeshLoadBalancingStrategyItemFilterState) GetKey() string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemFilterState) GetKey() string {
+	if m == nil {
 		return ""
 	}
-	return o.Key
+	return m.Key
 }
 
 type MeshLoadBalancingStrategyItemSpecToHeader struct {
@@ -533,11 +533,11 @@ type MeshLoadBalancingStrategyItemSpecToHeader struct {
 	Name string `json:"name"`
 }
 
-func (o *MeshLoadBalancingStrategyItemSpecToHeader) GetName() string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemSpecToHeader) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
 type MeshLoadBalancingStrategyItemQueryParameter struct {
@@ -547,11 +547,11 @@ type MeshLoadBalancingStrategyItemQueryParameter struct {
 	Name string `json:"name"`
 }
 
-func (o *MeshLoadBalancingStrategyItemQueryParameter) GetName() string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemQueryParameter) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
 type MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType string
@@ -606,53 +606,53 @@ type MeshLoadBalancingStrategyItemHashPolicies struct {
 	Type     MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType `json:"type"`
 }
 
-func (o *MeshLoadBalancingStrategyItemHashPolicies) GetConnection() *MeshLoadBalancingStrategyItemConnection {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemHashPolicies) GetConnection() *MeshLoadBalancingStrategyItemConnection {
+	if m == nil {
 		return nil
 	}
-	return o.Connection
+	return m.Connection
 }
 
-func (o *MeshLoadBalancingStrategyItemHashPolicies) GetCookie() *MeshLoadBalancingStrategyItemCookie {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemHashPolicies) GetCookie() *MeshLoadBalancingStrategyItemCookie {
+	if m == nil {
 		return nil
 	}
-	return o.Cookie
+	return m.Cookie
 }
 
-func (o *MeshLoadBalancingStrategyItemHashPolicies) GetFilterState() *MeshLoadBalancingStrategyItemFilterState {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemHashPolicies) GetFilterState() *MeshLoadBalancingStrategyItemFilterState {
+	if m == nil {
 		return nil
 	}
-	return o.FilterState
+	return m.FilterState
 }
 
-func (o *MeshLoadBalancingStrategyItemHashPolicies) GetHeader() *MeshLoadBalancingStrategyItemSpecToHeader {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemHashPolicies) GetHeader() *MeshLoadBalancingStrategyItemSpecToHeader {
+	if m == nil {
 		return nil
 	}
-	return o.Header
+	return m.Header
 }
 
-func (o *MeshLoadBalancingStrategyItemHashPolicies) GetQueryParameter() *MeshLoadBalancingStrategyItemQueryParameter {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemHashPolicies) GetQueryParameter() *MeshLoadBalancingStrategyItemQueryParameter {
+	if m == nil {
 		return nil
 	}
-	return o.QueryParameter
+	return m.QueryParameter
 }
 
-func (o *MeshLoadBalancingStrategyItemHashPolicies) GetTerminal() *bool {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemHashPolicies) GetTerminal() *bool {
+	if m == nil {
 		return nil
 	}
-	return o.Terminal
+	return m.Terminal
 }
 
-func (o *MeshLoadBalancingStrategyItemHashPolicies) GetType() MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemHashPolicies) GetType() MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType {
+	if m == nil {
 		return MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType("")
 	}
-	return o.Type
+	return m.Type
 }
 
 // Maglev implements consistent hashing to upstream hosts. Maglev can be used as
@@ -673,18 +673,18 @@ type Maglev struct {
 	TableSize *int `json:"tableSize,omitempty"`
 }
 
-func (o *Maglev) GetHashPolicies() []MeshLoadBalancingStrategyItemHashPolicies {
-	if o == nil {
+func (m *Maglev) GetHashPolicies() []MeshLoadBalancingStrategyItemHashPolicies {
+	if m == nil {
 		return nil
 	}
-	return o.HashPolicies
+	return m.HashPolicies
 }
 
-func (o *Maglev) GetTableSize() *int {
-	if o == nil {
+func (m *Maglev) GetTableSize() *int {
+	if m == nil {
 		return nil
 	}
-	return o.TableSize
+	return m.TableSize
 }
 
 // MeshLoadBalancingStrategyItemRandom - Random selects a random available host. The random load balancer generally
@@ -726,11 +726,11 @@ type MeshLoadBalancingStrategyItemSpecConnection struct {
 	SourceIP *bool `json:"sourceIP,omitempty"`
 }
 
-func (o *MeshLoadBalancingStrategyItemSpecConnection) GetSourceIP() *bool {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemSpecConnection) GetSourceIP() *bool {
+	if m == nil {
 		return nil
 	}
-	return o.SourceIP
+	return m.SourceIP
 }
 
 type MeshLoadBalancingStrategyItemSpecCookie struct {
@@ -742,25 +742,25 @@ type MeshLoadBalancingStrategyItemSpecCookie struct {
 	TTL *string `json:"ttl,omitempty"`
 }
 
-func (o *MeshLoadBalancingStrategyItemSpecCookie) GetName() string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemSpecCookie) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshLoadBalancingStrategyItemSpecCookie) GetPath() *string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemSpecCookie) GetPath() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Path
+	return m.Path
 }
 
-func (o *MeshLoadBalancingStrategyItemSpecCookie) GetTTL() *string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemSpecCookie) GetTTL() *string {
+	if m == nil {
 		return nil
 	}
-	return o.TTL
+	return m.TTL
 }
 
 type MeshLoadBalancingStrategyItemSpecFilterState struct {
@@ -770,11 +770,11 @@ type MeshLoadBalancingStrategyItemSpecFilterState struct {
 	Key string `json:"key"`
 }
 
-func (o *MeshLoadBalancingStrategyItemSpecFilterState) GetKey() string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemSpecFilterState) GetKey() string {
+	if m == nil {
 		return ""
 	}
-	return o.Key
+	return m.Key
 }
 
 type MeshLoadBalancingStrategyItemSpecHeader struct {
@@ -782,11 +782,11 @@ type MeshLoadBalancingStrategyItemSpecHeader struct {
 	Name string `json:"name"`
 }
 
-func (o *MeshLoadBalancingStrategyItemSpecHeader) GetName() string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemSpecHeader) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
 type MeshLoadBalancingStrategyItemSpecQueryParameter struct {
@@ -796,11 +796,11 @@ type MeshLoadBalancingStrategyItemSpecQueryParameter struct {
 	Name string `json:"name"`
 }
 
-func (o *MeshLoadBalancingStrategyItemSpecQueryParameter) GetName() string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemSpecQueryParameter) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
 type MeshLoadBalancingStrategyItemSpecToDefaultType string
@@ -855,53 +855,53 @@ type MeshLoadBalancingStrategyItemSpecHashPolicies struct {
 	Type     MeshLoadBalancingStrategyItemSpecToDefaultType `json:"type"`
 }
 
-func (o *MeshLoadBalancingStrategyItemSpecHashPolicies) GetConnection() *MeshLoadBalancingStrategyItemSpecConnection {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemSpecHashPolicies) GetConnection() *MeshLoadBalancingStrategyItemSpecConnection {
+	if m == nil {
 		return nil
 	}
-	return o.Connection
+	return m.Connection
 }
 
-func (o *MeshLoadBalancingStrategyItemSpecHashPolicies) GetCookie() *MeshLoadBalancingStrategyItemSpecCookie {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemSpecHashPolicies) GetCookie() *MeshLoadBalancingStrategyItemSpecCookie {
+	if m == nil {
 		return nil
 	}
-	return o.Cookie
+	return m.Cookie
 }
 
-func (o *MeshLoadBalancingStrategyItemSpecHashPolicies) GetFilterState() *MeshLoadBalancingStrategyItemSpecFilterState {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemSpecHashPolicies) GetFilterState() *MeshLoadBalancingStrategyItemSpecFilterState {
+	if m == nil {
 		return nil
 	}
-	return o.FilterState
+	return m.FilterState
 }
 
-func (o *MeshLoadBalancingStrategyItemSpecHashPolicies) GetHeader() *MeshLoadBalancingStrategyItemSpecHeader {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemSpecHashPolicies) GetHeader() *MeshLoadBalancingStrategyItemSpecHeader {
+	if m == nil {
 		return nil
 	}
-	return o.Header
+	return m.Header
 }
 
-func (o *MeshLoadBalancingStrategyItemSpecHashPolicies) GetQueryParameter() *MeshLoadBalancingStrategyItemSpecQueryParameter {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemSpecHashPolicies) GetQueryParameter() *MeshLoadBalancingStrategyItemSpecQueryParameter {
+	if m == nil {
 		return nil
 	}
-	return o.QueryParameter
+	return m.QueryParameter
 }
 
-func (o *MeshLoadBalancingStrategyItemSpecHashPolicies) GetTerminal() *bool {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemSpecHashPolicies) GetTerminal() *bool {
+	if m == nil {
 		return nil
 	}
-	return o.Terminal
+	return m.Terminal
 }
 
-func (o *MeshLoadBalancingStrategyItemSpecHashPolicies) GetType() MeshLoadBalancingStrategyItemSpecToDefaultType {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemSpecHashPolicies) GetType() MeshLoadBalancingStrategyItemSpecToDefaultType {
+	if m == nil {
 		return MeshLoadBalancingStrategyItemSpecToDefaultType("")
 	}
-	return o.Type
+	return m.Type
 }
 
 // RingHash  implements consistent hashing to upstream hosts. Each host is mapped
@@ -926,32 +926,32 @@ type RingHash struct {
 	MinRingSize *int `json:"minRingSize,omitempty"`
 }
 
-func (o *RingHash) GetHashFunction() *HashFunction {
-	if o == nil {
+func (r *RingHash) GetHashFunction() *HashFunction {
+	if r == nil {
 		return nil
 	}
-	return o.HashFunction
+	return r.HashFunction
 }
 
-func (o *RingHash) GetHashPolicies() []MeshLoadBalancingStrategyItemSpecHashPolicies {
-	if o == nil {
+func (r *RingHash) GetHashPolicies() []MeshLoadBalancingStrategyItemSpecHashPolicies {
+	if r == nil {
 		return nil
 	}
-	return o.HashPolicies
+	return r.HashPolicies
 }
 
-func (o *RingHash) GetMaxRingSize() *int {
-	if o == nil {
+func (r *RingHash) GetMaxRingSize() *int {
+	if r == nil {
 		return nil
 	}
-	return o.MaxRingSize
+	return r.MaxRingSize
 }
 
-func (o *RingHash) GetMinRingSize() *int {
-	if o == nil {
+func (r *RingHash) GetMinRingSize() *int {
+	if r == nil {
 		return nil
 	}
-	return o.MinRingSize
+	return r.MinRingSize
 }
 
 // RoundRobin is a load balancing algorithm that distributes requests
@@ -1018,46 +1018,46 @@ type LoadBalancer struct {
 	Type       MeshLoadBalancingStrategyItemSpecToType `json:"type"`
 }
 
-func (o *LoadBalancer) GetLeastRequest() *LeastRequest {
-	if o == nil {
+func (l *LoadBalancer) GetLeastRequest() *LeastRequest {
+	if l == nil {
 		return nil
 	}
-	return o.LeastRequest
+	return l.LeastRequest
 }
 
-func (o *LoadBalancer) GetMaglev() *Maglev {
-	if o == nil {
+func (l *LoadBalancer) GetMaglev() *Maglev {
+	if l == nil {
 		return nil
 	}
-	return o.Maglev
+	return l.Maglev
 }
 
-func (o *LoadBalancer) GetRandom() *MeshLoadBalancingStrategyItemRandom {
-	if o == nil {
+func (l *LoadBalancer) GetRandom() *MeshLoadBalancingStrategyItemRandom {
+	if l == nil {
 		return nil
 	}
-	return o.Random
+	return l.Random
 }
 
-func (o *LoadBalancer) GetRingHash() *RingHash {
-	if o == nil {
+func (l *LoadBalancer) GetRingHash() *RingHash {
+	if l == nil {
 		return nil
 	}
-	return o.RingHash
+	return l.RingHash
 }
 
-func (o *LoadBalancer) GetRoundRobin() *RoundRobin {
-	if o == nil {
+func (l *LoadBalancer) GetRoundRobin() *RoundRobin {
+	if l == nil {
 		return nil
 	}
-	return o.RoundRobin
+	return l.RoundRobin
 }
 
-func (o *LoadBalancer) GetType() MeshLoadBalancingStrategyItemSpecToType {
-	if o == nil {
+func (l *LoadBalancer) GetType() MeshLoadBalancingStrategyItemSpecToType {
+	if l == nil {
 		return MeshLoadBalancingStrategyItemSpecToType("")
 	}
-	return o.Type
+	return l.Type
 }
 
 // MeshLoadBalancingStrategyItemFrom - From defines the list of zones to which the rule applies
@@ -1065,11 +1065,11 @@ type MeshLoadBalancingStrategyItemFrom struct {
 	Zones []string `json:"zones"`
 }
 
-func (o *MeshLoadBalancingStrategyItemFrom) GetZones() []string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemFrom) GetZones() []string {
+	if m == nil {
 		return []string{}
 	}
-	return o.Zones
+	return m.Zones
 }
 
 // MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessType - Type defines how target zones will be picked from available zones
@@ -1112,18 +1112,18 @@ type MeshLoadBalancingStrategyItemSpecTo struct {
 	Zones []string                                                        `json:"zones,omitempty"`
 }
 
-func (o *MeshLoadBalancingStrategyItemSpecTo) GetType() MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessType {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemSpecTo) GetType() MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessType {
+	if m == nil {
 		return MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshLoadBalancingStrategyItemSpecTo) GetZones() []string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemSpecTo) GetZones() []string {
+	if m == nil {
 		return nil
 	}
-	return o.Zones
+	return m.Zones
 }
 
 type Failover struct {
@@ -1133,18 +1133,18 @@ type Failover struct {
 	To MeshLoadBalancingStrategyItemSpecTo `json:"to"`
 }
 
-func (o *Failover) GetFrom() *MeshLoadBalancingStrategyItemFrom {
-	if o == nil {
+func (f *Failover) GetFrom() *MeshLoadBalancingStrategyItemFrom {
+	if f == nil {
 		return nil
 	}
-	return o.From
+	return f.From
 }
 
-func (o *Failover) GetTo() MeshLoadBalancingStrategyItemSpecTo {
-	if o == nil {
+func (f *Failover) GetTo() MeshLoadBalancingStrategyItemSpecTo {
+	if f == nil {
 		return MeshLoadBalancingStrategyItemSpecTo{}
 	}
-	return o.To
+	return f.To
 }
 
 type MeshLoadBalancingStrategyItemPercentageType string
@@ -1155,8 +1155,8 @@ const (
 )
 
 type MeshLoadBalancingStrategyItemPercentage struct {
-	Integer *int64  `queryParam:"inline"`
-	Str     *string `queryParam:"inline"`
+	Integer *int64  `queryParam:"inline,name=percentage"`
+	Str     *string `queryParam:"inline,name=percentage"`
 
 	Type MeshLoadBalancingStrategyItemPercentageType
 }
@@ -1182,14 +1182,14 @@ func CreateMeshLoadBalancingStrategyItemPercentageStr(str string) MeshLoadBalanc
 func (u *MeshLoadBalancingStrategyItemPercentage) UnmarshalJSON(data []byte) error {
 
 	var integer int64 = int64(0)
-	if err := utils.UnmarshalJSON(data, &integer, "", true, true); err == nil {
+	if err := utils.UnmarshalJSON(data, &integer, "", true, nil); err == nil {
 		u.Integer = &integer
 		u.Type = MeshLoadBalancingStrategyItemPercentageTypeInteger
 		return nil
 	}
 
 	var str string = ""
-	if err := utils.UnmarshalJSON(data, &str, "", true, true); err == nil {
+	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
 		u.Str = &str
 		u.Type = MeshLoadBalancingStrategyItemPercentageTypeStr
 		return nil
@@ -1219,11 +1219,11 @@ type FailoverThreshold struct {
 	Percentage MeshLoadBalancingStrategyItemPercentage `json:"percentage"`
 }
 
-func (o *FailoverThreshold) GetPercentage() MeshLoadBalancingStrategyItemPercentage {
-	if o == nil {
+func (f *FailoverThreshold) GetPercentage() MeshLoadBalancingStrategyItemPercentage {
+	if f == nil {
 		return MeshLoadBalancingStrategyItemPercentage{}
 	}
-	return o.Percentage
+	return f.Percentage
 }
 
 // CrossZone defines locality aware load balancing priorities when dataplane proxies inside local zone
@@ -1239,18 +1239,18 @@ type CrossZone struct {
 	FailoverThreshold *FailoverThreshold `json:"failoverThreshold,omitempty"`
 }
 
-func (o *CrossZone) GetFailover() []Failover {
-	if o == nil {
+func (c *CrossZone) GetFailover() []Failover {
+	if c == nil {
 		return nil
 	}
-	return o.Failover
+	return c.Failover
 }
 
-func (o *CrossZone) GetFailoverThreshold() *FailoverThreshold {
-	if o == nil {
+func (c *CrossZone) GetFailoverThreshold() *FailoverThreshold {
+	if c == nil {
 		return nil
 	}
-	return o.FailoverThreshold
+	return c.FailoverThreshold
 }
 
 type AffinityTags struct {
@@ -1265,18 +1265,18 @@ type AffinityTags struct {
 	Weight *int `json:"weight,omitempty"`
 }
 
-func (o *AffinityTags) GetKey() string {
-	if o == nil {
+func (a *AffinityTags) GetKey() string {
+	if a == nil {
 		return ""
 	}
-	return o.Key
+	return a.Key
 }
 
-func (o *AffinityTags) GetWeight() *int {
-	if o == nil {
+func (a *AffinityTags) GetWeight() *int {
+	if a == nil {
 		return nil
 	}
-	return o.Weight
+	return a.Weight
 }
 
 // LocalZone defines locality aware load balancing priorities between dataplane proxies inside a zone
@@ -1285,11 +1285,11 @@ type LocalZone struct {
 	AffinityTags []AffinityTags `json:"affinityTags,omitempty"`
 }
 
-func (o *LocalZone) GetAffinityTags() []AffinityTags {
-	if o == nil {
+func (l *LocalZone) GetAffinityTags() []AffinityTags {
+	if l == nil {
 		return nil
 	}
-	return o.AffinityTags
+	return l.AffinityTags
 }
 
 // LocalityAwareness contains configuration for locality aware load balancing.
@@ -1304,25 +1304,25 @@ type LocalityAwareness struct {
 	LocalZone *LocalZone `json:"localZone,omitempty"`
 }
 
-func (o *LocalityAwareness) GetCrossZone() *CrossZone {
-	if o == nil {
+func (l *LocalityAwareness) GetCrossZone() *CrossZone {
+	if l == nil {
 		return nil
 	}
-	return o.CrossZone
+	return l.CrossZone
 }
 
-func (o *LocalityAwareness) GetDisabled() *bool {
-	if o == nil {
+func (l *LocalityAwareness) GetDisabled() *bool {
+	if l == nil {
 		return nil
 	}
-	return o.Disabled
+	return l.Disabled
 }
 
-func (o *LocalityAwareness) GetLocalZone() *LocalZone {
-	if o == nil {
+func (l *LocalityAwareness) GetLocalZone() *LocalZone {
+	if l == nil {
 		return nil
 	}
-	return o.LocalZone
+	return l.LocalZone
 }
 
 // MeshLoadBalancingStrategyItemDefault - Default is a configuration specific to the group of destinations referenced in
@@ -1339,25 +1339,25 @@ type MeshLoadBalancingStrategyItemDefault struct {
 	LocalityAwareness *LocalityAwareness `json:"localityAwareness,omitempty"`
 }
 
-func (o *MeshLoadBalancingStrategyItemDefault) GetHashPolicies() []HashPolicies {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemDefault) GetHashPolicies() []HashPolicies {
+	if m == nil {
 		return nil
 	}
-	return o.HashPolicies
+	return m.HashPolicies
 }
 
-func (o *MeshLoadBalancingStrategyItemDefault) GetLoadBalancer() *LoadBalancer {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemDefault) GetLoadBalancer() *LoadBalancer {
+	if m == nil {
 		return nil
 	}
-	return o.LoadBalancer
+	return m.LoadBalancer
 }
 
-func (o *MeshLoadBalancingStrategyItemDefault) GetLocalityAwareness() *LocalityAwareness {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemDefault) GetLocalityAwareness() *LocalityAwareness {
+	if m == nil {
 		return nil
 	}
-	return o.LocalityAwareness
+	return m.LocalityAwareness
 }
 
 // MeshLoadBalancingStrategyItemSpecKind - Kind of the referenced resource
@@ -1461,60 +1461,60 @@ type MeshLoadBalancingStrategyItemSpecTargetRef struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (o *MeshLoadBalancingStrategyItemSpecTargetRef) GetKind() MeshLoadBalancingStrategyItemSpecKind {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemSpecTargetRef) GetKind() MeshLoadBalancingStrategyItemSpecKind {
+	if m == nil {
 		return MeshLoadBalancingStrategyItemSpecKind("")
 	}
-	return o.Kind
+	return m.Kind
 }
 
-func (o *MeshLoadBalancingStrategyItemSpecTargetRef) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemSpecTargetRef) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshLoadBalancingStrategyItemSpecTargetRef) GetMesh() *string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemSpecTargetRef) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshLoadBalancingStrategyItemSpecTargetRef) GetName() *string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemSpecTargetRef) GetName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshLoadBalancingStrategyItemSpecTargetRef) GetNamespace() *string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemSpecTargetRef) GetNamespace() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Namespace
+	return m.Namespace
 }
 
-func (o *MeshLoadBalancingStrategyItemSpecTargetRef) GetProxyTypes() []MeshLoadBalancingStrategyItemSpecProxyTypes {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemSpecTargetRef) GetProxyTypes() []MeshLoadBalancingStrategyItemSpecProxyTypes {
+	if m == nil {
 		return nil
 	}
-	return o.ProxyTypes
+	return m.ProxyTypes
 }
 
-func (o *MeshLoadBalancingStrategyItemSpecTargetRef) GetSectionName() *string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemSpecTargetRef) GetSectionName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.SectionName
+	return m.SectionName
 }
 
-func (o *MeshLoadBalancingStrategyItemSpecTargetRef) GetTags() map[string]string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemSpecTargetRef) GetTags() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Tags
+	return m.Tags
 }
 
 type MeshLoadBalancingStrategyItemTo struct {
@@ -1526,18 +1526,18 @@ type MeshLoadBalancingStrategyItemTo struct {
 	TargetRef MeshLoadBalancingStrategyItemSpecTargetRef `json:"targetRef"`
 }
 
-func (o *MeshLoadBalancingStrategyItemTo) GetDefault() *MeshLoadBalancingStrategyItemDefault {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemTo) GetDefault() *MeshLoadBalancingStrategyItemDefault {
+	if m == nil {
 		return nil
 	}
-	return o.Default
+	return m.Default
 }
 
-func (o *MeshLoadBalancingStrategyItemTo) GetTargetRef() MeshLoadBalancingStrategyItemSpecTargetRef {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemTo) GetTargetRef() MeshLoadBalancingStrategyItemSpecTargetRef {
+	if m == nil {
 		return MeshLoadBalancingStrategyItemSpecTargetRef{}
 	}
-	return o.TargetRef
+	return m.TargetRef
 }
 
 // MeshLoadBalancingStrategyItemSpec - Spec is the specification of the Kuma MeshLoadBalancingStrategy resource.
@@ -1550,18 +1550,18 @@ type MeshLoadBalancingStrategyItemSpec struct {
 	To []MeshLoadBalancingStrategyItemTo `json:"to,omitempty"`
 }
 
-func (o *MeshLoadBalancingStrategyItemSpec) GetTargetRef() *MeshLoadBalancingStrategyItemTargetRef {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemSpec) GetTargetRef() *MeshLoadBalancingStrategyItemTargetRef {
+	if m == nil {
 		return nil
 	}
-	return o.TargetRef
+	return m.TargetRef
 }
 
-func (o *MeshLoadBalancingStrategyItemSpec) GetTo() []MeshLoadBalancingStrategyItemTo {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemSpec) GetTo() []MeshLoadBalancingStrategyItemTo {
+	if m == nil {
 		return nil
 	}
-	return o.To
+	return m.To
 }
 
 // MeshLoadBalancingStrategyItem - Successful response
@@ -1587,59 +1587,59 @@ func (m MeshLoadBalancingStrategyItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshLoadBalancingStrategyItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshLoadBalancingStrategyItem) GetType() MeshLoadBalancingStrategyItemType {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItem) GetType() MeshLoadBalancingStrategyItemType {
+	if m == nil {
 		return MeshLoadBalancingStrategyItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshLoadBalancingStrategyItem) GetMesh() *string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItem) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshLoadBalancingStrategyItem) GetName() string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItem) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshLoadBalancingStrategyItem) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItem) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshLoadBalancingStrategyItem) GetSpec() MeshLoadBalancingStrategyItemSpec {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItem) GetSpec() MeshLoadBalancingStrategyItemSpec {
+	if m == nil {
 		return MeshLoadBalancingStrategyItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }
 
-func (o *MeshLoadBalancingStrategyItem) GetCreationTime() *time.Time {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItem) GetCreationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.CreationTime
+	return m.CreationTime
 }
 
-func (o *MeshLoadBalancingStrategyItem) GetModificationTime() *time.Time {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItem) GetModificationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.ModificationTime
+	return m.ModificationTime
 }
 
 type MeshLoadBalancingStrategyItemInput struct {
@@ -1660,43 +1660,43 @@ func (m MeshLoadBalancingStrategyItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshLoadBalancingStrategyItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshLoadBalancingStrategyItemInput) GetType() MeshLoadBalancingStrategyItemType {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemInput) GetType() MeshLoadBalancingStrategyItemType {
+	if m == nil {
 		return MeshLoadBalancingStrategyItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshLoadBalancingStrategyItemInput) GetMesh() *string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemInput) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshLoadBalancingStrategyItemInput) GetName() string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemInput) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshLoadBalancingStrategyItemInput) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemInput) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshLoadBalancingStrategyItemInput) GetSpec() MeshLoadBalancingStrategyItemSpec {
-	if o == nil {
+func (m *MeshLoadBalancingStrategyItemInput) GetSpec() MeshLoadBalancingStrategyItemSpec {
+	if m == nil {
 		return MeshLoadBalancingStrategyItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }

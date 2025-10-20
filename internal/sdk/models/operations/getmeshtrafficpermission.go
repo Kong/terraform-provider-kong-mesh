@@ -14,18 +14,18 @@ type GetMeshTrafficPermissionRequest struct {
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 }
 
-func (o *GetMeshTrafficPermissionRequest) GetMesh() string {
-	if o == nil {
+func (g *GetMeshTrafficPermissionRequest) GetMesh() string {
+	if g == nil {
 		return ""
 	}
-	return o.Mesh
+	return g.Mesh
 }
 
-func (o *GetMeshTrafficPermissionRequest) GetName() string {
-	if o == nil {
+func (g *GetMeshTrafficPermissionRequest) GetName() string {
+	if g == nil {
 		return ""
 	}
-	return o.Name
+	return g.Name
 }
 
 type GetMeshTrafficPermissionResponse struct {
@@ -41,37 +41,37 @@ type GetMeshTrafficPermissionResponse struct {
 	NotFoundError *shared.NotFoundError
 }
 
-func (o *GetMeshTrafficPermissionResponse) GetContentType() string {
-	if o == nil {
+func (g *GetMeshTrafficPermissionResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetMeshTrafficPermissionResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetMeshTrafficPermissionResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetMeshTrafficPermissionResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetMeshTrafficPermissionResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetMeshTrafficPermissionResponse) GetMeshTrafficPermissionItem() *shared.MeshTrafficPermissionItem {
-	if o == nil {
+func (g *GetMeshTrafficPermissionResponse) GetMeshTrafficPermissionItem() *shared.MeshTrafficPermissionItem {
+	if g == nil {
 		return nil
 	}
-	return o.MeshTrafficPermissionItem
+	return g.MeshTrafficPermissionItem
 }
 
-func (o *GetMeshTrafficPermissionResponse) GetNotFoundError() *shared.NotFoundError {
-	if o == nil {
+func (g *GetMeshTrafficPermissionResponse) GetNotFoundError() *shared.NotFoundError {
+	if g == nil {
 		return nil
 	}
-	return o.NotFoundError
+	return g.NotFoundError
 }

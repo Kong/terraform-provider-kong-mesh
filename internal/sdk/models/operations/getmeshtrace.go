@@ -14,18 +14,18 @@ type GetMeshTraceRequest struct {
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 }
 
-func (o *GetMeshTraceRequest) GetMesh() string {
-	if o == nil {
+func (g *GetMeshTraceRequest) GetMesh() string {
+	if g == nil {
 		return ""
 	}
-	return o.Mesh
+	return g.Mesh
 }
 
-func (o *GetMeshTraceRequest) GetName() string {
-	if o == nil {
+func (g *GetMeshTraceRequest) GetName() string {
+	if g == nil {
 		return ""
 	}
-	return o.Name
+	return g.Name
 }
 
 type GetMeshTraceResponse struct {
@@ -41,37 +41,37 @@ type GetMeshTraceResponse struct {
 	NotFoundError *shared.NotFoundError
 }
 
-func (o *GetMeshTraceResponse) GetContentType() string {
-	if o == nil {
+func (g *GetMeshTraceResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetMeshTraceResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetMeshTraceResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetMeshTraceResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetMeshTraceResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetMeshTraceResponse) GetMeshTraceItem() *shared.MeshTraceItem {
-	if o == nil {
+func (g *GetMeshTraceResponse) GetMeshTraceItem() *shared.MeshTraceItem {
+	if g == nil {
 		return nil
 	}
-	return o.MeshTraceItem
+	return g.MeshTraceItem
 }
 
-func (o *GetMeshTraceResponse) GetNotFoundError() *shared.NotFoundError {
-	if o == nil {
+func (g *GetMeshTraceResponse) GetNotFoundError() *shared.NotFoundError {
+	if g == nil {
 		return nil
 	}
-	return o.NotFoundError
+	return g.NotFoundError
 }

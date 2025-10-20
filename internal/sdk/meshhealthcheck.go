@@ -62,7 +62,7 @@ func (s *MeshHealthCheck) GetMeshHealthCheck(ctx context.Context, request operat
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getMeshHealthCheck",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -292,7 +292,7 @@ func (s *MeshHealthCheck) PutMeshHealthCheck(ctx context.Context, request operat
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "putMeshHealthCheck",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "MeshHealthCheckItem", "json", `request:"mediaType=application/json"`)
@@ -506,7 +506,7 @@ func (s *MeshHealthCheck) DeleteMeshHealthCheck(ctx context.Context, request ope
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "deleteMeshHealthCheck",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -736,7 +736,7 @@ func (s *MeshHealthCheck) GetMeshHealthCheckList(ctx context.Context, request op
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getMeshHealthCheckList",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 

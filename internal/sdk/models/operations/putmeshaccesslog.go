@@ -16,25 +16,25 @@ type PutMeshAccessLogRequest struct {
 	MeshAccessLogItem shared.MeshAccessLogItemInput `request:"mediaType=application/json"`
 }
 
-func (o *PutMeshAccessLogRequest) GetMesh() string {
-	if o == nil {
+func (p *PutMeshAccessLogRequest) GetMesh() string {
+	if p == nil {
 		return ""
 	}
-	return o.Mesh
+	return p.Mesh
 }
 
-func (o *PutMeshAccessLogRequest) GetName() string {
-	if o == nil {
+func (p *PutMeshAccessLogRequest) GetName() string {
+	if p == nil {
 		return ""
 	}
-	return o.Name
+	return p.Name
 }
 
-func (o *PutMeshAccessLogRequest) GetMeshAccessLogItem() shared.MeshAccessLogItemInput {
-	if o == nil {
+func (p *PutMeshAccessLogRequest) GetMeshAccessLogItem() shared.MeshAccessLogItemInput {
+	if p == nil {
 		return shared.MeshAccessLogItemInput{}
 	}
-	return o.MeshAccessLogItem
+	return p.MeshAccessLogItem
 }
 
 type PutMeshAccessLogResponse struct {
@@ -48,30 +48,30 @@ type PutMeshAccessLogResponse struct {
 	MeshAccessLogCreateOrUpdateSuccessResponse *shared.MeshAccessLogCreateOrUpdateSuccessResponse
 }
 
-func (o *PutMeshAccessLogResponse) GetContentType() string {
-	if o == nil {
+func (p *PutMeshAccessLogResponse) GetContentType() string {
+	if p == nil {
 		return ""
 	}
-	return o.ContentType
+	return p.ContentType
 }
 
-func (o *PutMeshAccessLogResponse) GetStatusCode() int {
-	if o == nil {
+func (p *PutMeshAccessLogResponse) GetStatusCode() int {
+	if p == nil {
 		return 0
 	}
-	return o.StatusCode
+	return p.StatusCode
 }
 
-func (o *PutMeshAccessLogResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *PutMeshAccessLogResponse) GetRawResponse() *http.Response {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.RawResponse
 }
 
-func (o *PutMeshAccessLogResponse) GetMeshAccessLogCreateOrUpdateSuccessResponse() *shared.MeshAccessLogCreateOrUpdateSuccessResponse {
-	if o == nil {
+func (p *PutMeshAccessLogResponse) GetMeshAccessLogCreateOrUpdateSuccessResponse() *shared.MeshAccessLogCreateOrUpdateSuccessResponse {
+	if p == nil {
 		return nil
 	}
-	return o.MeshAccessLogCreateOrUpdateSuccessResponse
+	return p.MeshAccessLogCreateOrUpdateSuccessResponse
 }

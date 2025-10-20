@@ -36,6 +36,7 @@ func NewMeshResource() resource.Resource {
 
 // MeshResource defines the resource implementation.
 type MeshResource struct {
+	// Provider configured SDK client.
 	client *sdk.KongMesh
 }
 
@@ -731,6 +732,7 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 													Optional:    true,
 													Default:     listdefault.StaticValue(types.ListValueMust(types.StringType, []attr.Value{})),
 													ElementType: types.StringType,
+													Description: `Default: []`,
 												},
 												"issuer_ref": schema.SingleNestedAttribute{
 													Optional: true,
@@ -1462,7 +1464,8 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				ElementType: types.StringType,
 				MarkdownDescription: `List of policies to skip creating by default when the mesh is created.` + "\n" +
 					`e.g. TrafficPermission, MeshRetry, etc. An '*' can be used to skip all` + "\n" +
-					`policies.`,
+					`policies.` + "\n" +
+					`Default: []`,
 			},
 			"tracing": schema.SingleNestedAttribute{
 				Optional: true,

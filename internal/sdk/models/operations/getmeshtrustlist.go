@@ -14,18 +14,18 @@ type GetMeshTrustListQueryParamFilter struct {
 	Value *string `queryParam:"name=value"`
 }
 
-func (o *GetMeshTrustListQueryParamFilter) GetKey() *string {
-	if o == nil {
+func (g *GetMeshTrustListQueryParamFilter) GetKey() *string {
+	if g == nil {
 		return nil
 	}
-	return o.Key
+	return g.Key
 }
 
-func (o *GetMeshTrustListQueryParamFilter) GetValue() *string {
-	if o == nil {
+func (g *GetMeshTrustListQueryParamFilter) GetValue() *string {
+	if g == nil {
 		return nil
 	}
-	return o.Value
+	return g.Value
 }
 
 type GetMeshTrustListRequest struct {
@@ -44,38 +44,38 @@ func (g GetMeshTrustListRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetMeshTrustListRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &g, "", false, []string{"mesh"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *GetMeshTrustListRequest) GetOffset() *int64 {
-	if o == nil {
+func (g *GetMeshTrustListRequest) GetOffset() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Offset
+	return g.Offset
 }
 
-func (o *GetMeshTrustListRequest) GetSize() *int64 {
-	if o == nil {
+func (g *GetMeshTrustListRequest) GetSize() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Size
+	return g.Size
 }
 
-func (o *GetMeshTrustListRequest) GetFilter() *GetMeshTrustListQueryParamFilter {
-	if o == nil {
+func (g *GetMeshTrustListRequest) GetFilter() *GetMeshTrustListQueryParamFilter {
+	if g == nil {
 		return nil
 	}
-	return o.Filter
+	return g.Filter
 }
 
-func (o *GetMeshTrustListRequest) GetMesh() string {
-	if o == nil {
+func (g *GetMeshTrustListRequest) GetMesh() string {
+	if g == nil {
 		return ""
 	}
-	return o.Mesh
+	return g.Mesh
 }
 
 type GetMeshTrustListResponse struct {
@@ -89,30 +89,30 @@ type GetMeshTrustListResponse struct {
 	MeshTrustList *shared.MeshTrustList
 }
 
-func (o *GetMeshTrustListResponse) GetContentType() string {
-	if o == nil {
+func (g *GetMeshTrustListResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetMeshTrustListResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetMeshTrustListResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetMeshTrustListResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetMeshTrustListResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetMeshTrustListResponse) GetMeshTrustList() *shared.MeshTrustList {
-	if o == nil {
+func (g *GetMeshTrustListResponse) GetMeshTrustList() *shared.MeshTrustList {
+	if g == nil {
 		return nil
 	}
-	return o.MeshTrustList
+	return g.MeshTrustList
 }

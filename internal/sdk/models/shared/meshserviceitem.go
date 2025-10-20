@@ -65,18 +65,18 @@ type Identities struct {
 	Value string                  `json:"value"`
 }
 
-func (o *Identities) GetType() MeshServiceItemSpecType {
-	if o == nil {
+func (i *Identities) GetType() MeshServiceItemSpecType {
+	if i == nil {
 		return MeshServiceItemSpecType("")
 	}
-	return o.Type
+	return i.Type
 }
 
-func (o *Identities) GetValue() string {
-	if o == nil {
+func (i *Identities) GetValue() string {
+	if i == nil {
 		return ""
 	}
-	return o.Value
+	return i.Value
 }
 
 type TargetPortType string
@@ -87,8 +87,8 @@ const (
 )
 
 type TargetPort struct {
-	Integer *int64  `queryParam:"inline"`
-	Str     *string `queryParam:"inline"`
+	Integer *int64  `queryParam:"inline,name=targetPort"`
+	Str     *string `queryParam:"inline,name=targetPort"`
 
 	Type TargetPortType
 }
@@ -114,14 +114,14 @@ func CreateTargetPortStr(str string) TargetPort {
 func (u *TargetPort) UnmarshalJSON(data []byte) error {
 
 	var integer int64 = int64(0)
-	if err := utils.UnmarshalJSON(data, &integer, "", true, true); err == nil {
+	if err := utils.UnmarshalJSON(data, &integer, "", true, nil); err == nil {
 		u.Integer = &integer
 		u.Type = TargetPortTypeInteger
 		return nil
 	}
 
 	var str string = ""
-	if err := utils.UnmarshalJSON(data, &str, "", true, true); err == nil {
+	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
 		u.Str = &str
 		u.Type = TargetPortTypeStr
 		return nil
@@ -155,49 +155,49 @@ func (m MeshServiceItemPorts) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshServiceItemPorts) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"port"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshServiceItemPorts) GetAppProtocol() *string {
-	if o == nil {
+func (m *MeshServiceItemPorts) GetAppProtocol() *string {
+	if m == nil {
 		return nil
 	}
-	return o.AppProtocol
+	return m.AppProtocol
 }
 
-func (o *MeshServiceItemPorts) GetName() *string {
-	if o == nil {
+func (m *MeshServiceItemPorts) GetName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshServiceItemPorts) GetPort() int {
-	if o == nil {
+func (m *MeshServiceItemPorts) GetPort() int {
+	if m == nil {
 		return 0
 	}
-	return o.Port
+	return m.Port
 }
 
-func (o *MeshServiceItemPorts) GetTargetPort() *TargetPort {
-	if o == nil {
+func (m *MeshServiceItemPorts) GetTargetPort() *TargetPort {
+	if m == nil {
 		return nil
 	}
-	return o.TargetPort
+	return m.TargetPort
 }
 
 type DataplaneRef struct {
 	Name *string `json:"name,omitempty"`
 }
 
-func (o *DataplaneRef) GetName() *string {
-	if o == nil {
+func (d *DataplaneRef) GetName() *string {
+	if d == nil {
 		return nil
 	}
-	return o.Name
+	return d.Name
 }
 
 type MeshServiceItemSelector struct {
@@ -205,18 +205,18 @@ type MeshServiceItemSelector struct {
 	DataplaneTags map[string]string `json:"dataplaneTags,omitempty"`
 }
 
-func (o *MeshServiceItemSelector) GetDataplaneRef() *DataplaneRef {
-	if o == nil {
+func (m *MeshServiceItemSelector) GetDataplaneRef() *DataplaneRef {
+	if m == nil {
 		return nil
 	}
-	return o.DataplaneRef
+	return m.DataplaneRef
 }
 
-func (o *MeshServiceItemSelector) GetDataplaneTags() map[string]string {
-	if o == nil {
+func (m *MeshServiceItemSelector) GetDataplaneTags() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.DataplaneTags
+	return m.DataplaneTags
 }
 
 // State of MeshService. Available if there is at least one healthy endpoint. Otherwise, Unavailable.
@@ -262,49 +262,49 @@ func (m MeshServiceItemSpec) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshServiceItemSpec) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshServiceItemSpec) GetIdentities() []Identities {
-	if o == nil {
+func (m *MeshServiceItemSpec) GetIdentities() []Identities {
+	if m == nil {
 		return nil
 	}
-	return o.Identities
+	return m.Identities
 }
 
-func (o *MeshServiceItemSpec) GetPorts() []MeshServiceItemPorts {
-	if o == nil {
+func (m *MeshServiceItemSpec) GetPorts() []MeshServiceItemPorts {
+	if m == nil {
 		return nil
 	}
-	return o.Ports
+	return m.Ports
 }
 
-func (o *MeshServiceItemSpec) GetSelector() *MeshServiceItemSelector {
-	if o == nil {
+func (m *MeshServiceItemSpec) GetSelector() *MeshServiceItemSelector {
+	if m == nil {
 		return nil
 	}
-	return o.Selector
+	return m.Selector
 }
 
-func (o *MeshServiceItemSpec) GetState() *State {
-	if o == nil {
+func (m *MeshServiceItemSpec) GetState() *State {
+	if m == nil {
 		return nil
 	}
-	return o.State
+	return m.State
 }
 
 type MeshServiceItemHostnameGeneratorRef struct {
 	CoreName string `json:"coreName"`
 }
 
-func (o *MeshServiceItemHostnameGeneratorRef) GetCoreName() string {
-	if o == nil {
+func (m *MeshServiceItemHostnameGeneratorRef) GetCoreName() string {
+	if m == nil {
 		return ""
 	}
-	return o.CoreName
+	return m.CoreName
 }
 
 type MeshServiceItemAddresses struct {
@@ -313,25 +313,25 @@ type MeshServiceItemAddresses struct {
 	Origin               *string                              `json:"origin,omitempty"`
 }
 
-func (o *MeshServiceItemAddresses) GetHostname() *string {
-	if o == nil {
+func (m *MeshServiceItemAddresses) GetHostname() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Hostname
+	return m.Hostname
 }
 
-func (o *MeshServiceItemAddresses) GetHostnameGeneratorRef() *MeshServiceItemHostnameGeneratorRef {
-	if o == nil {
+func (m *MeshServiceItemAddresses) GetHostnameGeneratorRef() *MeshServiceItemHostnameGeneratorRef {
+	if m == nil {
 		return nil
 	}
-	return o.HostnameGeneratorRef
+	return m.HostnameGeneratorRef
 }
 
-func (o *MeshServiceItemAddresses) GetOrigin() *string {
-	if o == nil {
+func (m *MeshServiceItemAddresses) GetOrigin() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Origin
+	return m.Origin
 }
 
 // DataplaneProxies - Data plane proxies statistics selected by this MeshService.
@@ -344,25 +344,25 @@ type DataplaneProxies struct {
 	Total *int64 `json:"total,omitempty"`
 }
 
-func (o *DataplaneProxies) GetConnected() *int64 {
-	if o == nil {
+func (d *DataplaneProxies) GetConnected() *int64 {
+	if d == nil {
 		return nil
 	}
-	return o.Connected
+	return d.Connected
 }
 
-func (o *DataplaneProxies) GetHealthy() *int64 {
-	if o == nil {
+func (d *DataplaneProxies) GetHealthy() *int64 {
+	if d == nil {
 		return nil
 	}
-	return o.Healthy
+	return d.Healthy
 }
 
-func (o *DataplaneProxies) GetTotal() *int64 {
-	if o == nil {
+func (d *DataplaneProxies) GetTotal() *int64 {
+	if d == nil {
 		return nil
 	}
-	return o.Total
+	return d.Total
 }
 
 // MeshServiceItemStatusHostnameGeneratorsStatus - status of the condition, one of True, False, Unknown.
@@ -411,43 +411,43 @@ type MeshServiceItemConditions struct {
 	Type string `json:"type"`
 }
 
-func (o *MeshServiceItemConditions) GetMessage() string {
-	if o == nil {
+func (m *MeshServiceItemConditions) GetMessage() string {
+	if m == nil {
 		return ""
 	}
-	return o.Message
+	return m.Message
 }
 
-func (o *MeshServiceItemConditions) GetReason() string {
-	if o == nil {
+func (m *MeshServiceItemConditions) GetReason() string {
+	if m == nil {
 		return ""
 	}
-	return o.Reason
+	return m.Reason
 }
 
-func (o *MeshServiceItemConditions) GetStatus() MeshServiceItemStatusHostnameGeneratorsStatus {
-	if o == nil {
+func (m *MeshServiceItemConditions) GetStatus() MeshServiceItemStatusHostnameGeneratorsStatus {
+	if m == nil {
 		return MeshServiceItemStatusHostnameGeneratorsStatus("")
 	}
-	return o.Status
+	return m.Status
 }
 
-func (o *MeshServiceItemConditions) GetType() string {
-	if o == nil {
+func (m *MeshServiceItemConditions) GetType() string {
+	if m == nil {
 		return ""
 	}
-	return o.Type
+	return m.Type
 }
 
 type MeshServiceItemStatusHostnameGeneratorRef struct {
 	CoreName string `json:"coreName"`
 }
 
-func (o *MeshServiceItemStatusHostnameGeneratorRef) GetCoreName() string {
-	if o == nil {
+func (m *MeshServiceItemStatusHostnameGeneratorRef) GetCoreName() string {
+	if m == nil {
 		return ""
 	}
-	return o.CoreName
+	return m.CoreName
 }
 
 type MeshServiceItemHostnameGenerators struct {
@@ -456,18 +456,18 @@ type MeshServiceItemHostnameGenerators struct {
 	HostnameGeneratorRef MeshServiceItemStatusHostnameGeneratorRef `json:"hostnameGeneratorRef"`
 }
 
-func (o *MeshServiceItemHostnameGenerators) GetConditions() []MeshServiceItemConditions {
-	if o == nil {
+func (m *MeshServiceItemHostnameGenerators) GetConditions() []MeshServiceItemConditions {
+	if m == nil {
 		return nil
 	}
-	return o.Conditions
+	return m.Conditions
 }
 
-func (o *MeshServiceItemHostnameGenerators) GetHostnameGeneratorRef() MeshServiceItemStatusHostnameGeneratorRef {
-	if o == nil {
+func (m *MeshServiceItemHostnameGenerators) GetHostnameGeneratorRef() MeshServiceItemStatusHostnameGeneratorRef {
+	if m == nil {
 		return MeshServiceItemStatusHostnameGeneratorRef{}
 	}
-	return o.HostnameGeneratorRef
+	return m.HostnameGeneratorRef
 }
 
 type MeshServiceItemStatusStatus string
@@ -500,22 +500,22 @@ type MeshServiceItemTLS struct {
 	Status *MeshServiceItemStatusStatus `json:"status,omitempty"`
 }
 
-func (o *MeshServiceItemTLS) GetStatus() *MeshServiceItemStatusStatus {
-	if o == nil {
+func (m *MeshServiceItemTLS) GetStatus() *MeshServiceItemStatusStatus {
+	if m == nil {
 		return nil
 	}
-	return o.Status
+	return m.Status
 }
 
 type MeshServiceItemVips struct {
 	IP *string `json:"ip,omitempty"`
 }
 
-func (o *MeshServiceItemVips) GetIP() *string {
-	if o == nil {
+func (m *MeshServiceItemVips) GetIP() *string {
+	if m == nil {
 		return nil
 	}
-	return o.IP
+	return m.IP
 }
 
 // MeshServiceItemStatus - Status is the current status of the Kuma MeshService resource.
@@ -528,39 +528,39 @@ type MeshServiceItemStatus struct {
 	Vips               []MeshServiceItemVips               `json:"vips,omitempty"`
 }
 
-func (o *MeshServiceItemStatus) GetAddresses() []MeshServiceItemAddresses {
-	if o == nil {
+func (m *MeshServiceItemStatus) GetAddresses() []MeshServiceItemAddresses {
+	if m == nil {
 		return nil
 	}
-	return o.Addresses
+	return m.Addresses
 }
 
-func (o *MeshServiceItemStatus) GetDataplaneProxies() *DataplaneProxies {
-	if o == nil {
+func (m *MeshServiceItemStatus) GetDataplaneProxies() *DataplaneProxies {
+	if m == nil {
 		return nil
 	}
-	return o.DataplaneProxies
+	return m.DataplaneProxies
 }
 
-func (o *MeshServiceItemStatus) GetHostnameGenerators() []MeshServiceItemHostnameGenerators {
-	if o == nil {
+func (m *MeshServiceItemStatus) GetHostnameGenerators() []MeshServiceItemHostnameGenerators {
+	if m == nil {
 		return nil
 	}
-	return o.HostnameGenerators
+	return m.HostnameGenerators
 }
 
-func (o *MeshServiceItemStatus) GetTLS() *MeshServiceItemTLS {
-	if o == nil {
+func (m *MeshServiceItemStatus) GetTLS() *MeshServiceItemTLS {
+	if m == nil {
 		return nil
 	}
-	return o.TLS
+	return m.TLS
 }
 
-func (o *MeshServiceItemStatus) GetVips() []MeshServiceItemVips {
-	if o == nil {
+func (m *MeshServiceItemStatus) GetVips() []MeshServiceItemVips {
+	if m == nil {
 		return nil
 	}
-	return o.Vips
+	return m.Vips
 }
 
 // MeshServiceItem - Successful response
@@ -588,66 +588,66 @@ func (m MeshServiceItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshServiceItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshServiceItem) GetType() MeshServiceItemType {
-	if o == nil {
+func (m *MeshServiceItem) GetType() MeshServiceItemType {
+	if m == nil {
 		return MeshServiceItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshServiceItem) GetMesh() *string {
-	if o == nil {
+func (m *MeshServiceItem) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshServiceItem) GetName() string {
-	if o == nil {
+func (m *MeshServiceItem) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshServiceItem) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshServiceItem) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshServiceItem) GetSpec() MeshServiceItemSpec {
-	if o == nil {
+func (m *MeshServiceItem) GetSpec() MeshServiceItemSpec {
+	if m == nil {
 		return MeshServiceItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }
 
-func (o *MeshServiceItem) GetCreationTime() *time.Time {
-	if o == nil {
+func (m *MeshServiceItem) GetCreationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.CreationTime
+	return m.CreationTime
 }
 
-func (o *MeshServiceItem) GetModificationTime() *time.Time {
-	if o == nil {
+func (m *MeshServiceItem) GetModificationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.ModificationTime
+	return m.ModificationTime
 }
 
-func (o *MeshServiceItem) GetStatus() *MeshServiceItemStatus {
-	if o == nil {
+func (m *MeshServiceItem) GetStatus() *MeshServiceItemStatus {
+	if m == nil {
 		return nil
 	}
-	return o.Status
+	return m.Status
 }
 
 type MeshServiceItemInput struct {
@@ -668,43 +668,43 @@ func (m MeshServiceItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshServiceItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshServiceItemInput) GetType() MeshServiceItemType {
-	if o == nil {
+func (m *MeshServiceItemInput) GetType() MeshServiceItemType {
+	if m == nil {
 		return MeshServiceItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshServiceItemInput) GetMesh() *string {
-	if o == nil {
+func (m *MeshServiceItemInput) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshServiceItemInput) GetName() string {
-	if o == nil {
+func (m *MeshServiceItemInput) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshServiceItemInput) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshServiceItemInput) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshServiceItemInput) GetSpec() MeshServiceItemSpec {
-	if o == nil {
+func (m *MeshServiceItemInput) GetSpec() MeshServiceItemSpec {
+	if m == nil {
 		return MeshServiceItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }

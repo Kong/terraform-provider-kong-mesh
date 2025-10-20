@@ -14,18 +14,18 @@ type GetMeshRateLimitListQueryParamFilter struct {
 	Value *string `queryParam:"name=value"`
 }
 
-func (o *GetMeshRateLimitListQueryParamFilter) GetKey() *string {
-	if o == nil {
+func (g *GetMeshRateLimitListQueryParamFilter) GetKey() *string {
+	if g == nil {
 		return nil
 	}
-	return o.Key
+	return g.Key
 }
 
-func (o *GetMeshRateLimitListQueryParamFilter) GetValue() *string {
-	if o == nil {
+func (g *GetMeshRateLimitListQueryParamFilter) GetValue() *string {
+	if g == nil {
 		return nil
 	}
-	return o.Value
+	return g.Value
 }
 
 type GetMeshRateLimitListRequest struct {
@@ -44,38 +44,38 @@ func (g GetMeshRateLimitListRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetMeshRateLimitListRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &g, "", false, []string{"mesh"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *GetMeshRateLimitListRequest) GetOffset() *int64 {
-	if o == nil {
+func (g *GetMeshRateLimitListRequest) GetOffset() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Offset
+	return g.Offset
 }
 
-func (o *GetMeshRateLimitListRequest) GetSize() *int64 {
-	if o == nil {
+func (g *GetMeshRateLimitListRequest) GetSize() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Size
+	return g.Size
 }
 
-func (o *GetMeshRateLimitListRequest) GetFilter() *GetMeshRateLimitListQueryParamFilter {
-	if o == nil {
+func (g *GetMeshRateLimitListRequest) GetFilter() *GetMeshRateLimitListQueryParamFilter {
+	if g == nil {
 		return nil
 	}
-	return o.Filter
+	return g.Filter
 }
 
-func (o *GetMeshRateLimitListRequest) GetMesh() string {
-	if o == nil {
+func (g *GetMeshRateLimitListRequest) GetMesh() string {
+	if g == nil {
 		return ""
 	}
-	return o.Mesh
+	return g.Mesh
 }
 
 type GetMeshRateLimitListResponse struct {
@@ -89,30 +89,30 @@ type GetMeshRateLimitListResponse struct {
 	MeshRateLimitList *shared.MeshRateLimitList
 }
 
-func (o *GetMeshRateLimitListResponse) GetContentType() string {
-	if o == nil {
+func (g *GetMeshRateLimitListResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetMeshRateLimitListResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetMeshRateLimitListResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetMeshRateLimitListResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetMeshRateLimitListResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetMeshRateLimitListResponse) GetMeshRateLimitList() *shared.MeshRateLimitList {
-	if o == nil {
+func (g *GetMeshRateLimitListResponse) GetMeshRateLimitList() *shared.MeshRateLimitList {
+	if g == nil {
 		return nil
 	}
-	return o.MeshRateLimitList
+	return g.MeshRateLimitList
 }

@@ -14,18 +14,18 @@ type DeleteMeshTrustRequest struct {
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 }
 
-func (o *DeleteMeshTrustRequest) GetMesh() string {
-	if o == nil {
+func (d *DeleteMeshTrustRequest) GetMesh() string {
+	if d == nil {
 		return ""
 	}
-	return o.Mesh
+	return d.Mesh
 }
 
-func (o *DeleteMeshTrustRequest) GetName() string {
-	if o == nil {
+func (d *DeleteMeshTrustRequest) GetName() string {
+	if d == nil {
 		return ""
 	}
-	return o.Name
+	return d.Name
 }
 
 type DeleteMeshTrustResponse struct {
@@ -41,37 +41,37 @@ type DeleteMeshTrustResponse struct {
 	NotFoundError *shared.NotFoundError
 }
 
-func (o *DeleteMeshTrustResponse) GetContentType() string {
-	if o == nil {
+func (d *DeleteMeshTrustResponse) GetContentType() string {
+	if d == nil {
 		return ""
 	}
-	return o.ContentType
+	return d.ContentType
 }
 
-func (o *DeleteMeshTrustResponse) GetStatusCode() int {
-	if o == nil {
+func (d *DeleteMeshTrustResponse) GetStatusCode() int {
+	if d == nil {
 		return 0
 	}
-	return o.StatusCode
+	return d.StatusCode
 }
 
-func (o *DeleteMeshTrustResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (d *DeleteMeshTrustResponse) GetRawResponse() *http.Response {
+	if d == nil {
 		return nil
 	}
-	return o.RawResponse
+	return d.RawResponse
 }
 
-func (o *DeleteMeshTrustResponse) GetMeshTrustDeleteSuccessResponse() *shared.MeshTrustDeleteSuccessResponse {
-	if o == nil {
+func (d *DeleteMeshTrustResponse) GetMeshTrustDeleteSuccessResponse() *shared.MeshTrustDeleteSuccessResponse {
+	if d == nil {
 		return nil
 	}
-	return o.MeshTrustDeleteSuccessResponse
+	return d.MeshTrustDeleteSuccessResponse
 }
 
-func (o *DeleteMeshTrustResponse) GetNotFoundError() *shared.NotFoundError {
-	if o == nil {
+func (d *DeleteMeshTrustResponse) GetNotFoundError() *shared.NotFoundError {
+	if d == nil {
 		return nil
 	}
-	return o.NotFoundError
+	return d.NotFoundError
 }

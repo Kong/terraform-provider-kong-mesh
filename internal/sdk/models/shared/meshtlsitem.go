@@ -183,24 +183,24 @@ func (t TLSVersion) MarshalJSON() ([]byte, error) {
 }
 
 func (t *TLSVersion) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &t, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &t, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *TLSVersion) GetMax() *MeshTLSItemSpecMax {
-	if o == nil {
+func (t *TLSVersion) GetMax() *MeshTLSItemSpecMax {
+	if t == nil {
 		return nil
 	}
-	return o.Max
+	return t.Max
 }
 
-func (o *TLSVersion) GetMin() *MeshTLSItemSpecMin {
-	if o == nil {
+func (t *TLSVersion) GetMin() *MeshTLSItemSpecMin {
+	if t == nil {
 		return nil
 	}
-	return o.Min
+	return t.Min
 }
 
 // MeshTLSItemDefault - Default is a configuration specific to the group of clients referenced in
@@ -214,25 +214,25 @@ type MeshTLSItemDefault struct {
 	TLSVersion *TLSVersion `json:"tlsVersion,omitempty"`
 }
 
-func (o *MeshTLSItemDefault) GetMode() *MeshTLSItemSpecMode {
-	if o == nil {
+func (m *MeshTLSItemDefault) GetMode() *MeshTLSItemSpecMode {
+	if m == nil {
 		return nil
 	}
-	return o.Mode
+	return m.Mode
 }
 
-func (o *MeshTLSItemDefault) GetTLSCiphers() []TLSCiphers {
-	if o == nil {
+func (m *MeshTLSItemDefault) GetTLSCiphers() []TLSCiphers {
+	if m == nil {
 		return nil
 	}
-	return o.TLSCiphers
+	return m.TLSCiphers
 }
 
-func (o *MeshTLSItemDefault) GetTLSVersion() *TLSVersion {
-	if o == nil {
+func (m *MeshTLSItemDefault) GetTLSVersion() *TLSVersion {
+	if m == nil {
 		return nil
 	}
-	return o.TLSVersion
+	return m.TLSVersion
 }
 
 // MeshTLSItemSpecKind - Kind of the referenced resource
@@ -336,60 +336,60 @@ type MeshTLSItemSpecTargetRef struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (o *MeshTLSItemSpecTargetRef) GetKind() MeshTLSItemSpecKind {
-	if o == nil {
+func (m *MeshTLSItemSpecTargetRef) GetKind() MeshTLSItemSpecKind {
+	if m == nil {
 		return MeshTLSItemSpecKind("")
 	}
-	return o.Kind
+	return m.Kind
 }
 
-func (o *MeshTLSItemSpecTargetRef) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshTLSItemSpecTargetRef) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshTLSItemSpecTargetRef) GetMesh() *string {
-	if o == nil {
+func (m *MeshTLSItemSpecTargetRef) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshTLSItemSpecTargetRef) GetName() *string {
-	if o == nil {
+func (m *MeshTLSItemSpecTargetRef) GetName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshTLSItemSpecTargetRef) GetNamespace() *string {
-	if o == nil {
+func (m *MeshTLSItemSpecTargetRef) GetNamespace() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Namespace
+	return m.Namespace
 }
 
-func (o *MeshTLSItemSpecTargetRef) GetProxyTypes() []MeshTLSItemSpecProxyTypes {
-	if o == nil {
+func (m *MeshTLSItemSpecTargetRef) GetProxyTypes() []MeshTLSItemSpecProxyTypes {
+	if m == nil {
 		return nil
 	}
-	return o.ProxyTypes
+	return m.ProxyTypes
 }
 
-func (o *MeshTLSItemSpecTargetRef) GetSectionName() *string {
-	if o == nil {
+func (m *MeshTLSItemSpecTargetRef) GetSectionName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.SectionName
+	return m.SectionName
 }
 
-func (o *MeshTLSItemSpecTargetRef) GetTags() map[string]string {
-	if o == nil {
+func (m *MeshTLSItemSpecTargetRef) GetTags() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Tags
+	return m.Tags
 }
 
 type MeshTLSItemFrom struct {
@@ -401,18 +401,18 @@ type MeshTLSItemFrom struct {
 	TargetRef MeshTLSItemSpecTargetRef `json:"targetRef"`
 }
 
-func (o *MeshTLSItemFrom) GetDefault() *MeshTLSItemDefault {
-	if o == nil {
+func (m *MeshTLSItemFrom) GetDefault() *MeshTLSItemDefault {
+	if m == nil {
 		return nil
 	}
-	return o.Default
+	return m.Default
 }
 
-func (o *MeshTLSItemFrom) GetTargetRef() MeshTLSItemSpecTargetRef {
-	if o == nil {
+func (m *MeshTLSItemFrom) GetTargetRef() MeshTLSItemSpecTargetRef {
+	if m == nil {
 		return MeshTLSItemSpecTargetRef{}
 	}
-	return o.TargetRef
+	return m.TargetRef
 }
 
 // MeshTLSItemMode - Mode defines the behavior of inbound listeners with regard to traffic encryption.
@@ -565,24 +565,24 @@ func (m MeshTLSItemTLSVersion) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshTLSItemTLSVersion) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshTLSItemTLSVersion) GetMax() *MeshTLSItemMax {
-	if o == nil {
+func (m *MeshTLSItemTLSVersion) GetMax() *MeshTLSItemMax {
+	if m == nil {
 		return nil
 	}
-	return o.Max
+	return m.Max
 }
 
-func (o *MeshTLSItemTLSVersion) GetMin() *MeshTLSItemMin {
-	if o == nil {
+func (m *MeshTLSItemTLSVersion) GetMin() *MeshTLSItemMin {
+	if m == nil {
 		return nil
 	}
-	return o.Min
+	return m.Min
 }
 
 // MeshTLSItemSpecDefault - Default contains configuration of the inbound tls
@@ -595,25 +595,25 @@ type MeshTLSItemSpecDefault struct {
 	TLSVersion *MeshTLSItemTLSVersion `json:"tlsVersion,omitempty"`
 }
 
-func (o *MeshTLSItemSpecDefault) GetMode() *MeshTLSItemMode {
-	if o == nil {
+func (m *MeshTLSItemSpecDefault) GetMode() *MeshTLSItemMode {
+	if m == nil {
 		return nil
 	}
-	return o.Mode
+	return m.Mode
 }
 
-func (o *MeshTLSItemSpecDefault) GetTLSCiphers() []MeshTLSItemTLSCiphers {
-	if o == nil {
+func (m *MeshTLSItemSpecDefault) GetTLSCiphers() []MeshTLSItemTLSCiphers {
+	if m == nil {
 		return nil
 	}
-	return o.TLSCiphers
+	return m.TLSCiphers
 }
 
-func (o *MeshTLSItemSpecDefault) GetTLSVersion() *MeshTLSItemTLSVersion {
-	if o == nil {
+func (m *MeshTLSItemSpecDefault) GetTLSVersion() *MeshTLSItemTLSVersion {
+	if m == nil {
 		return nil
 	}
-	return o.TLSVersion
+	return m.TLSVersion
 }
 
 type MeshTLSItemRules struct {
@@ -621,11 +621,11 @@ type MeshTLSItemRules struct {
 	Default *MeshTLSItemSpecDefault `json:"default,omitempty"`
 }
 
-func (o *MeshTLSItemRules) GetDefault() *MeshTLSItemSpecDefault {
-	if o == nil {
+func (m *MeshTLSItemRules) GetDefault() *MeshTLSItemSpecDefault {
+	if m == nil {
 		return nil
 	}
-	return o.Default
+	return m.Default
 }
 
 // MeshTLSItemKind - Kind of the referenced resource
@@ -730,60 +730,60 @@ type MeshTLSItemTargetRef struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (o *MeshTLSItemTargetRef) GetKind() MeshTLSItemKind {
-	if o == nil {
+func (m *MeshTLSItemTargetRef) GetKind() MeshTLSItemKind {
+	if m == nil {
 		return MeshTLSItemKind("")
 	}
-	return o.Kind
+	return m.Kind
 }
 
-func (o *MeshTLSItemTargetRef) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshTLSItemTargetRef) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshTLSItemTargetRef) GetMesh() *string {
-	if o == nil {
+func (m *MeshTLSItemTargetRef) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshTLSItemTargetRef) GetName() *string {
-	if o == nil {
+func (m *MeshTLSItemTargetRef) GetName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshTLSItemTargetRef) GetNamespace() *string {
-	if o == nil {
+func (m *MeshTLSItemTargetRef) GetNamespace() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Namespace
+	return m.Namespace
 }
 
-func (o *MeshTLSItemTargetRef) GetProxyTypes() []MeshTLSItemProxyTypes {
-	if o == nil {
+func (m *MeshTLSItemTargetRef) GetProxyTypes() []MeshTLSItemProxyTypes {
+	if m == nil {
 		return nil
 	}
-	return o.ProxyTypes
+	return m.ProxyTypes
 }
 
-func (o *MeshTLSItemTargetRef) GetSectionName() *string {
-	if o == nil {
+func (m *MeshTLSItemTargetRef) GetSectionName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.SectionName
+	return m.SectionName
 }
 
-func (o *MeshTLSItemTargetRef) GetTags() map[string]string {
-	if o == nil {
+func (m *MeshTLSItemTargetRef) GetTags() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Tags
+	return m.Tags
 }
 
 // MeshTLSItemSpec - Spec is the specification of the Kuma MeshTLS resource.
@@ -799,25 +799,25 @@ type MeshTLSItemSpec struct {
 	TargetRef *MeshTLSItemTargetRef `json:"targetRef,omitempty"`
 }
 
-func (o *MeshTLSItemSpec) GetFrom() []MeshTLSItemFrom {
-	if o == nil {
+func (m *MeshTLSItemSpec) GetFrom() []MeshTLSItemFrom {
+	if m == nil {
 		return nil
 	}
-	return o.From
+	return m.From
 }
 
-func (o *MeshTLSItemSpec) GetRules() []MeshTLSItemRules {
-	if o == nil {
+func (m *MeshTLSItemSpec) GetRules() []MeshTLSItemRules {
+	if m == nil {
 		return nil
 	}
-	return o.Rules
+	return m.Rules
 }
 
-func (o *MeshTLSItemSpec) GetTargetRef() *MeshTLSItemTargetRef {
-	if o == nil {
+func (m *MeshTLSItemSpec) GetTargetRef() *MeshTLSItemTargetRef {
+	if m == nil {
 		return nil
 	}
-	return o.TargetRef
+	return m.TargetRef
 }
 
 // MeshTLSItem - Successful response
@@ -843,59 +843,59 @@ func (m MeshTLSItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshTLSItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshTLSItem) GetType() MeshTLSItemType {
-	if o == nil {
+func (m *MeshTLSItem) GetType() MeshTLSItemType {
+	if m == nil {
 		return MeshTLSItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshTLSItem) GetMesh() *string {
-	if o == nil {
+func (m *MeshTLSItem) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshTLSItem) GetName() string {
-	if o == nil {
+func (m *MeshTLSItem) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshTLSItem) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshTLSItem) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshTLSItem) GetSpec() MeshTLSItemSpec {
-	if o == nil {
+func (m *MeshTLSItem) GetSpec() MeshTLSItemSpec {
+	if m == nil {
 		return MeshTLSItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }
 
-func (o *MeshTLSItem) GetCreationTime() *time.Time {
-	if o == nil {
+func (m *MeshTLSItem) GetCreationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.CreationTime
+	return m.CreationTime
 }
 
-func (o *MeshTLSItem) GetModificationTime() *time.Time {
-	if o == nil {
+func (m *MeshTLSItem) GetModificationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.ModificationTime
+	return m.ModificationTime
 }
 
 type MeshTLSItemInput struct {
@@ -916,43 +916,43 @@ func (m MeshTLSItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshTLSItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshTLSItemInput) GetType() MeshTLSItemType {
-	if o == nil {
+func (m *MeshTLSItemInput) GetType() MeshTLSItemType {
+	if m == nil {
 		return MeshTLSItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshTLSItemInput) GetMesh() *string {
-	if o == nil {
+func (m *MeshTLSItemInput) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshTLSItemInput) GetName() string {
-	if o == nil {
+func (m *MeshTLSItemInput) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshTLSItemInput) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshTLSItemInput) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshTLSItemInput) GetSpec() MeshTLSItemSpec {
-	if o == nil {
+func (m *MeshTLSItemInput) GetSpec() MeshTLSItemSpec {
+	if m == nil {
 		return MeshTLSItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }

@@ -14,18 +14,18 @@ type GetMeshTLSRequest struct {
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 }
 
-func (o *GetMeshTLSRequest) GetMesh() string {
-	if o == nil {
+func (g *GetMeshTLSRequest) GetMesh() string {
+	if g == nil {
 		return ""
 	}
-	return o.Mesh
+	return g.Mesh
 }
 
-func (o *GetMeshTLSRequest) GetName() string {
-	if o == nil {
+func (g *GetMeshTLSRequest) GetName() string {
+	if g == nil {
 		return ""
 	}
-	return o.Name
+	return g.Name
 }
 
 type GetMeshTLSResponse struct {
@@ -41,37 +41,37 @@ type GetMeshTLSResponse struct {
 	NotFoundError *shared.NotFoundError
 }
 
-func (o *GetMeshTLSResponse) GetContentType() string {
-	if o == nil {
+func (g *GetMeshTLSResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetMeshTLSResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetMeshTLSResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetMeshTLSResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetMeshTLSResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetMeshTLSResponse) GetMeshTLSItem() *shared.MeshTLSItem {
-	if o == nil {
+func (g *GetMeshTLSResponse) GetMeshTLSItem() *shared.MeshTLSItem {
+	if g == nil {
 		return nil
 	}
-	return o.MeshTLSItem
+	return g.MeshTLSItem
 }
 
-func (o *GetMeshTLSResponse) GetNotFoundError() *shared.NotFoundError {
-	if o == nil {
+func (g *GetMeshTLSResponse) GetNotFoundError() *shared.NotFoundError {
+	if g == nil {
 		return nil
 	}
-	return o.NotFoundError
+	return g.NotFoundError
 }
