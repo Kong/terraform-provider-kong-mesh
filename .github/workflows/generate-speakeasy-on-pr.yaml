@@ -2,6 +2,9 @@ name: Run Speakeasy on PR Open
 
 on:
   pull_request:
+    paths-ignore:
+      - '.github/**'
+      - 'examples/**'
   workflow_dispatch:
     inputs:
       branch:
