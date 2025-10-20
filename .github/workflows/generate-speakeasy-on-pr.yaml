@@ -2,6 +2,9 @@ name: Run Speakeasy on PR Open
 
 on:
   pull_request:
+    paths-ignore:
+      - '.github/**'
+      - 'examples/**'
 
 permissions:
   contents: write
@@ -70,4 +73,3 @@ jobs:
           else
             echo "No changes to commit."
           fi
-
