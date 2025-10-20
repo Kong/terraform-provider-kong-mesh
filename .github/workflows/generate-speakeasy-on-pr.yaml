@@ -5,6 +5,12 @@ on:
     paths-ignore:
       - '.github/**'
       - 'examples/**'
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to run the workflow on'
+        required: true
+        default: 'feat/platform-api-automated-update'
 
 permissions:
   contents: write
@@ -12,8 +18,11 @@ permissions:
 
 jobs:
   speakeasy-on-pr-open:
+    env:
+      REF: ${{ github.event.pull_request.head.ref || github.event.inputs.branch }}
     name: Run Speakeasy on PR Open
     if: github.event.pull_request.head.ref == 'feat/platform-api-automated-update' ||
+      github.event_name == 'workflow_dispatch' ||
       github.actor == 'renovate[bot]' ||
       github.actor == 'mend[bot]'
     runs-on: ubuntu-latest
@@ -34,12 +43,20 @@ jobs:
           mkdir -p ~/.speakeasy
           echo 'speakeasy_api_key: ${{ secrets.SPEAKEASY_API_KEY }}' > ~/.speakeasy/config.yaml
 
+      - name: Generate GitHub app token
+        id: github-app-token
+        uses: actions/create-github-app-token@67018539274d69449ef7c02e8e71183d1719ab42 # v2.1.4
+        with:
+          app-id: ${{ vars.KONG_MESH_APP_ID }}
+          private-key: ${{ secrets.KONG_MESH_APP_PRIVATE_KEY }}
+
       - name: Checkout PR branch
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
-          ref: ${{ github.head_ref }}
+          ref: ${{ env.REF }}
           path: repo
           fetch-depth: 0
+          token: ${{ steps.github-app-token.outputs.token }}
 
       - name: Set up Go
         uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
@@ -56,8 +73,8 @@ jobs:
       - name: Set up Git identity
         working-directory: repo
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "kong-mesh[bot]"
+          git config user.email "123109030+kong-mesh[bot]@users.noreply.github.com"
 
       - name: Run Generators
         working-directory: repo
