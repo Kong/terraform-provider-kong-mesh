@@ -62,7 +62,7 @@ func (s *MeshTLS) GetMeshTLS(ctx context.Context, request operations.GetMeshTLSR
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getMeshTLS",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -292,7 +292,7 @@ func (s *MeshTLS) PutMeshTLS(ctx context.Context, request operations.PutMeshTLSR
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "putMeshTLS",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "MeshTLSItem", "json", `request:"mediaType=application/json"`)
@@ -506,7 +506,7 @@ func (s *MeshTLS) DeleteMeshTLS(ctx context.Context, request operations.DeleteMe
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "deleteMeshTLS",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -736,7 +736,7 @@ func (s *MeshTLS) GetMeshTLSList(ctx context.Context, request operations.GetMesh
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getMeshTLSList",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 

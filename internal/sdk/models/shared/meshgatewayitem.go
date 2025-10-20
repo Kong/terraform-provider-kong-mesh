@@ -17,8 +17,8 @@ const (
 
 // Protocol specifies the network protocol this listener expects to receive.
 type Protocol struct {
-	Str     *string `queryParam:"inline"`
-	Integer *int64  `queryParam:"inline"`
+	Str     *string `queryParam:"inline,name=protocol"`
+	Integer *int64  `queryParam:"inline,name=protocol"`
 
 	Type ProtocolType
 }
@@ -44,14 +44,14 @@ func CreateProtocolInteger(integer int64) Protocol {
 func (u *Protocol) UnmarshalJSON(data []byte) error {
 
 	var str string = ""
-	if err := utils.UnmarshalJSON(data, &str, "", true, true); err == nil {
+	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
 		u.Str = &str
 		u.Type = ProtocolTypeStr
 		return nil
 	}
 
 	var integer int64 = int64(0)
-	if err := utils.UnmarshalJSON(data, &integer, "", true, true); err == nil {
+	if err := utils.UnmarshalJSON(data, &integer, "", true, nil); err == nil {
 		u.Integer = &integer
 		u.Type = ProtocolTypeInteger
 		return nil
@@ -77,11 +77,11 @@ type Resources struct {
 	ConnectionLimit *int64 `json:"connectionLimit,omitempty"`
 }
 
-func (o *Resources) GetConnectionLimit() *int64 {
-	if o == nil {
+func (r *Resources) GetConnectionLimit() *int64 {
+	if r == nil {
 		return nil
 	}
-	return o.ConnectionLimit
+	return r.ConnectionLimit
 }
 
 type DataSourceSecret struct {
@@ -89,11 +89,22 @@ type DataSourceSecret struct {
 	Secret *string `json:"secret,omitempty"`
 }
 
-func (o *DataSourceSecret) GetSecret() *string {
-	if o == nil {
+func (d DataSourceSecret) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(d, "", false)
+}
+
+func (d *DataSourceSecret) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &d, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (d *DataSourceSecret) GetSecret() *string {
+	if d == nil {
 		return nil
 	}
-	return o.Secret
+	return d.Secret
 }
 
 type DataSourceInlineString struct {
@@ -101,11 +112,22 @@ type DataSourceInlineString struct {
 	InlineString *string `json:"inlineString,omitempty"`
 }
 
-func (o *DataSourceInlineString) GetInlineString() *string {
-	if o == nil {
+func (d DataSourceInlineString) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(d, "", false)
+}
+
+func (d *DataSourceInlineString) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &d, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (d *DataSourceInlineString) GetInlineString() *string {
+	if d == nil {
 		return nil
 	}
-	return o.InlineString
+	return d.InlineString
 }
 
 type DataSourceInline struct {
@@ -113,11 +135,22 @@ type DataSourceInline struct {
 	Inline *string `json:"inline,omitempty"`
 }
 
-func (o *DataSourceInline) GetInline() *string {
-	if o == nil {
+func (d DataSourceInline) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(d, "", false)
+}
+
+func (d *DataSourceInline) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &d, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (d *DataSourceInline) GetInline() *string {
+	if d == nil {
 		return nil
 	}
-	return o.Inline
+	return d.Inline
 }
 
 type DataSourceFile struct {
@@ -126,11 +159,22 @@ type DataSourceFile struct {
 	File *string `json:"file,omitempty"`
 }
 
-func (o *DataSourceFile) GetFile() *string {
-	if o == nil {
+func (d DataSourceFile) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(d, "", false)
+}
+
+func (d *DataSourceFile) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &d, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (d *DataSourceFile) GetFile() *string {
+	if d == nil {
 		return nil
 	}
-	return o.File
+	return d.File
 }
 
 type CertificatesType string
@@ -143,10 +187,10 @@ const (
 )
 
 type Certificates struct {
-	DataSourceFile         *DataSourceFile         `queryParam:"inline"`
-	DataSourceInline       *DataSourceInline       `queryParam:"inline"`
-	DataSourceInlineString *DataSourceInlineString `queryParam:"inline"`
-	DataSourceSecret       *DataSourceSecret       `queryParam:"inline"`
+	DataSourceFile         *DataSourceFile         `queryParam:"inline,name=certificates"`
+	DataSourceInline       *DataSourceInline       `queryParam:"inline,name=certificates"`
+	DataSourceInlineString *DataSourceInlineString `queryParam:"inline,name=certificates"`
+	DataSourceSecret       *DataSourceSecret       `queryParam:"inline,name=certificates"`
 
 	Type CertificatesType
 }
@@ -190,28 +234,28 @@ func CreateCertificatesDataSourceSecret(dataSourceSecret DataSourceSecret) Certi
 func (u *Certificates) UnmarshalJSON(data []byte) error {
 
 	var dataSourceFile DataSourceFile = DataSourceFile{}
-	if err := utils.UnmarshalJSON(data, &dataSourceFile, "", true, true); err == nil {
+	if err := utils.UnmarshalJSON(data, &dataSourceFile, "", true, nil); err == nil {
 		u.DataSourceFile = &dataSourceFile
 		u.Type = CertificatesTypeDataSourceFile
 		return nil
 	}
 
 	var dataSourceInline DataSourceInline = DataSourceInline{}
-	if err := utils.UnmarshalJSON(data, &dataSourceInline, "", true, true); err == nil {
+	if err := utils.UnmarshalJSON(data, &dataSourceInline, "", true, nil); err == nil {
 		u.DataSourceInline = &dataSourceInline
 		u.Type = CertificatesTypeDataSourceInline
 		return nil
 	}
 
 	var dataSourceInlineString DataSourceInlineString = DataSourceInlineString{}
-	if err := utils.UnmarshalJSON(data, &dataSourceInlineString, "", true, true); err == nil {
+	if err := utils.UnmarshalJSON(data, &dataSourceInlineString, "", true, nil); err == nil {
 		u.DataSourceInlineString = &dataSourceInlineString
 		u.Type = CertificatesTypeDataSourceInlineString
 		return nil
 	}
 
 	var dataSourceSecret DataSourceSecret = DataSourceSecret{}
-	if err := utils.UnmarshalJSON(data, &dataSourceSecret, "", true, true); err == nil {
+	if err := utils.UnmarshalJSON(data, &dataSourceSecret, "", true, nil); err == nil {
 		u.DataSourceSecret = &dataSourceSecret
 		u.Type = CertificatesTypeDataSourceSecret
 		return nil
@@ -250,8 +294,8 @@ const (
 // MeshGatewayItemMode - Mode defines the TLS behavior for the TLS session initiated
 // by the client.
 type MeshGatewayItemMode struct {
-	Str     *string `queryParam:"inline"`
-	Integer *int64  `queryParam:"inline"`
+	Str     *string `queryParam:"inline,name=mode"`
+	Integer *int64  `queryParam:"inline,name=mode"`
 
 	Type MeshGatewayItemModeType
 }
@@ -277,14 +321,14 @@ func CreateMeshGatewayItemModeInteger(integer int64) MeshGatewayItemMode {
 func (u *MeshGatewayItemMode) UnmarshalJSON(data []byte) error {
 
 	var str string = ""
-	if err := utils.UnmarshalJSON(data, &str, "", true, true); err == nil {
+	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
 		u.Str = &str
 		u.Type = MeshGatewayItemModeTypeStr
 		return nil
 	}
 
 	var integer int64 = int64(0)
-	if err := utils.UnmarshalJSON(data, &integer, "", true, true); err == nil {
+	if err := utils.UnmarshalJSON(data, &integer, "", true, nil); err == nil {
 		u.Integer = &integer
 		u.Type = MeshGatewayItemModeTypeInteger
 		return nil
@@ -336,25 +380,25 @@ type MeshGatewayItemTLS struct {
 	Options *OptionsObj `json:"options,omitempty"`
 }
 
-func (o *MeshGatewayItemTLS) GetCertificates() []Certificates {
-	if o == nil {
+func (m *MeshGatewayItemTLS) GetCertificates() []Certificates {
+	if m == nil {
 		return nil
 	}
-	return o.Certificates
+	return m.Certificates
 }
 
-func (o *MeshGatewayItemTLS) GetMode() *MeshGatewayItemMode {
-	if o == nil {
+func (m *MeshGatewayItemTLS) GetMode() *MeshGatewayItemMode {
+	if m == nil {
 		return nil
 	}
-	return o.Mode
+	return m.Mode
 }
 
-func (o *MeshGatewayItemTLS) GetOptions() *OptionsObj {
-	if o == nil {
+func (m *MeshGatewayItemTLS) GetOptions() *OptionsObj {
+	if m == nil {
 		return nil
 	}
-	return o.Options
+	return m.Options
 }
 
 type Listeners struct {
@@ -387,53 +431,53 @@ type Listeners struct {
 	TLS *MeshGatewayItemTLS `json:"tls,omitempty"`
 }
 
-func (o *Listeners) GetCrossMesh() *bool {
-	if o == nil {
+func (l *Listeners) GetCrossMesh() *bool {
+	if l == nil {
 		return nil
 	}
-	return o.CrossMesh
+	return l.CrossMesh
 }
 
-func (o *Listeners) GetHostname() *string {
-	if o == nil {
+func (l *Listeners) GetHostname() *string {
+	if l == nil {
 		return nil
 	}
-	return o.Hostname
+	return l.Hostname
 }
 
-func (o *Listeners) GetPort() *int64 {
-	if o == nil {
+func (l *Listeners) GetPort() *int64 {
+	if l == nil {
 		return nil
 	}
-	return o.Port
+	return l.Port
 }
 
-func (o *Listeners) GetProtocol() *Protocol {
-	if o == nil {
+func (l *Listeners) GetProtocol() *Protocol {
+	if l == nil {
 		return nil
 	}
-	return o.Protocol
+	return l.Protocol
 }
 
-func (o *Listeners) GetResources() *Resources {
-	if o == nil {
+func (l *Listeners) GetResources() *Resources {
+	if l == nil {
 		return nil
 	}
-	return o.Resources
+	return l.Resources
 }
 
-func (o *Listeners) GetTags() map[string]string {
-	if o == nil {
+func (l *Listeners) GetTags() map[string]string {
+	if l == nil {
 		return nil
 	}
-	return o.Tags
+	return l.Tags
 }
 
-func (o *Listeners) GetTLS() *MeshGatewayItemTLS {
-	if o == nil {
+func (l *Listeners) GetTLS() *MeshGatewayItemTLS {
+	if l == nil {
 		return nil
 	}
-	return o.TLS
+	return l.TLS
 }
 
 // Conf - The desired configuration of the MeshGateway.
@@ -443,11 +487,11 @@ type Conf struct {
 	Listeners []Listeners `json:"listeners,omitempty"`
 }
 
-func (o *Conf) GetListeners() []Listeners {
-	if o == nil {
+func (c *Conf) GetListeners() []Listeners {
+	if c == nil {
 		return nil
 	}
-	return o.Listeners
+	return c.Listeners
 }
 
 // Selectors - Selector defines structure for selecting tags for given dataplane
@@ -456,11 +500,11 @@ type Selectors struct {
 	Match map[string]string `json:"match,omitempty"`
 }
 
-func (o *Selectors) GetMatch() map[string]string {
-	if o == nil {
+func (s *Selectors) GetMatch() map[string]string {
+	if s == nil {
 		return nil
 	}
-	return o.Match
+	return s.Match
 }
 
 // MeshGatewayItem - Successful response
@@ -481,51 +525,51 @@ type MeshGatewayItem struct {
 	Type string            `json:"type"`
 }
 
-func (o *MeshGatewayItem) GetConf() *Conf {
-	if o == nil {
+func (m *MeshGatewayItem) GetConf() *Conf {
+	if m == nil {
 		return nil
 	}
-	return o.Conf
+	return m.Conf
 }
 
-func (o *MeshGatewayItem) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshGatewayItem) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshGatewayItem) GetMesh() string {
-	if o == nil {
+func (m *MeshGatewayItem) GetMesh() string {
+	if m == nil {
 		return ""
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshGatewayItem) GetName() string {
-	if o == nil {
+func (m *MeshGatewayItem) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshGatewayItem) GetSelectors() []Selectors {
-	if o == nil {
+func (m *MeshGatewayItem) GetSelectors() []Selectors {
+	if m == nil {
 		return nil
 	}
-	return o.Selectors
+	return m.Selectors
 }
 
-func (o *MeshGatewayItem) GetTags() map[string]string {
-	if o == nil {
+func (m *MeshGatewayItem) GetTags() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Tags
+	return m.Tags
 }
 
-func (o *MeshGatewayItem) GetType() string {
-	if o == nil {
+func (m *MeshGatewayItem) GetType() string {
+	if m == nil {
 		return ""
 	}
-	return o.Type
+	return m.Type
 }

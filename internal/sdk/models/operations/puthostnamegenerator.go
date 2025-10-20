@@ -14,18 +14,18 @@ type PutHostnameGeneratorRequest struct {
 	HostnameGeneratorItem shared.HostnameGeneratorItemInput `request:"mediaType=application/json"`
 }
 
-func (o *PutHostnameGeneratorRequest) GetName() string {
-	if o == nil {
+func (p *PutHostnameGeneratorRequest) GetName() string {
+	if p == nil {
 		return ""
 	}
-	return o.Name
+	return p.Name
 }
 
-func (o *PutHostnameGeneratorRequest) GetHostnameGeneratorItem() shared.HostnameGeneratorItemInput {
-	if o == nil {
+func (p *PutHostnameGeneratorRequest) GetHostnameGeneratorItem() shared.HostnameGeneratorItemInput {
+	if p == nil {
 		return shared.HostnameGeneratorItemInput{}
 	}
-	return o.HostnameGeneratorItem
+	return p.HostnameGeneratorItem
 }
 
 type PutHostnameGeneratorResponse struct {
@@ -39,30 +39,30 @@ type PutHostnameGeneratorResponse struct {
 	HostnameGeneratorCreateOrUpdateSuccessResponse *shared.HostnameGeneratorCreateOrUpdateSuccessResponse
 }
 
-func (o *PutHostnameGeneratorResponse) GetContentType() string {
-	if o == nil {
+func (p *PutHostnameGeneratorResponse) GetContentType() string {
+	if p == nil {
 		return ""
 	}
-	return o.ContentType
+	return p.ContentType
 }
 
-func (o *PutHostnameGeneratorResponse) GetStatusCode() int {
-	if o == nil {
+func (p *PutHostnameGeneratorResponse) GetStatusCode() int {
+	if p == nil {
 		return 0
 	}
-	return o.StatusCode
+	return p.StatusCode
 }
 
-func (o *PutHostnameGeneratorResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *PutHostnameGeneratorResponse) GetRawResponse() *http.Response {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.RawResponse
 }
 
-func (o *PutHostnameGeneratorResponse) GetHostnameGeneratorCreateOrUpdateSuccessResponse() *shared.HostnameGeneratorCreateOrUpdateSuccessResponse {
-	if o == nil {
+func (p *PutHostnameGeneratorResponse) GetHostnameGeneratorCreateOrUpdateSuccessResponse() *shared.HostnameGeneratorCreateOrUpdateSuccessResponse {
+	if p == nil {
 		return nil
 	}
-	return o.HostnameGeneratorCreateOrUpdateSuccessResponse
+	return p.HostnameGeneratorCreateOrUpdateSuccessResponse
 }

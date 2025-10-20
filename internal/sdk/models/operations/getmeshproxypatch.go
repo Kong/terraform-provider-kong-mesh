@@ -14,18 +14,18 @@ type GetMeshProxyPatchRequest struct {
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 }
 
-func (o *GetMeshProxyPatchRequest) GetMesh() string {
-	if o == nil {
+func (g *GetMeshProxyPatchRequest) GetMesh() string {
+	if g == nil {
 		return ""
 	}
-	return o.Mesh
+	return g.Mesh
 }
 
-func (o *GetMeshProxyPatchRequest) GetName() string {
-	if o == nil {
+func (g *GetMeshProxyPatchRequest) GetName() string {
+	if g == nil {
 		return ""
 	}
-	return o.Name
+	return g.Name
 }
 
 type GetMeshProxyPatchResponse struct {
@@ -41,37 +41,37 @@ type GetMeshProxyPatchResponse struct {
 	NotFoundError *shared.NotFoundError
 }
 
-func (o *GetMeshProxyPatchResponse) GetContentType() string {
-	if o == nil {
+func (g *GetMeshProxyPatchResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetMeshProxyPatchResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetMeshProxyPatchResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetMeshProxyPatchResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetMeshProxyPatchResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetMeshProxyPatchResponse) GetMeshProxyPatchItem() *shared.MeshProxyPatchItem {
-	if o == nil {
+func (g *GetMeshProxyPatchResponse) GetMeshProxyPatchItem() *shared.MeshProxyPatchItem {
+	if g == nil {
 		return nil
 	}
-	return o.MeshProxyPatchItem
+	return g.MeshProxyPatchItem
 }
 
-func (o *GetMeshProxyPatchResponse) GetNotFoundError() *shared.NotFoundError {
-	if o == nil {
+func (g *GetMeshProxyPatchResponse) GetNotFoundError() *shared.NotFoundError {
+	if g == nil {
 		return nil
 	}
-	return o.NotFoundError
+	return g.NotFoundError
 }

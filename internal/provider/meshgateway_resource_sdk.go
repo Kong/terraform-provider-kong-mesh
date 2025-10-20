@@ -12,6 +12,195 @@ import (
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
 )
 
+func (r *MeshGatewayResourceModel) RefreshFromSharedMeshGatewayCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.MeshGatewayCreateOrUpdateSuccessResponse) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		r.Warnings = make([]types.String, 0, len(resp.Warnings))
+		for _, v := range resp.Warnings {
+			r.Warnings = append(r.Warnings, types.StringValue(v))
+		}
+	}
+
+	return diags
+}
+
+func (r *MeshGatewayResourceModel) RefreshFromSharedMeshGatewayItem(ctx context.Context, resp *shared.MeshGatewayItem) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		if resp.Conf == nil {
+			r.Conf = nil
+		} else {
+			r.Conf = &tfTypes.Conf{}
+			r.Conf.Listeners = []tfTypes.Listeners{}
+
+			for _, listenersItem := range resp.Conf.Listeners {
+				var listeners tfTypes.Listeners
+
+				listeners.CrossMesh = types.BoolPointerValue(listenersItem.CrossMesh)
+				listeners.Hostname = types.StringPointerValue(listenersItem.Hostname)
+				listeners.Port = types.Int64PointerValue(listenersItem.Port)
+				if listenersItem.Protocol != nil {
+					listeners.Protocol = &tfTypes.Mode{}
+					if listenersItem.Protocol.Str != nil {
+						listeners.Protocol.Str = types.StringPointerValue(listenersItem.Protocol.Str)
+					}
+					if listenersItem.Protocol.Integer != nil {
+						listeners.Protocol.Integer = types.Int64PointerValue(listenersItem.Protocol.Integer)
+					}
+				}
+				if listenersItem.Resources == nil {
+					listeners.Resources = nil
+				} else {
+					listeners.Resources = &tfTypes.Resources{}
+					listeners.Resources.ConnectionLimit = types.Int64PointerValue(listenersItem.Resources.ConnectionLimit)
+				}
+				if len(listenersItem.Tags) > 0 {
+					listeners.Tags = make(map[string]types.String, len(listenersItem.Tags))
+					for key, value := range listenersItem.Tags {
+						listeners.Tags[key] = types.StringValue(value)
+					}
+				}
+				if listenersItem.TLS == nil {
+					listeners.TLS = nil
+				} else {
+					listeners.TLS = &tfTypes.MeshGatewayItemTLS{}
+					listeners.TLS.Certificates = []tfTypes.AccessKey{}
+
+					for _, certificatesItem := range listenersItem.TLS.Certificates {
+						var certificates tfTypes.AccessKey
+
+						if certificatesItem.DataSourceFile != nil {
+							certificates.DataSourceFile = &tfTypes.AccessKeyDataSourceFile{}
+							certificates.DataSourceFile.File = types.StringPointerValue(certificatesItem.DataSourceFile.File)
+						}
+						if certificatesItem.DataSourceInline != nil {
+							certificates.DataSourceInline = &tfTypes.AccessKeyDataSourceInline{}
+							certificates.DataSourceInline.Inline = types.StringPointerValue(certificatesItem.DataSourceInline.Inline)
+						}
+						if certificatesItem.DataSourceInlineString != nil {
+							certificates.DataSourceInlineString = &tfTypes.AccessKeyDataSourceInlineString{}
+							certificates.DataSourceInlineString.InlineString = types.StringPointerValue(certificatesItem.DataSourceInlineString.InlineString)
+						}
+						if certificatesItem.DataSourceSecret != nil {
+							certificates.DataSourceSecret = &tfTypes.AccessKeyDataSourceSecret{}
+							certificates.DataSourceSecret.Secret = types.StringPointerValue(certificatesItem.DataSourceSecret.Secret)
+						}
+
+						listeners.TLS.Certificates = append(listeners.TLS.Certificates, certificates)
+					}
+					if listenersItem.TLS.Mode != nil {
+						listeners.TLS.Mode = &tfTypes.Mode{}
+						if listenersItem.TLS.Mode.Str != nil {
+							listeners.TLS.Mode.Str = types.StringPointerValue(listenersItem.TLS.Mode.Str)
+						}
+						if listenersItem.TLS.Mode.Integer != nil {
+							listeners.TLS.Mode.Integer = types.Int64PointerValue(listenersItem.TLS.Mode.Integer)
+						}
+					}
+					if listenersItem.TLS.Options == nil {
+						listeners.TLS.Options = nil
+					} else {
+						listeners.TLS.Options = &tfTypes.OptionsObj{}
+					}
+				}
+
+				r.Conf.Listeners = append(r.Conf.Listeners, listeners)
+			}
+		}
+		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
+		diags.Append(labelsDiags...)
+		labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
+		diags.Append(labelsDiags...)
+		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
+		r.Mesh = types.StringValue(resp.Mesh)
+		r.Name = types.StringValue(resp.Name)
+		r.Selectors = []tfTypes.Selectors{}
+
+		for _, selectorsItem := range resp.Selectors {
+			var selectors tfTypes.Selectors
+
+			if len(selectorsItem.Match) > 0 {
+				selectors.Match = make(map[string]types.String, len(selectorsItem.Match))
+				for key1, value1 := range selectorsItem.Match {
+					selectors.Match[key1] = types.StringValue(value1)
+				}
+			}
+
+			r.Selectors = append(r.Selectors, selectors)
+		}
+		if len(resp.Tags) > 0 {
+			r.Tags = make(map[string]types.String, len(resp.Tags))
+			for key2, value2 := range resp.Tags {
+				r.Tags[key2] = types.StringValue(value2)
+			}
+		}
+		r.Type = types.StringValue(resp.Type)
+	}
+
+	return diags
+}
+
+func (r *MeshGatewayResourceModel) ToOperationsDeleteMeshGatewayRequest(ctx context.Context) (*operations.DeleteMeshGatewayRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.DeleteMeshGatewayRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshGatewayResourceModel) ToOperationsGetMeshGatewayRequest(ctx context.Context) (*operations.GetMeshGatewayRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.GetMeshGatewayRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshGatewayResourceModel) ToOperationsPutMeshGatewayRequest(ctx context.Context) (*operations.PutMeshGatewayRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	meshGatewayItem, meshGatewayItemDiags := r.ToSharedMeshGatewayItem(ctx)
+	diags.Append(meshGatewayItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PutMeshGatewayRequest{
+		Mesh:            mesh,
+		Name:            name,
+		MeshGatewayItem: *meshGatewayItem,
+	}
+
+	return &out, diags
+}
+
 func (r *MeshGatewayResourceModel) ToSharedMeshGatewayItem(ctx context.Context) (*shared.MeshGatewayItem, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -235,211 +424,4 @@ func (r *MeshGatewayResourceModel) ToSharedMeshGatewayItem(ctx context.Context) 
 	}
 
 	return &out, diags
-}
-
-func (r *MeshGatewayResourceModel) ToOperationsPutMeshGatewayRequest(ctx context.Context) (*operations.PutMeshGatewayRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	meshGatewayItem, meshGatewayItemDiags := r.ToSharedMeshGatewayItem(ctx)
-	diags.Append(meshGatewayItemDiags...)
-
-	if diags.HasError() {
-		return nil, diags
-	}
-
-	out := operations.PutMeshGatewayRequest{
-		Mesh:            mesh,
-		Name:            name,
-		MeshGatewayItem: *meshGatewayItem,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshGatewayResourceModel) ToOperationsGetMeshGatewayRequest(ctx context.Context) (*operations.GetMeshGatewayRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	out := operations.GetMeshGatewayRequest{
-		Mesh: mesh,
-		Name: name,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshGatewayResourceModel) ToOperationsDeleteMeshGatewayRequest(ctx context.Context) (*operations.DeleteMeshGatewayRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	out := operations.DeleteMeshGatewayRequest{
-		Mesh: mesh,
-		Name: name,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshGatewayResourceModel) RefreshFromSharedMeshGatewayCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.MeshGatewayCreateOrUpdateSuccessResponse) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		r.Warnings = make([]types.String, 0, len(resp.Warnings))
-		for _, v := range resp.Warnings {
-			r.Warnings = append(r.Warnings, types.StringValue(v))
-		}
-	}
-
-	return diags
-}
-
-func (r *MeshGatewayResourceModel) RefreshFromSharedMeshGatewayItem(ctx context.Context, resp *shared.MeshGatewayItem) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		if resp.Conf == nil {
-			r.Conf = nil
-		} else {
-			r.Conf = &tfTypes.Conf{}
-			r.Conf.Listeners = []tfTypes.Listeners{}
-			if len(r.Conf.Listeners) > len(resp.Conf.Listeners) {
-				r.Conf.Listeners = r.Conf.Listeners[:len(resp.Conf.Listeners)]
-			}
-			for listenersCount, listenersItem := range resp.Conf.Listeners {
-				var listeners tfTypes.Listeners
-				listeners.CrossMesh = types.BoolPointerValue(listenersItem.CrossMesh)
-				listeners.Hostname = types.StringPointerValue(listenersItem.Hostname)
-				listeners.Port = types.Int64PointerValue(listenersItem.Port)
-				if listenersItem.Protocol != nil {
-					listeners.Protocol = &tfTypes.Mode{}
-					if listenersItem.Protocol.Str != nil {
-						listeners.Protocol.Str = types.StringPointerValue(listenersItem.Protocol.Str)
-					}
-					if listenersItem.Protocol.Integer != nil {
-						listeners.Protocol.Integer = types.Int64PointerValue(listenersItem.Protocol.Integer)
-					}
-				}
-				if listenersItem.Resources == nil {
-					listeners.Resources = nil
-				} else {
-					listeners.Resources = &tfTypes.Resources{}
-					listeners.Resources.ConnectionLimit = types.Int64PointerValue(listenersItem.Resources.ConnectionLimit)
-				}
-				if len(listenersItem.Tags) > 0 {
-					listeners.Tags = make(map[string]types.String, len(listenersItem.Tags))
-					for key, value := range listenersItem.Tags {
-						listeners.Tags[key] = types.StringValue(value)
-					}
-				}
-				if listenersItem.TLS == nil {
-					listeners.TLS = nil
-				} else {
-					listeners.TLS = &tfTypes.MeshGatewayItemTLS{}
-					listeners.TLS.Certificates = []tfTypes.AccessKey{}
-					for certificatesCount, certificatesItem := range listenersItem.TLS.Certificates {
-						var certificates tfTypes.AccessKey
-						if certificatesItem.DataSourceFile != nil {
-							certificates.DataSourceFile = &tfTypes.AccessKeyDataSourceFile{}
-							certificates.DataSourceFile.File = types.StringPointerValue(certificatesItem.DataSourceFile.File)
-						}
-						if certificatesItem.DataSourceInline != nil {
-							certificates.DataSourceInline = &tfTypes.AccessKeyDataSourceInline{}
-							certificates.DataSourceInline.Inline = types.StringPointerValue(certificatesItem.DataSourceInline.Inline)
-						}
-						if certificatesItem.DataSourceInlineString != nil {
-							certificates.DataSourceInlineString = &tfTypes.AccessKeyDataSourceInlineString{}
-							certificates.DataSourceInlineString.InlineString = types.StringPointerValue(certificatesItem.DataSourceInlineString.InlineString)
-						}
-						if certificatesItem.DataSourceSecret != nil {
-							certificates.DataSourceSecret = &tfTypes.AccessKeyDataSourceSecret{}
-							certificates.DataSourceSecret.Secret = types.StringPointerValue(certificatesItem.DataSourceSecret.Secret)
-						}
-						if certificatesCount+1 > len(listeners.TLS.Certificates) {
-							listeners.TLS.Certificates = append(listeners.TLS.Certificates, certificates)
-						} else {
-							listeners.TLS.Certificates[certificatesCount].DataSourceFile = certificates.DataSourceFile
-							listeners.TLS.Certificates[certificatesCount].DataSourceInline = certificates.DataSourceInline
-							listeners.TLS.Certificates[certificatesCount].DataSourceInlineString = certificates.DataSourceInlineString
-							listeners.TLS.Certificates[certificatesCount].DataSourceSecret = certificates.DataSourceSecret
-						}
-					}
-					if listenersItem.TLS.Mode != nil {
-						listeners.TLS.Mode = &tfTypes.Mode{}
-						if listenersItem.TLS.Mode.Str != nil {
-							listeners.TLS.Mode.Str = types.StringPointerValue(listenersItem.TLS.Mode.Str)
-						}
-						if listenersItem.TLS.Mode.Integer != nil {
-							listeners.TLS.Mode.Integer = types.Int64PointerValue(listenersItem.TLS.Mode.Integer)
-						}
-					}
-					if listenersItem.TLS.Options == nil {
-						listeners.TLS.Options = nil
-					} else {
-						listeners.TLS.Options = &tfTypes.OptionsObj{}
-					}
-				}
-				if listenersCount+1 > len(r.Conf.Listeners) {
-					r.Conf.Listeners = append(r.Conf.Listeners, listeners)
-				} else {
-					r.Conf.Listeners[listenersCount].CrossMesh = listeners.CrossMesh
-					r.Conf.Listeners[listenersCount].Hostname = listeners.Hostname
-					r.Conf.Listeners[listenersCount].Port = listeners.Port
-					r.Conf.Listeners[listenersCount].Protocol = listeners.Protocol
-					r.Conf.Listeners[listenersCount].Resources = listeners.Resources
-					r.Conf.Listeners[listenersCount].Tags = listeners.Tags
-					r.Conf.Listeners[listenersCount].TLS = listeners.TLS
-				}
-			}
-		}
-		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
-		diags.Append(labelsDiags...)
-		labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
-		diags.Append(labelsDiags...)
-		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
-		r.Mesh = types.StringValue(resp.Mesh)
-		r.Name = types.StringValue(resp.Name)
-		r.Selectors = []tfTypes.Selectors{}
-		if len(r.Selectors) > len(resp.Selectors) {
-			r.Selectors = r.Selectors[:len(resp.Selectors)]
-		}
-		for selectorsCount, selectorsItem := range resp.Selectors {
-			var selectors tfTypes.Selectors
-			if len(selectorsItem.Match) > 0 {
-				selectors.Match = make(map[string]types.String, len(selectorsItem.Match))
-				for key1, value1 := range selectorsItem.Match {
-					selectors.Match[key1] = types.StringValue(value1)
-				}
-			}
-			if selectorsCount+1 > len(r.Selectors) {
-				r.Selectors = append(r.Selectors, selectors)
-			} else {
-				r.Selectors[selectorsCount].Match = selectors.Match
-			}
-		}
-		if len(resp.Tags) > 0 {
-			r.Tags = make(map[string]types.String, len(resp.Tags))
-			for key2, value2 := range resp.Tags {
-				r.Tags[key2] = types.StringValue(value2)
-			}
-		}
-		r.Type = types.StringValue(resp.Type)
-	}
-
-	return diags
 }

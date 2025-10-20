@@ -16,25 +16,25 @@ type PutMeshHTTPRouteRequest struct {
 	MeshHTTPRouteItem shared.MeshHTTPRouteItemInput `request:"mediaType=application/json"`
 }
 
-func (o *PutMeshHTTPRouteRequest) GetMesh() string {
-	if o == nil {
+func (p *PutMeshHTTPRouteRequest) GetMesh() string {
+	if p == nil {
 		return ""
 	}
-	return o.Mesh
+	return p.Mesh
 }
 
-func (o *PutMeshHTTPRouteRequest) GetName() string {
-	if o == nil {
+func (p *PutMeshHTTPRouteRequest) GetName() string {
+	if p == nil {
 		return ""
 	}
-	return o.Name
+	return p.Name
 }
 
-func (o *PutMeshHTTPRouteRequest) GetMeshHTTPRouteItem() shared.MeshHTTPRouteItemInput {
-	if o == nil {
+func (p *PutMeshHTTPRouteRequest) GetMeshHTTPRouteItem() shared.MeshHTTPRouteItemInput {
+	if p == nil {
 		return shared.MeshHTTPRouteItemInput{}
 	}
-	return o.MeshHTTPRouteItem
+	return p.MeshHTTPRouteItem
 }
 
 type PutMeshHTTPRouteResponse struct {
@@ -48,30 +48,30 @@ type PutMeshHTTPRouteResponse struct {
 	MeshHTTPRouteCreateOrUpdateSuccessResponse *shared.MeshHTTPRouteCreateOrUpdateSuccessResponse
 }
 
-func (o *PutMeshHTTPRouteResponse) GetContentType() string {
-	if o == nil {
+func (p *PutMeshHTTPRouteResponse) GetContentType() string {
+	if p == nil {
 		return ""
 	}
-	return o.ContentType
+	return p.ContentType
 }
 
-func (o *PutMeshHTTPRouteResponse) GetStatusCode() int {
-	if o == nil {
+func (p *PutMeshHTTPRouteResponse) GetStatusCode() int {
+	if p == nil {
 		return 0
 	}
-	return o.StatusCode
+	return p.StatusCode
 }
 
-func (o *PutMeshHTTPRouteResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *PutMeshHTTPRouteResponse) GetRawResponse() *http.Response {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.RawResponse
 }
 
-func (o *PutMeshHTTPRouteResponse) GetMeshHTTPRouteCreateOrUpdateSuccessResponse() *shared.MeshHTTPRouteCreateOrUpdateSuccessResponse {
-	if o == nil {
+func (p *PutMeshHTTPRouteResponse) GetMeshHTTPRouteCreateOrUpdateSuccessResponse() *shared.MeshHTTPRouteCreateOrUpdateSuccessResponse {
+	if p == nil {
 		return nil
 	}
-	return o.MeshHTTPRouteCreateOrUpdateSuccessResponse
+	return p.MeshHTTPRouteCreateOrUpdateSuccessResponse
 }

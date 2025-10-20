@@ -135,60 +135,60 @@ type MeshRetryItemTargetRef struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (o *MeshRetryItemTargetRef) GetKind() MeshRetryItemKind {
-	if o == nil {
+func (m *MeshRetryItemTargetRef) GetKind() MeshRetryItemKind {
+	if m == nil {
 		return MeshRetryItemKind("")
 	}
-	return o.Kind
+	return m.Kind
 }
 
-func (o *MeshRetryItemTargetRef) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshRetryItemTargetRef) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshRetryItemTargetRef) GetMesh() *string {
-	if o == nil {
+func (m *MeshRetryItemTargetRef) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshRetryItemTargetRef) GetName() *string {
-	if o == nil {
+func (m *MeshRetryItemTargetRef) GetName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshRetryItemTargetRef) GetNamespace() *string {
-	if o == nil {
+func (m *MeshRetryItemTargetRef) GetNamespace() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Namespace
+	return m.Namespace
 }
 
-func (o *MeshRetryItemTargetRef) GetProxyTypes() []MeshRetryItemProxyTypes {
-	if o == nil {
+func (m *MeshRetryItemTargetRef) GetProxyTypes() []MeshRetryItemProxyTypes {
+	if m == nil {
 		return nil
 	}
-	return o.ProxyTypes
+	return m.ProxyTypes
 }
 
-func (o *MeshRetryItemTargetRef) GetSectionName() *string {
-	if o == nil {
+func (m *MeshRetryItemTargetRef) GetSectionName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.SectionName
+	return m.SectionName
 }
 
-func (o *MeshRetryItemTargetRef) GetTags() map[string]string {
-	if o == nil {
+func (m *MeshRetryItemTargetRef) GetTags() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Tags
+	return m.Tags
 }
 
 // BackOff is a configuration of durations which will be used in an exponential
@@ -203,18 +203,18 @@ type BackOff struct {
 	MaxInterval *string `json:"maxInterval,omitempty"`
 }
 
-func (o *BackOff) GetBaseInterval() *string {
-	if o == nil {
+func (b *BackOff) GetBaseInterval() *string {
+	if b == nil {
 		return nil
 	}
-	return o.BaseInterval
+	return b.BaseInterval
 }
 
-func (o *BackOff) GetMaxInterval() *string {
-	if o == nil {
+func (b *BackOff) GetMaxInterval() *string {
+	if b == nil {
 		return nil
 	}
-	return o.MaxInterval
+	return b.MaxInterval
 }
 
 // MeshRetryItemFormat - The format of the reset header.
@@ -251,18 +251,18 @@ type ResetHeaders struct {
 	Name string `json:"name"`
 }
 
-func (o *ResetHeaders) GetFormat() MeshRetryItemFormat {
-	if o == nil {
+func (r *ResetHeaders) GetFormat() MeshRetryItemFormat {
+	if r == nil {
 		return MeshRetryItemFormat("")
 	}
-	return o.Format
+	return r.Format
 }
 
-func (o *ResetHeaders) GetName() string {
-	if o == nil {
+func (r *ResetHeaders) GetName() string {
+	if r == nil {
 		return ""
 	}
-	return o.Name
+	return r.Name
 }
 
 // RateLimitedBackOff is a configuration of backoff which will be used when
@@ -278,18 +278,18 @@ type RateLimitedBackOff struct {
 	ResetHeaders []ResetHeaders `json:"resetHeaders,omitempty"`
 }
 
-func (o *RateLimitedBackOff) GetMaxInterval() *string {
-	if o == nil {
+func (r *RateLimitedBackOff) GetMaxInterval() *string {
+	if r == nil {
 		return nil
 	}
-	return o.MaxInterval
+	return r.MaxInterval
 }
 
-func (o *RateLimitedBackOff) GetResetHeaders() []ResetHeaders {
-	if o == nil {
+func (r *RateLimitedBackOff) GetResetHeaders() []ResetHeaders {
+	if r == nil {
 		return nil
 	}
-	return o.ResetHeaders
+	return r.ResetHeaders
 }
 
 type RetryOn string
@@ -346,39 +346,39 @@ type MeshRetryItemGrpc struct {
 	RetryOn []RetryOn `json:"retryOn,omitempty"`
 }
 
-func (o *MeshRetryItemGrpc) GetBackOff() *BackOff {
-	if o == nil {
+func (m *MeshRetryItemGrpc) GetBackOff() *BackOff {
+	if m == nil {
 		return nil
 	}
-	return o.BackOff
+	return m.BackOff
 }
 
-func (o *MeshRetryItemGrpc) GetNumRetries() *int {
-	if o == nil {
+func (m *MeshRetryItemGrpc) GetNumRetries() *int {
+	if m == nil {
 		return nil
 	}
-	return o.NumRetries
+	return m.NumRetries
 }
 
-func (o *MeshRetryItemGrpc) GetPerTryTimeout() *string {
-	if o == nil {
+func (m *MeshRetryItemGrpc) GetPerTryTimeout() *string {
+	if m == nil {
 		return nil
 	}
-	return o.PerTryTimeout
+	return m.PerTryTimeout
 }
 
-func (o *MeshRetryItemGrpc) GetRateLimitedBackOff() *RateLimitedBackOff {
-	if o == nil {
+func (m *MeshRetryItemGrpc) GetRateLimitedBackOff() *RateLimitedBackOff {
+	if m == nil {
 		return nil
 	}
-	return o.RateLimitedBackOff
+	return m.RateLimitedBackOff
 }
 
-func (o *MeshRetryItemGrpc) GetRetryOn() []RetryOn {
-	if o == nil {
+func (m *MeshRetryItemGrpc) GetRetryOn() []RetryOn {
+	if m == nil {
 		return nil
 	}
-	return o.RetryOn
+	return m.RetryOn
 }
 
 // MeshRetryItemBackOff - BackOff is a configuration of durations which will be used in exponential
@@ -393,18 +393,18 @@ type MeshRetryItemBackOff struct {
 	MaxInterval *string `json:"maxInterval,omitempty"`
 }
 
-func (o *MeshRetryItemBackOff) GetBaseInterval() *string {
-	if o == nil {
+func (m *MeshRetryItemBackOff) GetBaseInterval() *string {
+	if m == nil {
 		return nil
 	}
-	return o.BaseInterval
+	return m.BaseInterval
 }
 
-func (o *MeshRetryItemBackOff) GetMaxInterval() *string {
-	if o == nil {
+func (m *MeshRetryItemBackOff) GetMaxInterval() *string {
+	if m == nil {
 		return nil
 	}
-	return o.MaxInterval
+	return m.MaxInterval
 }
 
 // Predicate - Type is requested predicate mode.
@@ -453,31 +453,31 @@ func (h HostSelection) MarshalJSON() ([]byte, error) {
 }
 
 func (h *HostSelection) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &h, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &h, "", false, []string{"predicate"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *HostSelection) GetPredicate() Predicate {
-	if o == nil {
+func (h *HostSelection) GetPredicate() Predicate {
+	if h == nil {
 		return Predicate("")
 	}
-	return o.Predicate
+	return h.Predicate
 }
 
-func (o *HostSelection) GetTags() map[string]string {
-	if o == nil {
+func (h *HostSelection) GetTags() map[string]string {
+	if h == nil {
 		return nil
 	}
-	return o.Tags
+	return h.Tags
 }
 
-func (o *HostSelection) GetUpdateFrequency() *int {
-	if o == nil {
+func (h *HostSelection) GetUpdateFrequency() *int {
+	if h == nil {
 		return nil
 	}
-	return o.UpdateFrequency
+	return h.UpdateFrequency
 }
 
 // MeshRetryItemSpecFormat - The format of the reset header.
@@ -514,18 +514,18 @@ type MeshRetryItemResetHeaders struct {
 	Name string `json:"name"`
 }
 
-func (o *MeshRetryItemResetHeaders) GetFormat() MeshRetryItemSpecFormat {
-	if o == nil {
+func (m *MeshRetryItemResetHeaders) GetFormat() MeshRetryItemSpecFormat {
+	if m == nil {
 		return MeshRetryItemSpecFormat("")
 	}
-	return o.Format
+	return m.Format
 }
 
-func (o *MeshRetryItemResetHeaders) GetName() string {
-	if o == nil {
+func (m *MeshRetryItemResetHeaders) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
 // MeshRetryItemRateLimitedBackOff - RateLimitedBackOff is a configuration of backoff which will be used
@@ -541,18 +541,18 @@ type MeshRetryItemRateLimitedBackOff struct {
 	ResetHeaders []MeshRetryItemResetHeaders `json:"resetHeaders,omitempty"`
 }
 
-func (o *MeshRetryItemRateLimitedBackOff) GetMaxInterval() *string {
-	if o == nil {
+func (m *MeshRetryItemRateLimitedBackOff) GetMaxInterval() *string {
+	if m == nil {
 		return nil
 	}
-	return o.MaxInterval
+	return m.MaxInterval
 }
 
-func (o *MeshRetryItemRateLimitedBackOff) GetResetHeaders() []MeshRetryItemResetHeaders {
-	if o == nil {
+func (m *MeshRetryItemRateLimitedBackOff) GetResetHeaders() []MeshRetryItemResetHeaders {
+	if m == nil {
 		return nil
 	}
-	return o.ResetHeaders
+	return m.ResetHeaders
 }
 
 // MeshRetryItemSpecType - Type specifies how to match against the value of the header.
@@ -608,31 +608,31 @@ func (r RetriableRequestHeaders) MarshalJSON() ([]byte, error) {
 }
 
 func (r *RetriableRequestHeaders) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &r, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &r, "", false, []string{"name"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *RetriableRequestHeaders) GetName() string {
-	if o == nil {
+func (r *RetriableRequestHeaders) GetName() string {
+	if r == nil {
 		return ""
 	}
-	return o.Name
+	return r.Name
 }
 
-func (o *RetriableRequestHeaders) GetType() *MeshRetryItemSpecType {
-	if o == nil {
+func (r *RetriableRequestHeaders) GetType() *MeshRetryItemSpecType {
+	if r == nil {
 		return nil
 	}
-	return o.Type
+	return r.Type
 }
 
-func (o *RetriableRequestHeaders) GetValue() *string {
-	if o == nil {
+func (r *RetriableRequestHeaders) GetValue() *string {
+	if r == nil {
 		return nil
 	}
-	return o.Value
+	return r.Value
 }
 
 // MeshRetryItemSpecToType - Type specifies how to match against the value of the header.
@@ -688,31 +688,31 @@ func (r RetriableResponseHeaders) MarshalJSON() ([]byte, error) {
 }
 
 func (r *RetriableResponseHeaders) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &r, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &r, "", false, []string{"name"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *RetriableResponseHeaders) GetName() string {
-	if o == nil {
+func (r *RetriableResponseHeaders) GetName() string {
+	if r == nil {
 		return ""
 	}
-	return o.Name
+	return r.Name
 }
 
-func (o *RetriableResponseHeaders) GetType() *MeshRetryItemSpecToType {
-	if o == nil {
+func (r *RetriableResponseHeaders) GetType() *MeshRetryItemSpecToType {
+	if r == nil {
 		return nil
 	}
-	return o.Type
+	return r.Type
 }
 
-func (o *RetriableResponseHeaders) GetValue() *string {
-	if o == nil {
+func (r *RetriableResponseHeaders) GetValue() *string {
+	if r == nil {
 		return nil
 	}
-	return o.Value
+	return r.Value
 }
 
 // MeshRetryItemHTTP - HTTP defines a configuration of retries for HTTP traffic
@@ -755,67 +755,67 @@ type MeshRetryItemHTTP struct {
 	RetryOn []string `json:"retryOn,omitempty"`
 }
 
-func (o *MeshRetryItemHTTP) GetBackOff() *MeshRetryItemBackOff {
-	if o == nil {
+func (m *MeshRetryItemHTTP) GetBackOff() *MeshRetryItemBackOff {
+	if m == nil {
 		return nil
 	}
-	return o.BackOff
+	return m.BackOff
 }
 
-func (o *MeshRetryItemHTTP) GetHostSelection() []HostSelection {
-	if o == nil {
+func (m *MeshRetryItemHTTP) GetHostSelection() []HostSelection {
+	if m == nil {
 		return nil
 	}
-	return o.HostSelection
+	return m.HostSelection
 }
 
-func (o *MeshRetryItemHTTP) GetHostSelectionMaxAttempts() *int64 {
-	if o == nil {
+func (m *MeshRetryItemHTTP) GetHostSelectionMaxAttempts() *int64 {
+	if m == nil {
 		return nil
 	}
-	return o.HostSelectionMaxAttempts
+	return m.HostSelectionMaxAttempts
 }
 
-func (o *MeshRetryItemHTTP) GetNumRetries() *int {
-	if o == nil {
+func (m *MeshRetryItemHTTP) GetNumRetries() *int {
+	if m == nil {
 		return nil
 	}
-	return o.NumRetries
+	return m.NumRetries
 }
 
-func (o *MeshRetryItemHTTP) GetPerTryTimeout() *string {
-	if o == nil {
+func (m *MeshRetryItemHTTP) GetPerTryTimeout() *string {
+	if m == nil {
 		return nil
 	}
-	return o.PerTryTimeout
+	return m.PerTryTimeout
 }
 
-func (o *MeshRetryItemHTTP) GetRateLimitedBackOff() *MeshRetryItemRateLimitedBackOff {
-	if o == nil {
+func (m *MeshRetryItemHTTP) GetRateLimitedBackOff() *MeshRetryItemRateLimitedBackOff {
+	if m == nil {
 		return nil
 	}
-	return o.RateLimitedBackOff
+	return m.RateLimitedBackOff
 }
 
-func (o *MeshRetryItemHTTP) GetRetriableRequestHeaders() []RetriableRequestHeaders {
-	if o == nil {
+func (m *MeshRetryItemHTTP) GetRetriableRequestHeaders() []RetriableRequestHeaders {
+	if m == nil {
 		return nil
 	}
-	return o.RetriableRequestHeaders
+	return m.RetriableRequestHeaders
 }
 
-func (o *MeshRetryItemHTTP) GetRetriableResponseHeaders() []RetriableResponseHeaders {
-	if o == nil {
+func (m *MeshRetryItemHTTP) GetRetriableResponseHeaders() []RetriableResponseHeaders {
+	if m == nil {
 		return nil
 	}
-	return o.RetriableResponseHeaders
+	return m.RetriableResponseHeaders
 }
 
-func (o *MeshRetryItemHTTP) GetRetryOn() []string {
-	if o == nil {
+func (m *MeshRetryItemHTTP) GetRetryOn() []string {
+	if m == nil {
 		return nil
 	}
-	return o.RetryOn
+	return m.RetryOn
 }
 
 // MeshRetryItemTCP - TCP defines a configuration of retries for TCP traffic
@@ -825,11 +825,11 @@ type MeshRetryItemTCP struct {
 	MaxConnectAttempt *int `json:"maxConnectAttempt,omitempty"`
 }
 
-func (o *MeshRetryItemTCP) GetMaxConnectAttempt() *int {
-	if o == nil {
+func (m *MeshRetryItemTCP) GetMaxConnectAttempt() *int {
+	if m == nil {
 		return nil
 	}
-	return o.MaxConnectAttempt
+	return m.MaxConnectAttempt
 }
 
 // MeshRetryItemDefault - Default is a configuration specific to the group of destinations referenced in
@@ -843,25 +843,25 @@ type MeshRetryItemDefault struct {
 	TCP *MeshRetryItemTCP `json:"tcp,omitempty"`
 }
 
-func (o *MeshRetryItemDefault) GetGrpc() *MeshRetryItemGrpc {
-	if o == nil {
+func (m *MeshRetryItemDefault) GetGrpc() *MeshRetryItemGrpc {
+	if m == nil {
 		return nil
 	}
-	return o.Grpc
+	return m.Grpc
 }
 
-func (o *MeshRetryItemDefault) GetHTTP() *MeshRetryItemHTTP {
-	if o == nil {
+func (m *MeshRetryItemDefault) GetHTTP() *MeshRetryItemHTTP {
+	if m == nil {
 		return nil
 	}
-	return o.HTTP
+	return m.HTTP
 }
 
-func (o *MeshRetryItemDefault) GetTCP() *MeshRetryItemTCP {
-	if o == nil {
+func (m *MeshRetryItemDefault) GetTCP() *MeshRetryItemTCP {
+	if m == nil {
 		return nil
 	}
-	return o.TCP
+	return m.TCP
 }
 
 // MeshRetryItemSpecKind - Kind of the referenced resource
@@ -965,60 +965,60 @@ type MeshRetryItemSpecTargetRef struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (o *MeshRetryItemSpecTargetRef) GetKind() MeshRetryItemSpecKind {
-	if o == nil {
+func (m *MeshRetryItemSpecTargetRef) GetKind() MeshRetryItemSpecKind {
+	if m == nil {
 		return MeshRetryItemSpecKind("")
 	}
-	return o.Kind
+	return m.Kind
 }
 
-func (o *MeshRetryItemSpecTargetRef) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshRetryItemSpecTargetRef) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshRetryItemSpecTargetRef) GetMesh() *string {
-	if o == nil {
+func (m *MeshRetryItemSpecTargetRef) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshRetryItemSpecTargetRef) GetName() *string {
-	if o == nil {
+func (m *MeshRetryItemSpecTargetRef) GetName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshRetryItemSpecTargetRef) GetNamespace() *string {
-	if o == nil {
+func (m *MeshRetryItemSpecTargetRef) GetNamespace() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Namespace
+	return m.Namespace
 }
 
-func (o *MeshRetryItemSpecTargetRef) GetProxyTypes() []MeshRetryItemSpecProxyTypes {
-	if o == nil {
+func (m *MeshRetryItemSpecTargetRef) GetProxyTypes() []MeshRetryItemSpecProxyTypes {
+	if m == nil {
 		return nil
 	}
-	return o.ProxyTypes
+	return m.ProxyTypes
 }
 
-func (o *MeshRetryItemSpecTargetRef) GetSectionName() *string {
-	if o == nil {
+func (m *MeshRetryItemSpecTargetRef) GetSectionName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.SectionName
+	return m.SectionName
 }
 
-func (o *MeshRetryItemSpecTargetRef) GetTags() map[string]string {
-	if o == nil {
+func (m *MeshRetryItemSpecTargetRef) GetTags() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Tags
+	return m.Tags
 }
 
 type MeshRetryItemTo struct {
@@ -1030,18 +1030,18 @@ type MeshRetryItemTo struct {
 	TargetRef MeshRetryItemSpecTargetRef `json:"targetRef"`
 }
 
-func (o *MeshRetryItemTo) GetDefault() *MeshRetryItemDefault {
-	if o == nil {
+func (m *MeshRetryItemTo) GetDefault() *MeshRetryItemDefault {
+	if m == nil {
 		return nil
 	}
-	return o.Default
+	return m.Default
 }
 
-func (o *MeshRetryItemTo) GetTargetRef() MeshRetryItemSpecTargetRef {
-	if o == nil {
+func (m *MeshRetryItemTo) GetTargetRef() MeshRetryItemSpecTargetRef {
+	if m == nil {
 		return MeshRetryItemSpecTargetRef{}
 	}
-	return o.TargetRef
+	return m.TargetRef
 }
 
 // MeshRetryItemSpec - Spec is the specification of the Kuma MeshRetry resource.
@@ -1054,18 +1054,18 @@ type MeshRetryItemSpec struct {
 	To []MeshRetryItemTo `json:"to,omitempty"`
 }
 
-func (o *MeshRetryItemSpec) GetTargetRef() *MeshRetryItemTargetRef {
-	if o == nil {
+func (m *MeshRetryItemSpec) GetTargetRef() *MeshRetryItemTargetRef {
+	if m == nil {
 		return nil
 	}
-	return o.TargetRef
+	return m.TargetRef
 }
 
-func (o *MeshRetryItemSpec) GetTo() []MeshRetryItemTo {
-	if o == nil {
+func (m *MeshRetryItemSpec) GetTo() []MeshRetryItemTo {
+	if m == nil {
 		return nil
 	}
-	return o.To
+	return m.To
 }
 
 // MeshRetryItem - Successful response
@@ -1091,59 +1091,59 @@ func (m MeshRetryItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshRetryItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshRetryItem) GetType() MeshRetryItemType {
-	if o == nil {
+func (m *MeshRetryItem) GetType() MeshRetryItemType {
+	if m == nil {
 		return MeshRetryItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshRetryItem) GetMesh() *string {
-	if o == nil {
+func (m *MeshRetryItem) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshRetryItem) GetName() string {
-	if o == nil {
+func (m *MeshRetryItem) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshRetryItem) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshRetryItem) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshRetryItem) GetSpec() MeshRetryItemSpec {
-	if o == nil {
+func (m *MeshRetryItem) GetSpec() MeshRetryItemSpec {
+	if m == nil {
 		return MeshRetryItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }
 
-func (o *MeshRetryItem) GetCreationTime() *time.Time {
-	if o == nil {
+func (m *MeshRetryItem) GetCreationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.CreationTime
+	return m.CreationTime
 }
 
-func (o *MeshRetryItem) GetModificationTime() *time.Time {
-	if o == nil {
+func (m *MeshRetryItem) GetModificationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.ModificationTime
+	return m.ModificationTime
 }
 
 type MeshRetryItemInput struct {
@@ -1164,43 +1164,43 @@ func (m MeshRetryItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshRetryItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshRetryItemInput) GetType() MeshRetryItemType {
-	if o == nil {
+func (m *MeshRetryItemInput) GetType() MeshRetryItemType {
+	if m == nil {
 		return MeshRetryItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshRetryItemInput) GetMesh() *string {
-	if o == nil {
+func (m *MeshRetryItemInput) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshRetryItemInput) GetName() string {
-	if o == nil {
+func (m *MeshRetryItemInput) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshRetryItemInput) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshRetryItemInput) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshRetryItemInput) GetSpec() MeshRetryItemSpec {
-	if o == nil {
+func (m *MeshRetryItemInput) GetSpec() MeshRetryItemSpec {
+	if m == nil {
 		return MeshRetryItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }

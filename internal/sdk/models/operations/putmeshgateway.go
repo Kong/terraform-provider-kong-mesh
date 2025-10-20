@@ -16,25 +16,25 @@ type PutMeshGatewayRequest struct {
 	MeshGatewayItem shared.MeshGatewayItem `request:"mediaType=application/json"`
 }
 
-func (o *PutMeshGatewayRequest) GetMesh() string {
-	if o == nil {
+func (p *PutMeshGatewayRequest) GetMesh() string {
+	if p == nil {
 		return ""
 	}
-	return o.Mesh
+	return p.Mesh
 }
 
-func (o *PutMeshGatewayRequest) GetName() string {
-	if o == nil {
+func (p *PutMeshGatewayRequest) GetName() string {
+	if p == nil {
 		return ""
 	}
-	return o.Name
+	return p.Name
 }
 
-func (o *PutMeshGatewayRequest) GetMeshGatewayItem() shared.MeshGatewayItem {
-	if o == nil {
+func (p *PutMeshGatewayRequest) GetMeshGatewayItem() shared.MeshGatewayItem {
+	if p == nil {
 		return shared.MeshGatewayItem{}
 	}
-	return o.MeshGatewayItem
+	return p.MeshGatewayItem
 }
 
 type PutMeshGatewayResponse struct {
@@ -48,30 +48,30 @@ type PutMeshGatewayResponse struct {
 	MeshGatewayCreateOrUpdateSuccessResponse *shared.MeshGatewayCreateOrUpdateSuccessResponse
 }
 
-func (o *PutMeshGatewayResponse) GetContentType() string {
-	if o == nil {
+func (p *PutMeshGatewayResponse) GetContentType() string {
+	if p == nil {
 		return ""
 	}
-	return o.ContentType
+	return p.ContentType
 }
 
-func (o *PutMeshGatewayResponse) GetStatusCode() int {
-	if o == nil {
+func (p *PutMeshGatewayResponse) GetStatusCode() int {
+	if p == nil {
 		return 0
 	}
-	return o.StatusCode
+	return p.StatusCode
 }
 
-func (o *PutMeshGatewayResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *PutMeshGatewayResponse) GetRawResponse() *http.Response {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.RawResponse
 }
 
-func (o *PutMeshGatewayResponse) GetMeshGatewayCreateOrUpdateSuccessResponse() *shared.MeshGatewayCreateOrUpdateSuccessResponse {
-	if o == nil {
+func (p *PutMeshGatewayResponse) GetMeshGatewayCreateOrUpdateSuccessResponse() *shared.MeshGatewayCreateOrUpdateSuccessResponse {
+	if p == nil {
 		return nil
 	}
-	return o.MeshGatewayCreateOrUpdateSuccessResponse
+	return p.MeshGatewayCreateOrUpdateSuccessResponse
 }

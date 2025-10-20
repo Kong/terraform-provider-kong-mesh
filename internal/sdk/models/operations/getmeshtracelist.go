@@ -14,18 +14,18 @@ type GetMeshTraceListQueryParamFilter struct {
 	Value *string `queryParam:"name=value"`
 }
 
-func (o *GetMeshTraceListQueryParamFilter) GetKey() *string {
-	if o == nil {
+func (g *GetMeshTraceListQueryParamFilter) GetKey() *string {
+	if g == nil {
 		return nil
 	}
-	return o.Key
+	return g.Key
 }
 
-func (o *GetMeshTraceListQueryParamFilter) GetValue() *string {
-	if o == nil {
+func (g *GetMeshTraceListQueryParamFilter) GetValue() *string {
+	if g == nil {
 		return nil
 	}
-	return o.Value
+	return g.Value
 }
 
 type GetMeshTraceListRequest struct {
@@ -44,38 +44,38 @@ func (g GetMeshTraceListRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetMeshTraceListRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &g, "", false, []string{"mesh"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *GetMeshTraceListRequest) GetOffset() *int64 {
-	if o == nil {
+func (g *GetMeshTraceListRequest) GetOffset() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Offset
+	return g.Offset
 }
 
-func (o *GetMeshTraceListRequest) GetSize() *int64 {
-	if o == nil {
+func (g *GetMeshTraceListRequest) GetSize() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Size
+	return g.Size
 }
 
-func (o *GetMeshTraceListRequest) GetFilter() *GetMeshTraceListQueryParamFilter {
-	if o == nil {
+func (g *GetMeshTraceListRequest) GetFilter() *GetMeshTraceListQueryParamFilter {
+	if g == nil {
 		return nil
 	}
-	return o.Filter
+	return g.Filter
 }
 
-func (o *GetMeshTraceListRequest) GetMesh() string {
-	if o == nil {
+func (g *GetMeshTraceListRequest) GetMesh() string {
+	if g == nil {
 		return ""
 	}
-	return o.Mesh
+	return g.Mesh
 }
 
 type GetMeshTraceListResponse struct {
@@ -89,30 +89,30 @@ type GetMeshTraceListResponse struct {
 	MeshTraceList *shared.MeshTraceList
 }
 
-func (o *GetMeshTraceListResponse) GetContentType() string {
-	if o == nil {
+func (g *GetMeshTraceListResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetMeshTraceListResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetMeshTraceListResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetMeshTraceListResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetMeshTraceListResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetMeshTraceListResponse) GetMeshTraceList() *shared.MeshTraceList {
-	if o == nil {
+func (g *GetMeshTraceListResponse) GetMeshTraceList() *shared.MeshTraceList {
+	if g == nil {
 		return nil
 	}
-	return o.MeshTraceList
+	return g.MeshTraceList
 }

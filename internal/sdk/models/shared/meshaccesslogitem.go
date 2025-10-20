@@ -38,18 +38,18 @@ type JSON struct {
 	Value string `json:"value"`
 }
 
-func (o *JSON) GetKey() string {
-	if o == nil {
+func (j *JSON) GetKey() string {
+	if j == nil {
 		return ""
 	}
-	return o.Key
+	return j.Key
 }
 
-func (o *JSON) GetValue() string {
-	if o == nil {
+func (j *JSON) GetValue() string {
+	if j == nil {
 		return ""
 	}
-	return o.Value
+	return j.Value
 }
 
 type MeshAccessLogItemSpecFromType string
@@ -92,38 +92,38 @@ func (f Format) MarshalJSON() ([]byte, error) {
 }
 
 func (f *Format) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &f, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &f, "", false, []string{"type"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *Format) GetJSON() []JSON {
-	if o == nil {
+func (f *Format) GetJSON() []JSON {
+	if f == nil {
 		return nil
 	}
-	return o.JSON
+	return f.JSON
 }
 
-func (o *Format) GetOmitEmptyValues() *bool {
-	if o == nil {
+func (f *Format) GetOmitEmptyValues() *bool {
+	if f == nil {
 		return nil
 	}
-	return o.OmitEmptyValues
+	return f.OmitEmptyValues
 }
 
-func (o *Format) GetPlain() *string {
-	if o == nil {
+func (f *Format) GetPlain() *string {
+	if f == nil {
 		return nil
 	}
-	return o.Plain
+	return f.Plain
 }
 
-func (o *Format) GetType() MeshAccessLogItemSpecFromType {
-	if o == nil {
+func (f *Format) GetType() MeshAccessLogItemSpecFromType {
+	if f == nil {
 		return MeshAccessLogItemSpecFromType("")
 	}
-	return o.Type
+	return f.Type
 }
 
 // File - FileBackend defines configuration for file based access logs
@@ -135,18 +135,18 @@ type File struct {
 	Path string `json:"path"`
 }
 
-func (o *File) GetFormat() *Format {
-	if o == nil {
+func (f *File) GetFormat() *Format {
+	if f == nil {
 		return nil
 	}
-	return o.Format
+	return f.Format
 }
 
-func (o *File) GetPath() string {
-	if o == nil {
+func (f *File) GetPath() string {
+	if f == nil {
 		return ""
 	}
-	return o.Path
+	return f.Path
 }
 
 type Attributes struct {
@@ -154,18 +154,18 @@ type Attributes struct {
 	Value string `json:"value"`
 }
 
-func (o *Attributes) GetKey() string {
-	if o == nil {
+func (a *Attributes) GetKey() string {
+	if a == nil {
 		return ""
 	}
-	return o.Key
+	return a.Key
 }
 
-func (o *Attributes) GetValue() string {
-	if o == nil {
+func (a *Attributes) GetValue() string {
+	if a == nil {
 		return ""
 	}
-	return o.Value
+	return a.Value
 }
 
 // MeshAccessLogItemSpecFromOpenTelemetry - Defines an OpenTelemetry logging backend.
@@ -182,25 +182,25 @@ type MeshAccessLogItemSpecFromOpenTelemetry struct {
 	Endpoint string `json:"endpoint"`
 }
 
-func (o *MeshAccessLogItemSpecFromOpenTelemetry) GetAttributes() []Attributes {
-	if o == nil {
+func (m *MeshAccessLogItemSpecFromOpenTelemetry) GetAttributes() []Attributes {
+	if m == nil {
 		return nil
 	}
-	return o.Attributes
+	return m.Attributes
 }
 
-func (o *MeshAccessLogItemSpecFromOpenTelemetry) GetBody() any {
-	if o == nil {
+func (m *MeshAccessLogItemSpecFromOpenTelemetry) GetBody() any {
+	if m == nil {
 		return nil
 	}
-	return o.Body
+	return m.Body
 }
 
-func (o *MeshAccessLogItemSpecFromOpenTelemetry) GetEndpoint() string {
-	if o == nil {
+func (m *MeshAccessLogItemSpecFromOpenTelemetry) GetEndpoint() string {
+	if m == nil {
 		return ""
 	}
-	return o.Endpoint
+	return m.Endpoint
 }
 
 type MeshAccessLogItemJSON struct {
@@ -208,18 +208,18 @@ type MeshAccessLogItemJSON struct {
 	Value string `json:"value"`
 }
 
-func (o *MeshAccessLogItemJSON) GetKey() string {
-	if o == nil {
+func (m *MeshAccessLogItemJSON) GetKey() string {
+	if m == nil {
 		return ""
 	}
-	return o.Key
+	return m.Key
 }
 
-func (o *MeshAccessLogItemJSON) GetValue() string {
-	if o == nil {
+func (m *MeshAccessLogItemJSON) GetValue() string {
+	if m == nil {
 		return ""
 	}
-	return o.Value
+	return m.Value
 }
 
 type MeshAccessLogItemSpecFromDefaultType string
@@ -262,38 +262,38 @@ func (m MeshAccessLogItemFormat) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshAccessLogItemFormat) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshAccessLogItemFormat) GetJSON() []MeshAccessLogItemJSON {
-	if o == nil {
+func (m *MeshAccessLogItemFormat) GetJSON() []MeshAccessLogItemJSON {
+	if m == nil {
 		return nil
 	}
-	return o.JSON
+	return m.JSON
 }
 
-func (o *MeshAccessLogItemFormat) GetOmitEmptyValues() *bool {
-	if o == nil {
+func (m *MeshAccessLogItemFormat) GetOmitEmptyValues() *bool {
+	if m == nil {
 		return nil
 	}
-	return o.OmitEmptyValues
+	return m.OmitEmptyValues
 }
 
-func (o *MeshAccessLogItemFormat) GetPlain() *string {
-	if o == nil {
+func (m *MeshAccessLogItemFormat) GetPlain() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Plain
+	return m.Plain
 }
 
-func (o *MeshAccessLogItemFormat) GetType() MeshAccessLogItemSpecFromDefaultType {
-	if o == nil {
+func (m *MeshAccessLogItemFormat) GetType() MeshAccessLogItemSpecFromDefaultType {
+	if m == nil {
 		return MeshAccessLogItemSpecFromDefaultType("")
 	}
-	return o.Type
+	return m.Type
 }
 
 // MeshAccessLogItemSpecFromTCP - TCPBackend defines a TCP logging backend.
@@ -305,18 +305,18 @@ type MeshAccessLogItemSpecFromTCP struct {
 	Format *MeshAccessLogItemFormat `json:"format,omitempty"`
 }
 
-func (o *MeshAccessLogItemSpecFromTCP) GetAddress() string {
-	if o == nil {
+func (m *MeshAccessLogItemSpecFromTCP) GetAddress() string {
+	if m == nil {
 		return ""
 	}
-	return o.Address
+	return m.Address
 }
 
-func (o *MeshAccessLogItemSpecFromTCP) GetFormat() *MeshAccessLogItemFormat {
-	if o == nil {
+func (m *MeshAccessLogItemSpecFromTCP) GetFormat() *MeshAccessLogItemFormat {
+	if m == nil {
 		return nil
 	}
-	return o.Format
+	return m.Format
 }
 
 type MeshAccessLogItemType string
@@ -358,32 +358,32 @@ type MeshAccessLogItemSpecFromBackends struct {
 	Type MeshAccessLogItemType         `json:"type"`
 }
 
-func (o *MeshAccessLogItemSpecFromBackends) GetFile() *File {
-	if o == nil {
+func (m *MeshAccessLogItemSpecFromBackends) GetFile() *File {
+	if m == nil {
 		return nil
 	}
-	return o.File
+	return m.File
 }
 
-func (o *MeshAccessLogItemSpecFromBackends) GetOpenTelemetry() *MeshAccessLogItemSpecFromOpenTelemetry {
-	if o == nil {
+func (m *MeshAccessLogItemSpecFromBackends) GetOpenTelemetry() *MeshAccessLogItemSpecFromOpenTelemetry {
+	if m == nil {
 		return nil
 	}
-	return o.OpenTelemetry
+	return m.OpenTelemetry
 }
 
-func (o *MeshAccessLogItemSpecFromBackends) GetTCP() *MeshAccessLogItemSpecFromTCP {
-	if o == nil {
+func (m *MeshAccessLogItemSpecFromBackends) GetTCP() *MeshAccessLogItemSpecFromTCP {
+	if m == nil {
 		return nil
 	}
-	return o.TCP
+	return m.TCP
 }
 
-func (o *MeshAccessLogItemSpecFromBackends) GetType() MeshAccessLogItemType {
-	if o == nil {
+func (m *MeshAccessLogItemSpecFromBackends) GetType() MeshAccessLogItemType {
+	if m == nil {
 		return MeshAccessLogItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
 // MeshAccessLogItemSpecFromDefault - Default is a configuration specific to the group of clients referenced in
@@ -392,11 +392,11 @@ type MeshAccessLogItemSpecFromDefault struct {
 	Backends []MeshAccessLogItemSpecFromBackends `json:"backends,omitempty"`
 }
 
-func (o *MeshAccessLogItemSpecFromDefault) GetBackends() []MeshAccessLogItemSpecFromBackends {
-	if o == nil {
+func (m *MeshAccessLogItemSpecFromDefault) GetBackends() []MeshAccessLogItemSpecFromBackends {
+	if m == nil {
 		return nil
 	}
-	return o.Backends
+	return m.Backends
 }
 
 // MeshAccessLogItemKind - Kind of the referenced resource
@@ -500,60 +500,60 @@ type MeshAccessLogItemTargetRef struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (o *MeshAccessLogItemTargetRef) GetKind() MeshAccessLogItemKind {
-	if o == nil {
+func (m *MeshAccessLogItemTargetRef) GetKind() MeshAccessLogItemKind {
+	if m == nil {
 		return MeshAccessLogItemKind("")
 	}
-	return o.Kind
+	return m.Kind
 }
 
-func (o *MeshAccessLogItemTargetRef) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshAccessLogItemTargetRef) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshAccessLogItemTargetRef) GetMesh() *string {
-	if o == nil {
+func (m *MeshAccessLogItemTargetRef) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshAccessLogItemTargetRef) GetName() *string {
-	if o == nil {
+func (m *MeshAccessLogItemTargetRef) GetName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshAccessLogItemTargetRef) GetNamespace() *string {
-	if o == nil {
+func (m *MeshAccessLogItemTargetRef) GetNamespace() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Namespace
+	return m.Namespace
 }
 
-func (o *MeshAccessLogItemTargetRef) GetProxyTypes() []MeshAccessLogItemProxyTypes {
-	if o == nil {
+func (m *MeshAccessLogItemTargetRef) GetProxyTypes() []MeshAccessLogItemProxyTypes {
+	if m == nil {
 		return nil
 	}
-	return o.ProxyTypes
+	return m.ProxyTypes
 }
 
-func (o *MeshAccessLogItemTargetRef) GetSectionName() *string {
-	if o == nil {
+func (m *MeshAccessLogItemTargetRef) GetSectionName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.SectionName
+	return m.SectionName
 }
 
-func (o *MeshAccessLogItemTargetRef) GetTags() map[string]string {
-	if o == nil {
+func (m *MeshAccessLogItemTargetRef) GetTags() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Tags
+	return m.Tags
 }
 
 type From struct {
@@ -565,18 +565,18 @@ type From struct {
 	TargetRef MeshAccessLogItemTargetRef `json:"targetRef"`
 }
 
-func (o *From) GetDefault() MeshAccessLogItemSpecFromDefault {
-	if o == nil {
+func (f *From) GetDefault() MeshAccessLogItemSpecFromDefault {
+	if f == nil {
 		return MeshAccessLogItemSpecFromDefault{}
 	}
-	return o.Default
+	return f.Default
 }
 
-func (o *From) GetTargetRef() MeshAccessLogItemTargetRef {
-	if o == nil {
+func (f *From) GetTargetRef() MeshAccessLogItemTargetRef {
+	if f == nil {
 		return MeshAccessLogItemTargetRef{}
 	}
-	return o.TargetRef
+	return f.TargetRef
 }
 
 type MeshAccessLogItemSpecJSON struct {
@@ -584,18 +584,18 @@ type MeshAccessLogItemSpecJSON struct {
 	Value string `json:"value"`
 }
 
-func (o *MeshAccessLogItemSpecJSON) GetKey() string {
-	if o == nil {
+func (m *MeshAccessLogItemSpecJSON) GetKey() string {
+	if m == nil {
 		return ""
 	}
-	return o.Key
+	return m.Key
 }
 
-func (o *MeshAccessLogItemSpecJSON) GetValue() string {
-	if o == nil {
+func (m *MeshAccessLogItemSpecJSON) GetValue() string {
+	if m == nil {
 		return ""
 	}
-	return o.Value
+	return m.Value
 }
 
 type MeshAccessLogItemSpecRulesType string
@@ -638,38 +638,38 @@ func (m MeshAccessLogItemSpecFormat) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshAccessLogItemSpecFormat) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshAccessLogItemSpecFormat) GetJSON() []MeshAccessLogItemSpecJSON {
-	if o == nil {
+func (m *MeshAccessLogItemSpecFormat) GetJSON() []MeshAccessLogItemSpecJSON {
+	if m == nil {
 		return nil
 	}
-	return o.JSON
+	return m.JSON
 }
 
-func (o *MeshAccessLogItemSpecFormat) GetOmitEmptyValues() *bool {
-	if o == nil {
+func (m *MeshAccessLogItemSpecFormat) GetOmitEmptyValues() *bool {
+	if m == nil {
 		return nil
 	}
-	return o.OmitEmptyValues
+	return m.OmitEmptyValues
 }
 
-func (o *MeshAccessLogItemSpecFormat) GetPlain() *string {
-	if o == nil {
+func (m *MeshAccessLogItemSpecFormat) GetPlain() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Plain
+	return m.Plain
 }
 
-func (o *MeshAccessLogItemSpecFormat) GetType() MeshAccessLogItemSpecRulesType {
-	if o == nil {
+func (m *MeshAccessLogItemSpecFormat) GetType() MeshAccessLogItemSpecRulesType {
+	if m == nil {
 		return MeshAccessLogItemSpecRulesType("")
 	}
-	return o.Type
+	return m.Type
 }
 
 // MeshAccessLogItemFile - FileBackend defines configuration for file based access logs
@@ -681,18 +681,18 @@ type MeshAccessLogItemFile struct {
 	Path string `json:"path"`
 }
 
-func (o *MeshAccessLogItemFile) GetFormat() *MeshAccessLogItemSpecFormat {
-	if o == nil {
+func (m *MeshAccessLogItemFile) GetFormat() *MeshAccessLogItemSpecFormat {
+	if m == nil {
 		return nil
 	}
-	return o.Format
+	return m.Format
 }
 
-func (o *MeshAccessLogItemFile) GetPath() string {
-	if o == nil {
+func (m *MeshAccessLogItemFile) GetPath() string {
+	if m == nil {
 		return ""
 	}
-	return o.Path
+	return m.Path
 }
 
 type MeshAccessLogItemAttributes struct {
@@ -700,18 +700,18 @@ type MeshAccessLogItemAttributes struct {
 	Value string `json:"value"`
 }
 
-func (o *MeshAccessLogItemAttributes) GetKey() string {
-	if o == nil {
+func (m *MeshAccessLogItemAttributes) GetKey() string {
+	if m == nil {
 		return ""
 	}
-	return o.Key
+	return m.Key
 }
 
-func (o *MeshAccessLogItemAttributes) GetValue() string {
-	if o == nil {
+func (m *MeshAccessLogItemAttributes) GetValue() string {
+	if m == nil {
 		return ""
 	}
-	return o.Value
+	return m.Value
 }
 
 // MeshAccessLogItemOpenTelemetry - Defines an OpenTelemetry logging backend.
@@ -728,25 +728,25 @@ type MeshAccessLogItemOpenTelemetry struct {
 	Endpoint string `json:"endpoint"`
 }
 
-func (o *MeshAccessLogItemOpenTelemetry) GetAttributes() []MeshAccessLogItemAttributes {
-	if o == nil {
+func (m *MeshAccessLogItemOpenTelemetry) GetAttributes() []MeshAccessLogItemAttributes {
+	if m == nil {
 		return nil
 	}
-	return o.Attributes
+	return m.Attributes
 }
 
-func (o *MeshAccessLogItemOpenTelemetry) GetBody() any {
-	if o == nil {
+func (m *MeshAccessLogItemOpenTelemetry) GetBody() any {
+	if m == nil {
 		return nil
 	}
-	return o.Body
+	return m.Body
 }
 
-func (o *MeshAccessLogItemOpenTelemetry) GetEndpoint() string {
-	if o == nil {
+func (m *MeshAccessLogItemOpenTelemetry) GetEndpoint() string {
+	if m == nil {
 		return ""
 	}
-	return o.Endpoint
+	return m.Endpoint
 }
 
 type MeshAccessLogItemSpecRulesJSON struct {
@@ -754,18 +754,18 @@ type MeshAccessLogItemSpecRulesJSON struct {
 	Value string `json:"value"`
 }
 
-func (o *MeshAccessLogItemSpecRulesJSON) GetKey() string {
-	if o == nil {
+func (m *MeshAccessLogItemSpecRulesJSON) GetKey() string {
+	if m == nil {
 		return ""
 	}
-	return o.Key
+	return m.Key
 }
 
-func (o *MeshAccessLogItemSpecRulesJSON) GetValue() string {
-	if o == nil {
+func (m *MeshAccessLogItemSpecRulesJSON) GetValue() string {
+	if m == nil {
 		return ""
 	}
-	return o.Value
+	return m.Value
 }
 
 type MeshAccessLogItemSpecRulesDefaultType string
@@ -808,38 +808,38 @@ func (m MeshAccessLogItemSpecRulesFormat) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshAccessLogItemSpecRulesFormat) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshAccessLogItemSpecRulesFormat) GetJSON() []MeshAccessLogItemSpecRulesJSON {
-	if o == nil {
+func (m *MeshAccessLogItemSpecRulesFormat) GetJSON() []MeshAccessLogItemSpecRulesJSON {
+	if m == nil {
 		return nil
 	}
-	return o.JSON
+	return m.JSON
 }
 
-func (o *MeshAccessLogItemSpecRulesFormat) GetOmitEmptyValues() *bool {
-	if o == nil {
+func (m *MeshAccessLogItemSpecRulesFormat) GetOmitEmptyValues() *bool {
+	if m == nil {
 		return nil
 	}
-	return o.OmitEmptyValues
+	return m.OmitEmptyValues
 }
 
-func (o *MeshAccessLogItemSpecRulesFormat) GetPlain() *string {
-	if o == nil {
+func (m *MeshAccessLogItemSpecRulesFormat) GetPlain() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Plain
+	return m.Plain
 }
 
-func (o *MeshAccessLogItemSpecRulesFormat) GetType() MeshAccessLogItemSpecRulesDefaultType {
-	if o == nil {
+func (m *MeshAccessLogItemSpecRulesFormat) GetType() MeshAccessLogItemSpecRulesDefaultType {
+	if m == nil {
 		return MeshAccessLogItemSpecRulesDefaultType("")
 	}
-	return o.Type
+	return m.Type
 }
 
 // MeshAccessLogItemTCP - TCPBackend defines a TCP logging backend.
@@ -851,18 +851,18 @@ type MeshAccessLogItemTCP struct {
 	Format *MeshAccessLogItemSpecRulesFormat `json:"format,omitempty"`
 }
 
-func (o *MeshAccessLogItemTCP) GetAddress() string {
-	if o == nil {
+func (m *MeshAccessLogItemTCP) GetAddress() string {
+	if m == nil {
 		return ""
 	}
-	return o.Address
+	return m.Address
 }
 
-func (o *MeshAccessLogItemTCP) GetFormat() *MeshAccessLogItemSpecRulesFormat {
-	if o == nil {
+func (m *MeshAccessLogItemTCP) GetFormat() *MeshAccessLogItemSpecRulesFormat {
+	if m == nil {
 		return nil
 	}
-	return o.Format
+	return m.Format
 }
 
 type MeshAccessLogItemSpecType string
@@ -904,32 +904,32 @@ type MeshAccessLogItemBackends struct {
 	Type MeshAccessLogItemSpecType `json:"type"`
 }
 
-func (o *MeshAccessLogItemBackends) GetFile() *MeshAccessLogItemFile {
-	if o == nil {
+func (m *MeshAccessLogItemBackends) GetFile() *MeshAccessLogItemFile {
+	if m == nil {
 		return nil
 	}
-	return o.File
+	return m.File
 }
 
-func (o *MeshAccessLogItemBackends) GetOpenTelemetry() *MeshAccessLogItemOpenTelemetry {
-	if o == nil {
+func (m *MeshAccessLogItemBackends) GetOpenTelemetry() *MeshAccessLogItemOpenTelemetry {
+	if m == nil {
 		return nil
 	}
-	return o.OpenTelemetry
+	return m.OpenTelemetry
 }
 
-func (o *MeshAccessLogItemBackends) GetTCP() *MeshAccessLogItemTCP {
-	if o == nil {
+func (m *MeshAccessLogItemBackends) GetTCP() *MeshAccessLogItemTCP {
+	if m == nil {
 		return nil
 	}
-	return o.TCP
+	return m.TCP
 }
 
-func (o *MeshAccessLogItemBackends) GetType() MeshAccessLogItemSpecType {
-	if o == nil {
+func (m *MeshAccessLogItemBackends) GetType() MeshAccessLogItemSpecType {
+	if m == nil {
 		return MeshAccessLogItemSpecType("")
 	}
-	return o.Type
+	return m.Type
 }
 
 // MeshAccessLogItemDefault - Default contains configuration of the inbound access logging
@@ -937,11 +937,11 @@ type MeshAccessLogItemDefault struct {
 	Backends []MeshAccessLogItemBackends `json:"backends,omitempty"`
 }
 
-func (o *MeshAccessLogItemDefault) GetBackends() []MeshAccessLogItemBackends {
-	if o == nil {
+func (m *MeshAccessLogItemDefault) GetBackends() []MeshAccessLogItemBackends {
+	if m == nil {
 		return nil
 	}
-	return o.Backends
+	return m.Backends
 }
 
 type Rules struct {
@@ -949,11 +949,11 @@ type Rules struct {
 	Default MeshAccessLogItemDefault `json:"default"`
 }
 
-func (o *Rules) GetDefault() MeshAccessLogItemDefault {
-	if o == nil {
+func (r *Rules) GetDefault() MeshAccessLogItemDefault {
+	if r == nil {
 		return MeshAccessLogItemDefault{}
 	}
-	return o.Default
+	return r.Default
 }
 
 // Kind of the referenced resource
@@ -1058,60 +1058,60 @@ type TargetRef struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (o *TargetRef) GetKind() Kind {
-	if o == nil {
+func (t *TargetRef) GetKind() Kind {
+	if t == nil {
 		return Kind("")
 	}
-	return o.Kind
+	return t.Kind
 }
 
-func (o *TargetRef) GetLabels() map[string]string {
-	if o == nil {
+func (t *TargetRef) GetLabels() map[string]string {
+	if t == nil {
 		return nil
 	}
-	return o.Labels
+	return t.Labels
 }
 
-func (o *TargetRef) GetMesh() *string {
-	if o == nil {
+func (t *TargetRef) GetMesh() *string {
+	if t == nil {
 		return nil
 	}
-	return o.Mesh
+	return t.Mesh
 }
 
-func (o *TargetRef) GetName() *string {
-	if o == nil {
+func (t *TargetRef) GetName() *string {
+	if t == nil {
 		return nil
 	}
-	return o.Name
+	return t.Name
 }
 
-func (o *TargetRef) GetNamespace() *string {
-	if o == nil {
+func (t *TargetRef) GetNamespace() *string {
+	if t == nil {
 		return nil
 	}
-	return o.Namespace
+	return t.Namespace
 }
 
-func (o *TargetRef) GetProxyTypes() []ProxyTypes {
-	if o == nil {
+func (t *TargetRef) GetProxyTypes() []ProxyTypes {
+	if t == nil {
 		return nil
 	}
-	return o.ProxyTypes
+	return t.ProxyTypes
 }
 
-func (o *TargetRef) GetSectionName() *string {
-	if o == nil {
+func (t *TargetRef) GetSectionName() *string {
+	if t == nil {
 		return nil
 	}
-	return o.SectionName
+	return t.SectionName
 }
 
-func (o *TargetRef) GetTags() map[string]string {
-	if o == nil {
+func (t *TargetRef) GetTags() map[string]string {
+	if t == nil {
 		return nil
 	}
-	return o.Tags
+	return t.Tags
 }
 
 type MeshAccessLogItemSpecToJSON struct {
@@ -1119,18 +1119,18 @@ type MeshAccessLogItemSpecToJSON struct {
 	Value string `json:"value"`
 }
 
-func (o *MeshAccessLogItemSpecToJSON) GetKey() string {
-	if o == nil {
+func (m *MeshAccessLogItemSpecToJSON) GetKey() string {
+	if m == nil {
 		return ""
 	}
-	return o.Key
+	return m.Key
 }
 
-func (o *MeshAccessLogItemSpecToJSON) GetValue() string {
-	if o == nil {
+func (m *MeshAccessLogItemSpecToJSON) GetValue() string {
+	if m == nil {
 		return ""
 	}
-	return o.Value
+	return m.Value
 }
 
 type MeshAccessLogItemSpecToDefaultBackendsType string
@@ -1173,38 +1173,38 @@ func (m MeshAccessLogItemSpecToFormat) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshAccessLogItemSpecToFormat) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshAccessLogItemSpecToFormat) GetJSON() []MeshAccessLogItemSpecToJSON {
-	if o == nil {
+func (m *MeshAccessLogItemSpecToFormat) GetJSON() []MeshAccessLogItemSpecToJSON {
+	if m == nil {
 		return nil
 	}
-	return o.JSON
+	return m.JSON
 }
 
-func (o *MeshAccessLogItemSpecToFormat) GetOmitEmptyValues() *bool {
-	if o == nil {
+func (m *MeshAccessLogItemSpecToFormat) GetOmitEmptyValues() *bool {
+	if m == nil {
 		return nil
 	}
-	return o.OmitEmptyValues
+	return m.OmitEmptyValues
 }
 
-func (o *MeshAccessLogItemSpecToFormat) GetPlain() *string {
-	if o == nil {
+func (m *MeshAccessLogItemSpecToFormat) GetPlain() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Plain
+	return m.Plain
 }
 
-func (o *MeshAccessLogItemSpecToFormat) GetType() MeshAccessLogItemSpecToDefaultBackendsType {
-	if o == nil {
+func (m *MeshAccessLogItemSpecToFormat) GetType() MeshAccessLogItemSpecToDefaultBackendsType {
+	if m == nil {
 		return MeshAccessLogItemSpecToDefaultBackendsType("")
 	}
-	return o.Type
+	return m.Type
 }
 
 // MeshAccessLogItemSpecFile - FileBackend defines configuration for file based access logs
@@ -1216,18 +1216,18 @@ type MeshAccessLogItemSpecFile struct {
 	Path string `json:"path"`
 }
 
-func (o *MeshAccessLogItemSpecFile) GetFormat() *MeshAccessLogItemSpecToFormat {
-	if o == nil {
+func (m *MeshAccessLogItemSpecFile) GetFormat() *MeshAccessLogItemSpecToFormat {
+	if m == nil {
 		return nil
 	}
-	return o.Format
+	return m.Format
 }
 
-func (o *MeshAccessLogItemSpecFile) GetPath() string {
-	if o == nil {
+func (m *MeshAccessLogItemSpecFile) GetPath() string {
+	if m == nil {
 		return ""
 	}
-	return o.Path
+	return m.Path
 }
 
 type MeshAccessLogItemSpecAttributes struct {
@@ -1235,18 +1235,18 @@ type MeshAccessLogItemSpecAttributes struct {
 	Value string `json:"value"`
 }
 
-func (o *MeshAccessLogItemSpecAttributes) GetKey() string {
-	if o == nil {
+func (m *MeshAccessLogItemSpecAttributes) GetKey() string {
+	if m == nil {
 		return ""
 	}
-	return o.Key
+	return m.Key
 }
 
-func (o *MeshAccessLogItemSpecAttributes) GetValue() string {
-	if o == nil {
+func (m *MeshAccessLogItemSpecAttributes) GetValue() string {
+	if m == nil {
 		return ""
 	}
-	return o.Value
+	return m.Value
 }
 
 // MeshAccessLogItemSpecOpenTelemetry - Defines an OpenTelemetry logging backend.
@@ -1263,25 +1263,25 @@ type MeshAccessLogItemSpecOpenTelemetry struct {
 	Endpoint string `json:"endpoint"`
 }
 
-func (o *MeshAccessLogItemSpecOpenTelemetry) GetAttributes() []MeshAccessLogItemSpecAttributes {
-	if o == nil {
+func (m *MeshAccessLogItemSpecOpenTelemetry) GetAttributes() []MeshAccessLogItemSpecAttributes {
+	if m == nil {
 		return nil
 	}
-	return o.Attributes
+	return m.Attributes
 }
 
-func (o *MeshAccessLogItemSpecOpenTelemetry) GetBody() any {
-	if o == nil {
+func (m *MeshAccessLogItemSpecOpenTelemetry) GetBody() any {
+	if m == nil {
 		return nil
 	}
-	return o.Body
+	return m.Body
 }
 
-func (o *MeshAccessLogItemSpecOpenTelemetry) GetEndpoint() string {
-	if o == nil {
+func (m *MeshAccessLogItemSpecOpenTelemetry) GetEndpoint() string {
+	if m == nil {
 		return ""
 	}
-	return o.Endpoint
+	return m.Endpoint
 }
 
 type MeshAccessLogItemSpecToDefaultJSON struct {
@@ -1289,18 +1289,18 @@ type MeshAccessLogItemSpecToDefaultJSON struct {
 	Value string `json:"value"`
 }
 
-func (o *MeshAccessLogItemSpecToDefaultJSON) GetKey() string {
-	if o == nil {
+func (m *MeshAccessLogItemSpecToDefaultJSON) GetKey() string {
+	if m == nil {
 		return ""
 	}
-	return o.Key
+	return m.Key
 }
 
-func (o *MeshAccessLogItemSpecToDefaultJSON) GetValue() string {
-	if o == nil {
+func (m *MeshAccessLogItemSpecToDefaultJSON) GetValue() string {
+	if m == nil {
 		return ""
 	}
-	return o.Value
+	return m.Value
 }
 
 type MeshAccessLogItemSpecToDefaultType string
@@ -1343,38 +1343,38 @@ func (m MeshAccessLogItemSpecToDefaultFormat) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshAccessLogItemSpecToDefaultFormat) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshAccessLogItemSpecToDefaultFormat) GetJSON() []MeshAccessLogItemSpecToDefaultJSON {
-	if o == nil {
+func (m *MeshAccessLogItemSpecToDefaultFormat) GetJSON() []MeshAccessLogItemSpecToDefaultJSON {
+	if m == nil {
 		return nil
 	}
-	return o.JSON
+	return m.JSON
 }
 
-func (o *MeshAccessLogItemSpecToDefaultFormat) GetOmitEmptyValues() *bool {
-	if o == nil {
+func (m *MeshAccessLogItemSpecToDefaultFormat) GetOmitEmptyValues() *bool {
+	if m == nil {
 		return nil
 	}
-	return o.OmitEmptyValues
+	return m.OmitEmptyValues
 }
 
-func (o *MeshAccessLogItemSpecToDefaultFormat) GetPlain() *string {
-	if o == nil {
+func (m *MeshAccessLogItemSpecToDefaultFormat) GetPlain() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Plain
+	return m.Plain
 }
 
-func (o *MeshAccessLogItemSpecToDefaultFormat) GetType() MeshAccessLogItemSpecToDefaultType {
-	if o == nil {
+func (m *MeshAccessLogItemSpecToDefaultFormat) GetType() MeshAccessLogItemSpecToDefaultType {
+	if m == nil {
 		return MeshAccessLogItemSpecToDefaultType("")
 	}
-	return o.Type
+	return m.Type
 }
 
 // MeshAccessLogItemSpecTCP - TCPBackend defines a TCP logging backend.
@@ -1386,18 +1386,18 @@ type MeshAccessLogItemSpecTCP struct {
 	Format *MeshAccessLogItemSpecToDefaultFormat `json:"format,omitempty"`
 }
 
-func (o *MeshAccessLogItemSpecTCP) GetAddress() string {
-	if o == nil {
+func (m *MeshAccessLogItemSpecTCP) GetAddress() string {
+	if m == nil {
 		return ""
 	}
-	return o.Address
+	return m.Address
 }
 
-func (o *MeshAccessLogItemSpecTCP) GetFormat() *MeshAccessLogItemSpecToDefaultFormat {
-	if o == nil {
+func (m *MeshAccessLogItemSpecTCP) GetFormat() *MeshAccessLogItemSpecToDefaultFormat {
+	if m == nil {
 		return nil
 	}
-	return o.Format
+	return m.Format
 }
 
 type MeshAccessLogItemSpecToType string
@@ -1439,32 +1439,32 @@ type MeshAccessLogItemSpecBackends struct {
 	Type MeshAccessLogItemSpecToType `json:"type"`
 }
 
-func (o *MeshAccessLogItemSpecBackends) GetFile() *MeshAccessLogItemSpecFile {
-	if o == nil {
+func (m *MeshAccessLogItemSpecBackends) GetFile() *MeshAccessLogItemSpecFile {
+	if m == nil {
 		return nil
 	}
-	return o.File
+	return m.File
 }
 
-func (o *MeshAccessLogItemSpecBackends) GetOpenTelemetry() *MeshAccessLogItemSpecOpenTelemetry {
-	if o == nil {
+func (m *MeshAccessLogItemSpecBackends) GetOpenTelemetry() *MeshAccessLogItemSpecOpenTelemetry {
+	if m == nil {
 		return nil
 	}
-	return o.OpenTelemetry
+	return m.OpenTelemetry
 }
 
-func (o *MeshAccessLogItemSpecBackends) GetTCP() *MeshAccessLogItemSpecTCP {
-	if o == nil {
+func (m *MeshAccessLogItemSpecBackends) GetTCP() *MeshAccessLogItemSpecTCP {
+	if m == nil {
 		return nil
 	}
-	return o.TCP
+	return m.TCP
 }
 
-func (o *MeshAccessLogItemSpecBackends) GetType() MeshAccessLogItemSpecToType {
-	if o == nil {
+func (m *MeshAccessLogItemSpecBackends) GetType() MeshAccessLogItemSpecToType {
+	if m == nil {
 		return MeshAccessLogItemSpecToType("")
 	}
-	return o.Type
+	return m.Type
 }
 
 // MeshAccessLogItemSpecDefault - Default is a configuration specific to the group of destinations referenced in
@@ -1473,11 +1473,11 @@ type MeshAccessLogItemSpecDefault struct {
 	Backends []MeshAccessLogItemSpecBackends `json:"backends,omitempty"`
 }
 
-func (o *MeshAccessLogItemSpecDefault) GetBackends() []MeshAccessLogItemSpecBackends {
-	if o == nil {
+func (m *MeshAccessLogItemSpecDefault) GetBackends() []MeshAccessLogItemSpecBackends {
+	if m == nil {
 		return nil
 	}
-	return o.Backends
+	return m.Backends
 }
 
 // MeshAccessLogItemSpecKind - Kind of the referenced resource
@@ -1581,60 +1581,60 @@ type MeshAccessLogItemSpecTargetRef struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (o *MeshAccessLogItemSpecTargetRef) GetKind() MeshAccessLogItemSpecKind {
-	if o == nil {
+func (m *MeshAccessLogItemSpecTargetRef) GetKind() MeshAccessLogItemSpecKind {
+	if m == nil {
 		return MeshAccessLogItemSpecKind("")
 	}
-	return o.Kind
+	return m.Kind
 }
 
-func (o *MeshAccessLogItemSpecTargetRef) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshAccessLogItemSpecTargetRef) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshAccessLogItemSpecTargetRef) GetMesh() *string {
-	if o == nil {
+func (m *MeshAccessLogItemSpecTargetRef) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshAccessLogItemSpecTargetRef) GetName() *string {
-	if o == nil {
+func (m *MeshAccessLogItemSpecTargetRef) GetName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshAccessLogItemSpecTargetRef) GetNamespace() *string {
-	if o == nil {
+func (m *MeshAccessLogItemSpecTargetRef) GetNamespace() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Namespace
+	return m.Namespace
 }
 
-func (o *MeshAccessLogItemSpecTargetRef) GetProxyTypes() []MeshAccessLogItemSpecProxyTypes {
-	if o == nil {
+func (m *MeshAccessLogItemSpecTargetRef) GetProxyTypes() []MeshAccessLogItemSpecProxyTypes {
+	if m == nil {
 		return nil
 	}
-	return o.ProxyTypes
+	return m.ProxyTypes
 }
 
-func (o *MeshAccessLogItemSpecTargetRef) GetSectionName() *string {
-	if o == nil {
+func (m *MeshAccessLogItemSpecTargetRef) GetSectionName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.SectionName
+	return m.SectionName
 }
 
-func (o *MeshAccessLogItemSpecTargetRef) GetTags() map[string]string {
-	if o == nil {
+func (m *MeshAccessLogItemSpecTargetRef) GetTags() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Tags
+	return m.Tags
 }
 
 type To struct {
@@ -1646,18 +1646,18 @@ type To struct {
 	TargetRef MeshAccessLogItemSpecTargetRef `json:"targetRef"`
 }
 
-func (o *To) GetDefault() MeshAccessLogItemSpecDefault {
-	if o == nil {
+func (t *To) GetDefault() MeshAccessLogItemSpecDefault {
+	if t == nil {
 		return MeshAccessLogItemSpecDefault{}
 	}
-	return o.Default
+	return t.Default
 }
 
-func (o *To) GetTargetRef() MeshAccessLogItemSpecTargetRef {
-	if o == nil {
+func (t *To) GetTargetRef() MeshAccessLogItemSpecTargetRef {
+	if t == nil {
 		return MeshAccessLogItemSpecTargetRef{}
 	}
-	return o.TargetRef
+	return t.TargetRef
 }
 
 // Spec is the specification of the Kuma MeshAccessLog resource.
@@ -1675,32 +1675,32 @@ type Spec struct {
 	To []To `json:"to,omitempty"`
 }
 
-func (o *Spec) GetFrom() []From {
-	if o == nil {
+func (s *Spec) GetFrom() []From {
+	if s == nil {
 		return nil
 	}
-	return o.From
+	return s.From
 }
 
-func (o *Spec) GetRules() []Rules {
-	if o == nil {
+func (s *Spec) GetRules() []Rules {
+	if s == nil {
 		return nil
 	}
-	return o.Rules
+	return s.Rules
 }
 
-func (o *Spec) GetTargetRef() *TargetRef {
-	if o == nil {
+func (s *Spec) GetTargetRef() *TargetRef {
+	if s == nil {
 		return nil
 	}
-	return o.TargetRef
+	return s.TargetRef
 }
 
-func (o *Spec) GetTo() []To {
-	if o == nil {
+func (s *Spec) GetTo() []To {
+	if s == nil {
 		return nil
 	}
-	return o.To
+	return s.To
 }
 
 // MeshAccessLogItem - Successful response
@@ -1726,59 +1726,59 @@ func (m MeshAccessLogItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshAccessLogItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshAccessLogItem) GetType() Type {
-	if o == nil {
+func (m *MeshAccessLogItem) GetType() Type {
+	if m == nil {
 		return Type("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshAccessLogItem) GetMesh() *string {
-	if o == nil {
+func (m *MeshAccessLogItem) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshAccessLogItem) GetName() string {
-	if o == nil {
+func (m *MeshAccessLogItem) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshAccessLogItem) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshAccessLogItem) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshAccessLogItem) GetSpec() Spec {
-	if o == nil {
+func (m *MeshAccessLogItem) GetSpec() Spec {
+	if m == nil {
 		return Spec{}
 	}
-	return o.Spec
+	return m.Spec
 }
 
-func (o *MeshAccessLogItem) GetCreationTime() *time.Time {
-	if o == nil {
+func (m *MeshAccessLogItem) GetCreationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.CreationTime
+	return m.CreationTime
 }
 
-func (o *MeshAccessLogItem) GetModificationTime() *time.Time {
-	if o == nil {
+func (m *MeshAccessLogItem) GetModificationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.ModificationTime
+	return m.ModificationTime
 }
 
 type MeshAccessLogItemInput struct {
@@ -1799,43 +1799,43 @@ func (m MeshAccessLogItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshAccessLogItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshAccessLogItemInput) GetType() Type {
-	if o == nil {
+func (m *MeshAccessLogItemInput) GetType() Type {
+	if m == nil {
 		return Type("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshAccessLogItemInput) GetMesh() *string {
-	if o == nil {
+func (m *MeshAccessLogItemInput) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshAccessLogItemInput) GetName() string {
-	if o == nil {
+func (m *MeshAccessLogItemInput) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshAccessLogItemInput) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshAccessLogItemInput) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshAccessLogItemInput) GetSpec() Spec {
-	if o == nil {
+func (m *MeshAccessLogItemInput) GetSpec() Spec {
+	if m == nil {
 		return Spec{}
 	}
-	return o.Spec
+	return m.Spec
 }

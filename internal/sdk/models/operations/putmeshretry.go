@@ -16,25 +16,25 @@ type PutMeshRetryRequest struct {
 	MeshRetryItem shared.MeshRetryItemInput `request:"mediaType=application/json"`
 }
 
-func (o *PutMeshRetryRequest) GetMesh() string {
-	if o == nil {
+func (p *PutMeshRetryRequest) GetMesh() string {
+	if p == nil {
 		return ""
 	}
-	return o.Mesh
+	return p.Mesh
 }
 
-func (o *PutMeshRetryRequest) GetName() string {
-	if o == nil {
+func (p *PutMeshRetryRequest) GetName() string {
+	if p == nil {
 		return ""
 	}
-	return o.Name
+	return p.Name
 }
 
-func (o *PutMeshRetryRequest) GetMeshRetryItem() shared.MeshRetryItemInput {
-	if o == nil {
+func (p *PutMeshRetryRequest) GetMeshRetryItem() shared.MeshRetryItemInput {
+	if p == nil {
 		return shared.MeshRetryItemInput{}
 	}
-	return o.MeshRetryItem
+	return p.MeshRetryItem
 }
 
 type PutMeshRetryResponse struct {
@@ -48,30 +48,30 @@ type PutMeshRetryResponse struct {
 	MeshRetryCreateOrUpdateSuccessResponse *shared.MeshRetryCreateOrUpdateSuccessResponse
 }
 
-func (o *PutMeshRetryResponse) GetContentType() string {
-	if o == nil {
+func (p *PutMeshRetryResponse) GetContentType() string {
+	if p == nil {
 		return ""
 	}
-	return o.ContentType
+	return p.ContentType
 }
 
-func (o *PutMeshRetryResponse) GetStatusCode() int {
-	if o == nil {
+func (p *PutMeshRetryResponse) GetStatusCode() int {
+	if p == nil {
 		return 0
 	}
-	return o.StatusCode
+	return p.StatusCode
 }
 
-func (o *PutMeshRetryResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *PutMeshRetryResponse) GetRawResponse() *http.Response {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.RawResponse
 }
 
-func (o *PutMeshRetryResponse) GetMeshRetryCreateOrUpdateSuccessResponse() *shared.MeshRetryCreateOrUpdateSuccessResponse {
-	if o == nil {
+func (p *PutMeshRetryResponse) GetMeshRetryCreateOrUpdateSuccessResponse() *shared.MeshRetryCreateOrUpdateSuccessResponse {
+	if p == nil {
 		return nil
 	}
-	return o.MeshRetryCreateOrUpdateSuccessResponse
+	return p.MeshRetryCreateOrUpdateSuccessResponse
 }

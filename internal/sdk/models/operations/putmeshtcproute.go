@@ -16,25 +16,25 @@ type PutMeshTCPRouteRequest struct {
 	MeshTCPRouteItem shared.MeshTCPRouteItemInput `request:"mediaType=application/json"`
 }
 
-func (o *PutMeshTCPRouteRequest) GetMesh() string {
-	if o == nil {
+func (p *PutMeshTCPRouteRequest) GetMesh() string {
+	if p == nil {
 		return ""
 	}
-	return o.Mesh
+	return p.Mesh
 }
 
-func (o *PutMeshTCPRouteRequest) GetName() string {
-	if o == nil {
+func (p *PutMeshTCPRouteRequest) GetName() string {
+	if p == nil {
 		return ""
 	}
-	return o.Name
+	return p.Name
 }
 
-func (o *PutMeshTCPRouteRequest) GetMeshTCPRouteItem() shared.MeshTCPRouteItemInput {
-	if o == nil {
+func (p *PutMeshTCPRouteRequest) GetMeshTCPRouteItem() shared.MeshTCPRouteItemInput {
+	if p == nil {
 		return shared.MeshTCPRouteItemInput{}
 	}
-	return o.MeshTCPRouteItem
+	return p.MeshTCPRouteItem
 }
 
 type PutMeshTCPRouteResponse struct {
@@ -48,30 +48,30 @@ type PutMeshTCPRouteResponse struct {
 	MeshTCPRouteCreateOrUpdateSuccessResponse *shared.MeshTCPRouteCreateOrUpdateSuccessResponse
 }
 
-func (o *PutMeshTCPRouteResponse) GetContentType() string {
-	if o == nil {
+func (p *PutMeshTCPRouteResponse) GetContentType() string {
+	if p == nil {
 		return ""
 	}
-	return o.ContentType
+	return p.ContentType
 }
 
-func (o *PutMeshTCPRouteResponse) GetStatusCode() int {
-	if o == nil {
+func (p *PutMeshTCPRouteResponse) GetStatusCode() int {
+	if p == nil {
 		return 0
 	}
-	return o.StatusCode
+	return p.StatusCode
 }
 
-func (o *PutMeshTCPRouteResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *PutMeshTCPRouteResponse) GetRawResponse() *http.Response {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.RawResponse
 }
 
-func (o *PutMeshTCPRouteResponse) GetMeshTCPRouteCreateOrUpdateSuccessResponse() *shared.MeshTCPRouteCreateOrUpdateSuccessResponse {
-	if o == nil {
+func (p *PutMeshTCPRouteResponse) GetMeshTCPRouteCreateOrUpdateSuccessResponse() *shared.MeshTCPRouteCreateOrUpdateSuccessResponse {
+	if p == nil {
 		return nil
 	}
-	return o.MeshTCPRouteCreateOrUpdateSuccessResponse
+	return p.MeshTCPRouteCreateOrUpdateSuccessResponse
 }

@@ -118,38 +118,38 @@ func (a AppendMatch) MarshalJSON() ([]byte, error) {
 }
 
 func (a *AppendMatch) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &a, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &a, "", false, []string{"type", "value"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *AppendMatch) GetPort() *int {
-	if o == nil {
+func (a *AppendMatch) GetPort() *int {
+	if a == nil {
 		return nil
 	}
-	return o.Port
+	return a.Port
 }
 
-func (o *AppendMatch) GetProtocol() *MeshPassthroughItemProtocol {
-	if o == nil {
+func (a *AppendMatch) GetProtocol() *MeshPassthroughItemProtocol {
+	if a == nil {
 		return nil
 	}
-	return o.Protocol
+	return a.Protocol
 }
 
-func (o *AppendMatch) GetType() MeshPassthroughItemSpecType {
-	if o == nil {
+func (a *AppendMatch) GetType() MeshPassthroughItemSpecType {
+	if a == nil {
 		return MeshPassthroughItemSpecType("")
 	}
-	return o.Type
+	return a.Type
 }
 
-func (o *AppendMatch) GetValue() string {
-	if o == nil {
+func (a *AppendMatch) GetValue() string {
+	if a == nil {
 		return ""
 	}
-	return o.Value
+	return a.Value
 }
 
 // PassthroughMode - Defines the passthrough behavior. Possible values: `All`, `None`, `Matched`
@@ -194,18 +194,18 @@ type MeshPassthroughItemDefault struct {
 	PassthroughMode *PassthroughMode `json:"passthroughMode,omitempty"`
 }
 
-func (o *MeshPassthroughItemDefault) GetAppendMatch() []AppendMatch {
-	if o == nil {
+func (m *MeshPassthroughItemDefault) GetAppendMatch() []AppendMatch {
+	if m == nil {
 		return nil
 	}
-	return o.AppendMatch
+	return m.AppendMatch
 }
 
-func (o *MeshPassthroughItemDefault) GetPassthroughMode() *PassthroughMode {
-	if o == nil {
+func (m *MeshPassthroughItemDefault) GetPassthroughMode() *PassthroughMode {
+	if m == nil {
 		return nil
 	}
-	return o.PassthroughMode
+	return m.PassthroughMode
 }
 
 // MeshPassthroughItemKind - Kind of the referenced resource
@@ -310,60 +310,60 @@ type MeshPassthroughItemTargetRef struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (o *MeshPassthroughItemTargetRef) GetKind() MeshPassthroughItemKind {
-	if o == nil {
+func (m *MeshPassthroughItemTargetRef) GetKind() MeshPassthroughItemKind {
+	if m == nil {
 		return MeshPassthroughItemKind("")
 	}
-	return o.Kind
+	return m.Kind
 }
 
-func (o *MeshPassthroughItemTargetRef) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshPassthroughItemTargetRef) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshPassthroughItemTargetRef) GetMesh() *string {
-	if o == nil {
+func (m *MeshPassthroughItemTargetRef) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshPassthroughItemTargetRef) GetName() *string {
-	if o == nil {
+func (m *MeshPassthroughItemTargetRef) GetName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshPassthroughItemTargetRef) GetNamespace() *string {
-	if o == nil {
+func (m *MeshPassthroughItemTargetRef) GetNamespace() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Namespace
+	return m.Namespace
 }
 
-func (o *MeshPassthroughItemTargetRef) GetProxyTypes() []MeshPassthroughItemProxyTypes {
-	if o == nil {
+func (m *MeshPassthroughItemTargetRef) GetProxyTypes() []MeshPassthroughItemProxyTypes {
+	if m == nil {
 		return nil
 	}
-	return o.ProxyTypes
+	return m.ProxyTypes
 }
 
-func (o *MeshPassthroughItemTargetRef) GetSectionName() *string {
-	if o == nil {
+func (m *MeshPassthroughItemTargetRef) GetSectionName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.SectionName
+	return m.SectionName
 }
 
-func (o *MeshPassthroughItemTargetRef) GetTags() map[string]string {
-	if o == nil {
+func (m *MeshPassthroughItemTargetRef) GetTags() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Tags
+	return m.Tags
 }
 
 // MeshPassthroughItemSpec - Spec is the specification of the Kuma MeshPassthrough resource.
@@ -376,18 +376,18 @@ type MeshPassthroughItemSpec struct {
 	TargetRef *MeshPassthroughItemTargetRef `json:"targetRef,omitempty"`
 }
 
-func (o *MeshPassthroughItemSpec) GetDefault() *MeshPassthroughItemDefault {
-	if o == nil {
+func (m *MeshPassthroughItemSpec) GetDefault() *MeshPassthroughItemDefault {
+	if m == nil {
 		return nil
 	}
-	return o.Default
+	return m.Default
 }
 
-func (o *MeshPassthroughItemSpec) GetTargetRef() *MeshPassthroughItemTargetRef {
-	if o == nil {
+func (m *MeshPassthroughItemSpec) GetTargetRef() *MeshPassthroughItemTargetRef {
+	if m == nil {
 		return nil
 	}
-	return o.TargetRef
+	return m.TargetRef
 }
 
 // MeshPassthroughItem - Successful response
@@ -413,59 +413,59 @@ func (m MeshPassthroughItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshPassthroughItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshPassthroughItem) GetType() MeshPassthroughItemType {
-	if o == nil {
+func (m *MeshPassthroughItem) GetType() MeshPassthroughItemType {
+	if m == nil {
 		return MeshPassthroughItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshPassthroughItem) GetMesh() *string {
-	if o == nil {
+func (m *MeshPassthroughItem) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshPassthroughItem) GetName() string {
-	if o == nil {
+func (m *MeshPassthroughItem) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshPassthroughItem) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshPassthroughItem) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshPassthroughItem) GetSpec() MeshPassthroughItemSpec {
-	if o == nil {
+func (m *MeshPassthroughItem) GetSpec() MeshPassthroughItemSpec {
+	if m == nil {
 		return MeshPassthroughItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }
 
-func (o *MeshPassthroughItem) GetCreationTime() *time.Time {
-	if o == nil {
+func (m *MeshPassthroughItem) GetCreationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.CreationTime
+	return m.CreationTime
 }
 
-func (o *MeshPassthroughItem) GetModificationTime() *time.Time {
-	if o == nil {
+func (m *MeshPassthroughItem) GetModificationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.ModificationTime
+	return m.ModificationTime
 }
 
 type MeshPassthroughItemInput struct {
@@ -486,43 +486,43 @@ func (m MeshPassthroughItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshPassthroughItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshPassthroughItemInput) GetType() MeshPassthroughItemType {
-	if o == nil {
+func (m *MeshPassthroughItemInput) GetType() MeshPassthroughItemType {
+	if m == nil {
 		return MeshPassthroughItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshPassthroughItemInput) GetMesh() *string {
-	if o == nil {
+func (m *MeshPassthroughItemInput) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshPassthroughItemInput) GetName() string {
-	if o == nil {
+func (m *MeshPassthroughItemInput) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshPassthroughItemInput) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshPassthroughItemInput) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshPassthroughItemInput) GetSpec() MeshPassthroughItemSpec {
-	if o == nil {
+func (m *MeshPassthroughItemInput) GetSpec() MeshPassthroughItemSpec {
+	if m == nil {
 		return MeshPassthroughItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }

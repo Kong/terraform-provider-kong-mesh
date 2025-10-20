@@ -13,6 +13,191 @@ import (
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
 )
 
+func (r *MeshTCPRouteResourceModel) RefreshFromSharedMeshTCPRouteCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.MeshTCPRouteCreateOrUpdateSuccessResponse) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		r.Warnings = make([]types.String, 0, len(resp.Warnings))
+		for _, v := range resp.Warnings {
+			r.Warnings = append(r.Warnings, types.StringValue(v))
+		}
+	}
+
+	return diags
+}
+
+func (r *MeshTCPRouteResourceModel) RefreshFromSharedMeshTCPRouteItem(ctx context.Context, resp *shared.MeshTCPRouteItem) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
+		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
+		diags.Append(labelsDiags...)
+		labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
+		diags.Append(labelsDiags...)
+		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
+		r.Mesh = types.StringPointerValue(resp.Mesh)
+		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
+		r.Name = types.StringValue(resp.Name)
+		if resp.Spec.TargetRef == nil {
+			r.Spec.TargetRef = nil
+		} else {
+			r.Spec.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
+			r.Spec.TargetRef.Kind = types.StringValue(string(resp.Spec.TargetRef.Kind))
+			if len(resp.Spec.TargetRef.Labels) > 0 {
+				r.Spec.TargetRef.Labels = make(map[string]types.String, len(resp.Spec.TargetRef.Labels))
+				for key, value := range resp.Spec.TargetRef.Labels {
+					r.Spec.TargetRef.Labels[key] = types.StringValue(value)
+				}
+			}
+			r.Spec.TargetRef.Mesh = types.StringPointerValue(resp.Spec.TargetRef.Mesh)
+			r.Spec.TargetRef.Name = types.StringPointerValue(resp.Spec.TargetRef.Name)
+			r.Spec.TargetRef.Namespace = types.StringPointerValue(resp.Spec.TargetRef.Namespace)
+			r.Spec.TargetRef.ProxyTypes = make([]types.String, 0, len(resp.Spec.TargetRef.ProxyTypes))
+			for _, v := range resp.Spec.TargetRef.ProxyTypes {
+				r.Spec.TargetRef.ProxyTypes = append(r.Spec.TargetRef.ProxyTypes, types.StringValue(string(v)))
+			}
+			r.Spec.TargetRef.SectionName = types.StringPointerValue(resp.Spec.TargetRef.SectionName)
+			if len(resp.Spec.TargetRef.Tags) > 0 {
+				r.Spec.TargetRef.Tags = make(map[string]types.String, len(resp.Spec.TargetRef.Tags))
+				for key1, value1 := range resp.Spec.TargetRef.Tags {
+					r.Spec.TargetRef.Tags[key1] = types.StringValue(value1)
+				}
+			}
+		}
+		r.Spec.To = []tfTypes.MeshTCPRouteItemTo{}
+
+		for _, toItem := range resp.Spec.To {
+			var to tfTypes.MeshTCPRouteItemTo
+
+			to.Rules = []tfTypes.MeshTCPRouteItemRules{}
+
+			for _, rulesItem := range toItem.Rules {
+				var rules tfTypes.MeshTCPRouteItemRules
+
+				rules.Default.BackendRefs = []tfTypes.BackendRefs{}
+
+				for _, backendRefsItem := range rulesItem.Default.BackendRefs {
+					var backendRefs tfTypes.BackendRefs
+
+					backendRefs.Kind = types.StringValue(string(backendRefsItem.Kind))
+					if len(backendRefsItem.Labels) > 0 {
+						backendRefs.Labels = make(map[string]types.String, len(backendRefsItem.Labels))
+						for key2, value2 := range backendRefsItem.Labels {
+							backendRefs.Labels[key2] = types.StringValue(value2)
+						}
+					}
+					backendRefs.Mesh = types.StringPointerValue(backendRefsItem.Mesh)
+					backendRefs.Name = types.StringPointerValue(backendRefsItem.Name)
+					backendRefs.Namespace = types.StringPointerValue(backendRefsItem.Namespace)
+					backendRefs.Port = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(backendRefsItem.Port))
+					backendRefs.ProxyTypes = make([]types.String, 0, len(backendRefsItem.ProxyTypes))
+					for _, v := range backendRefsItem.ProxyTypes {
+						backendRefs.ProxyTypes = append(backendRefs.ProxyTypes, types.StringValue(string(v)))
+					}
+					backendRefs.SectionName = types.StringPointerValue(backendRefsItem.SectionName)
+					if len(backendRefsItem.Tags) > 0 {
+						backendRefs.Tags = make(map[string]types.String, len(backendRefsItem.Tags))
+						for key3, value3 := range backendRefsItem.Tags {
+							backendRefs.Tags[key3] = types.StringValue(value3)
+						}
+					}
+					backendRefs.Weight = types.Int64PointerValue(backendRefsItem.Weight)
+
+					rules.Default.BackendRefs = append(rules.Default.BackendRefs, backendRefs)
+				}
+
+				to.Rules = append(to.Rules, rules)
+			}
+			to.TargetRef.Kind = types.StringValue(string(toItem.TargetRef.Kind))
+			if len(toItem.TargetRef.Labels) > 0 {
+				to.TargetRef.Labels = make(map[string]types.String, len(toItem.TargetRef.Labels))
+				for key4, value4 := range toItem.TargetRef.Labels {
+					to.TargetRef.Labels[key4] = types.StringValue(value4)
+				}
+			}
+			to.TargetRef.Mesh = types.StringPointerValue(toItem.TargetRef.Mesh)
+			to.TargetRef.Name = types.StringPointerValue(toItem.TargetRef.Name)
+			to.TargetRef.Namespace = types.StringPointerValue(toItem.TargetRef.Namespace)
+			to.TargetRef.ProxyTypes = make([]types.String, 0, len(toItem.TargetRef.ProxyTypes))
+			for _, v := range toItem.TargetRef.ProxyTypes {
+				to.TargetRef.ProxyTypes = append(to.TargetRef.ProxyTypes, types.StringValue(string(v)))
+			}
+			to.TargetRef.SectionName = types.StringPointerValue(toItem.TargetRef.SectionName)
+			if len(toItem.TargetRef.Tags) > 0 {
+				to.TargetRef.Tags = make(map[string]types.String, len(toItem.TargetRef.Tags))
+				for key5, value5 := range toItem.TargetRef.Tags {
+					to.TargetRef.Tags[key5] = types.StringValue(value5)
+				}
+			}
+
+			r.Spec.To = append(r.Spec.To, to)
+		}
+		r.Type = types.StringValue(string(resp.Type))
+	}
+
+	return diags
+}
+
+func (r *MeshTCPRouteResourceModel) ToOperationsDeleteMeshTCPRouteRequest(ctx context.Context) (*operations.DeleteMeshTCPRouteRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.DeleteMeshTCPRouteRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshTCPRouteResourceModel) ToOperationsGetMeshTCPRouteRequest(ctx context.Context) (*operations.GetMeshTCPRouteRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.GetMeshTCPRouteRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshTCPRouteResourceModel) ToOperationsPutMeshTCPRouteRequest(ctx context.Context) (*operations.PutMeshTCPRouteRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	meshTCPRouteItem, meshTCPRouteItemDiags := r.ToSharedMeshTCPRouteItemInput(ctx)
+	diags.Append(meshTCPRouteItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PutMeshTCPRouteRequest{
+		Mesh:             mesh,
+		Name:             name,
+		MeshTCPRouteItem: *meshTCPRouteItem,
+	}
+
+	return &out, diags
+}
+
 func (r *MeshTCPRouteResourceModel) ToSharedMeshTCPRouteItemInput(ctx context.Context) (*shared.MeshTCPRouteItemInput, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -238,205 +423,4 @@ func (r *MeshTCPRouteResourceModel) ToSharedMeshTCPRouteItemInput(ctx context.Co
 	}
 
 	return &out, diags
-}
-
-func (r *MeshTCPRouteResourceModel) ToOperationsPutMeshTCPRouteRequest(ctx context.Context) (*operations.PutMeshTCPRouteRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	meshTCPRouteItem, meshTCPRouteItemDiags := r.ToSharedMeshTCPRouteItemInput(ctx)
-	diags.Append(meshTCPRouteItemDiags...)
-
-	if diags.HasError() {
-		return nil, diags
-	}
-
-	out := operations.PutMeshTCPRouteRequest{
-		Mesh:             mesh,
-		Name:             name,
-		MeshTCPRouteItem: *meshTCPRouteItem,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshTCPRouteResourceModel) ToOperationsGetMeshTCPRouteRequest(ctx context.Context) (*operations.GetMeshTCPRouteRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	out := operations.GetMeshTCPRouteRequest{
-		Mesh: mesh,
-		Name: name,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshTCPRouteResourceModel) ToOperationsDeleteMeshTCPRouteRequest(ctx context.Context) (*operations.DeleteMeshTCPRouteRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	out := operations.DeleteMeshTCPRouteRequest{
-		Mesh: mesh,
-		Name: name,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshTCPRouteResourceModel) RefreshFromSharedMeshTCPRouteCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.MeshTCPRouteCreateOrUpdateSuccessResponse) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		r.Warnings = make([]types.String, 0, len(resp.Warnings))
-		for _, v := range resp.Warnings {
-			r.Warnings = append(r.Warnings, types.StringValue(v))
-		}
-	}
-
-	return diags
-}
-
-func (r *MeshTCPRouteResourceModel) RefreshFromSharedMeshTCPRouteItem(ctx context.Context, resp *shared.MeshTCPRouteItem) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
-		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
-		diags.Append(labelsDiags...)
-		labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
-		diags.Append(labelsDiags...)
-		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
-		r.Mesh = types.StringPointerValue(resp.Mesh)
-		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
-		r.Name = types.StringValue(resp.Name)
-		if resp.Spec.TargetRef == nil {
-			r.Spec.TargetRef = nil
-		} else {
-			r.Spec.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
-			r.Spec.TargetRef.Kind = types.StringValue(string(resp.Spec.TargetRef.Kind))
-			if len(resp.Spec.TargetRef.Labels) > 0 {
-				r.Spec.TargetRef.Labels = make(map[string]types.String, len(resp.Spec.TargetRef.Labels))
-				for key, value := range resp.Spec.TargetRef.Labels {
-					r.Spec.TargetRef.Labels[key] = types.StringValue(value)
-				}
-			}
-			r.Spec.TargetRef.Mesh = types.StringPointerValue(resp.Spec.TargetRef.Mesh)
-			r.Spec.TargetRef.Name = types.StringPointerValue(resp.Spec.TargetRef.Name)
-			r.Spec.TargetRef.Namespace = types.StringPointerValue(resp.Spec.TargetRef.Namespace)
-			r.Spec.TargetRef.ProxyTypes = make([]types.String, 0, len(resp.Spec.TargetRef.ProxyTypes))
-			for _, v := range resp.Spec.TargetRef.ProxyTypes {
-				r.Spec.TargetRef.ProxyTypes = append(r.Spec.TargetRef.ProxyTypes, types.StringValue(string(v)))
-			}
-			r.Spec.TargetRef.SectionName = types.StringPointerValue(resp.Spec.TargetRef.SectionName)
-			if len(resp.Spec.TargetRef.Tags) > 0 {
-				r.Spec.TargetRef.Tags = make(map[string]types.String, len(resp.Spec.TargetRef.Tags))
-				for key1, value1 := range resp.Spec.TargetRef.Tags {
-					r.Spec.TargetRef.Tags[key1] = types.StringValue(value1)
-				}
-			}
-		}
-		r.Spec.To = []tfTypes.MeshTCPRouteItemTo{}
-		if len(r.Spec.To) > len(resp.Spec.To) {
-			r.Spec.To = r.Spec.To[:len(resp.Spec.To)]
-		}
-		for toCount, toItem := range resp.Spec.To {
-			var to tfTypes.MeshTCPRouteItemTo
-			to.Rules = []tfTypes.MeshTCPRouteItemRules{}
-			for rulesCount, rulesItem := range toItem.Rules {
-				var rules tfTypes.MeshTCPRouteItemRules
-				rules.Default.BackendRefs = []tfTypes.BackendRefs{}
-				for backendRefsCount, backendRefsItem := range rulesItem.Default.BackendRefs {
-					var backendRefs tfTypes.BackendRefs
-					backendRefs.Kind = types.StringValue(string(backendRefsItem.Kind))
-					if len(backendRefsItem.Labels) > 0 {
-						backendRefs.Labels = make(map[string]types.String, len(backendRefsItem.Labels))
-						for key2, value2 := range backendRefsItem.Labels {
-							backendRefs.Labels[key2] = types.StringValue(value2)
-						}
-					}
-					backendRefs.Mesh = types.StringPointerValue(backendRefsItem.Mesh)
-					backendRefs.Name = types.StringPointerValue(backendRefsItem.Name)
-					backendRefs.Namespace = types.StringPointerValue(backendRefsItem.Namespace)
-					backendRefs.Port = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(backendRefsItem.Port))
-					backendRefs.ProxyTypes = make([]types.String, 0, len(backendRefsItem.ProxyTypes))
-					for _, v := range backendRefsItem.ProxyTypes {
-						backendRefs.ProxyTypes = append(backendRefs.ProxyTypes, types.StringValue(string(v)))
-					}
-					backendRefs.SectionName = types.StringPointerValue(backendRefsItem.SectionName)
-					if len(backendRefsItem.Tags) > 0 {
-						backendRefs.Tags = make(map[string]types.String, len(backendRefsItem.Tags))
-						for key3, value3 := range backendRefsItem.Tags {
-							backendRefs.Tags[key3] = types.StringValue(value3)
-						}
-					}
-					backendRefs.Weight = types.Int64PointerValue(backendRefsItem.Weight)
-					if backendRefsCount+1 > len(rules.Default.BackendRefs) {
-						rules.Default.BackendRefs = append(rules.Default.BackendRefs, backendRefs)
-					} else {
-						rules.Default.BackendRefs[backendRefsCount].Kind = backendRefs.Kind
-						rules.Default.BackendRefs[backendRefsCount].Labels = backendRefs.Labels
-						rules.Default.BackendRefs[backendRefsCount].Mesh = backendRefs.Mesh
-						rules.Default.BackendRefs[backendRefsCount].Name = backendRefs.Name
-						rules.Default.BackendRefs[backendRefsCount].Namespace = backendRefs.Namespace
-						rules.Default.BackendRefs[backendRefsCount].Port = backendRefs.Port
-						rules.Default.BackendRefs[backendRefsCount].ProxyTypes = backendRefs.ProxyTypes
-						rules.Default.BackendRefs[backendRefsCount].SectionName = backendRefs.SectionName
-						rules.Default.BackendRefs[backendRefsCount].Tags = backendRefs.Tags
-						rules.Default.BackendRefs[backendRefsCount].Weight = backendRefs.Weight
-					}
-				}
-				if rulesCount+1 > len(to.Rules) {
-					to.Rules = append(to.Rules, rules)
-				} else {
-					to.Rules[rulesCount].Default = rules.Default
-				}
-			}
-			to.TargetRef.Kind = types.StringValue(string(toItem.TargetRef.Kind))
-			if len(toItem.TargetRef.Labels) > 0 {
-				to.TargetRef.Labels = make(map[string]types.String, len(toItem.TargetRef.Labels))
-				for key4, value4 := range toItem.TargetRef.Labels {
-					to.TargetRef.Labels[key4] = types.StringValue(value4)
-				}
-			}
-			to.TargetRef.Mesh = types.StringPointerValue(toItem.TargetRef.Mesh)
-			to.TargetRef.Name = types.StringPointerValue(toItem.TargetRef.Name)
-			to.TargetRef.Namespace = types.StringPointerValue(toItem.TargetRef.Namespace)
-			to.TargetRef.ProxyTypes = make([]types.String, 0, len(toItem.TargetRef.ProxyTypes))
-			for _, v := range toItem.TargetRef.ProxyTypes {
-				to.TargetRef.ProxyTypes = append(to.TargetRef.ProxyTypes, types.StringValue(string(v)))
-			}
-			to.TargetRef.SectionName = types.StringPointerValue(toItem.TargetRef.SectionName)
-			if len(toItem.TargetRef.Tags) > 0 {
-				to.TargetRef.Tags = make(map[string]types.String, len(toItem.TargetRef.Tags))
-				for key5, value5 := range toItem.TargetRef.Tags {
-					to.TargetRef.Tags[key5] = types.StringValue(value5)
-				}
-			}
-			if toCount+1 > len(r.Spec.To) {
-				r.Spec.To = append(r.Spec.To, to)
-			} else {
-				r.Spec.To[toCount].Rules = to.Rules
-				r.Spec.To[toCount].TargetRef = to.TargetRef
-			}
-		}
-		r.Type = types.StringValue(string(resp.Type))
-	}
-
-	return diags
 }

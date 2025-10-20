@@ -14,18 +14,18 @@ type DeleteMeshRateLimitRequest struct {
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 }
 
-func (o *DeleteMeshRateLimitRequest) GetMesh() string {
-	if o == nil {
+func (d *DeleteMeshRateLimitRequest) GetMesh() string {
+	if d == nil {
 		return ""
 	}
-	return o.Mesh
+	return d.Mesh
 }
 
-func (o *DeleteMeshRateLimitRequest) GetName() string {
-	if o == nil {
+func (d *DeleteMeshRateLimitRequest) GetName() string {
+	if d == nil {
 		return ""
 	}
-	return o.Name
+	return d.Name
 }
 
 type DeleteMeshRateLimitResponse struct {
@@ -41,37 +41,37 @@ type DeleteMeshRateLimitResponse struct {
 	NotFoundError *shared.NotFoundError
 }
 
-func (o *DeleteMeshRateLimitResponse) GetContentType() string {
-	if o == nil {
+func (d *DeleteMeshRateLimitResponse) GetContentType() string {
+	if d == nil {
 		return ""
 	}
-	return o.ContentType
+	return d.ContentType
 }
 
-func (o *DeleteMeshRateLimitResponse) GetStatusCode() int {
-	if o == nil {
+func (d *DeleteMeshRateLimitResponse) GetStatusCode() int {
+	if d == nil {
 		return 0
 	}
-	return o.StatusCode
+	return d.StatusCode
 }
 
-func (o *DeleteMeshRateLimitResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (d *DeleteMeshRateLimitResponse) GetRawResponse() *http.Response {
+	if d == nil {
 		return nil
 	}
-	return o.RawResponse
+	return d.RawResponse
 }
 
-func (o *DeleteMeshRateLimitResponse) GetMeshRateLimitDeleteSuccessResponse() *shared.MeshRateLimitDeleteSuccessResponse {
-	if o == nil {
+func (d *DeleteMeshRateLimitResponse) GetMeshRateLimitDeleteSuccessResponse() *shared.MeshRateLimitDeleteSuccessResponse {
+	if d == nil {
 		return nil
 	}
-	return o.MeshRateLimitDeleteSuccessResponse
+	return d.MeshRateLimitDeleteSuccessResponse
 }
 
-func (o *DeleteMeshRateLimitResponse) GetNotFoundError() *shared.NotFoundError {
-	if o == nil {
+func (d *DeleteMeshRateLimitResponse) GetNotFoundError() *shared.NotFoundError {
+	if d == nil {
 		return nil
 	}
-	return o.NotFoundError
+	return d.NotFoundError
 }

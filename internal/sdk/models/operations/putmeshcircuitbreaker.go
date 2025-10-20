@@ -16,25 +16,25 @@ type PutMeshCircuitBreakerRequest struct {
 	MeshCircuitBreakerItem shared.MeshCircuitBreakerItemInput `request:"mediaType=application/json"`
 }
 
-func (o *PutMeshCircuitBreakerRequest) GetMesh() string {
-	if o == nil {
+func (p *PutMeshCircuitBreakerRequest) GetMesh() string {
+	if p == nil {
 		return ""
 	}
-	return o.Mesh
+	return p.Mesh
 }
 
-func (o *PutMeshCircuitBreakerRequest) GetName() string {
-	if o == nil {
+func (p *PutMeshCircuitBreakerRequest) GetName() string {
+	if p == nil {
 		return ""
 	}
-	return o.Name
+	return p.Name
 }
 
-func (o *PutMeshCircuitBreakerRequest) GetMeshCircuitBreakerItem() shared.MeshCircuitBreakerItemInput {
-	if o == nil {
+func (p *PutMeshCircuitBreakerRequest) GetMeshCircuitBreakerItem() shared.MeshCircuitBreakerItemInput {
+	if p == nil {
 		return shared.MeshCircuitBreakerItemInput{}
 	}
-	return o.MeshCircuitBreakerItem
+	return p.MeshCircuitBreakerItem
 }
 
 type PutMeshCircuitBreakerResponse struct {
@@ -48,30 +48,30 @@ type PutMeshCircuitBreakerResponse struct {
 	MeshCircuitBreakerCreateOrUpdateSuccessResponse *shared.MeshCircuitBreakerCreateOrUpdateSuccessResponse
 }
 
-func (o *PutMeshCircuitBreakerResponse) GetContentType() string {
-	if o == nil {
+func (p *PutMeshCircuitBreakerResponse) GetContentType() string {
+	if p == nil {
 		return ""
 	}
-	return o.ContentType
+	return p.ContentType
 }
 
-func (o *PutMeshCircuitBreakerResponse) GetStatusCode() int {
-	if o == nil {
+func (p *PutMeshCircuitBreakerResponse) GetStatusCode() int {
+	if p == nil {
 		return 0
 	}
-	return o.StatusCode
+	return p.StatusCode
 }
 
-func (o *PutMeshCircuitBreakerResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *PutMeshCircuitBreakerResponse) GetRawResponse() *http.Response {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.RawResponse
 }
 
-func (o *PutMeshCircuitBreakerResponse) GetMeshCircuitBreakerCreateOrUpdateSuccessResponse() *shared.MeshCircuitBreakerCreateOrUpdateSuccessResponse {
-	if o == nil {
+func (p *PutMeshCircuitBreakerResponse) GetMeshCircuitBreakerCreateOrUpdateSuccessResponse() *shared.MeshCircuitBreakerCreateOrUpdateSuccessResponse {
+	if p == nil {
 		return nil
 	}
-	return o.MeshCircuitBreakerCreateOrUpdateSuccessResponse
+	return p.MeshCircuitBreakerCreateOrUpdateSuccessResponse
 }
