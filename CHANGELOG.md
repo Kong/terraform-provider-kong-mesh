@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.5
+> Released on 2025/10/22
+>
+> - Bump Kong/shared-speakeasy/resource_plan_modifier from 0.0.7 to 0.0.8 to fix issue with resources with status
+
 ## 0.5.4
 > Released on 2025/07/11
 >
