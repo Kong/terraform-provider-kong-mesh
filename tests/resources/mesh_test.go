@@ -118,12 +118,12 @@ func TestMesh(t *testing.T) {
 
 	t.Run("should be able to store secrets", func(t *testing.T) {
 		meshName := "m4"
-		secretName := "my_secret"
+		secretName := "mysecret"
 
 		builder := tfbuilder.NewBuilder(tfbuilder.KongMesh, "http", "localhost", port.Int())
 		mesh := tfbuilder.NewMeshBuilder("default", meshName).
 			WithSpec(`skip_creating_initial_policies = [ "*" ]`)
-		secret := tfbuilder.NewPolicyBuilder("secret", "my_secret", secretName, "Secret").
+		secret := tfbuilder.NewPolicyBuilder("secret", "mysecret", secretName, "Secret").
 			WithMeshRef(builder.ResourceAddress("mesh", mesh.ResourceName) + ".name").
 			WithDependsOn(builder.ResourceAddress("mesh", mesh.ResourceName))
 		builder.AddMesh(mesh)
