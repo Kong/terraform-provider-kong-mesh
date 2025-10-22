@@ -13285,6 +13285,11 @@ components:
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
+            valueType: kumalabels.KumaLabelsMapValue
         mesh:
           type: string
           x-speakeasy-param-computed: false
