@@ -2,5 +2,6 @@
 
 package shared
 
+// MeshOPADeleteSuccessResponse - Successful response
 type MeshOPADeleteSuccessResponse struct {
 }

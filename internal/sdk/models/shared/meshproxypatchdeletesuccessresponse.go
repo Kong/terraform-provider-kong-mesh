@@ -2,5 +2,6 @@
 
 package shared
 
+// MeshProxyPatchDeleteSuccessResponse - Successful response
 type MeshProxyPatchDeleteSuccessResponse struct {
 }

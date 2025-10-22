@@ -2,5 +2,6 @@
 
 package shared
 
+// MeshTrafficPermissionDeleteSuccessResponse - Successful response
 type MeshTrafficPermissionDeleteSuccessResponse struct {
 }

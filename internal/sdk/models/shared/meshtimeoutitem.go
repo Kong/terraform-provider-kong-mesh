@@ -965,6 +965,7 @@ func (o *MeshTimeoutItem) GetModificationTime() *time.Time {
 	return o.ModificationTime
 }
 
+// MeshTimeoutItemInput - Successful response
 type MeshTimeoutItemInput struct {
 	// the type of the resource
 	Type MeshTimeoutItemType `json:"type"`

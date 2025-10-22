@@ -898,6 +898,7 @@ func (o *MeshTLSItem) GetModificationTime() *time.Time {
 	return o.ModificationTime
 }
 
+// MeshTLSItemInput - Successful response
 type MeshTLSItemInput struct {
 	// the type of the resource
 	Type MeshTLSItemType `json:"type"`

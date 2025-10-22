@@ -2440,6 +2440,7 @@ func (o *MeshCircuitBreakerItem) GetModificationTime() *time.Time {
 	return o.ModificationTime
 }
 
+// MeshCircuitBreakerItemInput - Successful response
 type MeshCircuitBreakerItemInput struct {
 	// the type of the resource
 	Type MeshCircuitBreakerItemType `json:"type"`

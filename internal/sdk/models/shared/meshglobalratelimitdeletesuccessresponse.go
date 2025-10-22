@@ -2,5 +2,6 @@
 
 package shared
 
+// MeshGlobalRateLimitDeleteSuccessResponse - Successful response
 type MeshGlobalRateLimitDeleteSuccessResponse struct {
 }

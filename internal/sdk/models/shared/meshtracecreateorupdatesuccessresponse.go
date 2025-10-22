@@ -2,6 +2,7 @@
 
 package shared
 
+// MeshTraceCreateOrUpdateSuccessResponse - Successful response
 type MeshTraceCreateOrUpdateSuccessResponse struct {
 	// warnings is a list of warning messages to return to the requesting Kuma API clients.
 	// Warning messages describe a problem the client making the API request should correct or be aware of.

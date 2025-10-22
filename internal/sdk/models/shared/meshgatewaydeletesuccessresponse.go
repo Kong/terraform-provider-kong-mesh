@@ -2,5 +2,6 @@
 
 package shared
 
+// MeshGatewayDeleteSuccessResponse - Successful response
 type MeshGatewayDeleteSuccessResponse struct {
 }

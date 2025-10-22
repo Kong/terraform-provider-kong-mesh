@@ -2,5 +2,6 @@
 
 package shared
 
+// MeshMultiZoneServiceDeleteSuccessResponse - Successful response
 type MeshMultiZoneServiceDeleteSuccessResponse struct {
 }

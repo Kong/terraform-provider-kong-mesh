@@ -2,5 +2,6 @@
 
 package shared
 
+// MeshAccessLogDeleteSuccessResponse - Successful response
 type MeshAccessLogDeleteSuccessResponse struct {
 }

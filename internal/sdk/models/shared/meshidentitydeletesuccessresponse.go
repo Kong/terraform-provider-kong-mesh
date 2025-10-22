@@ -2,5 +2,6 @@
 
 package shared
 
+// MeshIdentityDeleteSuccessResponse - Successful response
 type MeshIdentityDeleteSuccessResponse struct {
 }

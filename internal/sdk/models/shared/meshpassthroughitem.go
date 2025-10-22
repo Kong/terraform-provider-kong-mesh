@@ -468,6 +468,7 @@ func (o *MeshPassthroughItem) GetModificationTime() *time.Time {
 	return o.ModificationTime
 }
 
+// MeshPassthroughItemInput - Successful response
 type MeshPassthroughItemInput struct {
 	// the type of the resource
 	Type MeshPassthroughItemType `json:"type"`

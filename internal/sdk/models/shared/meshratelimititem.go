@@ -1343,6 +1343,7 @@ func (o *MeshRateLimitItem) GetModificationTime() *time.Time {
 	return o.ModificationTime
 }
 
+// MeshRateLimitItemInput - Successful response
 type MeshRateLimitItemInput struct {
 	// the type of the resource
 	Type MeshRateLimitItemType `json:"type"`
