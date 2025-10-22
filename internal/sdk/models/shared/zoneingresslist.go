@@ -6,6 +6,7 @@ import (
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/utils"
 )
 
+// ZoneIngressList - List
 type ZoneIngressList struct {
 	Items []ZoneIngressItem `json:"items"`
 	// The total number of entities
