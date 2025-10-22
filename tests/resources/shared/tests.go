@@ -54,6 +54,9 @@ func ShouldBeAbleToStoreSecrets(providerFactory map[string]func() (tfprotov6.Pro
 					},
 				},
 			},
+			{
+				Config: builder.AddMesh(mesh.WithSpec(`skip_creating_initial_policies = [ "*" ]`)).Build(),
+			},
 			tfbuilder.CheckReapplyPlanEmpty(builder),
 		},
 	}
