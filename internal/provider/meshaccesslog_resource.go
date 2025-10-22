@@ -44,6 +44,7 @@ type MeshAccessLogResource struct {
 // MeshAccessLogResourceModel describes the resource data model.
 type MeshAccessLogResourceModel struct {
 	CreationTime     types.String                  `tfsdk:"creation_time"`
+	Kri              types.String                  `tfsdk:"kri"`
 	Labels           kumalabels.KumaLabelsMapValue `tfsdk:"labels"`
 	Mesh             types.String                  `tfsdk:"mesh"`
 	ModificationTime types.String                  `tfsdk:"modification_time"`
@@ -70,6 +71,10 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 				Validators: []validator.String{
 					validators.IsRFC3339(),
 				},
+			},
+			"kri": schema.StringAttribute{
+				Computed:    true,
+				Description: `A unique identifier for this resource instance used by internal tooling and integrations. Typically derived from resource attributes and may be used for cross-references or indexing`,
 			},
 			"labels": schema.MapAttribute{
 				CustomType:  kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}},
