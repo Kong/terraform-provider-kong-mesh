@@ -1146,6 +1146,7 @@ func (o *MeshRetryItem) GetModificationTime() *time.Time {
 	return o.ModificationTime
 }
 
+// MeshRetryItemInput - Successful response
 type MeshRetryItemInput struct {
 	// the type of the resource
 	Type MeshRetryItemType `json:"type"`

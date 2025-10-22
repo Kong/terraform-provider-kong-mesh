@@ -2,5 +2,6 @@
 
 package shared
 
+// MeshTCPRouteDeleteSuccessResponse - Successful response
 type MeshTCPRouteDeleteSuccessResponse struct {
 }

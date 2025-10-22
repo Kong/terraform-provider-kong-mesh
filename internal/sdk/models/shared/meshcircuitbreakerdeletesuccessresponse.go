@@ -2,5 +2,6 @@
 
 package shared
 
+// MeshCircuitBreakerDeleteSuccessResponse - Successful response
 type MeshCircuitBreakerDeleteSuccessResponse struct {
 }

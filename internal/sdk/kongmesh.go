@@ -73,6 +73,8 @@ type KongMesh struct {
 	MeshTrafficPermission     *MeshTrafficPermission
 	Mesh                      *Mesh
 	MeshGateway               *MeshGateway
+	ZoneEgress                *ZoneEgress
+	ZoneIngress               *ZoneIngress
 	HostnameGenerator         *HostnameGenerator
 	MeshExternalService       *MeshExternalService
 	MeshIdentity              *MeshIdentity
@@ -197,6 +199,8 @@ func New(opts ...SDKOption) *KongMesh {
 	sdk.MeshTrafficPermission = newMeshTrafficPermission(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Mesh = newMesh(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MeshGateway = newMeshGateway(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.ZoneEgress = newZoneEgress(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.ZoneIngress = newZoneIngress(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.HostnameGenerator = newHostnameGenerator(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MeshExternalService = newMeshExternalService(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MeshIdentity = newMeshIdentity(sdk, sdk.sdkConfiguration, sdk.hooks)

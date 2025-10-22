@@ -766,6 +766,7 @@ func (o *MeshMetricItem) GetModificationTime() *time.Time {
 	return o.ModificationTime
 }
 
+// MeshMetricItemInput - Successful response
 type MeshMetricItemInput struct {
 	// the type of the resource
 	Type MeshMetricItemType `json:"type"`

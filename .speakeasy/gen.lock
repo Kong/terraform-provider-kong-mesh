@@ -1,7 +1,7 @@
 lockVersion: 2.0.0
 id: 322c4806-8b53-493c-a05f-50d4d113c747
 management:
-  docChecksum: 64c078e688c5be2bed8685043756a3f0
+  docChecksum: ed31f122ac574ac45f9f932b3148e6b1
   docVersion: 2.0.0
   speakeasyVersion: 1.555.3
   generationVersion: 2.620.2
@@ -75,6 +75,10 @@ generatedFiles:
   - examples/resources/kong-mesh_mesh_traffic_permission/resource.tf
   - examples/resources/kong-mesh_mesh_trust/import.sh
   - examples/resources/kong-mesh_mesh_trust/resource.tf
+  - examples/resources/kong-mesh_zone_egress/import.sh
+  - examples/resources/kong-mesh_zone_egress/resource.tf
+  - examples/resources/kong-mesh_zone_ingress/import.sh
+  - examples/resources/kong-mesh_zone_ingress/resource.tf
   - go.mod
   - go.sum
   - internal/planmodifiers/boolplanmodifier/suppress_diff.go
@@ -167,6 +171,7 @@ generatedFiles:
   - internal/provider/types/access_key_data_source_secret.go
   - internal/provider/types/acm_certificate_authority_config.go
   - internal/provider/types/addresses.go
+  - internal/provider/types/admin.go
   - internal/provider/types/affinity_tags.go
   - internal/provider/types/agent.go
   - internal/provider/types/aggregate.go
@@ -178,6 +183,7 @@ generatedFiles:
   - internal/provider/types/auth_config.go
   - internal/provider/types/auth_tls.go
   - internal/provider/types/autogenerate.go
+  - internal/provider/types/available_services.go
   - internal/provider/types/aws.go
   - internal/provider/types/aws_credentials.go
   - internal/provider/types/back_off.go
@@ -425,7 +431,13 @@ generatedFiles:
   - internal/provider/types/virtual_host.go
   - internal/provider/types/zipkin.go
   - internal/provider/types/zipkin_tracing_backend_config.go
+  - internal/provider/types/zone_egress_item_networking.go
+  - internal/provider/types/zone_ingress_item_networking.go
   - internal/provider/utils.go
+  - internal/provider/zoneegress_resource.go
+  - internal/provider/zoneegress_resource_sdk.go
+  - internal/provider/zoneingress_resource.go
+  - internal/provider/zoneingress_resource_sdk.go
   - internal/sdk/.gitattributes
   - internal/sdk/docs/models/operations/option.md
   - internal/sdk/hostnamegenerator.go
@@ -495,6 +507,8 @@ generatedFiles:
   - internal/sdk/models/operations/deletemeshtrace.go
   - internal/sdk/models/operations/deletemeshtrafficpermission.go
   - internal/sdk/models/operations/deletemeshtrust.go
+  - internal/sdk/models/operations/deletezoneegress.go
+  - internal/sdk/models/operations/deletezoneingress.go
   - internal/sdk/models/operations/gethostnamegenerator.go
   - internal/sdk/models/operations/gethostnamegeneratorlist.go
   - internal/sdk/models/operations/getmesh.go
@@ -547,6 +561,10 @@ generatedFiles:
   - internal/sdk/models/operations/getmeshtrafficpermissionlist.go
   - internal/sdk/models/operations/getmeshtrust.go
   - internal/sdk/models/operations/getmeshtrustlist.go
+  - internal/sdk/models/operations/getzoneegress.go
+  - internal/sdk/models/operations/getzoneegresslist.go
+  - internal/sdk/models/operations/getzoneingress.go
+  - internal/sdk/models/operations/getzoneingresslist.go
   - internal/sdk/models/operations/options.go
   - internal/sdk/models/operations/puthostnamegenerator.go
   - internal/sdk/models/operations/putmesh.go
@@ -574,6 +592,8 @@ generatedFiles:
   - internal/sdk/models/operations/putmeshtrace.go
   - internal/sdk/models/operations/putmeshtrafficpermission.go
   - internal/sdk/models/operations/putmeshtrust.go
+  - internal/sdk/models/operations/putzoneegress.go
+  - internal/sdk/models/operations/putzoneingress.go
   - internal/sdk/models/shared/hostnamegeneratorcreateorupdatesuccessresponse.go
   - internal/sdk/models/shared/hostnamegeneratordeletesuccessresponse.go
   - internal/sdk/models/shared/hostnamegeneratoritem.go
@@ -681,12 +701,22 @@ generatedFiles:
   - internal/sdk/models/shared/notfounderror.go
   - internal/sdk/models/shared/schemebasicauth.go
   - internal/sdk/models/shared/security.go
+  - internal/sdk/models/shared/zoneegresscreateorupdatesuccessresponse.go
+  - internal/sdk/models/shared/zoneegressdeletesuccessresponse.go
+  - internal/sdk/models/shared/zoneegressitem.go
+  - internal/sdk/models/shared/zoneegresslist.go
+  - internal/sdk/models/shared/zoneingresscreateorupdatesuccessresponse.go
+  - internal/sdk/models/shared/zoneingressdeletesuccessresponse.go
+  - internal/sdk/models/shared/zoneingressitem.go
+  - internal/sdk/models/shared/zoneingresslist.go
   - internal/sdk/retry/config.go
   - internal/sdk/types/bigint.go
   - internal/sdk/types/date.go
   - internal/sdk/types/datetime.go
   - internal/sdk/types/decimal.go
   - internal/sdk/types/pointers.go
+  - internal/sdk/zoneegress.go
+  - internal/sdk/zoneingress.go
   - internal/validators/DateValidator.go
   - internal/validators/ExactlyOneChild.go
   - internal/validators/JSONParseValidator.go
@@ -2956,5 +2986,85 @@ examples:
       responses:
         "200":
           application/json: {}
+  getZoneEgress:
+    speakeasy-default-get-zone-egress:
+      parameters:
+        path:
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"name": "<value>", "type": "<value>"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
+  putZoneEgress:
+    speakeasy-default-put-zone-egress:
+      parameters:
+        path:
+          name: "<value>"
+      requestBody:
+        application/json: {"name": "<value>", "type": "<value>"}
+      responses:
+        "200":
+          application/json: {}
+  deleteZoneEgress:
+    speakeasy-default-delete-zone-egress:
+      parameters:
+        path:
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
+  getZoneEgressList:
+    "":
+      parameters:
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": null, "total": null, "next": null}
+  getZoneIngress:
+    speakeasy-default-get-zone-ingress:
+      parameters:
+        path:
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"availableServices": null, "name": "<value>", "type": "<value>"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
+  putZoneIngress:
+    speakeasy-default-put-zone-ingress:
+      parameters:
+        path:
+          name: "<value>"
+      requestBody:
+        application/json: {"availableServices": null, "name": "<value>", "type": "<value>"}
+      responses:
+        "200":
+          application/json: {}
+  deleteZoneIngress:
+    speakeasy-default-delete-zone-ingress:
+      parameters:
+        path:
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
+  getZoneIngressList:
+    "":
+      parameters:
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": null, "total": null, "next": null}
 examplesVersion: 1.0.2
 generatedTests: {}

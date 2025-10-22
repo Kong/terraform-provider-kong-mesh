@@ -502,6 +502,7 @@ func (o *MeshOPAItem) GetModificationTime() *time.Time {
 	return o.ModificationTime
 }
 
+// MeshOPAItemInput - Successful response
 type MeshOPAItemInput struct {
 	// the type of the resource
 	Type MeshOPAItemType `json:"type"`

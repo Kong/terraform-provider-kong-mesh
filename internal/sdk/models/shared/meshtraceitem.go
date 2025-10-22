@@ -850,6 +850,7 @@ func (o *MeshTraceItem) GetModificationTime() *time.Time {
 	return o.ModificationTime
 }
 
+// MeshTraceItemInput - Successful response
 type MeshTraceItemInput struct {
 	// the type of the resource
 	Type MeshTraceItemType `json:"type"`

@@ -1751,6 +1751,7 @@ func (o *MeshHTTPRouteItem) GetModificationTime() *time.Time {
 	return o.ModificationTime
 }
 
+// MeshHTTPRouteItemInput - Successful response
 type MeshHTTPRouteItemInput struct {
 	// the type of the resource
 	Type MeshHTTPRouteItemType `json:"type"`

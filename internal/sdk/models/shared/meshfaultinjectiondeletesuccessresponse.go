@@ -2,5 +2,6 @@
 
 package shared
 
+// MeshFaultInjectionDeleteSuccessResponse - Successful response
 type MeshFaultInjectionDeleteSuccessResponse struct {
 }

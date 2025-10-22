@@ -2,5 +2,6 @@
 
 package shared
 
+// MeshHealthCheckDeleteSuccessResponse - Successful response
 type MeshHealthCheckDeleteSuccessResponse struct {
 }

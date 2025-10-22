@@ -751,6 +751,7 @@ func (o *MeshTrafficPermissionItem) GetModificationTime() *time.Time {
 	return o.ModificationTime
 }
 
+// MeshTrafficPermissionItemInput - Successful response
 type MeshTrafficPermissionItemInput struct {
 	// the type of the resource
 	Type MeshTrafficPermissionItemType `json:"type"`

@@ -684,6 +684,7 @@ func (o *MeshTCPRouteItem) GetModificationTime() *time.Time {
 	return o.ModificationTime
 }
 
+// MeshTCPRouteItemInput - Successful response
 type MeshTCPRouteItemInput struct {
 	// the type of the resource
 	Type MeshTCPRouteItemType `json:"type"`

@@ -2,5 +2,6 @@
 
 package shared
 
+// HostnameGeneratorDeleteSuccessResponse - Successful response
 type HostnameGeneratorDeleteSuccessResponse struct {
 }

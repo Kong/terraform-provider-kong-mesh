@@ -2,5 +2,6 @@
 
 package shared
 
+// MeshLoadBalancingStrategyDeleteSuccessResponse - Successful response
 type MeshLoadBalancingStrategyDeleteSuccessResponse struct {
 }

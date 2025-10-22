@@ -2,5 +2,6 @@
 
 package shared
 
+// MeshTimeoutDeleteSuccessResponse - Successful response
 type MeshTimeoutDeleteSuccessResponse struct {
 }

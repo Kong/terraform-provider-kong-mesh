@@ -1342,6 +1342,7 @@ func (o *MeshProxyPatchItem) GetModificationTime() *time.Time {
 	return o.ModificationTime
 }
 
+// MeshProxyPatchItemInput - Successful response
 type MeshProxyPatchItemInput struct {
 	// the type of the resource
 	Type MeshProxyPatchItemType `json:"type"`

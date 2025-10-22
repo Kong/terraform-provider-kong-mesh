@@ -1781,6 +1781,7 @@ func (o *MeshAccessLogItem) GetModificationTime() *time.Time {
 	return o.ModificationTime
 }
 
+// MeshAccessLogItemInput - Successful response
 type MeshAccessLogItemInput struct {
 	// the type of the resource
 	Type Type `json:"type"`

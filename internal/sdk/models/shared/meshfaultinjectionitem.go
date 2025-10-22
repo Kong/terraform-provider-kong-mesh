@@ -1701,6 +1701,7 @@ func (o *MeshFaultInjectionItem) GetModificationTime() *time.Time {
 	return o.ModificationTime
 }
 
+// MeshFaultInjectionItemInput - Successful response
 type MeshFaultInjectionItemInput struct {
 	// the type of the resource
 	Type MeshFaultInjectionItemType `json:"type"`

@@ -1642,6 +1642,7 @@ func (o *MeshLoadBalancingStrategyItem) GetModificationTime() *time.Time {
 	return o.ModificationTime
 }
 
+// MeshLoadBalancingStrategyItemInput - Successful response
 type MeshLoadBalancingStrategyItemInput struct {
 	// the type of the resource
 	Type MeshLoadBalancingStrategyItemType `json:"type"`

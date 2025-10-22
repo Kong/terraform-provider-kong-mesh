@@ -2,5 +2,6 @@
 
 package shared
 
+// MeshTLSDeleteSuccessResponse - Successful response
 type MeshTLSDeleteSuccessResponse struct {
 }

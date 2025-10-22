@@ -149,6 +149,8 @@ func (p *KongMeshProvider) Resources(ctx context.Context) []func() resource.Reso
 		NewMeshTraceResource,
 		NewMeshTrafficPermissionResource,
 		NewMeshTrustResource,
+		NewZoneEgressResource,
+		NewZoneIngressResource,
 	}
 }
 

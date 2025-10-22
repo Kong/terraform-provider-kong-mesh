@@ -893,6 +893,7 @@ func (o *MeshHealthCheckItem) GetModificationTime() *time.Time {
 	return o.ModificationTime
 }
 
+// MeshHealthCheckItemInput - Successful response
 type MeshHealthCheckItemInput struct {
 	// the type of the resource
 	Type MeshHealthCheckItemType `json:"type"`
