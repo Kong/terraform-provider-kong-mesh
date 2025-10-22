@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -30,12 +31,12 @@ type SecretResource struct {
 
 // SecretResourceModel describes the resource data model.
 type SecretResourceModel struct {
-	Data     types.String            `tfsdk:"data"`
-	Labels   map[string]types.String `tfsdk:"labels"`
-	Mesh     types.String            `tfsdk:"mesh"`
-	Name     types.String            `tfsdk:"name"`
-	Type     types.String            `tfsdk:"type"`
-	Warnings []types.String          `tfsdk:"warnings"`
+	Data     types.String                  `tfsdk:"data"`
+	Labels   kumalabels.KumaLabelsMapValue `tfsdk:"labels"`
+	Mesh     types.String                  `tfsdk:"mesh"`
+	Name     types.String                  `tfsdk:"name"`
+	Type     types.String                  `tfsdk:"type"`
+	Warnings []types.String                `tfsdk:"warnings"`
 }
 
 func (r *SecretResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -51,6 +52,7 @@ func (r *SecretResource) Schema(ctx context.Context, req resource.SchemaRequest,
 				Description: `Value of the secret`,
 			},
 			"labels": schema.MapAttribute{
+				CustomType:  kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}},
 				Optional:    true,
 				ElementType: types.StringType,
 			},
