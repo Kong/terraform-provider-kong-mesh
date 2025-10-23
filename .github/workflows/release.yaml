@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - ".speakeasy/gen.lock"
+      - "gen.yaml"
     branches:
       - main
   workflow_dispatch:
@@ -25,15 +26,30 @@ jobs:
         with:
           go-version-file: "go.mod"
           cache: true
-      - name: Read current version + create tag
+      - name: Read terraform.version from gen.yaml and create tag if higher
         run: |
-          TAG=$(yq '.management.releaseVersion' .speakeasy/gen.lock)
+          set -euo pipefail
+          NEW_VER=$(yq -r '.terraform.version' gen.yaml)
 
           git config --global user.email "apiops@konghq.com"
           git config --global user.name "kong-apiops[bot]"
 
-          git tag -a v$TAG -m "Release v$TAG"
-          git push origin v$TAG
+          # Find latest tag (sorted by version); may be empty
+          LAST_TAG=$(git tag --list --sort=-v:refname | head -n1 || true)
+
+          if [ -z "$LAST_TAG" ]; then
+            echo "No existing tags found. Proceeding to create tag v$NEW_VER"
+          else
+            LAST_VER="${LAST_TAG#v}"
+            if [ "$NEW_VER" = "$LAST_VER" ]; then
+              echo "Version unchanged ($NEW_VER == $LAST_VER). Skipping release."
+              exit 0
+            fi
+            echo "New version detected. Continuing."
+          fi
+
+          git tag -a "v$NEW_VER" -m "Release v$NEW_VER"
+          git push origin "v$NEW_VER"
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@111c56156bcc6918c056dbef52164cfa583dc549 # v5.2.0
         id: import_gpg
