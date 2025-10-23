@@ -48,8 +48,8 @@ jobs:
             echo "New version detected. Continuing."
           fi
 
-          git tag -a v$NEW_VER -m "Release v$NEW_VER"
-          git push origin v$NEW_VER
+          git tag -a "v$NEW_VER" -m "Release v$NEW_VER"
+          git push origin "v$NEW_VER"
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@111c56156bcc6918c056dbef52164cfa583dc549 # v5.2.0
         id: import_gpg
