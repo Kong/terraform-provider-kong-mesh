@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.0
+> Released on 2025/10/23
+>
+> - Add support for secret resources in Kong Mesh
+
 ## 0.5.5
 > Released on 2025/10/22
 >
