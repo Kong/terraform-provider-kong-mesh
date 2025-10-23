@@ -27,6 +27,7 @@ jobs:
           go-version-file: "go.mod"
           cache: true
       - name: Read terraform.version from gen.yaml and create tag if higher
+        id: check_version
         run: |
           set -euo pipefail
           NEW_VER=$(yq -r '.terraform.version' gen.yaml)
@@ -39,24 +40,29 @@ jobs:
 
           if [ -z "$LAST_TAG" ]; then
             echo "No existing tags found. Proceeding to create tag v$NEW_VER"
+            echo "skip_release=false" >> $GITHUB_OUTPUT
           else
             LAST_VER="${LAST_TAG#v}"
             if [ "$NEW_VER" = "$LAST_VER" ]; then
               echo "Version unchanged ($NEW_VER == $LAST_VER). Skipping release."
+              echo "skip_release=true" >> $GITHUB_OUTPUT
               exit 0
             fi
+            echo "skip_release=false" >> $GITHUB_OUTPUT
             echo "New version detected. Continuing."
           fi
 
           git tag -a "v$NEW_VER" -m "Release v$NEW_VER"
           git push origin "v$NEW_VER"
       - name: Import GPG key
+        if: ${{ steps.check_version.outputs.skip_release != 'true' }}
         uses: crazy-max/ghaction-import-gpg@111c56156bcc6918c056dbef52164cfa583dc549 # v5.2.0
         id: import_gpg
         with:
           gpg_private_key: ${{ secrets.TERRAFORM_GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.TERRAFORM_GPG_PASSPHRASE }}
       - name: Run GoReleaser
+        if: ${{ steps.check_version.outputs.skip_release != 'true' }}
         uses: goreleaser/goreleaser-action@f82d6c1c344bcacabba2c841718984797f664a6b # v4.2.0
         with:
           args: release --clean
