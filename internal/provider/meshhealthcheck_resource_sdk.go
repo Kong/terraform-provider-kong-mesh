@@ -464,6 +464,7 @@ func (r *MeshHealthCheckResourceModel) RefreshFromSharedMeshHealthCheckItem(ctx 
 
 	if resp != nil {
 		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
+		r.Kri = types.StringPointerValue(resp.Kri)
 		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
 		diags.Append(labelsDiags...)
 		labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)

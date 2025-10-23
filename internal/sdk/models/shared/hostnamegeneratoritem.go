@@ -159,6 +159,8 @@ func (o *HostnameGeneratorItemSpec) GetTemplate() string {
 type HostnameGeneratorItem struct {
 	// the type of the resource
 	Type HostnameGeneratorItemType `json:"type"`
+	// A unique identifier for this resource instance used by internal tooling and integrations. Typically derived from resource attributes and may be used for cross-references or indexing
+	Kri *string `json:"kri,omitempty"`
 	// Name of the Kuma resource
 	Name string `json:"name"`
 	// The labels to help identity resources
@@ -187,6 +189,13 @@ func (o *HostnameGeneratorItem) GetType() HostnameGeneratorItemType {
 		return HostnameGeneratorItemType("")
 	}
 	return o.Type
+}
+
+func (o *HostnameGeneratorItem) GetKri() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Kri
 }
 
 func (o *HostnameGeneratorItem) GetName() string {

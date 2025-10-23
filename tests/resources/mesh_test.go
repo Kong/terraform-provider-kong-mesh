@@ -12,6 +12,7 @@ import (
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
+	resourcesshared "github.com/kong/terraform-provider-kong-mesh/tests/resources/shared"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
@@ -115,6 +116,19 @@ func TestMesh(t *testing.T) {
 		resource.ParallelTest(t, tfbuilder.NotImportedResourceShouldErrorOutWithMeaningfulMessage(providerFactory, builder, mtp, func() { createAnMTP(t, "http://"+net.JoinHostPort("localhost", port.Port()), meshName, mtpName) }))
 	})
 
+	t.Run("should be able to store secrets", func(t *testing.T) {
+		meshName := "m4"
+		secretName := "mysecret"
+
+		builder := tfbuilder.NewBuilder(tfbuilder.KongMesh, "http", "localhost", port.Int())
+		mesh := tfbuilder.NewMeshBuilder("default", meshName).
+			WithSpec(`skip_creating_initial_policies = [ "*" ]`)
+		secret := tfbuilder.NewPolicyBuilder("secret", "mysecret", secretName, "Secret").
+			WithMeshRef(builder.ResourceAddress("mesh", mesh.ResourceName) + ".name").
+			WithDependsOn(builder.ResourceAddress("mesh", mesh.ResourceName))
+		builder.AddMesh(mesh)
+		resource.ParallelTest(t, resourcesshared.ShouldBeAbleToStoreSecrets(providerFactory, builder, secret, mesh))
+	})
 }
 
 func createAnMTP(t *testing.T, url string, meshName string, mtpName string) {
