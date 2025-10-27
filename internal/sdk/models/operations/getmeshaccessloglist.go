@@ -14,18 +14,18 @@ type Filter struct {
 	Value *string `queryParam:"name=value"`
 }
 
-func (o *Filter) GetKey() *string {
-	if o == nil {
+func (f *Filter) GetKey() *string {
+	if f == nil {
 		return nil
 	}
-	return o.Key
+	return f.Key
 }
 
-func (o *Filter) GetValue() *string {
-	if o == nil {
+func (f *Filter) GetValue() *string {
+	if f == nil {
 		return nil
 	}
-	return o.Value
+	return f.Value
 }
 
 type GetMeshAccessLogListRequest struct {
@@ -44,38 +44,38 @@ func (g GetMeshAccessLogListRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetMeshAccessLogListRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &g, "", false, []string{"mesh"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *GetMeshAccessLogListRequest) GetOffset() *int64 {
-	if o == nil {
+func (g *GetMeshAccessLogListRequest) GetOffset() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Offset
+	return g.Offset
 }
 
-func (o *GetMeshAccessLogListRequest) GetSize() *int64 {
-	if o == nil {
+func (g *GetMeshAccessLogListRequest) GetSize() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Size
+	return g.Size
 }
 
-func (o *GetMeshAccessLogListRequest) GetFilter() *Filter {
-	if o == nil {
+func (g *GetMeshAccessLogListRequest) GetFilter() *Filter {
+	if g == nil {
 		return nil
 	}
-	return o.Filter
+	return g.Filter
 }
 
-func (o *GetMeshAccessLogListRequest) GetMesh() string {
-	if o == nil {
+func (g *GetMeshAccessLogListRequest) GetMesh() string {
+	if g == nil {
 		return ""
 	}
-	return o.Mesh
+	return g.Mesh
 }
 
 type GetMeshAccessLogListResponse struct {
@@ -89,30 +89,30 @@ type GetMeshAccessLogListResponse struct {
 	MeshAccessLogList *shared.MeshAccessLogList
 }
 
-func (o *GetMeshAccessLogListResponse) GetContentType() string {
-	if o == nil {
+func (g *GetMeshAccessLogListResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetMeshAccessLogListResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetMeshAccessLogListResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetMeshAccessLogListResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetMeshAccessLogListResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetMeshAccessLogListResponse) GetMeshAccessLogList() *shared.MeshAccessLogList {
-	if o == nil {
+func (g *GetMeshAccessLogListResponse) GetMeshAccessLogList() *shared.MeshAccessLogList {
+	if g == nil {
 		return nil
 	}
-	return o.MeshAccessLogList
+	return g.MeshAccessLogList
 }

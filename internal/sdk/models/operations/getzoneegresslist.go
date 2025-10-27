@@ -14,18 +14,18 @@ type GetZoneEgressListQueryParamFilter struct {
 	Value *string `queryParam:"name=value"`
 }
 
-func (o *GetZoneEgressListQueryParamFilter) GetKey() *string {
-	if o == nil {
+func (g *GetZoneEgressListQueryParamFilter) GetKey() *string {
+	if g == nil {
 		return nil
 	}
-	return o.Key
+	return g.Key
 }
 
-func (o *GetZoneEgressListQueryParamFilter) GetValue() *string {
-	if o == nil {
+func (g *GetZoneEgressListQueryParamFilter) GetValue() *string {
+	if g == nil {
 		return nil
 	}
-	return o.Value
+	return g.Value
 }
 
 type GetZoneEgressListRequest struct {
@@ -42,31 +42,31 @@ func (g GetZoneEgressListRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetZoneEgressListRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *GetZoneEgressListRequest) GetOffset() *int64 {
-	if o == nil {
+func (g *GetZoneEgressListRequest) GetOffset() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Offset
+	return g.Offset
 }
 
-func (o *GetZoneEgressListRequest) GetSize() *int64 {
-	if o == nil {
+func (g *GetZoneEgressListRequest) GetSize() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Size
+	return g.Size
 }
 
-func (o *GetZoneEgressListRequest) GetFilter() *GetZoneEgressListQueryParamFilter {
-	if o == nil {
+func (g *GetZoneEgressListRequest) GetFilter() *GetZoneEgressListQueryParamFilter {
+	if g == nil {
 		return nil
 	}
-	return o.Filter
+	return g.Filter
 }
 
 type GetZoneEgressListResponse struct {
@@ -80,30 +80,30 @@ type GetZoneEgressListResponse struct {
 	ZoneEgressList *shared.ZoneEgressList
 }
 
-func (o *GetZoneEgressListResponse) GetContentType() string {
-	if o == nil {
+func (g *GetZoneEgressListResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetZoneEgressListResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetZoneEgressListResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetZoneEgressListResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetZoneEgressListResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetZoneEgressListResponse) GetZoneEgressList() *shared.ZoneEgressList {
-	if o == nil {
+func (g *GetZoneEgressListResponse) GetZoneEgressList() *shared.ZoneEgressList {
+	if g == nil {
 		return nil
 	}
-	return o.ZoneEgressList
+	return g.ZoneEgressList
 }

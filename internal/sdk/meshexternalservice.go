@@ -62,7 +62,7 @@ func (s *MeshExternalService) GetMeshExternalService(ctx context.Context, reques
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getMeshExternalService",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -292,7 +292,7 @@ func (s *MeshExternalService) PutMeshExternalService(ctx context.Context, reques
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "putMeshExternalService",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "MeshExternalServiceItem", "json", `request:"mediaType=application/json"`)
@@ -506,7 +506,7 @@ func (s *MeshExternalService) DeleteMeshExternalService(ctx context.Context, req
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "deleteMeshExternalService",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -736,7 +736,7 @@ func (s *MeshExternalService) GetMeshExternalServiceList(ctx context.Context, re
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getMeshExternalServiceList",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 

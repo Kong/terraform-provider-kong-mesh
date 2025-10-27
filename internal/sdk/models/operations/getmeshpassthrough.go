@@ -14,18 +14,18 @@ type GetMeshPassthroughRequest struct {
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 }
 
-func (o *GetMeshPassthroughRequest) GetMesh() string {
-	if o == nil {
+func (g *GetMeshPassthroughRequest) GetMesh() string {
+	if g == nil {
 		return ""
 	}
-	return o.Mesh
+	return g.Mesh
 }
 
-func (o *GetMeshPassthroughRequest) GetName() string {
-	if o == nil {
+func (g *GetMeshPassthroughRequest) GetName() string {
+	if g == nil {
 		return ""
 	}
-	return o.Name
+	return g.Name
 }
 
 type GetMeshPassthroughResponse struct {
@@ -41,37 +41,37 @@ type GetMeshPassthroughResponse struct {
 	NotFoundError *shared.NotFoundError
 }
 
-func (o *GetMeshPassthroughResponse) GetContentType() string {
-	if o == nil {
+func (g *GetMeshPassthroughResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetMeshPassthroughResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetMeshPassthroughResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetMeshPassthroughResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetMeshPassthroughResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetMeshPassthroughResponse) GetMeshPassthroughItem() *shared.MeshPassthroughItem {
-	if o == nil {
+func (g *GetMeshPassthroughResponse) GetMeshPassthroughItem() *shared.MeshPassthroughItem {
+	if g == nil {
 		return nil
 	}
-	return o.MeshPassthroughItem
+	return g.MeshPassthroughItem
 }
 
-func (o *GetMeshPassthroughResponse) GetNotFoundError() *shared.NotFoundError {
-	if o == nil {
+func (g *GetMeshPassthroughResponse) GetNotFoundError() *shared.NotFoundError {
+	if g == nil {
 		return nil
 	}
-	return o.NotFoundError
+	return g.NotFoundError
 }

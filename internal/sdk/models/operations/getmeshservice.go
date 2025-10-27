@@ -14,18 +14,18 @@ type GetMeshServiceRequest struct {
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 }
 
-func (o *GetMeshServiceRequest) GetMesh() string {
-	if o == nil {
+func (g *GetMeshServiceRequest) GetMesh() string {
+	if g == nil {
 		return ""
 	}
-	return o.Mesh
+	return g.Mesh
 }
 
-func (o *GetMeshServiceRequest) GetName() string {
-	if o == nil {
+func (g *GetMeshServiceRequest) GetName() string {
+	if g == nil {
 		return ""
 	}
-	return o.Name
+	return g.Name
 }
 
 type GetMeshServiceResponse struct {
@@ -41,37 +41,37 @@ type GetMeshServiceResponse struct {
 	NotFoundError *shared.NotFoundError
 }
 
-func (o *GetMeshServiceResponse) GetContentType() string {
-	if o == nil {
+func (g *GetMeshServiceResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetMeshServiceResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetMeshServiceResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetMeshServiceResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetMeshServiceResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetMeshServiceResponse) GetMeshServiceItem() *shared.MeshServiceItem {
-	if o == nil {
+func (g *GetMeshServiceResponse) GetMeshServiceItem() *shared.MeshServiceItem {
+	if g == nil {
 		return nil
 	}
-	return o.MeshServiceItem
+	return g.MeshServiceItem
 }
 
-func (o *GetMeshServiceResponse) GetNotFoundError() *shared.NotFoundError {
-	if o == nil {
+func (g *GetMeshServiceResponse) GetNotFoundError() *shared.NotFoundError {
+	if g == nil {
 		return nil
 	}
-	return o.NotFoundError
+	return g.NotFoundError
 }

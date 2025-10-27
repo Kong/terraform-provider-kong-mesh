@@ -41,7 +41,11 @@ resource "kong-mesh_mesh_retry" "my_meshretry" {
               ]
             }
             retry_on = [
-              "DeadlineExceeded"
+              "Canceled",
+              "DeadlineExceeded",
+              "Internal",
+              "ResourceExhausted",
+              "Unavailable",
             ]
           }
           http = {
@@ -85,7 +89,25 @@ resource "kong-mesh_mesh_retry" "my_meshretry" {
               }
             ]
             retry_on = [
-              "..."
+              "5XX",
+              "GatewayError",
+              "Reset",
+              "Retriable4xx",
+              "ConnectFailure",
+              "EnvoyRatelimited",
+              "RefusedStream",
+              "Http3PostConnectFailure",
+              "HttpMethodConnect",
+              "HttpMethodDelete",
+              "HttpMethodGet",
+              "HttpMethodHead",
+              "HttpMethodOptions",
+              "HttpMethodPatch",
+              "HttpMethodPost",
+              "HttpMethodPut",
+              "HttpMethodTrace",
+              "500",
+              "503",
             ]
           }
           tcp = {

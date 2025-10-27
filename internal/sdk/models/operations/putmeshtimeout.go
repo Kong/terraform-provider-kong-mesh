@@ -16,25 +16,25 @@ type PutMeshTimeoutRequest struct {
 	MeshTimeoutItem shared.MeshTimeoutItemInput `request:"mediaType=application/json"`
 }
 
-func (o *PutMeshTimeoutRequest) GetMesh() string {
-	if o == nil {
+func (p *PutMeshTimeoutRequest) GetMesh() string {
+	if p == nil {
 		return ""
 	}
-	return o.Mesh
+	return p.Mesh
 }
 
-func (o *PutMeshTimeoutRequest) GetName() string {
-	if o == nil {
+func (p *PutMeshTimeoutRequest) GetName() string {
+	if p == nil {
 		return ""
 	}
-	return o.Name
+	return p.Name
 }
 
-func (o *PutMeshTimeoutRequest) GetMeshTimeoutItem() shared.MeshTimeoutItemInput {
-	if o == nil {
+func (p *PutMeshTimeoutRequest) GetMeshTimeoutItem() shared.MeshTimeoutItemInput {
+	if p == nil {
 		return shared.MeshTimeoutItemInput{}
 	}
-	return o.MeshTimeoutItem
+	return p.MeshTimeoutItem
 }
 
 type PutMeshTimeoutResponse struct {
@@ -48,30 +48,30 @@ type PutMeshTimeoutResponse struct {
 	MeshTimeoutCreateOrUpdateSuccessResponse *shared.MeshTimeoutCreateOrUpdateSuccessResponse
 }
 
-func (o *PutMeshTimeoutResponse) GetContentType() string {
-	if o == nil {
+func (p *PutMeshTimeoutResponse) GetContentType() string {
+	if p == nil {
 		return ""
 	}
-	return o.ContentType
+	return p.ContentType
 }
 
-func (o *PutMeshTimeoutResponse) GetStatusCode() int {
-	if o == nil {
+func (p *PutMeshTimeoutResponse) GetStatusCode() int {
+	if p == nil {
 		return 0
 	}
-	return o.StatusCode
+	return p.StatusCode
 }
 
-func (o *PutMeshTimeoutResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *PutMeshTimeoutResponse) GetRawResponse() *http.Response {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.RawResponse
 }
 
-func (o *PutMeshTimeoutResponse) GetMeshTimeoutCreateOrUpdateSuccessResponse() *shared.MeshTimeoutCreateOrUpdateSuccessResponse {
-	if o == nil {
+func (p *PutMeshTimeoutResponse) GetMeshTimeoutCreateOrUpdateSuccessResponse() *shared.MeshTimeoutCreateOrUpdateSuccessResponse {
+	if p == nil {
 		return nil
 	}
-	return o.MeshTimeoutCreateOrUpdateSuccessResponse
+	return p.MeshTimeoutCreateOrUpdateSuccessResponse
 }

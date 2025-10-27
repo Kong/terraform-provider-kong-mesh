@@ -14,18 +14,18 @@ type DeleteMeshHealthCheckRequest struct {
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 }
 
-func (o *DeleteMeshHealthCheckRequest) GetMesh() string {
-	if o == nil {
+func (d *DeleteMeshHealthCheckRequest) GetMesh() string {
+	if d == nil {
 		return ""
 	}
-	return o.Mesh
+	return d.Mesh
 }
 
-func (o *DeleteMeshHealthCheckRequest) GetName() string {
-	if o == nil {
+func (d *DeleteMeshHealthCheckRequest) GetName() string {
+	if d == nil {
 		return ""
 	}
-	return o.Name
+	return d.Name
 }
 
 type DeleteMeshHealthCheckResponse struct {
@@ -41,37 +41,37 @@ type DeleteMeshHealthCheckResponse struct {
 	NotFoundError *shared.NotFoundError
 }
 
-func (o *DeleteMeshHealthCheckResponse) GetContentType() string {
-	if o == nil {
+func (d *DeleteMeshHealthCheckResponse) GetContentType() string {
+	if d == nil {
 		return ""
 	}
-	return o.ContentType
+	return d.ContentType
 }
 
-func (o *DeleteMeshHealthCheckResponse) GetStatusCode() int {
-	if o == nil {
+func (d *DeleteMeshHealthCheckResponse) GetStatusCode() int {
+	if d == nil {
 		return 0
 	}
-	return o.StatusCode
+	return d.StatusCode
 }
 
-func (o *DeleteMeshHealthCheckResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (d *DeleteMeshHealthCheckResponse) GetRawResponse() *http.Response {
+	if d == nil {
 		return nil
 	}
-	return o.RawResponse
+	return d.RawResponse
 }
 
-func (o *DeleteMeshHealthCheckResponse) GetMeshHealthCheckDeleteSuccessResponse() *shared.MeshHealthCheckDeleteSuccessResponse {
-	if o == nil {
+func (d *DeleteMeshHealthCheckResponse) GetMeshHealthCheckDeleteSuccessResponse() *shared.MeshHealthCheckDeleteSuccessResponse {
+	if d == nil {
 		return nil
 	}
-	return o.MeshHealthCheckDeleteSuccessResponse
+	return d.MeshHealthCheckDeleteSuccessResponse
 }
 
-func (o *DeleteMeshHealthCheckResponse) GetNotFoundError() *shared.NotFoundError {
-	if o == nil {
+func (d *DeleteMeshHealthCheckResponse) GetNotFoundError() *shared.NotFoundError {
+	if d == nil {
 		return nil
 	}
-	return o.NotFoundError
+	return d.NotFoundError
 }

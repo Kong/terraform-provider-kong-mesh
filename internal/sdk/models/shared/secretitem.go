@@ -12,37 +12,37 @@ type SecretItem struct {
 	Type   string            `json:"type"`
 }
 
-func (o *SecretItem) GetData() *string {
-	if o == nil {
+func (s *SecretItem) GetData() *string {
+	if s == nil {
 		return nil
 	}
-	return o.Data
+	return s.Data
 }
 
-func (o *SecretItem) GetLabels() map[string]string {
-	if o == nil {
+func (s *SecretItem) GetLabels() map[string]string {
+	if s == nil {
 		return nil
 	}
-	return o.Labels
+	return s.Labels
 }
 
-func (o *SecretItem) GetMesh() string {
-	if o == nil {
+func (s *SecretItem) GetMesh() string {
+	if s == nil {
 		return ""
 	}
-	return o.Mesh
+	return s.Mesh
 }
 
-func (o *SecretItem) GetName() string {
-	if o == nil {
+func (s *SecretItem) GetName() string {
+	if s == nil {
 		return ""
 	}
-	return o.Name
+	return s.Name
 }
 
-func (o *SecretItem) GetType() string {
-	if o == nil {
+func (s *SecretItem) GetType() string {
+	if s == nil {
 		return ""
 	}
-	return o.Type
+	return s.Type
 }

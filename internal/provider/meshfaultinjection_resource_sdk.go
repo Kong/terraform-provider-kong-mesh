@@ -13,6 +13,347 @@ import (
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
 )
 
+func (r *MeshFaultInjectionResourceModel) RefreshFromSharedMeshFaultInjectionCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.MeshFaultInjectionCreateOrUpdateSuccessResponse) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		r.Warnings = make([]types.String, 0, len(resp.Warnings))
+		for _, v := range resp.Warnings {
+			r.Warnings = append(r.Warnings, types.StringValue(v))
+		}
+	}
+
+	return diags
+}
+
+func (r *MeshFaultInjectionResourceModel) RefreshFromSharedMeshFaultInjectionItem(ctx context.Context, resp *shared.MeshFaultInjectionItem) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
+		r.Kri = types.StringPointerValue(resp.Kri)
+		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
+		diags.Append(labelsDiags...)
+		labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
+		diags.Append(labelsDiags...)
+		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
+		r.Mesh = types.StringPointerValue(resp.Mesh)
+		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
+		r.Name = types.StringValue(resp.Name)
+		r.Spec.From = []tfTypes.MeshFaultInjectionItemFrom{}
+
+		for _, fromItem := range resp.Spec.From {
+			var from tfTypes.MeshFaultInjectionItemFrom
+
+			if fromItem.Default == nil {
+				from.Default = nil
+			} else {
+				from.Default = &tfTypes.MeshFaultInjectionItemDefault{}
+				from.Default.HTTP = []tfTypes.HTTP{}
+
+				for _, httpItem := range fromItem.Default.HTTP {
+					var http tfTypes.HTTP
+
+					if httpItem.Abort == nil {
+						http.Abort = nil
+					} else {
+						http.Abort = &tfTypes.Abort{}
+						http.Abort.HTTPStatus = types.Int32Value(int32(httpItem.Abort.HTTPStatus))
+						if httpItem.Abort.Percentage.Integer != nil {
+							http.Abort.Percentage.Integer = types.Int64PointerValue(httpItem.Abort.Percentage.Integer)
+						}
+						if httpItem.Abort.Percentage.Str != nil {
+							http.Abort.Percentage.Str = types.StringPointerValue(httpItem.Abort.Percentage.Str)
+						}
+					}
+					if httpItem.Delay == nil {
+						http.Delay = nil
+					} else {
+						http.Delay = &tfTypes.Delay{}
+						if httpItem.Delay.Percentage.Integer != nil {
+							http.Delay.Percentage.Integer = types.Int64PointerValue(httpItem.Delay.Percentage.Integer)
+						}
+						if httpItem.Delay.Percentage.Str != nil {
+							http.Delay.Percentage.Str = types.StringPointerValue(httpItem.Delay.Percentage.Str)
+						}
+						http.Delay.Value = types.StringValue(httpItem.Delay.Value)
+					}
+					if httpItem.ResponseBandwidth == nil {
+						http.ResponseBandwidth = nil
+					} else {
+						http.ResponseBandwidth = &tfTypes.ResponseBandwidth{}
+						http.ResponseBandwidth.Limit = types.StringValue(httpItem.ResponseBandwidth.Limit)
+						if httpItem.ResponseBandwidth.Percentage.Integer != nil {
+							http.ResponseBandwidth.Percentage.Integer = types.Int64PointerValue(httpItem.ResponseBandwidth.Percentage.Integer)
+						}
+						if httpItem.ResponseBandwidth.Percentage.Str != nil {
+							http.ResponseBandwidth.Percentage.Str = types.StringPointerValue(httpItem.ResponseBandwidth.Percentage.Str)
+						}
+					}
+
+					from.Default.HTTP = append(from.Default.HTTP, http)
+				}
+			}
+			from.TargetRef.Kind = types.StringValue(string(fromItem.TargetRef.Kind))
+			if len(fromItem.TargetRef.Labels) > 0 {
+				from.TargetRef.Labels = make(map[string]types.String, len(fromItem.TargetRef.Labels))
+				for key, value := range fromItem.TargetRef.Labels {
+					from.TargetRef.Labels[key] = types.StringValue(value)
+				}
+			}
+			from.TargetRef.Mesh = types.StringPointerValue(fromItem.TargetRef.Mesh)
+			from.TargetRef.Name = types.StringPointerValue(fromItem.TargetRef.Name)
+			from.TargetRef.Namespace = types.StringPointerValue(fromItem.TargetRef.Namespace)
+			from.TargetRef.ProxyTypes = make([]types.String, 0, len(fromItem.TargetRef.ProxyTypes))
+			for _, v := range fromItem.TargetRef.ProxyTypes {
+				from.TargetRef.ProxyTypes = append(from.TargetRef.ProxyTypes, types.StringValue(string(v)))
+			}
+			from.TargetRef.SectionName = types.StringPointerValue(fromItem.TargetRef.SectionName)
+			if len(fromItem.TargetRef.Tags) > 0 {
+				from.TargetRef.Tags = make(map[string]types.String, len(fromItem.TargetRef.Tags))
+				for key1, value1 := range fromItem.TargetRef.Tags {
+					from.TargetRef.Tags[key1] = types.StringValue(value1)
+				}
+			}
+
+			r.Spec.From = append(r.Spec.From, from)
+		}
+		r.Spec.Rules = []tfTypes.MeshFaultInjectionItemRules{}
+
+		for _, rulesItem := range resp.Spec.Rules {
+			var rules tfTypes.MeshFaultInjectionItemRules
+
+			rules.Default.HTTP = []tfTypes.HTTP{}
+
+			for _, httpItem1 := range rulesItem.Default.HTTP {
+				var http1 tfTypes.HTTP
+
+				if httpItem1.Abort == nil {
+					http1.Abort = nil
+				} else {
+					http1.Abort = &tfTypes.Abort{}
+					http1.Abort.HTTPStatus = types.Int32Value(int32(httpItem1.Abort.HTTPStatus))
+					if httpItem1.Abort.Percentage.Integer != nil {
+						http1.Abort.Percentage.Integer = types.Int64PointerValue(httpItem1.Abort.Percentage.Integer)
+					}
+					if httpItem1.Abort.Percentage.Str != nil {
+						http1.Abort.Percentage.Str = types.StringPointerValue(httpItem1.Abort.Percentage.Str)
+					}
+				}
+				if httpItem1.Delay == nil {
+					http1.Delay = nil
+				} else {
+					http1.Delay = &tfTypes.Delay{}
+					if httpItem1.Delay.Percentage.Integer != nil {
+						http1.Delay.Percentage.Integer = types.Int64PointerValue(httpItem1.Delay.Percentage.Integer)
+					}
+					if httpItem1.Delay.Percentage.Str != nil {
+						http1.Delay.Percentage.Str = types.StringPointerValue(httpItem1.Delay.Percentage.Str)
+					}
+					http1.Delay.Value = types.StringValue(httpItem1.Delay.Value)
+				}
+				if httpItem1.ResponseBandwidth == nil {
+					http1.ResponseBandwidth = nil
+				} else {
+					http1.ResponseBandwidth = &tfTypes.ResponseBandwidth{}
+					http1.ResponseBandwidth.Limit = types.StringValue(httpItem1.ResponseBandwidth.Limit)
+					if httpItem1.ResponseBandwidth.Percentage.Integer != nil {
+						http1.ResponseBandwidth.Percentage.Integer = types.Int64PointerValue(httpItem1.ResponseBandwidth.Percentage.Integer)
+					}
+					if httpItem1.ResponseBandwidth.Percentage.Str != nil {
+						http1.ResponseBandwidth.Percentage.Str = types.StringPointerValue(httpItem1.ResponseBandwidth.Percentage.Str)
+					}
+				}
+
+				rules.Default.HTTP = append(rules.Default.HTTP, http1)
+			}
+			rules.Matches = []tfTypes.Matches{}
+
+			for _, matchesItem := range rulesItem.Matches {
+				var matches tfTypes.Matches
+
+				if matchesItem.SpiffeID == nil {
+					matches.SpiffeID = nil
+				} else {
+					matches.SpiffeID = &tfTypes.MeshFaultInjectionItemSpiffeID{}
+					matches.SpiffeID.Type = types.StringValue(string(matchesItem.SpiffeID.Type))
+					matches.SpiffeID.Value = types.StringValue(matchesItem.SpiffeID.Value)
+				}
+
+				rules.Matches = append(rules.Matches, matches)
+			}
+
+			r.Spec.Rules = append(r.Spec.Rules, rules)
+		}
+		if resp.Spec.TargetRef == nil {
+			r.Spec.TargetRef = nil
+		} else {
+			r.Spec.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
+			r.Spec.TargetRef.Kind = types.StringValue(string(resp.Spec.TargetRef.Kind))
+			if len(resp.Spec.TargetRef.Labels) > 0 {
+				r.Spec.TargetRef.Labels = make(map[string]types.String, len(resp.Spec.TargetRef.Labels))
+				for key2, value2 := range resp.Spec.TargetRef.Labels {
+					r.Spec.TargetRef.Labels[key2] = types.StringValue(value2)
+				}
+			}
+			r.Spec.TargetRef.Mesh = types.StringPointerValue(resp.Spec.TargetRef.Mesh)
+			r.Spec.TargetRef.Name = types.StringPointerValue(resp.Spec.TargetRef.Name)
+			r.Spec.TargetRef.Namespace = types.StringPointerValue(resp.Spec.TargetRef.Namespace)
+			r.Spec.TargetRef.ProxyTypes = make([]types.String, 0, len(resp.Spec.TargetRef.ProxyTypes))
+			for _, v := range resp.Spec.TargetRef.ProxyTypes {
+				r.Spec.TargetRef.ProxyTypes = append(r.Spec.TargetRef.ProxyTypes, types.StringValue(string(v)))
+			}
+			r.Spec.TargetRef.SectionName = types.StringPointerValue(resp.Spec.TargetRef.SectionName)
+			if len(resp.Spec.TargetRef.Tags) > 0 {
+				r.Spec.TargetRef.Tags = make(map[string]types.String, len(resp.Spec.TargetRef.Tags))
+				for key3, value3 := range resp.Spec.TargetRef.Tags {
+					r.Spec.TargetRef.Tags[key3] = types.StringValue(value3)
+				}
+			}
+		}
+		r.Spec.To = []tfTypes.MeshFaultInjectionItemFrom{}
+
+		for _, toItem := range resp.Spec.To {
+			var to tfTypes.MeshFaultInjectionItemFrom
+
+			if toItem.Default == nil {
+				to.Default = nil
+			} else {
+				to.Default = &tfTypes.MeshFaultInjectionItemDefault{}
+				to.Default.HTTP = []tfTypes.HTTP{}
+
+				for _, httpItem2 := range toItem.Default.HTTP {
+					var http2 tfTypes.HTTP
+
+					if httpItem2.Abort == nil {
+						http2.Abort = nil
+					} else {
+						http2.Abort = &tfTypes.Abort{}
+						http2.Abort.HTTPStatus = types.Int32Value(int32(httpItem2.Abort.HTTPStatus))
+						if httpItem2.Abort.Percentage.Integer != nil {
+							http2.Abort.Percentage.Integer = types.Int64PointerValue(httpItem2.Abort.Percentage.Integer)
+						}
+						if httpItem2.Abort.Percentage.Str != nil {
+							http2.Abort.Percentage.Str = types.StringPointerValue(httpItem2.Abort.Percentage.Str)
+						}
+					}
+					if httpItem2.Delay == nil {
+						http2.Delay = nil
+					} else {
+						http2.Delay = &tfTypes.Delay{}
+						if httpItem2.Delay.Percentage.Integer != nil {
+							http2.Delay.Percentage.Integer = types.Int64PointerValue(httpItem2.Delay.Percentage.Integer)
+						}
+						if httpItem2.Delay.Percentage.Str != nil {
+							http2.Delay.Percentage.Str = types.StringPointerValue(httpItem2.Delay.Percentage.Str)
+						}
+						http2.Delay.Value = types.StringValue(httpItem2.Delay.Value)
+					}
+					if httpItem2.ResponseBandwidth == nil {
+						http2.ResponseBandwidth = nil
+					} else {
+						http2.ResponseBandwidth = &tfTypes.ResponseBandwidth{}
+						http2.ResponseBandwidth.Limit = types.StringValue(httpItem2.ResponseBandwidth.Limit)
+						if httpItem2.ResponseBandwidth.Percentage.Integer != nil {
+							http2.ResponseBandwidth.Percentage.Integer = types.Int64PointerValue(httpItem2.ResponseBandwidth.Percentage.Integer)
+						}
+						if httpItem2.ResponseBandwidth.Percentage.Str != nil {
+							http2.ResponseBandwidth.Percentage.Str = types.StringPointerValue(httpItem2.ResponseBandwidth.Percentage.Str)
+						}
+					}
+
+					to.Default.HTTP = append(to.Default.HTTP, http2)
+				}
+			}
+			to.TargetRef.Kind = types.StringValue(string(toItem.TargetRef.Kind))
+			if len(toItem.TargetRef.Labels) > 0 {
+				to.TargetRef.Labels = make(map[string]types.String, len(toItem.TargetRef.Labels))
+				for key4, value4 := range toItem.TargetRef.Labels {
+					to.TargetRef.Labels[key4] = types.StringValue(value4)
+				}
+			}
+			to.TargetRef.Mesh = types.StringPointerValue(toItem.TargetRef.Mesh)
+			to.TargetRef.Name = types.StringPointerValue(toItem.TargetRef.Name)
+			to.TargetRef.Namespace = types.StringPointerValue(toItem.TargetRef.Namespace)
+			to.TargetRef.ProxyTypes = make([]types.String, 0, len(toItem.TargetRef.ProxyTypes))
+			for _, v := range toItem.TargetRef.ProxyTypes {
+				to.TargetRef.ProxyTypes = append(to.TargetRef.ProxyTypes, types.StringValue(string(v)))
+			}
+			to.TargetRef.SectionName = types.StringPointerValue(toItem.TargetRef.SectionName)
+			if len(toItem.TargetRef.Tags) > 0 {
+				to.TargetRef.Tags = make(map[string]types.String, len(toItem.TargetRef.Tags))
+				for key5, value5 := range toItem.TargetRef.Tags {
+					to.TargetRef.Tags[key5] = types.StringValue(value5)
+				}
+			}
+
+			r.Spec.To = append(r.Spec.To, to)
+		}
+		r.Type = types.StringValue(string(resp.Type))
+	}
+
+	return diags
+}
+
+func (r *MeshFaultInjectionResourceModel) ToOperationsDeleteMeshFaultInjectionRequest(ctx context.Context) (*operations.DeleteMeshFaultInjectionRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.DeleteMeshFaultInjectionRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshFaultInjectionResourceModel) ToOperationsGetMeshFaultInjectionRequest(ctx context.Context) (*operations.GetMeshFaultInjectionRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.GetMeshFaultInjectionRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshFaultInjectionResourceModel) ToOperationsPutMeshFaultInjectionRequest(ctx context.Context) (*operations.PutMeshFaultInjectionRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	meshFaultInjectionItem, meshFaultInjectionItemDiags := r.ToSharedMeshFaultInjectionItemInput(ctx)
+	diags.Append(meshFaultInjectionItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PutMeshFaultInjectionRequest{
+		Mesh:                   mesh,
+		Name:                   name,
+		MeshFaultInjectionItem: *meshFaultInjectionItem,
+	}
+
+	return &out, diags
+}
+
 func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ctx context.Context) (*shared.MeshFaultInjectionItemInput, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -581,370 +922,4 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 	}
 
 	return &out, diags
-}
-
-func (r *MeshFaultInjectionResourceModel) ToOperationsPutMeshFaultInjectionRequest(ctx context.Context) (*operations.PutMeshFaultInjectionRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	meshFaultInjectionItem, meshFaultInjectionItemDiags := r.ToSharedMeshFaultInjectionItemInput(ctx)
-	diags.Append(meshFaultInjectionItemDiags...)
-
-	if diags.HasError() {
-		return nil, diags
-	}
-
-	out := operations.PutMeshFaultInjectionRequest{
-		Mesh:                   mesh,
-		Name:                   name,
-		MeshFaultInjectionItem: *meshFaultInjectionItem,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshFaultInjectionResourceModel) ToOperationsGetMeshFaultInjectionRequest(ctx context.Context) (*operations.GetMeshFaultInjectionRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	out := operations.GetMeshFaultInjectionRequest{
-		Mesh: mesh,
-		Name: name,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshFaultInjectionResourceModel) ToOperationsDeleteMeshFaultInjectionRequest(ctx context.Context) (*operations.DeleteMeshFaultInjectionRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	out := operations.DeleteMeshFaultInjectionRequest{
-		Mesh: mesh,
-		Name: name,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshFaultInjectionResourceModel) RefreshFromSharedMeshFaultInjectionCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.MeshFaultInjectionCreateOrUpdateSuccessResponse) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		r.Warnings = make([]types.String, 0, len(resp.Warnings))
-		for _, v := range resp.Warnings {
-			r.Warnings = append(r.Warnings, types.StringValue(v))
-		}
-	}
-
-	return diags
-}
-
-func (r *MeshFaultInjectionResourceModel) RefreshFromSharedMeshFaultInjectionItem(ctx context.Context, resp *shared.MeshFaultInjectionItem) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
-		r.Kri = types.StringPointerValue(resp.Kri)
-		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
-		diags.Append(labelsDiags...)
-		labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
-		diags.Append(labelsDiags...)
-		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
-		r.Mesh = types.StringPointerValue(resp.Mesh)
-		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
-		r.Name = types.StringValue(resp.Name)
-		r.Spec.From = []tfTypes.MeshFaultInjectionItemFrom{}
-		if len(r.Spec.From) > len(resp.Spec.From) {
-			r.Spec.From = r.Spec.From[:len(resp.Spec.From)]
-		}
-		for fromCount, fromItem := range resp.Spec.From {
-			var from tfTypes.MeshFaultInjectionItemFrom
-			if fromItem.Default == nil {
-				from.Default = nil
-			} else {
-				from.Default = &tfTypes.MeshFaultInjectionItemDefault{}
-				from.Default.HTTP = []tfTypes.HTTP{}
-				for httpCount, httpItem := range fromItem.Default.HTTP {
-					var http tfTypes.HTTP
-					if httpItem.Abort == nil {
-						http.Abort = nil
-					} else {
-						http.Abort = &tfTypes.Abort{}
-						http.Abort.HTTPStatus = types.Int32Value(int32(httpItem.Abort.HTTPStatus))
-						if httpItem.Abort.Percentage.Integer != nil {
-							http.Abort.Percentage.Integer = types.Int64PointerValue(httpItem.Abort.Percentage.Integer)
-						}
-						if httpItem.Abort.Percentage.Str != nil {
-							http.Abort.Percentage.Str = types.StringPointerValue(httpItem.Abort.Percentage.Str)
-						}
-					}
-					if httpItem.Delay == nil {
-						http.Delay = nil
-					} else {
-						http.Delay = &tfTypes.Delay{}
-						if httpItem.Delay.Percentage.Integer != nil {
-							http.Delay.Percentage.Integer = types.Int64PointerValue(httpItem.Delay.Percentage.Integer)
-						}
-						if httpItem.Delay.Percentage.Str != nil {
-							http.Delay.Percentage.Str = types.StringPointerValue(httpItem.Delay.Percentage.Str)
-						}
-						http.Delay.Value = types.StringValue(httpItem.Delay.Value)
-					}
-					if httpItem.ResponseBandwidth == nil {
-						http.ResponseBandwidth = nil
-					} else {
-						http.ResponseBandwidth = &tfTypes.ResponseBandwidth{}
-						http.ResponseBandwidth.Limit = types.StringValue(httpItem.ResponseBandwidth.Limit)
-						if httpItem.ResponseBandwidth.Percentage.Integer != nil {
-							http.ResponseBandwidth.Percentage.Integer = types.Int64PointerValue(httpItem.ResponseBandwidth.Percentage.Integer)
-						}
-						if httpItem.ResponseBandwidth.Percentage.Str != nil {
-							http.ResponseBandwidth.Percentage.Str = types.StringPointerValue(httpItem.ResponseBandwidth.Percentage.Str)
-						}
-					}
-					if httpCount+1 > len(from.Default.HTTP) {
-						from.Default.HTTP = append(from.Default.HTTP, http)
-					} else {
-						from.Default.HTTP[httpCount].Abort = http.Abort
-						from.Default.HTTP[httpCount].Delay = http.Delay
-						from.Default.HTTP[httpCount].ResponseBandwidth = http.ResponseBandwidth
-					}
-				}
-			}
-			from.TargetRef.Kind = types.StringValue(string(fromItem.TargetRef.Kind))
-			if len(fromItem.TargetRef.Labels) > 0 {
-				from.TargetRef.Labels = make(map[string]types.String, len(fromItem.TargetRef.Labels))
-				for key, value := range fromItem.TargetRef.Labels {
-					from.TargetRef.Labels[key] = types.StringValue(value)
-				}
-			}
-			from.TargetRef.Mesh = types.StringPointerValue(fromItem.TargetRef.Mesh)
-			from.TargetRef.Name = types.StringPointerValue(fromItem.TargetRef.Name)
-			from.TargetRef.Namespace = types.StringPointerValue(fromItem.TargetRef.Namespace)
-			from.TargetRef.ProxyTypes = make([]types.String, 0, len(fromItem.TargetRef.ProxyTypes))
-			for _, v := range fromItem.TargetRef.ProxyTypes {
-				from.TargetRef.ProxyTypes = append(from.TargetRef.ProxyTypes, types.StringValue(string(v)))
-			}
-			from.TargetRef.SectionName = types.StringPointerValue(fromItem.TargetRef.SectionName)
-			if len(fromItem.TargetRef.Tags) > 0 {
-				from.TargetRef.Tags = make(map[string]types.String, len(fromItem.TargetRef.Tags))
-				for key1, value1 := range fromItem.TargetRef.Tags {
-					from.TargetRef.Tags[key1] = types.StringValue(value1)
-				}
-			}
-			if fromCount+1 > len(r.Spec.From) {
-				r.Spec.From = append(r.Spec.From, from)
-			} else {
-				r.Spec.From[fromCount].Default = from.Default
-				r.Spec.From[fromCount].TargetRef = from.TargetRef
-			}
-		}
-		r.Spec.Rules = []tfTypes.MeshFaultInjectionItemRules{}
-		if len(r.Spec.Rules) > len(resp.Spec.Rules) {
-			r.Spec.Rules = r.Spec.Rules[:len(resp.Spec.Rules)]
-		}
-		for rulesCount, rulesItem := range resp.Spec.Rules {
-			var rules tfTypes.MeshFaultInjectionItemRules
-			rules.Default.HTTP = []tfTypes.HTTP{}
-			for httpCount1, httpItem1 := range rulesItem.Default.HTTP {
-				var http1 tfTypes.HTTP
-				if httpItem1.Abort == nil {
-					http1.Abort = nil
-				} else {
-					http1.Abort = &tfTypes.Abort{}
-					http1.Abort.HTTPStatus = types.Int32Value(int32(httpItem1.Abort.HTTPStatus))
-					if httpItem1.Abort.Percentage.Integer != nil {
-						http1.Abort.Percentage.Integer = types.Int64PointerValue(httpItem1.Abort.Percentage.Integer)
-					}
-					if httpItem1.Abort.Percentage.Str != nil {
-						http1.Abort.Percentage.Str = types.StringPointerValue(httpItem1.Abort.Percentage.Str)
-					}
-				}
-				if httpItem1.Delay == nil {
-					http1.Delay = nil
-				} else {
-					http1.Delay = &tfTypes.Delay{}
-					if httpItem1.Delay.Percentage.Integer != nil {
-						http1.Delay.Percentage.Integer = types.Int64PointerValue(httpItem1.Delay.Percentage.Integer)
-					}
-					if httpItem1.Delay.Percentage.Str != nil {
-						http1.Delay.Percentage.Str = types.StringPointerValue(httpItem1.Delay.Percentage.Str)
-					}
-					http1.Delay.Value = types.StringValue(httpItem1.Delay.Value)
-				}
-				if httpItem1.ResponseBandwidth == nil {
-					http1.ResponseBandwidth = nil
-				} else {
-					http1.ResponseBandwidth = &tfTypes.ResponseBandwidth{}
-					http1.ResponseBandwidth.Limit = types.StringValue(httpItem1.ResponseBandwidth.Limit)
-					if httpItem1.ResponseBandwidth.Percentage.Integer != nil {
-						http1.ResponseBandwidth.Percentage.Integer = types.Int64PointerValue(httpItem1.ResponseBandwidth.Percentage.Integer)
-					}
-					if httpItem1.ResponseBandwidth.Percentage.Str != nil {
-						http1.ResponseBandwidth.Percentage.Str = types.StringPointerValue(httpItem1.ResponseBandwidth.Percentage.Str)
-					}
-				}
-				if httpCount1+1 > len(rules.Default.HTTP) {
-					rules.Default.HTTP = append(rules.Default.HTTP, http1)
-				} else {
-					rules.Default.HTTP[httpCount1].Abort = http1.Abort
-					rules.Default.HTTP[httpCount1].Delay = http1.Delay
-					rules.Default.HTTP[httpCount1].ResponseBandwidth = http1.ResponseBandwidth
-				}
-			}
-			rules.Matches = []tfTypes.Matches{}
-			for matchesCount, matchesItem := range rulesItem.Matches {
-				var matches tfTypes.Matches
-				if matchesItem.SpiffeID == nil {
-					matches.SpiffeID = nil
-				} else {
-					matches.SpiffeID = &tfTypes.MeshFaultInjectionItemSpiffeID{}
-					matches.SpiffeID.Type = types.StringValue(string(matchesItem.SpiffeID.Type))
-					matches.SpiffeID.Value = types.StringValue(matchesItem.SpiffeID.Value)
-				}
-				if matchesCount+1 > len(rules.Matches) {
-					rules.Matches = append(rules.Matches, matches)
-				} else {
-					rules.Matches[matchesCount].SpiffeID = matches.SpiffeID
-				}
-			}
-			if rulesCount+1 > len(r.Spec.Rules) {
-				r.Spec.Rules = append(r.Spec.Rules, rules)
-			} else {
-				r.Spec.Rules[rulesCount].Default = rules.Default
-				r.Spec.Rules[rulesCount].Matches = rules.Matches
-			}
-		}
-		if resp.Spec.TargetRef == nil {
-			r.Spec.TargetRef = nil
-		} else {
-			r.Spec.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
-			r.Spec.TargetRef.Kind = types.StringValue(string(resp.Spec.TargetRef.Kind))
-			if len(resp.Spec.TargetRef.Labels) > 0 {
-				r.Spec.TargetRef.Labels = make(map[string]types.String, len(resp.Spec.TargetRef.Labels))
-				for key2, value2 := range resp.Spec.TargetRef.Labels {
-					r.Spec.TargetRef.Labels[key2] = types.StringValue(value2)
-				}
-			}
-			r.Spec.TargetRef.Mesh = types.StringPointerValue(resp.Spec.TargetRef.Mesh)
-			r.Spec.TargetRef.Name = types.StringPointerValue(resp.Spec.TargetRef.Name)
-			r.Spec.TargetRef.Namespace = types.StringPointerValue(resp.Spec.TargetRef.Namespace)
-			r.Spec.TargetRef.ProxyTypes = make([]types.String, 0, len(resp.Spec.TargetRef.ProxyTypes))
-			for _, v := range resp.Spec.TargetRef.ProxyTypes {
-				r.Spec.TargetRef.ProxyTypes = append(r.Spec.TargetRef.ProxyTypes, types.StringValue(string(v)))
-			}
-			r.Spec.TargetRef.SectionName = types.StringPointerValue(resp.Spec.TargetRef.SectionName)
-			if len(resp.Spec.TargetRef.Tags) > 0 {
-				r.Spec.TargetRef.Tags = make(map[string]types.String, len(resp.Spec.TargetRef.Tags))
-				for key3, value3 := range resp.Spec.TargetRef.Tags {
-					r.Spec.TargetRef.Tags[key3] = types.StringValue(value3)
-				}
-			}
-		}
-		r.Spec.To = []tfTypes.MeshFaultInjectionItemFrom{}
-		if len(r.Spec.To) > len(resp.Spec.To) {
-			r.Spec.To = r.Spec.To[:len(resp.Spec.To)]
-		}
-		for toCount, toItem := range resp.Spec.To {
-			var to tfTypes.MeshFaultInjectionItemFrom
-			if toItem.Default == nil {
-				to.Default = nil
-			} else {
-				to.Default = &tfTypes.MeshFaultInjectionItemDefault{}
-				to.Default.HTTP = []tfTypes.HTTP{}
-				for httpCount2, httpItem2 := range toItem.Default.HTTP {
-					var http2 tfTypes.HTTP
-					if httpItem2.Abort == nil {
-						http2.Abort = nil
-					} else {
-						http2.Abort = &tfTypes.Abort{}
-						http2.Abort.HTTPStatus = types.Int32Value(int32(httpItem2.Abort.HTTPStatus))
-						if httpItem2.Abort.Percentage.Integer != nil {
-							http2.Abort.Percentage.Integer = types.Int64PointerValue(httpItem2.Abort.Percentage.Integer)
-						}
-						if httpItem2.Abort.Percentage.Str != nil {
-							http2.Abort.Percentage.Str = types.StringPointerValue(httpItem2.Abort.Percentage.Str)
-						}
-					}
-					if httpItem2.Delay == nil {
-						http2.Delay = nil
-					} else {
-						http2.Delay = &tfTypes.Delay{}
-						if httpItem2.Delay.Percentage.Integer != nil {
-							http2.Delay.Percentage.Integer = types.Int64PointerValue(httpItem2.Delay.Percentage.Integer)
-						}
-						if httpItem2.Delay.Percentage.Str != nil {
-							http2.Delay.Percentage.Str = types.StringPointerValue(httpItem2.Delay.Percentage.Str)
-						}
-						http2.Delay.Value = types.StringValue(httpItem2.Delay.Value)
-					}
-					if httpItem2.ResponseBandwidth == nil {
-						http2.ResponseBandwidth = nil
-					} else {
-						http2.ResponseBandwidth = &tfTypes.ResponseBandwidth{}
-						http2.ResponseBandwidth.Limit = types.StringValue(httpItem2.ResponseBandwidth.Limit)
-						if httpItem2.ResponseBandwidth.Percentage.Integer != nil {
-							http2.ResponseBandwidth.Percentage.Integer = types.Int64PointerValue(httpItem2.ResponseBandwidth.Percentage.Integer)
-						}
-						if httpItem2.ResponseBandwidth.Percentage.Str != nil {
-							http2.ResponseBandwidth.Percentage.Str = types.StringPointerValue(httpItem2.ResponseBandwidth.Percentage.Str)
-						}
-					}
-					if httpCount2+1 > len(to.Default.HTTP) {
-						to.Default.HTTP = append(to.Default.HTTP, http2)
-					} else {
-						to.Default.HTTP[httpCount2].Abort = http2.Abort
-						to.Default.HTTP[httpCount2].Delay = http2.Delay
-						to.Default.HTTP[httpCount2].ResponseBandwidth = http2.ResponseBandwidth
-					}
-				}
-			}
-			to.TargetRef.Kind = types.StringValue(string(toItem.TargetRef.Kind))
-			if len(toItem.TargetRef.Labels) > 0 {
-				to.TargetRef.Labels = make(map[string]types.String, len(toItem.TargetRef.Labels))
-				for key4, value4 := range toItem.TargetRef.Labels {
-					to.TargetRef.Labels[key4] = types.StringValue(value4)
-				}
-			}
-			to.TargetRef.Mesh = types.StringPointerValue(toItem.TargetRef.Mesh)
-			to.TargetRef.Name = types.StringPointerValue(toItem.TargetRef.Name)
-			to.TargetRef.Namespace = types.StringPointerValue(toItem.TargetRef.Namespace)
-			to.TargetRef.ProxyTypes = make([]types.String, 0, len(toItem.TargetRef.ProxyTypes))
-			for _, v := range toItem.TargetRef.ProxyTypes {
-				to.TargetRef.ProxyTypes = append(to.TargetRef.ProxyTypes, types.StringValue(string(v)))
-			}
-			to.TargetRef.SectionName = types.StringPointerValue(toItem.TargetRef.SectionName)
-			if len(toItem.TargetRef.Tags) > 0 {
-				to.TargetRef.Tags = make(map[string]types.String, len(toItem.TargetRef.Tags))
-				for key5, value5 := range toItem.TargetRef.Tags {
-					to.TargetRef.Tags[key5] = types.StringValue(value5)
-				}
-			}
-			if toCount+1 > len(r.Spec.To) {
-				r.Spec.To = append(r.Spec.To, to)
-			} else {
-				r.Spec.To[toCount].Default = to.Default
-				r.Spec.To[toCount].TargetRef = to.TargetRef
-			}
-		}
-		r.Type = types.StringValue(string(resp.Type))
-	}
-
-	return diags
 }

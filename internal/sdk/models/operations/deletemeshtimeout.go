@@ -14,18 +14,18 @@ type DeleteMeshTimeoutRequest struct {
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 }
 
-func (o *DeleteMeshTimeoutRequest) GetMesh() string {
-	if o == nil {
+func (d *DeleteMeshTimeoutRequest) GetMesh() string {
+	if d == nil {
 		return ""
 	}
-	return o.Mesh
+	return d.Mesh
 }
 
-func (o *DeleteMeshTimeoutRequest) GetName() string {
-	if o == nil {
+func (d *DeleteMeshTimeoutRequest) GetName() string {
+	if d == nil {
 		return ""
 	}
-	return o.Name
+	return d.Name
 }
 
 type DeleteMeshTimeoutResponse struct {
@@ -41,37 +41,37 @@ type DeleteMeshTimeoutResponse struct {
 	NotFoundError *shared.NotFoundError
 }
 
-func (o *DeleteMeshTimeoutResponse) GetContentType() string {
-	if o == nil {
+func (d *DeleteMeshTimeoutResponse) GetContentType() string {
+	if d == nil {
 		return ""
 	}
-	return o.ContentType
+	return d.ContentType
 }
 
-func (o *DeleteMeshTimeoutResponse) GetStatusCode() int {
-	if o == nil {
+func (d *DeleteMeshTimeoutResponse) GetStatusCode() int {
+	if d == nil {
 		return 0
 	}
-	return o.StatusCode
+	return d.StatusCode
 }
 
-func (o *DeleteMeshTimeoutResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (d *DeleteMeshTimeoutResponse) GetRawResponse() *http.Response {
+	if d == nil {
 		return nil
 	}
-	return o.RawResponse
+	return d.RawResponse
 }
 
-func (o *DeleteMeshTimeoutResponse) GetMeshTimeoutDeleteSuccessResponse() *shared.MeshTimeoutDeleteSuccessResponse {
-	if o == nil {
+func (d *DeleteMeshTimeoutResponse) GetMeshTimeoutDeleteSuccessResponse() *shared.MeshTimeoutDeleteSuccessResponse {
+	if d == nil {
 		return nil
 	}
-	return o.MeshTimeoutDeleteSuccessResponse
+	return d.MeshTimeoutDeleteSuccessResponse
 }
 
-func (o *DeleteMeshTimeoutResponse) GetNotFoundError() *shared.NotFoundError {
-	if o == nil {
+func (d *DeleteMeshTimeoutResponse) GetNotFoundError() *shared.NotFoundError {
+	if d == nil {
 		return nil
 	}
-	return o.NotFoundError
+	return d.NotFoundError
 }

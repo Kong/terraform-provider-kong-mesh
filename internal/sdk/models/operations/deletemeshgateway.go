@@ -14,18 +14,18 @@ type DeleteMeshGatewayRequest struct {
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 }
 
-func (o *DeleteMeshGatewayRequest) GetMesh() string {
-	if o == nil {
+func (d *DeleteMeshGatewayRequest) GetMesh() string {
+	if d == nil {
 		return ""
 	}
-	return o.Mesh
+	return d.Mesh
 }
 
-func (o *DeleteMeshGatewayRequest) GetName() string {
-	if o == nil {
+func (d *DeleteMeshGatewayRequest) GetName() string {
+	if d == nil {
 		return ""
 	}
-	return o.Name
+	return d.Name
 }
 
 type DeleteMeshGatewayResponse struct {
@@ -41,37 +41,37 @@ type DeleteMeshGatewayResponse struct {
 	NotFoundError *shared.NotFoundError
 }
 
-func (o *DeleteMeshGatewayResponse) GetContentType() string {
-	if o == nil {
+func (d *DeleteMeshGatewayResponse) GetContentType() string {
+	if d == nil {
 		return ""
 	}
-	return o.ContentType
+	return d.ContentType
 }
 
-func (o *DeleteMeshGatewayResponse) GetStatusCode() int {
-	if o == nil {
+func (d *DeleteMeshGatewayResponse) GetStatusCode() int {
+	if d == nil {
 		return 0
 	}
-	return o.StatusCode
+	return d.StatusCode
 }
 
-func (o *DeleteMeshGatewayResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (d *DeleteMeshGatewayResponse) GetRawResponse() *http.Response {
+	if d == nil {
 		return nil
 	}
-	return o.RawResponse
+	return d.RawResponse
 }
 
-func (o *DeleteMeshGatewayResponse) GetMeshGatewayDeleteSuccessResponse() *shared.MeshGatewayDeleteSuccessResponse {
-	if o == nil {
+func (d *DeleteMeshGatewayResponse) GetMeshGatewayDeleteSuccessResponse() *shared.MeshGatewayDeleteSuccessResponse {
+	if d == nil {
 		return nil
 	}
-	return o.MeshGatewayDeleteSuccessResponse
+	return d.MeshGatewayDeleteSuccessResponse
 }
 
-func (o *DeleteMeshGatewayResponse) GetNotFoundError() *shared.NotFoundError {
-	if o == nil {
+func (d *DeleteMeshGatewayResponse) GetNotFoundError() *shared.NotFoundError {
+	if d == nil {
 		return nil
 	}
-	return o.NotFoundError
+	return d.NotFoundError
 }

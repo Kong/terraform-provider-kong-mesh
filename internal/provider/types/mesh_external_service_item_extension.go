@@ -3,10 +3,11 @@
 package types
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type MeshExternalServiceItemExtension struct {
-	Config types.String `tfsdk:"config"`
-	Type   types.String `tfsdk:"type"`
+	Config jsontypes.Normalized `tfsdk:"config"`
+	Type   types.String         `tfsdk:"type"`
 }

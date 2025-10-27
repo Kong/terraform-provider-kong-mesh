@@ -14,18 +14,18 @@ type GetMeshTrustRequest struct {
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 }
 
-func (o *GetMeshTrustRequest) GetMesh() string {
-	if o == nil {
+func (g *GetMeshTrustRequest) GetMesh() string {
+	if g == nil {
 		return ""
 	}
-	return o.Mesh
+	return g.Mesh
 }
 
-func (o *GetMeshTrustRequest) GetName() string {
-	if o == nil {
+func (g *GetMeshTrustRequest) GetName() string {
+	if g == nil {
 		return ""
 	}
-	return o.Name
+	return g.Name
 }
 
 type GetMeshTrustResponse struct {
@@ -41,37 +41,37 @@ type GetMeshTrustResponse struct {
 	NotFoundError *shared.NotFoundError
 }
 
-func (o *GetMeshTrustResponse) GetContentType() string {
-	if o == nil {
+func (g *GetMeshTrustResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetMeshTrustResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetMeshTrustResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetMeshTrustResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetMeshTrustResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetMeshTrustResponse) GetMeshTrustItem() *shared.MeshTrustItem {
-	if o == nil {
+func (g *GetMeshTrustResponse) GetMeshTrustItem() *shared.MeshTrustItem {
+	if g == nil {
 		return nil
 	}
-	return o.MeshTrustItem
+	return g.MeshTrustItem
 }
 
-func (o *GetMeshTrustResponse) GetNotFoundError() *shared.NotFoundError {
-	if o == nil {
+func (g *GetMeshTrustResponse) GetNotFoundError() *shared.NotFoundError {
+	if g == nil {
 		return nil
 	}
-	return o.NotFoundError
+	return g.NotFoundError
 }

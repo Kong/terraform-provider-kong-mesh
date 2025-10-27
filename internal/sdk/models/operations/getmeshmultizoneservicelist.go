@@ -14,18 +14,18 @@ type GetMeshMultiZoneServiceListQueryParamFilter struct {
 	Value *string `queryParam:"name=value"`
 }
 
-func (o *GetMeshMultiZoneServiceListQueryParamFilter) GetKey() *string {
-	if o == nil {
+func (g *GetMeshMultiZoneServiceListQueryParamFilter) GetKey() *string {
+	if g == nil {
 		return nil
 	}
-	return o.Key
+	return g.Key
 }
 
-func (o *GetMeshMultiZoneServiceListQueryParamFilter) GetValue() *string {
-	if o == nil {
+func (g *GetMeshMultiZoneServiceListQueryParamFilter) GetValue() *string {
+	if g == nil {
 		return nil
 	}
-	return o.Value
+	return g.Value
 }
 
 type GetMeshMultiZoneServiceListRequest struct {
@@ -44,38 +44,38 @@ func (g GetMeshMultiZoneServiceListRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetMeshMultiZoneServiceListRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &g, "", false, []string{"mesh"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *GetMeshMultiZoneServiceListRequest) GetOffset() *int64 {
-	if o == nil {
+func (g *GetMeshMultiZoneServiceListRequest) GetOffset() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Offset
+	return g.Offset
 }
 
-func (o *GetMeshMultiZoneServiceListRequest) GetSize() *int64 {
-	if o == nil {
+func (g *GetMeshMultiZoneServiceListRequest) GetSize() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Size
+	return g.Size
 }
 
-func (o *GetMeshMultiZoneServiceListRequest) GetFilter() *GetMeshMultiZoneServiceListQueryParamFilter {
-	if o == nil {
+func (g *GetMeshMultiZoneServiceListRequest) GetFilter() *GetMeshMultiZoneServiceListQueryParamFilter {
+	if g == nil {
 		return nil
 	}
-	return o.Filter
+	return g.Filter
 }
 
-func (o *GetMeshMultiZoneServiceListRequest) GetMesh() string {
-	if o == nil {
+func (g *GetMeshMultiZoneServiceListRequest) GetMesh() string {
+	if g == nil {
 		return ""
 	}
-	return o.Mesh
+	return g.Mesh
 }
 
 type GetMeshMultiZoneServiceListResponse struct {
@@ -89,30 +89,30 @@ type GetMeshMultiZoneServiceListResponse struct {
 	MeshMultiZoneServiceList *shared.MeshMultiZoneServiceList
 }
 
-func (o *GetMeshMultiZoneServiceListResponse) GetContentType() string {
-	if o == nil {
+func (g *GetMeshMultiZoneServiceListResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetMeshMultiZoneServiceListResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetMeshMultiZoneServiceListResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetMeshMultiZoneServiceListResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetMeshMultiZoneServiceListResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetMeshMultiZoneServiceListResponse) GetMeshMultiZoneServiceList() *shared.MeshMultiZoneServiceList {
-	if o == nil {
+func (g *GetMeshMultiZoneServiceListResponse) GetMeshMultiZoneServiceList() *shared.MeshMultiZoneServiceList {
+	if g == nil {
 		return nil
 	}
-	return o.MeshMultiZoneServiceList
+	return g.MeshMultiZoneServiceList
 }

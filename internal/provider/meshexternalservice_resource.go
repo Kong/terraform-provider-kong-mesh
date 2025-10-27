@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int32validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -44,6 +45,7 @@ func NewMeshExternalServiceResource() resource.Resource {
 
 // MeshExternalServiceResource defines the resource implementation.
 type MeshExternalServiceResource struct {
+	// Provider configured SDK client.
 	client *sdk.KongMesh
 }
 
@@ -151,15 +153,13 @@ func (r *MeshExternalServiceResource) Schema(ctx context.Context, req resource.S
 						Optional: true,
 						Attributes: map[string]schema.Attribute{
 							"config": schema.StringAttribute{
-								Computed: true,
-								Optional: true,
+								CustomType: jsontypes.NormalizedType{},
+								Computed:   true,
+								Optional:   true,
 								PlanModifiers: []planmodifier.String{
 									custom_stringplanmodifier.ArbitraryJSONModifier(),
 								},
 								Description: `Config freeform configuration for the extension. Parsed as JSON.`,
-								Validators: []validator.String{
-									validators.IsValidJSON(),
-								},
 							},
 							"type": schema.StringAttribute{
 								Required:    true,
@@ -849,7 +849,7 @@ func (r *MeshExternalServiceResource) ImportState(ctx context.Context, req resou
 	}
 
 	if err := dec.Decode(&data); err != nil {
-		resp.Diagnostics.AddError("Invalid ID", `The import ID is not valid. It is expected to be a JSON object string with the format: '{ "mesh": "",  "name": ""}': `+err.Error())
+		resp.Diagnostics.AddError("Invalid ID", `The import ID is not valid. It is expected to be a JSON object string with the format: '{"mesh": "...", "name": "..."}': `+err.Error())
 		return
 	}
 
@@ -863,5 +863,4 @@ func (r *MeshExternalServiceResource) ImportState(ctx context.Context, req resou
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("name"), data.Name)...)
-
 }

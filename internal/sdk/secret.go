@@ -62,7 +62,7 @@ func (s *Secret) GetSecret(ctx context.Context, request operations.GetSecretRequ
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getSecret",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -292,7 +292,7 @@ func (s *Secret) PutSecret(ctx context.Context, request operations.PutSecretRequ
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "putSecret",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "SecretItem", "json", `request:"mediaType=application/json"`)
@@ -506,7 +506,7 @@ func (s *Secret) DeleteSecret(ctx context.Context, request operations.DeleteSecr
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "deleteSecret",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -736,7 +736,7 @@ func (s *Secret) GetSecretList(ctx context.Context, request operations.GetSecret
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getSecretList",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 

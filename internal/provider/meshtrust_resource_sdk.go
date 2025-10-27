@@ -13,6 +13,120 @@ import (
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
 )
 
+func (r *MeshTrustResourceModel) RefreshFromSharedMeshTrustCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.MeshTrustCreateOrUpdateSuccessResponse) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		r.Warnings = make([]types.String, 0, len(resp.Warnings))
+		for _, v := range resp.Warnings {
+			r.Warnings = append(r.Warnings, types.StringValue(v))
+		}
+	}
+
+	return diags
+}
+
+func (r *MeshTrustResourceModel) RefreshFromSharedMeshTrustItem(ctx context.Context, resp *shared.MeshTrustItem) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
+		r.Kri = types.StringPointerValue(resp.Kri)
+		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
+		diags.Append(labelsDiags...)
+		labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
+		diags.Append(labelsDiags...)
+		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
+		r.Mesh = types.StringPointerValue(resp.Mesh)
+		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
+		r.Name = types.StringValue(resp.Name)
+		r.Spec.CaBundles = []tfTypes.CaBundles{}
+
+		for _, caBundlesItem := range resp.Spec.CaBundles {
+			var caBundles tfTypes.CaBundles
+
+			if caBundlesItem.Pem == nil {
+				caBundles.Pem = nil
+			} else {
+				caBundles.Pem = &tfTypes.InsecureInline{}
+				caBundles.Pem.Value = types.StringValue(caBundlesItem.Pem.Value)
+			}
+			caBundles.Type = types.StringValue(string(caBundlesItem.Type))
+
+			r.Spec.CaBundles = append(r.Spec.CaBundles, caBundles)
+		}
+		if resp.Spec.Origin == nil {
+			r.Spec.Origin = nil
+		} else {
+			r.Spec.Origin = &tfTypes.Origin{}
+			r.Spec.Origin.Kri = types.StringPointerValue(resp.Spec.Origin.Kri)
+		}
+		r.Spec.TrustDomain = types.StringValue(resp.Spec.TrustDomain)
+		r.Type = types.StringValue(string(resp.Type))
+	}
+
+	return diags
+}
+
+func (r *MeshTrustResourceModel) ToOperationsDeleteMeshTrustRequest(ctx context.Context) (*operations.DeleteMeshTrustRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.DeleteMeshTrustRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshTrustResourceModel) ToOperationsGetMeshTrustRequest(ctx context.Context) (*operations.GetMeshTrustRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.GetMeshTrustRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshTrustResourceModel) ToOperationsPutMeshTrustRequest(ctx context.Context) (*operations.PutMeshTrustRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	meshTrustItem, meshTrustItemDiags := r.ToSharedMeshTrustItemInput(ctx)
+	diags.Append(meshTrustItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PutMeshTrustRequest{
+		Mesh:          mesh,
+		Name:          name,
+		MeshTrustItem: *meshTrustItem,
+	}
+
+	return &out, diags
+}
+
 func (r *MeshTrustResourceModel) ToSharedMeshTrustItemInput(ctx context.Context) (*shared.MeshTrustItemInput, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -76,123 +190,4 @@ func (r *MeshTrustResourceModel) ToSharedMeshTrustItemInput(ctx context.Context)
 	}
 
 	return &out, diags
-}
-
-func (r *MeshTrustResourceModel) ToOperationsPutMeshTrustRequest(ctx context.Context) (*operations.PutMeshTrustRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	meshTrustItem, meshTrustItemDiags := r.ToSharedMeshTrustItemInput(ctx)
-	diags.Append(meshTrustItemDiags...)
-
-	if diags.HasError() {
-		return nil, diags
-	}
-
-	out := operations.PutMeshTrustRequest{
-		Mesh:          mesh,
-		Name:          name,
-		MeshTrustItem: *meshTrustItem,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshTrustResourceModel) ToOperationsGetMeshTrustRequest(ctx context.Context) (*operations.GetMeshTrustRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	out := operations.GetMeshTrustRequest{
-		Mesh: mesh,
-		Name: name,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshTrustResourceModel) ToOperationsDeleteMeshTrustRequest(ctx context.Context) (*operations.DeleteMeshTrustRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	out := operations.DeleteMeshTrustRequest{
-		Mesh: mesh,
-		Name: name,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshTrustResourceModel) RefreshFromSharedMeshTrustCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.MeshTrustCreateOrUpdateSuccessResponse) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		r.Warnings = make([]types.String, 0, len(resp.Warnings))
-		for _, v := range resp.Warnings {
-			r.Warnings = append(r.Warnings, types.StringValue(v))
-		}
-	}
-
-	return diags
-}
-
-func (r *MeshTrustResourceModel) RefreshFromSharedMeshTrustItem(ctx context.Context, resp *shared.MeshTrustItem) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
-		r.Kri = types.StringPointerValue(resp.Kri)
-		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
-		diags.Append(labelsDiags...)
-		labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
-		diags.Append(labelsDiags...)
-		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
-		r.Mesh = types.StringPointerValue(resp.Mesh)
-		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
-		r.Name = types.StringValue(resp.Name)
-		r.Spec.CaBundles = []tfTypes.CaBundles{}
-		if len(r.Spec.CaBundles) > len(resp.Spec.CaBundles) {
-			r.Spec.CaBundles = r.Spec.CaBundles[:len(resp.Spec.CaBundles)]
-		}
-		for caBundlesCount, caBundlesItem := range resp.Spec.CaBundles {
-			var caBundles tfTypes.CaBundles
-			if caBundlesItem.Pem == nil {
-				caBundles.Pem = nil
-			} else {
-				caBundles.Pem = &tfTypes.InsecureInline{}
-				caBundles.Pem.Value = types.StringValue(caBundlesItem.Pem.Value)
-			}
-			caBundles.Type = types.StringValue(string(caBundlesItem.Type))
-			if caBundlesCount+1 > len(r.Spec.CaBundles) {
-				r.Spec.CaBundles = append(r.Spec.CaBundles, caBundles)
-			} else {
-				r.Spec.CaBundles[caBundlesCount].Pem = caBundles.Pem
-				r.Spec.CaBundles[caBundlesCount].Type = caBundles.Type
-			}
-		}
-		if resp.Spec.Origin == nil {
-			r.Spec.Origin = nil
-		} else {
-			r.Spec.Origin = &tfTypes.Origin{}
-			r.Spec.Origin.Kri = types.StringPointerValue(resp.Spec.Origin.Kri)
-		}
-		r.Spec.TrustDomain = types.StringValue(resp.Spec.TrustDomain)
-		r.Type = types.StringValue(string(resp.Type))
-	}
-
-	return diags
 }
