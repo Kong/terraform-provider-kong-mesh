@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.1
+> Released on 2025/10/29
+>
+> - Fix issue with secret resources test
+
 ## 0.6.0
 > Released on 2025/10/23
 >
