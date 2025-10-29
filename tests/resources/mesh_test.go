@@ -36,6 +36,9 @@ func TestMesh(t *testing.T) {
 			wait.ForListeningPort("5681/tcp"),
 		),
 		Cmd: []string{"run"},
+		Env: map[string]string{
+			"KUMA_MODE": "global",
+		},
 	}
 	if os.Getenv("RUNNER_DEBUG") == "1" {
 		req.Cmd = []string{"run", "--log-level", "debug"}
@@ -118,16 +121,18 @@ func TestMesh(t *testing.T) {
 
 	t.Run("should be able to store secrets", func(t *testing.T) {
 		meshName := "m4"
-		secretName := "mysecret"
 
 		builder := tfbuilder.NewBuilder(tfbuilder.KongMesh, "http", "localhost", port.Int())
 		mesh := tfbuilder.NewMeshBuilder("default", meshName).
 			WithSpec(`skip_creating_initial_policies = [ "*" ]`)
-		secret := tfbuilder.NewPolicyBuilder("secret", "mysecret", secretName, "Secret").
+		skey := tfbuilder.NewPolicyBuilder("secret", "skey", "skey", "Secret").
+			WithMeshRef(builder.ResourceAddress("mesh", mesh.ResourceName) + ".name").
+			WithDependsOn(builder.ResourceAddress("mesh", mesh.ResourceName))
+		scert := tfbuilder.NewPolicyBuilder("secret", "scert", "scert", "Secret").
 			WithMeshRef(builder.ResourceAddress("mesh", mesh.ResourceName) + ".name").
 			WithDependsOn(builder.ResourceAddress("mesh", mesh.ResourceName))
 		builder.AddMesh(mesh)
-		resource.ParallelTest(t, resourcesshared.ShouldBeAbleToStoreSecrets(providerFactory, builder, secret, mesh))
+		resource.ParallelTest(t, resourcesshared.ShouldBeAbleToStoreSecrets(providerFactory, builder, scert, skey, mesh))
 	})
 }
 
