@@ -28,6 +28,7 @@ func NewZoneIngressResource() resource.Resource {
 
 // ZoneIngressResource defines the resource implementation.
 type ZoneIngressResource struct {
+	// Provider configured SDK client.
 	client *sdk.KongMesh
 }
 

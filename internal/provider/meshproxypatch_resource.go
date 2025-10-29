@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -36,6 +37,7 @@ func NewMeshProxyPatchResource() resource.Resource {
 
 // MeshProxyPatchResource defines the resource implementation.
 type MeshProxyPatchResource struct {
+	// Provider configured SDK client.
 	client *sdk.KongMesh
 }
 
@@ -161,11 +163,9 @@ func (r *MeshProxyPatchResource) Schema(ctx context.Context, req resource.Schema
 																},
 															},
 															"value": schema.StringAttribute{
+																CustomType:  jsontypes.NormalizedType{},
 																Optional:    true,
 																Description: `Value must be a valid json value used by replace and add operations. Parsed as JSON.`,
-																Validators: []validator.String{
-																	validators.IsValidJSON(),
-																},
 															},
 														},
 													},
@@ -258,11 +258,9 @@ func (r *MeshProxyPatchResource) Schema(ctx context.Context, req resource.Schema
 																},
 															},
 															"value": schema.StringAttribute{
+																CustomType:  jsontypes.NormalizedType{},
 																Optional:    true,
 																Description: `Value must be a valid json value used by replace and add operations. Parsed as JSON.`,
-																Validators: []validator.String{
-																	validators.IsValidJSON(),
-																},
 															},
 														},
 													},
@@ -368,11 +366,9 @@ func (r *MeshProxyPatchResource) Schema(ctx context.Context, req resource.Schema
 																},
 															},
 															"value": schema.StringAttribute{
+																CustomType:  jsontypes.NormalizedType{},
 																Optional:    true,
 																Description: `Value must be a valid json value used by replace and add operations. Parsed as JSON.`,
-																Validators: []validator.String{
-																	validators.IsValidJSON(),
-																},
 															},
 														},
 													},
@@ -470,11 +466,9 @@ func (r *MeshProxyPatchResource) Schema(ctx context.Context, req resource.Schema
 																},
 															},
 															"value": schema.StringAttribute{
+																CustomType:  jsontypes.NormalizedType{},
 																Optional:    true,
 																Description: `Value must be a valid json value used by replace and add operations. Parsed as JSON.`,
-																Validators: []validator.String{
-																	validators.IsValidJSON(),
-																},
 															},
 														},
 													},
@@ -579,11 +573,9 @@ func (r *MeshProxyPatchResource) Schema(ctx context.Context, req resource.Schema
 																},
 															},
 															"value": schema.StringAttribute{
+																CustomType:  jsontypes.NormalizedType{},
 																Optional:    true,
 																Description: `Value must be a valid json value used by replace and add operations. Parsed as JSON.`,
-																Validators: []validator.String{
-																	validators.IsValidJSON(),
-																},
 															},
 														},
 													},
@@ -1066,7 +1058,7 @@ func (r *MeshProxyPatchResource) ImportState(ctx context.Context, req resource.I
 	}
 
 	if err := dec.Decode(&data); err != nil {
-		resp.Diagnostics.AddError("Invalid ID", `The import ID is not valid. It is expected to be a JSON object string with the format: '{ "mesh": "",  "name": ""}': `+err.Error())
+		resp.Diagnostics.AddError("Invalid ID", `The import ID is not valid. It is expected to be a JSON object string with the format: '{"mesh": "...", "name": "..."}': `+err.Error())
 		return
 	}
 
@@ -1080,5 +1072,4 @@ func (r *MeshProxyPatchResource) ImportState(ctx context.Context, req resource.I
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("name"), data.Name)...)
-
 }

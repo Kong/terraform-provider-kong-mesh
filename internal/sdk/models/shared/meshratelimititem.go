@@ -38,18 +38,18 @@ type MeshRateLimitItemAdd struct {
 	Value string `json:"value"`
 }
 
-func (o *MeshRateLimitItemAdd) GetName() string {
-	if o == nil {
+func (m *MeshRateLimitItemAdd) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshRateLimitItemAdd) GetValue() string {
-	if o == nil {
+func (m *MeshRateLimitItemAdd) GetValue() string {
+	if m == nil {
 		return ""
 	}
-	return o.Value
+	return m.Value
 }
 
 type MeshRateLimitItemSet struct {
@@ -57,18 +57,18 @@ type MeshRateLimitItemSet struct {
 	Value string `json:"value"`
 }
 
-func (o *MeshRateLimitItemSet) GetName() string {
-	if o == nil {
+func (m *MeshRateLimitItemSet) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshRateLimitItemSet) GetValue() string {
-	if o == nil {
+func (m *MeshRateLimitItemSet) GetValue() string {
+	if m == nil {
 		return ""
 	}
-	return o.Value
+	return m.Value
 }
 
 // MeshRateLimitItemHeaders - The Headers to be added to the HTTP response on a rate limit event
@@ -77,18 +77,18 @@ type MeshRateLimitItemHeaders struct {
 	Set []MeshRateLimitItemSet `json:"set,omitempty"`
 }
 
-func (o *MeshRateLimitItemHeaders) GetAdd() []MeshRateLimitItemAdd {
-	if o == nil {
+func (m *MeshRateLimitItemHeaders) GetAdd() []MeshRateLimitItemAdd {
+	if m == nil {
 		return nil
 	}
-	return o.Add
+	return m.Add
 }
 
-func (o *MeshRateLimitItemHeaders) GetSet() []MeshRateLimitItemSet {
-	if o == nil {
+func (m *MeshRateLimitItemHeaders) GetSet() []MeshRateLimitItemSet {
+	if m == nil {
 		return nil
 	}
-	return o.Set
+	return m.Set
 }
 
 // MeshRateLimitItemSpecFromOnRateLimit - Describes the actions to take on a rate limit event
@@ -99,18 +99,18 @@ type MeshRateLimitItemSpecFromOnRateLimit struct {
 	Status *int `json:"status,omitempty"`
 }
 
-func (o *MeshRateLimitItemSpecFromOnRateLimit) GetHeaders() *MeshRateLimitItemHeaders {
-	if o == nil {
+func (m *MeshRateLimitItemSpecFromOnRateLimit) GetHeaders() *MeshRateLimitItemHeaders {
+	if m == nil {
 		return nil
 	}
-	return o.Headers
+	return m.Headers
 }
 
-func (o *MeshRateLimitItemSpecFromOnRateLimit) GetStatus() *int {
-	if o == nil {
+func (m *MeshRateLimitItemSpecFromOnRateLimit) GetStatus() *int {
+	if m == nil {
 		return nil
 	}
-	return o.Status
+	return m.Status
 }
 
 // MeshRateLimitItemSpecFromRequestRate - Defines how many requests are allowed per interval.
@@ -122,18 +122,18 @@ type MeshRateLimitItemSpecFromRequestRate struct {
 	Num int `json:"num"`
 }
 
-func (o *MeshRateLimitItemSpecFromRequestRate) GetInterval() string {
-	if o == nil {
+func (m *MeshRateLimitItemSpecFromRequestRate) GetInterval() string {
+	if m == nil {
 		return ""
 	}
-	return o.Interval
+	return m.Interval
 }
 
-func (o *MeshRateLimitItemSpecFromRequestRate) GetNum() int {
-	if o == nil {
+func (m *MeshRateLimitItemSpecFromRequestRate) GetNum() int {
+	if m == nil {
 		return 0
 	}
-	return o.Num
+	return m.Num
 }
 
 // MeshRateLimitItemHTTP - LocalHTTP defines configuration of local HTTP rate limiting
@@ -147,25 +147,25 @@ type MeshRateLimitItemHTTP struct {
 	RequestRate *MeshRateLimitItemSpecFromRequestRate `json:"requestRate,omitempty"`
 }
 
-func (o *MeshRateLimitItemHTTP) GetDisabled() *bool {
-	if o == nil {
+func (m *MeshRateLimitItemHTTP) GetDisabled() *bool {
+	if m == nil {
 		return nil
 	}
-	return o.Disabled
+	return m.Disabled
 }
 
-func (o *MeshRateLimitItemHTTP) GetOnRateLimit() *MeshRateLimitItemSpecFromOnRateLimit {
-	if o == nil {
+func (m *MeshRateLimitItemHTTP) GetOnRateLimit() *MeshRateLimitItemSpecFromOnRateLimit {
+	if m == nil {
 		return nil
 	}
-	return o.OnRateLimit
+	return m.OnRateLimit
 }
 
-func (o *MeshRateLimitItemHTTP) GetRequestRate() *MeshRateLimitItemSpecFromRequestRate {
-	if o == nil {
+func (m *MeshRateLimitItemHTTP) GetRequestRate() *MeshRateLimitItemSpecFromRequestRate {
+	if m == nil {
 		return nil
 	}
-	return o.RequestRate
+	return m.RequestRate
 }
 
 // ConnectionRate - Defines how many connections are allowed per interval.
@@ -177,18 +177,18 @@ type ConnectionRate struct {
 	Num int `json:"num"`
 }
 
-func (o *ConnectionRate) GetInterval() string {
-	if o == nil {
+func (c *ConnectionRate) GetInterval() string {
+	if c == nil {
 		return ""
 	}
-	return o.Interval
+	return c.Interval
 }
 
-func (o *ConnectionRate) GetNum() int {
-	if o == nil {
+func (c *ConnectionRate) GetNum() int {
+	if c == nil {
 		return 0
 	}
-	return o.Num
+	return c.Num
 }
 
 // MeshRateLimitItemTCP - LocalTCP defines confguration of local TCP rate limiting
@@ -201,18 +201,18 @@ type MeshRateLimitItemTCP struct {
 	Disabled *bool `json:"disabled,omitempty"`
 }
 
-func (o *MeshRateLimitItemTCP) GetConnectionRate() *ConnectionRate {
-	if o == nil {
+func (m *MeshRateLimitItemTCP) GetConnectionRate() *ConnectionRate {
+	if m == nil {
 		return nil
 	}
-	return o.ConnectionRate
+	return m.ConnectionRate
 }
 
-func (o *MeshRateLimitItemTCP) GetDisabled() *bool {
-	if o == nil {
+func (m *MeshRateLimitItemTCP) GetDisabled() *bool {
+	if m == nil {
 		return nil
 	}
-	return o.Disabled
+	return m.Disabled
 }
 
 // Local - LocalConf defines local http or/and tcp rate limit configuration
@@ -225,18 +225,18 @@ type Local struct {
 	TCP *MeshRateLimitItemTCP `json:"tcp,omitempty"`
 }
 
-func (o *Local) GetHTTP() *MeshRateLimitItemHTTP {
-	if o == nil {
+func (l *Local) GetHTTP() *MeshRateLimitItemHTTP {
+	if l == nil {
 		return nil
 	}
-	return o.HTTP
+	return l.HTTP
 }
 
-func (o *Local) GetTCP() *MeshRateLimitItemTCP {
-	if o == nil {
+func (l *Local) GetTCP() *MeshRateLimitItemTCP {
+	if l == nil {
 		return nil
 	}
-	return o.TCP
+	return l.TCP
 }
 
 // MeshRateLimitItemDefault - Default is a configuration specific to the group of clients referenced in
@@ -246,11 +246,11 @@ type MeshRateLimitItemDefault struct {
 	Local *Local `json:"local,omitempty"`
 }
 
-func (o *MeshRateLimitItemDefault) GetLocal() *Local {
-	if o == nil {
+func (m *MeshRateLimitItemDefault) GetLocal() *Local {
+	if m == nil {
 		return nil
 	}
-	return o.Local
+	return m.Local
 }
 
 // MeshRateLimitItemSpecKind - Kind of the referenced resource
@@ -354,60 +354,60 @@ type MeshRateLimitItemSpecTargetRef struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (o *MeshRateLimitItemSpecTargetRef) GetKind() MeshRateLimitItemSpecKind {
-	if o == nil {
+func (m *MeshRateLimitItemSpecTargetRef) GetKind() MeshRateLimitItemSpecKind {
+	if m == nil {
 		return MeshRateLimitItemSpecKind("")
 	}
-	return o.Kind
+	return m.Kind
 }
 
-func (o *MeshRateLimitItemSpecTargetRef) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshRateLimitItemSpecTargetRef) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshRateLimitItemSpecTargetRef) GetMesh() *string {
-	if o == nil {
+func (m *MeshRateLimitItemSpecTargetRef) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshRateLimitItemSpecTargetRef) GetName() *string {
-	if o == nil {
+func (m *MeshRateLimitItemSpecTargetRef) GetName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshRateLimitItemSpecTargetRef) GetNamespace() *string {
-	if o == nil {
+func (m *MeshRateLimitItemSpecTargetRef) GetNamespace() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Namespace
+	return m.Namespace
 }
 
-func (o *MeshRateLimitItemSpecTargetRef) GetProxyTypes() []MeshRateLimitItemSpecProxyTypes {
-	if o == nil {
+func (m *MeshRateLimitItemSpecTargetRef) GetProxyTypes() []MeshRateLimitItemSpecProxyTypes {
+	if m == nil {
 		return nil
 	}
-	return o.ProxyTypes
+	return m.ProxyTypes
 }
 
-func (o *MeshRateLimitItemSpecTargetRef) GetSectionName() *string {
-	if o == nil {
+func (m *MeshRateLimitItemSpecTargetRef) GetSectionName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.SectionName
+	return m.SectionName
 }
 
-func (o *MeshRateLimitItemSpecTargetRef) GetTags() map[string]string {
-	if o == nil {
+func (m *MeshRateLimitItemSpecTargetRef) GetTags() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Tags
+	return m.Tags
 }
 
 type MeshRateLimitItemFrom struct {
@@ -419,18 +419,18 @@ type MeshRateLimitItemFrom struct {
 	TargetRef MeshRateLimitItemSpecTargetRef `json:"targetRef"`
 }
 
-func (o *MeshRateLimitItemFrom) GetDefault() *MeshRateLimitItemDefault {
-	if o == nil {
+func (m *MeshRateLimitItemFrom) GetDefault() *MeshRateLimitItemDefault {
+	if m == nil {
 		return nil
 	}
-	return o.Default
+	return m.Default
 }
 
-func (o *MeshRateLimitItemFrom) GetTargetRef() MeshRateLimitItemSpecTargetRef {
-	if o == nil {
+func (m *MeshRateLimitItemFrom) GetTargetRef() MeshRateLimitItemSpecTargetRef {
+	if m == nil {
 		return MeshRateLimitItemSpecTargetRef{}
 	}
-	return o.TargetRef
+	return m.TargetRef
 }
 
 type MeshRateLimitItemSpecAdd struct {
@@ -438,18 +438,18 @@ type MeshRateLimitItemSpecAdd struct {
 	Value string `json:"value"`
 }
 
-func (o *MeshRateLimitItemSpecAdd) GetName() string {
-	if o == nil {
+func (m *MeshRateLimitItemSpecAdd) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshRateLimitItemSpecAdd) GetValue() string {
-	if o == nil {
+func (m *MeshRateLimitItemSpecAdd) GetValue() string {
+	if m == nil {
 		return ""
 	}
-	return o.Value
+	return m.Value
 }
 
 type MeshRateLimitItemSpecSet struct {
@@ -457,18 +457,18 @@ type MeshRateLimitItemSpecSet struct {
 	Value string `json:"value"`
 }
 
-func (o *MeshRateLimitItemSpecSet) GetName() string {
-	if o == nil {
+func (m *MeshRateLimitItemSpecSet) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshRateLimitItemSpecSet) GetValue() string {
-	if o == nil {
+func (m *MeshRateLimitItemSpecSet) GetValue() string {
+	if m == nil {
 		return ""
 	}
-	return o.Value
+	return m.Value
 }
 
 // MeshRateLimitItemSpecHeaders - The Headers to be added to the HTTP response on a rate limit event
@@ -477,18 +477,18 @@ type MeshRateLimitItemSpecHeaders struct {
 	Set []MeshRateLimitItemSpecSet `json:"set,omitempty"`
 }
 
-func (o *MeshRateLimitItemSpecHeaders) GetAdd() []MeshRateLimitItemSpecAdd {
-	if o == nil {
+func (m *MeshRateLimitItemSpecHeaders) GetAdd() []MeshRateLimitItemSpecAdd {
+	if m == nil {
 		return nil
 	}
-	return o.Add
+	return m.Add
 }
 
-func (o *MeshRateLimitItemSpecHeaders) GetSet() []MeshRateLimitItemSpecSet {
-	if o == nil {
+func (m *MeshRateLimitItemSpecHeaders) GetSet() []MeshRateLimitItemSpecSet {
+	if m == nil {
 		return nil
 	}
-	return o.Set
+	return m.Set
 }
 
 // MeshRateLimitItemOnRateLimit - Describes the actions to take on a rate limit event
@@ -499,18 +499,18 @@ type MeshRateLimitItemOnRateLimit struct {
 	Status *int `json:"status,omitempty"`
 }
 
-func (o *MeshRateLimitItemOnRateLimit) GetHeaders() *MeshRateLimitItemSpecHeaders {
-	if o == nil {
+func (m *MeshRateLimitItemOnRateLimit) GetHeaders() *MeshRateLimitItemSpecHeaders {
+	if m == nil {
 		return nil
 	}
-	return o.Headers
+	return m.Headers
 }
 
-func (o *MeshRateLimitItemOnRateLimit) GetStatus() *int {
-	if o == nil {
+func (m *MeshRateLimitItemOnRateLimit) GetStatus() *int {
+	if m == nil {
 		return nil
 	}
-	return o.Status
+	return m.Status
 }
 
 // MeshRateLimitItemRequestRate - Defines how many requests are allowed per interval.
@@ -522,18 +522,18 @@ type MeshRateLimitItemRequestRate struct {
 	Num int `json:"num"`
 }
 
-func (o *MeshRateLimitItemRequestRate) GetInterval() string {
-	if o == nil {
+func (m *MeshRateLimitItemRequestRate) GetInterval() string {
+	if m == nil {
 		return ""
 	}
-	return o.Interval
+	return m.Interval
 }
 
-func (o *MeshRateLimitItemRequestRate) GetNum() int {
-	if o == nil {
+func (m *MeshRateLimitItemRequestRate) GetNum() int {
+	if m == nil {
 		return 0
 	}
-	return o.Num
+	return m.Num
 }
 
 // MeshRateLimitItemSpecHTTP - LocalHTTP defines configuration of local HTTP rate limiting
@@ -547,25 +547,25 @@ type MeshRateLimitItemSpecHTTP struct {
 	RequestRate *MeshRateLimitItemRequestRate `json:"requestRate,omitempty"`
 }
 
-func (o *MeshRateLimitItemSpecHTTP) GetDisabled() *bool {
-	if o == nil {
+func (m *MeshRateLimitItemSpecHTTP) GetDisabled() *bool {
+	if m == nil {
 		return nil
 	}
-	return o.Disabled
+	return m.Disabled
 }
 
-func (o *MeshRateLimitItemSpecHTTP) GetOnRateLimit() *MeshRateLimitItemOnRateLimit {
-	if o == nil {
+func (m *MeshRateLimitItemSpecHTTP) GetOnRateLimit() *MeshRateLimitItemOnRateLimit {
+	if m == nil {
 		return nil
 	}
-	return o.OnRateLimit
+	return m.OnRateLimit
 }
 
-func (o *MeshRateLimitItemSpecHTTP) GetRequestRate() *MeshRateLimitItemRequestRate {
-	if o == nil {
+func (m *MeshRateLimitItemSpecHTTP) GetRequestRate() *MeshRateLimitItemRequestRate {
+	if m == nil {
 		return nil
 	}
-	return o.RequestRate
+	return m.RequestRate
 }
 
 // MeshRateLimitItemConnectionRate - Defines how many connections are allowed per interval.
@@ -577,18 +577,18 @@ type MeshRateLimitItemConnectionRate struct {
 	Num int `json:"num"`
 }
 
-func (o *MeshRateLimitItemConnectionRate) GetInterval() string {
-	if o == nil {
+func (m *MeshRateLimitItemConnectionRate) GetInterval() string {
+	if m == nil {
 		return ""
 	}
-	return o.Interval
+	return m.Interval
 }
 
-func (o *MeshRateLimitItemConnectionRate) GetNum() int {
-	if o == nil {
+func (m *MeshRateLimitItemConnectionRate) GetNum() int {
+	if m == nil {
 		return 0
 	}
-	return o.Num
+	return m.Num
 }
 
 // MeshRateLimitItemSpecTCP - LocalTCP defines confguration of local TCP rate limiting
@@ -601,18 +601,18 @@ type MeshRateLimitItemSpecTCP struct {
 	Disabled *bool `json:"disabled,omitempty"`
 }
 
-func (o *MeshRateLimitItemSpecTCP) GetConnectionRate() *MeshRateLimitItemConnectionRate {
-	if o == nil {
+func (m *MeshRateLimitItemSpecTCP) GetConnectionRate() *MeshRateLimitItemConnectionRate {
+	if m == nil {
 		return nil
 	}
-	return o.ConnectionRate
+	return m.ConnectionRate
 }
 
-func (o *MeshRateLimitItemSpecTCP) GetDisabled() *bool {
-	if o == nil {
+func (m *MeshRateLimitItemSpecTCP) GetDisabled() *bool {
+	if m == nil {
 		return nil
 	}
-	return o.Disabled
+	return m.Disabled
 }
 
 // MeshRateLimitItemLocal - LocalConf defines local http or/and tcp rate limit configuration
@@ -625,18 +625,18 @@ type MeshRateLimitItemLocal struct {
 	TCP *MeshRateLimitItemSpecTCP `json:"tcp,omitempty"`
 }
 
-func (o *MeshRateLimitItemLocal) GetHTTP() *MeshRateLimitItemSpecHTTP {
-	if o == nil {
+func (m *MeshRateLimitItemLocal) GetHTTP() *MeshRateLimitItemSpecHTTP {
+	if m == nil {
 		return nil
 	}
-	return o.HTTP
+	return m.HTTP
 }
 
-func (o *MeshRateLimitItemLocal) GetTCP() *MeshRateLimitItemSpecTCP {
-	if o == nil {
+func (m *MeshRateLimitItemLocal) GetTCP() *MeshRateLimitItemSpecTCP {
+	if m == nil {
 		return nil
 	}
-	return o.TCP
+	return m.TCP
 }
 
 // MeshRateLimitItemSpecDefault - Default contains configuration of the inbound rate limits
@@ -645,11 +645,11 @@ type MeshRateLimitItemSpecDefault struct {
 	Local *MeshRateLimitItemLocal `json:"local,omitempty"`
 }
 
-func (o *MeshRateLimitItemSpecDefault) GetLocal() *MeshRateLimitItemLocal {
-	if o == nil {
+func (m *MeshRateLimitItemSpecDefault) GetLocal() *MeshRateLimitItemLocal {
+	if m == nil {
 		return nil
 	}
-	return o.Local
+	return m.Local
 }
 
 type MeshRateLimitItemRules struct {
@@ -657,11 +657,11 @@ type MeshRateLimitItemRules struct {
 	Default *MeshRateLimitItemSpecDefault `json:"default,omitempty"`
 }
 
-func (o *MeshRateLimitItemRules) GetDefault() *MeshRateLimitItemSpecDefault {
-	if o == nil {
+func (m *MeshRateLimitItemRules) GetDefault() *MeshRateLimitItemSpecDefault {
+	if m == nil {
 		return nil
 	}
-	return o.Default
+	return m.Default
 }
 
 // MeshRateLimitItemKind - Kind of the referenced resource
@@ -766,60 +766,60 @@ type MeshRateLimitItemTargetRef struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (o *MeshRateLimitItemTargetRef) GetKind() MeshRateLimitItemKind {
-	if o == nil {
+func (m *MeshRateLimitItemTargetRef) GetKind() MeshRateLimitItemKind {
+	if m == nil {
 		return MeshRateLimitItemKind("")
 	}
-	return o.Kind
+	return m.Kind
 }
 
-func (o *MeshRateLimitItemTargetRef) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshRateLimitItemTargetRef) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshRateLimitItemTargetRef) GetMesh() *string {
-	if o == nil {
+func (m *MeshRateLimitItemTargetRef) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshRateLimitItemTargetRef) GetName() *string {
-	if o == nil {
+func (m *MeshRateLimitItemTargetRef) GetName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshRateLimitItemTargetRef) GetNamespace() *string {
-	if o == nil {
+func (m *MeshRateLimitItemTargetRef) GetNamespace() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Namespace
+	return m.Namespace
 }
 
-func (o *MeshRateLimitItemTargetRef) GetProxyTypes() []MeshRateLimitItemProxyTypes {
-	if o == nil {
+func (m *MeshRateLimitItemTargetRef) GetProxyTypes() []MeshRateLimitItemProxyTypes {
+	if m == nil {
 		return nil
 	}
-	return o.ProxyTypes
+	return m.ProxyTypes
 }
 
-func (o *MeshRateLimitItemTargetRef) GetSectionName() *string {
-	if o == nil {
+func (m *MeshRateLimitItemTargetRef) GetSectionName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.SectionName
+	return m.SectionName
 }
 
-func (o *MeshRateLimitItemTargetRef) GetTags() map[string]string {
-	if o == nil {
+func (m *MeshRateLimitItemTargetRef) GetTags() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Tags
+	return m.Tags
 }
 
 type MeshRateLimitItemSpecToAdd struct {
@@ -827,18 +827,18 @@ type MeshRateLimitItemSpecToAdd struct {
 	Value string `json:"value"`
 }
 
-func (o *MeshRateLimitItemSpecToAdd) GetName() string {
-	if o == nil {
+func (m *MeshRateLimitItemSpecToAdd) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshRateLimitItemSpecToAdd) GetValue() string {
-	if o == nil {
+func (m *MeshRateLimitItemSpecToAdd) GetValue() string {
+	if m == nil {
 		return ""
 	}
-	return o.Value
+	return m.Value
 }
 
 type MeshRateLimitItemSpecToSet struct {
@@ -846,18 +846,18 @@ type MeshRateLimitItemSpecToSet struct {
 	Value string `json:"value"`
 }
 
-func (o *MeshRateLimitItemSpecToSet) GetName() string {
-	if o == nil {
+func (m *MeshRateLimitItemSpecToSet) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshRateLimitItemSpecToSet) GetValue() string {
-	if o == nil {
+func (m *MeshRateLimitItemSpecToSet) GetValue() string {
+	if m == nil {
 		return ""
 	}
-	return o.Value
+	return m.Value
 }
 
 // MeshRateLimitItemSpecToHeaders - The Headers to be added to the HTTP response on a rate limit event
@@ -866,18 +866,18 @@ type MeshRateLimitItemSpecToHeaders struct {
 	Set []MeshRateLimitItemSpecToSet `json:"set,omitempty"`
 }
 
-func (o *MeshRateLimitItemSpecToHeaders) GetAdd() []MeshRateLimitItemSpecToAdd {
-	if o == nil {
+func (m *MeshRateLimitItemSpecToHeaders) GetAdd() []MeshRateLimitItemSpecToAdd {
+	if m == nil {
 		return nil
 	}
-	return o.Add
+	return m.Add
 }
 
-func (o *MeshRateLimitItemSpecToHeaders) GetSet() []MeshRateLimitItemSpecToSet {
-	if o == nil {
+func (m *MeshRateLimitItemSpecToHeaders) GetSet() []MeshRateLimitItemSpecToSet {
+	if m == nil {
 		return nil
 	}
-	return o.Set
+	return m.Set
 }
 
 // MeshRateLimitItemSpecOnRateLimit - Describes the actions to take on a rate limit event
@@ -888,18 +888,18 @@ type MeshRateLimitItemSpecOnRateLimit struct {
 	Status *int `json:"status,omitempty"`
 }
 
-func (o *MeshRateLimitItemSpecOnRateLimit) GetHeaders() *MeshRateLimitItemSpecToHeaders {
-	if o == nil {
+func (m *MeshRateLimitItemSpecOnRateLimit) GetHeaders() *MeshRateLimitItemSpecToHeaders {
+	if m == nil {
 		return nil
 	}
-	return o.Headers
+	return m.Headers
 }
 
-func (o *MeshRateLimitItemSpecOnRateLimit) GetStatus() *int {
-	if o == nil {
+func (m *MeshRateLimitItemSpecOnRateLimit) GetStatus() *int {
+	if m == nil {
 		return nil
 	}
-	return o.Status
+	return m.Status
 }
 
 // MeshRateLimitItemSpecRequestRate - Defines how many requests are allowed per interval.
@@ -911,18 +911,18 @@ type MeshRateLimitItemSpecRequestRate struct {
 	Num int `json:"num"`
 }
 
-func (o *MeshRateLimitItemSpecRequestRate) GetInterval() string {
-	if o == nil {
+func (m *MeshRateLimitItemSpecRequestRate) GetInterval() string {
+	if m == nil {
 		return ""
 	}
-	return o.Interval
+	return m.Interval
 }
 
-func (o *MeshRateLimitItemSpecRequestRate) GetNum() int {
-	if o == nil {
+func (m *MeshRateLimitItemSpecRequestRate) GetNum() int {
+	if m == nil {
 		return 0
 	}
-	return o.Num
+	return m.Num
 }
 
 // MeshRateLimitItemSpecToHTTP - LocalHTTP defines configuration of local HTTP rate limiting
@@ -936,25 +936,25 @@ type MeshRateLimitItemSpecToHTTP struct {
 	RequestRate *MeshRateLimitItemSpecRequestRate `json:"requestRate,omitempty"`
 }
 
-func (o *MeshRateLimitItemSpecToHTTP) GetDisabled() *bool {
-	if o == nil {
+func (m *MeshRateLimitItemSpecToHTTP) GetDisabled() *bool {
+	if m == nil {
 		return nil
 	}
-	return o.Disabled
+	return m.Disabled
 }
 
-func (o *MeshRateLimitItemSpecToHTTP) GetOnRateLimit() *MeshRateLimitItemSpecOnRateLimit {
-	if o == nil {
+func (m *MeshRateLimitItemSpecToHTTP) GetOnRateLimit() *MeshRateLimitItemSpecOnRateLimit {
+	if m == nil {
 		return nil
 	}
-	return o.OnRateLimit
+	return m.OnRateLimit
 }
 
-func (o *MeshRateLimitItemSpecToHTTP) GetRequestRate() *MeshRateLimitItemSpecRequestRate {
-	if o == nil {
+func (m *MeshRateLimitItemSpecToHTTP) GetRequestRate() *MeshRateLimitItemSpecRequestRate {
+	if m == nil {
 		return nil
 	}
-	return o.RequestRate
+	return m.RequestRate
 }
 
 // MeshRateLimitItemSpecConnectionRate - Defines how many connections are allowed per interval.
@@ -966,18 +966,18 @@ type MeshRateLimitItemSpecConnectionRate struct {
 	Num int `json:"num"`
 }
 
-func (o *MeshRateLimitItemSpecConnectionRate) GetInterval() string {
-	if o == nil {
+func (m *MeshRateLimitItemSpecConnectionRate) GetInterval() string {
+	if m == nil {
 		return ""
 	}
-	return o.Interval
+	return m.Interval
 }
 
-func (o *MeshRateLimitItemSpecConnectionRate) GetNum() int {
-	if o == nil {
+func (m *MeshRateLimitItemSpecConnectionRate) GetNum() int {
+	if m == nil {
 		return 0
 	}
-	return o.Num
+	return m.Num
 }
 
 // MeshRateLimitItemSpecToTCP - LocalTCP defines confguration of local TCP rate limiting
@@ -990,18 +990,18 @@ type MeshRateLimitItemSpecToTCP struct {
 	Disabled *bool `json:"disabled,omitempty"`
 }
 
-func (o *MeshRateLimitItemSpecToTCP) GetConnectionRate() *MeshRateLimitItemSpecConnectionRate {
-	if o == nil {
+func (m *MeshRateLimitItemSpecToTCP) GetConnectionRate() *MeshRateLimitItemSpecConnectionRate {
+	if m == nil {
 		return nil
 	}
-	return o.ConnectionRate
+	return m.ConnectionRate
 }
 
-func (o *MeshRateLimitItemSpecToTCP) GetDisabled() *bool {
-	if o == nil {
+func (m *MeshRateLimitItemSpecToTCP) GetDisabled() *bool {
+	if m == nil {
 		return nil
 	}
-	return o.Disabled
+	return m.Disabled
 }
 
 // MeshRateLimitItemSpecLocal - LocalConf defines local http or/and tcp rate limit configuration
@@ -1014,18 +1014,18 @@ type MeshRateLimitItemSpecLocal struct {
 	TCP *MeshRateLimitItemSpecToTCP `json:"tcp,omitempty"`
 }
 
-func (o *MeshRateLimitItemSpecLocal) GetHTTP() *MeshRateLimitItemSpecToHTTP {
-	if o == nil {
+func (m *MeshRateLimitItemSpecLocal) GetHTTP() *MeshRateLimitItemSpecToHTTP {
+	if m == nil {
 		return nil
 	}
-	return o.HTTP
+	return m.HTTP
 }
 
-func (o *MeshRateLimitItemSpecLocal) GetTCP() *MeshRateLimitItemSpecToTCP {
-	if o == nil {
+func (m *MeshRateLimitItemSpecLocal) GetTCP() *MeshRateLimitItemSpecToTCP {
+	if m == nil {
 		return nil
 	}
-	return o.TCP
+	return m.TCP
 }
 
 // MeshRateLimitItemSpecToDefault - Default is a configuration specific to the group of clients referenced in
@@ -1035,11 +1035,11 @@ type MeshRateLimitItemSpecToDefault struct {
 	Local *MeshRateLimitItemSpecLocal `json:"local,omitempty"`
 }
 
-func (o *MeshRateLimitItemSpecToDefault) GetLocal() *MeshRateLimitItemSpecLocal {
-	if o == nil {
+func (m *MeshRateLimitItemSpecToDefault) GetLocal() *MeshRateLimitItemSpecLocal {
+	if m == nil {
 		return nil
 	}
-	return o.Local
+	return m.Local
 }
 
 // MeshRateLimitItemSpecToKind - Kind of the referenced resource
@@ -1143,60 +1143,60 @@ type MeshRateLimitItemSpecToTargetRef struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (o *MeshRateLimitItemSpecToTargetRef) GetKind() MeshRateLimitItemSpecToKind {
-	if o == nil {
+func (m *MeshRateLimitItemSpecToTargetRef) GetKind() MeshRateLimitItemSpecToKind {
+	if m == nil {
 		return MeshRateLimitItemSpecToKind("")
 	}
-	return o.Kind
+	return m.Kind
 }
 
-func (o *MeshRateLimitItemSpecToTargetRef) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshRateLimitItemSpecToTargetRef) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshRateLimitItemSpecToTargetRef) GetMesh() *string {
-	if o == nil {
+func (m *MeshRateLimitItemSpecToTargetRef) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshRateLimitItemSpecToTargetRef) GetName() *string {
-	if o == nil {
+func (m *MeshRateLimitItemSpecToTargetRef) GetName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshRateLimitItemSpecToTargetRef) GetNamespace() *string {
-	if o == nil {
+func (m *MeshRateLimitItemSpecToTargetRef) GetNamespace() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Namespace
+	return m.Namespace
 }
 
-func (o *MeshRateLimitItemSpecToTargetRef) GetProxyTypes() []MeshRateLimitItemSpecToProxyTypes {
-	if o == nil {
+func (m *MeshRateLimitItemSpecToTargetRef) GetProxyTypes() []MeshRateLimitItemSpecToProxyTypes {
+	if m == nil {
 		return nil
 	}
-	return o.ProxyTypes
+	return m.ProxyTypes
 }
 
-func (o *MeshRateLimitItemSpecToTargetRef) GetSectionName() *string {
-	if o == nil {
+func (m *MeshRateLimitItemSpecToTargetRef) GetSectionName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.SectionName
+	return m.SectionName
 }
 
-func (o *MeshRateLimitItemSpecToTargetRef) GetTags() map[string]string {
-	if o == nil {
+func (m *MeshRateLimitItemSpecToTargetRef) GetTags() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Tags
+	return m.Tags
 }
 
 type MeshRateLimitItemTo struct {
@@ -1208,18 +1208,18 @@ type MeshRateLimitItemTo struct {
 	TargetRef MeshRateLimitItemSpecToTargetRef `json:"targetRef"`
 }
 
-func (o *MeshRateLimitItemTo) GetDefault() *MeshRateLimitItemSpecToDefault {
-	if o == nil {
+func (m *MeshRateLimitItemTo) GetDefault() *MeshRateLimitItemSpecToDefault {
+	if m == nil {
 		return nil
 	}
-	return o.Default
+	return m.Default
 }
 
-func (o *MeshRateLimitItemTo) GetTargetRef() MeshRateLimitItemSpecToTargetRef {
-	if o == nil {
+func (m *MeshRateLimitItemTo) GetTargetRef() MeshRateLimitItemSpecToTargetRef {
+	if m == nil {
 		return MeshRateLimitItemSpecToTargetRef{}
 	}
-	return o.TargetRef
+	return m.TargetRef
 }
 
 // MeshRateLimitItemSpec - Spec is the specification of the Kuma MeshRateLimit resource.
@@ -1237,32 +1237,32 @@ type MeshRateLimitItemSpec struct {
 	To []MeshRateLimitItemTo `json:"to,omitempty"`
 }
 
-func (o *MeshRateLimitItemSpec) GetFrom() []MeshRateLimitItemFrom {
-	if o == nil {
+func (m *MeshRateLimitItemSpec) GetFrom() []MeshRateLimitItemFrom {
+	if m == nil {
 		return nil
 	}
-	return o.From
+	return m.From
 }
 
-func (o *MeshRateLimitItemSpec) GetRules() []MeshRateLimitItemRules {
-	if o == nil {
+func (m *MeshRateLimitItemSpec) GetRules() []MeshRateLimitItemRules {
+	if m == nil {
 		return nil
 	}
-	return o.Rules
+	return m.Rules
 }
 
-func (o *MeshRateLimitItemSpec) GetTargetRef() *MeshRateLimitItemTargetRef {
-	if o == nil {
+func (m *MeshRateLimitItemSpec) GetTargetRef() *MeshRateLimitItemTargetRef {
+	if m == nil {
 		return nil
 	}
-	return o.TargetRef
+	return m.TargetRef
 }
 
-func (o *MeshRateLimitItemSpec) GetTo() []MeshRateLimitItemTo {
-	if o == nil {
+func (m *MeshRateLimitItemSpec) GetTo() []MeshRateLimitItemTo {
+	if m == nil {
 		return nil
 	}
-	return o.To
+	return m.To
 }
 
 // MeshRateLimitItem - Successful response
@@ -1290,66 +1290,66 @@ func (m MeshRateLimitItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshRateLimitItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshRateLimitItem) GetType() MeshRateLimitItemType {
-	if o == nil {
+func (m *MeshRateLimitItem) GetType() MeshRateLimitItemType {
+	if m == nil {
 		return MeshRateLimitItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshRateLimitItem) GetMesh() *string {
-	if o == nil {
+func (m *MeshRateLimitItem) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshRateLimitItem) GetKri() *string {
-	if o == nil {
+func (m *MeshRateLimitItem) GetKri() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Kri
+	return m.Kri
 }
 
-func (o *MeshRateLimitItem) GetName() string {
-	if o == nil {
+func (m *MeshRateLimitItem) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshRateLimitItem) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshRateLimitItem) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshRateLimitItem) GetSpec() MeshRateLimitItemSpec {
-	if o == nil {
+func (m *MeshRateLimitItem) GetSpec() MeshRateLimitItemSpec {
+	if m == nil {
 		return MeshRateLimitItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }
 
-func (o *MeshRateLimitItem) GetCreationTime() *time.Time {
-	if o == nil {
+func (m *MeshRateLimitItem) GetCreationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.CreationTime
+	return m.CreationTime
 }
 
-func (o *MeshRateLimitItem) GetModificationTime() *time.Time {
-	if o == nil {
+func (m *MeshRateLimitItem) GetModificationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.ModificationTime
+	return m.ModificationTime
 }
 
 // MeshRateLimitItemInput - Successful response
@@ -1371,43 +1371,43 @@ func (m MeshRateLimitItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshRateLimitItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshRateLimitItemInput) GetType() MeshRateLimitItemType {
-	if o == nil {
+func (m *MeshRateLimitItemInput) GetType() MeshRateLimitItemType {
+	if m == nil {
 		return MeshRateLimitItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshRateLimitItemInput) GetMesh() *string {
-	if o == nil {
+func (m *MeshRateLimitItemInput) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshRateLimitItemInput) GetName() string {
-	if o == nil {
+func (m *MeshRateLimitItemInput) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshRateLimitItemInput) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshRateLimitItemInput) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshRateLimitItemInput) GetSpec() MeshRateLimitItemSpec {
-	if o == nil {
+func (m *MeshRateLimitItemInput) GetSpec() MeshRateLimitItemSpec {
+	if m == nil {
 		return MeshRateLimitItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }

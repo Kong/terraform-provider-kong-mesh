@@ -13,6 +13,240 @@ import (
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
 )
 
+func (r *MeshIdentityResourceModel) RefreshFromSharedMeshIdentityCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.MeshIdentityCreateOrUpdateSuccessResponse) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		r.Warnings = make([]types.String, 0, len(resp.Warnings))
+		for _, v := range resp.Warnings {
+			r.Warnings = append(r.Warnings, types.StringValue(v))
+		}
+	}
+
+	return diags
+}
+
+func (r *MeshIdentityResourceModel) RefreshFromSharedMeshIdentityItem(ctx context.Context, resp *shared.MeshIdentityItem) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
+		r.Kri = types.StringPointerValue(resp.Kri)
+		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
+		diags.Append(labelsDiags...)
+		labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
+		diags.Append(labelsDiags...)
+		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
+		r.Mesh = types.StringPointerValue(resp.Mesh)
+		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
+		r.Name = types.StringValue(resp.Name)
+		if resp.Spec.Provider.Bundled == nil {
+			r.Spec.Provider.Bundled = nil
+		} else {
+			r.Spec.Provider.Bundled = &tfTypes.Bundled{}
+			if resp.Spec.Provider.Bundled.Autogenerate == nil {
+				r.Spec.Provider.Bundled.Autogenerate = nil
+			} else {
+				r.Spec.Provider.Bundled.Autogenerate = &tfTypes.Autogenerate{}
+				r.Spec.Provider.Bundled.Autogenerate.Enabled = types.BoolPointerValue(resp.Spec.Provider.Bundled.Autogenerate.Enabled)
+			}
+			if resp.Spec.Provider.Bundled.Ca == nil {
+				r.Spec.Provider.Bundled.Ca = nil
+			} else {
+				r.Spec.Provider.Bundled.Ca = &tfTypes.Ca{}
+				if resp.Spec.Provider.Bundled.Ca.Certificate == nil {
+					r.Spec.Provider.Bundled.Ca.Certificate = nil
+				} else {
+					r.Spec.Provider.Bundled.Ca.Certificate = &tfTypes.Certificate{}
+					if resp.Spec.Provider.Bundled.Ca.Certificate.EnvVar == nil {
+						r.Spec.Provider.Bundled.Ca.Certificate.EnvVar = nil
+					} else {
+						r.Spec.Provider.Bundled.Ca.Certificate.EnvVar = &tfTypes.EnvVar{}
+						r.Spec.Provider.Bundled.Ca.Certificate.EnvVar.Name = types.StringValue(resp.Spec.Provider.Bundled.Ca.Certificate.EnvVar.Name)
+					}
+					if resp.Spec.Provider.Bundled.Ca.Certificate.File == nil {
+						r.Spec.Provider.Bundled.Ca.Certificate.File = nil
+					} else {
+						r.Spec.Provider.Bundled.Ca.Certificate.File = &tfTypes.MeshIdentityItemFile{}
+						r.Spec.Provider.Bundled.Ca.Certificate.File.Path = types.StringValue(resp.Spec.Provider.Bundled.Ca.Certificate.File.Path)
+					}
+					if resp.Spec.Provider.Bundled.Ca.Certificate.InsecureInline == nil {
+						r.Spec.Provider.Bundled.Ca.Certificate.InsecureInline = nil
+					} else {
+						r.Spec.Provider.Bundled.Ca.Certificate.InsecureInline = &tfTypes.InsecureInline{}
+						r.Spec.Provider.Bundled.Ca.Certificate.InsecureInline.Value = types.StringValue(resp.Spec.Provider.Bundled.Ca.Certificate.InsecureInline.Value)
+					}
+					if resp.Spec.Provider.Bundled.Ca.Certificate.SecretRef == nil {
+						r.Spec.Provider.Bundled.Ca.Certificate.SecretRef = nil
+					} else {
+						r.Spec.Provider.Bundled.Ca.Certificate.SecretRef = &tfTypes.SecretRef{}
+						r.Spec.Provider.Bundled.Ca.Certificate.SecretRef.Kind = types.StringValue(string(resp.Spec.Provider.Bundled.Ca.Certificate.SecretRef.Kind))
+						r.Spec.Provider.Bundled.Ca.Certificate.SecretRef.Name = types.StringValue(resp.Spec.Provider.Bundled.Ca.Certificate.SecretRef.Name)
+					}
+					r.Spec.Provider.Bundled.Ca.Certificate.Type = types.StringValue(string(resp.Spec.Provider.Bundled.Ca.Certificate.Type))
+				}
+				if resp.Spec.Provider.Bundled.Ca.PrivateKey == nil {
+					r.Spec.Provider.Bundled.Ca.PrivateKey = nil
+				} else {
+					r.Spec.Provider.Bundled.Ca.PrivateKey = &tfTypes.Certificate{}
+					if resp.Spec.Provider.Bundled.Ca.PrivateKey.EnvVar == nil {
+						r.Spec.Provider.Bundled.Ca.PrivateKey.EnvVar = nil
+					} else {
+						r.Spec.Provider.Bundled.Ca.PrivateKey.EnvVar = &tfTypes.EnvVar{}
+						r.Spec.Provider.Bundled.Ca.PrivateKey.EnvVar.Name = types.StringValue(resp.Spec.Provider.Bundled.Ca.PrivateKey.EnvVar.Name)
+					}
+					if resp.Spec.Provider.Bundled.Ca.PrivateKey.File == nil {
+						r.Spec.Provider.Bundled.Ca.PrivateKey.File = nil
+					} else {
+						r.Spec.Provider.Bundled.Ca.PrivateKey.File = &tfTypes.MeshIdentityItemFile{}
+						r.Spec.Provider.Bundled.Ca.PrivateKey.File.Path = types.StringValue(resp.Spec.Provider.Bundled.Ca.PrivateKey.File.Path)
+					}
+					if resp.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline == nil {
+						r.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline = nil
+					} else {
+						r.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline = &tfTypes.InsecureInline{}
+						r.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline.Value = types.StringValue(resp.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline.Value)
+					}
+					if resp.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef == nil {
+						r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef = nil
+					} else {
+						r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef = &tfTypes.SecretRef{}
+						r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef.Kind = types.StringValue(string(resp.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef.Kind))
+						r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef.Name = types.StringValue(resp.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef.Name)
+					}
+					r.Spec.Provider.Bundled.Ca.PrivateKey.Type = types.StringValue(string(resp.Spec.Provider.Bundled.Ca.PrivateKey.Type))
+				}
+			}
+			if resp.Spec.Provider.Bundled.CertificateParameters == nil {
+				r.Spec.Provider.Bundled.CertificateParameters = nil
+			} else {
+				r.Spec.Provider.Bundled.CertificateParameters = &tfTypes.CertificateParameters{}
+				r.Spec.Provider.Bundled.CertificateParameters.Expiry = types.StringPointerValue(resp.Spec.Provider.Bundled.CertificateParameters.Expiry)
+			}
+			r.Spec.Provider.Bundled.InsecureAllowSelfSigned = types.BoolPointerValue(resp.Spec.Provider.Bundled.InsecureAllowSelfSigned)
+			if resp.Spec.Provider.Bundled.MeshTrustCreation != nil {
+				r.Spec.Provider.Bundled.MeshTrustCreation = types.StringValue(string(*resp.Spec.Provider.Bundled.MeshTrustCreation))
+			} else {
+				r.Spec.Provider.Bundled.MeshTrustCreation = types.StringNull()
+			}
+		}
+		if resp.Spec.Provider.Spire == nil {
+			r.Spec.Provider.Spire = nil
+		} else {
+			r.Spec.Provider.Spire = &tfTypes.Spire{}
+			if resp.Spec.Provider.Spire.Agent == nil {
+				r.Spec.Provider.Spire.Agent = nil
+			} else {
+				r.Spec.Provider.Spire.Agent = &tfTypes.Agent{}
+				r.Spec.Provider.Spire.Agent.Timeout = types.StringPointerValue(resp.Spec.Provider.Spire.Agent.Timeout)
+			}
+		}
+		r.Spec.Provider.Type = types.StringValue(string(resp.Spec.Provider.Type))
+		if resp.Spec.Selector == nil {
+			r.Spec.Selector = nil
+		} else {
+			r.Spec.Selector = &tfTypes.MeshIdentityItemSelector{}
+			if resp.Spec.Selector.Dataplane == nil {
+				r.Spec.Selector.Dataplane = nil
+			} else {
+				r.Spec.Selector.Dataplane = &tfTypes.MeshExternalService{}
+				if len(resp.Spec.Selector.Dataplane.MatchLabels) > 0 {
+					r.Spec.Selector.Dataplane.MatchLabels = make(map[string]types.String, len(resp.Spec.Selector.Dataplane.MatchLabels))
+					for key, value := range resp.Spec.Selector.Dataplane.MatchLabels {
+						r.Spec.Selector.Dataplane.MatchLabels[key] = types.StringValue(value)
+					}
+				}
+			}
+		}
+		if resp.Spec.SpiffeID == nil {
+			r.Spec.SpiffeID = nil
+		} else {
+			r.Spec.SpiffeID = &tfTypes.SpiffeID{}
+			r.Spec.SpiffeID.Path = types.StringPointerValue(resp.Spec.SpiffeID.Path)
+			r.Spec.SpiffeID.TrustDomain = types.StringPointerValue(resp.Spec.SpiffeID.TrustDomain)
+		}
+		if resp.Status == nil {
+			r.Status = nil
+		} else {
+			r.Status = &tfTypes.MeshIdentityItemStatus{}
+			r.Status.Conditions = []tfTypes.MeshExternalServiceItemConditions{}
+
+			for _, conditionsItem := range resp.Status.Conditions {
+				var conditions tfTypes.MeshExternalServiceItemConditions
+
+				conditions.Message = types.StringValue(conditionsItem.Message)
+				conditions.Reason = types.StringValue(conditionsItem.Reason)
+				conditions.Status = types.StringValue(string(conditionsItem.Status))
+				conditions.Type = types.StringValue(conditionsItem.Type)
+
+				r.Status.Conditions = append(r.Status.Conditions, conditions)
+			}
+		}
+		r.Type = types.StringValue(string(resp.Type))
+	}
+
+	return diags
+}
+
+func (r *MeshIdentityResourceModel) ToOperationsDeleteMeshIdentityRequest(ctx context.Context) (*operations.DeleteMeshIdentityRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.DeleteMeshIdentityRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshIdentityResourceModel) ToOperationsGetMeshIdentityRequest(ctx context.Context) (*operations.GetMeshIdentityRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.GetMeshIdentityRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshIdentityResourceModel) ToOperationsPutMeshIdentityRequest(ctx context.Context) (*operations.PutMeshIdentityRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	meshIdentityItem, meshIdentityItemDiags := r.ToSharedMeshIdentityItemInput(ctx)
+	diags.Append(meshIdentityItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PutMeshIdentityRequest{
+		Mesh:             mesh,
+		Name:             name,
+		MeshIdentityItem: *meshIdentityItem,
+	}
+
+	return &out, diags
+}
+
 func (r *MeshIdentityResourceModel) ToSharedMeshIdentityItemInput(ctx context.Context) (*shared.MeshIdentityItemInput, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -257,245 +491,4 @@ func (r *MeshIdentityResourceModel) ToSharedMeshIdentityItemInput(ctx context.Co
 	}
 
 	return &out, diags
-}
-
-func (r *MeshIdentityResourceModel) ToOperationsPutMeshIdentityRequest(ctx context.Context) (*operations.PutMeshIdentityRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	meshIdentityItem, meshIdentityItemDiags := r.ToSharedMeshIdentityItemInput(ctx)
-	diags.Append(meshIdentityItemDiags...)
-
-	if diags.HasError() {
-		return nil, diags
-	}
-
-	out := operations.PutMeshIdentityRequest{
-		Mesh:             mesh,
-		Name:             name,
-		MeshIdentityItem: *meshIdentityItem,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshIdentityResourceModel) ToOperationsGetMeshIdentityRequest(ctx context.Context) (*operations.GetMeshIdentityRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	out := operations.GetMeshIdentityRequest{
-		Mesh: mesh,
-		Name: name,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshIdentityResourceModel) ToOperationsDeleteMeshIdentityRequest(ctx context.Context) (*operations.DeleteMeshIdentityRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	out := operations.DeleteMeshIdentityRequest{
-		Mesh: mesh,
-		Name: name,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshIdentityResourceModel) RefreshFromSharedMeshIdentityCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.MeshIdentityCreateOrUpdateSuccessResponse) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		r.Warnings = make([]types.String, 0, len(resp.Warnings))
-		for _, v := range resp.Warnings {
-			r.Warnings = append(r.Warnings, types.StringValue(v))
-		}
-	}
-
-	return diags
-}
-
-func (r *MeshIdentityResourceModel) RefreshFromSharedMeshIdentityItem(ctx context.Context, resp *shared.MeshIdentityItem) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
-		r.Kri = types.StringPointerValue(resp.Kri)
-		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
-		diags.Append(labelsDiags...)
-		labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
-		diags.Append(labelsDiags...)
-		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
-		r.Mesh = types.StringPointerValue(resp.Mesh)
-		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
-		r.Name = types.StringValue(resp.Name)
-		if resp.Spec.Provider.Bundled == nil {
-			r.Spec.Provider.Bundled = nil
-		} else {
-			r.Spec.Provider.Bundled = &tfTypes.Bundled{}
-			if resp.Spec.Provider.Bundled.Autogenerate == nil {
-				r.Spec.Provider.Bundled.Autogenerate = nil
-			} else {
-				r.Spec.Provider.Bundled.Autogenerate = &tfTypes.Autogenerate{}
-				r.Spec.Provider.Bundled.Autogenerate.Enabled = types.BoolPointerValue(resp.Spec.Provider.Bundled.Autogenerate.Enabled)
-			}
-			if resp.Spec.Provider.Bundled.Ca == nil {
-				r.Spec.Provider.Bundled.Ca = nil
-			} else {
-				r.Spec.Provider.Bundled.Ca = &tfTypes.Ca{}
-				if resp.Spec.Provider.Bundled.Ca.Certificate == nil {
-					r.Spec.Provider.Bundled.Ca.Certificate = nil
-				} else {
-					r.Spec.Provider.Bundled.Ca.Certificate = &tfTypes.Certificate{}
-					if resp.Spec.Provider.Bundled.Ca.Certificate.EnvVar == nil {
-						r.Spec.Provider.Bundled.Ca.Certificate.EnvVar = nil
-					} else {
-						r.Spec.Provider.Bundled.Ca.Certificate.EnvVar = &tfTypes.EnvVar{}
-						r.Spec.Provider.Bundled.Ca.Certificate.EnvVar.Name = types.StringValue(resp.Spec.Provider.Bundled.Ca.Certificate.EnvVar.Name)
-					}
-					if resp.Spec.Provider.Bundled.Ca.Certificate.File == nil {
-						r.Spec.Provider.Bundled.Ca.Certificate.File = nil
-					} else {
-						r.Spec.Provider.Bundled.Ca.Certificate.File = &tfTypes.MeshIdentityItemFile{}
-						r.Spec.Provider.Bundled.Ca.Certificate.File.Path = types.StringValue(resp.Spec.Provider.Bundled.Ca.Certificate.File.Path)
-					}
-					if resp.Spec.Provider.Bundled.Ca.Certificate.InsecureInline == nil {
-						r.Spec.Provider.Bundled.Ca.Certificate.InsecureInline = nil
-					} else {
-						r.Spec.Provider.Bundled.Ca.Certificate.InsecureInline = &tfTypes.InsecureInline{}
-						r.Spec.Provider.Bundled.Ca.Certificate.InsecureInline.Value = types.StringValue(resp.Spec.Provider.Bundled.Ca.Certificate.InsecureInline.Value)
-					}
-					if resp.Spec.Provider.Bundled.Ca.Certificate.SecretRef == nil {
-						r.Spec.Provider.Bundled.Ca.Certificate.SecretRef = nil
-					} else {
-						r.Spec.Provider.Bundled.Ca.Certificate.SecretRef = &tfTypes.SecretRef{}
-						r.Spec.Provider.Bundled.Ca.Certificate.SecretRef.Kind = types.StringValue(string(resp.Spec.Provider.Bundled.Ca.Certificate.SecretRef.Kind))
-						r.Spec.Provider.Bundled.Ca.Certificate.SecretRef.Name = types.StringValue(resp.Spec.Provider.Bundled.Ca.Certificate.SecretRef.Name)
-					}
-					r.Spec.Provider.Bundled.Ca.Certificate.Type = types.StringValue(string(resp.Spec.Provider.Bundled.Ca.Certificate.Type))
-				}
-				if resp.Spec.Provider.Bundled.Ca.PrivateKey == nil {
-					r.Spec.Provider.Bundled.Ca.PrivateKey = nil
-				} else {
-					r.Spec.Provider.Bundled.Ca.PrivateKey = &tfTypes.Certificate{}
-					if resp.Spec.Provider.Bundled.Ca.PrivateKey.EnvVar == nil {
-						r.Spec.Provider.Bundled.Ca.PrivateKey.EnvVar = nil
-					} else {
-						r.Spec.Provider.Bundled.Ca.PrivateKey.EnvVar = &tfTypes.EnvVar{}
-						r.Spec.Provider.Bundled.Ca.PrivateKey.EnvVar.Name = types.StringValue(resp.Spec.Provider.Bundled.Ca.PrivateKey.EnvVar.Name)
-					}
-					if resp.Spec.Provider.Bundled.Ca.PrivateKey.File == nil {
-						r.Spec.Provider.Bundled.Ca.PrivateKey.File = nil
-					} else {
-						r.Spec.Provider.Bundled.Ca.PrivateKey.File = &tfTypes.MeshIdentityItemFile{}
-						r.Spec.Provider.Bundled.Ca.PrivateKey.File.Path = types.StringValue(resp.Spec.Provider.Bundled.Ca.PrivateKey.File.Path)
-					}
-					if resp.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline == nil {
-						r.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline = nil
-					} else {
-						r.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline = &tfTypes.InsecureInline{}
-						r.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline.Value = types.StringValue(resp.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline.Value)
-					}
-					if resp.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef == nil {
-						r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef = nil
-					} else {
-						r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef = &tfTypes.SecretRef{}
-						r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef.Kind = types.StringValue(string(resp.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef.Kind))
-						r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef.Name = types.StringValue(resp.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef.Name)
-					}
-					r.Spec.Provider.Bundled.Ca.PrivateKey.Type = types.StringValue(string(resp.Spec.Provider.Bundled.Ca.PrivateKey.Type))
-				}
-			}
-			if resp.Spec.Provider.Bundled.CertificateParameters == nil {
-				r.Spec.Provider.Bundled.CertificateParameters = nil
-			} else {
-				r.Spec.Provider.Bundled.CertificateParameters = &tfTypes.CertificateParameters{}
-				r.Spec.Provider.Bundled.CertificateParameters.Expiry = types.StringPointerValue(resp.Spec.Provider.Bundled.CertificateParameters.Expiry)
-			}
-			r.Spec.Provider.Bundled.InsecureAllowSelfSigned = types.BoolPointerValue(resp.Spec.Provider.Bundled.InsecureAllowSelfSigned)
-			if resp.Spec.Provider.Bundled.MeshTrustCreation != nil {
-				r.Spec.Provider.Bundled.MeshTrustCreation = types.StringValue(string(*resp.Spec.Provider.Bundled.MeshTrustCreation))
-			} else {
-				r.Spec.Provider.Bundled.MeshTrustCreation = types.StringNull()
-			}
-		}
-		if resp.Spec.Provider.Spire == nil {
-			r.Spec.Provider.Spire = nil
-		} else {
-			r.Spec.Provider.Spire = &tfTypes.Spire{}
-			if resp.Spec.Provider.Spire.Agent == nil {
-				r.Spec.Provider.Spire.Agent = nil
-			} else {
-				r.Spec.Provider.Spire.Agent = &tfTypes.Agent{}
-				r.Spec.Provider.Spire.Agent.Timeout = types.StringPointerValue(resp.Spec.Provider.Spire.Agent.Timeout)
-			}
-		}
-		r.Spec.Provider.Type = types.StringValue(string(resp.Spec.Provider.Type))
-		if resp.Spec.Selector == nil {
-			r.Spec.Selector = nil
-		} else {
-			r.Spec.Selector = &tfTypes.MeshIdentityItemSelector{}
-			if resp.Spec.Selector.Dataplane == nil {
-				r.Spec.Selector.Dataplane = nil
-			} else {
-				r.Spec.Selector.Dataplane = &tfTypes.MeshExternalService{}
-				if len(resp.Spec.Selector.Dataplane.MatchLabels) > 0 {
-					r.Spec.Selector.Dataplane.MatchLabels = make(map[string]types.String, len(resp.Spec.Selector.Dataplane.MatchLabels))
-					for key, value := range resp.Spec.Selector.Dataplane.MatchLabels {
-						r.Spec.Selector.Dataplane.MatchLabels[key] = types.StringValue(value)
-					}
-				}
-			}
-		}
-		if resp.Spec.SpiffeID == nil {
-			r.Spec.SpiffeID = nil
-		} else {
-			r.Spec.SpiffeID = &tfTypes.SpiffeID{}
-			r.Spec.SpiffeID.Path = types.StringPointerValue(resp.Spec.SpiffeID.Path)
-			r.Spec.SpiffeID.TrustDomain = types.StringPointerValue(resp.Spec.SpiffeID.TrustDomain)
-		}
-		if resp.Status == nil {
-			r.Status = nil
-		} else {
-			r.Status = &tfTypes.MeshIdentityItemStatus{}
-			r.Status.Conditions = []tfTypes.MeshExternalServiceItemConditions{}
-			if len(r.Status.Conditions) > len(resp.Status.Conditions) {
-				r.Status.Conditions = r.Status.Conditions[:len(resp.Status.Conditions)]
-			}
-			for conditionsCount, conditionsItem := range resp.Status.Conditions {
-				var conditions tfTypes.MeshExternalServiceItemConditions
-				conditions.Message = types.StringValue(conditionsItem.Message)
-				conditions.Reason = types.StringValue(conditionsItem.Reason)
-				conditions.Status = types.StringValue(string(conditionsItem.Status))
-				conditions.Type = types.StringValue(conditionsItem.Type)
-				if conditionsCount+1 > len(r.Status.Conditions) {
-					r.Status.Conditions = append(r.Status.Conditions, conditions)
-				} else {
-					r.Status.Conditions[conditionsCount].Message = conditions.Message
-					r.Status.Conditions[conditionsCount].Reason = conditions.Reason
-					r.Status.Conditions[conditionsCount].Status = conditions.Status
-					r.Status.Conditions[conditionsCount].Type = conditions.Type
-				}
-			}
-		}
-		r.Type = types.StringValue(string(resp.Type))
-	}
-
-	return diags
 }

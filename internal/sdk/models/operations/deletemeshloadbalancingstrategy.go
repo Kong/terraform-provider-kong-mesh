@@ -14,18 +14,18 @@ type DeleteMeshLoadBalancingStrategyRequest struct {
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 }
 
-func (o *DeleteMeshLoadBalancingStrategyRequest) GetMesh() string {
-	if o == nil {
+func (d *DeleteMeshLoadBalancingStrategyRequest) GetMesh() string {
+	if d == nil {
 		return ""
 	}
-	return o.Mesh
+	return d.Mesh
 }
 
-func (o *DeleteMeshLoadBalancingStrategyRequest) GetName() string {
-	if o == nil {
+func (d *DeleteMeshLoadBalancingStrategyRequest) GetName() string {
+	if d == nil {
 		return ""
 	}
-	return o.Name
+	return d.Name
 }
 
 type DeleteMeshLoadBalancingStrategyResponse struct {
@@ -41,37 +41,37 @@ type DeleteMeshLoadBalancingStrategyResponse struct {
 	NotFoundError *shared.NotFoundError
 }
 
-func (o *DeleteMeshLoadBalancingStrategyResponse) GetContentType() string {
-	if o == nil {
+func (d *DeleteMeshLoadBalancingStrategyResponse) GetContentType() string {
+	if d == nil {
 		return ""
 	}
-	return o.ContentType
+	return d.ContentType
 }
 
-func (o *DeleteMeshLoadBalancingStrategyResponse) GetStatusCode() int {
-	if o == nil {
+func (d *DeleteMeshLoadBalancingStrategyResponse) GetStatusCode() int {
+	if d == nil {
 		return 0
 	}
-	return o.StatusCode
+	return d.StatusCode
 }
 
-func (o *DeleteMeshLoadBalancingStrategyResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (d *DeleteMeshLoadBalancingStrategyResponse) GetRawResponse() *http.Response {
+	if d == nil {
 		return nil
 	}
-	return o.RawResponse
+	return d.RawResponse
 }
 
-func (o *DeleteMeshLoadBalancingStrategyResponse) GetMeshLoadBalancingStrategyDeleteSuccessResponse() *shared.MeshLoadBalancingStrategyDeleteSuccessResponse {
-	if o == nil {
+func (d *DeleteMeshLoadBalancingStrategyResponse) GetMeshLoadBalancingStrategyDeleteSuccessResponse() *shared.MeshLoadBalancingStrategyDeleteSuccessResponse {
+	if d == nil {
 		return nil
 	}
-	return o.MeshLoadBalancingStrategyDeleteSuccessResponse
+	return d.MeshLoadBalancingStrategyDeleteSuccessResponse
 }
 
-func (o *DeleteMeshLoadBalancingStrategyResponse) GetNotFoundError() *shared.NotFoundError {
-	if o == nil {
+func (d *DeleteMeshLoadBalancingStrategyResponse) GetNotFoundError() *shared.NotFoundError {
+	if d == nil {
 		return nil
 	}
-	return o.NotFoundError
+	return d.NotFoundError
 }

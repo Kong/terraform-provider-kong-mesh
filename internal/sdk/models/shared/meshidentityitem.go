@@ -38,44 +38,44 @@ type Autogenerate struct {
 	Enabled *bool `json:"enabled,omitempty"`
 }
 
-func (o *Autogenerate) GetEnabled() *bool {
-	if o == nil {
+func (a *Autogenerate) GetEnabled() *bool {
+	if a == nil {
 		return nil
 	}
-	return o.Enabled
+	return a.Enabled
 }
 
 type EnvVar struct {
 	Name string `json:"name"`
 }
 
-func (o *EnvVar) GetName() string {
-	if o == nil {
+func (e *EnvVar) GetName() string {
+	if e == nil {
 		return ""
 	}
-	return o.Name
+	return e.Name
 }
 
 type MeshIdentityItemFile struct {
 	Path string `json:"path"`
 }
 
-func (o *MeshIdentityItemFile) GetPath() string {
-	if o == nil {
+func (m *MeshIdentityItemFile) GetPath() string {
+	if m == nil {
 		return ""
 	}
-	return o.Path
+	return m.Path
 }
 
 type InsecureInline struct {
 	Value string `json:"value"`
 }
 
-func (o *InsecureInline) GetValue() string {
-	if o == nil {
+func (i *InsecureInline) GetValue() string {
+	if i == nil {
 		return ""
 	}
-	return o.Value
+	return i.Value
 }
 
 type MeshIdentityItemKind string
@@ -106,18 +106,18 @@ type SecretRef struct {
 	Name string               `json:"name"`
 }
 
-func (o *SecretRef) GetKind() MeshIdentityItemKind {
-	if o == nil {
+func (s *SecretRef) GetKind() MeshIdentityItemKind {
+	if s == nil {
 		return MeshIdentityItemKind("")
 	}
-	return o.Kind
+	return s.Kind
 }
 
-func (o *SecretRef) GetName() string {
-	if o == nil {
+func (s *SecretRef) GetName() string {
+	if s == nil {
 		return ""
 	}
-	return o.Name
+	return s.Name
 }
 
 type MeshIdentityItemSpecProviderBundledType string
@@ -161,72 +161,72 @@ type Certificate struct {
 	Type           MeshIdentityItemSpecProviderBundledType `json:"type"`
 }
 
-func (o *Certificate) GetEnvVar() *EnvVar {
-	if o == nil {
+func (c *Certificate) GetEnvVar() *EnvVar {
+	if c == nil {
 		return nil
 	}
-	return o.EnvVar
+	return c.EnvVar
 }
 
-func (o *Certificate) GetFile() *MeshIdentityItemFile {
-	if o == nil {
+func (c *Certificate) GetFile() *MeshIdentityItemFile {
+	if c == nil {
 		return nil
 	}
-	return o.File
+	return c.File
 }
 
-func (o *Certificate) GetInsecureInline() *InsecureInline {
-	if o == nil {
+func (c *Certificate) GetInsecureInline() *InsecureInline {
+	if c == nil {
 		return nil
 	}
-	return o.InsecureInline
+	return c.InsecureInline
 }
 
-func (o *Certificate) GetSecretRef() *SecretRef {
-	if o == nil {
+func (c *Certificate) GetSecretRef() *SecretRef {
+	if c == nil {
 		return nil
 	}
-	return o.SecretRef
+	return c.SecretRef
 }
 
-func (o *Certificate) GetType() MeshIdentityItemSpecProviderBundledType {
-	if o == nil {
+func (c *Certificate) GetType() MeshIdentityItemSpecProviderBundledType {
+	if c == nil {
 		return MeshIdentityItemSpecProviderBundledType("")
 	}
-	return o.Type
+	return c.Type
 }
 
 type MeshIdentityItemEnvVar struct {
 	Name string `json:"name"`
 }
 
-func (o *MeshIdentityItemEnvVar) GetName() string {
-	if o == nil {
+func (m *MeshIdentityItemEnvVar) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
 type MeshIdentityItemSpecFile struct {
 	Path string `json:"path"`
 }
 
-func (o *MeshIdentityItemSpecFile) GetPath() string {
-	if o == nil {
+func (m *MeshIdentityItemSpecFile) GetPath() string {
+	if m == nil {
 		return ""
 	}
-	return o.Path
+	return m.Path
 }
 
 type MeshIdentityItemInsecureInline struct {
 	Value string `json:"value"`
 }
 
-func (o *MeshIdentityItemInsecureInline) GetValue() string {
-	if o == nil {
+func (m *MeshIdentityItemInsecureInline) GetValue() string {
+	if m == nil {
 		return ""
 	}
-	return o.Value
+	return m.Value
 }
 
 type MeshIdentityItemSpecKind string
@@ -257,18 +257,18 @@ type MeshIdentityItemSecretRef struct {
 	Name string                   `json:"name"`
 }
 
-func (o *MeshIdentityItemSecretRef) GetKind() MeshIdentityItemSpecKind {
-	if o == nil {
+func (m *MeshIdentityItemSecretRef) GetKind() MeshIdentityItemSpecKind {
+	if m == nil {
 		return MeshIdentityItemSpecKind("")
 	}
-	return o.Kind
+	return m.Kind
 }
 
-func (o *MeshIdentityItemSecretRef) GetName() string {
-	if o == nil {
+func (m *MeshIdentityItemSecretRef) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
 type MeshIdentityItemSpecProviderType string
@@ -312,39 +312,39 @@ type PrivateKey struct {
 	Type           MeshIdentityItemSpecProviderType `json:"type"`
 }
 
-func (o *PrivateKey) GetEnvVar() *MeshIdentityItemEnvVar {
-	if o == nil {
+func (p *PrivateKey) GetEnvVar() *MeshIdentityItemEnvVar {
+	if p == nil {
 		return nil
 	}
-	return o.EnvVar
+	return p.EnvVar
 }
 
-func (o *PrivateKey) GetFile() *MeshIdentityItemSpecFile {
-	if o == nil {
+func (p *PrivateKey) GetFile() *MeshIdentityItemSpecFile {
+	if p == nil {
 		return nil
 	}
-	return o.File
+	return p.File
 }
 
-func (o *PrivateKey) GetInsecureInline() *MeshIdentityItemInsecureInline {
-	if o == nil {
+func (p *PrivateKey) GetInsecureInline() *MeshIdentityItemInsecureInline {
+	if p == nil {
 		return nil
 	}
-	return o.InsecureInline
+	return p.InsecureInline
 }
 
-func (o *PrivateKey) GetSecretRef() *MeshIdentityItemSecretRef {
-	if o == nil {
+func (p *PrivateKey) GetSecretRef() *MeshIdentityItemSecretRef {
+	if p == nil {
 		return nil
 	}
-	return o.SecretRef
+	return p.SecretRef
 }
 
-func (o *PrivateKey) GetType() MeshIdentityItemSpecProviderType {
-	if o == nil {
+func (p *PrivateKey) GetType() MeshIdentityItemSpecProviderType {
+	if p == nil {
 		return MeshIdentityItemSpecProviderType("")
 	}
-	return o.Type
+	return p.Type
 }
 
 // Ca - CA has configuration related to the CA
@@ -355,18 +355,18 @@ type Ca struct {
 	PrivateKey *PrivateKey `json:"privateKey,omitempty"`
 }
 
-func (o *Ca) GetCertificate() *Certificate {
-	if o == nil {
+func (c *Ca) GetCertificate() *Certificate {
+	if c == nil {
 		return nil
 	}
-	return o.Certificate
+	return c.Certificate
 }
 
-func (o *Ca) GetPrivateKey() *PrivateKey {
-	if o == nil {
+func (c *Ca) GetPrivateKey() *PrivateKey {
+	if c == nil {
 		return nil
 	}
-	return o.PrivateKey
+	return c.PrivateKey
 }
 
 // CertificateParameters allows users to define certificate generation parameters.
@@ -374,11 +374,11 @@ type CertificateParameters struct {
 	Expiry *string `json:"expiry,omitempty"`
 }
 
-func (o *CertificateParameters) GetExpiry() *string {
-	if o == nil {
+func (c *CertificateParameters) GetExpiry() *string {
+	if c == nil {
 		return nil
 	}
-	return o.Expiry
+	return c.Expiry
 }
 
 // MeshTrustCreation defines whether a MeshTrust resource should be automatically created
@@ -425,39 +425,39 @@ type Bundled struct {
 	MeshTrustCreation *MeshTrustCreation `json:"meshTrustCreation,omitempty"`
 }
 
-func (o *Bundled) GetAutogenerate() *Autogenerate {
-	if o == nil {
+func (b *Bundled) GetAutogenerate() *Autogenerate {
+	if b == nil {
 		return nil
 	}
-	return o.Autogenerate
+	return b.Autogenerate
 }
 
-func (o *Bundled) GetCa() *Ca {
-	if o == nil {
+func (b *Bundled) GetCa() *Ca {
+	if b == nil {
 		return nil
 	}
-	return o.Ca
+	return b.Ca
 }
 
-func (o *Bundled) GetCertificateParameters() *CertificateParameters {
-	if o == nil {
+func (b *Bundled) GetCertificateParameters() *CertificateParameters {
+	if b == nil {
 		return nil
 	}
-	return o.CertificateParameters
+	return b.CertificateParameters
 }
 
-func (o *Bundled) GetInsecureAllowSelfSigned() *bool {
-	if o == nil {
+func (b *Bundled) GetInsecureAllowSelfSigned() *bool {
+	if b == nil {
 		return nil
 	}
-	return o.InsecureAllowSelfSigned
+	return b.InsecureAllowSelfSigned
 }
 
-func (o *Bundled) GetMeshTrustCreation() *MeshTrustCreation {
-	if o == nil {
+func (b *Bundled) GetMeshTrustCreation() *MeshTrustCreation {
+	if b == nil {
 		return nil
 	}
-	return o.MeshTrustCreation
+	return b.MeshTrustCreation
 }
 
 // Agent - Spire agent configuration
@@ -467,11 +467,11 @@ type Agent struct {
 	Timeout *string `json:"timeout,omitempty"`
 }
 
-func (o *Agent) GetTimeout() *string {
-	if o == nil {
+func (a *Agent) GetTimeout() *string {
+	if a == nil {
 		return nil
 	}
-	return o.Timeout
+	return a.Timeout
 }
 
 // Spire indicates that SPIRE is used for certificate delivery.
@@ -480,11 +480,11 @@ type Spire struct {
 	Agent *Agent `json:"agent,omitempty"`
 }
 
-func (o *Spire) GetAgent() *Agent {
-	if o == nil {
+func (s *Spire) GetAgent() *Agent {
+	if s == nil {
 		return nil
 	}
-	return o.Agent
+	return s.Agent
 }
 
 // MeshIdentityItemSpecType - Type specifies the type of certificate provider.
@@ -524,47 +524,47 @@ type Provider struct {
 	Type MeshIdentityItemSpecType `json:"type"`
 }
 
-func (o *Provider) GetBundled() *Bundled {
-	if o == nil {
+func (p *Provider) GetBundled() *Bundled {
+	if p == nil {
 		return nil
 	}
-	return o.Bundled
+	return p.Bundled
 }
 
-func (o *Provider) GetSpire() *Spire {
-	if o == nil {
+func (p *Provider) GetSpire() *Spire {
+	if p == nil {
 		return nil
 	}
-	return o.Spire
+	return p.Spire
 }
 
-func (o *Provider) GetType() MeshIdentityItemSpecType {
-	if o == nil {
+func (p *Provider) GetType() MeshIdentityItemSpecType {
+	if p == nil {
 		return MeshIdentityItemSpecType("")
 	}
-	return o.Type
+	return p.Type
 }
 
 type Dataplane struct {
 	MatchLabels map[string]string `json:"matchLabels,omitempty"`
 }
 
-func (o *Dataplane) GetMatchLabels() map[string]string {
-	if o == nil {
+func (d *Dataplane) GetMatchLabels() map[string]string {
+	if d == nil {
 		return nil
 	}
-	return o.MatchLabels
+	return d.MatchLabels
 }
 
 type MeshIdentityItemSelector struct {
 	Dataplane *Dataplane `json:"dataplane,omitempty"`
 }
 
-func (o *MeshIdentityItemSelector) GetDataplane() *Dataplane {
-	if o == nil {
+func (m *MeshIdentityItemSelector) GetDataplane() *Dataplane {
+	if m == nil {
 		return nil
 	}
-	return o.Dataplane
+	return m.Dataplane
 }
 
 type SpiffeID struct {
@@ -572,18 +572,18 @@ type SpiffeID struct {
 	TrustDomain *string `json:"trustDomain,omitempty"`
 }
 
-func (o *SpiffeID) GetPath() *string {
-	if o == nil {
+func (s *SpiffeID) GetPath() *string {
+	if s == nil {
 		return nil
 	}
-	return o.Path
+	return s.Path
 }
 
-func (o *SpiffeID) GetTrustDomain() *string {
-	if o == nil {
+func (s *SpiffeID) GetTrustDomain() *string {
+	if s == nil {
 		return nil
 	}
-	return o.TrustDomain
+	return s.TrustDomain
 }
 
 // MeshIdentityItemSpec - Spec is the specification of the Kuma MeshIdentity resource.
@@ -593,25 +593,25 @@ type MeshIdentityItemSpec struct {
 	SpiffeID *SpiffeID                 `json:"spiffeID,omitempty"`
 }
 
-func (o *MeshIdentityItemSpec) GetProvider() Provider {
-	if o == nil {
+func (m *MeshIdentityItemSpec) GetProvider() Provider {
+	if m == nil {
 		return Provider{}
 	}
-	return o.Provider
+	return m.Provider
 }
 
-func (o *MeshIdentityItemSpec) GetSelector() *MeshIdentityItemSelector {
-	if o == nil {
+func (m *MeshIdentityItemSpec) GetSelector() *MeshIdentityItemSelector {
+	if m == nil {
 		return nil
 	}
-	return o.Selector
+	return m.Selector
 }
 
-func (o *MeshIdentityItemSpec) GetSpiffeID() *SpiffeID {
-	if o == nil {
+func (m *MeshIdentityItemSpec) GetSpiffeID() *SpiffeID {
+	if m == nil {
 		return nil
 	}
-	return o.SpiffeID
+	return m.SpiffeID
 }
 
 // MeshIdentityItemStatusStatus - status of the condition, one of True, False, Unknown.
@@ -660,32 +660,32 @@ type Conditions struct {
 	Type string `json:"type"`
 }
 
-func (o *Conditions) GetMessage() string {
-	if o == nil {
+func (c *Conditions) GetMessage() string {
+	if c == nil {
 		return ""
 	}
-	return o.Message
+	return c.Message
 }
 
-func (o *Conditions) GetReason() string {
-	if o == nil {
+func (c *Conditions) GetReason() string {
+	if c == nil {
 		return ""
 	}
-	return o.Reason
+	return c.Reason
 }
 
-func (o *Conditions) GetStatus() MeshIdentityItemStatusStatus {
-	if o == nil {
+func (c *Conditions) GetStatus() MeshIdentityItemStatusStatus {
+	if c == nil {
 		return MeshIdentityItemStatusStatus("")
 	}
-	return o.Status
+	return c.Status
 }
 
-func (o *Conditions) GetType() string {
-	if o == nil {
+func (c *Conditions) GetType() string {
+	if c == nil {
 		return ""
 	}
-	return o.Type
+	return c.Type
 }
 
 // MeshIdentityItemStatus - Status is the current status of the Kuma MeshIdentity resource.
@@ -694,11 +694,11 @@ type MeshIdentityItemStatus struct {
 	Conditions []Conditions `json:"conditions,omitempty"`
 }
 
-func (o *MeshIdentityItemStatus) GetConditions() []Conditions {
-	if o == nil {
+func (m *MeshIdentityItemStatus) GetConditions() []Conditions {
+	if m == nil {
 		return nil
 	}
-	return o.Conditions
+	return m.Conditions
 }
 
 // MeshIdentityItem - Successful response
@@ -728,73 +728,73 @@ func (m MeshIdentityItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshIdentityItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshIdentityItem) GetType() MeshIdentityItemType {
-	if o == nil {
+func (m *MeshIdentityItem) GetType() MeshIdentityItemType {
+	if m == nil {
 		return MeshIdentityItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshIdentityItem) GetMesh() *string {
-	if o == nil {
+func (m *MeshIdentityItem) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshIdentityItem) GetKri() *string {
-	if o == nil {
+func (m *MeshIdentityItem) GetKri() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Kri
+	return m.Kri
 }
 
-func (o *MeshIdentityItem) GetName() string {
-	if o == nil {
+func (m *MeshIdentityItem) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshIdentityItem) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshIdentityItem) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshIdentityItem) GetSpec() MeshIdentityItemSpec {
-	if o == nil {
+func (m *MeshIdentityItem) GetSpec() MeshIdentityItemSpec {
+	if m == nil {
 		return MeshIdentityItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }
 
-func (o *MeshIdentityItem) GetCreationTime() *time.Time {
-	if o == nil {
+func (m *MeshIdentityItem) GetCreationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.CreationTime
+	return m.CreationTime
 }
 
-func (o *MeshIdentityItem) GetModificationTime() *time.Time {
-	if o == nil {
+func (m *MeshIdentityItem) GetModificationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.ModificationTime
+	return m.ModificationTime
 }
 
-func (o *MeshIdentityItem) GetStatus() *MeshIdentityItemStatus {
-	if o == nil {
+func (m *MeshIdentityItem) GetStatus() *MeshIdentityItemStatus {
+	if m == nil {
 		return nil
 	}
-	return o.Status
+	return m.Status
 }
 
 type MeshIdentityItemInput struct {
@@ -815,43 +815,43 @@ func (m MeshIdentityItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshIdentityItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshIdentityItemInput) GetType() MeshIdentityItemType {
-	if o == nil {
+func (m *MeshIdentityItemInput) GetType() MeshIdentityItemType {
+	if m == nil {
 		return MeshIdentityItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshIdentityItemInput) GetMesh() *string {
-	if o == nil {
+func (m *MeshIdentityItemInput) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshIdentityItemInput) GetName() string {
-	if o == nil {
+func (m *MeshIdentityItemInput) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshIdentityItemInput) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshIdentityItemInput) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshIdentityItemInput) GetSpec() MeshIdentityItemSpec {
-	if o == nil {
+func (m *MeshIdentityItemInput) GetSpec() MeshIdentityItemSpec {
+	if m == nil {
 		return MeshIdentityItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }

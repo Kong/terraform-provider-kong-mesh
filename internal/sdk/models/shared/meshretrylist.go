@@ -11,23 +11,23 @@ type MeshRetryList struct {
 	Next *string `json:"next,omitempty"`
 }
 
-func (o *MeshRetryList) GetItems() []MeshRetryItem {
-	if o == nil {
+func (m *MeshRetryList) GetItems() []MeshRetryItem {
+	if m == nil {
 		return nil
 	}
-	return o.Items
+	return m.Items
 }
 
-func (o *MeshRetryList) GetTotal() *float64 {
-	if o == nil {
+func (m *MeshRetryList) GetTotal() *float64 {
+	if m == nil {
 		return nil
 	}
-	return o.Total
+	return m.Total
 }
 
-func (o *MeshRetryList) GetNext() *string {
-	if o == nil {
+func (m *MeshRetryList) GetNext() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Next
+	return m.Next
 }

@@ -11,23 +11,23 @@ type MeshHealthCheckList struct {
 	Next *string `json:"next,omitempty"`
 }
 
-func (o *MeshHealthCheckList) GetItems() []MeshHealthCheckItem {
-	if o == nil {
+func (m *MeshHealthCheckList) GetItems() []MeshHealthCheckItem {
+	if m == nil {
 		return nil
 	}
-	return o.Items
+	return m.Items
 }
 
-func (o *MeshHealthCheckList) GetTotal() *float64 {
-	if o == nil {
+func (m *MeshHealthCheckList) GetTotal() *float64 {
+	if m == nil {
 		return nil
 	}
-	return o.Total
+	return m.Total
 }
 
-func (o *MeshHealthCheckList) GetNext() *string {
-	if o == nil {
+func (m *MeshHealthCheckList) GetNext() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Next
+	return m.Next
 }

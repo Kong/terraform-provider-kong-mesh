@@ -6,6 +6,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
@@ -13,6 +14,250 @@ import (
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
 )
+
+func (r *MeshExternalServiceResourceModel) RefreshFromSharedMeshExternalServiceCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.MeshExternalServiceCreateOrUpdateSuccessResponse) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		r.Warnings = make([]types.String, 0, len(resp.Warnings))
+		for _, v := range resp.Warnings {
+			r.Warnings = append(r.Warnings, types.StringValue(v))
+		}
+	}
+
+	return diags
+}
+
+func (r *MeshExternalServiceResourceModel) RefreshFromSharedMeshExternalServiceItem(ctx context.Context, resp *shared.MeshExternalServiceItem) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
+		r.Kri = types.StringPointerValue(resp.Kri)
+		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
+		diags.Append(labelsDiags...)
+		labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
+		diags.Append(labelsDiags...)
+		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
+		r.Mesh = types.StringPointerValue(resp.Mesh)
+		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
+		r.Name = types.StringValue(resp.Name)
+		r.Spec.Endpoints = []tfTypes.Endpoints{}
+
+		for _, endpointsItem := range resp.Spec.Endpoints {
+			var endpoints tfTypes.Endpoints
+
+			endpoints.Address = types.StringValue(endpointsItem.Address)
+			endpoints.Port = types.Int32Value(int32(endpointsItem.Port))
+
+			r.Spec.Endpoints = append(r.Spec.Endpoints, endpoints)
+		}
+		if resp.Spec.Extension == nil {
+			r.Spec.Extension = nil
+		} else {
+			r.Spec.Extension = &tfTypes.MeshExternalServiceItemExtension{}
+			if resp.Spec.Extension.Config == nil {
+				r.Spec.Extension.Config = jsontypes.NewNormalizedNull()
+			} else {
+				configResult, _ := json.Marshal(resp.Spec.Extension.Config)
+				r.Spec.Extension.Config = jsontypes.NewNormalizedValue(string(configResult))
+			}
+			r.Spec.Extension.Type = types.StringValue(resp.Spec.Extension.Type)
+		}
+		r.Spec.Match.Port = types.Int32Value(int32(resp.Spec.Match.Port))
+		if resp.Spec.Match.Protocol != nil {
+			r.Spec.Match.Protocol = types.StringValue(string(*resp.Spec.Match.Protocol))
+		} else {
+			r.Spec.Match.Protocol = types.StringNull()
+		}
+		if resp.Spec.Match.Type != nil {
+			r.Spec.Match.Type = types.StringValue(string(*resp.Spec.Match.Type))
+		} else {
+			r.Spec.Match.Type = types.StringNull()
+		}
+		if resp.Spec.TLS == nil {
+			r.Spec.TLS = nil
+		} else {
+			r.Spec.TLS = &tfTypes.TLS{}
+			r.Spec.TLS.AllowRenegotiation = types.BoolPointerValue(resp.Spec.TLS.AllowRenegotiation)
+			r.Spec.TLS.Enabled = types.BoolPointerValue(resp.Spec.TLS.Enabled)
+			if resp.Spec.TLS.Verification == nil {
+				r.Spec.TLS.Verification = nil
+			} else {
+				r.Spec.TLS.Verification = &tfTypes.Verification{}
+				if resp.Spec.TLS.Verification.CaCert == nil {
+					r.Spec.TLS.Verification.CaCert = nil
+				} else {
+					r.Spec.TLS.Verification.CaCert = &tfTypes.CaCert{}
+					r.Spec.TLS.Verification.CaCert.Inline = types.StringPointerValue(resp.Spec.TLS.Verification.CaCert.Inline)
+					r.Spec.TLS.Verification.CaCert.InlineString = types.StringPointerValue(resp.Spec.TLS.Verification.CaCert.InlineString)
+					r.Spec.TLS.Verification.CaCert.Secret = types.StringPointerValue(resp.Spec.TLS.Verification.CaCert.Secret)
+				}
+				if resp.Spec.TLS.Verification.ClientCert == nil {
+					r.Spec.TLS.Verification.ClientCert = nil
+				} else {
+					r.Spec.TLS.Verification.ClientCert = &tfTypes.CaCert{}
+					r.Spec.TLS.Verification.ClientCert.Inline = types.StringPointerValue(resp.Spec.TLS.Verification.ClientCert.Inline)
+					r.Spec.TLS.Verification.ClientCert.InlineString = types.StringPointerValue(resp.Spec.TLS.Verification.ClientCert.InlineString)
+					r.Spec.TLS.Verification.ClientCert.Secret = types.StringPointerValue(resp.Spec.TLS.Verification.ClientCert.Secret)
+				}
+				if resp.Spec.TLS.Verification.ClientKey == nil {
+					r.Spec.TLS.Verification.ClientKey = nil
+				} else {
+					r.Spec.TLS.Verification.ClientKey = &tfTypes.CaCert{}
+					r.Spec.TLS.Verification.ClientKey.Inline = types.StringPointerValue(resp.Spec.TLS.Verification.ClientKey.Inline)
+					r.Spec.TLS.Verification.ClientKey.InlineString = types.StringPointerValue(resp.Spec.TLS.Verification.ClientKey.InlineString)
+					r.Spec.TLS.Verification.ClientKey.Secret = types.StringPointerValue(resp.Spec.TLS.Verification.ClientKey.Secret)
+				}
+				if resp.Spec.TLS.Verification.Mode != nil {
+					r.Spec.TLS.Verification.Mode = types.StringValue(string(*resp.Spec.TLS.Verification.Mode))
+				} else {
+					r.Spec.TLS.Verification.Mode = types.StringNull()
+				}
+				r.Spec.TLS.Verification.ServerName = types.StringPointerValue(resp.Spec.TLS.Verification.ServerName)
+				r.Spec.TLS.Verification.SubjectAltNames = []tfTypes.SubjectAltNames{}
+
+				for _, subjectAltNamesItem := range resp.Spec.TLS.Verification.SubjectAltNames {
+					var subjectAltNames tfTypes.SubjectAltNames
+
+					if subjectAltNamesItem.Type != nil {
+						subjectAltNames.Type = types.StringValue(string(*subjectAltNamesItem.Type))
+					} else {
+						subjectAltNames.Type = types.StringNull()
+					}
+					subjectAltNames.Value = types.StringValue(subjectAltNamesItem.Value)
+
+					r.Spec.TLS.Verification.SubjectAltNames = append(r.Spec.TLS.Verification.SubjectAltNames, subjectAltNames)
+				}
+			}
+			if resp.Spec.TLS.Version == nil {
+				r.Spec.TLS.Version = nil
+			} else {
+				r.Spec.TLS.Version = &tfTypes.Version{}
+				if resp.Spec.TLS.Version.Max != nil {
+					r.Spec.TLS.Version.Max = types.StringValue(string(*resp.Spec.TLS.Version.Max))
+				} else {
+					r.Spec.TLS.Version.Max = types.StringNull()
+				}
+				if resp.Spec.TLS.Version.Min != nil {
+					r.Spec.TLS.Version.Min = types.StringValue(string(*resp.Spec.TLS.Version.Min))
+				} else {
+					r.Spec.TLS.Version.Min = types.StringNull()
+				}
+			}
+		}
+		if resp.Status == nil {
+			r.Status = nil
+		} else {
+			r.Status = &tfTypes.Status{}
+			r.Status.Addresses = []tfTypes.Addresses{}
+
+			for _, addressesItem := range resp.Status.Addresses {
+				var addresses tfTypes.Addresses
+
+				addresses.Hostname = types.StringPointerValue(addressesItem.Hostname)
+				if addressesItem.HostnameGeneratorRef == nil {
+					addresses.HostnameGeneratorRef = nil
+				} else {
+					addresses.HostnameGeneratorRef = &tfTypes.HostnameGeneratorRef{}
+					addresses.HostnameGeneratorRef.CoreName = types.StringValue(addressesItem.HostnameGeneratorRef.CoreName)
+				}
+				addresses.Origin = types.StringPointerValue(addressesItem.Origin)
+
+				r.Status.Addresses = append(r.Status.Addresses, addresses)
+			}
+			r.Status.HostnameGenerators = []tfTypes.HostnameGenerators{}
+
+			for _, hostnameGeneratorsItem := range resp.Status.HostnameGenerators {
+				var hostnameGenerators tfTypes.HostnameGenerators
+
+				hostnameGenerators.Conditions = []tfTypes.MeshExternalServiceItemConditions{}
+
+				for _, conditionsItem := range hostnameGeneratorsItem.Conditions {
+					var conditions tfTypes.MeshExternalServiceItemConditions
+
+					conditions.Message = types.StringValue(conditionsItem.Message)
+					conditions.Reason = types.StringValue(conditionsItem.Reason)
+					conditions.Status = types.StringValue(string(conditionsItem.Status))
+					conditions.Type = types.StringValue(conditionsItem.Type)
+
+					hostnameGenerators.Conditions = append(hostnameGenerators.Conditions, conditions)
+				}
+				hostnameGenerators.HostnameGeneratorRef.CoreName = types.StringValue(hostnameGeneratorsItem.HostnameGeneratorRef.CoreName)
+
+				r.Status.HostnameGenerators = append(r.Status.HostnameGenerators, hostnameGenerators)
+			}
+			if resp.Status.Vip == nil {
+				r.Status.Vip = nil
+			} else {
+				r.Status.Vip = &tfTypes.Vip{}
+				r.Status.Vip.IP = types.StringPointerValue(resp.Status.Vip.IP)
+			}
+		}
+		r.Type = types.StringValue(string(resp.Type))
+	}
+
+	return diags
+}
+
+func (r *MeshExternalServiceResourceModel) ToOperationsDeleteMeshExternalServiceRequest(ctx context.Context) (*operations.DeleteMeshExternalServiceRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.DeleteMeshExternalServiceRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshExternalServiceResourceModel) ToOperationsGetMeshExternalServiceRequest(ctx context.Context) (*operations.GetMeshExternalServiceRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.GetMeshExternalServiceRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshExternalServiceResourceModel) ToOperationsPutMeshExternalServiceRequest(ctx context.Context) (*operations.PutMeshExternalServiceRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	meshExternalServiceItem, meshExternalServiceItemDiags := r.ToSharedMeshExternalServiceItemInput(ctx)
+	diags.Append(meshExternalServiceItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PutMeshExternalServiceRequest{
+		Mesh:                    mesh,
+		Name:                    name,
+		MeshExternalServiceItem: *meshExternalServiceItem,
+	}
+
+	return &out, diags
+}
 
 func (r *MeshExternalServiceResourceModel) ToSharedMeshExternalServiceItemInput(ctx context.Context) (*shared.MeshExternalServiceItemInput, diag.Diagnostics) {
 	var diags diag.Diagnostics
@@ -250,273 +495,4 @@ func (r *MeshExternalServiceResourceModel) ToSharedMeshExternalServiceItemInput(
 	}
 
 	return &out, diags
-}
-
-func (r *MeshExternalServiceResourceModel) ToOperationsPutMeshExternalServiceRequest(ctx context.Context) (*operations.PutMeshExternalServiceRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	meshExternalServiceItem, meshExternalServiceItemDiags := r.ToSharedMeshExternalServiceItemInput(ctx)
-	diags.Append(meshExternalServiceItemDiags...)
-
-	if diags.HasError() {
-		return nil, diags
-	}
-
-	out := operations.PutMeshExternalServiceRequest{
-		Mesh:                    mesh,
-		Name:                    name,
-		MeshExternalServiceItem: *meshExternalServiceItem,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshExternalServiceResourceModel) ToOperationsGetMeshExternalServiceRequest(ctx context.Context) (*operations.GetMeshExternalServiceRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	out := operations.GetMeshExternalServiceRequest{
-		Mesh: mesh,
-		Name: name,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshExternalServiceResourceModel) ToOperationsDeleteMeshExternalServiceRequest(ctx context.Context) (*operations.DeleteMeshExternalServiceRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	out := operations.DeleteMeshExternalServiceRequest{
-		Mesh: mesh,
-		Name: name,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshExternalServiceResourceModel) RefreshFromSharedMeshExternalServiceCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.MeshExternalServiceCreateOrUpdateSuccessResponse) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		r.Warnings = make([]types.String, 0, len(resp.Warnings))
-		for _, v := range resp.Warnings {
-			r.Warnings = append(r.Warnings, types.StringValue(v))
-		}
-	}
-
-	return diags
-}
-
-func (r *MeshExternalServiceResourceModel) RefreshFromSharedMeshExternalServiceItem(ctx context.Context, resp *shared.MeshExternalServiceItem) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
-		r.Kri = types.StringPointerValue(resp.Kri)
-		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
-		diags.Append(labelsDiags...)
-		labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
-		diags.Append(labelsDiags...)
-		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
-		r.Mesh = types.StringPointerValue(resp.Mesh)
-		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
-		r.Name = types.StringValue(resp.Name)
-		r.Spec.Endpoints = []tfTypes.Endpoints{}
-		if len(r.Spec.Endpoints) > len(resp.Spec.Endpoints) {
-			r.Spec.Endpoints = r.Spec.Endpoints[:len(resp.Spec.Endpoints)]
-		}
-		for endpointsCount, endpointsItem := range resp.Spec.Endpoints {
-			var endpoints tfTypes.Endpoints
-			endpoints.Address = types.StringValue(endpointsItem.Address)
-			endpoints.Port = types.Int32Value(int32(endpointsItem.Port))
-			if endpointsCount+1 > len(r.Spec.Endpoints) {
-				r.Spec.Endpoints = append(r.Spec.Endpoints, endpoints)
-			} else {
-				r.Spec.Endpoints[endpointsCount].Address = endpoints.Address
-				r.Spec.Endpoints[endpointsCount].Port = endpoints.Port
-			}
-		}
-		if resp.Spec.Extension == nil {
-			r.Spec.Extension = nil
-		} else {
-			r.Spec.Extension = &tfTypes.MeshExternalServiceItemExtension{}
-			if resp.Spec.Extension.Config == nil {
-				r.Spec.Extension.Config = types.StringNull()
-			} else {
-				configResult, _ := json.Marshal(resp.Spec.Extension.Config)
-				r.Spec.Extension.Config = types.StringValue(string(configResult))
-			}
-			r.Spec.Extension.Type = types.StringValue(resp.Spec.Extension.Type)
-		}
-		r.Spec.Match.Port = types.Int32Value(int32(resp.Spec.Match.Port))
-		if resp.Spec.Match.Protocol != nil {
-			r.Spec.Match.Protocol = types.StringValue(string(*resp.Spec.Match.Protocol))
-		} else {
-			r.Spec.Match.Protocol = types.StringNull()
-		}
-		if resp.Spec.Match.Type != nil {
-			r.Spec.Match.Type = types.StringValue(string(*resp.Spec.Match.Type))
-		} else {
-			r.Spec.Match.Type = types.StringNull()
-		}
-		if resp.Spec.TLS == nil {
-			r.Spec.TLS = nil
-		} else {
-			r.Spec.TLS = &tfTypes.TLS{}
-			r.Spec.TLS.AllowRenegotiation = types.BoolPointerValue(resp.Spec.TLS.AllowRenegotiation)
-			r.Spec.TLS.Enabled = types.BoolPointerValue(resp.Spec.TLS.Enabled)
-			if resp.Spec.TLS.Verification == nil {
-				r.Spec.TLS.Verification = nil
-			} else {
-				r.Spec.TLS.Verification = &tfTypes.Verification{}
-				if resp.Spec.TLS.Verification.CaCert == nil {
-					r.Spec.TLS.Verification.CaCert = nil
-				} else {
-					r.Spec.TLS.Verification.CaCert = &tfTypes.CaCert{}
-					r.Spec.TLS.Verification.CaCert.Inline = types.StringPointerValue(resp.Spec.TLS.Verification.CaCert.Inline)
-					r.Spec.TLS.Verification.CaCert.InlineString = types.StringPointerValue(resp.Spec.TLS.Verification.CaCert.InlineString)
-					r.Spec.TLS.Verification.CaCert.Secret = types.StringPointerValue(resp.Spec.TLS.Verification.CaCert.Secret)
-				}
-				if resp.Spec.TLS.Verification.ClientCert == nil {
-					r.Spec.TLS.Verification.ClientCert = nil
-				} else {
-					r.Spec.TLS.Verification.ClientCert = &tfTypes.CaCert{}
-					r.Spec.TLS.Verification.ClientCert.Inline = types.StringPointerValue(resp.Spec.TLS.Verification.ClientCert.Inline)
-					r.Spec.TLS.Verification.ClientCert.InlineString = types.StringPointerValue(resp.Spec.TLS.Verification.ClientCert.InlineString)
-					r.Spec.TLS.Verification.ClientCert.Secret = types.StringPointerValue(resp.Spec.TLS.Verification.ClientCert.Secret)
-				}
-				if resp.Spec.TLS.Verification.ClientKey == nil {
-					r.Spec.TLS.Verification.ClientKey = nil
-				} else {
-					r.Spec.TLS.Verification.ClientKey = &tfTypes.CaCert{}
-					r.Spec.TLS.Verification.ClientKey.Inline = types.StringPointerValue(resp.Spec.TLS.Verification.ClientKey.Inline)
-					r.Spec.TLS.Verification.ClientKey.InlineString = types.StringPointerValue(resp.Spec.TLS.Verification.ClientKey.InlineString)
-					r.Spec.TLS.Verification.ClientKey.Secret = types.StringPointerValue(resp.Spec.TLS.Verification.ClientKey.Secret)
-				}
-				if resp.Spec.TLS.Verification.Mode != nil {
-					r.Spec.TLS.Verification.Mode = types.StringValue(string(*resp.Spec.TLS.Verification.Mode))
-				} else {
-					r.Spec.TLS.Verification.Mode = types.StringNull()
-				}
-				r.Spec.TLS.Verification.ServerName = types.StringPointerValue(resp.Spec.TLS.Verification.ServerName)
-				r.Spec.TLS.Verification.SubjectAltNames = []tfTypes.SubjectAltNames{}
-				if len(r.Spec.TLS.Verification.SubjectAltNames) > len(resp.Spec.TLS.Verification.SubjectAltNames) {
-					r.Spec.TLS.Verification.SubjectAltNames = r.Spec.TLS.Verification.SubjectAltNames[:len(resp.Spec.TLS.Verification.SubjectAltNames)]
-				}
-				for subjectAltNamesCount, subjectAltNamesItem := range resp.Spec.TLS.Verification.SubjectAltNames {
-					var subjectAltNames tfTypes.SubjectAltNames
-					if subjectAltNamesItem.Type != nil {
-						subjectAltNames.Type = types.StringValue(string(*subjectAltNamesItem.Type))
-					} else {
-						subjectAltNames.Type = types.StringNull()
-					}
-					subjectAltNames.Value = types.StringValue(subjectAltNamesItem.Value)
-					if subjectAltNamesCount+1 > len(r.Spec.TLS.Verification.SubjectAltNames) {
-						r.Spec.TLS.Verification.SubjectAltNames = append(r.Spec.TLS.Verification.SubjectAltNames, subjectAltNames)
-					} else {
-						r.Spec.TLS.Verification.SubjectAltNames[subjectAltNamesCount].Type = subjectAltNames.Type
-						r.Spec.TLS.Verification.SubjectAltNames[subjectAltNamesCount].Value = subjectAltNames.Value
-					}
-				}
-			}
-			if resp.Spec.TLS.Version == nil {
-				r.Spec.TLS.Version = nil
-			} else {
-				r.Spec.TLS.Version = &tfTypes.Version{}
-				if resp.Spec.TLS.Version.Max != nil {
-					r.Spec.TLS.Version.Max = types.StringValue(string(*resp.Spec.TLS.Version.Max))
-				} else {
-					r.Spec.TLS.Version.Max = types.StringNull()
-				}
-				if resp.Spec.TLS.Version.Min != nil {
-					r.Spec.TLS.Version.Min = types.StringValue(string(*resp.Spec.TLS.Version.Min))
-				} else {
-					r.Spec.TLS.Version.Min = types.StringNull()
-				}
-			}
-		}
-		if resp.Status == nil {
-			r.Status = nil
-		} else {
-			r.Status = &tfTypes.Status{}
-			r.Status.Addresses = []tfTypes.Addresses{}
-			if len(r.Status.Addresses) > len(resp.Status.Addresses) {
-				r.Status.Addresses = r.Status.Addresses[:len(resp.Status.Addresses)]
-			}
-			for addressesCount, addressesItem := range resp.Status.Addresses {
-				var addresses tfTypes.Addresses
-				addresses.Hostname = types.StringPointerValue(addressesItem.Hostname)
-				if addressesItem.HostnameGeneratorRef == nil {
-					addresses.HostnameGeneratorRef = nil
-				} else {
-					addresses.HostnameGeneratorRef = &tfTypes.HostnameGeneratorRef{}
-					addresses.HostnameGeneratorRef.CoreName = types.StringValue(addressesItem.HostnameGeneratorRef.CoreName)
-				}
-				addresses.Origin = types.StringPointerValue(addressesItem.Origin)
-				if addressesCount+1 > len(r.Status.Addresses) {
-					r.Status.Addresses = append(r.Status.Addresses, addresses)
-				} else {
-					r.Status.Addresses[addressesCount].Hostname = addresses.Hostname
-					r.Status.Addresses[addressesCount].HostnameGeneratorRef = addresses.HostnameGeneratorRef
-					r.Status.Addresses[addressesCount].Origin = addresses.Origin
-				}
-			}
-			r.Status.HostnameGenerators = []tfTypes.HostnameGenerators{}
-			if len(r.Status.HostnameGenerators) > len(resp.Status.HostnameGenerators) {
-				r.Status.HostnameGenerators = r.Status.HostnameGenerators[:len(resp.Status.HostnameGenerators)]
-			}
-			for hostnameGeneratorsCount, hostnameGeneratorsItem := range resp.Status.HostnameGenerators {
-				var hostnameGenerators tfTypes.HostnameGenerators
-				hostnameGenerators.Conditions = []tfTypes.MeshExternalServiceItemConditions{}
-				for conditionsCount, conditionsItem := range hostnameGeneratorsItem.Conditions {
-					var conditions tfTypes.MeshExternalServiceItemConditions
-					conditions.Message = types.StringValue(conditionsItem.Message)
-					conditions.Reason = types.StringValue(conditionsItem.Reason)
-					conditions.Status = types.StringValue(string(conditionsItem.Status))
-					conditions.Type = types.StringValue(conditionsItem.Type)
-					if conditionsCount+1 > len(hostnameGenerators.Conditions) {
-						hostnameGenerators.Conditions = append(hostnameGenerators.Conditions, conditions)
-					} else {
-						hostnameGenerators.Conditions[conditionsCount].Message = conditions.Message
-						hostnameGenerators.Conditions[conditionsCount].Reason = conditions.Reason
-						hostnameGenerators.Conditions[conditionsCount].Status = conditions.Status
-						hostnameGenerators.Conditions[conditionsCount].Type = conditions.Type
-					}
-				}
-				hostnameGenerators.HostnameGeneratorRef.CoreName = types.StringValue(hostnameGeneratorsItem.HostnameGeneratorRef.CoreName)
-				if hostnameGeneratorsCount+1 > len(r.Status.HostnameGenerators) {
-					r.Status.HostnameGenerators = append(r.Status.HostnameGenerators, hostnameGenerators)
-				} else {
-					r.Status.HostnameGenerators[hostnameGeneratorsCount].Conditions = hostnameGenerators.Conditions
-					r.Status.HostnameGenerators[hostnameGeneratorsCount].HostnameGeneratorRef = hostnameGenerators.HostnameGeneratorRef
-				}
-			}
-			if resp.Status.Vip == nil {
-				r.Status.Vip = nil
-			} else {
-				r.Status.Vip = &tfTypes.Vip{}
-				r.Status.Vip.IP = types.StringPointerValue(resp.Status.Vip.IP)
-			}
-		}
-		r.Type = types.StringValue(string(resp.Type))
-	}
-
-	return diags
 }

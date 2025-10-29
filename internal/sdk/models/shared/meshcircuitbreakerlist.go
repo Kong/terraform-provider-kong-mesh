@@ -11,23 +11,23 @@ type MeshCircuitBreakerList struct {
 	Next *string `json:"next,omitempty"`
 }
 
-func (o *MeshCircuitBreakerList) GetItems() []MeshCircuitBreakerItem {
-	if o == nil {
+func (m *MeshCircuitBreakerList) GetItems() []MeshCircuitBreakerItem {
+	if m == nil {
 		return nil
 	}
-	return o.Items
+	return m.Items
 }
 
-func (o *MeshCircuitBreakerList) GetTotal() *float64 {
-	if o == nil {
+func (m *MeshCircuitBreakerList) GetTotal() *float64 {
+	if m == nil {
 		return nil
 	}
-	return o.Total
+	return m.Total
 }
 
-func (o *MeshCircuitBreakerList) GetNext() *string {
-	if o == nil {
+func (m *MeshCircuitBreakerList) GetNext() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Next
+	return m.Next
 }

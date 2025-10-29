@@ -62,7 +62,7 @@ func (s *MeshRetry) GetMeshRetry(ctx context.Context, request operations.GetMesh
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getMeshRetry",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -292,7 +292,7 @@ func (s *MeshRetry) PutMeshRetry(ctx context.Context, request operations.PutMesh
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "putMeshRetry",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "MeshRetryItem", "json", `request:"mediaType=application/json"`)
@@ -506,7 +506,7 @@ func (s *MeshRetry) DeleteMeshRetry(ctx context.Context, request operations.Dele
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "deleteMeshRetry",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -736,7 +736,7 @@ func (s *MeshRetry) GetMeshRetryList(ctx context.Context, request operations.Get
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getMeshRetryList",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 

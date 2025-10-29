@@ -11,6 +11,634 @@ import (
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
 )
 
+func (r *MeshResourceModel) RefreshFromSharedMeshCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.MeshCreateOrUpdateSuccessResponse) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		r.Warnings = make([]types.String, 0, len(resp.Warnings))
+		for _, v := range resp.Warnings {
+			r.Warnings = append(r.Warnings, types.StringValue(v))
+		}
+	}
+
+	return diags
+}
+
+func (r *MeshResourceModel) RefreshFromSharedMeshItem(ctx context.Context, resp *shared.MeshItem) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		if resp.Constraints == nil {
+			r.Constraints = nil
+		} else {
+			r.Constraints = &tfTypes.Constraints{}
+			if resp.Constraints.DataplaneProxy == nil {
+				r.Constraints.DataplaneProxy = nil
+			} else {
+				r.Constraints.DataplaneProxy = &tfTypes.DataplaneProxy{}
+				r.Constraints.DataplaneProxy.Requirements = []tfTypes.Requirements{}
+
+				for _, requirementsItem := range resp.Constraints.DataplaneProxy.Requirements {
+					var requirements tfTypes.Requirements
+
+					if len(requirementsItem.Tags) > 0 {
+						requirements.Tags = make(map[string]types.String, len(requirementsItem.Tags))
+						for key, value := range requirementsItem.Tags {
+							requirements.Tags[key] = types.StringValue(value)
+						}
+					}
+
+					r.Constraints.DataplaneProxy.Requirements = append(r.Constraints.DataplaneProxy.Requirements, requirements)
+				}
+				r.Constraints.DataplaneProxy.Restrictions = []tfTypes.Requirements{}
+
+				for _, restrictionsItem := range resp.Constraints.DataplaneProxy.Restrictions {
+					var restrictions tfTypes.Requirements
+
+					if len(restrictionsItem.Tags) > 0 {
+						restrictions.Tags = make(map[string]types.String, len(restrictionsItem.Tags))
+						for key1, value1 := range restrictionsItem.Tags {
+							restrictions.Tags[key1] = types.StringValue(value1)
+						}
+					}
+
+					r.Constraints.DataplaneProxy.Restrictions = append(r.Constraints.DataplaneProxy.Restrictions, restrictions)
+				}
+			}
+		}
+		if len(resp.Labels) > 0 {
+			r.Labels = make(map[string]types.String, len(resp.Labels))
+			for key2, value2 := range resp.Labels {
+				r.Labels[key2] = types.StringValue(value2)
+			}
+		}
+		if resp.Logging == nil {
+			r.Logging = nil
+		} else {
+			r.Logging = &tfTypes.Logging{}
+			r.Logging.Backends = []tfTypes.Backends{}
+
+			for _, backendsItem := range resp.Logging.Backends {
+				var backends tfTypes.Backends
+
+				if backendsItem.Conf != nil {
+					backends.Conf = &tfTypes.MeshItemLoggingConf{}
+					if backendsItem.Conf.FileLoggingBackendConfig != nil {
+						backends.Conf.FileLoggingBackendConfig = &tfTypes.FileLoggingBackendConfig{}
+						backends.Conf.FileLoggingBackendConfig.Path = types.StringPointerValue(backendsItem.Conf.FileLoggingBackendConfig.Path)
+					}
+					if backendsItem.Conf.TCPLoggingBackendConfig != nil {
+						backends.Conf.TCPLoggingBackendConfig = &tfTypes.TCPLoggingBackendConfig{}
+						backends.Conf.TCPLoggingBackendConfig.Address = types.StringPointerValue(backendsItem.Conf.TCPLoggingBackendConfig.Address)
+					}
+				}
+				backends.Format = types.StringPointerValue(backendsItem.Format)
+				backends.Name = types.StringPointerValue(backendsItem.Name)
+				backends.Type = types.StringPointerValue(backendsItem.Type)
+
+				r.Logging.Backends = append(r.Logging.Backends, backends)
+			}
+			r.Logging.DefaultBackend = types.StringPointerValue(resp.Logging.DefaultBackend)
+		}
+		if resp.MeshServices == nil {
+			r.MeshServices = nil
+		} else {
+			r.MeshServices = &tfTypes.MeshServices{}
+			if resp.MeshServices.Mode != nil {
+				r.MeshServices.Mode = &tfTypes.Mode{}
+				if resp.MeshServices.Mode.Str != nil {
+					r.MeshServices.Mode.Str = types.StringPointerValue(resp.MeshServices.Mode.Str)
+				}
+				if resp.MeshServices.Mode.Integer != nil {
+					r.MeshServices.Mode.Integer = types.Int64PointerValue(resp.MeshServices.Mode.Integer)
+				}
+			}
+		}
+		if resp.Metrics == nil {
+			r.Metrics = nil
+		} else {
+			r.Metrics = &tfTypes.Metrics{}
+			r.Metrics.Backends = []tfTypes.MeshItemBackends{}
+
+			for _, backendsItem1 := range resp.Metrics.Backends {
+				var backends1 tfTypes.MeshItemBackends
+
+				if backendsItem1.Conf != nil {
+					backends1.Conf = &tfTypes.MeshItemConf{}
+					if backendsItem1.Conf.PrometheusMetricsBackendConfig != nil {
+						backends1.Conf.PrometheusMetricsBackendConfig = &tfTypes.PrometheusMetricsBackendConfig{}
+						backends1.Conf.PrometheusMetricsBackendConfig.Aggregate = []tfTypes.Aggregate{}
+
+						for _, aggregateItem := range backendsItem1.Conf.PrometheusMetricsBackendConfig.Aggregate {
+							var aggregate tfTypes.Aggregate
+
+							aggregate.Address = types.StringPointerValue(aggregateItem.Address)
+							aggregate.Enabled = types.BoolPointerValue(aggregateItem.Enabled)
+							aggregate.Name = types.StringPointerValue(aggregateItem.Name)
+							aggregate.Path = types.StringPointerValue(aggregateItem.Path)
+							aggregate.Port = types.Int64PointerValue(aggregateItem.Port)
+
+							backends1.Conf.PrometheusMetricsBackendConfig.Aggregate = append(backends1.Conf.PrometheusMetricsBackendConfig.Aggregate, aggregate)
+						}
+						if backendsItem1.Conf.PrometheusMetricsBackendConfig.Envoy == nil {
+							backends1.Conf.PrometheusMetricsBackendConfig.Envoy = nil
+						} else {
+							backends1.Conf.PrometheusMetricsBackendConfig.Envoy = &tfTypes.Envoy{}
+							backends1.Conf.PrometheusMetricsBackendConfig.Envoy.FilterRegex = types.StringPointerValue(backendsItem1.Conf.PrometheusMetricsBackendConfig.Envoy.FilterRegex)
+							backends1.Conf.PrometheusMetricsBackendConfig.Envoy.UsedOnly = types.BoolPointerValue(backendsItem1.Conf.PrometheusMetricsBackendConfig.Envoy.UsedOnly)
+						}
+						backends1.Conf.PrometheusMetricsBackendConfig.Path = types.StringPointerValue(backendsItem1.Conf.PrometheusMetricsBackendConfig.Path)
+						backends1.Conf.PrometheusMetricsBackendConfig.Port = types.Int64PointerValue(backendsItem1.Conf.PrometheusMetricsBackendConfig.Port)
+						backends1.Conf.PrometheusMetricsBackendConfig.SkipMTLS = types.BoolPointerValue(backendsItem1.Conf.PrometheusMetricsBackendConfig.SkipMTLS)
+						if len(backendsItem1.Conf.PrometheusMetricsBackendConfig.Tags) > 0 {
+							backends1.Conf.PrometheusMetricsBackendConfig.Tags = make(map[string]types.String, len(backendsItem1.Conf.PrometheusMetricsBackendConfig.Tags))
+							for key3, value3 := range backendsItem1.Conf.PrometheusMetricsBackendConfig.Tags {
+								backends1.Conf.PrometheusMetricsBackendConfig.Tags[key3] = types.StringValue(value3)
+							}
+						}
+						if backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS == nil {
+							backends1.Conf.PrometheusMetricsBackendConfig.TLS = nil
+						} else {
+							backends1.Conf.PrometheusMetricsBackendConfig.TLS = &tfTypes.MeshServices{}
+							if backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS.Mode != nil {
+								backends1.Conf.PrometheusMetricsBackendConfig.TLS.Mode = &tfTypes.Mode{}
+								if backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Str != nil {
+									backends1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Str = types.StringPointerValue(backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Str)
+								}
+								if backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Integer != nil {
+									backends1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Integer = types.Int64PointerValue(backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Integer)
+								}
+							}
+						}
+					}
+				}
+				backends1.Name = types.StringPointerValue(backendsItem1.Name)
+				backends1.Type = types.StringPointerValue(backendsItem1.Type)
+
+				r.Metrics.Backends = append(r.Metrics.Backends, backends1)
+			}
+			r.Metrics.EnabledBackend = types.StringPointerValue(resp.Metrics.EnabledBackend)
+		}
+		if resp.Mtls == nil {
+			r.Mtls = nil
+		} else {
+			r.Mtls = &tfTypes.Mtls{}
+			r.Mtls.Backends = []tfTypes.MeshItemMtlsBackends{}
+
+			for _, backendsItem2 := range resp.Mtls.Backends {
+				var backends2 tfTypes.MeshItemMtlsBackends
+
+				if backendsItem2.Conf != nil {
+					backends2.Conf = &tfTypes.MeshItemMtlsConf{}
+					if backendsItem2.Conf.ACMCertificateAuthorityConfig != nil {
+						backends2.Conf.ACMCertificateAuthorityConfig = &tfTypes.ACMCertificateAuthorityConfig{}
+						backends2.Conf.ACMCertificateAuthorityConfig.Arn = types.StringPointerValue(backendsItem2.Conf.ACMCertificateAuthorityConfig.Arn)
+						if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth == nil {
+							backends2.Conf.ACMCertificateAuthorityConfig.Auth = nil
+						} else {
+							backends2.Conf.ACMCertificateAuthorityConfig.Auth = &tfTypes.Auth{}
+							if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials == nil {
+								backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials = nil
+							} else {
+								backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials = &tfTypes.AwsCredentials{}
+								if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey != nil {
+									backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey = &tfTypes.AccessKey{}
+									if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.AccessKeyDataSourceFile != nil {
+										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceFile = &tfTypes.AccessKeyDataSourceFile{}
+										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceFile.File = types.StringPointerValue(backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.AccessKeyDataSourceFile.File)
+									}
+									if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.AccessKeyDataSourceInline != nil {
+										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceInline = &tfTypes.AccessKeyDataSourceInline{}
+										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceInline.Inline = types.StringPointerValue(backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.AccessKeyDataSourceInline.Inline)
+									}
+									if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.AccessKeyDataSourceInlineString != nil {
+										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceInlineString = &tfTypes.AccessKeyDataSourceInlineString{}
+										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceInlineString.InlineString = types.StringPointerValue(backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.AccessKeyDataSourceInlineString.InlineString)
+									}
+									if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.AccessKeyDataSourceSecret != nil {
+										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceSecret = &tfTypes.AccessKeyDataSourceSecret{}
+										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceSecret.Secret = types.StringPointerValue(backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.AccessKeyDataSourceSecret.Secret)
+									}
+								}
+								if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret != nil {
+									backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret = &tfTypes.AccessKey{}
+									if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.AccessKeySecretDataSourceFile != nil {
+										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceFile = &tfTypes.AccessKeyDataSourceFile{}
+										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceFile.File = types.StringPointerValue(backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.AccessKeySecretDataSourceFile.File)
+									}
+									if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.AccessKeySecretDataSourceInline != nil {
+										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceInline = &tfTypes.AccessKeyDataSourceInline{}
+										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceInline.Inline = types.StringPointerValue(backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.AccessKeySecretDataSourceInline.Inline)
+									}
+									if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.AccessKeySecretDataSourceInlineString != nil {
+										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceInlineString = &tfTypes.AccessKeyDataSourceInlineString{}
+										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceInlineString.InlineString = types.StringPointerValue(backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.AccessKeySecretDataSourceInlineString.InlineString)
+									}
+									if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.AccessKeySecretDataSourceSecret != nil {
+										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceSecret = &tfTypes.AccessKeyDataSourceSecret{}
+										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceSecret.Secret = types.StringPointerValue(backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.AccessKeySecretDataSourceSecret.Secret)
+									}
+								}
+							}
+						}
+						if backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert != nil {
+							backends2.Conf.ACMCertificateAuthorityConfig.CaCert = &tfTypes.AccessKey{}
+							if backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.CaCertDataSourceFile != nil {
+								backends2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceFile = &tfTypes.AccessKeyDataSourceFile{}
+								backends2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceFile.File = types.StringPointerValue(backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.CaCertDataSourceFile.File)
+							}
+							if backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.CaCertDataSourceInline != nil {
+								backends2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceInline = &tfTypes.AccessKeyDataSourceInline{}
+								backends2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceInline.Inline = types.StringPointerValue(backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.CaCertDataSourceInline.Inline)
+							}
+							if backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.CaCertDataSourceInlineString != nil {
+								backends2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceInlineString = &tfTypes.AccessKeyDataSourceInlineString{}
+								backends2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceInlineString.InlineString = types.StringPointerValue(backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.CaCertDataSourceInlineString.InlineString)
+							}
+							if backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.CaCertDataSourceSecret != nil {
+								backends2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceSecret = &tfTypes.AccessKeyDataSourceSecret{}
+								backends2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceSecret.Secret = types.StringPointerValue(backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.CaCertDataSourceSecret.Secret)
+							}
+						}
+						backends2.Conf.ACMCertificateAuthorityConfig.CommonName = types.StringPointerValue(backendsItem2.Conf.ACMCertificateAuthorityConfig.CommonName)
+					}
+					if backendsItem2.Conf.BuiltinCertificateAuthorityConfig != nil {
+						backends2.Conf.BuiltinCertificateAuthorityConfig = &tfTypes.BuiltinCertificateAuthorityConfig{}
+						if backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert == nil {
+							backends2.Conf.BuiltinCertificateAuthorityConfig.CaCert = nil
+						} else {
+							backends2.Conf.BuiltinCertificateAuthorityConfig.CaCert = &tfTypes.BuiltinCertificateAuthorityConfigConfCaCert{}
+							backends2.Conf.BuiltinCertificateAuthorityConfig.CaCert.Expiration = types.StringPointerValue(backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert.Expiration)
+							backends2.Conf.BuiltinCertificateAuthorityConfig.CaCert.RsaBits = types.Int64PointerValue(backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert.RsaBits)
+						}
+					}
+					if backendsItem2.Conf.CertManagerCertificateAuthorityConfig != nil {
+						backends2.Conf.CertManagerCertificateAuthorityConfig = &tfTypes.CertManagerCertificateAuthorityConfig{}
+						if backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert != nil {
+							backends2.Conf.CertManagerCertificateAuthorityConfig.CaCert = &tfTypes.AccessKey{}
+							if backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.CertManagerCertificateAuthorityConfigCaCertDataSourceFile != nil {
+								backends2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceFile = &tfTypes.AccessKeyDataSourceFile{}
+								backends2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceFile.File = types.StringPointerValue(backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.CertManagerCertificateAuthorityConfigCaCertDataSourceFile.File)
+							}
+							if backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.CertManagerCertificateAuthorityConfigCaCertDataSourceInline != nil {
+								backends2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceInline = &tfTypes.AccessKeyDataSourceInline{}
+								backends2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceInline.Inline = types.StringPointerValue(backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.CertManagerCertificateAuthorityConfigCaCertDataSourceInline.Inline)
+							}
+							if backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.CertManagerCertificateAuthorityConfigCaCertDataSourceInlineString != nil {
+								backends2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceInlineString = &tfTypes.AccessKeyDataSourceInlineString{}
+								backends2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceInlineString.InlineString = types.StringPointerValue(backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.CertManagerCertificateAuthorityConfigCaCertDataSourceInlineString.InlineString)
+							}
+							if backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.CertManagerCertificateAuthorityConfigCaCertDataSourceSecret != nil {
+								backends2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceSecret = &tfTypes.AccessKeyDataSourceSecret{}
+								backends2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceSecret.Secret = types.StringPointerValue(backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.CertManagerCertificateAuthorityConfigCaCertDataSourceSecret.Secret)
+							}
+						}
+						backends2.Conf.CertManagerCertificateAuthorityConfig.CommonName = types.StringPointerValue(backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CommonName)
+						backends2.Conf.CertManagerCertificateAuthorityConfig.DNSNames = make([]types.String, 0, len(backendsItem2.Conf.CertManagerCertificateAuthorityConfig.DNSNames))
+						for _, v := range backendsItem2.Conf.CertManagerCertificateAuthorityConfig.DNSNames {
+							backends2.Conf.CertManagerCertificateAuthorityConfig.DNSNames = append(backends2.Conf.CertManagerCertificateAuthorityConfig.DNSNames, types.StringValue(v))
+						}
+						if backendsItem2.Conf.CertManagerCertificateAuthorityConfig.IssuerRef == nil {
+							backends2.Conf.CertManagerCertificateAuthorityConfig.IssuerRef = nil
+						} else {
+							backends2.Conf.CertManagerCertificateAuthorityConfig.IssuerRef = &tfTypes.IssuerRef{}
+							backends2.Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Group = types.StringPointerValue(backendsItem2.Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Group)
+							backends2.Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Kind = types.StringPointerValue(backendsItem2.Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Kind)
+							backends2.Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Name = types.StringPointerValue(backendsItem2.Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Name)
+						}
+					}
+					if backendsItem2.Conf.ProvidedCertificateAuthorityConfig != nil {
+						backends2.Conf.ProvidedCertificateAuthorityConfig = &tfTypes.ProvidedCertificateAuthorityConfig{}
+						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert != nil {
+							backends2.Conf.ProvidedCertificateAuthorityConfig.Cert = &tfTypes.AccessKey{}
+							if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.CertDataSourceFile != nil {
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceFile = &tfTypes.AccessKeyDataSourceFile{}
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceFile.File = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.CertDataSourceFile.File)
+							}
+							if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.CertDataSourceInline != nil {
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInline = &tfTypes.AccessKeyDataSourceInline{}
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInline.Inline = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.CertDataSourceInline.Inline)
+							}
+							if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.CertDataSourceInlineString != nil {
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInlineString = &tfTypes.AccessKeyDataSourceInlineString{}
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInlineString.InlineString = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.CertDataSourceInlineString.InlineString)
+							}
+							if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.CertDataSourceSecret != nil {
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceSecret = &tfTypes.AccessKeyDataSourceSecret{}
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceSecret.Secret = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.CertDataSourceSecret.Secret)
+							}
+						}
+						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key != nil {
+							backends2.Conf.ProvidedCertificateAuthorityConfig.Key = &tfTypes.AccessKey{}
+							if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.KeyDataSourceFile != nil {
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceFile = &tfTypes.AccessKeyDataSourceFile{}
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceFile.File = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.KeyDataSourceFile.File)
+							}
+							if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.KeyDataSourceInline != nil {
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInline = &tfTypes.AccessKeyDataSourceInline{}
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInline.Inline = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.KeyDataSourceInline.Inline)
+							}
+							if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.KeyDataSourceInlineString != nil {
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInlineString = &tfTypes.AccessKeyDataSourceInlineString{}
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInlineString.InlineString = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.KeyDataSourceInlineString.InlineString)
+							}
+							if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.KeyDataSourceSecret != nil {
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceSecret = &tfTypes.AccessKeyDataSourceSecret{}
+								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceSecret.Secret = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.KeyDataSourceSecret.Secret)
+							}
+						}
+					}
+					if backendsItem2.Conf.VaultCertificateAuthorityConfig != nil {
+						backends2.Conf.VaultCertificateAuthorityConfig = &tfTypes.VaultCertificateAuthorityConfig{}
+						if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp != nil {
+							backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp = &tfTypes.VaultCertificateAuthorityConfigFromCp{}
+							if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp == nil {
+								backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp = nil
+							} else {
+								backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp = &tfTypes.FromCp{}
+								backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Address = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Address)
+								backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.AgentAddress = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.AgentAddress)
+								if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth != nil {
+									backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth = &tfTypes.VaultCertificateAuthorityConfigAuth{}
+									if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws != nil {
+										backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws = &tfTypes.VaultCertificateAuthorityConfigFromCpAuthAws{}
+										if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws == nil {
+											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws = nil
+										} else {
+											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws = &tfTypes.Aws{}
+											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.IamServerIDHeader = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.IamServerIDHeader)
+											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Role = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Role)
+											if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type != nil {
+												backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type = &tfTypes.Mode{}
+												if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type.Str != nil {
+													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type.Str = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type.Str)
+												}
+												if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type.Integer != nil {
+													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type.Integer = types.Int64PointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type.Integer)
+												}
+											}
+										}
+									}
+									if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS != nil {
+										backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS = &tfTypes.VaultCertificateAuthorityConfigFromCpAuthTLS{}
+										if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS == nil {
+											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS = nil
+										} else {
+											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS = &tfTypes.AuthTLS{}
+											if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert != nil {
+												backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert = &tfTypes.AccessKey{}
+												if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.ClientCertDataSourceFile != nil {
+													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceFile = &tfTypes.AccessKeyDataSourceFile{}
+													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceFile.File = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.ClientCertDataSourceFile.File)
+												}
+												if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.ClientCertDataSourceInline != nil {
+													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceInline = &tfTypes.AccessKeyDataSourceInline{}
+													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceInline.Inline = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.ClientCertDataSourceInline.Inline)
+												}
+												if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.ClientCertDataSourceInlineString != nil {
+													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceInlineString = &tfTypes.AccessKeyDataSourceInlineString{}
+													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceInlineString.InlineString = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.ClientCertDataSourceInlineString.InlineString)
+												}
+												if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.ClientCertDataSourceSecret != nil {
+													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceSecret = &tfTypes.AccessKeyDataSourceSecret{}
+													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceSecret.Secret = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.ClientCertDataSourceSecret.Secret)
+												}
+											}
+											if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey != nil {
+												backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey = &tfTypes.AccessKey{}
+												if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.ClientKeyDataSourceFile != nil {
+													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceFile = &tfTypes.AccessKeyDataSourceFile{}
+													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceFile.File = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.ClientKeyDataSourceFile.File)
+												}
+												if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.ClientKeyDataSourceInline != nil {
+													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceInline = &tfTypes.AccessKeyDataSourceInline{}
+													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceInline.Inline = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.ClientKeyDataSourceInline.Inline)
+												}
+												if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.ClientKeyDataSourceInlineString != nil {
+													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceInlineString = &tfTypes.AccessKeyDataSourceInlineString{}
+													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceInlineString.InlineString = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.ClientKeyDataSourceInlineString.InlineString)
+												}
+												if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.ClientKeyDataSourceSecret != nil {
+													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceSecret = &tfTypes.AccessKeyDataSourceSecret{}
+													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceSecret.Secret = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.ClientKeyDataSourceSecret.Secret)
+												}
+											}
+										}
+									}
+									if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken != nil {
+										backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken = &tfTypes.VaultCertificateAuthorityConfigFromCpAuthToken{}
+										if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token != nil {
+											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token = &tfTypes.AccessKey{}
+											if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.TokenDataSourceFile != nil {
+												backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceFile = &tfTypes.AccessKeyDataSourceFile{}
+												backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceFile.File = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.TokenDataSourceFile.File)
+											}
+											if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.TokenDataSourceInline != nil {
+												backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceInline = &tfTypes.AccessKeyDataSourceInline{}
+												backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceInline.Inline = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.TokenDataSourceInline.Inline)
+											}
+											if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.TokenDataSourceInlineString != nil {
+												backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceInlineString = &tfTypes.AccessKeyDataSourceInlineString{}
+												backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceInlineString.InlineString = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.TokenDataSourceInlineString.InlineString)
+											}
+											if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.TokenDataSourceSecret != nil {
+												backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceSecret = &tfTypes.AccessKeyDataSourceSecret{}
+												backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceSecret.Secret = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.TokenDataSourceSecret.Secret)
+											}
+										}
+									}
+								}
+								backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.CommonName = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.CommonName)
+								backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Namespace = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Namespace)
+								backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Pki = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Pki)
+								backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Role = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Role)
+								if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS == nil {
+									backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS = nil
+								} else {
+									backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS = &tfTypes.VaultCertificateAuthorityConfigTLS{}
+									if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert != nil {
+										backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert = &tfTypes.AccessKey{}
+										if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.VaultCertificateAuthorityConfigFromCpCaCertDataSourceFile != nil {
+											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceFile = &tfTypes.AccessKeyDataSourceFile{}
+											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceFile.File = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.VaultCertificateAuthorityConfigFromCpCaCertDataSourceFile.File)
+										}
+										if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.VaultCertificateAuthorityConfigFromCpCaCertDataSourceInline != nil {
+											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceInline = &tfTypes.AccessKeyDataSourceInline{}
+											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceInline.Inline = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.VaultCertificateAuthorityConfigFromCpCaCertDataSourceInline.Inline)
+										}
+										if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.VaultCertificateAuthorityConfigFromCpCaCertDataSourceInlineString != nil {
+											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceInlineString = &tfTypes.AccessKeyDataSourceInlineString{}
+											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceInlineString.InlineString = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.VaultCertificateAuthorityConfigFromCpCaCertDataSourceInlineString.InlineString)
+										}
+										if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.VaultCertificateAuthorityConfigFromCpCaCertDataSourceSecret != nil {
+											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceSecret = &tfTypes.AccessKeyDataSourceSecret{}
+											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceSecret.Secret = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.VaultCertificateAuthorityConfigFromCpCaCertDataSourceSecret.Secret)
+										}
+									}
+									backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.ServerName = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.ServerName)
+									backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.SkipVerify = types.BoolPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.SkipVerify)
+								}
+							}
+						}
+					}
+				}
+				if backendsItem2.DpCert == nil {
+					backends2.DpCert = nil
+				} else {
+					backends2.DpCert = &tfTypes.DpCert{}
+					if backendsItem2.DpCert.RequestTimeout == nil {
+						backends2.DpCert.RequestTimeout = nil
+					} else {
+						backends2.DpCert.RequestTimeout = &tfTypes.RequestTimeout{}
+						backends2.DpCert.RequestTimeout.Nanos = types.Int64PointerValue(backendsItem2.DpCert.RequestTimeout.Nanos)
+						backends2.DpCert.RequestTimeout.Seconds = types.Int64PointerValue(backendsItem2.DpCert.RequestTimeout.Seconds)
+					}
+					if backendsItem2.DpCert.Rotation == nil {
+						backends2.DpCert.Rotation = nil
+					} else {
+						backends2.DpCert.Rotation = &tfTypes.Rotation{}
+						backends2.DpCert.Rotation.Expiration = types.StringPointerValue(backendsItem2.DpCert.Rotation.Expiration)
+					}
+				}
+				if backendsItem2.Mode != nil {
+					backends2.Mode = &tfTypes.Mode{}
+					if backendsItem2.Mode.Str != nil {
+						backends2.Mode.Str = types.StringPointerValue(backendsItem2.Mode.Str)
+					}
+					if backendsItem2.Mode.Integer != nil {
+						backends2.Mode.Integer = types.Int64PointerValue(backendsItem2.Mode.Integer)
+					}
+				}
+				backends2.Name = types.StringPointerValue(backendsItem2.Name)
+				if backendsItem2.RootChain == nil {
+					backends2.RootChain = nil
+				} else {
+					backends2.RootChain = &tfTypes.RootChain{}
+					if backendsItem2.RootChain.RequestTimeout == nil {
+						backends2.RootChain.RequestTimeout = nil
+					} else {
+						backends2.RootChain.RequestTimeout = &tfTypes.RequestTimeout{}
+						backends2.RootChain.RequestTimeout.Nanos = types.Int64PointerValue(backendsItem2.RootChain.RequestTimeout.Nanos)
+						backends2.RootChain.RequestTimeout.Seconds = types.Int64PointerValue(backendsItem2.RootChain.RequestTimeout.Seconds)
+					}
+				}
+				backends2.Type = types.StringPointerValue(backendsItem2.Type)
+
+				r.Mtls.Backends = append(r.Mtls.Backends, backends2)
+			}
+			r.Mtls.EnabledBackend = types.StringPointerValue(resp.Mtls.EnabledBackend)
+			r.Mtls.SkipValidation = types.BoolPointerValue(resp.Mtls.SkipValidation)
+		}
+		r.Name = types.StringValue(resp.Name)
+		if resp.Networking == nil {
+			r.Networking = nil
+		} else {
+			r.Networking = &tfTypes.Networking{}
+			if resp.Networking.Outbound == nil {
+				r.Networking.Outbound = nil
+			} else {
+				r.Networking.Outbound = &tfTypes.Outbound{}
+				r.Networking.Outbound.Passthrough = types.BoolPointerValue(resp.Networking.Outbound.Passthrough)
+			}
+		}
+		if resp.Routing == nil {
+			r.Routing = nil
+		} else {
+			r.Routing = &tfTypes.Routing{}
+			r.Routing.DefaultForbidMeshExternalServiceAccess = types.BoolPointerValue(resp.Routing.DefaultForbidMeshExternalServiceAccess)
+			r.Routing.LocalityAwareLoadBalancing = types.BoolPointerValue(resp.Routing.LocalityAwareLoadBalancing)
+			r.Routing.ZoneEgress = types.BoolPointerValue(resp.Routing.ZoneEgress)
+		}
+		r.SkipCreatingInitialPolicies = make([]types.String, 0, len(resp.SkipCreatingInitialPolicies))
+		for _, v := range resp.SkipCreatingInitialPolicies {
+			r.SkipCreatingInitialPolicies = append(r.SkipCreatingInitialPolicies, types.StringValue(v))
+		}
+		if resp.Tracing == nil {
+			r.Tracing = nil
+		} else {
+			r.Tracing = &tfTypes.Tracing{}
+			r.Tracing.Backends = []tfTypes.MeshItemTracingBackends{}
+
+			for _, backendsItem3 := range resp.Tracing.Backends {
+				var backends3 tfTypes.MeshItemTracingBackends
+
+				if backendsItem3.Conf != nil {
+					backends3.Conf = &tfTypes.MeshItemTracingConf{}
+					if backendsItem3.Conf.DatadogTracingBackendConfig != nil {
+						backends3.Conf.DatadogTracingBackendConfig = &tfTypes.DatadogTracingBackendConfig{}
+						backends3.Conf.DatadogTracingBackendConfig.Address = types.StringPointerValue(backendsItem3.Conf.DatadogTracingBackendConfig.Address)
+						backends3.Conf.DatadogTracingBackendConfig.Port = types.Int64PointerValue(backendsItem3.Conf.DatadogTracingBackendConfig.Port)
+						backends3.Conf.DatadogTracingBackendConfig.SplitService = types.BoolPointerValue(backendsItem3.Conf.DatadogTracingBackendConfig.SplitService)
+					}
+					if backendsItem3.Conf.ZipkinTracingBackendConfig != nil {
+						backends3.Conf.ZipkinTracingBackendConfig = &tfTypes.ZipkinTracingBackendConfig{}
+						backends3.Conf.ZipkinTracingBackendConfig.APIVersion = types.StringPointerValue(backendsItem3.Conf.ZipkinTracingBackendConfig.APIVersion)
+						backends3.Conf.ZipkinTracingBackendConfig.SharedSpanContext = types.BoolPointerValue(backendsItem3.Conf.ZipkinTracingBackendConfig.SharedSpanContext)
+						backends3.Conf.ZipkinTracingBackendConfig.TraceId128bit = types.BoolPointerValue(backendsItem3.Conf.ZipkinTracingBackendConfig.TraceId128bit)
+						backends3.Conf.ZipkinTracingBackendConfig.URL = types.StringPointerValue(backendsItem3.Conf.ZipkinTracingBackendConfig.URL)
+					}
+				}
+				backends3.Name = types.StringPointerValue(backendsItem3.Name)
+				backends3.Sampling = types.Float64PointerValue(backendsItem3.Sampling)
+				backends3.Type = types.StringPointerValue(backendsItem3.Type)
+
+				r.Tracing.Backends = append(r.Tracing.Backends, backends3)
+			}
+			r.Tracing.DefaultBackend = types.StringPointerValue(resp.Tracing.DefaultBackend)
+		}
+		r.Type = types.StringValue(resp.Type)
+	}
+
+	return diags
+}
+
+func (r *MeshResourceModel) ToOperationsDeleteMeshRequest(ctx context.Context) (*operations.DeleteMeshRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.DeleteMeshRequest{
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshResourceModel) ToOperationsGetMeshRequest(ctx context.Context) (*operations.GetMeshRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.GetMeshRequest{
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshResourceModel) ToOperationsPutMeshRequest(ctx context.Context) (*operations.PutMeshRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var name string
+	name = r.Name.ValueString()
+
+	meshItem, meshItemDiags := r.ToSharedMeshItem(ctx)
+	diags.Append(meshItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PutMeshRequest{
+		Name:     name,
+		MeshItem: *meshItem,
+	}
+
+	return &out, diags
+}
+
 func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshItem, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -1669,674 +2297,4 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 	}
 
 	return &out, diags
-}
-
-func (r *MeshResourceModel) ToOperationsPutMeshRequest(ctx context.Context) (*operations.PutMeshRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var name string
-	name = r.Name.ValueString()
-
-	meshItem, meshItemDiags := r.ToSharedMeshItem(ctx)
-	diags.Append(meshItemDiags...)
-
-	if diags.HasError() {
-		return nil, diags
-	}
-
-	out := operations.PutMeshRequest{
-		Name:     name,
-		MeshItem: *meshItem,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshResourceModel) ToOperationsGetMeshRequest(ctx context.Context) (*operations.GetMeshRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var name string
-	name = r.Name.ValueString()
-
-	out := operations.GetMeshRequest{
-		Name: name,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshResourceModel) ToOperationsDeleteMeshRequest(ctx context.Context) (*operations.DeleteMeshRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var name string
-	name = r.Name.ValueString()
-
-	out := operations.DeleteMeshRequest{
-		Name: name,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshResourceModel) RefreshFromSharedMeshCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.MeshCreateOrUpdateSuccessResponse) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		r.Warnings = make([]types.String, 0, len(resp.Warnings))
-		for _, v := range resp.Warnings {
-			r.Warnings = append(r.Warnings, types.StringValue(v))
-		}
-	}
-
-	return diags
-}
-
-func (r *MeshResourceModel) RefreshFromSharedMeshItem(ctx context.Context, resp *shared.MeshItem) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		if resp.Constraints == nil {
-			r.Constraints = nil
-		} else {
-			r.Constraints = &tfTypes.Constraints{}
-			if resp.Constraints.DataplaneProxy == nil {
-				r.Constraints.DataplaneProxy = nil
-			} else {
-				r.Constraints.DataplaneProxy = &tfTypes.DataplaneProxy{}
-				r.Constraints.DataplaneProxy.Requirements = []tfTypes.Requirements{}
-				if len(r.Constraints.DataplaneProxy.Requirements) > len(resp.Constraints.DataplaneProxy.Requirements) {
-					r.Constraints.DataplaneProxy.Requirements = r.Constraints.DataplaneProxy.Requirements[:len(resp.Constraints.DataplaneProxy.Requirements)]
-				}
-				for requirementsCount, requirementsItem := range resp.Constraints.DataplaneProxy.Requirements {
-					var requirements tfTypes.Requirements
-					if len(requirementsItem.Tags) > 0 {
-						requirements.Tags = make(map[string]types.String, len(requirementsItem.Tags))
-						for key, value := range requirementsItem.Tags {
-							requirements.Tags[key] = types.StringValue(value)
-						}
-					}
-					if requirementsCount+1 > len(r.Constraints.DataplaneProxy.Requirements) {
-						r.Constraints.DataplaneProxy.Requirements = append(r.Constraints.DataplaneProxy.Requirements, requirements)
-					} else {
-						r.Constraints.DataplaneProxy.Requirements[requirementsCount].Tags = requirements.Tags
-					}
-				}
-				r.Constraints.DataplaneProxy.Restrictions = []tfTypes.Requirements{}
-				if len(r.Constraints.DataplaneProxy.Restrictions) > len(resp.Constraints.DataplaneProxy.Restrictions) {
-					r.Constraints.DataplaneProxy.Restrictions = r.Constraints.DataplaneProxy.Restrictions[:len(resp.Constraints.DataplaneProxy.Restrictions)]
-				}
-				for restrictionsCount, restrictionsItem := range resp.Constraints.DataplaneProxy.Restrictions {
-					var restrictions tfTypes.Requirements
-					if len(restrictionsItem.Tags) > 0 {
-						restrictions.Tags = make(map[string]types.String, len(restrictionsItem.Tags))
-						for key1, value1 := range restrictionsItem.Tags {
-							restrictions.Tags[key1] = types.StringValue(value1)
-						}
-					}
-					if restrictionsCount+1 > len(r.Constraints.DataplaneProxy.Restrictions) {
-						r.Constraints.DataplaneProxy.Restrictions = append(r.Constraints.DataplaneProxy.Restrictions, restrictions)
-					} else {
-						r.Constraints.DataplaneProxy.Restrictions[restrictionsCount].Tags = restrictions.Tags
-					}
-				}
-			}
-		}
-		if len(resp.Labels) > 0 {
-			r.Labels = make(map[string]types.String, len(resp.Labels))
-			for key2, value2 := range resp.Labels {
-				r.Labels[key2] = types.StringValue(value2)
-			}
-		}
-		if resp.Logging == nil {
-			r.Logging = nil
-		} else {
-			r.Logging = &tfTypes.Logging{}
-			r.Logging.Backends = []tfTypes.Backends{}
-			if len(r.Logging.Backends) > len(resp.Logging.Backends) {
-				r.Logging.Backends = r.Logging.Backends[:len(resp.Logging.Backends)]
-			}
-			for backendsCount, backendsItem := range resp.Logging.Backends {
-				var backends tfTypes.Backends
-				if backendsItem.Conf != nil {
-					backends.Conf = &tfTypes.MeshItemLoggingConf{}
-					if backendsItem.Conf.FileLoggingBackendConfig != nil {
-						backends.Conf.FileLoggingBackendConfig = &tfTypes.FileLoggingBackendConfig{}
-						backends.Conf.FileLoggingBackendConfig.Path = types.StringPointerValue(backendsItem.Conf.FileLoggingBackendConfig.Path)
-					}
-					if backendsItem.Conf.TCPLoggingBackendConfig != nil {
-						backends.Conf.TCPLoggingBackendConfig = &tfTypes.TCPLoggingBackendConfig{}
-						backends.Conf.TCPLoggingBackendConfig.Address = types.StringPointerValue(backendsItem.Conf.TCPLoggingBackendConfig.Address)
-					}
-				}
-				backends.Format = types.StringPointerValue(backendsItem.Format)
-				backends.Name = types.StringPointerValue(backendsItem.Name)
-				backends.Type = types.StringPointerValue(backendsItem.Type)
-				if backendsCount+1 > len(r.Logging.Backends) {
-					r.Logging.Backends = append(r.Logging.Backends, backends)
-				} else {
-					r.Logging.Backends[backendsCount].Conf = backends.Conf
-					r.Logging.Backends[backendsCount].Format = backends.Format
-					r.Logging.Backends[backendsCount].Name = backends.Name
-					r.Logging.Backends[backendsCount].Type = backends.Type
-				}
-			}
-			r.Logging.DefaultBackend = types.StringPointerValue(resp.Logging.DefaultBackend)
-		}
-		if resp.MeshServices == nil {
-			r.MeshServices = nil
-		} else {
-			r.MeshServices = &tfTypes.MeshServices{}
-			if resp.MeshServices.Mode != nil {
-				r.MeshServices.Mode = &tfTypes.Mode{}
-				if resp.MeshServices.Mode.Str != nil {
-					r.MeshServices.Mode.Str = types.StringPointerValue(resp.MeshServices.Mode.Str)
-				}
-				if resp.MeshServices.Mode.Integer != nil {
-					r.MeshServices.Mode.Integer = types.Int64PointerValue(resp.MeshServices.Mode.Integer)
-				}
-			}
-		}
-		if resp.Metrics == nil {
-			r.Metrics = nil
-		} else {
-			r.Metrics = &tfTypes.Metrics{}
-			r.Metrics.Backends = []tfTypes.MeshItemBackends{}
-			if len(r.Metrics.Backends) > len(resp.Metrics.Backends) {
-				r.Metrics.Backends = r.Metrics.Backends[:len(resp.Metrics.Backends)]
-			}
-			for backendsCount1, backendsItem1 := range resp.Metrics.Backends {
-				var backends1 tfTypes.MeshItemBackends
-				if backendsItem1.Conf != nil {
-					backends1.Conf = &tfTypes.MeshItemConf{}
-					if backendsItem1.Conf.PrometheusMetricsBackendConfig != nil {
-						backends1.Conf.PrometheusMetricsBackendConfig = &tfTypes.PrometheusMetricsBackendConfig{}
-						backends1.Conf.PrometheusMetricsBackendConfig.Aggregate = []tfTypes.Aggregate{}
-						for aggregateCount, aggregateItem := range backendsItem1.Conf.PrometheusMetricsBackendConfig.Aggregate {
-							var aggregate tfTypes.Aggregate
-							aggregate.Address = types.StringPointerValue(aggregateItem.Address)
-							aggregate.Enabled = types.BoolPointerValue(aggregateItem.Enabled)
-							aggregate.Name = types.StringPointerValue(aggregateItem.Name)
-							aggregate.Path = types.StringPointerValue(aggregateItem.Path)
-							aggregate.Port = types.Int64PointerValue(aggregateItem.Port)
-							if aggregateCount+1 > len(backends1.Conf.PrometheusMetricsBackendConfig.Aggregate) {
-								backends1.Conf.PrometheusMetricsBackendConfig.Aggregate = append(backends1.Conf.PrometheusMetricsBackendConfig.Aggregate, aggregate)
-							} else {
-								backends1.Conf.PrometheusMetricsBackendConfig.Aggregate[aggregateCount].Address = aggregate.Address
-								backends1.Conf.PrometheusMetricsBackendConfig.Aggregate[aggregateCount].Enabled = aggregate.Enabled
-								backends1.Conf.PrometheusMetricsBackendConfig.Aggregate[aggregateCount].Name = aggregate.Name
-								backends1.Conf.PrometheusMetricsBackendConfig.Aggregate[aggregateCount].Path = aggregate.Path
-								backends1.Conf.PrometheusMetricsBackendConfig.Aggregate[aggregateCount].Port = aggregate.Port
-							}
-						}
-						if backendsItem1.Conf.PrometheusMetricsBackendConfig.Envoy == nil {
-							backends1.Conf.PrometheusMetricsBackendConfig.Envoy = nil
-						} else {
-							backends1.Conf.PrometheusMetricsBackendConfig.Envoy = &tfTypes.Envoy{}
-							backends1.Conf.PrometheusMetricsBackendConfig.Envoy.FilterRegex = types.StringPointerValue(backendsItem1.Conf.PrometheusMetricsBackendConfig.Envoy.FilterRegex)
-							backends1.Conf.PrometheusMetricsBackendConfig.Envoy.UsedOnly = types.BoolPointerValue(backendsItem1.Conf.PrometheusMetricsBackendConfig.Envoy.UsedOnly)
-						}
-						backends1.Conf.PrometheusMetricsBackendConfig.Path = types.StringPointerValue(backendsItem1.Conf.PrometheusMetricsBackendConfig.Path)
-						backends1.Conf.PrometheusMetricsBackendConfig.Port = types.Int64PointerValue(backendsItem1.Conf.PrometheusMetricsBackendConfig.Port)
-						backends1.Conf.PrometheusMetricsBackendConfig.SkipMTLS = types.BoolPointerValue(backendsItem1.Conf.PrometheusMetricsBackendConfig.SkipMTLS)
-						if len(backendsItem1.Conf.PrometheusMetricsBackendConfig.Tags) > 0 {
-							backends1.Conf.PrometheusMetricsBackendConfig.Tags = make(map[string]types.String, len(backendsItem1.Conf.PrometheusMetricsBackendConfig.Tags))
-							for key3, value3 := range backendsItem1.Conf.PrometheusMetricsBackendConfig.Tags {
-								backends1.Conf.PrometheusMetricsBackendConfig.Tags[key3] = types.StringValue(value3)
-							}
-						}
-						if backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS == nil {
-							backends1.Conf.PrometheusMetricsBackendConfig.TLS = nil
-						} else {
-							backends1.Conf.PrometheusMetricsBackendConfig.TLS = &tfTypes.MeshServices{}
-							if backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS.Mode != nil {
-								backends1.Conf.PrometheusMetricsBackendConfig.TLS.Mode = &tfTypes.Mode{}
-								if backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Str != nil {
-									backends1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Str = types.StringPointerValue(backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Str)
-								}
-								if backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Integer != nil {
-									backends1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Integer = types.Int64PointerValue(backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Integer)
-								}
-							}
-						}
-					}
-				}
-				backends1.Name = types.StringPointerValue(backendsItem1.Name)
-				backends1.Type = types.StringPointerValue(backendsItem1.Type)
-				if backendsCount1+1 > len(r.Metrics.Backends) {
-					r.Metrics.Backends = append(r.Metrics.Backends, backends1)
-				} else {
-					r.Metrics.Backends[backendsCount1].Conf = backends1.Conf
-					r.Metrics.Backends[backendsCount1].Name = backends1.Name
-					r.Metrics.Backends[backendsCount1].Type = backends1.Type
-				}
-			}
-			r.Metrics.EnabledBackend = types.StringPointerValue(resp.Metrics.EnabledBackend)
-		}
-		if resp.Mtls == nil {
-			r.Mtls = nil
-		} else {
-			r.Mtls = &tfTypes.Mtls{}
-			r.Mtls.Backends = []tfTypes.MeshItemMtlsBackends{}
-			if len(r.Mtls.Backends) > len(resp.Mtls.Backends) {
-				r.Mtls.Backends = r.Mtls.Backends[:len(resp.Mtls.Backends)]
-			}
-			for backendsCount2, backendsItem2 := range resp.Mtls.Backends {
-				var backends2 tfTypes.MeshItemMtlsBackends
-				if backendsItem2.Conf != nil {
-					backends2.Conf = &tfTypes.MeshItemMtlsConf{}
-					if backendsItem2.Conf.ACMCertificateAuthorityConfig != nil {
-						backends2.Conf.ACMCertificateAuthorityConfig = &tfTypes.ACMCertificateAuthorityConfig{}
-						backends2.Conf.ACMCertificateAuthorityConfig.Arn = types.StringPointerValue(backendsItem2.Conf.ACMCertificateAuthorityConfig.Arn)
-						if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth == nil {
-							backends2.Conf.ACMCertificateAuthorityConfig.Auth = nil
-						} else {
-							backends2.Conf.ACMCertificateAuthorityConfig.Auth = &tfTypes.Auth{}
-							if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials == nil {
-								backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials = nil
-							} else {
-								backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials = &tfTypes.AwsCredentials{}
-								if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey != nil {
-									backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey = &tfTypes.AccessKey{}
-									if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.AccessKeyDataSourceFile != nil {
-										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceFile = &tfTypes.AccessKeyDataSourceFile{}
-										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceFile.File = types.StringPointerValue(backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.AccessKeyDataSourceFile.File)
-									}
-									if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.AccessKeyDataSourceInline != nil {
-										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceInline = &tfTypes.AccessKeyDataSourceInline{}
-										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceInline.Inline = types.StringPointerValue(backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.AccessKeyDataSourceInline.Inline)
-									}
-									if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.AccessKeyDataSourceInlineString != nil {
-										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceInlineString = &tfTypes.AccessKeyDataSourceInlineString{}
-										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceInlineString.InlineString = types.StringPointerValue(backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.AccessKeyDataSourceInlineString.InlineString)
-									}
-									if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.AccessKeyDataSourceSecret != nil {
-										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceSecret = &tfTypes.AccessKeyDataSourceSecret{}
-										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceSecret.Secret = types.StringPointerValue(backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.AccessKeyDataSourceSecret.Secret)
-									}
-								}
-								if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret != nil {
-									backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret = &tfTypes.AccessKey{}
-									if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.AccessKeySecretDataSourceFile != nil {
-										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceFile = &tfTypes.AccessKeyDataSourceFile{}
-										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceFile.File = types.StringPointerValue(backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.AccessKeySecretDataSourceFile.File)
-									}
-									if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.AccessKeySecretDataSourceInline != nil {
-										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceInline = &tfTypes.AccessKeyDataSourceInline{}
-										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceInline.Inline = types.StringPointerValue(backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.AccessKeySecretDataSourceInline.Inline)
-									}
-									if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.AccessKeySecretDataSourceInlineString != nil {
-										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceInlineString = &tfTypes.AccessKeyDataSourceInlineString{}
-										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceInlineString.InlineString = types.StringPointerValue(backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.AccessKeySecretDataSourceInlineString.InlineString)
-									}
-									if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.AccessKeySecretDataSourceSecret != nil {
-										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceSecret = &tfTypes.AccessKeyDataSourceSecret{}
-										backends2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceSecret.Secret = types.StringPointerValue(backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.AccessKeySecretDataSourceSecret.Secret)
-									}
-								}
-							}
-						}
-						if backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert != nil {
-							backends2.Conf.ACMCertificateAuthorityConfig.CaCert = &tfTypes.AccessKey{}
-							if backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.CaCertDataSourceFile != nil {
-								backends2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceFile = &tfTypes.AccessKeyDataSourceFile{}
-								backends2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceFile.File = types.StringPointerValue(backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.CaCertDataSourceFile.File)
-							}
-							if backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.CaCertDataSourceInline != nil {
-								backends2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceInline = &tfTypes.AccessKeyDataSourceInline{}
-								backends2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceInline.Inline = types.StringPointerValue(backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.CaCertDataSourceInline.Inline)
-							}
-							if backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.CaCertDataSourceInlineString != nil {
-								backends2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceInlineString = &tfTypes.AccessKeyDataSourceInlineString{}
-								backends2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceInlineString.InlineString = types.StringPointerValue(backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.CaCertDataSourceInlineString.InlineString)
-							}
-							if backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.CaCertDataSourceSecret != nil {
-								backends2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceSecret = &tfTypes.AccessKeyDataSourceSecret{}
-								backends2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceSecret.Secret = types.StringPointerValue(backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.CaCertDataSourceSecret.Secret)
-							}
-						}
-						backends2.Conf.ACMCertificateAuthorityConfig.CommonName = types.StringPointerValue(backendsItem2.Conf.ACMCertificateAuthorityConfig.CommonName)
-					}
-					if backendsItem2.Conf.BuiltinCertificateAuthorityConfig != nil {
-						backends2.Conf.BuiltinCertificateAuthorityConfig = &tfTypes.BuiltinCertificateAuthorityConfig{}
-						if backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert == nil {
-							backends2.Conf.BuiltinCertificateAuthorityConfig.CaCert = nil
-						} else {
-							backends2.Conf.BuiltinCertificateAuthorityConfig.CaCert = &tfTypes.BuiltinCertificateAuthorityConfigConfCaCert{}
-							backends2.Conf.BuiltinCertificateAuthorityConfig.CaCert.Expiration = types.StringPointerValue(backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert.Expiration)
-							backends2.Conf.BuiltinCertificateAuthorityConfig.CaCert.RsaBits = types.Int64PointerValue(backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert.RsaBits)
-						}
-					}
-					if backendsItem2.Conf.CertManagerCertificateAuthorityConfig != nil {
-						backends2.Conf.CertManagerCertificateAuthorityConfig = &tfTypes.CertManagerCertificateAuthorityConfig{}
-						if backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert != nil {
-							backends2.Conf.CertManagerCertificateAuthorityConfig.CaCert = &tfTypes.AccessKey{}
-							if backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.CertManagerCertificateAuthorityConfigCaCertDataSourceFile != nil {
-								backends2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceFile = &tfTypes.AccessKeyDataSourceFile{}
-								backends2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceFile.File = types.StringPointerValue(backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.CertManagerCertificateAuthorityConfigCaCertDataSourceFile.File)
-							}
-							if backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.CertManagerCertificateAuthorityConfigCaCertDataSourceInline != nil {
-								backends2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceInline = &tfTypes.AccessKeyDataSourceInline{}
-								backends2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceInline.Inline = types.StringPointerValue(backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.CertManagerCertificateAuthorityConfigCaCertDataSourceInline.Inline)
-							}
-							if backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.CertManagerCertificateAuthorityConfigCaCertDataSourceInlineString != nil {
-								backends2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceInlineString = &tfTypes.AccessKeyDataSourceInlineString{}
-								backends2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceInlineString.InlineString = types.StringPointerValue(backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.CertManagerCertificateAuthorityConfigCaCertDataSourceInlineString.InlineString)
-							}
-							if backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.CertManagerCertificateAuthorityConfigCaCertDataSourceSecret != nil {
-								backends2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceSecret = &tfTypes.AccessKeyDataSourceSecret{}
-								backends2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceSecret.Secret = types.StringPointerValue(backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.CertManagerCertificateAuthorityConfigCaCertDataSourceSecret.Secret)
-							}
-						}
-						backends2.Conf.CertManagerCertificateAuthorityConfig.CommonName = types.StringPointerValue(backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CommonName)
-						backends2.Conf.CertManagerCertificateAuthorityConfig.DNSNames = make([]types.String, 0, len(backendsItem2.Conf.CertManagerCertificateAuthorityConfig.DNSNames))
-						for _, v := range backendsItem2.Conf.CertManagerCertificateAuthorityConfig.DNSNames {
-							backends2.Conf.CertManagerCertificateAuthorityConfig.DNSNames = append(backends2.Conf.CertManagerCertificateAuthorityConfig.DNSNames, types.StringValue(v))
-						}
-						if backendsItem2.Conf.CertManagerCertificateAuthorityConfig.IssuerRef == nil {
-							backends2.Conf.CertManagerCertificateAuthorityConfig.IssuerRef = nil
-						} else {
-							backends2.Conf.CertManagerCertificateAuthorityConfig.IssuerRef = &tfTypes.IssuerRef{}
-							backends2.Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Group = types.StringPointerValue(backendsItem2.Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Group)
-							backends2.Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Kind = types.StringPointerValue(backendsItem2.Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Kind)
-							backends2.Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Name = types.StringPointerValue(backendsItem2.Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Name)
-						}
-					}
-					if backendsItem2.Conf.ProvidedCertificateAuthorityConfig != nil {
-						backends2.Conf.ProvidedCertificateAuthorityConfig = &tfTypes.ProvidedCertificateAuthorityConfig{}
-						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert != nil {
-							backends2.Conf.ProvidedCertificateAuthorityConfig.Cert = &tfTypes.AccessKey{}
-							if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.CertDataSourceFile != nil {
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceFile = &tfTypes.AccessKeyDataSourceFile{}
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceFile.File = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.CertDataSourceFile.File)
-							}
-							if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.CertDataSourceInline != nil {
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInline = &tfTypes.AccessKeyDataSourceInline{}
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInline.Inline = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.CertDataSourceInline.Inline)
-							}
-							if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.CertDataSourceInlineString != nil {
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInlineString = &tfTypes.AccessKeyDataSourceInlineString{}
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInlineString.InlineString = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.CertDataSourceInlineString.InlineString)
-							}
-							if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.CertDataSourceSecret != nil {
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceSecret = &tfTypes.AccessKeyDataSourceSecret{}
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceSecret.Secret = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.CertDataSourceSecret.Secret)
-							}
-						}
-						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key != nil {
-							backends2.Conf.ProvidedCertificateAuthorityConfig.Key = &tfTypes.AccessKey{}
-							if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.KeyDataSourceFile != nil {
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceFile = &tfTypes.AccessKeyDataSourceFile{}
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceFile.File = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.KeyDataSourceFile.File)
-							}
-							if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.KeyDataSourceInline != nil {
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInline = &tfTypes.AccessKeyDataSourceInline{}
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInline.Inline = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.KeyDataSourceInline.Inline)
-							}
-							if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.KeyDataSourceInlineString != nil {
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInlineString = &tfTypes.AccessKeyDataSourceInlineString{}
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInlineString.InlineString = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.KeyDataSourceInlineString.InlineString)
-							}
-							if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.KeyDataSourceSecret != nil {
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceSecret = &tfTypes.AccessKeyDataSourceSecret{}
-								backends2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceSecret.Secret = types.StringPointerValue(backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.KeyDataSourceSecret.Secret)
-							}
-						}
-					}
-					if backendsItem2.Conf.VaultCertificateAuthorityConfig != nil {
-						backends2.Conf.VaultCertificateAuthorityConfig = &tfTypes.VaultCertificateAuthorityConfig{}
-						if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp != nil {
-							backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp = &tfTypes.VaultCertificateAuthorityConfigFromCp{}
-							if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp == nil {
-								backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp = nil
-							} else {
-								backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp = &tfTypes.FromCp{}
-								backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Address = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Address)
-								backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.AgentAddress = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.AgentAddress)
-								if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth != nil {
-									backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth = &tfTypes.VaultCertificateAuthorityConfigAuth{}
-									if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws != nil {
-										backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws = &tfTypes.VaultCertificateAuthorityConfigFromCpAuthAws{}
-										if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws == nil {
-											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws = nil
-										} else {
-											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws = &tfTypes.Aws{}
-											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.IamServerIDHeader = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.IamServerIDHeader)
-											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Role = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Role)
-											if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type != nil {
-												backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type = &tfTypes.Mode{}
-												if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type.Str != nil {
-													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type.Str = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type.Str)
-												}
-												if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type.Integer != nil {
-													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type.Integer = types.Int64PointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type.Integer)
-												}
-											}
-										}
-									}
-									if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS != nil {
-										backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS = &tfTypes.VaultCertificateAuthorityConfigFromCpAuthTLS{}
-										if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS == nil {
-											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS = nil
-										} else {
-											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS = &tfTypes.AuthTLS{}
-											if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert != nil {
-												backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert = &tfTypes.AccessKey{}
-												if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.ClientCertDataSourceFile != nil {
-													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceFile = &tfTypes.AccessKeyDataSourceFile{}
-													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceFile.File = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.ClientCertDataSourceFile.File)
-												}
-												if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.ClientCertDataSourceInline != nil {
-													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceInline = &tfTypes.AccessKeyDataSourceInline{}
-													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceInline.Inline = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.ClientCertDataSourceInline.Inline)
-												}
-												if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.ClientCertDataSourceInlineString != nil {
-													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceInlineString = &tfTypes.AccessKeyDataSourceInlineString{}
-													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceInlineString.InlineString = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.ClientCertDataSourceInlineString.InlineString)
-												}
-												if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.ClientCertDataSourceSecret != nil {
-													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceSecret = &tfTypes.AccessKeyDataSourceSecret{}
-													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceSecret.Secret = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.ClientCertDataSourceSecret.Secret)
-												}
-											}
-											if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey != nil {
-												backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey = &tfTypes.AccessKey{}
-												if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.ClientKeyDataSourceFile != nil {
-													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceFile = &tfTypes.AccessKeyDataSourceFile{}
-													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceFile.File = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.ClientKeyDataSourceFile.File)
-												}
-												if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.ClientKeyDataSourceInline != nil {
-													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceInline = &tfTypes.AccessKeyDataSourceInline{}
-													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceInline.Inline = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.ClientKeyDataSourceInline.Inline)
-												}
-												if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.ClientKeyDataSourceInlineString != nil {
-													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceInlineString = &tfTypes.AccessKeyDataSourceInlineString{}
-													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceInlineString.InlineString = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.ClientKeyDataSourceInlineString.InlineString)
-												}
-												if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.ClientKeyDataSourceSecret != nil {
-													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceSecret = &tfTypes.AccessKeyDataSourceSecret{}
-													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceSecret.Secret = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.ClientKeyDataSourceSecret.Secret)
-												}
-											}
-										}
-									}
-									if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken != nil {
-										backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken = &tfTypes.VaultCertificateAuthorityConfigFromCpAuthToken{}
-										if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token != nil {
-											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token = &tfTypes.AccessKey{}
-											if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.TokenDataSourceFile != nil {
-												backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceFile = &tfTypes.AccessKeyDataSourceFile{}
-												backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceFile.File = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.TokenDataSourceFile.File)
-											}
-											if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.TokenDataSourceInline != nil {
-												backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceInline = &tfTypes.AccessKeyDataSourceInline{}
-												backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceInline.Inline = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.TokenDataSourceInline.Inline)
-											}
-											if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.TokenDataSourceInlineString != nil {
-												backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceInlineString = &tfTypes.AccessKeyDataSourceInlineString{}
-												backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceInlineString.InlineString = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.TokenDataSourceInlineString.InlineString)
-											}
-											if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.TokenDataSourceSecret != nil {
-												backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceSecret = &tfTypes.AccessKeyDataSourceSecret{}
-												backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceSecret.Secret = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.TokenDataSourceSecret.Secret)
-											}
-										}
-									}
-								}
-								backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.CommonName = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.CommonName)
-								backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Namespace = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Namespace)
-								backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Pki = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Pki)
-								backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Role = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Role)
-								if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS == nil {
-									backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS = nil
-								} else {
-									backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS = &tfTypes.VaultCertificateAuthorityConfigTLS{}
-									if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert != nil {
-										backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert = &tfTypes.AccessKey{}
-										if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.VaultCertificateAuthorityConfigFromCpCaCertDataSourceFile != nil {
-											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceFile = &tfTypes.AccessKeyDataSourceFile{}
-											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceFile.File = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.VaultCertificateAuthorityConfigFromCpCaCertDataSourceFile.File)
-										}
-										if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.VaultCertificateAuthorityConfigFromCpCaCertDataSourceInline != nil {
-											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceInline = &tfTypes.AccessKeyDataSourceInline{}
-											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceInline.Inline = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.VaultCertificateAuthorityConfigFromCpCaCertDataSourceInline.Inline)
-										}
-										if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.VaultCertificateAuthorityConfigFromCpCaCertDataSourceInlineString != nil {
-											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceInlineString = &tfTypes.AccessKeyDataSourceInlineString{}
-											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceInlineString.InlineString = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.VaultCertificateAuthorityConfigFromCpCaCertDataSourceInlineString.InlineString)
-										}
-										if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.VaultCertificateAuthorityConfigFromCpCaCertDataSourceSecret != nil {
-											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceSecret = &tfTypes.AccessKeyDataSourceSecret{}
-											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceSecret.Secret = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.VaultCertificateAuthorityConfigFromCpCaCertDataSourceSecret.Secret)
-										}
-									}
-									backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.ServerName = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.ServerName)
-									backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.SkipVerify = types.BoolPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.SkipVerify)
-								}
-							}
-						}
-					}
-				}
-				if backendsItem2.DpCert == nil {
-					backends2.DpCert = nil
-				} else {
-					backends2.DpCert = &tfTypes.DpCert{}
-					if backendsItem2.DpCert.RequestTimeout == nil {
-						backends2.DpCert.RequestTimeout = nil
-					} else {
-						backends2.DpCert.RequestTimeout = &tfTypes.RequestTimeout{}
-						backends2.DpCert.RequestTimeout.Nanos = types.Int64PointerValue(backendsItem2.DpCert.RequestTimeout.Nanos)
-						backends2.DpCert.RequestTimeout.Seconds = types.Int64PointerValue(backendsItem2.DpCert.RequestTimeout.Seconds)
-					}
-					if backendsItem2.DpCert.Rotation == nil {
-						backends2.DpCert.Rotation = nil
-					} else {
-						backends2.DpCert.Rotation = &tfTypes.Rotation{}
-						backends2.DpCert.Rotation.Expiration = types.StringPointerValue(backendsItem2.DpCert.Rotation.Expiration)
-					}
-				}
-				if backendsItem2.Mode != nil {
-					backends2.Mode = &tfTypes.Mode{}
-					if backendsItem2.Mode.Str != nil {
-						backends2.Mode.Str = types.StringPointerValue(backendsItem2.Mode.Str)
-					}
-					if backendsItem2.Mode.Integer != nil {
-						backends2.Mode.Integer = types.Int64PointerValue(backendsItem2.Mode.Integer)
-					}
-				}
-				backends2.Name = types.StringPointerValue(backendsItem2.Name)
-				if backendsItem2.RootChain == nil {
-					backends2.RootChain = nil
-				} else {
-					backends2.RootChain = &tfTypes.RootChain{}
-					if backendsItem2.RootChain.RequestTimeout == nil {
-						backends2.RootChain.RequestTimeout = nil
-					} else {
-						backends2.RootChain.RequestTimeout = &tfTypes.RequestTimeout{}
-						backends2.RootChain.RequestTimeout.Nanos = types.Int64PointerValue(backendsItem2.RootChain.RequestTimeout.Nanos)
-						backends2.RootChain.RequestTimeout.Seconds = types.Int64PointerValue(backendsItem2.RootChain.RequestTimeout.Seconds)
-					}
-				}
-				backends2.Type = types.StringPointerValue(backendsItem2.Type)
-				if backendsCount2+1 > len(r.Mtls.Backends) {
-					r.Mtls.Backends = append(r.Mtls.Backends, backends2)
-				} else {
-					r.Mtls.Backends[backendsCount2].Conf = backends2.Conf
-					r.Mtls.Backends[backendsCount2].DpCert = backends2.DpCert
-					r.Mtls.Backends[backendsCount2].Mode = backends2.Mode
-					r.Mtls.Backends[backendsCount2].Name = backends2.Name
-					r.Mtls.Backends[backendsCount2].RootChain = backends2.RootChain
-					r.Mtls.Backends[backendsCount2].Type = backends2.Type
-				}
-			}
-			r.Mtls.EnabledBackend = types.StringPointerValue(resp.Mtls.EnabledBackend)
-			r.Mtls.SkipValidation = types.BoolPointerValue(resp.Mtls.SkipValidation)
-		}
-		r.Name = types.StringValue(resp.Name)
-		if resp.Networking == nil {
-			r.Networking = nil
-		} else {
-			r.Networking = &tfTypes.Networking{}
-			if resp.Networking.Outbound == nil {
-				r.Networking.Outbound = nil
-			} else {
-				r.Networking.Outbound = &tfTypes.Outbound{}
-				r.Networking.Outbound.Passthrough = types.BoolPointerValue(resp.Networking.Outbound.Passthrough)
-			}
-		}
-		if resp.Routing == nil {
-			r.Routing = nil
-		} else {
-			r.Routing = &tfTypes.Routing{}
-			r.Routing.DefaultForbidMeshExternalServiceAccess = types.BoolPointerValue(resp.Routing.DefaultForbidMeshExternalServiceAccess)
-			r.Routing.LocalityAwareLoadBalancing = types.BoolPointerValue(resp.Routing.LocalityAwareLoadBalancing)
-			r.Routing.ZoneEgress = types.BoolPointerValue(resp.Routing.ZoneEgress)
-		}
-		r.SkipCreatingInitialPolicies = make([]types.String, 0, len(resp.SkipCreatingInitialPolicies))
-		for _, v := range resp.SkipCreatingInitialPolicies {
-			r.SkipCreatingInitialPolicies = append(r.SkipCreatingInitialPolicies, types.StringValue(v))
-		}
-		if resp.Tracing == nil {
-			r.Tracing = nil
-		} else {
-			r.Tracing = &tfTypes.Tracing{}
-			r.Tracing.Backends = []tfTypes.MeshItemTracingBackends{}
-			if len(r.Tracing.Backends) > len(resp.Tracing.Backends) {
-				r.Tracing.Backends = r.Tracing.Backends[:len(resp.Tracing.Backends)]
-			}
-			for backendsCount3, backendsItem3 := range resp.Tracing.Backends {
-				var backends3 tfTypes.MeshItemTracingBackends
-				if backendsItem3.Conf != nil {
-					backends3.Conf = &tfTypes.MeshItemTracingConf{}
-					if backendsItem3.Conf.DatadogTracingBackendConfig != nil {
-						backends3.Conf.DatadogTracingBackendConfig = &tfTypes.DatadogTracingBackendConfig{}
-						backends3.Conf.DatadogTracingBackendConfig.Address = types.StringPointerValue(backendsItem3.Conf.DatadogTracingBackendConfig.Address)
-						backends3.Conf.DatadogTracingBackendConfig.Port = types.Int64PointerValue(backendsItem3.Conf.DatadogTracingBackendConfig.Port)
-						backends3.Conf.DatadogTracingBackendConfig.SplitService = types.BoolPointerValue(backendsItem3.Conf.DatadogTracingBackendConfig.SplitService)
-					}
-					if backendsItem3.Conf.ZipkinTracingBackendConfig != nil {
-						backends3.Conf.ZipkinTracingBackendConfig = &tfTypes.ZipkinTracingBackendConfig{}
-						backends3.Conf.ZipkinTracingBackendConfig.APIVersion = types.StringPointerValue(backendsItem3.Conf.ZipkinTracingBackendConfig.APIVersion)
-						backends3.Conf.ZipkinTracingBackendConfig.SharedSpanContext = types.BoolPointerValue(backendsItem3.Conf.ZipkinTracingBackendConfig.SharedSpanContext)
-						backends3.Conf.ZipkinTracingBackendConfig.TraceId128bit = types.BoolPointerValue(backendsItem3.Conf.ZipkinTracingBackendConfig.TraceId128bit)
-						backends3.Conf.ZipkinTracingBackendConfig.URL = types.StringPointerValue(backendsItem3.Conf.ZipkinTracingBackendConfig.URL)
-					}
-				}
-				backends3.Name = types.StringPointerValue(backendsItem3.Name)
-				backends3.Sampling = types.Float64PointerValue(backendsItem3.Sampling)
-				backends3.Type = types.StringPointerValue(backendsItem3.Type)
-				if backendsCount3+1 > len(r.Tracing.Backends) {
-					r.Tracing.Backends = append(r.Tracing.Backends, backends3)
-				} else {
-					r.Tracing.Backends[backendsCount3].Conf = backends3.Conf
-					r.Tracing.Backends[backendsCount3].Name = backends3.Name
-					r.Tracing.Backends[backendsCount3].Sampling = backends3.Sampling
-					r.Tracing.Backends[backendsCount3].Type = backends3.Type
-				}
-			}
-			r.Tracing.DefaultBackend = types.StringPointerValue(resp.Tracing.DefaultBackend)
-		}
-		r.Type = types.StringValue(resp.Type)
-	}
-
-	return diags
 }

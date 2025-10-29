@@ -14,18 +14,18 @@ type GetSecretRequest struct {
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 }
 
-func (o *GetSecretRequest) GetMesh() string {
-	if o == nil {
+func (g *GetSecretRequest) GetMesh() string {
+	if g == nil {
 		return ""
 	}
-	return o.Mesh
+	return g.Mesh
 }
 
-func (o *GetSecretRequest) GetName() string {
-	if o == nil {
+func (g *GetSecretRequest) GetName() string {
+	if g == nil {
 		return ""
 	}
-	return o.Name
+	return g.Name
 }
 
 type GetSecretResponse struct {
@@ -41,37 +41,37 @@ type GetSecretResponse struct {
 	NotFoundError *shared.NotFoundError
 }
 
-func (o *GetSecretResponse) GetContentType() string {
-	if o == nil {
+func (g *GetSecretResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetSecretResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetSecretResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetSecretResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetSecretResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetSecretResponse) GetSecretItem() *shared.SecretItem {
-	if o == nil {
+func (g *GetSecretResponse) GetSecretItem() *shared.SecretItem {
+	if g == nil {
 		return nil
 	}
-	return o.SecretItem
+	return g.SecretItem
 }
 
-func (o *GetSecretResponse) GetNotFoundError() *shared.NotFoundError {
-	if o == nil {
+func (g *GetSecretResponse) GetNotFoundError() *shared.NotFoundError {
+	if g == nil {
 		return nil
 	}
-	return o.NotFoundError
+	return g.NotFoundError
 }

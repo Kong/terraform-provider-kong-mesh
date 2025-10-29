@@ -3,12 +3,13 @@
 package types
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type JSONPatches struct {
-	From  types.String `tfsdk:"from"`
-	Op    types.String `tfsdk:"op"`
-	Path  types.String `tfsdk:"path"`
-	Value types.String `tfsdk:"value"`
+	From  types.String         `tfsdk:"from"`
+	Op    types.String         `tfsdk:"op"`
+	Path  types.String         `tfsdk:"path"`
+	Value jsontypes.Normalized `tfsdk:"value"`
 }

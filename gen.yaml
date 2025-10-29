@@ -16,6 +16,13 @@ generation:
   auth:
     oAuth2ClientCredentialsEnabled: false
     oAuth2PasswordEnabled: false
+    hoistGlobalSecurity: true
+  schemas:
+    allOfMergeStrategy: shallowMerge
+  tests:
+    generateTests: true
+    generateNewTests: false
+    skipResponseBodyAssertions: false
   baseServerURL: ""
 go:
   version: 1.24.1
@@ -35,6 +42,7 @@ terraform:
   additionalResources: []
   allowUnknownFieldsInWeakUnions: false
   author: kong
+  baseErrorName: KongMeshError
   defaultErrorName: SDKError
   enableTypeDeduplication: true
   environmentVariables:
@@ -49,3 +57,4 @@ terraform:
       shared: shared
       webhooks: webhooks
   packageName: kong-mesh
+  unionDeserializationStrategy: populated-fields

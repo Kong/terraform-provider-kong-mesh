@@ -39,6 +39,7 @@ func NewMeshRateLimitResource() resource.Resource {
 
 // MeshRateLimitResource defines the resource implementation.
 type MeshRateLimitResource struct {
+	// Provider configured SDK client.
 	client *sdk.KongMesh
 }
 
@@ -1198,7 +1199,7 @@ func (r *MeshRateLimitResource) ImportState(ctx context.Context, req resource.Im
 	}
 
 	if err := dec.Decode(&data); err != nil {
-		resp.Diagnostics.AddError("Invalid ID", `The import ID is not valid. It is expected to be a JSON object string with the format: '{ "mesh": "",  "name": ""}': `+err.Error())
+		resp.Diagnostics.AddError("Invalid ID", `The import ID is not valid. It is expected to be a JSON object string with the format: '{"mesh": "...", "name": "..."}': `+err.Error())
 		return
 	}
 
@@ -1212,5 +1213,4 @@ func (r *MeshRateLimitResource) ImportState(ctx context.Context, req resource.Im
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("name"), data.Name)...)
-
 }

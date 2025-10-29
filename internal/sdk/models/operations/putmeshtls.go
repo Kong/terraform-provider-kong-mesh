@@ -16,25 +16,25 @@ type PutMeshTLSRequest struct {
 	MeshTLSItem shared.MeshTLSItemInput `request:"mediaType=application/json"`
 }
 
-func (o *PutMeshTLSRequest) GetMesh() string {
-	if o == nil {
+func (p *PutMeshTLSRequest) GetMesh() string {
+	if p == nil {
 		return ""
 	}
-	return o.Mesh
+	return p.Mesh
 }
 
-func (o *PutMeshTLSRequest) GetName() string {
-	if o == nil {
+func (p *PutMeshTLSRequest) GetName() string {
+	if p == nil {
 		return ""
 	}
-	return o.Name
+	return p.Name
 }
 
-func (o *PutMeshTLSRequest) GetMeshTLSItem() shared.MeshTLSItemInput {
-	if o == nil {
+func (p *PutMeshTLSRequest) GetMeshTLSItem() shared.MeshTLSItemInput {
+	if p == nil {
 		return shared.MeshTLSItemInput{}
 	}
-	return o.MeshTLSItem
+	return p.MeshTLSItem
 }
 
 type PutMeshTLSResponse struct {
@@ -48,30 +48,30 @@ type PutMeshTLSResponse struct {
 	MeshTLSCreateOrUpdateSuccessResponse *shared.MeshTLSCreateOrUpdateSuccessResponse
 }
 
-func (o *PutMeshTLSResponse) GetContentType() string {
-	if o == nil {
+func (p *PutMeshTLSResponse) GetContentType() string {
+	if p == nil {
 		return ""
 	}
-	return o.ContentType
+	return p.ContentType
 }
 
-func (o *PutMeshTLSResponse) GetStatusCode() int {
-	if o == nil {
+func (p *PutMeshTLSResponse) GetStatusCode() int {
+	if p == nil {
 		return 0
 	}
-	return o.StatusCode
+	return p.StatusCode
 }
 
-func (o *PutMeshTLSResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *PutMeshTLSResponse) GetRawResponse() *http.Response {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.RawResponse
 }
 
-func (o *PutMeshTLSResponse) GetMeshTLSCreateOrUpdateSuccessResponse() *shared.MeshTLSCreateOrUpdateSuccessResponse {
-	if o == nil {
+func (p *PutMeshTLSResponse) GetMeshTLSCreateOrUpdateSuccessResponse() *shared.MeshTLSCreateOrUpdateSuccessResponse {
+	if p == nil {
 		return nil
 	}
-	return o.MeshTLSCreateOrUpdateSuccessResponse
+	return p.MeshTLSCreateOrUpdateSuccessResponse
 }
