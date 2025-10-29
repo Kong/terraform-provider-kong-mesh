@@ -14,18 +14,18 @@ type PutZoneEgressRequest struct {
 	ZoneEgressItem shared.ZoneEgressItem `request:"mediaType=application/json"`
 }
 
-func (o *PutZoneEgressRequest) GetName() string {
-	if o == nil {
+func (p *PutZoneEgressRequest) GetName() string {
+	if p == nil {
 		return ""
 	}
-	return o.Name
+	return p.Name
 }
 
-func (o *PutZoneEgressRequest) GetZoneEgressItem() shared.ZoneEgressItem {
-	if o == nil {
+func (p *PutZoneEgressRequest) GetZoneEgressItem() shared.ZoneEgressItem {
+	if p == nil {
 		return shared.ZoneEgressItem{}
 	}
-	return o.ZoneEgressItem
+	return p.ZoneEgressItem
 }
 
 type PutZoneEgressResponse struct {
@@ -39,30 +39,30 @@ type PutZoneEgressResponse struct {
 	ZoneEgressCreateOrUpdateSuccessResponse *shared.ZoneEgressCreateOrUpdateSuccessResponse
 }
 
-func (o *PutZoneEgressResponse) GetContentType() string {
-	if o == nil {
+func (p *PutZoneEgressResponse) GetContentType() string {
+	if p == nil {
 		return ""
 	}
-	return o.ContentType
+	return p.ContentType
 }
 
-func (o *PutZoneEgressResponse) GetStatusCode() int {
-	if o == nil {
+func (p *PutZoneEgressResponse) GetStatusCode() int {
+	if p == nil {
 		return 0
 	}
-	return o.StatusCode
+	return p.StatusCode
 }
 
-func (o *PutZoneEgressResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *PutZoneEgressResponse) GetRawResponse() *http.Response {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.RawResponse
 }
 
-func (o *PutZoneEgressResponse) GetZoneEgressCreateOrUpdateSuccessResponse() *shared.ZoneEgressCreateOrUpdateSuccessResponse {
-	if o == nil {
+func (p *PutZoneEgressResponse) GetZoneEgressCreateOrUpdateSuccessResponse() *shared.ZoneEgressCreateOrUpdateSuccessResponse {
+	if p == nil {
 		return nil
 	}
-	return o.ZoneEgressCreateOrUpdateSuccessResponse
+	return p.ZoneEgressCreateOrUpdateSuccessResponse
 }

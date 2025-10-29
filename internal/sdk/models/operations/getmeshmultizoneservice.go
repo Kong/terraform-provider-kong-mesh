@@ -14,18 +14,18 @@ type GetMeshMultiZoneServiceRequest struct {
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 }
 
-func (o *GetMeshMultiZoneServiceRequest) GetMesh() string {
-	if o == nil {
+func (g *GetMeshMultiZoneServiceRequest) GetMesh() string {
+	if g == nil {
 		return ""
 	}
-	return o.Mesh
+	return g.Mesh
 }
 
-func (o *GetMeshMultiZoneServiceRequest) GetName() string {
-	if o == nil {
+func (g *GetMeshMultiZoneServiceRequest) GetName() string {
+	if g == nil {
 		return ""
 	}
-	return o.Name
+	return g.Name
 }
 
 type GetMeshMultiZoneServiceResponse struct {
@@ -41,37 +41,37 @@ type GetMeshMultiZoneServiceResponse struct {
 	NotFoundError *shared.NotFoundError
 }
 
-func (o *GetMeshMultiZoneServiceResponse) GetContentType() string {
-	if o == nil {
+func (g *GetMeshMultiZoneServiceResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetMeshMultiZoneServiceResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetMeshMultiZoneServiceResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetMeshMultiZoneServiceResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetMeshMultiZoneServiceResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetMeshMultiZoneServiceResponse) GetMeshMultiZoneServiceItem() *shared.MeshMultiZoneServiceItem {
-	if o == nil {
+func (g *GetMeshMultiZoneServiceResponse) GetMeshMultiZoneServiceItem() *shared.MeshMultiZoneServiceItem {
+	if g == nil {
 		return nil
 	}
-	return o.MeshMultiZoneServiceItem
+	return g.MeshMultiZoneServiceItem
 }
 
-func (o *GetMeshMultiZoneServiceResponse) GetNotFoundError() *shared.NotFoundError {
-	if o == nil {
+func (g *GetMeshMultiZoneServiceResponse) GetNotFoundError() *shared.NotFoundError {
+	if g == nil {
 		return nil
 	}
-	return o.NotFoundError
+	return g.NotFoundError
 }

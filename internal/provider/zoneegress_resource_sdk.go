@@ -11,6 +11,97 @@ import (
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
 )
 
+func (r *ZoneEgressResourceModel) RefreshFromSharedZoneEgressCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.ZoneEgressCreateOrUpdateSuccessResponse) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		r.Warnings = make([]types.String, 0, len(resp.Warnings))
+		for _, v := range resp.Warnings {
+			r.Warnings = append(r.Warnings, types.StringValue(v))
+		}
+	}
+
+	return diags
+}
+
+func (r *ZoneEgressResourceModel) RefreshFromSharedZoneEgressItem(ctx context.Context, resp *shared.ZoneEgressItem) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		if len(resp.Labels) > 0 {
+			r.Labels = make(map[string]types.String, len(resp.Labels))
+			for key, value := range resp.Labels {
+				r.Labels[key] = types.StringValue(value)
+			}
+		}
+		r.Name = types.StringValue(resp.Name)
+		if resp.Networking == nil {
+			r.Networking = nil
+		} else {
+			r.Networking = &tfTypes.ZoneEgressItemNetworking{}
+			r.Networking.Address = types.StringPointerValue(resp.Networking.Address)
+			if resp.Networking.Admin == nil {
+				r.Networking.Admin = nil
+			} else {
+				r.Networking.Admin = &tfTypes.Admin{}
+				r.Networking.Admin.Port = types.Int64PointerValue(resp.Networking.Admin.Port)
+			}
+			r.Networking.Port = types.Int64PointerValue(resp.Networking.Port)
+		}
+		r.Type = types.StringValue(resp.Type)
+		r.Zone = types.StringPointerValue(resp.Zone)
+	}
+
+	return diags
+}
+
+func (r *ZoneEgressResourceModel) ToOperationsDeleteZoneEgressRequest(ctx context.Context) (*operations.DeleteZoneEgressRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.DeleteZoneEgressRequest{
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *ZoneEgressResourceModel) ToOperationsGetZoneEgressRequest(ctx context.Context) (*operations.GetZoneEgressRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.GetZoneEgressRequest{
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *ZoneEgressResourceModel) ToOperationsPutZoneEgressRequest(ctx context.Context) (*operations.PutZoneEgressRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var name string
+	name = r.Name.ValueString()
+
+	zoneEgressItem, zoneEgressItemDiags := r.ToSharedZoneEgressItem(ctx)
+	diags.Append(zoneEgressItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PutZoneEgressRequest{
+		Name:           name,
+		ZoneEgressItem: *zoneEgressItem,
+	}
+
+	return &out, diags
+}
+
 func (r *ZoneEgressResourceModel) ToSharedZoneEgressItem(ctx context.Context) (*shared.ZoneEgressItem, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -74,95 +165,4 @@ func (r *ZoneEgressResourceModel) ToSharedZoneEgressItem(ctx context.Context) (*
 	}
 
 	return &out, diags
-}
-
-func (r *ZoneEgressResourceModel) ToOperationsPutZoneEgressRequest(ctx context.Context) (*operations.PutZoneEgressRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var name string
-	name = r.Name.ValueString()
-
-	zoneEgressItem, zoneEgressItemDiags := r.ToSharedZoneEgressItem(ctx)
-	diags.Append(zoneEgressItemDiags...)
-
-	if diags.HasError() {
-		return nil, diags
-	}
-
-	out := operations.PutZoneEgressRequest{
-		Name:           name,
-		ZoneEgressItem: *zoneEgressItem,
-	}
-
-	return &out, diags
-}
-
-func (r *ZoneEgressResourceModel) ToOperationsGetZoneEgressRequest(ctx context.Context) (*operations.GetZoneEgressRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var name string
-	name = r.Name.ValueString()
-
-	out := operations.GetZoneEgressRequest{
-		Name: name,
-	}
-
-	return &out, diags
-}
-
-func (r *ZoneEgressResourceModel) ToOperationsDeleteZoneEgressRequest(ctx context.Context) (*operations.DeleteZoneEgressRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var name string
-	name = r.Name.ValueString()
-
-	out := operations.DeleteZoneEgressRequest{
-		Name: name,
-	}
-
-	return &out, diags
-}
-
-func (r *ZoneEgressResourceModel) RefreshFromSharedZoneEgressCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.ZoneEgressCreateOrUpdateSuccessResponse) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		r.Warnings = make([]types.String, 0, len(resp.Warnings))
-		for _, v := range resp.Warnings {
-			r.Warnings = append(r.Warnings, types.StringValue(v))
-		}
-	}
-
-	return diags
-}
-
-func (r *ZoneEgressResourceModel) RefreshFromSharedZoneEgressItem(ctx context.Context, resp *shared.ZoneEgressItem) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		if len(resp.Labels) > 0 {
-			r.Labels = make(map[string]types.String, len(resp.Labels))
-			for key, value := range resp.Labels {
-				r.Labels[key] = types.StringValue(value)
-			}
-		}
-		r.Name = types.StringValue(resp.Name)
-		if resp.Networking == nil {
-			r.Networking = nil
-		} else {
-			r.Networking = &tfTypes.ZoneEgressItemNetworking{}
-			r.Networking.Address = types.StringPointerValue(resp.Networking.Address)
-			if resp.Networking.Admin == nil {
-				r.Networking.Admin = nil
-			} else {
-				r.Networking.Admin = &tfTypes.Admin{}
-				r.Networking.Admin.Port = types.Int64PointerValue(resp.Networking.Admin.Port)
-			}
-			r.Networking.Port = types.Int64PointerValue(resp.Networking.Port)
-		}
-		r.Type = types.StringValue(resp.Type)
-		r.Zone = types.StringPointerValue(resp.Zone)
-	}
-
-	return diags
 }

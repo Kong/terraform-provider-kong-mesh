@@ -49,38 +49,38 @@ func (a Applications) MarshalJSON() ([]byte, error) {
 }
 
 func (a *Applications) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &a, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &a, "", false, []string{"port"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *Applications) GetAddress() *string {
-	if o == nil {
+func (a *Applications) GetAddress() *string {
+	if a == nil {
 		return nil
 	}
-	return o.Address
+	return a.Address
 }
 
-func (o *Applications) GetName() *string {
-	if o == nil {
+func (a *Applications) GetName() *string {
+	if a == nil {
 		return nil
 	}
-	return o.Name
+	return a.Name
 }
 
-func (o *Applications) GetPath() *string {
-	if o == nil {
+func (a *Applications) GetPath() *string {
+	if a == nil {
 		return nil
 	}
-	return o.Path
+	return a.Path
 }
 
-func (o *Applications) GetPort() int {
-	if o == nil {
+func (a *Applications) GetPort() int {
+	if a == nil {
 		return 0
 	}
-	return o.Port
+	return a.Port
 }
 
 // OpenTelemetry backend configuration
@@ -146,17 +146,17 @@ func (m MeshMetricItemTLS) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshMetricItemTLS) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshMetricItemTLS) GetMode() *MeshMetricItemMode {
-	if o == nil {
+func (m *MeshMetricItemTLS) GetMode() *MeshMetricItemMode {
+	if m == nil {
 		return nil
 	}
-	return o.Mode
+	return m.Mode
 }
 
 // Prometheus backend configuration.
@@ -176,38 +176,38 @@ func (p Prometheus) MarshalJSON() ([]byte, error) {
 }
 
 func (p *Prometheus) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &p, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *Prometheus) GetClientID() *string {
-	if o == nil {
+func (p *Prometheus) GetClientID() *string {
+	if p == nil {
 		return nil
 	}
-	return o.ClientID
+	return p.ClientID
 }
 
-func (o *Prometheus) GetPath() *string {
-	if o == nil {
+func (p *Prometheus) GetPath() *string {
+	if p == nil {
 		return nil
 	}
-	return o.Path
+	return p.Path
 }
 
-func (o *Prometheus) GetPort() *int {
-	if o == nil {
+func (p *Prometheus) GetPort() *int {
+	if p == nil {
 		return nil
 	}
-	return o.Port
+	return p.Port
 }
 
-func (o *Prometheus) GetTLS() *MeshMetricItemTLS {
-	if o == nil {
+func (p *Prometheus) GetTLS() *MeshMetricItemTLS {
+	if p == nil {
 		return nil
 	}
-	return o.TLS
+	return p.TLS
 }
 
 // MeshMetricItemSpecType - Type of the backend that will be used to collect metrics. At the moment only Prometheus backend is available.
@@ -246,25 +246,25 @@ type MeshMetricItemBackends struct {
 	Type MeshMetricItemSpecType `json:"type"`
 }
 
-func (o *MeshMetricItemBackends) GetOpenTelemetry() *OpenTelemetry {
-	if o == nil {
+func (m *MeshMetricItemBackends) GetOpenTelemetry() *OpenTelemetry {
+	if m == nil {
 		return nil
 	}
-	return o.OpenTelemetry
+	return m.OpenTelemetry
 }
 
-func (o *MeshMetricItemBackends) GetPrometheus() *Prometheus {
-	if o == nil {
+func (m *MeshMetricItemBackends) GetPrometheus() *Prometheus {
+	if m == nil {
 		return nil
 	}
-	return o.Prometheus
+	return m.Prometheus
 }
 
-func (o *MeshMetricItemBackends) GetType() MeshMetricItemSpecType {
-	if o == nil {
+func (m *MeshMetricItemBackends) GetType() MeshMetricItemSpecType {
+	if m == nil {
 		return MeshMetricItemSpecType("")
 	}
-	return o.Type
+	return m.Type
 }
 
 // Name of the predefined profile, one of: all, basic, none
@@ -302,11 +302,11 @@ type AppendProfiles struct {
 	Name Name `json:"name"`
 }
 
-func (o *AppendProfiles) GetName() Name {
-	if o == nil {
+func (a *AppendProfiles) GetName() Name {
+	if a == nil {
 		return Name("")
 	}
-	return o.Name
+	return a.Name
 }
 
 // MeshMetricItemSpecDefaultType - Type defined the type of selector, one of: prefix, regex, exact
@@ -349,18 +349,18 @@ type Exclude struct {
 	Type MeshMetricItemSpecDefaultType `json:"type"`
 }
 
-func (o *Exclude) GetMatch() string {
-	if o == nil {
+func (e *Exclude) GetMatch() string {
+	if e == nil {
 		return ""
 	}
-	return o.Match
+	return e.Match
 }
 
-func (o *Exclude) GetType() MeshMetricItemSpecDefaultType {
-	if o == nil {
+func (e *Exclude) GetType() MeshMetricItemSpecDefaultType {
+	if e == nil {
 		return MeshMetricItemSpecDefaultType("")
 	}
-	return o.Type
+	return e.Type
 }
 
 // MeshMetricItemSpecDefaultSidecarType - Type defined the type of selector, one of: prefix, regex, exact
@@ -403,18 +403,18 @@ type Include struct {
 	Type MeshMetricItemSpecDefaultSidecarType `json:"type"`
 }
 
-func (o *Include) GetMatch() string {
-	if o == nil {
+func (i *Include) GetMatch() string {
+	if i == nil {
 		return ""
 	}
-	return o.Match
+	return i.Match
 }
 
-func (o *Include) GetType() MeshMetricItemSpecDefaultSidecarType {
-	if o == nil {
+func (i *Include) GetType() MeshMetricItemSpecDefaultSidecarType {
+	if i == nil {
 		return MeshMetricItemSpecDefaultSidecarType("")
 	}
-	return o.Type
+	return i.Type
 }
 
 // Profiles allows to customize which metrics are published.
@@ -429,25 +429,25 @@ type Profiles struct {
 	Include []Include `json:"include,omitempty"`
 }
 
-func (o *Profiles) GetAppendProfiles() []AppendProfiles {
-	if o == nil {
+func (p *Profiles) GetAppendProfiles() []AppendProfiles {
+	if p == nil {
 		return nil
 	}
-	return o.AppendProfiles
+	return p.AppendProfiles
 }
 
-func (o *Profiles) GetExclude() []Exclude {
-	if o == nil {
+func (p *Profiles) GetExclude() []Exclude {
+	if p == nil {
 		return nil
 	}
-	return o.Exclude
+	return p.Exclude
 }
 
-func (o *Profiles) GetInclude() []Include {
-	if o == nil {
+func (p *Profiles) GetInclude() []Include {
+	if p == nil {
 		return nil
 	}
-	return o.Include
+	return p.Include
 }
 
 // Sidecar metrics collection configuration
@@ -461,18 +461,18 @@ type Sidecar struct {
 	Profiles *Profiles `json:"profiles,omitempty"`
 }
 
-func (o *Sidecar) GetIncludeUnused() *bool {
-	if o == nil {
+func (s *Sidecar) GetIncludeUnused() *bool {
+	if s == nil {
 		return nil
 	}
-	return o.IncludeUnused
+	return s.IncludeUnused
 }
 
-func (o *Sidecar) GetProfiles() *Profiles {
-	if o == nil {
+func (s *Sidecar) GetProfiles() *Profiles {
+	if s == nil {
 		return nil
 	}
-	return o.Profiles
+	return s.Profiles
 }
 
 // Default - MeshMetric configuration.
@@ -485,25 +485,25 @@ type Default struct {
 	Sidecar *Sidecar `json:"sidecar,omitempty"`
 }
 
-func (o *Default) GetApplications() []Applications {
-	if o == nil {
+func (d *Default) GetApplications() []Applications {
+	if d == nil {
 		return nil
 	}
-	return o.Applications
+	return d.Applications
 }
 
-func (o *Default) GetBackends() []MeshMetricItemBackends {
-	if o == nil {
+func (d *Default) GetBackends() []MeshMetricItemBackends {
+	if d == nil {
 		return nil
 	}
-	return o.Backends
+	return d.Backends
 }
 
-func (o *Default) GetSidecar() *Sidecar {
-	if o == nil {
+func (d *Default) GetSidecar() *Sidecar {
+	if d == nil {
 		return nil
 	}
-	return o.Sidecar
+	return d.Sidecar
 }
 
 // MeshMetricItemKind - Kind of the referenced resource
@@ -608,60 +608,60 @@ type MeshMetricItemTargetRef struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (o *MeshMetricItemTargetRef) GetKind() MeshMetricItemKind {
-	if o == nil {
+func (m *MeshMetricItemTargetRef) GetKind() MeshMetricItemKind {
+	if m == nil {
 		return MeshMetricItemKind("")
 	}
-	return o.Kind
+	return m.Kind
 }
 
-func (o *MeshMetricItemTargetRef) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshMetricItemTargetRef) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshMetricItemTargetRef) GetMesh() *string {
-	if o == nil {
+func (m *MeshMetricItemTargetRef) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshMetricItemTargetRef) GetName() *string {
-	if o == nil {
+func (m *MeshMetricItemTargetRef) GetName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshMetricItemTargetRef) GetNamespace() *string {
-	if o == nil {
+func (m *MeshMetricItemTargetRef) GetNamespace() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Namespace
+	return m.Namespace
 }
 
-func (o *MeshMetricItemTargetRef) GetProxyTypes() []MeshMetricItemProxyTypes {
-	if o == nil {
+func (m *MeshMetricItemTargetRef) GetProxyTypes() []MeshMetricItemProxyTypes {
+	if m == nil {
 		return nil
 	}
-	return o.ProxyTypes
+	return m.ProxyTypes
 }
 
-func (o *MeshMetricItemTargetRef) GetSectionName() *string {
-	if o == nil {
+func (m *MeshMetricItemTargetRef) GetSectionName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.SectionName
+	return m.SectionName
 }
 
-func (o *MeshMetricItemTargetRef) GetTags() map[string]string {
-	if o == nil {
+func (m *MeshMetricItemTargetRef) GetTags() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Tags
+	return m.Tags
 }
 
 // MeshMetricItemSpec - Spec is the specification of the Kuma MeshMetric resource.
@@ -674,18 +674,18 @@ type MeshMetricItemSpec struct {
 	TargetRef *MeshMetricItemTargetRef `json:"targetRef,omitempty"`
 }
 
-func (o *MeshMetricItemSpec) GetDefault() *Default {
-	if o == nil {
+func (m *MeshMetricItemSpec) GetDefault() *Default {
+	if m == nil {
 		return nil
 	}
-	return o.Default
+	return m.Default
 }
 
-func (o *MeshMetricItemSpec) GetTargetRef() *MeshMetricItemTargetRef {
-	if o == nil {
+func (m *MeshMetricItemSpec) GetTargetRef() *MeshMetricItemTargetRef {
+	if m == nil {
 		return nil
 	}
-	return o.TargetRef
+	return m.TargetRef
 }
 
 // MeshMetricItem - Successful response
@@ -713,66 +713,66 @@ func (m MeshMetricItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshMetricItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshMetricItem) GetType() MeshMetricItemType {
-	if o == nil {
+func (m *MeshMetricItem) GetType() MeshMetricItemType {
+	if m == nil {
 		return MeshMetricItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshMetricItem) GetMesh() *string {
-	if o == nil {
+func (m *MeshMetricItem) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshMetricItem) GetKri() *string {
-	if o == nil {
+func (m *MeshMetricItem) GetKri() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Kri
+	return m.Kri
 }
 
-func (o *MeshMetricItem) GetName() string {
-	if o == nil {
+func (m *MeshMetricItem) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshMetricItem) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshMetricItem) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshMetricItem) GetSpec() MeshMetricItemSpec {
-	if o == nil {
+func (m *MeshMetricItem) GetSpec() MeshMetricItemSpec {
+	if m == nil {
 		return MeshMetricItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }
 
-func (o *MeshMetricItem) GetCreationTime() *time.Time {
-	if o == nil {
+func (m *MeshMetricItem) GetCreationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.CreationTime
+	return m.CreationTime
 }
 
-func (o *MeshMetricItem) GetModificationTime() *time.Time {
-	if o == nil {
+func (m *MeshMetricItem) GetModificationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.ModificationTime
+	return m.ModificationTime
 }
 
 // MeshMetricItemInput - Successful response
@@ -794,43 +794,43 @@ func (m MeshMetricItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshMetricItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshMetricItemInput) GetType() MeshMetricItemType {
-	if o == nil {
+func (m *MeshMetricItemInput) GetType() MeshMetricItemType {
+	if m == nil {
 		return MeshMetricItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshMetricItemInput) GetMesh() *string {
-	if o == nil {
+func (m *MeshMetricItemInput) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshMetricItemInput) GetName() string {
-	if o == nil {
+func (m *MeshMetricItemInput) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshMetricItemInput) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshMetricItemInput) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshMetricItemInput) GetSpec() MeshMetricItemSpec {
-	if o == nil {
+func (m *MeshMetricItemInput) GetSpec() MeshMetricItemSpec {
+	if m == nil {
 		return MeshMetricItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }

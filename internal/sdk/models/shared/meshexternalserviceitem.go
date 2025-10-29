@@ -40,18 +40,18 @@ type Endpoints struct {
 	Port int `json:"port"`
 }
 
-func (o *Endpoints) GetAddress() string {
-	if o == nil {
+func (e *Endpoints) GetAddress() string {
+	if e == nil {
 		return ""
 	}
-	return o.Address
+	return e.Address
 }
 
-func (o *Endpoints) GetPort() int {
-	if o == nil {
+func (e *Endpoints) GetPort() int {
+	if e == nil {
 		return 0
 	}
-	return o.Port
+	return e.Port
 }
 
 // MeshExternalServiceItemExtension - Extension struct for a plugin configuration, in the presence of an extension `endpoints` and `tls` are not required anymore - it's up to the extension to validate them independently.
@@ -62,18 +62,18 @@ type MeshExternalServiceItemExtension struct {
 	Type string `json:"type"`
 }
 
-func (o *MeshExternalServiceItemExtension) GetConfig() any {
-	if o == nil {
+func (m *MeshExternalServiceItemExtension) GetConfig() any {
+	if m == nil {
 		return nil
 	}
-	return o.Config
+	return m.Config
 }
 
-func (o *MeshExternalServiceItemExtension) GetType() string {
-	if o == nil {
+func (m *MeshExternalServiceItemExtension) GetType() string {
+	if m == nil {
 		return ""
 	}
-	return o.Type
+	return m.Type
 }
 
 // MeshExternalServiceItemProtocol - Protocol defines a protocol of the communication. Possible values: `tcp`, `grpc`, `http`, `http2`.
@@ -148,31 +148,31 @@ func (m Match) MarshalJSON() ([]byte, error) {
 }
 
 func (m *Match) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"port"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *Match) GetPort() int {
-	if o == nil {
+func (m *Match) GetPort() int {
+	if m == nil {
 		return 0
 	}
-	return o.Port
+	return m.Port
 }
 
-func (o *Match) GetProtocol() *MeshExternalServiceItemProtocol {
-	if o == nil {
+func (m *Match) GetProtocol() *MeshExternalServiceItemProtocol {
+	if m == nil {
 		return nil
 	}
-	return o.Protocol
+	return m.Protocol
 }
 
-func (o *Match) GetType() *MeshExternalServiceItemSpecType {
-	if o == nil {
+func (m *Match) GetType() *MeshExternalServiceItemSpecType {
+	if m == nil {
 		return nil
 	}
-	return o.Type
+	return m.Type
 }
 
 // CaCert defines a certificate of CA.
@@ -185,25 +185,25 @@ type CaCert struct {
 	Secret *string `json:"secret,omitempty"`
 }
 
-func (o *CaCert) GetInline() *string {
-	if o == nil {
+func (c *CaCert) GetInline() *string {
+	if c == nil {
 		return nil
 	}
-	return o.Inline
+	return c.Inline
 }
 
-func (o *CaCert) GetInlineString() *string {
-	if o == nil {
+func (c *CaCert) GetInlineString() *string {
+	if c == nil {
 		return nil
 	}
-	return o.InlineString
+	return c.InlineString
 }
 
-func (o *CaCert) GetSecret() *string {
-	if o == nil {
+func (c *CaCert) GetSecret() *string {
+	if c == nil {
 		return nil
 	}
-	return o.Secret
+	return c.Secret
 }
 
 // ClientCert defines a certificate of a client.
@@ -216,25 +216,25 @@ type ClientCert struct {
 	Secret *string `json:"secret,omitempty"`
 }
 
-func (o *ClientCert) GetInline() *string {
-	if o == nil {
+func (c *ClientCert) GetInline() *string {
+	if c == nil {
 		return nil
 	}
-	return o.Inline
+	return c.Inline
 }
 
-func (o *ClientCert) GetInlineString() *string {
-	if o == nil {
+func (c *ClientCert) GetInlineString() *string {
+	if c == nil {
 		return nil
 	}
-	return o.InlineString
+	return c.InlineString
 }
 
-func (o *ClientCert) GetSecret() *string {
-	if o == nil {
+func (c *ClientCert) GetSecret() *string {
+	if c == nil {
 		return nil
 	}
-	return o.Secret
+	return c.Secret
 }
 
 // ClientKey defines a client private key.
@@ -247,25 +247,25 @@ type ClientKey struct {
 	Secret *string `json:"secret,omitempty"`
 }
 
-func (o *ClientKey) GetInline() *string {
-	if o == nil {
+func (c *ClientKey) GetInline() *string {
+	if c == nil {
 		return nil
 	}
-	return o.Inline
+	return c.Inline
 }
 
-func (o *ClientKey) GetInlineString() *string {
-	if o == nil {
+func (c *ClientKey) GetInlineString() *string {
+	if c == nil {
 		return nil
 	}
-	return o.InlineString
+	return c.InlineString
 }
 
-func (o *ClientKey) GetSecret() *string {
-	if o == nil {
+func (c *ClientKey) GetSecret() *string {
+	if c == nil {
 		return nil
 	}
-	return o.Secret
+	return c.Secret
 }
 
 // MeshExternalServiceItemMode - Mode defines if proxy should skip verification, one of `SkipSAN`, `SkipCA`, `Secured`, `SkipAll`. Default `Secured`.
@@ -340,24 +340,24 @@ func (s SubjectAltNames) MarshalJSON() ([]byte, error) {
 }
 
 func (s *SubjectAltNames) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &s, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &s, "", false, []string{"value"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *SubjectAltNames) GetType() *MeshExternalServiceItemSpecTLSType {
-	if o == nil {
+func (s *SubjectAltNames) GetType() *MeshExternalServiceItemSpecTLSType {
+	if s == nil {
 		return nil
 	}
-	return o.Type
+	return s.Type
 }
 
-func (o *SubjectAltNames) GetValue() string {
-	if o == nil {
+func (s *SubjectAltNames) GetValue() string {
+	if s == nil {
 		return ""
 	}
-	return o.Value
+	return s.Value
 }
 
 // Verification section for providing TLS verification details.
@@ -381,52 +381,52 @@ func (v Verification) MarshalJSON() ([]byte, error) {
 }
 
 func (v *Verification) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &v, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &v, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *Verification) GetCaCert() *CaCert {
-	if o == nil {
+func (v *Verification) GetCaCert() *CaCert {
+	if v == nil {
 		return nil
 	}
-	return o.CaCert
+	return v.CaCert
 }
 
-func (o *Verification) GetClientCert() *ClientCert {
-	if o == nil {
+func (v *Verification) GetClientCert() *ClientCert {
+	if v == nil {
 		return nil
 	}
-	return o.ClientCert
+	return v.ClientCert
 }
 
-func (o *Verification) GetClientKey() *ClientKey {
-	if o == nil {
+func (v *Verification) GetClientKey() *ClientKey {
+	if v == nil {
 		return nil
 	}
-	return o.ClientKey
+	return v.ClientKey
 }
 
-func (o *Verification) GetMode() *MeshExternalServiceItemMode {
-	if o == nil {
+func (v *Verification) GetMode() *MeshExternalServiceItemMode {
+	if v == nil {
 		return nil
 	}
-	return o.Mode
+	return v.Mode
 }
 
-func (o *Verification) GetServerName() *string {
-	if o == nil {
+func (v *Verification) GetServerName() *string {
+	if v == nil {
 		return nil
 	}
-	return o.ServerName
+	return v.ServerName
 }
 
-func (o *Verification) GetSubjectAltNames() []SubjectAltNames {
-	if o == nil {
+func (v *Verification) GetSubjectAltNames() []SubjectAltNames {
+	if v == nil {
 		return nil
 	}
-	return o.SubjectAltNames
+	return v.SubjectAltNames
 }
 
 // Max defines maximum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`.
@@ -514,24 +514,24 @@ func (v Version) MarshalJSON() ([]byte, error) {
 }
 
 func (v *Version) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &v, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &v, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *Version) GetMax() *Max {
-	if o == nil {
+func (v *Version) GetMax() *Max {
+	if v == nil {
 		return nil
 	}
-	return o.Max
+	return v.Max
 }
 
-func (o *Version) GetMin() *Min {
-	if o == nil {
+func (v *Version) GetMin() *Min {
+	if v == nil {
 		return nil
 	}
-	return o.Min
+	return v.Min
 }
 
 // TLS - Tls provides a TLS configuration when proxy is resposible for a TLS origination
@@ -552,38 +552,38 @@ func (t TLS) MarshalJSON() ([]byte, error) {
 }
 
 func (t *TLS) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &t, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &t, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *TLS) GetAllowRenegotiation() *bool {
-	if o == nil {
+func (t *TLS) GetAllowRenegotiation() *bool {
+	if t == nil {
 		return nil
 	}
-	return o.AllowRenegotiation
+	return t.AllowRenegotiation
 }
 
-func (o *TLS) GetEnabled() *bool {
-	if o == nil {
+func (t *TLS) GetEnabled() *bool {
+	if t == nil {
 		return nil
 	}
-	return o.Enabled
+	return t.Enabled
 }
 
-func (o *TLS) GetVerification() *Verification {
-	if o == nil {
+func (t *TLS) GetVerification() *Verification {
+	if t == nil {
 		return nil
 	}
-	return o.Verification
+	return t.Verification
 }
 
-func (o *TLS) GetVersion() *Version {
-	if o == nil {
+func (t *TLS) GetVersion() *Version {
+	if t == nil {
 		return nil
 	}
-	return o.Version
+	return t.Version
 }
 
 // MeshExternalServiceItemSpec - Spec is the specification of the Kuma MeshExternalService resource.
@@ -598,43 +598,43 @@ type MeshExternalServiceItemSpec struct {
 	TLS *TLS `json:"tls,omitempty"`
 }
 
-func (o *MeshExternalServiceItemSpec) GetEndpoints() []Endpoints {
-	if o == nil {
+func (m *MeshExternalServiceItemSpec) GetEndpoints() []Endpoints {
+	if m == nil {
 		return nil
 	}
-	return o.Endpoints
+	return m.Endpoints
 }
 
-func (o *MeshExternalServiceItemSpec) GetExtension() *MeshExternalServiceItemExtension {
-	if o == nil {
+func (m *MeshExternalServiceItemSpec) GetExtension() *MeshExternalServiceItemExtension {
+	if m == nil {
 		return nil
 	}
-	return o.Extension
+	return m.Extension
 }
 
-func (o *MeshExternalServiceItemSpec) GetMatch() Match {
-	if o == nil {
+func (m *MeshExternalServiceItemSpec) GetMatch() Match {
+	if m == nil {
 		return Match{}
 	}
-	return o.Match
+	return m.Match
 }
 
-func (o *MeshExternalServiceItemSpec) GetTLS() *TLS {
-	if o == nil {
+func (m *MeshExternalServiceItemSpec) GetTLS() *TLS {
+	if m == nil {
 		return nil
 	}
-	return o.TLS
+	return m.TLS
 }
 
 type HostnameGeneratorRef struct {
 	CoreName string `json:"coreName"`
 }
 
-func (o *HostnameGeneratorRef) GetCoreName() string {
-	if o == nil {
+func (h *HostnameGeneratorRef) GetCoreName() string {
+	if h == nil {
 		return ""
 	}
-	return o.CoreName
+	return h.CoreName
 }
 
 type Addresses struct {
@@ -643,25 +643,25 @@ type Addresses struct {
 	Origin               *string               `json:"origin,omitempty"`
 }
 
-func (o *Addresses) GetHostname() *string {
-	if o == nil {
+func (a *Addresses) GetHostname() *string {
+	if a == nil {
 		return nil
 	}
-	return o.Hostname
+	return a.Hostname
 }
 
-func (o *Addresses) GetHostnameGeneratorRef() *HostnameGeneratorRef {
-	if o == nil {
+func (a *Addresses) GetHostnameGeneratorRef() *HostnameGeneratorRef {
+	if a == nil {
 		return nil
 	}
-	return o.HostnameGeneratorRef
+	return a.HostnameGeneratorRef
 }
 
-func (o *Addresses) GetOrigin() *string {
-	if o == nil {
+func (a *Addresses) GetOrigin() *string {
+	if a == nil {
 		return nil
 	}
-	return o.Origin
+	return a.Origin
 }
 
 // MeshExternalServiceItemStatus - status of the condition, one of True, False, Unknown.
@@ -710,43 +710,43 @@ type MeshExternalServiceItemConditions struct {
 	Type string `json:"type"`
 }
 
-func (o *MeshExternalServiceItemConditions) GetMessage() string {
-	if o == nil {
+func (m *MeshExternalServiceItemConditions) GetMessage() string {
+	if m == nil {
 		return ""
 	}
-	return o.Message
+	return m.Message
 }
 
-func (o *MeshExternalServiceItemConditions) GetReason() string {
-	if o == nil {
+func (m *MeshExternalServiceItemConditions) GetReason() string {
+	if m == nil {
 		return ""
 	}
-	return o.Reason
+	return m.Reason
 }
 
-func (o *MeshExternalServiceItemConditions) GetStatus() MeshExternalServiceItemStatus {
-	if o == nil {
+func (m *MeshExternalServiceItemConditions) GetStatus() MeshExternalServiceItemStatus {
+	if m == nil {
 		return MeshExternalServiceItemStatus("")
 	}
-	return o.Status
+	return m.Status
 }
 
-func (o *MeshExternalServiceItemConditions) GetType() string {
-	if o == nil {
+func (m *MeshExternalServiceItemConditions) GetType() string {
+	if m == nil {
 		return ""
 	}
-	return o.Type
+	return m.Type
 }
 
 type MeshExternalServiceItemHostnameGeneratorRef struct {
 	CoreName string `json:"coreName"`
 }
 
-func (o *MeshExternalServiceItemHostnameGeneratorRef) GetCoreName() string {
-	if o == nil {
+func (m *MeshExternalServiceItemHostnameGeneratorRef) GetCoreName() string {
+	if m == nil {
 		return ""
 	}
-	return o.CoreName
+	return m.CoreName
 }
 
 type HostnameGenerators struct {
@@ -755,18 +755,18 @@ type HostnameGenerators struct {
 	HostnameGeneratorRef MeshExternalServiceItemHostnameGeneratorRef `json:"hostnameGeneratorRef"`
 }
 
-func (o *HostnameGenerators) GetConditions() []MeshExternalServiceItemConditions {
-	if o == nil {
+func (h *HostnameGenerators) GetConditions() []MeshExternalServiceItemConditions {
+	if h == nil {
 		return nil
 	}
-	return o.Conditions
+	return h.Conditions
 }
 
-func (o *HostnameGenerators) GetHostnameGeneratorRef() MeshExternalServiceItemHostnameGeneratorRef {
-	if o == nil {
+func (h *HostnameGenerators) GetHostnameGeneratorRef() MeshExternalServiceItemHostnameGeneratorRef {
+	if h == nil {
 		return MeshExternalServiceItemHostnameGeneratorRef{}
 	}
-	return o.HostnameGeneratorRef
+	return h.HostnameGeneratorRef
 }
 
 // Vip section for allocated IP
@@ -775,11 +775,11 @@ type Vip struct {
 	IP *string `json:"ip,omitempty"`
 }
 
-func (o *Vip) GetIP() *string {
-	if o == nil {
+func (v *Vip) GetIP() *string {
+	if v == nil {
 		return nil
 	}
-	return o.IP
+	return v.IP
 }
 
 // Status is the current status of the Kuma MeshExternalService resource.
@@ -791,25 +791,25 @@ type Status struct {
 	Vip *Vip `json:"vip,omitempty"`
 }
 
-func (o *Status) GetAddresses() []Addresses {
-	if o == nil {
+func (s *Status) GetAddresses() []Addresses {
+	if s == nil {
 		return nil
 	}
-	return o.Addresses
+	return s.Addresses
 }
 
-func (o *Status) GetHostnameGenerators() []HostnameGenerators {
-	if o == nil {
+func (s *Status) GetHostnameGenerators() []HostnameGenerators {
+	if s == nil {
 		return nil
 	}
-	return o.HostnameGenerators
+	return s.HostnameGenerators
 }
 
-func (o *Status) GetVip() *Vip {
-	if o == nil {
+func (s *Status) GetVip() *Vip {
+	if s == nil {
 		return nil
 	}
-	return o.Vip
+	return s.Vip
 }
 
 // MeshExternalServiceItem - Successful response
@@ -839,73 +839,73 @@ func (m MeshExternalServiceItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshExternalServiceItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshExternalServiceItem) GetType() MeshExternalServiceItemType {
-	if o == nil {
+func (m *MeshExternalServiceItem) GetType() MeshExternalServiceItemType {
+	if m == nil {
 		return MeshExternalServiceItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshExternalServiceItem) GetMesh() *string {
-	if o == nil {
+func (m *MeshExternalServiceItem) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshExternalServiceItem) GetKri() *string {
-	if o == nil {
+func (m *MeshExternalServiceItem) GetKri() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Kri
+	return m.Kri
 }
 
-func (o *MeshExternalServiceItem) GetName() string {
-	if o == nil {
+func (m *MeshExternalServiceItem) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshExternalServiceItem) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshExternalServiceItem) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshExternalServiceItem) GetSpec() MeshExternalServiceItemSpec {
-	if o == nil {
+func (m *MeshExternalServiceItem) GetSpec() MeshExternalServiceItemSpec {
+	if m == nil {
 		return MeshExternalServiceItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }
 
-func (o *MeshExternalServiceItem) GetCreationTime() *time.Time {
-	if o == nil {
+func (m *MeshExternalServiceItem) GetCreationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.CreationTime
+	return m.CreationTime
 }
 
-func (o *MeshExternalServiceItem) GetModificationTime() *time.Time {
-	if o == nil {
+func (m *MeshExternalServiceItem) GetModificationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.ModificationTime
+	return m.ModificationTime
 }
 
-func (o *MeshExternalServiceItem) GetStatus() *Status {
-	if o == nil {
+func (m *MeshExternalServiceItem) GetStatus() *Status {
+	if m == nil {
 		return nil
 	}
-	return o.Status
+	return m.Status
 }
 
 type MeshExternalServiceItemInput struct {
@@ -926,43 +926,43 @@ func (m MeshExternalServiceItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshExternalServiceItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshExternalServiceItemInput) GetType() MeshExternalServiceItemType {
-	if o == nil {
+func (m *MeshExternalServiceItemInput) GetType() MeshExternalServiceItemType {
+	if m == nil {
 		return MeshExternalServiceItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshExternalServiceItemInput) GetMesh() *string {
-	if o == nil {
+func (m *MeshExternalServiceItemInput) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshExternalServiceItemInput) GetName() string {
-	if o == nil {
+func (m *MeshExternalServiceItemInput) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshExternalServiceItemInput) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshExternalServiceItemInput) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshExternalServiceItemInput) GetSpec() MeshExternalServiceItemSpec {
-	if o == nil {
+func (m *MeshExternalServiceItemInput) GetSpec() MeshExternalServiceItemSpec {
+	if m == nil {
 		return MeshExternalServiceItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }

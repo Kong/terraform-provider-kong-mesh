@@ -63,7 +63,7 @@ func (s *ZoneEgress) GetZoneEgress(ctx context.Context, request operations.GetZo
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getZoneEgress",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -293,7 +293,7 @@ func (s *ZoneEgress) PutZoneEgress(ctx context.Context, request operations.PutZo
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "putZoneEgress",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "ZoneEgressItem", "json", `request:"mediaType=application/json"`)
@@ -507,7 +507,7 @@ func (s *ZoneEgress) DeleteZoneEgress(ctx context.Context, request operations.De
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "deleteZoneEgress",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -737,7 +737,7 @@ func (s *ZoneEgress) GetZoneEgressList(ctx context.Context, request operations.G
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getZoneEgressList",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 

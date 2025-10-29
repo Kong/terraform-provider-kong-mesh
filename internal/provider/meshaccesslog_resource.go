@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -38,6 +39,7 @@ func NewMeshAccessLogResource() resource.Resource {
 
 // MeshAccessLogResource defines the resource implementation.
 type MeshAccessLogResource struct {
+	// Provider configured SDK client.
 	client *sdk.KongMesh
 }
 
@@ -237,8 +239,9 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 																	`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
 															},
 															"body": schema.StringAttribute{
-																Computed: true,
-																Optional: true,
+																CustomType: jsontypes.NormalizedType{},
+																Computed:   true,
+																Optional:   true,
 																PlanModifiers: []planmodifier.String{
 																	custom_stringplanmodifier.ArbitraryJSONModifier(),
 																},
@@ -247,9 +250,6 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 																	`It can contain placeholders available on` + "\n" +
 																	`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators` + "\n" +
 																	`Parsed as JSON.`,
-																Validators: []validator.String{
-																	validators.IsValidJSON(),
-																},
 															},
 															"endpoint": schema.StringAttribute{
 																Optional:    true,
@@ -556,16 +556,14 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 																	`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
 															},
 															"body": schema.StringAttribute{
-																Computed: true,
-																Optional: true,
+																CustomType: jsontypes.NormalizedType{},
+																Computed:   true,
+																Optional:   true,
 																MarkdownDescription: `Body is a raw string or an OTLP any value as described at` + "\n" +
 																	`https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body` + "\n" +
 																	`It can contain placeholders available on` + "\n" +
 																	`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators` + "\n" +
 																	`Parsed as JSON.`,
-																Validators: []validator.String{
-																	validators.IsValidJSON(),
-																},
 															},
 															"endpoint": schema.StringAttribute{
 																Optional:    true,
@@ -867,8 +865,9 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 																	`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
 															},
 															"body": schema.StringAttribute{
-																Computed: true,
-																Optional: true,
+																CustomType: jsontypes.NormalizedType{},
+																Computed:   true,
+																Optional:   true,
 																PlanModifiers: []planmodifier.String{
 																	custom_stringplanmodifier.ArbitraryJSONModifier(),
 																},
@@ -877,9 +876,6 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 																	`It can contain placeholders available on` + "\n" +
 																	`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators` + "\n" +
 																	`Parsed as JSON.`,
-																Validators: []validator.String{
-																	validators.IsValidJSON(),
-																},
 															},
 															"endpoint": schema.StringAttribute{
 																Optional:    true,
@@ -1406,7 +1402,7 @@ func (r *MeshAccessLogResource) ImportState(ctx context.Context, req resource.Im
 	}
 
 	if err := dec.Decode(&data); err != nil {
-		resp.Diagnostics.AddError("Invalid ID", `The import ID is not valid. It is expected to be a JSON object string with the format: '{ "mesh": "",  "name": ""}': `+err.Error())
+		resp.Diagnostics.AddError("Invalid ID", `The import ID is not valid. It is expected to be a JSON object string with the format: '{"mesh": "...", "name": "..."}': `+err.Error())
 		return
 	}
 
@@ -1420,5 +1416,4 @@ func (r *MeshAccessLogResource) ImportState(ctx context.Context, req resource.Im
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("name"), data.Name)...)
-
 }

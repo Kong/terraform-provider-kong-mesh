@@ -13,32 +13,32 @@ type AvailableServices struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (o *AvailableServices) GetExternalService() *bool {
-	if o == nil {
+func (a *AvailableServices) GetExternalService() *bool {
+	if a == nil {
 		return nil
 	}
-	return o.ExternalService
+	return a.ExternalService
 }
 
-func (o *AvailableServices) GetInstances() *int64 {
-	if o == nil {
+func (a *AvailableServices) GetInstances() *int64 {
+	if a == nil {
 		return nil
 	}
-	return o.Instances
+	return a.Instances
 }
 
-func (o *AvailableServices) GetMesh() *string {
-	if o == nil {
+func (a *AvailableServices) GetMesh() *string {
+	if a == nil {
 		return nil
 	}
-	return o.Mesh
+	return a.Mesh
 }
 
-func (o *AvailableServices) GetTags() map[string]string {
-	if o == nil {
+func (a *AvailableServices) GetTags() map[string]string {
+	if a == nil {
 		return nil
 	}
-	return o.Tags
+	return a.Tags
 }
 
 // ZoneIngressItemAdmin - Admin contains configuration related to Envoy Admin API
@@ -47,11 +47,11 @@ type ZoneIngressItemAdmin struct {
 	Port *int64 `json:"port,omitempty"`
 }
 
-func (o *ZoneIngressItemAdmin) GetPort() *int64 {
-	if o == nil {
+func (z *ZoneIngressItemAdmin) GetPort() *int64 {
+	if z == nil {
 		return nil
 	}
-	return o.Port
+	return z.Port
 }
 
 // ZoneIngressItemNetworking - Networking defines the address and port of the Ingress to listen on.
@@ -71,39 +71,39 @@ type ZoneIngressItemNetworking struct {
 	Port *int64 `json:"port,omitempty"`
 }
 
-func (o *ZoneIngressItemNetworking) GetAddress() *string {
-	if o == nil {
+func (z *ZoneIngressItemNetworking) GetAddress() *string {
+	if z == nil {
 		return nil
 	}
-	return o.Address
+	return z.Address
 }
 
-func (o *ZoneIngressItemNetworking) GetAdmin() *ZoneIngressItemAdmin {
-	if o == nil {
+func (z *ZoneIngressItemNetworking) GetAdmin() *ZoneIngressItemAdmin {
+	if z == nil {
 		return nil
 	}
-	return o.Admin
+	return z.Admin
 }
 
-func (o *ZoneIngressItemNetworking) GetAdvertisedAddress() *string {
-	if o == nil {
+func (z *ZoneIngressItemNetworking) GetAdvertisedAddress() *string {
+	if z == nil {
 		return nil
 	}
-	return o.AdvertisedAddress
+	return z.AdvertisedAddress
 }
 
-func (o *ZoneIngressItemNetworking) GetAdvertisedPort() *int64 {
-	if o == nil {
+func (z *ZoneIngressItemNetworking) GetAdvertisedPort() *int64 {
+	if z == nil {
 		return nil
 	}
-	return o.AdvertisedPort
+	return z.AdvertisedPort
 }
 
-func (o *ZoneIngressItemNetworking) GetPort() *int64 {
-	if o == nil {
+func (z *ZoneIngressItemNetworking) GetPort() *int64 {
+	if z == nil {
 		return nil
 	}
-	return o.Port
+	return z.Port
 }
 
 // ZoneIngressItem - Successful response
@@ -122,44 +122,44 @@ type ZoneIngressItem struct {
 	Zone *string `json:"zone,omitempty"`
 }
 
-func (o *ZoneIngressItem) GetAvailableServices() []AvailableServices {
-	if o == nil {
+func (z *ZoneIngressItem) GetAvailableServices() []AvailableServices {
+	if z == nil {
 		return nil
 	}
-	return o.AvailableServices
+	return z.AvailableServices
 }
 
-func (o *ZoneIngressItem) GetLabels() map[string]string {
-	if o == nil {
+func (z *ZoneIngressItem) GetLabels() map[string]string {
+	if z == nil {
 		return nil
 	}
-	return o.Labels
+	return z.Labels
 }
 
-func (o *ZoneIngressItem) GetName() string {
-	if o == nil {
+func (z *ZoneIngressItem) GetName() string {
+	if z == nil {
 		return ""
 	}
-	return o.Name
+	return z.Name
 }
 
-func (o *ZoneIngressItem) GetNetworking() *ZoneIngressItemNetworking {
-	if o == nil {
+func (z *ZoneIngressItem) GetNetworking() *ZoneIngressItemNetworking {
+	if z == nil {
 		return nil
 	}
-	return o.Networking
+	return z.Networking
 }
 
-func (o *ZoneIngressItem) GetType() string {
-	if o == nil {
+func (z *ZoneIngressItem) GetType() string {
+	if z == nil {
 		return ""
 	}
-	return o.Type
+	return z.Type
 }
 
-func (o *ZoneIngressItem) GetZone() *string {
-	if o == nil {
+func (z *ZoneIngressItem) GetZone() *string {
+	if z == nil {
 		return nil
 	}
-	return o.Zone
+	return z.Zone
 }

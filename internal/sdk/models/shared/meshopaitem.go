@@ -43,25 +43,25 @@ type AgentConfig struct {
 	Secret *string `json:"secret,omitempty"`
 }
 
-func (o *AgentConfig) GetInline() *string {
-	if o == nil {
+func (a *AgentConfig) GetInline() *string {
+	if a == nil {
 		return nil
 	}
-	return o.Inline
+	return a.Inline
 }
 
-func (o *AgentConfig) GetInlineString() *string {
-	if o == nil {
+func (a *AgentConfig) GetInlineString() *string {
+	if a == nil {
 		return nil
 	}
-	return o.InlineString
+	return a.InlineString
 }
 
-func (o *AgentConfig) GetSecret() *string {
-	if o == nil {
+func (a *AgentConfig) GetSecret() *string {
+	if a == nil {
 		return nil
 	}
-	return o.Secret
+	return a.Secret
 }
 
 // Rego - OPA Policy written in Rego. Available values: secret, inline, inlineString.
@@ -74,25 +74,25 @@ type Rego struct {
 	Secret *string `json:"secret,omitempty"`
 }
 
-func (o *Rego) GetInline() *string {
-	if o == nil {
+func (r *Rego) GetInline() *string {
+	if r == nil {
 		return nil
 	}
-	return o.Inline
+	return r.Inline
 }
 
-func (o *Rego) GetInlineString() *string {
-	if o == nil {
+func (r *Rego) GetInlineString() *string {
+	if r == nil {
 		return nil
 	}
-	return o.InlineString
+	return r.InlineString
 }
 
-func (o *Rego) GetSecret() *string {
-	if o == nil {
+func (r *Rego) GetSecret() *string {
+	if r == nil {
 		return nil
 	}
-	return o.Secret
+	return r.Secret
 }
 
 type AppendPolicies struct {
@@ -102,18 +102,18 @@ type AppendPolicies struct {
 	Rego Rego `json:"rego"`
 }
 
-func (o *AppendPolicies) GetIgnoreDecision() *bool {
-	if o == nil {
+func (a *AppendPolicies) GetIgnoreDecision() *bool {
+	if a == nil {
 		return nil
 	}
-	return o.IgnoreDecision
+	return a.IgnoreDecision
 }
 
-func (o *AppendPolicies) GetRego() Rego {
-	if o == nil {
+func (a *AppendPolicies) GetRego() Rego {
+	if a == nil {
 		return Rego{}
 	}
-	return o.Rego
+	return a.Rego
 }
 
 // OnAgentFailure either 'allow' or 'deny' (default to deny) whether
@@ -156,18 +156,18 @@ type RequestBody struct {
 	SendRawBody *bool `json:"sendRawBody,omitempty"`
 }
 
-func (o *RequestBody) GetMaxSize() *int {
-	if o == nil {
+func (r *RequestBody) GetMaxSize() *int {
+	if r == nil {
 		return nil
 	}
-	return o.MaxSize
+	return r.MaxSize
 }
 
-func (o *RequestBody) GetSendRawBody() *bool {
-	if o == nil {
+func (r *RequestBody) GetSendRawBody() *bool {
+	if r == nil {
 		return nil
 	}
-	return o.SendRawBody
+	return r.SendRawBody
 }
 
 // AuthConfig are configurations specific to the filter.
@@ -185,32 +185,32 @@ type AuthConfig struct {
 	Timeout *string `json:"timeout,omitempty"`
 }
 
-func (o *AuthConfig) GetOnAgentFailure() *OnAgentFailure {
-	if o == nil {
+func (a *AuthConfig) GetOnAgentFailure() *OnAgentFailure {
+	if a == nil {
 		return nil
 	}
-	return o.OnAgentFailure
+	return a.OnAgentFailure
 }
 
-func (o *AuthConfig) GetRequestBody() *RequestBody {
-	if o == nil {
+func (a *AuthConfig) GetRequestBody() *RequestBody {
+	if a == nil {
 		return nil
 	}
-	return o.RequestBody
+	return a.RequestBody
 }
 
-func (o *AuthConfig) GetStatusOnError() *int {
-	if o == nil {
+func (a *AuthConfig) GetStatusOnError() *int {
+	if a == nil {
 		return nil
 	}
-	return o.StatusOnError
+	return a.StatusOnError
 }
 
-func (o *AuthConfig) GetTimeout() *string {
-	if o == nil {
+func (a *AuthConfig) GetTimeout() *string {
+	if a == nil {
 		return nil
 	}
-	return o.Timeout
+	return a.Timeout
 }
 
 type MeshOPAItemDefault struct {
@@ -222,25 +222,25 @@ type MeshOPAItemDefault struct {
 	AuthConfig *AuthConfig `json:"authConfig,omitempty"`
 }
 
-func (o *MeshOPAItemDefault) GetAgentConfig() *AgentConfig {
-	if o == nil {
+func (m *MeshOPAItemDefault) GetAgentConfig() *AgentConfig {
+	if m == nil {
 		return nil
 	}
-	return o.AgentConfig
+	return m.AgentConfig
 }
 
-func (o *MeshOPAItemDefault) GetAppendPolicies() []AppendPolicies {
-	if o == nil {
+func (m *MeshOPAItemDefault) GetAppendPolicies() []AppendPolicies {
+	if m == nil {
 		return nil
 	}
-	return o.AppendPolicies
+	return m.AppendPolicies
 }
 
-func (o *MeshOPAItemDefault) GetAuthConfig() *AuthConfig {
-	if o == nil {
+func (m *MeshOPAItemDefault) GetAuthConfig() *AuthConfig {
+	if m == nil {
 		return nil
 	}
-	return o.AuthConfig
+	return m.AuthConfig
 }
 
 // MeshOPAItemKind - Kind of the referenced resource
@@ -345,60 +345,60 @@ type MeshOPAItemTargetRef struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (o *MeshOPAItemTargetRef) GetKind() MeshOPAItemKind {
-	if o == nil {
+func (m *MeshOPAItemTargetRef) GetKind() MeshOPAItemKind {
+	if m == nil {
 		return MeshOPAItemKind("")
 	}
-	return o.Kind
+	return m.Kind
 }
 
-func (o *MeshOPAItemTargetRef) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshOPAItemTargetRef) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshOPAItemTargetRef) GetMesh() *string {
-	if o == nil {
+func (m *MeshOPAItemTargetRef) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshOPAItemTargetRef) GetName() *string {
-	if o == nil {
+func (m *MeshOPAItemTargetRef) GetName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshOPAItemTargetRef) GetNamespace() *string {
-	if o == nil {
+func (m *MeshOPAItemTargetRef) GetNamespace() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Namespace
+	return m.Namespace
 }
 
-func (o *MeshOPAItemTargetRef) GetProxyTypes() []MeshOPAItemProxyTypes {
-	if o == nil {
+func (m *MeshOPAItemTargetRef) GetProxyTypes() []MeshOPAItemProxyTypes {
+	if m == nil {
 		return nil
 	}
-	return o.ProxyTypes
+	return m.ProxyTypes
 }
 
-func (o *MeshOPAItemTargetRef) GetSectionName() *string {
-	if o == nil {
+func (m *MeshOPAItemTargetRef) GetSectionName() *string {
+	if m == nil {
 		return nil
 	}
-	return o.SectionName
+	return m.SectionName
 }
 
-func (o *MeshOPAItemTargetRef) GetTags() map[string]string {
-	if o == nil {
+func (m *MeshOPAItemTargetRef) GetTags() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Tags
+	return m.Tags
 }
 
 // MeshOPAItemSpec - Spec is the specification of the Kuma MeshOPA resource.
@@ -410,18 +410,18 @@ type MeshOPAItemSpec struct {
 	TargetRef *MeshOPAItemTargetRef `json:"targetRef,omitempty"`
 }
 
-func (o *MeshOPAItemSpec) GetDefault() *MeshOPAItemDefault {
-	if o == nil {
+func (m *MeshOPAItemSpec) GetDefault() *MeshOPAItemDefault {
+	if m == nil {
 		return nil
 	}
-	return o.Default
+	return m.Default
 }
 
-func (o *MeshOPAItemSpec) GetTargetRef() *MeshOPAItemTargetRef {
-	if o == nil {
+func (m *MeshOPAItemSpec) GetTargetRef() *MeshOPAItemTargetRef {
+	if m == nil {
 		return nil
 	}
-	return o.TargetRef
+	return m.TargetRef
 }
 
 // MeshOPAItem - Successful response
@@ -449,66 +449,66 @@ func (m MeshOPAItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshOPAItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshOPAItem) GetType() MeshOPAItemType {
-	if o == nil {
+func (m *MeshOPAItem) GetType() MeshOPAItemType {
+	if m == nil {
 		return MeshOPAItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshOPAItem) GetMesh() *string {
-	if o == nil {
+func (m *MeshOPAItem) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshOPAItem) GetKri() *string {
-	if o == nil {
+func (m *MeshOPAItem) GetKri() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Kri
+	return m.Kri
 }
 
-func (o *MeshOPAItem) GetName() string {
-	if o == nil {
+func (m *MeshOPAItem) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshOPAItem) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshOPAItem) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshOPAItem) GetSpec() MeshOPAItemSpec {
-	if o == nil {
+func (m *MeshOPAItem) GetSpec() MeshOPAItemSpec {
+	if m == nil {
 		return MeshOPAItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }
 
-func (o *MeshOPAItem) GetCreationTime() *time.Time {
-	if o == nil {
+func (m *MeshOPAItem) GetCreationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.CreationTime
+	return m.CreationTime
 }
 
-func (o *MeshOPAItem) GetModificationTime() *time.Time {
-	if o == nil {
+func (m *MeshOPAItem) GetModificationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.ModificationTime
+	return m.ModificationTime
 }
 
 // MeshOPAItemInput - Successful response
@@ -530,43 +530,43 @@ func (m MeshOPAItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshOPAItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshOPAItemInput) GetType() MeshOPAItemType {
-	if o == nil {
+func (m *MeshOPAItemInput) GetType() MeshOPAItemType {
+	if m == nil {
 		return MeshOPAItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshOPAItemInput) GetMesh() *string {
-	if o == nil {
+func (m *MeshOPAItemInput) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshOPAItemInput) GetName() string {
-	if o == nil {
+func (m *MeshOPAItemInput) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshOPAItemInput) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshOPAItemInput) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshOPAItemInput) GetSpec() MeshOPAItemSpec {
-	if o == nil {
+func (m *MeshOPAItemInput) GetSpec() MeshOPAItemSpec {
+	if m == nil {
 		return MeshOPAItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }

@@ -5,6 +5,7 @@ package provider
 import (
 	"context"
 	"encoding/json"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
@@ -12,6 +13,137 @@ import (
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
 )
+
+func (r *MeshHostnameGeneratorResourceModel) RefreshFromSharedHostnameGeneratorCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.HostnameGeneratorCreateOrUpdateSuccessResponse) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		r.Warnings = make([]types.String, 0, len(resp.Warnings))
+		for _, v := range resp.Warnings {
+			r.Warnings = append(r.Warnings, types.StringValue(v))
+		}
+	}
+
+	return diags
+}
+
+func (r *MeshHostnameGeneratorResourceModel) RefreshFromSharedHostnameGeneratorItem(ctx context.Context, resp *shared.HostnameGeneratorItem) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
+		r.Kri = types.StringPointerValue(resp.Kri)
+		if len(resp.Labels) > 0 {
+			r.Labels = make(map[string]types.String, len(resp.Labels))
+			for key, value := range resp.Labels {
+				r.Labels[key] = types.StringValue(value)
+			}
+		}
+		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
+		r.Name = types.StringValue(resp.Name)
+		if resp.Spec.Extension == nil {
+			r.Spec.Extension = nil
+		} else {
+			r.Spec.Extension = &tfTypes.Extension{}
+			if resp.Spec.Extension.Config == nil {
+				r.Spec.Extension.Config = jsontypes.NewNormalizedNull()
+			} else {
+				configResult, _ := json.Marshal(resp.Spec.Extension.Config)
+				r.Spec.Extension.Config = jsontypes.NewNormalizedValue(string(configResult))
+			}
+			r.Spec.Extension.Type = types.StringValue(resp.Spec.Extension.Type)
+		}
+		if resp.Spec.Selector == nil {
+			r.Spec.Selector = nil
+		} else {
+			r.Spec.Selector = &tfTypes.Selector{}
+			if resp.Spec.Selector.MeshExternalService == nil {
+				r.Spec.Selector.MeshExternalService = nil
+			} else {
+				r.Spec.Selector.MeshExternalService = &tfTypes.MeshExternalService{}
+				if len(resp.Spec.Selector.MeshExternalService.MatchLabels) > 0 {
+					r.Spec.Selector.MeshExternalService.MatchLabels = make(map[string]types.String, len(resp.Spec.Selector.MeshExternalService.MatchLabels))
+					for key1, value1 := range resp.Spec.Selector.MeshExternalService.MatchLabels {
+						r.Spec.Selector.MeshExternalService.MatchLabels[key1] = types.StringValue(value1)
+					}
+				}
+			}
+			if resp.Spec.Selector.MeshMultiZoneService == nil {
+				r.Spec.Selector.MeshMultiZoneService = nil
+			} else {
+				r.Spec.Selector.MeshMultiZoneService = &tfTypes.MeshExternalService{}
+				if len(resp.Spec.Selector.MeshMultiZoneService.MatchLabels) > 0 {
+					r.Spec.Selector.MeshMultiZoneService.MatchLabels = make(map[string]types.String, len(resp.Spec.Selector.MeshMultiZoneService.MatchLabels))
+					for key2, value2 := range resp.Spec.Selector.MeshMultiZoneService.MatchLabels {
+						r.Spec.Selector.MeshMultiZoneService.MatchLabels[key2] = types.StringValue(value2)
+					}
+				}
+			}
+			if resp.Spec.Selector.MeshService == nil {
+				r.Spec.Selector.MeshService = nil
+			} else {
+				r.Spec.Selector.MeshService = &tfTypes.MeshExternalService{}
+				if len(resp.Spec.Selector.MeshService.MatchLabels) > 0 {
+					r.Spec.Selector.MeshService.MatchLabels = make(map[string]types.String, len(resp.Spec.Selector.MeshService.MatchLabels))
+					for key3, value3 := range resp.Spec.Selector.MeshService.MatchLabels {
+						r.Spec.Selector.MeshService.MatchLabels[key3] = types.StringValue(value3)
+					}
+				}
+			}
+		}
+		r.Spec.Template = types.StringValue(resp.Spec.Template)
+		r.Type = types.StringValue(string(resp.Type))
+	}
+
+	return diags
+}
+
+func (r *MeshHostnameGeneratorResourceModel) ToOperationsDeleteHostnameGeneratorRequest(ctx context.Context) (*operations.DeleteHostnameGeneratorRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.DeleteHostnameGeneratorRequest{
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshHostnameGeneratorResourceModel) ToOperationsGetHostnameGeneratorRequest(ctx context.Context) (*operations.GetHostnameGeneratorRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.GetHostnameGeneratorRequest{
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshHostnameGeneratorResourceModel) ToOperationsPutHostnameGeneratorRequest(ctx context.Context) (*operations.PutHostnameGeneratorRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var name string
+	name = r.Name.ValueString()
+
+	hostnameGeneratorItem, hostnameGeneratorItemDiags := r.ToSharedHostnameGeneratorItemInput(ctx)
+	diags.Append(hostnameGeneratorItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PutHostnameGeneratorRequest{
+		Name:                  name,
+		HostnameGeneratorItem: *hostnameGeneratorItem,
+	}
+
+	return &out, diags
+}
 
 func (r *MeshHostnameGeneratorResourceModel) ToSharedHostnameGeneratorItemInput(ctx context.Context) (*shared.HostnameGeneratorItemInput, diag.Diagnostics) {
 	var diags diag.Diagnostics
@@ -104,135 +236,4 @@ func (r *MeshHostnameGeneratorResourceModel) ToSharedHostnameGeneratorItemInput(
 	}
 
 	return &out, diags
-}
-
-func (r *MeshHostnameGeneratorResourceModel) ToOperationsPutHostnameGeneratorRequest(ctx context.Context) (*operations.PutHostnameGeneratorRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var name string
-	name = r.Name.ValueString()
-
-	hostnameGeneratorItem, hostnameGeneratorItemDiags := r.ToSharedHostnameGeneratorItemInput(ctx)
-	diags.Append(hostnameGeneratorItemDiags...)
-
-	if diags.HasError() {
-		return nil, diags
-	}
-
-	out := operations.PutHostnameGeneratorRequest{
-		Name:                  name,
-		HostnameGeneratorItem: *hostnameGeneratorItem,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshHostnameGeneratorResourceModel) ToOperationsGetHostnameGeneratorRequest(ctx context.Context) (*operations.GetHostnameGeneratorRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var name string
-	name = r.Name.ValueString()
-
-	out := operations.GetHostnameGeneratorRequest{
-		Name: name,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshHostnameGeneratorResourceModel) ToOperationsDeleteHostnameGeneratorRequest(ctx context.Context) (*operations.DeleteHostnameGeneratorRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var name string
-	name = r.Name.ValueString()
-
-	out := operations.DeleteHostnameGeneratorRequest{
-		Name: name,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshHostnameGeneratorResourceModel) RefreshFromSharedHostnameGeneratorCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.HostnameGeneratorCreateOrUpdateSuccessResponse) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		r.Warnings = make([]types.String, 0, len(resp.Warnings))
-		for _, v := range resp.Warnings {
-			r.Warnings = append(r.Warnings, types.StringValue(v))
-		}
-	}
-
-	return diags
-}
-
-func (r *MeshHostnameGeneratorResourceModel) RefreshFromSharedHostnameGeneratorItem(ctx context.Context, resp *shared.HostnameGeneratorItem) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
-		r.Kri = types.StringPointerValue(resp.Kri)
-		if len(resp.Labels) > 0 {
-			r.Labels = make(map[string]types.String, len(resp.Labels))
-			for key, value := range resp.Labels {
-				r.Labels[key] = types.StringValue(value)
-			}
-		}
-		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
-		r.Name = types.StringValue(resp.Name)
-		if resp.Spec.Extension == nil {
-			r.Spec.Extension = nil
-		} else {
-			r.Spec.Extension = &tfTypes.Extension{}
-			if resp.Spec.Extension.Config == nil {
-				r.Spec.Extension.Config = types.StringNull()
-			} else {
-				configResult, _ := json.Marshal(resp.Spec.Extension.Config)
-				r.Spec.Extension.Config = types.StringValue(string(configResult))
-			}
-			r.Spec.Extension.Type = types.StringValue(resp.Spec.Extension.Type)
-		}
-		if resp.Spec.Selector == nil {
-			r.Spec.Selector = nil
-		} else {
-			r.Spec.Selector = &tfTypes.Selector{}
-			if resp.Spec.Selector.MeshExternalService == nil {
-				r.Spec.Selector.MeshExternalService = nil
-			} else {
-				r.Spec.Selector.MeshExternalService = &tfTypes.MeshExternalService{}
-				if len(resp.Spec.Selector.MeshExternalService.MatchLabels) > 0 {
-					r.Spec.Selector.MeshExternalService.MatchLabels = make(map[string]types.String, len(resp.Spec.Selector.MeshExternalService.MatchLabels))
-					for key1, value1 := range resp.Spec.Selector.MeshExternalService.MatchLabels {
-						r.Spec.Selector.MeshExternalService.MatchLabels[key1] = types.StringValue(value1)
-					}
-				}
-			}
-			if resp.Spec.Selector.MeshMultiZoneService == nil {
-				r.Spec.Selector.MeshMultiZoneService = nil
-			} else {
-				r.Spec.Selector.MeshMultiZoneService = &tfTypes.MeshExternalService{}
-				if len(resp.Spec.Selector.MeshMultiZoneService.MatchLabels) > 0 {
-					r.Spec.Selector.MeshMultiZoneService.MatchLabels = make(map[string]types.String, len(resp.Spec.Selector.MeshMultiZoneService.MatchLabels))
-					for key2, value2 := range resp.Spec.Selector.MeshMultiZoneService.MatchLabels {
-						r.Spec.Selector.MeshMultiZoneService.MatchLabels[key2] = types.StringValue(value2)
-					}
-				}
-			}
-			if resp.Spec.Selector.MeshService == nil {
-				r.Spec.Selector.MeshService = nil
-			} else {
-				r.Spec.Selector.MeshService = &tfTypes.MeshExternalService{}
-				if len(resp.Spec.Selector.MeshService.MatchLabels) > 0 {
-					r.Spec.Selector.MeshService.MatchLabels = make(map[string]types.String, len(resp.Spec.Selector.MeshService.MatchLabels))
-					for key3, value3 := range resp.Spec.Selector.MeshService.MatchLabels {
-						r.Spec.Selector.MeshService.MatchLabels[key3] = types.StringValue(value3)
-					}
-				}
-			}
-		}
-		r.Spec.Template = types.StringValue(resp.Spec.Template)
-		r.Type = types.StringValue(string(resp.Type))
-	}
-
-	return diags
 }

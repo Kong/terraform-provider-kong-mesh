@@ -14,18 +14,18 @@ type DeleteMeshTCPRouteRequest struct {
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 }
 
-func (o *DeleteMeshTCPRouteRequest) GetMesh() string {
-	if o == nil {
+func (d *DeleteMeshTCPRouteRequest) GetMesh() string {
+	if d == nil {
 		return ""
 	}
-	return o.Mesh
+	return d.Mesh
 }
 
-func (o *DeleteMeshTCPRouteRequest) GetName() string {
-	if o == nil {
+func (d *DeleteMeshTCPRouteRequest) GetName() string {
+	if d == nil {
 		return ""
 	}
-	return o.Name
+	return d.Name
 }
 
 type DeleteMeshTCPRouteResponse struct {
@@ -41,37 +41,37 @@ type DeleteMeshTCPRouteResponse struct {
 	NotFoundError *shared.NotFoundError
 }
 
-func (o *DeleteMeshTCPRouteResponse) GetContentType() string {
-	if o == nil {
+func (d *DeleteMeshTCPRouteResponse) GetContentType() string {
+	if d == nil {
 		return ""
 	}
-	return o.ContentType
+	return d.ContentType
 }
 
-func (o *DeleteMeshTCPRouteResponse) GetStatusCode() int {
-	if o == nil {
+func (d *DeleteMeshTCPRouteResponse) GetStatusCode() int {
+	if d == nil {
 		return 0
 	}
-	return o.StatusCode
+	return d.StatusCode
 }
 
-func (o *DeleteMeshTCPRouteResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (d *DeleteMeshTCPRouteResponse) GetRawResponse() *http.Response {
+	if d == nil {
 		return nil
 	}
-	return o.RawResponse
+	return d.RawResponse
 }
 
-func (o *DeleteMeshTCPRouteResponse) GetMeshTCPRouteDeleteSuccessResponse() *shared.MeshTCPRouteDeleteSuccessResponse {
-	if o == nil {
+func (d *DeleteMeshTCPRouteResponse) GetMeshTCPRouteDeleteSuccessResponse() *shared.MeshTCPRouteDeleteSuccessResponse {
+	if d == nil {
 		return nil
 	}
-	return o.MeshTCPRouteDeleteSuccessResponse
+	return d.MeshTCPRouteDeleteSuccessResponse
 }
 
-func (o *DeleteMeshTCPRouteResponse) GetNotFoundError() *shared.NotFoundError {
-	if o == nil {
+func (d *DeleteMeshTCPRouteResponse) GetNotFoundError() *shared.NotFoundError {
+	if d == nil {
 		return nil
 	}
-	return o.NotFoundError
+	return d.NotFoundError
 }

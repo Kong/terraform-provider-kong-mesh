@@ -14,18 +14,18 @@ type GetMeshExternalServiceRequest struct {
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 }
 
-func (o *GetMeshExternalServiceRequest) GetMesh() string {
-	if o == nil {
+func (g *GetMeshExternalServiceRequest) GetMesh() string {
+	if g == nil {
 		return ""
 	}
-	return o.Mesh
+	return g.Mesh
 }
 
-func (o *GetMeshExternalServiceRequest) GetName() string {
-	if o == nil {
+func (g *GetMeshExternalServiceRequest) GetName() string {
+	if g == nil {
 		return ""
 	}
-	return o.Name
+	return g.Name
 }
 
 type GetMeshExternalServiceResponse struct {
@@ -41,37 +41,37 @@ type GetMeshExternalServiceResponse struct {
 	NotFoundError *shared.NotFoundError
 }
 
-func (o *GetMeshExternalServiceResponse) GetContentType() string {
-	if o == nil {
+func (g *GetMeshExternalServiceResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetMeshExternalServiceResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetMeshExternalServiceResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetMeshExternalServiceResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetMeshExternalServiceResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetMeshExternalServiceResponse) GetMeshExternalServiceItem() *shared.MeshExternalServiceItem {
-	if o == nil {
+func (g *GetMeshExternalServiceResponse) GetMeshExternalServiceItem() *shared.MeshExternalServiceItem {
+	if g == nil {
 		return nil
 	}
-	return o.MeshExternalServiceItem
+	return g.MeshExternalServiceItem
 }
 
-func (o *GetMeshExternalServiceResponse) GetNotFoundError() *shared.NotFoundError {
-	if o == nil {
+func (g *GetMeshExternalServiceResponse) GetNotFoundError() *shared.NotFoundError {
+	if g == nil {
 		return nil
 	}
-	return o.NotFoundError
+	return g.NotFoundError
 }

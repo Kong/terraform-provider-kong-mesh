@@ -13,6 +13,150 @@ import (
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
 )
 
+func (r *MeshPassthroughResourceModel) RefreshFromSharedMeshPassthroughCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.MeshPassthroughCreateOrUpdateSuccessResponse) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		r.Warnings = make([]types.String, 0, len(resp.Warnings))
+		for _, v := range resp.Warnings {
+			r.Warnings = append(r.Warnings, types.StringValue(v))
+		}
+	}
+
+	return diags
+}
+
+func (r *MeshPassthroughResourceModel) RefreshFromSharedMeshPassthroughItem(ctx context.Context, resp *shared.MeshPassthroughItem) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
+		r.Kri = types.StringPointerValue(resp.Kri)
+		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
+		diags.Append(labelsDiags...)
+		labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
+		diags.Append(labelsDiags...)
+		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
+		r.Mesh = types.StringPointerValue(resp.Mesh)
+		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
+		r.Name = types.StringValue(resp.Name)
+		if resp.Spec.Default == nil {
+			r.Spec.Default = nil
+		} else {
+			r.Spec.Default = &tfTypes.MeshPassthroughItemDefault{}
+			r.Spec.Default.AppendMatch = []tfTypes.AppendMatch{}
+
+			for _, appendMatchItem := range resp.Spec.Default.AppendMatch {
+				var appendMatch tfTypes.AppendMatch
+
+				appendMatch.Port = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(appendMatchItem.Port))
+				if appendMatchItem.Protocol != nil {
+					appendMatch.Protocol = types.StringValue(string(*appendMatchItem.Protocol))
+				} else {
+					appendMatch.Protocol = types.StringNull()
+				}
+				appendMatch.Type = types.StringValue(string(appendMatchItem.Type))
+				appendMatch.Value = types.StringValue(appendMatchItem.Value)
+
+				r.Spec.Default.AppendMatch = append(r.Spec.Default.AppendMatch, appendMatch)
+			}
+			if resp.Spec.Default.PassthroughMode != nil {
+				r.Spec.Default.PassthroughMode = types.StringValue(string(*resp.Spec.Default.PassthroughMode))
+			} else {
+				r.Spec.Default.PassthroughMode = types.StringNull()
+			}
+		}
+		if resp.Spec.TargetRef == nil {
+			r.Spec.TargetRef = nil
+		} else {
+			r.Spec.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
+			r.Spec.TargetRef.Kind = types.StringValue(string(resp.Spec.TargetRef.Kind))
+			if len(resp.Spec.TargetRef.Labels) > 0 {
+				r.Spec.TargetRef.Labels = make(map[string]types.String, len(resp.Spec.TargetRef.Labels))
+				for key, value := range resp.Spec.TargetRef.Labels {
+					r.Spec.TargetRef.Labels[key] = types.StringValue(value)
+				}
+			}
+			r.Spec.TargetRef.Mesh = types.StringPointerValue(resp.Spec.TargetRef.Mesh)
+			r.Spec.TargetRef.Name = types.StringPointerValue(resp.Spec.TargetRef.Name)
+			r.Spec.TargetRef.Namespace = types.StringPointerValue(resp.Spec.TargetRef.Namespace)
+			r.Spec.TargetRef.ProxyTypes = make([]types.String, 0, len(resp.Spec.TargetRef.ProxyTypes))
+			for _, v := range resp.Spec.TargetRef.ProxyTypes {
+				r.Spec.TargetRef.ProxyTypes = append(r.Spec.TargetRef.ProxyTypes, types.StringValue(string(v)))
+			}
+			r.Spec.TargetRef.SectionName = types.StringPointerValue(resp.Spec.TargetRef.SectionName)
+			if len(resp.Spec.TargetRef.Tags) > 0 {
+				r.Spec.TargetRef.Tags = make(map[string]types.String, len(resp.Spec.TargetRef.Tags))
+				for key1, value1 := range resp.Spec.TargetRef.Tags {
+					r.Spec.TargetRef.Tags[key1] = types.StringValue(value1)
+				}
+			}
+		}
+		r.Type = types.StringValue(string(resp.Type))
+	}
+
+	return diags
+}
+
+func (r *MeshPassthroughResourceModel) ToOperationsDeleteMeshPassthroughRequest(ctx context.Context) (*operations.DeleteMeshPassthroughRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.DeleteMeshPassthroughRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshPassthroughResourceModel) ToOperationsGetMeshPassthroughRequest(ctx context.Context) (*operations.GetMeshPassthroughRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.GetMeshPassthroughRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshPassthroughResourceModel) ToOperationsPutMeshPassthroughRequest(ctx context.Context) (*operations.PutMeshPassthroughRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	meshPassthroughItem, meshPassthroughItemDiags := r.ToSharedMeshPassthroughItemInput(ctx)
+	diags.Append(meshPassthroughItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PutMeshPassthroughRequest{
+		Mesh:                mesh,
+		Name:                name,
+		MeshPassthroughItem: *meshPassthroughItem,
+	}
+
+	return &out, diags
+}
+
 func (r *MeshPassthroughResourceModel) ToSharedMeshPassthroughItemInput(ctx context.Context) (*shared.MeshPassthroughItemInput, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -137,155 +281,4 @@ func (r *MeshPassthroughResourceModel) ToSharedMeshPassthroughItemInput(ctx cont
 	}
 
 	return &out, diags
-}
-
-func (r *MeshPassthroughResourceModel) ToOperationsPutMeshPassthroughRequest(ctx context.Context) (*operations.PutMeshPassthroughRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	meshPassthroughItem, meshPassthroughItemDiags := r.ToSharedMeshPassthroughItemInput(ctx)
-	diags.Append(meshPassthroughItemDiags...)
-
-	if diags.HasError() {
-		return nil, diags
-	}
-
-	out := operations.PutMeshPassthroughRequest{
-		Mesh:                mesh,
-		Name:                name,
-		MeshPassthroughItem: *meshPassthroughItem,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshPassthroughResourceModel) ToOperationsGetMeshPassthroughRequest(ctx context.Context) (*operations.GetMeshPassthroughRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	out := operations.GetMeshPassthroughRequest{
-		Mesh: mesh,
-		Name: name,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshPassthroughResourceModel) ToOperationsDeleteMeshPassthroughRequest(ctx context.Context) (*operations.DeleteMeshPassthroughRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	out := operations.DeleteMeshPassthroughRequest{
-		Mesh: mesh,
-		Name: name,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshPassthroughResourceModel) RefreshFromSharedMeshPassthroughCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.MeshPassthroughCreateOrUpdateSuccessResponse) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		r.Warnings = make([]types.String, 0, len(resp.Warnings))
-		for _, v := range resp.Warnings {
-			r.Warnings = append(r.Warnings, types.StringValue(v))
-		}
-	}
-
-	return diags
-}
-
-func (r *MeshPassthroughResourceModel) RefreshFromSharedMeshPassthroughItem(ctx context.Context, resp *shared.MeshPassthroughItem) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
-		r.Kri = types.StringPointerValue(resp.Kri)
-		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
-		diags.Append(labelsDiags...)
-		labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
-		diags.Append(labelsDiags...)
-		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
-		r.Mesh = types.StringPointerValue(resp.Mesh)
-		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
-		r.Name = types.StringValue(resp.Name)
-		if resp.Spec.Default == nil {
-			r.Spec.Default = nil
-		} else {
-			r.Spec.Default = &tfTypes.MeshPassthroughItemDefault{}
-			r.Spec.Default.AppendMatch = []tfTypes.AppendMatch{}
-			if len(r.Spec.Default.AppendMatch) > len(resp.Spec.Default.AppendMatch) {
-				r.Spec.Default.AppendMatch = r.Spec.Default.AppendMatch[:len(resp.Spec.Default.AppendMatch)]
-			}
-			for appendMatchCount, appendMatchItem := range resp.Spec.Default.AppendMatch {
-				var appendMatch tfTypes.AppendMatch
-				appendMatch.Port = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(appendMatchItem.Port))
-				if appendMatchItem.Protocol != nil {
-					appendMatch.Protocol = types.StringValue(string(*appendMatchItem.Protocol))
-				} else {
-					appendMatch.Protocol = types.StringNull()
-				}
-				appendMatch.Type = types.StringValue(string(appendMatchItem.Type))
-				appendMatch.Value = types.StringValue(appendMatchItem.Value)
-				if appendMatchCount+1 > len(r.Spec.Default.AppendMatch) {
-					r.Spec.Default.AppendMatch = append(r.Spec.Default.AppendMatch, appendMatch)
-				} else {
-					r.Spec.Default.AppendMatch[appendMatchCount].Port = appendMatch.Port
-					r.Spec.Default.AppendMatch[appendMatchCount].Protocol = appendMatch.Protocol
-					r.Spec.Default.AppendMatch[appendMatchCount].Type = appendMatch.Type
-					r.Spec.Default.AppendMatch[appendMatchCount].Value = appendMatch.Value
-				}
-			}
-			if resp.Spec.Default.PassthroughMode != nil {
-				r.Spec.Default.PassthroughMode = types.StringValue(string(*resp.Spec.Default.PassthroughMode))
-			} else {
-				r.Spec.Default.PassthroughMode = types.StringNull()
-			}
-		}
-		if resp.Spec.TargetRef == nil {
-			r.Spec.TargetRef = nil
-		} else {
-			r.Spec.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
-			r.Spec.TargetRef.Kind = types.StringValue(string(resp.Spec.TargetRef.Kind))
-			if len(resp.Spec.TargetRef.Labels) > 0 {
-				r.Spec.TargetRef.Labels = make(map[string]types.String, len(resp.Spec.TargetRef.Labels))
-				for key, value := range resp.Spec.TargetRef.Labels {
-					r.Spec.TargetRef.Labels[key] = types.StringValue(value)
-				}
-			}
-			r.Spec.TargetRef.Mesh = types.StringPointerValue(resp.Spec.TargetRef.Mesh)
-			r.Spec.TargetRef.Name = types.StringPointerValue(resp.Spec.TargetRef.Name)
-			r.Spec.TargetRef.Namespace = types.StringPointerValue(resp.Spec.TargetRef.Namespace)
-			r.Spec.TargetRef.ProxyTypes = make([]types.String, 0, len(resp.Spec.TargetRef.ProxyTypes))
-			for _, v := range resp.Spec.TargetRef.ProxyTypes {
-				r.Spec.TargetRef.ProxyTypes = append(r.Spec.TargetRef.ProxyTypes, types.StringValue(string(v)))
-			}
-			r.Spec.TargetRef.SectionName = types.StringPointerValue(resp.Spec.TargetRef.SectionName)
-			if len(resp.Spec.TargetRef.Tags) > 0 {
-				r.Spec.TargetRef.Tags = make(map[string]types.String, len(resp.Spec.TargetRef.Tags))
-				for key1, value1 := range resp.Spec.TargetRef.Tags {
-					r.Spec.TargetRef.Tags[key1] = types.StringValue(value1)
-				}
-			}
-		}
-		r.Type = types.StringValue(string(resp.Type))
-	}
-
-	return diags
 }

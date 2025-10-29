@@ -13,6 +13,213 @@ import (
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
 )
 
+func (r *MeshTraceResourceModel) RefreshFromSharedMeshTraceCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.MeshTraceCreateOrUpdateSuccessResponse) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		r.Warnings = make([]types.String, 0, len(resp.Warnings))
+		for _, v := range resp.Warnings {
+			r.Warnings = append(r.Warnings, types.StringValue(v))
+		}
+	}
+
+	return diags
+}
+
+func (r *MeshTraceResourceModel) RefreshFromSharedMeshTraceItem(ctx context.Context, resp *shared.MeshTraceItem) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
+		r.Kri = types.StringPointerValue(resp.Kri)
+		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
+		diags.Append(labelsDiags...)
+		labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
+		diags.Append(labelsDiags...)
+		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
+		r.Mesh = types.StringPointerValue(resp.Mesh)
+		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
+		r.Name = types.StringValue(resp.Name)
+		if resp.Spec.Default == nil {
+			r.Spec.Default = nil
+		} else {
+			r.Spec.Default = &tfTypes.MeshTraceItemDefault{}
+			r.Spec.Default.Backends = []tfTypes.MeshTraceItemBackends{}
+
+			for _, backendsItem := range resp.Spec.Default.Backends {
+				var backends tfTypes.MeshTraceItemBackends
+
+				if backendsItem.Datadog == nil {
+					backends.Datadog = nil
+				} else {
+					backends.Datadog = &tfTypes.Datadog{}
+					backends.Datadog.SplitService = types.BoolPointerValue(backendsItem.Datadog.SplitService)
+					backends.Datadog.URL = types.StringValue(backendsItem.Datadog.URL)
+				}
+				if backendsItem.OpenTelemetry == nil {
+					backends.OpenTelemetry = nil
+				} else {
+					backends.OpenTelemetry = &tfTypes.MeshTraceItemOpenTelemetry{}
+					backends.OpenTelemetry.Endpoint = types.StringValue(backendsItem.OpenTelemetry.Endpoint)
+				}
+				backends.Type = types.StringValue(string(backendsItem.Type))
+				if backendsItem.Zipkin == nil {
+					backends.Zipkin = nil
+				} else {
+					backends.Zipkin = &tfTypes.Zipkin{}
+					if backendsItem.Zipkin.APIVersion != nil {
+						backends.Zipkin.APIVersion = types.StringValue(string(*backendsItem.Zipkin.APIVersion))
+					} else {
+						backends.Zipkin.APIVersion = types.StringNull()
+					}
+					backends.Zipkin.SharedSpanContext = types.BoolPointerValue(backendsItem.Zipkin.SharedSpanContext)
+					backends.Zipkin.TraceId128bit = types.BoolPointerValue(backendsItem.Zipkin.TraceId128bit)
+					backends.Zipkin.URL = types.StringValue(backendsItem.Zipkin.URL)
+				}
+
+				r.Spec.Default.Backends = append(r.Spec.Default.Backends, backends)
+			}
+			if resp.Spec.Default.Sampling == nil {
+				r.Spec.Default.Sampling = nil
+			} else {
+				r.Spec.Default.Sampling = &tfTypes.Sampling{}
+				if resp.Spec.Default.Sampling.Client != nil {
+					r.Spec.Default.Sampling.Client = &tfTypes.Mode{}
+					if resp.Spec.Default.Sampling.Client.Integer != nil {
+						r.Spec.Default.Sampling.Client.Integer = types.Int64PointerValue(resp.Spec.Default.Sampling.Client.Integer)
+					}
+					if resp.Spec.Default.Sampling.Client.Str != nil {
+						r.Spec.Default.Sampling.Client.Str = types.StringPointerValue(resp.Spec.Default.Sampling.Client.Str)
+					}
+				}
+				if resp.Spec.Default.Sampling.Overall != nil {
+					r.Spec.Default.Sampling.Overall = &tfTypes.Mode{}
+					if resp.Spec.Default.Sampling.Overall.Integer != nil {
+						r.Spec.Default.Sampling.Overall.Integer = types.Int64PointerValue(resp.Spec.Default.Sampling.Overall.Integer)
+					}
+					if resp.Spec.Default.Sampling.Overall.Str != nil {
+						r.Spec.Default.Sampling.Overall.Str = types.StringPointerValue(resp.Spec.Default.Sampling.Overall.Str)
+					}
+				}
+				if resp.Spec.Default.Sampling.Random != nil {
+					r.Spec.Default.Sampling.Random = &tfTypes.Mode{}
+					if resp.Spec.Default.Sampling.Random.Integer != nil {
+						r.Spec.Default.Sampling.Random.Integer = types.Int64PointerValue(resp.Spec.Default.Sampling.Random.Integer)
+					}
+					if resp.Spec.Default.Sampling.Random.Str != nil {
+						r.Spec.Default.Sampling.Random.Str = types.StringPointerValue(resp.Spec.Default.Sampling.Random.Str)
+					}
+				}
+			}
+			r.Spec.Default.Tags = []tfTypes.Tags{}
+
+			for _, tagsItem := range resp.Spec.Default.Tags {
+				var tags tfTypes.Tags
+
+				if tagsItem.Header == nil {
+					tags.Header = nil
+				} else {
+					tags.Header = &tfTypes.Header{}
+					tags.Header.Default = types.StringPointerValue(tagsItem.Header.Default)
+					tags.Header.Name = types.StringValue(tagsItem.Header.Name)
+				}
+				tags.Literal = types.StringPointerValue(tagsItem.Literal)
+				tags.Name = types.StringValue(tagsItem.Name)
+
+				r.Spec.Default.Tags = append(r.Spec.Default.Tags, tags)
+			}
+		}
+		if resp.Spec.TargetRef == nil {
+			r.Spec.TargetRef = nil
+		} else {
+			r.Spec.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
+			r.Spec.TargetRef.Kind = types.StringValue(string(resp.Spec.TargetRef.Kind))
+			if len(resp.Spec.TargetRef.Labels) > 0 {
+				r.Spec.TargetRef.Labels = make(map[string]types.String, len(resp.Spec.TargetRef.Labels))
+				for key, value := range resp.Spec.TargetRef.Labels {
+					r.Spec.TargetRef.Labels[key] = types.StringValue(value)
+				}
+			}
+			r.Spec.TargetRef.Mesh = types.StringPointerValue(resp.Spec.TargetRef.Mesh)
+			r.Spec.TargetRef.Name = types.StringPointerValue(resp.Spec.TargetRef.Name)
+			r.Spec.TargetRef.Namespace = types.StringPointerValue(resp.Spec.TargetRef.Namespace)
+			r.Spec.TargetRef.ProxyTypes = make([]types.String, 0, len(resp.Spec.TargetRef.ProxyTypes))
+			for _, v := range resp.Spec.TargetRef.ProxyTypes {
+				r.Spec.TargetRef.ProxyTypes = append(r.Spec.TargetRef.ProxyTypes, types.StringValue(string(v)))
+			}
+			r.Spec.TargetRef.SectionName = types.StringPointerValue(resp.Spec.TargetRef.SectionName)
+			if len(resp.Spec.TargetRef.Tags) > 0 {
+				r.Spec.TargetRef.Tags = make(map[string]types.String, len(resp.Spec.TargetRef.Tags))
+				for key1, value1 := range resp.Spec.TargetRef.Tags {
+					r.Spec.TargetRef.Tags[key1] = types.StringValue(value1)
+				}
+			}
+		}
+		r.Type = types.StringValue(string(resp.Type))
+	}
+
+	return diags
+}
+
+func (r *MeshTraceResourceModel) ToOperationsDeleteMeshTraceRequest(ctx context.Context) (*operations.DeleteMeshTraceRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.DeleteMeshTraceRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshTraceResourceModel) ToOperationsGetMeshTraceRequest(ctx context.Context) (*operations.GetMeshTraceRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.GetMeshTraceRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshTraceResourceModel) ToOperationsPutMeshTraceRequest(ctx context.Context) (*operations.PutMeshTraceRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	meshTraceItem, meshTraceItemDiags := r.ToSharedMeshTraceItemInput(ctx)
+	diags.Append(meshTraceItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PutMeshTraceRequest{
+		Mesh:          mesh,
+		Name:          name,
+		MeshTraceItem: *meshTraceItem,
+	}
+
+	return &out, diags
+}
+
 func (r *MeshTraceResourceModel) ToSharedMeshTraceItemInput(ctx context.Context) (*shared.MeshTraceItemInput, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -288,224 +495,4 @@ func (r *MeshTraceResourceModel) ToSharedMeshTraceItemInput(ctx context.Context)
 	}
 
 	return &out, diags
-}
-
-func (r *MeshTraceResourceModel) ToOperationsPutMeshTraceRequest(ctx context.Context) (*operations.PutMeshTraceRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	meshTraceItem, meshTraceItemDiags := r.ToSharedMeshTraceItemInput(ctx)
-	diags.Append(meshTraceItemDiags...)
-
-	if diags.HasError() {
-		return nil, diags
-	}
-
-	out := operations.PutMeshTraceRequest{
-		Mesh:          mesh,
-		Name:          name,
-		MeshTraceItem: *meshTraceItem,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshTraceResourceModel) ToOperationsGetMeshTraceRequest(ctx context.Context) (*operations.GetMeshTraceRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	out := operations.GetMeshTraceRequest{
-		Mesh: mesh,
-		Name: name,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshTraceResourceModel) ToOperationsDeleteMeshTraceRequest(ctx context.Context) (*operations.DeleteMeshTraceRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	out := operations.DeleteMeshTraceRequest{
-		Mesh: mesh,
-		Name: name,
-	}
-
-	return &out, diags
-}
-
-func (r *MeshTraceResourceModel) RefreshFromSharedMeshTraceCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.MeshTraceCreateOrUpdateSuccessResponse) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		r.Warnings = make([]types.String, 0, len(resp.Warnings))
-		for _, v := range resp.Warnings {
-			r.Warnings = append(r.Warnings, types.StringValue(v))
-		}
-	}
-
-	return diags
-}
-
-func (r *MeshTraceResourceModel) RefreshFromSharedMeshTraceItem(ctx context.Context, resp *shared.MeshTraceItem) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
-		r.Kri = types.StringPointerValue(resp.Kri)
-		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
-		diags.Append(labelsDiags...)
-		labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
-		diags.Append(labelsDiags...)
-		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
-		r.Mesh = types.StringPointerValue(resp.Mesh)
-		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
-		r.Name = types.StringValue(resp.Name)
-		if resp.Spec.Default == nil {
-			r.Spec.Default = nil
-		} else {
-			r.Spec.Default = &tfTypes.MeshTraceItemDefault{}
-			r.Spec.Default.Backends = []tfTypes.MeshTraceItemBackends{}
-			if len(r.Spec.Default.Backends) > len(resp.Spec.Default.Backends) {
-				r.Spec.Default.Backends = r.Spec.Default.Backends[:len(resp.Spec.Default.Backends)]
-			}
-			for backendsCount, backendsItem := range resp.Spec.Default.Backends {
-				var backends tfTypes.MeshTraceItemBackends
-				if backendsItem.Datadog == nil {
-					backends.Datadog = nil
-				} else {
-					backends.Datadog = &tfTypes.Datadog{}
-					backends.Datadog.SplitService = types.BoolPointerValue(backendsItem.Datadog.SplitService)
-					backends.Datadog.URL = types.StringValue(backendsItem.Datadog.URL)
-				}
-				if backendsItem.OpenTelemetry == nil {
-					backends.OpenTelemetry = nil
-				} else {
-					backends.OpenTelemetry = &tfTypes.MeshTraceItemOpenTelemetry{}
-					backends.OpenTelemetry.Endpoint = types.StringValue(backendsItem.OpenTelemetry.Endpoint)
-				}
-				backends.Type = types.StringValue(string(backendsItem.Type))
-				if backendsItem.Zipkin == nil {
-					backends.Zipkin = nil
-				} else {
-					backends.Zipkin = &tfTypes.Zipkin{}
-					if backendsItem.Zipkin.APIVersion != nil {
-						backends.Zipkin.APIVersion = types.StringValue(string(*backendsItem.Zipkin.APIVersion))
-					} else {
-						backends.Zipkin.APIVersion = types.StringNull()
-					}
-					backends.Zipkin.SharedSpanContext = types.BoolPointerValue(backendsItem.Zipkin.SharedSpanContext)
-					backends.Zipkin.TraceId128bit = types.BoolPointerValue(backendsItem.Zipkin.TraceId128bit)
-					backends.Zipkin.URL = types.StringValue(backendsItem.Zipkin.URL)
-				}
-				if backendsCount+1 > len(r.Spec.Default.Backends) {
-					r.Spec.Default.Backends = append(r.Spec.Default.Backends, backends)
-				} else {
-					r.Spec.Default.Backends[backendsCount].Datadog = backends.Datadog
-					r.Spec.Default.Backends[backendsCount].OpenTelemetry = backends.OpenTelemetry
-					r.Spec.Default.Backends[backendsCount].Type = backends.Type
-					r.Spec.Default.Backends[backendsCount].Zipkin = backends.Zipkin
-				}
-			}
-			if resp.Spec.Default.Sampling == nil {
-				r.Spec.Default.Sampling = nil
-			} else {
-				r.Spec.Default.Sampling = &tfTypes.Sampling{}
-				if resp.Spec.Default.Sampling.Client != nil {
-					r.Spec.Default.Sampling.Client = &tfTypes.Mode{}
-					if resp.Spec.Default.Sampling.Client.Integer != nil {
-						r.Spec.Default.Sampling.Client.Integer = types.Int64PointerValue(resp.Spec.Default.Sampling.Client.Integer)
-					}
-					if resp.Spec.Default.Sampling.Client.Str != nil {
-						r.Spec.Default.Sampling.Client.Str = types.StringPointerValue(resp.Spec.Default.Sampling.Client.Str)
-					}
-				}
-				if resp.Spec.Default.Sampling.Overall != nil {
-					r.Spec.Default.Sampling.Overall = &tfTypes.Mode{}
-					if resp.Spec.Default.Sampling.Overall.Integer != nil {
-						r.Spec.Default.Sampling.Overall.Integer = types.Int64PointerValue(resp.Spec.Default.Sampling.Overall.Integer)
-					}
-					if resp.Spec.Default.Sampling.Overall.Str != nil {
-						r.Spec.Default.Sampling.Overall.Str = types.StringPointerValue(resp.Spec.Default.Sampling.Overall.Str)
-					}
-				}
-				if resp.Spec.Default.Sampling.Random != nil {
-					r.Spec.Default.Sampling.Random = &tfTypes.Mode{}
-					if resp.Spec.Default.Sampling.Random.Integer != nil {
-						r.Spec.Default.Sampling.Random.Integer = types.Int64PointerValue(resp.Spec.Default.Sampling.Random.Integer)
-					}
-					if resp.Spec.Default.Sampling.Random.Str != nil {
-						r.Spec.Default.Sampling.Random.Str = types.StringPointerValue(resp.Spec.Default.Sampling.Random.Str)
-					}
-				}
-			}
-			r.Spec.Default.Tags = []tfTypes.Tags{}
-			if len(r.Spec.Default.Tags) > len(resp.Spec.Default.Tags) {
-				r.Spec.Default.Tags = r.Spec.Default.Tags[:len(resp.Spec.Default.Tags)]
-			}
-			for tagsCount, tagsItem := range resp.Spec.Default.Tags {
-				var tags tfTypes.Tags
-				if tagsItem.Header == nil {
-					tags.Header = nil
-				} else {
-					tags.Header = &tfTypes.Header{}
-					tags.Header.Default = types.StringPointerValue(tagsItem.Header.Default)
-					tags.Header.Name = types.StringValue(tagsItem.Header.Name)
-				}
-				tags.Literal = types.StringPointerValue(tagsItem.Literal)
-				tags.Name = types.StringValue(tagsItem.Name)
-				if tagsCount+1 > len(r.Spec.Default.Tags) {
-					r.Spec.Default.Tags = append(r.Spec.Default.Tags, tags)
-				} else {
-					r.Spec.Default.Tags[tagsCount].Header = tags.Header
-					r.Spec.Default.Tags[tagsCount].Literal = tags.Literal
-					r.Spec.Default.Tags[tagsCount].Name = tags.Name
-				}
-			}
-		}
-		if resp.Spec.TargetRef == nil {
-			r.Spec.TargetRef = nil
-		} else {
-			r.Spec.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
-			r.Spec.TargetRef.Kind = types.StringValue(string(resp.Spec.TargetRef.Kind))
-			if len(resp.Spec.TargetRef.Labels) > 0 {
-				r.Spec.TargetRef.Labels = make(map[string]types.String, len(resp.Spec.TargetRef.Labels))
-				for key, value := range resp.Spec.TargetRef.Labels {
-					r.Spec.TargetRef.Labels[key] = types.StringValue(value)
-				}
-			}
-			r.Spec.TargetRef.Mesh = types.StringPointerValue(resp.Spec.TargetRef.Mesh)
-			r.Spec.TargetRef.Name = types.StringPointerValue(resp.Spec.TargetRef.Name)
-			r.Spec.TargetRef.Namespace = types.StringPointerValue(resp.Spec.TargetRef.Namespace)
-			r.Spec.TargetRef.ProxyTypes = make([]types.String, 0, len(resp.Spec.TargetRef.ProxyTypes))
-			for _, v := range resp.Spec.TargetRef.ProxyTypes {
-				r.Spec.TargetRef.ProxyTypes = append(r.Spec.TargetRef.ProxyTypes, types.StringValue(string(v)))
-			}
-			r.Spec.TargetRef.SectionName = types.StringPointerValue(resp.Spec.TargetRef.SectionName)
-			if len(resp.Spec.TargetRef.Tags) > 0 {
-				r.Spec.TargetRef.Tags = make(map[string]types.String, len(resp.Spec.TargetRef.Tags))
-				for key1, value1 := range resp.Spec.TargetRef.Tags {
-					r.Spec.TargetRef.Tags[key1] = types.StringValue(value1)
-				}
-			}
-		}
-		r.Type = types.StringValue(string(resp.Type))
-	}
-
-	return diags
 }

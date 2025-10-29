@@ -11,6 +11,118 @@ import (
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
 )
 
+func (r *ZoneIngressResourceModel) RefreshFromSharedZoneIngressCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.ZoneIngressCreateOrUpdateSuccessResponse) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		r.Warnings = make([]types.String, 0, len(resp.Warnings))
+		for _, v := range resp.Warnings {
+			r.Warnings = append(r.Warnings, types.StringValue(v))
+		}
+	}
+
+	return diags
+}
+
+func (r *ZoneIngressResourceModel) RefreshFromSharedZoneIngressItem(ctx context.Context, resp *shared.ZoneIngressItem) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		if resp.AvailableServices != nil {
+			r.AvailableServices = []tfTypes.AvailableServices{}
+
+			for _, availableServicesItem := range resp.AvailableServices {
+				var availableServices tfTypes.AvailableServices
+
+				availableServices.ExternalService = types.BoolPointerValue(availableServicesItem.ExternalService)
+				availableServices.Instances = types.Int64PointerValue(availableServicesItem.Instances)
+				availableServices.Mesh = types.StringPointerValue(availableServicesItem.Mesh)
+				if len(availableServicesItem.Tags) > 0 {
+					availableServices.Tags = make(map[string]types.String, len(availableServicesItem.Tags))
+					for key, value := range availableServicesItem.Tags {
+						availableServices.Tags[key] = types.StringValue(value)
+					}
+				}
+
+				r.AvailableServices = append(r.AvailableServices, availableServices)
+			}
+		}
+		if len(resp.Labels) > 0 {
+			r.Labels = make(map[string]types.String, len(resp.Labels))
+			for key1, value1 := range resp.Labels {
+				r.Labels[key1] = types.StringValue(value1)
+			}
+		}
+		r.Name = types.StringValue(resp.Name)
+		if resp.Networking == nil {
+			r.Networking = nil
+		} else {
+			r.Networking = &tfTypes.ZoneIngressItemNetworking{}
+			r.Networking.Address = types.StringPointerValue(resp.Networking.Address)
+			if resp.Networking.Admin == nil {
+				r.Networking.Admin = nil
+			} else {
+				r.Networking.Admin = &tfTypes.Admin{}
+				r.Networking.Admin.Port = types.Int64PointerValue(resp.Networking.Admin.Port)
+			}
+			r.Networking.AdvertisedAddress = types.StringPointerValue(resp.Networking.AdvertisedAddress)
+			r.Networking.AdvertisedPort = types.Int64PointerValue(resp.Networking.AdvertisedPort)
+			r.Networking.Port = types.Int64PointerValue(resp.Networking.Port)
+		}
+		r.Type = types.StringValue(resp.Type)
+		r.Zone = types.StringPointerValue(resp.Zone)
+	}
+
+	return diags
+}
+
+func (r *ZoneIngressResourceModel) ToOperationsDeleteZoneIngressRequest(ctx context.Context) (*operations.DeleteZoneIngressRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.DeleteZoneIngressRequest{
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *ZoneIngressResourceModel) ToOperationsGetZoneIngressRequest(ctx context.Context) (*operations.GetZoneIngressRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.GetZoneIngressRequest{
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *ZoneIngressResourceModel) ToOperationsPutZoneIngressRequest(ctx context.Context) (*operations.PutZoneIngressRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var name string
+	name = r.Name.ValueString()
+
+	zoneIngressItem, zoneIngressItemDiags := r.ToSharedZoneIngressItem(ctx)
+	diags.Append(zoneIngressItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PutZoneIngressRequest{
+		Name:            name,
+		ZoneIngressItem: *zoneIngressItem,
+	}
+
+	return &out, diags
+}
+
 func (r *ZoneIngressResourceModel) ToSharedZoneIngressItem(ctx context.Context) (*shared.ZoneIngressItem, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -126,123 +238,4 @@ func (r *ZoneIngressResourceModel) ToSharedZoneIngressItem(ctx context.Context) 
 	}
 
 	return &out, diags
-}
-
-func (r *ZoneIngressResourceModel) ToOperationsPutZoneIngressRequest(ctx context.Context) (*operations.PutZoneIngressRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var name string
-	name = r.Name.ValueString()
-
-	zoneIngressItem, zoneIngressItemDiags := r.ToSharedZoneIngressItem(ctx)
-	diags.Append(zoneIngressItemDiags...)
-
-	if diags.HasError() {
-		return nil, diags
-	}
-
-	out := operations.PutZoneIngressRequest{
-		Name:            name,
-		ZoneIngressItem: *zoneIngressItem,
-	}
-
-	return &out, diags
-}
-
-func (r *ZoneIngressResourceModel) ToOperationsGetZoneIngressRequest(ctx context.Context) (*operations.GetZoneIngressRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var name string
-	name = r.Name.ValueString()
-
-	out := operations.GetZoneIngressRequest{
-		Name: name,
-	}
-
-	return &out, diags
-}
-
-func (r *ZoneIngressResourceModel) ToOperationsDeleteZoneIngressRequest(ctx context.Context) (*operations.DeleteZoneIngressRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var name string
-	name = r.Name.ValueString()
-
-	out := operations.DeleteZoneIngressRequest{
-		Name: name,
-	}
-
-	return &out, diags
-}
-
-func (r *ZoneIngressResourceModel) RefreshFromSharedZoneIngressCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.ZoneIngressCreateOrUpdateSuccessResponse) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		r.Warnings = make([]types.String, 0, len(resp.Warnings))
-		for _, v := range resp.Warnings {
-			r.Warnings = append(r.Warnings, types.StringValue(v))
-		}
-	}
-
-	return diags
-}
-
-func (r *ZoneIngressResourceModel) RefreshFromSharedZoneIngressItem(ctx context.Context, resp *shared.ZoneIngressItem) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		if resp.AvailableServices != nil {
-			r.AvailableServices = []tfTypes.AvailableServices{}
-			if len(r.AvailableServices) > len(resp.AvailableServices) {
-				r.AvailableServices = r.AvailableServices[:len(resp.AvailableServices)]
-			}
-			for availableServicesCount, availableServicesItem := range resp.AvailableServices {
-				var availableServices tfTypes.AvailableServices
-				availableServices.ExternalService = types.BoolPointerValue(availableServicesItem.ExternalService)
-				availableServices.Instances = types.Int64PointerValue(availableServicesItem.Instances)
-				availableServices.Mesh = types.StringPointerValue(availableServicesItem.Mesh)
-				if len(availableServicesItem.Tags) > 0 {
-					availableServices.Tags = make(map[string]types.String, len(availableServicesItem.Tags))
-					for key, value := range availableServicesItem.Tags {
-						availableServices.Tags[key] = types.StringValue(value)
-					}
-				}
-				if availableServicesCount+1 > len(r.AvailableServices) {
-					r.AvailableServices = append(r.AvailableServices, availableServices)
-				} else {
-					r.AvailableServices[availableServicesCount].ExternalService = availableServices.ExternalService
-					r.AvailableServices[availableServicesCount].Instances = availableServices.Instances
-					r.AvailableServices[availableServicesCount].Mesh = availableServices.Mesh
-					r.AvailableServices[availableServicesCount].Tags = availableServices.Tags
-				}
-			}
-		}
-		if len(resp.Labels) > 0 {
-			r.Labels = make(map[string]types.String, len(resp.Labels))
-			for key1, value1 := range resp.Labels {
-				r.Labels[key1] = types.StringValue(value1)
-			}
-		}
-		r.Name = types.StringValue(resp.Name)
-		if resp.Networking == nil {
-			r.Networking = nil
-		} else {
-			r.Networking = &tfTypes.ZoneIngressItemNetworking{}
-			r.Networking.Address = types.StringPointerValue(resp.Networking.Address)
-			if resp.Networking.Admin == nil {
-				r.Networking.Admin = nil
-			} else {
-				r.Networking.Admin = &tfTypes.Admin{}
-				r.Networking.Admin.Port = types.Int64PointerValue(resp.Networking.Admin.Port)
-			}
-			r.Networking.AdvertisedAddress = types.StringPointerValue(resp.Networking.AdvertisedAddress)
-			r.Networking.AdvertisedPort = types.Int64PointerValue(resp.Networking.AdvertisedPort)
-			r.Networking.Port = types.Int64PointerValue(resp.Networking.Port)
-		}
-		r.Type = types.StringValue(resp.Type)
-		r.Zone = types.StringPointerValue(resp.Zone)
-	}
-
-	return diags
 }

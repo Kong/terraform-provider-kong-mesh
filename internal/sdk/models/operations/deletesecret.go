@@ -14,18 +14,18 @@ type DeleteSecretRequest struct {
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 }
 
-func (o *DeleteSecretRequest) GetMesh() string {
-	if o == nil {
+func (d *DeleteSecretRequest) GetMesh() string {
+	if d == nil {
 		return ""
 	}
-	return o.Mesh
+	return d.Mesh
 }
 
-func (o *DeleteSecretRequest) GetName() string {
-	if o == nil {
+func (d *DeleteSecretRequest) GetName() string {
+	if d == nil {
 		return ""
 	}
-	return o.Name
+	return d.Name
 }
 
 type DeleteSecretResponse struct {
@@ -41,37 +41,37 @@ type DeleteSecretResponse struct {
 	NotFoundError *shared.NotFoundError
 }
 
-func (o *DeleteSecretResponse) GetContentType() string {
-	if o == nil {
+func (d *DeleteSecretResponse) GetContentType() string {
+	if d == nil {
 		return ""
 	}
-	return o.ContentType
+	return d.ContentType
 }
 
-func (o *DeleteSecretResponse) GetStatusCode() int {
-	if o == nil {
+func (d *DeleteSecretResponse) GetStatusCode() int {
+	if d == nil {
 		return 0
 	}
-	return o.StatusCode
+	return d.StatusCode
 }
 
-func (o *DeleteSecretResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (d *DeleteSecretResponse) GetRawResponse() *http.Response {
+	if d == nil {
 		return nil
 	}
-	return o.RawResponse
+	return d.RawResponse
 }
 
-func (o *DeleteSecretResponse) GetSecretDeleteSuccessResponse() *shared.SecretDeleteSuccessResponse {
-	if o == nil {
+func (d *DeleteSecretResponse) GetSecretDeleteSuccessResponse() *shared.SecretDeleteSuccessResponse {
+	if d == nil {
 		return nil
 	}
-	return o.SecretDeleteSuccessResponse
+	return d.SecretDeleteSuccessResponse
 }
 
-func (o *DeleteSecretResponse) GetNotFoundError() *shared.NotFoundError {
-	if o == nil {
+func (d *DeleteSecretResponse) GetNotFoundError() *shared.NotFoundError {
+	if d == nil {
 		return nil
 	}
-	return o.NotFoundError
+	return d.NotFoundError
 }

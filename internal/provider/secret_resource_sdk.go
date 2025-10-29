@@ -11,6 +11,96 @@ import (
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
 )
 
+func (r *SecretResourceModel) RefreshFromSharedSecretCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.SecretCreateOrUpdateSuccessResponse) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		r.Warnings = make([]types.String, 0, len(resp.Warnings))
+		for _, v := range resp.Warnings {
+			r.Warnings = append(r.Warnings, types.StringValue(v))
+		}
+	}
+
+	return diags
+}
+
+func (r *SecretResourceModel) RefreshFromSharedSecretItem(ctx context.Context, resp *shared.SecretItem) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		r.Data = types.StringPointerValue(resp.Data)
+		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
+		diags.Append(labelsDiags...)
+		labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
+		diags.Append(labelsDiags...)
+		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
+		r.Mesh = types.StringValue(resp.Mesh)
+		r.Name = types.StringValue(resp.Name)
+		r.Type = types.StringValue(resp.Type)
+	}
+
+	return diags
+}
+
+func (r *SecretResourceModel) ToOperationsDeleteSecretRequest(ctx context.Context) (*operations.DeleteSecretRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.DeleteSecretRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *SecretResourceModel) ToOperationsGetSecretRequest(ctx context.Context) (*operations.GetSecretRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	out := operations.GetSecretRequest{
+		Mesh: mesh,
+		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *SecretResourceModel) ToOperationsPutSecretRequest(ctx context.Context) (*operations.PutSecretRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	var name string
+	name = r.Name.ValueString()
+
+	secretItem, secretItemDiags := r.ToSharedSecretItem(ctx)
+	diags.Append(secretItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PutSecretRequest{
+		Mesh:       mesh,
+		Name:       name,
+		SecretItem: *secretItem,
+	}
+
+	return &out, diags
+}
+
 func (r *SecretResourceModel) ToSharedSecretItem(ctx context.Context) (*shared.SecretItem, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -42,94 +132,4 @@ func (r *SecretResourceModel) ToSharedSecretItem(ctx context.Context) (*shared.S
 	}
 
 	return &out, diags
-}
-
-func (r *SecretResourceModel) ToOperationsPutSecretRequest(ctx context.Context) (*operations.PutSecretRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	secretItem, secretItemDiags := r.ToSharedSecretItem(ctx)
-	diags.Append(secretItemDiags...)
-
-	if diags.HasError() {
-		return nil, diags
-	}
-
-	out := operations.PutSecretRequest{
-		Mesh:       mesh,
-		Name:       name,
-		SecretItem: *secretItem,
-	}
-
-	return &out, diags
-}
-
-func (r *SecretResourceModel) ToOperationsGetSecretRequest(ctx context.Context) (*operations.GetSecretRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	out := operations.GetSecretRequest{
-		Mesh: mesh,
-		Name: name,
-	}
-
-	return &out, diags
-}
-
-func (r *SecretResourceModel) ToOperationsDeleteSecretRequest(ctx context.Context) (*operations.DeleteSecretRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var mesh string
-	mesh = r.Mesh.ValueString()
-
-	var name string
-	name = r.Name.ValueString()
-
-	out := operations.DeleteSecretRequest{
-		Mesh: mesh,
-		Name: name,
-	}
-
-	return &out, diags
-}
-
-func (r *SecretResourceModel) RefreshFromSharedSecretCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.SecretCreateOrUpdateSuccessResponse) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		r.Warnings = make([]types.String, 0, len(resp.Warnings))
-		for _, v := range resp.Warnings {
-			r.Warnings = append(r.Warnings, types.StringValue(v))
-		}
-	}
-
-	return diags
-}
-
-func (r *SecretResourceModel) RefreshFromSharedSecretItem(ctx context.Context, resp *shared.SecretItem) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		r.Data = types.StringPointerValue(resp.Data)
-		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
-		diags.Append(labelsDiags...)
-		labelsValuable, labelsDiags := kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}.ValueFromMap(ctx, labelsValue)
-		diags.Append(labelsDiags...)
-		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
-		r.Mesh = types.StringValue(resp.Mesh)
-		r.Name = types.StringValue(resp.Name)
-		r.Type = types.StringValue(resp.Type)
-	}
-
-	return diags
 }

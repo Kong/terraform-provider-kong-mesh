@@ -16,25 +16,25 @@ type PutSecretRequest struct {
 	SecretItem shared.SecretItem `request:"mediaType=application/json"`
 }
 
-func (o *PutSecretRequest) GetMesh() string {
-	if o == nil {
+func (p *PutSecretRequest) GetMesh() string {
+	if p == nil {
 		return ""
 	}
-	return o.Mesh
+	return p.Mesh
 }
 
-func (o *PutSecretRequest) GetName() string {
-	if o == nil {
+func (p *PutSecretRequest) GetName() string {
+	if p == nil {
 		return ""
 	}
-	return o.Name
+	return p.Name
 }
 
-func (o *PutSecretRequest) GetSecretItem() shared.SecretItem {
-	if o == nil {
+func (p *PutSecretRequest) GetSecretItem() shared.SecretItem {
+	if p == nil {
 		return shared.SecretItem{}
 	}
-	return o.SecretItem
+	return p.SecretItem
 }
 
 type PutSecretResponse struct {
@@ -48,30 +48,30 @@ type PutSecretResponse struct {
 	SecretCreateOrUpdateSuccessResponse *shared.SecretCreateOrUpdateSuccessResponse
 }
 
-func (o *PutSecretResponse) GetContentType() string {
-	if o == nil {
+func (p *PutSecretResponse) GetContentType() string {
+	if p == nil {
 		return ""
 	}
-	return o.ContentType
+	return p.ContentType
 }
 
-func (o *PutSecretResponse) GetStatusCode() int {
-	if o == nil {
+func (p *PutSecretResponse) GetStatusCode() int {
+	if p == nil {
 		return 0
 	}
-	return o.StatusCode
+	return p.StatusCode
 }
 
-func (o *PutSecretResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *PutSecretResponse) GetRawResponse() *http.Response {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.RawResponse
 }
 
-func (o *PutSecretResponse) GetSecretCreateOrUpdateSuccessResponse() *shared.SecretCreateOrUpdateSuccessResponse {
-	if o == nil {
+func (p *PutSecretResponse) GetSecretCreateOrUpdateSuccessResponse() *shared.SecretCreateOrUpdateSuccessResponse {
+	if p == nil {
 		return nil
 	}
-	return o.SecretCreateOrUpdateSuccessResponse
+	return p.SecretCreateOrUpdateSuccessResponse
 }

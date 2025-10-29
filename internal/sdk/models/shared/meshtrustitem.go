@@ -39,11 +39,11 @@ type Pem struct {
 	Value string `json:"value"`
 }
 
-func (o *Pem) GetValue() string {
-	if o == nil {
+func (p *Pem) GetValue() string {
+	if p == nil {
 		return ""
 	}
-	return o.Value
+	return p.Value
 }
 
 // MeshTrustItemSpecType - Type specifies the format or source type of the CA bundle.
@@ -77,18 +77,18 @@ type CaBundles struct {
 	Type MeshTrustItemSpecType `json:"type"`
 }
 
-func (o *CaBundles) GetPem() *Pem {
-	if o == nil {
+func (c *CaBundles) GetPem() *Pem {
+	if c == nil {
 		return nil
 	}
-	return o.Pem
+	return c.Pem
 }
 
-func (o *CaBundles) GetType() MeshTrustItemSpecType {
-	if o == nil {
+func (c *CaBundles) GetType() MeshTrustItemSpecType {
+	if c == nil {
 		return MeshTrustItemSpecType("")
 	}
-	return o.Type
+	return c.Type
 }
 
 // Origin specifies whether the resource was created from a MeshIdentity.
@@ -115,25 +115,25 @@ type MeshTrustItemSpec struct {
 	TrustDomain string `json:"trustDomain"`
 }
 
-func (o *MeshTrustItemSpec) GetCaBundles() []CaBundles {
-	if o == nil {
+func (m *MeshTrustItemSpec) GetCaBundles() []CaBundles {
+	if m == nil {
 		return []CaBundles{}
 	}
-	return o.CaBundles
+	return m.CaBundles
 }
 
-func (o *MeshTrustItemSpec) GetOrigin() *Origin {
-	if o == nil {
+func (m *MeshTrustItemSpec) GetOrigin() *Origin {
+	if m == nil {
 		return nil
 	}
-	return o.Origin
+	return m.Origin
 }
 
-func (o *MeshTrustItemSpec) GetTrustDomain() string {
-	if o == nil {
+func (m *MeshTrustItemSpec) GetTrustDomain() string {
+	if m == nil {
 		return ""
 	}
-	return o.TrustDomain
+	return m.TrustDomain
 }
 
 // MeshTrustItem - Successful response
@@ -161,66 +161,66 @@ func (m MeshTrustItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshTrustItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshTrustItem) GetType() MeshTrustItemType {
-	if o == nil {
+func (m *MeshTrustItem) GetType() MeshTrustItemType {
+	if m == nil {
 		return MeshTrustItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshTrustItem) GetMesh() *string {
-	if o == nil {
+func (m *MeshTrustItem) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshTrustItem) GetKri() *string {
-	if o == nil {
+func (m *MeshTrustItem) GetKri() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Kri
+	return m.Kri
 }
 
-func (o *MeshTrustItem) GetName() string {
-	if o == nil {
+func (m *MeshTrustItem) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshTrustItem) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshTrustItem) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshTrustItem) GetSpec() MeshTrustItemSpec {
-	if o == nil {
+func (m *MeshTrustItem) GetSpec() MeshTrustItemSpec {
+	if m == nil {
 		return MeshTrustItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }
 
-func (o *MeshTrustItem) GetCreationTime() *time.Time {
-	if o == nil {
+func (m *MeshTrustItem) GetCreationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.CreationTime
+	return m.CreationTime
 }
 
-func (o *MeshTrustItem) GetModificationTime() *time.Time {
-	if o == nil {
+func (m *MeshTrustItem) GetModificationTime() *time.Time {
+	if m == nil {
 		return nil
 	}
-	return o.ModificationTime
+	return m.ModificationTime
 }
 
 type MeshTrustItemInput struct {
@@ -241,43 +241,43 @@ func (m MeshTrustItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshTrustItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *MeshTrustItemInput) GetType() MeshTrustItemType {
-	if o == nil {
+func (m *MeshTrustItemInput) GetType() MeshTrustItemType {
+	if m == nil {
 		return MeshTrustItemType("")
 	}
-	return o.Type
+	return m.Type
 }
 
-func (o *MeshTrustItemInput) GetMesh() *string {
-	if o == nil {
+func (m *MeshTrustItemInput) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return o.Mesh
+	return m.Mesh
 }
 
-func (o *MeshTrustItemInput) GetName() string {
-	if o == nil {
+func (m *MeshTrustItemInput) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return o.Name
+	return m.Name
 }
 
-func (o *MeshTrustItemInput) GetLabels() map[string]string {
-	if o == nil {
+func (m *MeshTrustItemInput) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return o.Labels
+	return m.Labels
 }
 
-func (o *MeshTrustItemInput) GetSpec() MeshTrustItemSpec {
-	if o == nil {
+func (m *MeshTrustItemInput) GetSpec() MeshTrustItemSpec {
+	if m == nil {
 		return MeshTrustItemSpec{}
 	}
-	return o.Spec
+	return m.Spec
 }

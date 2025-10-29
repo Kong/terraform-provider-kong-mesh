@@ -14,18 +14,18 @@ type GetMeshAccessLogRequest struct {
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 }
 
-func (o *GetMeshAccessLogRequest) GetMesh() string {
-	if o == nil {
+func (g *GetMeshAccessLogRequest) GetMesh() string {
+	if g == nil {
 		return ""
 	}
-	return o.Mesh
+	return g.Mesh
 }
 
-func (o *GetMeshAccessLogRequest) GetName() string {
-	if o == nil {
+func (g *GetMeshAccessLogRequest) GetName() string {
+	if g == nil {
 		return ""
 	}
-	return o.Name
+	return g.Name
 }
 
 type GetMeshAccessLogResponse struct {
@@ -41,37 +41,37 @@ type GetMeshAccessLogResponse struct {
 	NotFoundError *shared.NotFoundError
 }
 
-func (o *GetMeshAccessLogResponse) GetContentType() string {
-	if o == nil {
+func (g *GetMeshAccessLogResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetMeshAccessLogResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetMeshAccessLogResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetMeshAccessLogResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetMeshAccessLogResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetMeshAccessLogResponse) GetMeshAccessLogItem() *shared.MeshAccessLogItem {
-	if o == nil {
+func (g *GetMeshAccessLogResponse) GetMeshAccessLogItem() *shared.MeshAccessLogItem {
+	if g == nil {
 		return nil
 	}
-	return o.MeshAccessLogItem
+	return g.MeshAccessLogItem
 }
 
-func (o *GetMeshAccessLogResponse) GetNotFoundError() *shared.NotFoundError {
-	if o == nil {
+func (g *GetMeshAccessLogResponse) GetNotFoundError() *shared.NotFoundError {
+	if g == nil {
 		return nil
 	}
-	return o.NotFoundError
+	return g.NotFoundError
 }
