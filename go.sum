@@ -14,8 +14,8 @@ github.com/Kong/shared-speakeasy/planmodifiers/arbitrary_json v0.0.1 h1:S3f3RAPN
 github.com/Kong/shared-speakeasy/planmodifiers/arbitrary_json v0.0.1/go.mod h1:exogJpiSOmoVk8BTkYA2wlkvqhYlOP+LJpXc4CacHuU=
 github.com/Kong/shared-speakeasy/planmodifiers/suppress_zero_null v0.0.1 h1:2PxZAhqgCU0dz+qjghtay2XkNLx2F3oEuh90U/acijc=
 github.com/Kong/shared-speakeasy/planmodifiers/suppress_zero_null v0.0.1/go.mod h1:l0nwf2fPUF7e6a+/Ui4LiuCXS6EUzcOJ7t+sW/ojvtI=
-github.com/Kong/shared-speakeasy/tfbuilder v0.0.4 h1:R0S8cPMwfg1UymbiwppxY1AYZhG1JIWqOQXjK6MgXLU=
-github.com/Kong/shared-speakeasy/tfbuilder v0.0.4/go.mod h1:y7RVSb1teZOEJF+P7lsTv0fc3C0icoQkj07ZtVor4Lw=
+github.com/Kong/shared-speakeasy/tfbuilder v0.0.5 h1:F7iSw7NG/N7XFCyno0qnq1sPbI7ub2Q6tcowbrgRV/8=
+github.com/Kong/shared-speakeasy/tfbuilder v0.0.5/go.mod h1:vxNYWR9eyHiG6a6CYStJ5uHKmW98da2weLAHBstQ0PA=
 github.com/Kunde21/markdownfmt/v3 v3.1.0 h1:KiZu9LKs+wFFBQKhrZJrFZwtLnCCWJahL+S+E/3VnM0=
 github.com/Kunde21/markdownfmt/v3 v3.1.0/go.mod h1:tPXN1RTyOzJwhfHoon9wUr4HGYmWgVxSQN6VBJDkrVc=
 github.com/Masterminds/goutils v1.1.1 h1:5nUrii3FMTL5diU80unEVvNevw1nH4+ZV4DSLVJLSYI=
