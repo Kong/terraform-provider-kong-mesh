@@ -19,7 +19,8 @@ jobs:
       pull-requests: write
     uses: kumahq/.github/.github/workflows/wfc_lifecycle.yml@ec5a7f83fb1f5b03707118050147a70fd115c231
     with:
-      filesToIgnore: CONTRIBUTING.md
+      # These files to sync are OSS things which have no place here
+      filesToIgnore: "CODE_OF_CONDUCT.md,LICENSE,SECURITY.md,CODEOWNERS,GOVERNANCE.md,CONTRIBUTING.md"
     secrets:
       app_id: ${{ secrets.KONG_MESH_APP_ID }}
       private_key: ${{ secrets.KONG_MESH_APP_PRIVATE_KEY }}
