@@ -8,12 +8,15 @@ on:
       - reopened
       - opened
       - labeled
-permissions:
-  contents: read
+permissions: {}
+
 jobs:
   lifecycle:
     permissions:
+      actions: read
+      contents: write
       issues: write
+      pull-requests: write
     uses: kumahq/.github/.github/workflows/wfc_lifecycle.yml@ec5a7f83fb1f5b03707118050147a70fd115c231
     with:
       filesToIgnore: CONTRIBUTING.md
