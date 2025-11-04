@@ -2405,7 +2405,7 @@ paths:
   '/meshes/{mesh}/secrets/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: Secret#get
+        terraform-resource: MeshSecret#get
         terraform-datasource: null
       operationId: getSecret
       summary: Returns Secret entity
@@ -2431,7 +2431,7 @@ paths:
         - Secret
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'Secret#create,update'
+        terraform-resource: 'MeshSecret#create,update'
         terraform-datasource: null
       operationId: putSecret
       summary: Creates or Updates Secret entity
@@ -2464,7 +2464,7 @@ paths:
         - Secret
     delete:
       x-speakeasy-entity-operation:
-        terraform-resource: Secret#delete
+        terraform-resource: MeshSecret#delete
         terraform-datasource: null
       operationId: deleteSecret
       summary: Deletes Secret entity
