@@ -41,6 +41,7 @@ func (r *MeshGatewayResource) ModifyPlan(
 	if mesh.IsUnknown() {
 		return
 	}
+
 	request := operations.GetMeshGatewayRequest{
 		Name: name.ValueString(),
 	}

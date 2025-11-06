@@ -41,6 +41,7 @@ func (r *MeshMultiZoneServiceResource) ModifyPlan(
 	if mesh.IsUnknown() {
 		return
 	}
+
 	request := operations.GetMeshMultiZoneServiceRequest{
 		Name: name.ValueString(),
 	}

@@ -41,6 +41,7 @@ func (r *MeshFaultInjectionResource) ModifyPlan(
 	if mesh.IsUnknown() {
 		return
 	}
+
 	request := operations.GetMeshFaultInjectionRequest{
 		Name: name.ValueString(),
 	}

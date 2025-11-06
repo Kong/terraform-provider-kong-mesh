@@ -41,6 +41,7 @@ func (r *MeshServiceResource) ModifyPlan(
 	if mesh.IsUnknown() {
 		return
 	}
+
 	request := operations.GetMeshServiceRequest{
 		Name: name.ValueString(),
 	}

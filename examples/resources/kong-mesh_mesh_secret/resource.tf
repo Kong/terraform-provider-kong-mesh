@@ -1,4 +1,4 @@
-resource "kong-mesh_secret" "my_secret" {
+resource "kong-mesh_mesh_secret" "my_meshsecret" {
   data = "...my_data..."
   labels = {
     key = "value"

@@ -125,10 +125,10 @@ func TestMesh(t *testing.T) {
 		builder := tfbuilder.NewBuilder(tfbuilder.KongMesh, "http", "localhost", port.Int())
 		mesh := tfbuilder.NewMeshBuilder("default", meshName).
 			WithSpec(`skip_creating_initial_policies = [ "*" ]`)
-		skey := tfbuilder.NewPolicyBuilder("secret", "skey", "skey", "Secret").
+		skey := tfbuilder.NewPolicyBuilder("mesh_secret", "skey", "skey", "Secret").
 			WithMeshRef(builder.ResourceAddress("mesh", mesh.ResourceName) + ".name").
 			WithDependsOn(builder.ResourceAddress("mesh", mesh.ResourceName))
-		scert := tfbuilder.NewPolicyBuilder("secret", "scert", "scert", "Secret").
+		scert := tfbuilder.NewPolicyBuilder("mesh_secret", "scert", "scert", "Secret").
 			WithMeshRef(builder.ResourceAddress("mesh", mesh.ResourceName) + ".name").
 			WithDependsOn(builder.ResourceAddress("mesh", mesh.ResourceName))
 		builder.AddMesh(mesh)

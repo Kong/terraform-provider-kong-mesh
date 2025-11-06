@@ -41,6 +41,7 @@ func (r *MeshAccessLogResource) ModifyPlan(
 	if mesh.IsUnknown() {
 		return
 	}
+
 	request := operations.GetMeshAccessLogRequest{
 		Name: name.ValueString(),
 	}
