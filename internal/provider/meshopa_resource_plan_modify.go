@@ -41,6 +41,7 @@ func (r *MeshOPAResource) ModifyPlan(
 	if mesh.IsUnknown() {
 		return
 	}
+
 	request := operations.GetMeshOPARequest{
 		Name: name.ValueString(),
 	}

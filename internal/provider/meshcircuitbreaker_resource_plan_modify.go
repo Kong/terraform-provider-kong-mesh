@@ -41,6 +41,7 @@ func (r *MeshCircuitBreakerResource) ModifyPlan(
 	if mesh.IsUnknown() {
 		return
 	}
+
 	request := operations.GetMeshCircuitBreakerRequest{
 		Name: name.ValueString(),
 	}

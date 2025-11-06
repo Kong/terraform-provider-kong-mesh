@@ -41,11 +41,12 @@ func (r *MeshSecretResource) ModifyPlan(
 	if mesh.IsUnknown() {
 		return
 	}
-	request := operations.GetMeshSecretRequest{
+
+	request := operations.GetSecretRequest{
 		Name: name.ValueString(),
 	}
 	request.Mesh = mesh.ValueString()
-	res, err := r.client.MeshSecret.GetMeshSecret(ctx, request)
+	res, err := r.client.Secret.GetSecret(ctx, request)
 
 	if err != nil {
 		var sdkError *sdkerrors.SDKError

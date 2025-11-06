@@ -41,6 +41,7 @@ func (r *MeshIdentityResource) ModifyPlan(
 	if mesh.IsUnknown() {
 		return
 	}
+
 	request := operations.GetMeshIdentityRequest{
 		Name: name.ValueString(),
 	}

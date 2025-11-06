@@ -41,6 +41,7 @@ func (r *MeshTimeoutResource) ModifyPlan(
 	if mesh.IsUnknown() {
 		return
 	}
+
 	request := operations.GetMeshTimeoutRequest{
 		Name: name.ValueString(),
 	}
