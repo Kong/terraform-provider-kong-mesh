@@ -41,6 +41,7 @@ func (r *MeshPassthroughResource) ModifyPlan(
 	if mesh.IsUnknown() {
 		return
 	}
+
 	request := operations.GetMeshPassthroughRequest{
 		Name: name.ValueString(),
 	}

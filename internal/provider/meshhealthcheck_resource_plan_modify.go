@@ -41,6 +41,7 @@ func (r *MeshHealthCheckResource) ModifyPlan(
 	if mesh.IsUnknown() {
 		return
 	}
+
 	request := operations.GetMeshHealthCheckRequest{
 		Name: name.ValueString(),
 	}

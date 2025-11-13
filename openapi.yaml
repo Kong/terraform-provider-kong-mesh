@@ -2405,7 +2405,7 @@ paths:
   '/meshes/{mesh}/secrets/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: Secret#get
+        terraform-resource: MeshSecret#get
         terraform-datasource: null
       operationId: getSecret
       summary: Returns Secret entity
@@ -2431,7 +2431,7 @@ paths:
         - Secret
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'Secret#create,update'
+        terraform-resource: 'MeshSecret#create,update'
         terraform-datasource: null
       operationId: putSecret
       summary: Creates or Updates Secret entity
@@ -2464,7 +2464,7 @@ paths:
         - Secret
     delete:
       x-speakeasy-entity-operation:
-        terraform-resource: Secret#delete
+        terraform-resource: MeshSecret#delete
         terraform-datasource: null
       operationId: deleteSecret
       summary: Deletes Secret entity
@@ -3908,6 +3908,7 @@ components:
                                         - Plain
                                         - Json
                                       x-speakeasy-param-computed: false
+                                      x-speakeasy-unknown-values: allow
                                   required:
                                     - type
                                   x-speakeasy-param-computed: false
@@ -4018,6 +4019,7 @@ components:
                                         - Plain
                                         - Json
                                       x-speakeasy-param-computed: false
+                                      x-speakeasy-unknown-values: allow
                                   required:
                                     - type
                                   x-speakeasy-param-computed: false
@@ -4031,6 +4033,7 @@ components:
                                 - File
                                 - OpenTelemetry
                               x-speakeasy-param-computed: false
+                              x-speakeasy-unknown-values: allow
                           required:
                             - type
                           type: object
@@ -4056,6 +4059,7 @@ components:
                           - MeshHTTPRoute
                           - Dataplane
                         x-speakeasy-param-computed: false
+                        x-speakeasy-unknown-values: allow
                       labels:
                         description: |-
                           Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -4090,6 +4094,7 @@ components:
                             - Sidecar
                             - Gateway
                           type: string
+                          x-speakeasy-unknown-values: allow
                         x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
@@ -4172,6 +4177,7 @@ components:
                                         - Plain
                                         - Json
                                       x-speakeasy-param-computed: false
+                                      x-speakeasy-unknown-values: allow
                                   required:
                                     - type
                                   x-speakeasy-param-computed: false
@@ -4281,6 +4287,7 @@ components:
                                         - Plain
                                         - Json
                                       x-speakeasy-param-computed: false
+                                      x-speakeasy-unknown-values: allow
                                   required:
                                     - type
                                   x-speakeasy-param-computed: false
@@ -4294,6 +4301,7 @@ components:
                                 - File
                                 - OpenTelemetry
                               x-speakeasy-param-computed: false
+                              x-speakeasy-unknown-values: allow
                           required:
                             - type
                           type: object
@@ -4324,6 +4332,7 @@ components:
                     - MeshHTTPRoute
                     - Dataplane
                   x-speakeasy-param-computed: false
+                  x-speakeasy-unknown-values: allow
                 labels:
                   description: |-
                     Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -4358,6 +4367,7 @@ components:
                       - Sidecar
                       - Gateway
                     type: string
+                    x-speakeasy-unknown-values: allow
                   x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
@@ -4435,6 +4445,7 @@ components:
                                         - Plain
                                         - Json
                                       x-speakeasy-param-computed: false
+                                      x-speakeasy-unknown-values: allow
                                   required:
                                     - type
                                   x-speakeasy-param-computed: false
@@ -4545,6 +4556,7 @@ components:
                                         - Plain
                                         - Json
                                       x-speakeasy-param-computed: false
+                                      x-speakeasy-unknown-values: allow
                                   required:
                                     - type
                                   x-speakeasy-param-computed: false
@@ -4558,6 +4570,7 @@ components:
                                 - File
                                 - OpenTelemetry
                               x-speakeasy-param-computed: false
+                              x-speakeasy-unknown-values: allow
                           required:
                             - type
                           type: object
@@ -4583,6 +4596,7 @@ components:
                           - MeshHTTPRoute
                           - Dataplane
                         x-speakeasy-param-computed: false
+                        x-speakeasy-unknown-values: allow
                       labels:
                         description: |-
                           Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -4617,6 +4631,7 @@ components:
                             - Sidecar
                             - Gateway
                           type: string
+                          x-speakeasy-unknown-values: allow
                         x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
@@ -5006,6 +5021,7 @@ components:
                           - MeshHTTPRoute
                           - Dataplane
                         x-speakeasy-param-computed: false
+                        x-speakeasy-unknown-values: allow
                       labels:
                         description: |-
                           Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -5040,6 +5056,7 @@ components:
                             - Sidecar
                             - Gateway
                           type: string
+                          x-speakeasy-unknown-values: allow
                         x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
@@ -5365,6 +5382,7 @@ components:
                     - MeshHTTPRoute
                     - Dataplane
                   x-speakeasy-param-computed: false
+                  x-speakeasy-unknown-values: allow
                 labels:
                   description: |-
                     Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -5399,6 +5417,7 @@ components:
                       - Sidecar
                       - Gateway
                     type: string
+                    x-speakeasy-unknown-values: allow
                   x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
@@ -5719,6 +5738,7 @@ components:
                           - MeshHTTPRoute
                           - Dataplane
                         x-speakeasy-param-computed: false
+                        x-speakeasy-unknown-values: allow
                       labels:
                         description: |-
                           Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -5753,6 +5773,7 @@ components:
                             - Sidecar
                             - Gateway
                           type: string
+                          x-speakeasy-unknown-values: allow
                         x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
@@ -5952,6 +5973,7 @@ components:
                           - MeshHTTPRoute
                           - Dataplane
                         x-speakeasy-param-computed: false
+                        x-speakeasy-unknown-values: allow
                       labels:
                         description: |-
                           Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -5986,6 +6008,7 @@ components:
                             - Sidecar
                             - Gateway
                           type: string
+                          x-speakeasy-unknown-values: allow
                         x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
@@ -6113,6 +6136,7 @@ components:
                                 - Exact
                                 - Prefix
                               x-speakeasy-param-computed: false
+                              x-speakeasy-unknown-values: allow
                             value:
                               description: Value is SpiffeId of a client that needs to match for the configuration to be applied
                               type: string
@@ -6148,6 +6172,7 @@ components:
                     - MeshHTTPRoute
                     - Dataplane
                   x-speakeasy-param-computed: false
+                  x-speakeasy-unknown-values: allow
                 labels:
                   description: |-
                     Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -6182,6 +6207,7 @@ components:
                       - Sidecar
                       - Gateway
                     type: string
+                    x-speakeasy-unknown-values: allow
                   x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
@@ -6311,6 +6337,7 @@ components:
                           - MeshHTTPRoute
                           - Dataplane
                         x-speakeasy-param-computed: false
+                        x-speakeasy-unknown-values: allow
                       labels:
                         description: |-
                           Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -6345,6 +6372,7 @@ components:
                             - Sidecar
                             - Gateway
                           type: string
+                          x-speakeasy-unknown-values: allow
                         x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
@@ -6454,6 +6482,7 @@ components:
                     - MeshHTTPRoute
                     - Dataplane
                   x-speakeasy-param-computed: false
+                  x-speakeasy-unknown-values: allow
                 labels:
                   description: |-
                     Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -6488,6 +6517,7 @@ components:
                       - Sidecar
                       - Gateway
                     type: string
+                    x-speakeasy-unknown-values: allow
                   x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
@@ -6757,6 +6787,7 @@ components:
                           - MeshHTTPRoute
                           - Dataplane
                         x-speakeasy-param-computed: false
+                        x-speakeasy-unknown-values: allow
                       labels:
                         description: |-
                           Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -6791,6 +6822,7 @@ components:
                             - Sidecar
                             - Gateway
                           type: string
+                          x-speakeasy-unknown-values: allow
                         x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
@@ -6900,6 +6932,7 @@ components:
                     - MeshHTTPRoute
                     - Dataplane
                   x-speakeasy-param-computed: false
+                  x-speakeasy-unknown-values: allow
                 labels:
                   description: |-
                     Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -6934,6 +6967,7 @@ components:
                       - Sidecar
                       - Gateway
                     type: string
+                    x-speakeasy-unknown-values: allow
                   x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
@@ -6999,6 +7033,7 @@ components:
                                       - MeshHTTPRoute
                                       - Dataplane
                                     x-speakeasy-param-computed: false
+                                    x-speakeasy-unknown-values: allow
                                   labels:
                                     description: |-
                                       Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -7038,6 +7073,7 @@ components:
                                         - Sidecar
                                         - Gateway
                                       type: string
+                                      x-speakeasy-unknown-values: allow
                                     x-speakeasy-plan-modifiers: SupressZeroNullModifier
                                   sectionName:
                                     description: |-
@@ -7145,6 +7181,7 @@ components:
                                               - MeshHTTPRoute
                                               - Dataplane
                                             x-speakeasy-param-computed: false
+                                            x-speakeasy-unknown-values: allow
                                           labels:
                                             description: |-
                                               Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -7184,6 +7221,7 @@ components:
                                                 - Sidecar
                                                 - Gateway
                                               type: string
+                                              x-speakeasy-unknown-values: allow
                                             x-speakeasy-plan-modifiers: SupressZeroNullModifier
                                           sectionName:
                                             description: |-
@@ -7255,6 +7293,7 @@ components:
                                               - ReplaceFullPath
                                               - ReplacePrefixMatch
                                             x-speakeasy-param-computed: false
+                                            x-speakeasy-unknown-values: allow
                                         required:
                                           - type
                                         x-speakeasy-param-computed: false
@@ -7274,6 +7313,7 @@ components:
                                           - http
                                           - https
                                         x-speakeasy-param-computed: false
+                                        x-speakeasy-unknown-values: allow
                                       statusCode:
                                         description: StatusCode is the HTTP status code to be used in response.
                                         type: integer
@@ -7285,6 +7325,7 @@ components:
                                           - 307
                                           - 308
                                         x-speakeasy-param-computed: false
+                                        x-speakeasy-unknown-values: allow
                                     x-speakeasy-param-computed: false
                                   responseHeaderModifier:
                                     description: |-
@@ -7353,6 +7394,7 @@ components:
                                       - URLRewrite
                                       - RequestMirror
                                     x-speakeasy-param-computed: false
+                                    x-speakeasy-unknown-values: allow
                                   urlRewrite:
                                     type: object
                                     properties:
@@ -7385,6 +7427,7 @@ components:
                                               - ReplaceFullPath
                                               - ReplacePrefixMatch
                                             x-speakeasy-param-computed: false
+                                            x-speakeasy-unknown-values: allow
                                         required:
                                           - type
                                         x-speakeasy-param-computed: false
@@ -7428,6 +7471,7 @@ components:
                                         - Absent
                                         - Prefix
                                       x-speakeasy-param-computed: false
+                                      x-speakeasy-unknown-values: allow
                                     value:
                                       description: Value is the value of HTTP Header to be matched.
                                       type: string
@@ -7449,6 +7493,7 @@ components:
                                   - PUT
                                   - TRACE
                                 x-speakeasy-param-computed: false
+                                x-speakeasy-unknown-values: allow
                               path:
                                 type: object
                                 properties:
@@ -7459,6 +7504,7 @@ components:
                                       - PathPrefix
                                       - RegularExpression
                                     x-speakeasy-param-computed: false
+                                    x-speakeasy-unknown-values: allow
                                   value:
                                     description: |-
                                       Exact or prefix matches must be an absolute path. A prefix matches only
@@ -7487,6 +7533,7 @@ components:
                                         - Exact
                                         - RegularExpression
                                       x-speakeasy-param-computed: false
+                                      x-speakeasy-unknown-values: allow
                                     value:
                                       type: string
                                       x-speakeasy-param-computed: false
@@ -7524,6 +7571,7 @@ components:
                           - MeshHTTPRoute
                           - Dataplane
                         x-speakeasy-param-computed: false
+                        x-speakeasy-unknown-values: allow
                       labels:
                         description: |-
                           Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -7558,6 +7606,7 @@ components:
                             - Sidecar
                             - Gateway
                           type: string
+                          x-speakeasy-unknown-values: allow
                         x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
@@ -7668,6 +7717,7 @@ components:
                     - MeshHTTPRoute
                     - Dataplane
                   x-speakeasy-param-computed: false
+                  x-speakeasy-unknown-values: allow
                 labels:
                   description: |-
                     Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -7702,6 +7752,7 @@ components:
                       - Sidecar
                       - Gateway
                     type: string
+                    x-speakeasy-unknown-values: allow
                   x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
@@ -7824,6 +7875,7 @@ components:
                                 - QueryParameter
                                 - FilterState
                               x-speakeasy-param-computed: false
+                              x-speakeasy-unknown-values: allow
                           required:
                             - type
                           type: object
@@ -7960,6 +8012,7 @@ components:
                                         - QueryParameter
                                         - FilterState
                                       x-speakeasy-param-computed: false
+                                      x-speakeasy-unknown-values: allow
                                   required:
                                     - type
                                   type: object
@@ -8002,6 +8055,7 @@ components:
                                   - XXHash
                                   - MurmurHash2
                                 x-speakeasy-param-computed: false
+                                x-speakeasy-unknown-values: allow
                               hashPolicies:
                                 description: |-
                                   HashPolicies specify a list of request/connection properties that are used to calculate a hash.
@@ -8095,6 +8149,7 @@ components:
                                         - QueryParameter
                                         - FilterState
                                       x-speakeasy-param-computed: false
+                                      x-speakeasy-unknown-values: allow
                                   required:
                                     - type
                                   type: object
@@ -8134,6 +8189,7 @@ components:
                               - Random
                               - Maglev
                             x-speakeasy-param-computed: false
+                            x-speakeasy-unknown-values: allow
                         required:
                           - type
                         x-speakeasy-param-computed: false
@@ -8177,6 +8233,7 @@ components:
                                             - Any
                                             - AnyExcept
                                           x-speakeasy-param-computed: false
+                                          x-speakeasy-unknown-values: allow
                                         zones:
                                           type: array
                                           items:
@@ -8265,6 +8322,7 @@ components:
                           - MeshHTTPRoute
                           - Dataplane
                         x-speakeasy-param-computed: false
+                        x-speakeasy-unknown-values: allow
                       labels:
                         description: |-
                           Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -8299,6 +8357,7 @@ components:
                             - Sidecar
                             - Gateway
                           type: string
+                          x-speakeasy-unknown-values: allow
                         x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
@@ -8470,6 +8529,7 @@ components:
                                   - ProvidedTLS
                                   - ActiveMTLSBackend
                                 x-speakeasy-param-computed: false
+                                x-speakeasy-unknown-values: allow
                             x-speakeasy-param-computed: false
                         x-speakeasy-param-computed: false
                       type:
@@ -8479,6 +8539,7 @@ components:
                           - Prometheus
                           - OpenTelemetry
                         x-speakeasy-param-computed: false
+                        x-speakeasy-unknown-values: allow
                     required:
                       - type
                     type: object
@@ -8512,6 +8573,7 @@ components:
                                   - Basic
                                   - None
                                 x-speakeasy-param-computed: false
+                                x-speakeasy-unknown-values: allow
                             required:
                               - name
                             type: object
@@ -8536,6 +8598,7 @@ components:
                                   - Exact
                                   - Contains
                                 x-speakeasy-param-computed: false
+                                x-speakeasy-unknown-values: allow
                             required:
                               - match
                               - type
@@ -8561,6 +8624,7 @@ components:
                                   - Exact
                                   - Contains
                                 x-speakeasy-param-computed: false
+                                x-speakeasy-unknown-values: allow
                             required:
                               - match
                               - type
@@ -8590,6 +8654,7 @@ components:
                     - MeshHTTPRoute
                     - Dataplane
                   x-speakeasy-param-computed: false
+                  x-speakeasy-unknown-values: allow
                 labels:
                   description: |-
                     Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -8624,6 +8689,7 @@ components:
                       - Sidecar
                       - Gateway
                     type: string
+                    x-speakeasy-unknown-values: allow
                   x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
@@ -8734,6 +8800,7 @@ components:
                           - http2
                           - mysql
                         x-speakeasy-param-computed: false
+                        x-speakeasy-unknown-values: allow
                       type:
                         description: 'Type of the match, one of `Domain`, `IP` or `CIDR` is available.'
                         type: string
@@ -8742,6 +8809,7 @@ components:
                           - IP
                           - CIDR
                         x-speakeasy-param-computed: false
+                        x-speakeasy-unknown-values: allow
                       value:
                         description: Value for the specified Type.
                         type: string
@@ -8762,6 +8830,7 @@ components:
                     - Matched
                     - None
                   x-speakeasy-param-computed: false
+                  x-speakeasy-unknown-values: allow
               x-speakeasy-param-computed: false
             targetRef:
               description: |-
@@ -8784,6 +8853,7 @@ components:
                     - MeshHTTPRoute
                     - Dataplane
                   x-speakeasy-param-computed: false
+                  x-speakeasy-unknown-values: allow
                 labels:
                   description: |-
                     Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -8818,6 +8888,7 @@ components:
                       - Sidecar
                       - Gateway
                     type: string
+                    x-speakeasy-unknown-values: allow
                   x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
@@ -8939,6 +9010,7 @@ components:
                                     - move
                                     - copy
                                   x-speakeasy-param-computed: false
+                                  x-speakeasy-unknown-values: allow
                                 path:
                                   description: Path is a jsonpatch path string.
                                   type: string
@@ -8987,6 +9059,7 @@ components:
                               - Remove
                               - Patch
                             x-speakeasy-param-computed: false
+                            x-speakeasy-unknown-values: allow
                           value:
                             description: Value of xDS resource in YAML format to add or patch.
                             type: string
@@ -9022,6 +9095,7 @@ components:
                                     - move
                                     - copy
                                   x-speakeasy-param-computed: false
+                                  x-speakeasy-unknown-values: allow
                                 path:
                                   description: Path is a jsonpatch path string.
                                   type: string
@@ -9083,6 +9157,7 @@ components:
                               - AddAfter
                               - AddLast
                             x-speakeasy-param-computed: false
+                            x-speakeasy-unknown-values: allow
                           value:
                             description: Value of xDS resource in YAML format to add or patch.
                             type: string
@@ -9116,6 +9191,7 @@ components:
                                     - move
                                     - copy
                                   x-speakeasy-param-computed: false
+                                  x-speakeasy-unknown-values: allow
                                 path:
                                   description: Path is a jsonpatch path string.
                                   type: string
@@ -9170,6 +9246,7 @@ components:
                               - Remove
                               - Patch
                             x-speakeasy-param-computed: false
+                            x-speakeasy-unknown-values: allow
                           value:
                             description: Value of xDS resource in YAML format to add or patch.
                             type: string
@@ -9203,6 +9280,7 @@ components:
                                     - move
                                     - copy
                                   x-speakeasy-param-computed: false
+                                  x-speakeasy-unknown-values: allow
                                 path:
                                   description: Path is a jsonpatch path string.
                                   type: string
@@ -9264,6 +9342,7 @@ components:
                               - AddAfter
                               - AddLast
                             x-speakeasy-param-computed: false
+                            x-speakeasy-unknown-values: allow
                           value:
                             description: Value of xDS resource in YAML format to add or patch.
                             type: string
@@ -9299,6 +9378,7 @@ components:
                                     - move
                                     - copy
                                   x-speakeasy-param-computed: false
+                                  x-speakeasy-unknown-values: allow
                                 path:
                                   description: Path is a jsonpatch path string.
                                   type: string
@@ -9351,6 +9431,7 @@ components:
                               - Remove
                               - Patch
                             x-speakeasy-param-computed: false
+                            x-speakeasy-unknown-values: allow
                           value:
                             description: Value of xDS resource in YAML format to add or patch.
                             type: string
@@ -9383,6 +9464,7 @@ components:
                     - MeshHTTPRoute
                     - Dataplane
                   x-speakeasy-param-computed: false
+                  x-speakeasy-unknown-values: allow
                 labels:
                   description: |-
                     Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -9417,6 +9499,7 @@ components:
                       - Sidecar
                       - Gateway
                     type: string
+                    x-speakeasy-unknown-values: allow
                   x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
@@ -9660,6 +9743,7 @@ components:
                           - MeshHTTPRoute
                           - Dataplane
                         x-speakeasy-param-computed: false
+                        x-speakeasy-unknown-values: allow
                       labels:
                         description: |-
                           Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -9694,6 +9778,7 @@ components:
                             - Sidecar
                             - Gateway
                           type: string
+                          x-speakeasy-unknown-values: allow
                         x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
@@ -9876,6 +9961,7 @@ components:
                     - MeshHTTPRoute
                     - Dataplane
                   x-speakeasy-param-computed: false
+                  x-speakeasy-unknown-values: allow
                 labels:
                   description: |-
                     Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -9910,6 +9996,7 @@ components:
                       - Sidecar
                       - Gateway
                     type: string
+                    x-speakeasy-unknown-values: allow
                   x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
@@ -10085,6 +10172,7 @@ components:
                           - MeshHTTPRoute
                           - Dataplane
                         x-speakeasy-param-computed: false
+                        x-speakeasy-unknown-values: allow
                       labels:
                         description: |-
                           Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -10119,6 +10207,7 @@ components:
                             - Sidecar
                             - Gateway
                           type: string
+                          x-speakeasy-unknown-values: allow
                         x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
@@ -10228,6 +10317,7 @@ components:
                     - MeshHTTPRoute
                     - Dataplane
                   x-speakeasy-param-computed: false
+                  x-speakeasy-unknown-values: allow
                 labels:
                   description: |-
                     Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -10262,6 +10352,7 @@ components:
                       - Sidecar
                       - Gateway
                     type: string
+                    x-speakeasy-unknown-values: allow
                   x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
@@ -10357,6 +10448,7 @@ components:
                                         - Seconds
                                         - UnixTimestamp
                                       x-speakeasy-param-computed: false
+                                      x-speakeasy-unknown-values: allow
                                     name:
                                       description: The Name of the reset header.
                                       type: string
@@ -10381,6 +10473,7 @@ components:
                                 - ResourceExhausted
                                 - Unavailable
                               type: string
+                              x-speakeasy-unknown-values: allow
                             example:
                               - Canceled
                               - DeadlineExceeded
@@ -10428,6 +10521,7 @@ components:
                                     - OmitHostsWithTags
                                     - OmitPreviousPriorities
                                   x-speakeasy-param-computed: false
+                                  x-speakeasy-unknown-values: allow
                                 tags:
                                   description: |-
                                     Tags is a map of metadata to match against for selecting the omitted hosts. Required if Type is
@@ -10500,6 +10594,7 @@ components:
                                         - Seconds
                                         - UnixTimestamp
                                       x-speakeasy-param-computed: false
+                                      x-speakeasy-unknown-values: allow
                                     name:
                                       description: The Name of the reset header.
                                       type: string
@@ -10543,6 +10638,7 @@ components:
                                     - Absent
                                     - Prefix
                                   x-speakeasy-param-computed: false
+                                  x-speakeasy-unknown-values: allow
                                 value:
                                   description: Value is the value of HTTP Header to be matched.
                                   type: string
@@ -10582,6 +10678,7 @@ components:
                                     - Absent
                                     - Prefix
                                   x-speakeasy-param-computed: false
+                                  x-speakeasy-unknown-values: allow
                                 value:
                                   description: Value is the value of HTTP Header to be matched.
                                   type: string
@@ -10656,6 +10753,7 @@ components:
                           - MeshHTTPRoute
                           - Dataplane
                         x-speakeasy-param-computed: false
+                        x-speakeasy-unknown-values: allow
                       labels:
                         description: |-
                           Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -10690,6 +10788,7 @@ components:
                             - Sidecar
                             - Gateway
                           type: string
+                          x-speakeasy-unknown-values: allow
                         x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
@@ -10799,6 +10898,7 @@ components:
                     - MeshHTTPRoute
                     - Dataplane
                   x-speakeasy-param-computed: false
+                  x-speakeasy-unknown-values: allow
                 labels:
                   description: |-
                     Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -10833,6 +10933,7 @@ components:
                       - Sidecar
                       - Gateway
                     type: string
+                    x-speakeasy-unknown-values: allow
                   x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
@@ -10890,6 +10991,7 @@ components:
                                       - MeshHTTPRoute
                                       - Dataplane
                                     x-speakeasy-param-computed: false
+                                    x-speakeasy-unknown-values: allow
                                   labels:
                                     description: |-
                                       Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -10929,6 +11031,7 @@ components:
                                         - Sidecar
                                         - Gateway
                                       type: string
+                                      x-speakeasy-unknown-values: allow
                                     x-speakeasy-plan-modifiers: SupressZeroNullModifier
                                   sectionName:
                                     description: |-
@@ -10979,6 +11082,7 @@ components:
                           - MeshHTTPRoute
                           - Dataplane
                         x-speakeasy-param-computed: false
+                        x-speakeasy-unknown-values: allow
                       labels:
                         description: |-
                           Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -11013,6 +11117,7 @@ components:
                             - Sidecar
                             - Gateway
                           type: string
+                          x-speakeasy-unknown-values: allow
                         x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
@@ -11188,6 +11293,7 @@ components:
                           - MeshHTTPRoute
                           - Dataplane
                         x-speakeasy-param-computed: false
+                        x-speakeasy-unknown-values: allow
                       labels:
                         description: |-
                           Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -11222,6 +11328,7 @@ components:
                             - Sidecar
                             - Gateway
                           type: string
+                          x-speakeasy-unknown-values: allow
                         x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
@@ -11332,6 +11439,7 @@ components:
                     - MeshHTTPRoute
                     - Dataplane
                   x-speakeasy-param-computed: false
+                  x-speakeasy-unknown-values: allow
                 labels:
                   description: |-
                     Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -11366,6 +11474,7 @@ components:
                       - Sidecar
                       - Gateway
                     type: string
+                    x-speakeasy-unknown-values: allow
                   x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
@@ -11469,6 +11578,7 @@ components:
                           - MeshHTTPRoute
                           - Dataplane
                         x-speakeasy-param-computed: false
+                        x-speakeasy-unknown-values: allow
                       labels:
                         description: |-
                           Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -11503,6 +11613,7 @@ components:
                             - Sidecar
                             - Gateway
                           type: string
+                          x-speakeasy-unknown-values: allow
                         x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
@@ -11609,6 +11720,7 @@ components:
                           - Permissive
                           - Strict
                         x-speakeasy-param-computed: false
+                        x-speakeasy-unknown-values: allow
                       tlsCiphers:
                         description: TlsCiphers section for providing ciphers specification.
                         type: array
@@ -11621,6 +11733,7 @@ components:
                             - ECDHE-RSA-AES256-GCM-SHA384
                             - ECDHE-RSA-CHACHA20-POLY1305
                           type: string
+                          x-speakeasy-unknown-values: allow
                         x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       tlsVersion:
                         description: Version section for providing version specification.
@@ -11637,6 +11750,7 @@ components:
                               - TLS12
                               - TLS13
                             x-speakeasy-param-computed: false
+                            x-speakeasy-unknown-values: allow
                           min:
                             description: 'Min defines minimum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`.'
                             type: string
@@ -11648,6 +11762,7 @@ components:
                               - TLS12
                               - TLS13
                             x-speakeasy-param-computed: false
+                            x-speakeasy-unknown-values: allow
                         x-speakeasy-param-computed: false
                     x-speakeasy-param-computed: false
                   targetRef:
@@ -11670,6 +11785,7 @@ components:
                           - MeshHTTPRoute
                           - Dataplane
                         x-speakeasy-param-computed: false
+                        x-speakeasy-unknown-values: allow
                       labels:
                         description: |-
                           Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -11704,6 +11820,7 @@ components:
                             - Sidecar
                             - Gateway
                           type: string
+                          x-speakeasy-unknown-values: allow
                         x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
@@ -11744,6 +11861,7 @@ components:
                           - Permissive
                           - Strict
                         x-speakeasy-param-computed: false
+                        x-speakeasy-unknown-values: allow
                       tlsCiphers:
                         description: TlsCiphers section for providing ciphers specification.
                         type: array
@@ -11756,6 +11874,7 @@ components:
                             - ECDHE-RSA-AES256-GCM-SHA384
                             - ECDHE-RSA-CHACHA20-POLY1305
                           type: string
+                          x-speakeasy-unknown-values: allow
                         x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       tlsVersion:
                         description: Version section for providing version specification.
@@ -11772,6 +11891,7 @@ components:
                               - TLS12
                               - TLS13
                             x-speakeasy-param-computed: false
+                            x-speakeasy-unknown-values: allow
                           min:
                             description: 'Min defines minimum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`.'
                             type: string
@@ -11783,6 +11903,7 @@ components:
                               - TLS12
                               - TLS13
                             x-speakeasy-param-computed: false
+                            x-speakeasy-unknown-values: allow
                         x-speakeasy-param-computed: false
                     x-speakeasy-param-computed: false
                 type: object
@@ -11808,6 +11929,7 @@ components:
                     - MeshHTTPRoute
                     - Dataplane
                   x-speakeasy-param-computed: false
+                  x-speakeasy-unknown-values: allow
                 labels:
                   description: |-
                     Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -11842,6 +11964,7 @@ components:
                       - Sidecar
                       - Gateway
                     type: string
+                    x-speakeasy-unknown-values: allow
                   x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
@@ -11984,6 +12107,7 @@ components:
                           - Datadog
                           - OpenTelemetry
                         x-speakeasy-param-computed: false
+                        x-speakeasy-unknown-values: allow
                       zipkin:
                         description: Zipkin backend configuration.
                         type: object
@@ -11998,6 +12122,7 @@ components:
                               - httpJson
                               - httpProto
                             x-speakeasy-param-computed: false
+                            x-speakeasy-unknown-values: allow
                           sharedSpanContext:
                             description: |-
                               Determines whether client and server spans will share the same span
@@ -12135,6 +12260,7 @@ components:
                     - MeshHTTPRoute
                     - Dataplane
                   x-speakeasy-param-computed: false
+                  x-speakeasy-unknown-values: allow
                 labels:
                   description: |-
                     Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -12169,6 +12295,7 @@ components:
                       - Sidecar
                       - Gateway
                     type: string
+                    x-speakeasy-unknown-values: allow
                   x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
@@ -12272,6 +12399,7 @@ components:
                           - Deny
                           - AllowWithShadowDeny
                         x-speakeasy-param-computed: false
+                        x-speakeasy-unknown-values: allow
                     x-speakeasy-param-computed: false
                   targetRef:
                     description: |-
@@ -12293,6 +12421,7 @@ components:
                           - MeshHTTPRoute
                           - Dataplane
                         x-speakeasy-param-computed: false
+                        x-speakeasy-unknown-values: allow
                       labels:
                         description: |-
                           Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -12327,6 +12456,7 @@ components:
                             - Sidecar
                             - Gateway
                           type: string
+                          x-speakeasy-unknown-values: allow
                         x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
@@ -12373,6 +12503,7 @@ components:
                                     - Exact
                                     - Prefix
                                   x-speakeasy-param-computed: false
+                                  x-speakeasy-unknown-values: allow
                                 value:
                                   description: Value is SpiffeId of a client that needs to match for the configuration to be applied
                                   type: string
@@ -12401,6 +12532,7 @@ components:
                                     - Exact
                                     - Prefix
                                   x-speakeasy-param-computed: false
+                                  x-speakeasy-unknown-values: allow
                                 value:
                                   description: Value is SpiffeId of a client that needs to match for the configuration to be applied
                                   type: string
@@ -12427,6 +12559,7 @@ components:
                                     - Exact
                                     - Prefix
                                   x-speakeasy-param-computed: false
+                                  x-speakeasy-unknown-values: allow
                                 value:
                                   description: Value is SpiffeId of a client that needs to match for the configuration to be applied
                                   type: string
@@ -12463,6 +12596,7 @@ components:
                     - MeshHTTPRoute
                     - Dataplane
                   x-speakeasy-param-computed: false
+                  x-speakeasy-unknown-values: allow
                 labels:
                   description: |-
                     Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -12497,6 +12631,7 @@ components:
                       - Sidecar
                       - Gateway
                     type: string
+                    x-speakeasy-unknown-values: allow
                   x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
@@ -13650,6 +13785,7 @@ components:
                     - http
                     - http2
                   x-speakeasy-param-computed: false
+                  x-speakeasy-unknown-values: allow
                 type:
                   description: 'Type of the match, only `HostnameGenerator` is available at the moment.'
                   type: string
@@ -13744,6 +13880,7 @@ components:
                         - Secured
                         - SkipAll
                       x-speakeasy-param-computed: false
+                      x-speakeasy-unknown-values: allow
                     serverName:
                       description: ServerName overrides the default Server Name Indicator set by Kuma.
                       type: string
@@ -13761,6 +13898,7 @@ components:
                               - Exact
                               - Prefix
                             x-speakeasy-param-computed: false
+                            x-speakeasy-unknown-values: allow
                           value:
                             description: Value to match.
                             type: string
@@ -13785,6 +13923,7 @@ components:
                         - TLS12
                         - TLS13
                       x-speakeasy-param-computed: false
+                      x-speakeasy-unknown-values: allow
                     min:
                       description: 'Min defines minimum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`.'
                       type: string
@@ -13796,6 +13935,7 @@ components:
                         - TLS12
                         - TLS13
                       x-speakeasy-param-computed: false
+                      x-speakeasy-unknown-values: allow
                   x-speakeasy-param-computed: false
               x-speakeasy-param-computed: false
           required:
@@ -13876,6 +14016,7 @@ components:
                             - 'True'
                             - 'False'
                             - Unknown
+                          x-speakeasy-unknown-values: allow
                         type:
                           description: type of condition in CamelCase or in foo.example.com/CamelCase.
                           type: string
@@ -14037,6 +14178,7 @@ components:
                                 - EnvVar
                                 - InsecureInline
                               x-speakeasy-param-computed: false
+                              x-speakeasy-unknown-values: allow
                           required:
                             - type
                           x-speakeasy-param-computed: false
@@ -14094,6 +14236,7 @@ components:
                                 - EnvVar
                                 - InsecureInline
                               x-speakeasy-param-computed: false
+                              x-speakeasy-unknown-values: allow
                           required:
                             - type
                           x-speakeasy-param-computed: false
@@ -14119,6 +14262,7 @@ components:
                         - Enabled
                         - Disabled
                       x-speakeasy-param-computed: false
+                      x-speakeasy-unknown-values: allow
                   x-speakeasy-param-computed: false
                 spire:
                   description: Spire indicates that SPIRE is used for certificate delivery.
@@ -14143,6 +14287,7 @@ components:
                     - Bundled
                     - Spire
                   x-speakeasy-param-computed: false
+                  x-speakeasy-unknown-values: allow
               required:
                 - type
               x-speakeasy-param-computed: false
@@ -14221,6 +14366,7 @@ components:
                       - 'True'
                       - 'False'
                       - Unknown
+                    x-speakeasy-unknown-values: allow
                   type:
                     description: type of condition in CamelCase or in foo.example.com/CamelCase.
                     type: string
@@ -14404,6 +14550,7 @@ components:
                             - 'True'
                             - 'False'
                             - Unknown
+                          x-speakeasy-unknown-values: allow
                         type:
                           description: type of condition in CamelCase or in foo.example.com/CamelCase.
                           type: string
@@ -14526,6 +14673,7 @@ components:
                       - ServiceTag
                       - SpiffeID
                     x-speakeasy-param-computed: false
+                    x-speakeasy-unknown-values: allow
                   value:
                     type: string
                     x-speakeasy-param-computed: false
@@ -14590,6 +14738,7 @@ components:
                 - Available
                 - Unavailable
               x-speakeasy-param-computed: false
+              x-speakeasy-unknown-values: allow
           x-speakeasy-param-computed: false
         creationTime:
           description: Time at which the resource was created
@@ -14682,6 +14831,7 @@ components:
                             - 'True'
                             - 'False'
                             - Unknown
+                          x-speakeasy-unknown-values: allow
                         type:
                           description: type of condition in CamelCase or in foo.example.com/CamelCase.
                           type: string
@@ -14719,6 +14869,7 @@ components:
                   enum:
                     - Ready
                     - NotReady
+                  x-speakeasy-unknown-values: allow
               x-speakeasy-param-computed: false
             vips:
               type: array
@@ -15237,6 +15388,7 @@ components:
                           - Limit
                           - Shadow
                         x-speakeasy-param-computed: false
+                        x-speakeasy-unknown-values: allow
                     required:
                       - backend
                       - http
@@ -15261,6 +15413,7 @@ components:
                           - MeshHTTPRoute
                           - Dataplane
                         x-speakeasy-param-computed: false
+                        x-speakeasy-unknown-values: allow
                       labels:
                         description: |-
                           Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -15295,6 +15448,7 @@ components:
                             - Sidecar
                             - Gateway
                           type: string
+                          x-speakeasy-unknown-values: allow
                         x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
@@ -15338,6 +15492,7 @@ components:
                     - MeshHTTPRoute
                     - Dataplane
                   x-speakeasy-param-computed: false
+                  x-speakeasy-unknown-values: allow
                 labels:
                   description: |-
                     Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -15372,6 +15527,7 @@ components:
                       - Sidecar
                       - Gateway
                     type: string
+                    x-speakeasy-unknown-values: allow
                   x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
@@ -15571,6 +15727,7 @@ components:
                           - Limit
                           - Shadow
                         x-speakeasy-param-computed: false
+                        x-speakeasy-unknown-values: allow
                     required:
                       - backend
                       - http
@@ -15595,6 +15752,7 @@ components:
                           - MeshHTTPRoute
                           - Dataplane
                         x-speakeasy-param-computed: false
+                        x-speakeasy-unknown-values: allow
                       labels:
                         description: |-
                           Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -15629,6 +15787,7 @@ components:
                             - Sidecar
                             - Gateway
                           type: string
+                          x-speakeasy-unknown-values: allow
                         x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
@@ -15782,6 +15941,7 @@ components:
                         - Allow
                         - Deny
                       x-speakeasy-param-computed: false
+                      x-speakeasy-unknown-values: allow
                     requestBody:
                       description: |-
                         RequestBody configuration to apply on the request body sent to the
@@ -15836,6 +15996,7 @@ components:
                     - MeshHTTPRoute
                     - Dataplane
                   x-speakeasy-param-computed: false
+                  x-speakeasy-unknown-values: allow
                 labels:
                   description: |-
                     Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -15870,6 +16031,7 @@ components:
                       - Sidecar
                       - Gateway
                     type: string
+                    x-speakeasy-unknown-values: allow
                   x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
@@ -15921,6 +16083,7 @@ components:
             body to child properties in a frontend UI. Must be returned as an integer.
           type: integer
           readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
         title:
           description: |
             A short, human-readable summary of the problem. It should not
@@ -15928,10 +16091,12 @@ components:
             Should be provided as "Sentence case" for direct use in the UI.
           type: string
           readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
         type:
           description: The error type.
           type: string
           readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
         instance:
           description: |
             Used to return the correlation ID back to the user, in the format
@@ -15939,6 +16104,7 @@ components:
             when a customer reports an issue.
           type: string
           readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
         detail:
           description: |
             A human readable explanation specific to this occurence of the problem.
@@ -15947,6 +16113,7 @@ components:
             provided as "Sentence case" for direct use in the UI.
           type: string
           readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
       required:
         - status
         - title
@@ -16007,6 +16174,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     MeshAccessLogDeleteSuccessResponse:
       description: Successful response
       content:
@@ -16051,6 +16219,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     MeshCircuitBreakerDeleteSuccessResponse:
       description: Successful response
       content:
@@ -16095,6 +16264,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     MeshFaultInjectionDeleteSuccessResponse:
       description: Successful response
       content:
@@ -16139,6 +16309,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     MeshHealthCheckDeleteSuccessResponse:
       description: Successful response
       content:
@@ -16183,6 +16354,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     MeshHTTPRouteDeleteSuccessResponse:
       description: Successful response
       content:
@@ -16227,6 +16399,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     MeshLoadBalancingStrategyDeleteSuccessResponse:
       description: Successful response
       content:
@@ -16271,6 +16444,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     MeshMetricDeleteSuccessResponse:
       description: Successful response
       content:
@@ -16315,6 +16489,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     MeshPassthroughDeleteSuccessResponse:
       description: Successful response
       content:
@@ -16359,6 +16534,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     MeshProxyPatchDeleteSuccessResponse:
       description: Successful response
       content:
@@ -16403,6 +16579,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     MeshRateLimitDeleteSuccessResponse:
       description: Successful response
       content:
@@ -16447,6 +16624,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     MeshRetryDeleteSuccessResponse:
       description: Successful response
       content:
@@ -16491,6 +16669,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     MeshTCPRouteDeleteSuccessResponse:
       description: Successful response
       content:
@@ -16535,6 +16714,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     MeshTimeoutDeleteSuccessResponse:
       description: Successful response
       content:
@@ -16579,6 +16759,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     MeshTLSDeleteSuccessResponse:
       description: Successful response
       content:
@@ -16623,6 +16804,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     MeshTraceDeleteSuccessResponse:
       description: Successful response
       content:
@@ -16667,6 +16849,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     MeshTrafficPermissionDeleteSuccessResponse:
       description: Successful response
       content:
@@ -16711,6 +16894,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     MeshDeleteSuccessResponse:
       description: Successful response
       content:
@@ -16755,6 +16939,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     MeshGatewayDeleteSuccessResponse:
       description: Successful response
       content:
@@ -16808,6 +16993,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     SecretDeleteSuccessResponse:
       description: Successful response
       content:
@@ -16861,6 +17047,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     ZoneEgressDeleteSuccessResponse:
       description: Successful response
       content:
@@ -16914,6 +17101,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     ZoneIngressDeleteSuccessResponse:
       description: Successful response
       content:
@@ -16967,6 +17155,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     HostnameGeneratorDeleteSuccessResponse:
       description: Successful response
       content:
@@ -17011,6 +17200,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     MeshExternalServiceDeleteSuccessResponse:
       description: Successful response
       content:
@@ -17055,6 +17245,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     MeshIdentityDeleteSuccessResponse:
       description: Successful response
       content:
@@ -17099,6 +17290,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     MeshMultiZoneServiceDeleteSuccessResponse:
       description: Successful response
       content:
@@ -17143,6 +17335,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     MeshServiceDeleteSuccessResponse:
       description: Successful response
       content:
@@ -17187,6 +17380,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     MeshTrustDeleteSuccessResponse:
       description: Successful response
       content:
@@ -17231,6 +17425,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     MeshGlobalRateLimitDeleteSuccessResponse:
       description: Successful response
       content:
@@ -17275,6 +17470,7 @@ components:
                 items:
                   type: string
                 readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
     MeshOPADeleteSuccessResponse:
       description: Successful response
       content:

@@ -1,7 +1,7 @@
 lockVersion: 2.0.0
 id: 322c4806-8b53-493c-a05f-50d4d113c747
 management:
-  docChecksum: 63314f5cb78095151e8693107d21b2ae
+  docChecksum: e56956b1d82474720c4d946511b299a9
   docVersion: 2.0.0
   speakeasyVersion: 1.642.1
   generationVersion: 2.731.4
@@ -79,6 +79,9 @@ generatedFiles:
   - examples/resources/kong-mesh_mesh_retry/import-by-string-id.tf
   - examples/resources/kong-mesh_mesh_retry/import.sh
   - examples/resources/kong-mesh_mesh_retry/resource.tf
+  - examples/resources/kong-mesh_mesh_secret/import-by-string-id.tf
+  - examples/resources/kong-mesh_mesh_secret/import.sh
+  - examples/resources/kong-mesh_mesh_secret/resource.tf
   - examples/resources/kong-mesh_mesh_service/import-by-string-id.tf
   - examples/resources/kong-mesh_mesh_service/import.sh
   - examples/resources/kong-mesh_mesh_service/resource.tf
@@ -100,9 +103,6 @@ generatedFiles:
   - examples/resources/kong-mesh_mesh_trust/import-by-string-id.tf
   - examples/resources/kong-mesh_mesh_trust/import.sh
   - examples/resources/kong-mesh_mesh_trust/resource.tf
-  - examples/resources/kong-mesh_secret/import-by-string-id.tf
-  - examples/resources/kong-mesh_secret/import.sh
-  - examples/resources/kong-mesh_secret/resource.tf
   - examples/resources/kong-mesh_zone_egress/import-by-string-id.tf
   - examples/resources/kong-mesh_zone_egress/import.sh
   - examples/resources/kong-mesh_zone_egress/resource.tf
@@ -161,6 +161,8 @@ generatedFiles:
   - internal/provider/meshratelimit_resource_sdk.go
   - internal/provider/meshretry_resource.go
   - internal/provider/meshretry_resource_sdk.go
+  - internal/provider/meshsecret_resource.go
+  - internal/provider/meshsecret_resource_sdk.go
   - internal/provider/meshservice_resource.go
   - internal/provider/meshservice_resource_sdk.go
   - internal/provider/meshtcproute_resource.go
@@ -190,8 +192,6 @@ generatedFiles:
   - internal/provider/reflect/primitive.go
   - internal/provider/reflect/slice.go
   - internal/provider/reflect/struct.go
-  - internal/provider/secret_resource.go
-  - internal/provider/secret_resource_sdk.go
   - internal/provider/typeconvert/date.go
   - internal/provider/typeconvert/datetime.go
   - internal/provider/typeconvert/int.go

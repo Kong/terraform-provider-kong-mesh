@@ -11,27 +11,29 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+	speakeasy_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &SecretResource{}
-var _ resource.ResourceWithImportState = &SecretResource{}
+var _ resource.Resource = &MeshSecretResource{}
+var _ resource.ResourceWithImportState = &MeshSecretResource{}
 
-func NewSecretResource() resource.Resource {
-	return &SecretResource{}
+func NewMeshSecretResource() resource.Resource {
+	return &MeshSecretResource{}
 }
 
-// SecretResource defines the resource implementation.
-type SecretResource struct {
+// MeshSecretResource defines the resource implementation.
+type MeshSecretResource struct {
 	// Provider configured SDK client.
 	client *sdk.KongMesh
 }
 
-// SecretResourceModel describes the resource data model.
-type SecretResourceModel struct {
+// MeshSecretResourceModel describes the resource data model.
+type MeshSecretResourceModel struct {
 	Data     types.String                  `tfsdk:"data"`
 	Labels   kumalabels.KumaLabelsMapValue `tfsdk:"labels"`
 	Mesh     types.String                  `tfsdk:"mesh"`
@@ -40,13 +42,13 @@ type SecretResourceModel struct {
 	Warnings []types.String                `tfsdk:"warnings"`
 }
 
-func (r *SecretResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_secret"
+func (r *MeshSecretResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_mesh_secret"
 }
 
-func (r *SecretResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *MeshSecretResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		MarkdownDescription: "Secret Resource",
+		MarkdownDescription: "MeshSecret Resource",
 		Attributes: map[string]schema.Attribute{
 			"data": schema.StringAttribute{
 				Optional:    true,
@@ -69,7 +71,10 @@ func (r *SecretResource) Schema(ctx context.Context, req resource.SchemaRequest,
 				Required: true,
 			},
 			"warnings": schema.ListAttribute{
-				Computed:    true,
+				Computed: true,
+				PlanModifiers: []planmodifier.List{
+					speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
+				},
 				ElementType: types.StringType,
 				MarkdownDescription: `warnings is a list of warning messages to return to the requesting Kuma API clients.` + "\n" +
 					`Warning messages describe a problem the client making the API request should correct or be aware of.`,
@@ -78,7 +83,7 @@ func (r *SecretResource) Schema(ctx context.Context, req resource.SchemaRequest,
 	}
 }
 
-func (r *SecretResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *MeshSecretResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	// Prevent panic if the provider has not been configured.
 	if req.ProviderData == nil {
 		return
@@ -98,8 +103,8 @@ func (r *SecretResource) Configure(ctx context.Context, req resource.ConfigureRe
 	r.client = client
 }
 
-func (r *SecretResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *SecretResourceModel
+func (r *MeshSecretResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *MeshSecretResourceModel
 	var plan types.Object
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
@@ -198,8 +203,8 @@ func (r *SecretResource) Create(ctx context.Context, req resource.CreateRequest,
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *SecretResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *SecretResourceModel
+func (r *MeshSecretResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *MeshSecretResourceModel
 	var item types.Object
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &item)...)
@@ -256,8 +261,8 @@ func (r *SecretResource) Read(ctx context.Context, req resource.ReadRequest, res
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *SecretResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *SecretResourceModel
+func (r *MeshSecretResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *MeshSecretResourceModel
 	var plan types.Object
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
@@ -352,8 +357,8 @@ func (r *SecretResource) Update(ctx context.Context, req resource.UpdateRequest,
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *SecretResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *SecretResourceModel
+func (r *MeshSecretResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *MeshSecretResourceModel
 	var item types.Object
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &item)...)
@@ -395,7 +400,7 @@ func (r *SecretResource) Delete(ctx context.Context, req resource.DeleteRequest,
 
 }
 
-func (r *SecretResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+func (r *MeshSecretResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	dec := json.NewDecoder(bytes.NewReader([]byte(req.ID)))
 	dec.DisallowUnknownFields()
 	var data struct {

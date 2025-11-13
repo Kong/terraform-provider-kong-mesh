@@ -41,6 +41,7 @@ func (r *MeshTrustResource) ModifyPlan(
 	if mesh.IsUnknown() {
 		return
 	}
+
 	request := operations.GetMeshTrustRequest{
 		Name: name.ValueString(),
 	}

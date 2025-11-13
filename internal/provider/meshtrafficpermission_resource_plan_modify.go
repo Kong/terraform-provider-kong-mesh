@@ -41,6 +41,7 @@ func (r *MeshTrafficPermissionResource) ModifyPlan(
 	if mesh.IsUnknown() {
 		return
 	}
+
 	request := operations.GetMeshTrafficPermissionRequest{
 		Name: name.ValueString(),
 	}

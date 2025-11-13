@@ -41,6 +41,7 @@ func (r *MeshTCPRouteResource) ModifyPlan(
 	if mesh.IsUnknown() {
 		return
 	}
+
 	request := operations.GetMeshTCPRouteRequest{
 		Name: name.ValueString(),
 	}

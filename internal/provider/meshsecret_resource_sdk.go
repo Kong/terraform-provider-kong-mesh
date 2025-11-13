@@ -11,7 +11,7 @@ import (
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
 )
 
-func (r *SecretResourceModel) RefreshFromSharedSecretCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.SecretCreateOrUpdateSuccessResponse) diag.Diagnostics {
+func (r *MeshSecretResourceModel) RefreshFromSharedSecretCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.SecretCreateOrUpdateSuccessResponse) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	if resp != nil {
@@ -24,7 +24,7 @@ func (r *SecretResourceModel) RefreshFromSharedSecretCreateOrUpdateSuccessRespon
 	return diags
 }
 
-func (r *SecretResourceModel) RefreshFromSharedSecretItem(ctx context.Context, resp *shared.SecretItem) diag.Diagnostics {
+func (r *MeshSecretResourceModel) RefreshFromSharedSecretItem(ctx context.Context, resp *shared.SecretItem) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	if resp != nil {
@@ -42,7 +42,7 @@ func (r *SecretResourceModel) RefreshFromSharedSecretItem(ctx context.Context, r
 	return diags
 }
 
-func (r *SecretResourceModel) ToOperationsDeleteSecretRequest(ctx context.Context) (*operations.DeleteSecretRequest, diag.Diagnostics) {
+func (r *MeshSecretResourceModel) ToOperationsDeleteSecretRequest(ctx context.Context) (*operations.DeleteSecretRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var mesh string
@@ -59,7 +59,7 @@ func (r *SecretResourceModel) ToOperationsDeleteSecretRequest(ctx context.Contex
 	return &out, diags
 }
 
-func (r *SecretResourceModel) ToOperationsGetSecretRequest(ctx context.Context) (*operations.GetSecretRequest, diag.Diagnostics) {
+func (r *MeshSecretResourceModel) ToOperationsGetSecretRequest(ctx context.Context) (*operations.GetSecretRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var mesh string
@@ -76,7 +76,7 @@ func (r *SecretResourceModel) ToOperationsGetSecretRequest(ctx context.Context) 
 	return &out, diags
 }
 
-func (r *SecretResourceModel) ToOperationsPutSecretRequest(ctx context.Context) (*operations.PutSecretRequest, diag.Diagnostics) {
+func (r *MeshSecretResourceModel) ToOperationsPutSecretRequest(ctx context.Context) (*operations.PutSecretRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var mesh string
@@ -101,7 +101,7 @@ func (r *SecretResourceModel) ToOperationsPutSecretRequest(ctx context.Context) 
 	return &out, diags
 }
 
-func (r *SecretResourceModel) ToSharedSecretItem(ctx context.Context) (*shared.SecretItem, diag.Diagnostics) {
+func (r *MeshSecretResourceModel) ToSharedSecretItem(ctx context.Context) (*shared.SecretItem, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	data := new(string)
