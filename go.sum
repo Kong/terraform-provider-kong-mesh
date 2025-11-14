@@ -8,6 +8,8 @@ github.com/BurntSushi/toml v1.2.1 h1:9F2/+DoOYIOksmaJFPw1tGFy1eDnIJXg+UHjuD8lTak
 github.com/BurntSushi/toml v1.2.1/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=
 github.com/Kong/shared-speakeasy/customtypes v0.3.0 h1:3wHKa0mvv/UTCnIrV+s0RqjRVsSNMU6RIee0kDOylbs=
 github.com/Kong/shared-speakeasy/customtypes v0.3.0/go.mod h1:JNv+ygEk9Dw3MyZLNxHSJS3Wo7HMexOSP2qH6kfaZhI=
+github.com/Kong/shared-speakeasy/hclbuilder v0.0.0-20251114115340-87f266015d09 h1:W744i91iLDqQb/rVW+ppdMYTfbieR+lUHKDTtLIgzg4=
+github.com/Kong/shared-speakeasy/hclbuilder v0.0.0-20251114115340-87f266015d09/go.mod h1:g7/r/ksRwKhskqr9Hga47H8PH6wjh6LcXBhFAAomIgA=
 github.com/Kong/shared-speakeasy/hooks/mesh_defaults v0.0.4 h1:BIlFfdeqRP33wP5GOSwLxFPujL4C1GozoIjZMpzZXj0=
 github.com/Kong/shared-speakeasy/hooks/mesh_defaults v0.0.4/go.mod h1:Tu9kdp+k8JF7ES5gcXBi6jHyLEOr1EAAWq8ROOipWqg=
 github.com/Kong/shared-speakeasy/planmodifiers/arbitrary_json v0.0.1 h1:S3f3RAPNv274Yd8ShkGjSTXLWS55AY1SHNKfcX8sQjU=

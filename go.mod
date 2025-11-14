@@ -4,7 +4,7 @@ go 1.24.1
 
 require (
 	github.com/Kong/shared-speakeasy/customtypes v0.3.0
-	github.com/Kong/shared-speakeasy/hclbuilder v0.0.0-20251105145842-ff8160cb4e4e
+	github.com/Kong/shared-speakeasy/hclbuilder v0.0.0-20251114115340-87f266015d09
 	github.com/Kong/shared-speakeasy/hooks/mesh_defaults v0.0.4
 	github.com/Kong/shared-speakeasy/planmodifiers/arbitrary_json v0.0.1
 	github.com/Kong/shared-speakeasy/planmodifiers/suppress_zero_null v0.0.1
@@ -141,5 +141,3 @@ require (
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/Kong/shared-speakeasy/hclbuilder => /Users/krzysztof.slonka/projects/shared-speakeasy/hclbuilder
