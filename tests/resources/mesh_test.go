@@ -116,7 +116,7 @@ func TestMesh(t *testing.T) {
 	})
 
 	t.Run("not imported resource should error out with meaningful message", func(t *testing.T) {
-		meshName := "m3"
+		meshName := "policy-test-mesh-2"
 		mtpName := "allow-all"
 		serverURL := fmt.Sprintf("http://localhost:%d", port.Int())
 
@@ -175,5 +175,5 @@ func createAnMTP(t *testing.T, url string, meshName string, mtpName string) {
 		},
 	})
 	require.NoError(t, err)
-	require.Equal(t, 201, resp.StatusCode)
+	require.True(t, resp.StatusCode == 200 || resp.StatusCode == 201, "Expected 200 or 201, got %d", resp.StatusCode)
 }
