@@ -220,9 +220,9 @@ func (r *MeshTCPRouteResourceModel) ToSharedMeshTCPRouteItemInput(ctx context.Co
 	if r.Spec.TargetRef != nil {
 		kind := shared.MeshTCPRouteItemKind(r.Spec.TargetRef.Kind.ValueString())
 		labels1 := make(map[string]string)
-		for labelsKey, labelsValue := range r.Spec.TargetRef.Labels {
+		for labelsKey := range r.Spec.TargetRef.Labels {
 			var labelsInst string
-			labelsInst = labelsValue.ValueString()
+			labelsInst = r.Spec.TargetRef.Labels[labelsKey].ValueString()
 
 			labels1[labelsKey] = labelsInst
 		}
@@ -255,9 +255,9 @@ func (r *MeshTCPRouteResourceModel) ToSharedMeshTCPRouteItemInput(ctx context.Co
 			sectionName = nil
 		}
 		tags := make(map[string]string)
-		for tagsKey, tagsValue := range r.Spec.TargetRef.Tags {
+		for tagsKey := range r.Spec.TargetRef.Tags {
 			var tagsInst string
-			tagsInst = tagsValue.ValueString()
+			tagsInst = r.Spec.TargetRef.Tags[tagsKey].ValueString()
 
 			tags[tagsKey] = tagsInst
 		}
@@ -273,63 +273,63 @@ func (r *MeshTCPRouteResourceModel) ToSharedMeshTCPRouteItemInput(ctx context.Co
 		}
 	}
 	to := make([]shared.MeshTCPRouteItemTo, 0, len(r.Spec.To))
-	for _, toItem := range r.Spec.To {
-		rules := make([]shared.MeshTCPRouteItemRules, 0, len(toItem.Rules))
-		for _, rulesItem := range toItem.Rules {
-			backendRefs := make([]shared.MeshTCPRouteItemBackendRefs, 0, len(rulesItem.Default.BackendRefs))
-			for _, backendRefsItem := range rulesItem.Default.BackendRefs {
-				kind1 := shared.MeshTCPRouteItemSpecToKind(backendRefsItem.Kind.ValueString())
+	for toIndex := range r.Spec.To {
+		rules := make([]shared.MeshTCPRouteItemRules, 0, len(r.Spec.To[toIndex].Rules))
+		for rulesIndex := range r.Spec.To[toIndex].Rules {
+			backendRefs := make([]shared.MeshTCPRouteItemBackendRefs, 0, len(r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs))
+			for backendRefsIndex := range r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs {
+				kind1 := shared.MeshTCPRouteItemSpecToKind(r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Kind.ValueString())
 				labels2 := make(map[string]string)
-				for labelsKey1, labelsValue1 := range backendRefsItem.Labels {
+				for labelsKey1 := range r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Labels {
 					var labelsInst1 string
-					labelsInst1 = labelsValue1.ValueString()
+					labelsInst1 = r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Labels[labelsKey1].ValueString()
 
 					labels2[labelsKey1] = labelsInst1
 				}
 				mesh2 := new(string)
-				if !backendRefsItem.Mesh.IsUnknown() && !backendRefsItem.Mesh.IsNull() {
-					*mesh2 = backendRefsItem.Mesh.ValueString()
+				if !r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Mesh.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Mesh.IsNull() {
+					*mesh2 = r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Mesh.ValueString()
 				} else {
 					mesh2 = nil
 				}
 				name2 := new(string)
-				if !backendRefsItem.Name.IsUnknown() && !backendRefsItem.Name.IsNull() {
-					*name2 = backendRefsItem.Name.ValueString()
+				if !r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Name.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Name.IsNull() {
+					*name2 = r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Name.ValueString()
 				} else {
 					name2 = nil
 				}
 				namespace1 := new(string)
-				if !backendRefsItem.Namespace.IsUnknown() && !backendRefsItem.Namespace.IsNull() {
-					*namespace1 = backendRefsItem.Namespace.ValueString()
+				if !r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Namespace.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Namespace.IsNull() {
+					*namespace1 = r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Namespace.ValueString()
 				} else {
 					namespace1 = nil
 				}
 				port := new(int)
-				if !backendRefsItem.Port.IsUnknown() && !backendRefsItem.Port.IsNull() {
-					*port = int(backendRefsItem.Port.ValueInt32())
+				if !r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Port.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Port.IsNull() {
+					*port = int(r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Port.ValueInt32())
 				} else {
 					port = nil
 				}
-				proxyTypes1 := make([]shared.MeshTCPRouteItemSpecToProxyTypes, 0, len(backendRefsItem.ProxyTypes))
-				for _, proxyTypesItem1 := range backendRefsItem.ProxyTypes {
+				proxyTypes1 := make([]shared.MeshTCPRouteItemSpecToProxyTypes, 0, len(r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].ProxyTypes))
+				for _, proxyTypesItem1 := range r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].ProxyTypes {
 					proxyTypes1 = append(proxyTypes1, shared.MeshTCPRouteItemSpecToProxyTypes(proxyTypesItem1.ValueString()))
 				}
 				sectionName1 := new(string)
-				if !backendRefsItem.SectionName.IsUnknown() && !backendRefsItem.SectionName.IsNull() {
-					*sectionName1 = backendRefsItem.SectionName.ValueString()
+				if !r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].SectionName.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].SectionName.IsNull() {
+					*sectionName1 = r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].SectionName.ValueString()
 				} else {
 					sectionName1 = nil
 				}
 				tags1 := make(map[string]string)
-				for tagsKey1, tagsValue1 := range backendRefsItem.Tags {
+				for tagsKey1 := range r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Tags {
 					var tagsInst1 string
-					tagsInst1 = tagsValue1.ValueString()
+					tagsInst1 = r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Tags[tagsKey1].ValueString()
 
 					tags1[tagsKey1] = tagsInst1
 				}
 				weight := new(int64)
-				if !backendRefsItem.Weight.IsUnknown() && !backendRefsItem.Weight.IsNull() {
-					*weight = backendRefsItem.Weight.ValueInt64()
+				if !r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Weight.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Weight.IsNull() {
+					*weight = r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Weight.ValueInt64()
 				} else {
 					weight = nil
 				}
@@ -353,46 +353,46 @@ func (r *MeshTCPRouteResourceModel) ToSharedMeshTCPRouteItemInput(ctx context.Co
 				Default: defaultVar,
 			})
 		}
-		kind2 := shared.MeshTCPRouteItemSpecKind(toItem.TargetRef.Kind.ValueString())
+		kind2 := shared.MeshTCPRouteItemSpecKind(r.Spec.To[toIndex].TargetRef.Kind.ValueString())
 		labels3 := make(map[string]string)
-		for labelsKey2, labelsValue2 := range toItem.TargetRef.Labels {
+		for labelsKey2 := range r.Spec.To[toIndex].TargetRef.Labels {
 			var labelsInst2 string
-			labelsInst2 = labelsValue2.ValueString()
+			labelsInst2 = r.Spec.To[toIndex].TargetRef.Labels[labelsKey2].ValueString()
 
 			labels3[labelsKey2] = labelsInst2
 		}
 		mesh3 := new(string)
-		if !toItem.TargetRef.Mesh.IsUnknown() && !toItem.TargetRef.Mesh.IsNull() {
-			*mesh3 = toItem.TargetRef.Mesh.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Mesh.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Mesh.IsNull() {
+			*mesh3 = r.Spec.To[toIndex].TargetRef.Mesh.ValueString()
 		} else {
 			mesh3 = nil
 		}
 		name3 := new(string)
-		if !toItem.TargetRef.Name.IsUnknown() && !toItem.TargetRef.Name.IsNull() {
-			*name3 = toItem.TargetRef.Name.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Name.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Name.IsNull() {
+			*name3 = r.Spec.To[toIndex].TargetRef.Name.ValueString()
 		} else {
 			name3 = nil
 		}
 		namespace2 := new(string)
-		if !toItem.TargetRef.Namespace.IsUnknown() && !toItem.TargetRef.Namespace.IsNull() {
-			*namespace2 = toItem.TargetRef.Namespace.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Namespace.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Namespace.IsNull() {
+			*namespace2 = r.Spec.To[toIndex].TargetRef.Namespace.ValueString()
 		} else {
 			namespace2 = nil
 		}
-		proxyTypes2 := make([]shared.MeshTCPRouteItemSpecProxyTypes, 0, len(toItem.TargetRef.ProxyTypes))
-		for _, proxyTypesItem2 := range toItem.TargetRef.ProxyTypes {
+		proxyTypes2 := make([]shared.MeshTCPRouteItemSpecProxyTypes, 0, len(r.Spec.To[toIndex].TargetRef.ProxyTypes))
+		for _, proxyTypesItem2 := range r.Spec.To[toIndex].TargetRef.ProxyTypes {
 			proxyTypes2 = append(proxyTypes2, shared.MeshTCPRouteItemSpecProxyTypes(proxyTypesItem2.ValueString()))
 		}
 		sectionName2 := new(string)
-		if !toItem.TargetRef.SectionName.IsUnknown() && !toItem.TargetRef.SectionName.IsNull() {
-			*sectionName2 = toItem.TargetRef.SectionName.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.SectionName.IsUnknown() && !r.Spec.To[toIndex].TargetRef.SectionName.IsNull() {
+			*sectionName2 = r.Spec.To[toIndex].TargetRef.SectionName.ValueString()
 		} else {
 			sectionName2 = nil
 		}
 		tags2 := make(map[string]string)
-		for tagsKey2, tagsValue2 := range toItem.TargetRef.Tags {
+		for tagsKey2 := range r.Spec.To[toIndex].TargetRef.Tags {
 			var tagsInst2 string
-			tagsInst2 = tagsValue2.ValueString()
+			tagsInst2 = r.Spec.To[toIndex].TargetRef.Tags[tagsKey2].ValueString()
 
 			tags2[tagsKey2] = tagsInst2
 		}

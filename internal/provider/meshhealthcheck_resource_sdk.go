@@ -262,9 +262,9 @@ func (r *MeshHealthCheckResourceModel) ToSharedMeshHealthCheckItemInput(ctx cont
 	if r.Spec.TargetRef != nil {
 		kind := shared.MeshHealthCheckItemKind(r.Spec.TargetRef.Kind.ValueString())
 		labels1 := make(map[string]string)
-		for labelsKey, labelsValue := range r.Spec.TargetRef.Labels {
+		for labelsKey := range r.Spec.TargetRef.Labels {
 			var labelsInst string
-			labelsInst = labelsValue.ValueString()
+			labelsInst = r.Spec.TargetRef.Labels[labelsKey].ValueString()
 
 			labels1[labelsKey] = labelsInst
 		}
@@ -297,9 +297,9 @@ func (r *MeshHealthCheckResourceModel) ToSharedMeshHealthCheckItemInput(ctx cont
 			sectionName = nil
 		}
 		tags := make(map[string]string)
-		for tagsKey, tagsValue := range r.Spec.TargetRef.Tags {
+		for tagsKey := range r.Spec.TargetRef.Tags {
 			var tagsInst string
-			tagsInst = tagsValue.ValueString()
+			tagsInst = r.Spec.TargetRef.Tags[tagsKey].ValueString()
 
 			tags[tagsKey] = tagsInst
 		}
@@ -315,44 +315,44 @@ func (r *MeshHealthCheckResourceModel) ToSharedMeshHealthCheckItemInput(ctx cont
 		}
 	}
 	to := make([]shared.MeshHealthCheckItemTo, 0, len(r.Spec.To))
-	for _, toItem := range r.Spec.To {
+	for toIndex := range r.Spec.To {
 		var defaultVar *shared.MeshHealthCheckItemDefault
-		if toItem.Default != nil {
+		if r.Spec.To[toIndex].Default != nil {
 			alwaysLogHealthCheckFailures := new(bool)
-			if !toItem.Default.AlwaysLogHealthCheckFailures.IsUnknown() && !toItem.Default.AlwaysLogHealthCheckFailures.IsNull() {
-				*alwaysLogHealthCheckFailures = toItem.Default.AlwaysLogHealthCheckFailures.ValueBool()
+			if !r.Spec.To[toIndex].Default.AlwaysLogHealthCheckFailures.IsUnknown() && !r.Spec.To[toIndex].Default.AlwaysLogHealthCheckFailures.IsNull() {
+				*alwaysLogHealthCheckFailures = r.Spec.To[toIndex].Default.AlwaysLogHealthCheckFailures.ValueBool()
 			} else {
 				alwaysLogHealthCheckFailures = nil
 			}
 			eventLogPath := new(string)
-			if !toItem.Default.EventLogPath.IsUnknown() && !toItem.Default.EventLogPath.IsNull() {
-				*eventLogPath = toItem.Default.EventLogPath.ValueString()
+			if !r.Spec.To[toIndex].Default.EventLogPath.IsUnknown() && !r.Spec.To[toIndex].Default.EventLogPath.IsNull() {
+				*eventLogPath = r.Spec.To[toIndex].Default.EventLogPath.ValueString()
 			} else {
 				eventLogPath = nil
 			}
 			failTrafficOnPanic := new(bool)
-			if !toItem.Default.FailTrafficOnPanic.IsUnknown() && !toItem.Default.FailTrafficOnPanic.IsNull() {
-				*failTrafficOnPanic = toItem.Default.FailTrafficOnPanic.ValueBool()
+			if !r.Spec.To[toIndex].Default.FailTrafficOnPanic.IsUnknown() && !r.Spec.To[toIndex].Default.FailTrafficOnPanic.IsNull() {
+				*failTrafficOnPanic = r.Spec.To[toIndex].Default.FailTrafficOnPanic.ValueBool()
 			} else {
 				failTrafficOnPanic = nil
 			}
 			var grpc *shared.Grpc
-			if toItem.Default.Grpc != nil {
+			if r.Spec.To[toIndex].Default.Grpc != nil {
 				authority := new(string)
-				if !toItem.Default.Grpc.Authority.IsUnknown() && !toItem.Default.Grpc.Authority.IsNull() {
-					*authority = toItem.Default.Grpc.Authority.ValueString()
+				if !r.Spec.To[toIndex].Default.Grpc.Authority.IsUnknown() && !r.Spec.To[toIndex].Default.Grpc.Authority.IsNull() {
+					*authority = r.Spec.To[toIndex].Default.Grpc.Authority.ValueString()
 				} else {
 					authority = nil
 				}
 				disabled := new(bool)
-				if !toItem.Default.Grpc.Disabled.IsUnknown() && !toItem.Default.Grpc.Disabled.IsNull() {
-					*disabled = toItem.Default.Grpc.Disabled.ValueBool()
+				if !r.Spec.To[toIndex].Default.Grpc.Disabled.IsUnknown() && !r.Spec.To[toIndex].Default.Grpc.Disabled.IsNull() {
+					*disabled = r.Spec.To[toIndex].Default.Grpc.Disabled.ValueBool()
 				} else {
 					disabled = nil
 				}
 				serviceName := new(string)
-				if !toItem.Default.Grpc.ServiceName.IsUnknown() && !toItem.Default.Grpc.ServiceName.IsNull() {
-					*serviceName = toItem.Default.Grpc.ServiceName.ValueString()
+				if !r.Spec.To[toIndex].Default.Grpc.ServiceName.IsUnknown() && !r.Spec.To[toIndex].Default.Grpc.ServiceName.IsNull() {
+					*serviceName = r.Spec.To[toIndex].Default.Grpc.ServiceName.ValueString()
 				} else {
 					serviceName = nil
 				}
@@ -363,10 +363,10 @@ func (r *MeshHealthCheckResourceModel) ToSharedMeshHealthCheckItemInput(ctx cont
 				}
 			}
 			var healthyPanicThreshold *shared.HealthyPanicThreshold
-			if toItem.Default.HealthyPanicThreshold != nil {
+			if r.Spec.To[toIndex].Default.HealthyPanicThreshold != nil {
 				integer := new(int64)
-				if !toItem.Default.HealthyPanicThreshold.Integer.IsUnknown() && !toItem.Default.HealthyPanicThreshold.Integer.IsNull() {
-					*integer = toItem.Default.HealthyPanicThreshold.Integer.ValueInt64()
+				if !r.Spec.To[toIndex].Default.HealthyPanicThreshold.Integer.IsUnknown() && !r.Spec.To[toIndex].Default.HealthyPanicThreshold.Integer.IsNull() {
+					*integer = r.Spec.To[toIndex].Default.HealthyPanicThreshold.Integer.ValueInt64()
 				} else {
 					integer = nil
 				}
@@ -376,8 +376,8 @@ func (r *MeshHealthCheckResourceModel) ToSharedMeshHealthCheckItemInput(ctx cont
 					}
 				}
 				str := new(string)
-				if !toItem.Default.HealthyPanicThreshold.Str.IsUnknown() && !toItem.Default.HealthyPanicThreshold.Str.IsNull() {
-					*str = toItem.Default.HealthyPanicThreshold.Str.ValueString()
+				if !r.Spec.To[toIndex].Default.HealthyPanicThreshold.Str.IsUnknown() && !r.Spec.To[toIndex].Default.HealthyPanicThreshold.Str.IsNull() {
+					*str = r.Spec.To[toIndex].Default.HealthyPanicThreshold.Str.ValueString()
 				} else {
 					str = nil
 				}
@@ -388,51 +388,51 @@ func (r *MeshHealthCheckResourceModel) ToSharedMeshHealthCheckItemInput(ctx cont
 				}
 			}
 			healthyThreshold := new(int)
-			if !toItem.Default.HealthyThreshold.IsUnknown() && !toItem.Default.HealthyThreshold.IsNull() {
-				*healthyThreshold = int(toItem.Default.HealthyThreshold.ValueInt32())
+			if !r.Spec.To[toIndex].Default.HealthyThreshold.IsUnknown() && !r.Spec.To[toIndex].Default.HealthyThreshold.IsNull() {
+				*healthyThreshold = int(r.Spec.To[toIndex].Default.HealthyThreshold.ValueInt32())
 			} else {
 				healthyThreshold = nil
 			}
 			var http *shared.MeshHealthCheckItemHTTP
-			if toItem.Default.HTTP != nil {
+			if r.Spec.To[toIndex].Default.HTTP != nil {
 				disabled1 := new(bool)
-				if !toItem.Default.HTTP.Disabled.IsUnknown() && !toItem.Default.HTTP.Disabled.IsNull() {
-					*disabled1 = toItem.Default.HTTP.Disabled.ValueBool()
+				if !r.Spec.To[toIndex].Default.HTTP.Disabled.IsUnknown() && !r.Spec.To[toIndex].Default.HTTP.Disabled.IsNull() {
+					*disabled1 = r.Spec.To[toIndex].Default.HTTP.Disabled.ValueBool()
 				} else {
 					disabled1 = nil
 				}
-				expectedStatuses := make([]int64, 0, len(toItem.Default.HTTP.ExpectedStatuses))
-				for _, expectedStatusesItem := range toItem.Default.HTTP.ExpectedStatuses {
-					expectedStatuses = append(expectedStatuses, expectedStatusesItem.ValueInt64())
+				expectedStatuses := make([]int64, 0, len(r.Spec.To[toIndex].Default.HTTP.ExpectedStatuses))
+				for expectedStatusesIndex := range r.Spec.To[toIndex].Default.HTTP.ExpectedStatuses {
+					expectedStatuses = append(expectedStatuses, r.Spec.To[toIndex].Default.HTTP.ExpectedStatuses[expectedStatusesIndex].ValueInt64())
 				}
 				path := new(string)
-				if !toItem.Default.HTTP.Path.IsUnknown() && !toItem.Default.HTTP.Path.IsNull() {
-					*path = toItem.Default.HTTP.Path.ValueString()
+				if !r.Spec.To[toIndex].Default.HTTP.Path.IsUnknown() && !r.Spec.To[toIndex].Default.HTTP.Path.IsNull() {
+					*path = r.Spec.To[toIndex].Default.HTTP.Path.ValueString()
 				} else {
 					path = nil
 				}
 				var requestHeadersToAdd *shared.RequestHeadersToAdd
-				if toItem.Default.HTTP.RequestHeadersToAdd != nil {
-					add := make([]shared.Add, 0, len(toItem.Default.HTTP.RequestHeadersToAdd.Add))
-					for _, addItem := range toItem.Default.HTTP.RequestHeadersToAdd.Add {
+				if r.Spec.To[toIndex].Default.HTTP.RequestHeadersToAdd != nil {
+					add := make([]shared.Add, 0, len(r.Spec.To[toIndex].Default.HTTP.RequestHeadersToAdd.Add))
+					for addIndex := range r.Spec.To[toIndex].Default.HTTP.RequestHeadersToAdd.Add {
 						var name2 string
-						name2 = addItem.Name.ValueString()
+						name2 = r.Spec.To[toIndex].Default.HTTP.RequestHeadersToAdd.Add[addIndex].Name.ValueString()
 
 						var value string
-						value = addItem.Value.ValueString()
+						value = r.Spec.To[toIndex].Default.HTTP.RequestHeadersToAdd.Add[addIndex].Value.ValueString()
 
 						add = append(add, shared.Add{
 							Name:  name2,
 							Value: value,
 						})
 					}
-					set := make([]shared.Set, 0, len(toItem.Default.HTTP.RequestHeadersToAdd.Set))
-					for _, setItem := range toItem.Default.HTTP.RequestHeadersToAdd.Set {
+					set := make([]shared.Set, 0, len(r.Spec.To[toIndex].Default.HTTP.RequestHeadersToAdd.Set))
+					for setIndex := range r.Spec.To[toIndex].Default.HTTP.RequestHeadersToAdd.Set {
 						var name3 string
-						name3 = setItem.Name.ValueString()
+						name3 = r.Spec.To[toIndex].Default.HTTP.RequestHeadersToAdd.Set[setIndex].Name.ValueString()
 
 						var value1 string
-						value1 = setItem.Value.ValueString()
+						value1 = r.Spec.To[toIndex].Default.HTTP.RequestHeadersToAdd.Set[setIndex].Value.ValueString()
 
 						set = append(set, shared.Set{
 							Name:  name3,
@@ -452,56 +452,56 @@ func (r *MeshHealthCheckResourceModel) ToSharedMeshHealthCheckItemInput(ctx cont
 				}
 			}
 			initialJitter := new(string)
-			if !toItem.Default.InitialJitter.IsUnknown() && !toItem.Default.InitialJitter.IsNull() {
-				*initialJitter = toItem.Default.InitialJitter.ValueString()
+			if !r.Spec.To[toIndex].Default.InitialJitter.IsUnknown() && !r.Spec.To[toIndex].Default.InitialJitter.IsNull() {
+				*initialJitter = r.Spec.To[toIndex].Default.InitialJitter.ValueString()
 			} else {
 				initialJitter = nil
 			}
 			interval := new(string)
-			if !toItem.Default.Interval.IsUnknown() && !toItem.Default.Interval.IsNull() {
-				*interval = toItem.Default.Interval.ValueString()
+			if !r.Spec.To[toIndex].Default.Interval.IsUnknown() && !r.Spec.To[toIndex].Default.Interval.IsNull() {
+				*interval = r.Spec.To[toIndex].Default.Interval.ValueString()
 			} else {
 				interval = nil
 			}
 			intervalJitter := new(string)
-			if !toItem.Default.IntervalJitter.IsUnknown() && !toItem.Default.IntervalJitter.IsNull() {
-				*intervalJitter = toItem.Default.IntervalJitter.ValueString()
+			if !r.Spec.To[toIndex].Default.IntervalJitter.IsUnknown() && !r.Spec.To[toIndex].Default.IntervalJitter.IsNull() {
+				*intervalJitter = r.Spec.To[toIndex].Default.IntervalJitter.ValueString()
 			} else {
 				intervalJitter = nil
 			}
 			intervalJitterPercent := new(int)
-			if !toItem.Default.IntervalJitterPercent.IsUnknown() && !toItem.Default.IntervalJitterPercent.IsNull() {
-				*intervalJitterPercent = int(toItem.Default.IntervalJitterPercent.ValueInt32())
+			if !r.Spec.To[toIndex].Default.IntervalJitterPercent.IsUnknown() && !r.Spec.To[toIndex].Default.IntervalJitterPercent.IsNull() {
+				*intervalJitterPercent = int(r.Spec.To[toIndex].Default.IntervalJitterPercent.ValueInt32())
 			} else {
 				intervalJitterPercent = nil
 			}
 			noTrafficInterval := new(string)
-			if !toItem.Default.NoTrafficInterval.IsUnknown() && !toItem.Default.NoTrafficInterval.IsNull() {
-				*noTrafficInterval = toItem.Default.NoTrafficInterval.ValueString()
+			if !r.Spec.To[toIndex].Default.NoTrafficInterval.IsUnknown() && !r.Spec.To[toIndex].Default.NoTrafficInterval.IsNull() {
+				*noTrafficInterval = r.Spec.To[toIndex].Default.NoTrafficInterval.ValueString()
 			} else {
 				noTrafficInterval = nil
 			}
 			reuseConnection := new(bool)
-			if !toItem.Default.ReuseConnection.IsUnknown() && !toItem.Default.ReuseConnection.IsNull() {
-				*reuseConnection = toItem.Default.ReuseConnection.ValueBool()
+			if !r.Spec.To[toIndex].Default.ReuseConnection.IsUnknown() && !r.Spec.To[toIndex].Default.ReuseConnection.IsNull() {
+				*reuseConnection = r.Spec.To[toIndex].Default.ReuseConnection.ValueBool()
 			} else {
 				reuseConnection = nil
 			}
 			var tcp *shared.TCP
-			if toItem.Default.TCP != nil {
+			if r.Spec.To[toIndex].Default.TCP != nil {
 				disabled2 := new(bool)
-				if !toItem.Default.TCP.Disabled.IsUnknown() && !toItem.Default.TCP.Disabled.IsNull() {
-					*disabled2 = toItem.Default.TCP.Disabled.ValueBool()
+				if !r.Spec.To[toIndex].Default.TCP.Disabled.IsUnknown() && !r.Spec.To[toIndex].Default.TCP.Disabled.IsNull() {
+					*disabled2 = r.Spec.To[toIndex].Default.TCP.Disabled.ValueBool()
 				} else {
 					disabled2 = nil
 				}
-				receive := make([]string, 0, len(toItem.Default.TCP.Receive))
-				for _, receiveItem := range toItem.Default.TCP.Receive {
-					receive = append(receive, receiveItem.ValueString())
+				receive := make([]string, 0, len(r.Spec.To[toIndex].Default.TCP.Receive))
+				for receiveIndex := range r.Spec.To[toIndex].Default.TCP.Receive {
+					receive = append(receive, r.Spec.To[toIndex].Default.TCP.Receive[receiveIndex].ValueString())
 				}
 				send := new(string)
-				if !toItem.Default.TCP.Send.IsUnknown() && !toItem.Default.TCP.Send.IsNull() {
-					*send = toItem.Default.TCP.Send.ValueString()
+				if !r.Spec.To[toIndex].Default.TCP.Send.IsUnknown() && !r.Spec.To[toIndex].Default.TCP.Send.IsNull() {
+					*send = r.Spec.To[toIndex].Default.TCP.Send.ValueString()
 				} else {
 					send = nil
 				}
@@ -512,14 +512,14 @@ func (r *MeshHealthCheckResourceModel) ToSharedMeshHealthCheckItemInput(ctx cont
 				}
 			}
 			timeout := new(string)
-			if !toItem.Default.Timeout.IsUnknown() && !toItem.Default.Timeout.IsNull() {
-				*timeout = toItem.Default.Timeout.ValueString()
+			if !r.Spec.To[toIndex].Default.Timeout.IsUnknown() && !r.Spec.To[toIndex].Default.Timeout.IsNull() {
+				*timeout = r.Spec.To[toIndex].Default.Timeout.ValueString()
 			} else {
 				timeout = nil
 			}
 			unhealthyThreshold := new(int)
-			if !toItem.Default.UnhealthyThreshold.IsUnknown() && !toItem.Default.UnhealthyThreshold.IsNull() {
-				*unhealthyThreshold = int(toItem.Default.UnhealthyThreshold.ValueInt32())
+			if !r.Spec.To[toIndex].Default.UnhealthyThreshold.IsUnknown() && !r.Spec.To[toIndex].Default.UnhealthyThreshold.IsNull() {
+				*unhealthyThreshold = int(r.Spec.To[toIndex].Default.UnhealthyThreshold.ValueInt32())
 			} else {
 				unhealthyThreshold = nil
 			}
@@ -542,46 +542,46 @@ func (r *MeshHealthCheckResourceModel) ToSharedMeshHealthCheckItemInput(ctx cont
 				UnhealthyThreshold:           unhealthyThreshold,
 			}
 		}
-		kind1 := shared.MeshHealthCheckItemSpecKind(toItem.TargetRef.Kind.ValueString())
+		kind1 := shared.MeshHealthCheckItemSpecKind(r.Spec.To[toIndex].TargetRef.Kind.ValueString())
 		labels2 := make(map[string]string)
-		for labelsKey1, labelsValue1 := range toItem.TargetRef.Labels {
+		for labelsKey1 := range r.Spec.To[toIndex].TargetRef.Labels {
 			var labelsInst1 string
-			labelsInst1 = labelsValue1.ValueString()
+			labelsInst1 = r.Spec.To[toIndex].TargetRef.Labels[labelsKey1].ValueString()
 
 			labels2[labelsKey1] = labelsInst1
 		}
 		mesh2 := new(string)
-		if !toItem.TargetRef.Mesh.IsUnknown() && !toItem.TargetRef.Mesh.IsNull() {
-			*mesh2 = toItem.TargetRef.Mesh.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Mesh.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Mesh.IsNull() {
+			*mesh2 = r.Spec.To[toIndex].TargetRef.Mesh.ValueString()
 		} else {
 			mesh2 = nil
 		}
 		name4 := new(string)
-		if !toItem.TargetRef.Name.IsUnknown() && !toItem.TargetRef.Name.IsNull() {
-			*name4 = toItem.TargetRef.Name.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Name.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Name.IsNull() {
+			*name4 = r.Spec.To[toIndex].TargetRef.Name.ValueString()
 		} else {
 			name4 = nil
 		}
 		namespace1 := new(string)
-		if !toItem.TargetRef.Namespace.IsUnknown() && !toItem.TargetRef.Namespace.IsNull() {
-			*namespace1 = toItem.TargetRef.Namespace.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Namespace.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Namespace.IsNull() {
+			*namespace1 = r.Spec.To[toIndex].TargetRef.Namespace.ValueString()
 		} else {
 			namespace1 = nil
 		}
-		proxyTypes1 := make([]shared.MeshHealthCheckItemSpecProxyTypes, 0, len(toItem.TargetRef.ProxyTypes))
-		for _, proxyTypesItem1 := range toItem.TargetRef.ProxyTypes {
+		proxyTypes1 := make([]shared.MeshHealthCheckItemSpecProxyTypes, 0, len(r.Spec.To[toIndex].TargetRef.ProxyTypes))
+		for _, proxyTypesItem1 := range r.Spec.To[toIndex].TargetRef.ProxyTypes {
 			proxyTypes1 = append(proxyTypes1, shared.MeshHealthCheckItemSpecProxyTypes(proxyTypesItem1.ValueString()))
 		}
 		sectionName1 := new(string)
-		if !toItem.TargetRef.SectionName.IsUnknown() && !toItem.TargetRef.SectionName.IsNull() {
-			*sectionName1 = toItem.TargetRef.SectionName.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.SectionName.IsUnknown() && !r.Spec.To[toIndex].TargetRef.SectionName.IsNull() {
+			*sectionName1 = r.Spec.To[toIndex].TargetRef.SectionName.ValueString()
 		} else {
 			sectionName1 = nil
 		}
 		tags1 := make(map[string]string)
-		for tagsKey1, tagsValue1 := range toItem.TargetRef.Tags {
+		for tagsKey1 := range r.Spec.To[toIndex].TargetRef.Tags {
 			var tagsInst1 string
-			tagsInst1 = tagsValue1.ValueString()
+			tagsInst1 = r.Spec.To[toIndex].TargetRef.Tags[tagsKey1].ValueString()
 
 			tags1[tagsKey1] = tagsInst1
 		}

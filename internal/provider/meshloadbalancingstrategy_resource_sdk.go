@@ -420,9 +420,9 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 	if r.Spec.TargetRef != nil {
 		kind := shared.MeshLoadBalancingStrategyItemKind(r.Spec.TargetRef.Kind.ValueString())
 		labels1 := make(map[string]string)
-		for labelsKey, labelsValue := range r.Spec.TargetRef.Labels {
+		for labelsKey := range r.Spec.TargetRef.Labels {
 			var labelsInst string
-			labelsInst = labelsValue.ValueString()
+			labelsInst = r.Spec.TargetRef.Labels[labelsKey].ValueString()
 
 			labels1[labelsKey] = labelsInst
 		}
@@ -455,9 +455,9 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 			sectionName = nil
 		}
 		tags := make(map[string]string)
-		for tagsKey, tagsValue := range r.Spec.TargetRef.Tags {
+		for tagsKey := range r.Spec.TargetRef.Tags {
 			var tagsInst string
-			tagsInst = tagsValue.ValueString()
+			tagsInst = r.Spec.TargetRef.Tags[tagsKey].ValueString()
 
 			tags[tagsKey] = tagsInst
 		}
@@ -473,16 +473,16 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 		}
 	}
 	to := make([]shared.MeshLoadBalancingStrategyItemTo, 0, len(r.Spec.To))
-	for _, toItem := range r.Spec.To {
+	for toIndex := range r.Spec.To {
 		var defaultVar *shared.MeshLoadBalancingStrategyItemDefault
-		if toItem.Default != nil {
-			hashPolicies := make([]shared.HashPolicies, 0, len(toItem.Default.HashPolicies))
-			for _, hashPoliciesItem := range toItem.Default.HashPolicies {
+		if r.Spec.To[toIndex].Default != nil {
+			hashPolicies := make([]shared.HashPolicies, 0, len(r.Spec.To[toIndex].Default.HashPolicies))
+			for hashPoliciesIndex := range r.Spec.To[toIndex].Default.HashPolicies {
 				var connection *shared.Connection
-				if hashPoliciesItem.Connection != nil {
+				if r.Spec.To[toIndex].Default.HashPolicies[hashPoliciesIndex].Connection != nil {
 					sourceIP := new(bool)
-					if !hashPoliciesItem.Connection.SourceIP.IsUnknown() && !hashPoliciesItem.Connection.SourceIP.IsNull() {
-						*sourceIP = hashPoliciesItem.Connection.SourceIP.ValueBool()
+					if !r.Spec.To[toIndex].Default.HashPolicies[hashPoliciesIndex].Connection.SourceIP.IsUnknown() && !r.Spec.To[toIndex].Default.HashPolicies[hashPoliciesIndex].Connection.SourceIP.IsNull() {
+						*sourceIP = r.Spec.To[toIndex].Default.HashPolicies[hashPoliciesIndex].Connection.SourceIP.ValueBool()
 					} else {
 						sourceIP = nil
 					}
@@ -491,19 +491,19 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 					}
 				}
 				var cookie *shared.Cookie
-				if hashPoliciesItem.Cookie != nil {
+				if r.Spec.To[toIndex].Default.HashPolicies[hashPoliciesIndex].Cookie != nil {
 					var name2 string
-					name2 = hashPoliciesItem.Cookie.Name.ValueString()
+					name2 = r.Spec.To[toIndex].Default.HashPolicies[hashPoliciesIndex].Cookie.Name.ValueString()
 
 					path := new(string)
-					if !hashPoliciesItem.Cookie.Path.IsUnknown() && !hashPoliciesItem.Cookie.Path.IsNull() {
-						*path = hashPoliciesItem.Cookie.Path.ValueString()
+					if !r.Spec.To[toIndex].Default.HashPolicies[hashPoliciesIndex].Cookie.Path.IsUnknown() && !r.Spec.To[toIndex].Default.HashPolicies[hashPoliciesIndex].Cookie.Path.IsNull() {
+						*path = r.Spec.To[toIndex].Default.HashPolicies[hashPoliciesIndex].Cookie.Path.ValueString()
 					} else {
 						path = nil
 					}
 					ttl := new(string)
-					if !hashPoliciesItem.Cookie.TTL.IsUnknown() && !hashPoliciesItem.Cookie.TTL.IsNull() {
-						*ttl = hashPoliciesItem.Cookie.TTL.ValueString()
+					if !r.Spec.To[toIndex].Default.HashPolicies[hashPoliciesIndex].Cookie.TTL.IsUnknown() && !r.Spec.To[toIndex].Default.HashPolicies[hashPoliciesIndex].Cookie.TTL.IsNull() {
+						*ttl = r.Spec.To[toIndex].Default.HashPolicies[hashPoliciesIndex].Cookie.TTL.ValueString()
 					} else {
 						ttl = nil
 					}
@@ -514,39 +514,39 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 					}
 				}
 				var filterState *shared.FilterState
-				if hashPoliciesItem.FilterState != nil {
+				if r.Spec.To[toIndex].Default.HashPolicies[hashPoliciesIndex].FilterState != nil {
 					var key string
-					key = hashPoliciesItem.FilterState.Key.ValueString()
+					key = r.Spec.To[toIndex].Default.HashPolicies[hashPoliciesIndex].FilterState.Key.ValueString()
 
 					filterState = &shared.FilterState{
 						Key: key,
 					}
 				}
 				var header *shared.MeshLoadBalancingStrategyItemHeader
-				if hashPoliciesItem.Header != nil {
+				if r.Spec.To[toIndex].Default.HashPolicies[hashPoliciesIndex].Header != nil {
 					var name3 string
-					name3 = hashPoliciesItem.Header.Name.ValueString()
+					name3 = r.Spec.To[toIndex].Default.HashPolicies[hashPoliciesIndex].Header.Name.ValueString()
 
 					header = &shared.MeshLoadBalancingStrategyItemHeader{
 						Name: name3,
 					}
 				}
 				var queryParameter *shared.QueryParameter
-				if hashPoliciesItem.QueryParameter != nil {
+				if r.Spec.To[toIndex].Default.HashPolicies[hashPoliciesIndex].QueryParameter != nil {
 					var name4 string
-					name4 = hashPoliciesItem.QueryParameter.Name.ValueString()
+					name4 = r.Spec.To[toIndex].Default.HashPolicies[hashPoliciesIndex].QueryParameter.Name.ValueString()
 
 					queryParameter = &shared.QueryParameter{
 						Name: name4,
 					}
 				}
 				terminal := new(bool)
-				if !hashPoliciesItem.Terminal.IsUnknown() && !hashPoliciesItem.Terminal.IsNull() {
-					*terminal = hashPoliciesItem.Terminal.ValueBool()
+				if !r.Spec.To[toIndex].Default.HashPolicies[hashPoliciesIndex].Terminal.IsUnknown() && !r.Spec.To[toIndex].Default.HashPolicies[hashPoliciesIndex].Terminal.IsNull() {
+					*terminal = r.Spec.To[toIndex].Default.HashPolicies[hashPoliciesIndex].Terminal.ValueBool()
 				} else {
 					terminal = nil
 				}
-				type1 := shared.MeshLoadBalancingStrategyItemSpecType(hashPoliciesItem.Type.ValueString())
+				type1 := shared.MeshLoadBalancingStrategyItemSpecType(r.Spec.To[toIndex].Default.HashPolicies[hashPoliciesIndex].Type.ValueString())
 				hashPolicies = append(hashPolicies, shared.HashPolicies{
 					Connection:     connection,
 					Cookie:         cookie,
@@ -558,14 +558,14 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 				})
 			}
 			var loadBalancer *shared.LoadBalancer
-			if toItem.Default.LoadBalancer != nil {
+			if r.Spec.To[toIndex].Default.LoadBalancer != nil {
 				var leastRequest *shared.LeastRequest
-				if toItem.Default.LoadBalancer.LeastRequest != nil {
+				if r.Spec.To[toIndex].Default.LoadBalancer.LeastRequest != nil {
 					var activeRequestBias *shared.ActiveRequestBias
-					if toItem.Default.LoadBalancer.LeastRequest.ActiveRequestBias != nil {
+					if r.Spec.To[toIndex].Default.LoadBalancer.LeastRequest.ActiveRequestBias != nil {
 						integer := new(int64)
-						if !toItem.Default.LoadBalancer.LeastRequest.ActiveRequestBias.Integer.IsUnknown() && !toItem.Default.LoadBalancer.LeastRequest.ActiveRequestBias.Integer.IsNull() {
-							*integer = toItem.Default.LoadBalancer.LeastRequest.ActiveRequestBias.Integer.ValueInt64()
+						if !r.Spec.To[toIndex].Default.LoadBalancer.LeastRequest.ActiveRequestBias.Integer.IsUnknown() && !r.Spec.To[toIndex].Default.LoadBalancer.LeastRequest.ActiveRequestBias.Integer.IsNull() {
+							*integer = r.Spec.To[toIndex].Default.LoadBalancer.LeastRequest.ActiveRequestBias.Integer.ValueInt64()
 						} else {
 							integer = nil
 						}
@@ -575,8 +575,8 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 							}
 						}
 						str := new(string)
-						if !toItem.Default.LoadBalancer.LeastRequest.ActiveRequestBias.Str.IsUnknown() && !toItem.Default.LoadBalancer.LeastRequest.ActiveRequestBias.Str.IsNull() {
-							*str = toItem.Default.LoadBalancer.LeastRequest.ActiveRequestBias.Str.ValueString()
+						if !r.Spec.To[toIndex].Default.LoadBalancer.LeastRequest.ActiveRequestBias.Str.IsUnknown() && !r.Spec.To[toIndex].Default.LoadBalancer.LeastRequest.ActiveRequestBias.Str.IsNull() {
+							*str = r.Spec.To[toIndex].Default.LoadBalancer.LeastRequest.ActiveRequestBias.Str.ValueString()
 						} else {
 							str = nil
 						}
@@ -587,8 +587,8 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 						}
 					}
 					choiceCount := new(int)
-					if !toItem.Default.LoadBalancer.LeastRequest.ChoiceCount.IsUnknown() && !toItem.Default.LoadBalancer.LeastRequest.ChoiceCount.IsNull() {
-						*choiceCount = int(toItem.Default.LoadBalancer.LeastRequest.ChoiceCount.ValueInt32())
+					if !r.Spec.To[toIndex].Default.LoadBalancer.LeastRequest.ChoiceCount.IsUnknown() && !r.Spec.To[toIndex].Default.LoadBalancer.LeastRequest.ChoiceCount.IsNull() {
+						*choiceCount = int(r.Spec.To[toIndex].Default.LoadBalancer.LeastRequest.ChoiceCount.ValueInt32())
 					} else {
 						choiceCount = nil
 					}
@@ -598,14 +598,14 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 					}
 				}
 				var maglev *shared.Maglev
-				if toItem.Default.LoadBalancer.Maglev != nil {
-					hashPolicies1 := make([]shared.MeshLoadBalancingStrategyItemHashPolicies, 0, len(toItem.Default.LoadBalancer.Maglev.HashPolicies))
-					for _, hashPoliciesItem1 := range toItem.Default.LoadBalancer.Maglev.HashPolicies {
+				if r.Spec.To[toIndex].Default.LoadBalancer.Maglev != nil {
+					hashPolicies1 := make([]shared.MeshLoadBalancingStrategyItemHashPolicies, 0, len(r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies))
+					for hashPoliciesIndex1 := range r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies {
 						var connection1 *shared.MeshLoadBalancingStrategyItemConnection
-						if hashPoliciesItem1.Connection != nil {
+						if r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Connection != nil {
 							sourceIp1 := new(bool)
-							if !hashPoliciesItem1.Connection.SourceIP.IsUnknown() && !hashPoliciesItem1.Connection.SourceIP.IsNull() {
-								*sourceIp1 = hashPoliciesItem1.Connection.SourceIP.ValueBool()
+							if !r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Connection.SourceIP.IsUnknown() && !r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Connection.SourceIP.IsNull() {
+								*sourceIp1 = r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Connection.SourceIP.ValueBool()
 							} else {
 								sourceIp1 = nil
 							}
@@ -614,19 +614,19 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 							}
 						}
 						var cookie1 *shared.MeshLoadBalancingStrategyItemCookie
-						if hashPoliciesItem1.Cookie != nil {
+						if r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Cookie != nil {
 							var name5 string
-							name5 = hashPoliciesItem1.Cookie.Name.ValueString()
+							name5 = r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Cookie.Name.ValueString()
 
 							path1 := new(string)
-							if !hashPoliciesItem1.Cookie.Path.IsUnknown() && !hashPoliciesItem1.Cookie.Path.IsNull() {
-								*path1 = hashPoliciesItem1.Cookie.Path.ValueString()
+							if !r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Cookie.Path.IsUnknown() && !r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Cookie.Path.IsNull() {
+								*path1 = r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Cookie.Path.ValueString()
 							} else {
 								path1 = nil
 							}
 							ttl1 := new(string)
-							if !hashPoliciesItem1.Cookie.TTL.IsUnknown() && !hashPoliciesItem1.Cookie.TTL.IsNull() {
-								*ttl1 = hashPoliciesItem1.Cookie.TTL.ValueString()
+							if !r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Cookie.TTL.IsUnknown() && !r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Cookie.TTL.IsNull() {
+								*ttl1 = r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Cookie.TTL.ValueString()
 							} else {
 								ttl1 = nil
 							}
@@ -637,39 +637,39 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 							}
 						}
 						var filterState1 *shared.MeshLoadBalancingStrategyItemFilterState
-						if hashPoliciesItem1.FilterState != nil {
+						if r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].FilterState != nil {
 							var key1 string
-							key1 = hashPoliciesItem1.FilterState.Key.ValueString()
+							key1 = r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].FilterState.Key.ValueString()
 
 							filterState1 = &shared.MeshLoadBalancingStrategyItemFilterState{
 								Key: key1,
 							}
 						}
 						var header1 *shared.MeshLoadBalancingStrategyItemSpecToHeader
-						if hashPoliciesItem1.Header != nil {
+						if r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Header != nil {
 							var name6 string
-							name6 = hashPoliciesItem1.Header.Name.ValueString()
+							name6 = r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Header.Name.ValueString()
 
 							header1 = &shared.MeshLoadBalancingStrategyItemSpecToHeader{
 								Name: name6,
 							}
 						}
 						var queryParameter1 *shared.MeshLoadBalancingStrategyItemQueryParameter
-						if hashPoliciesItem1.QueryParameter != nil {
+						if r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].QueryParameter != nil {
 							var name7 string
-							name7 = hashPoliciesItem1.QueryParameter.Name.ValueString()
+							name7 = r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].QueryParameter.Name.ValueString()
 
 							queryParameter1 = &shared.MeshLoadBalancingStrategyItemQueryParameter{
 								Name: name7,
 							}
 						}
 						terminal1 := new(bool)
-						if !hashPoliciesItem1.Terminal.IsUnknown() && !hashPoliciesItem1.Terminal.IsNull() {
-							*terminal1 = hashPoliciesItem1.Terminal.ValueBool()
+						if !r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Terminal.IsUnknown() && !r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Terminal.IsNull() {
+							*terminal1 = r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Terminal.ValueBool()
 						} else {
 							terminal1 = nil
 						}
-						type2 := shared.MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType(hashPoliciesItem1.Type.ValueString())
+						type2 := shared.MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType(r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Type.ValueString())
 						hashPolicies1 = append(hashPolicies1, shared.MeshLoadBalancingStrategyItemHashPolicies{
 							Connection:     connection1,
 							Cookie:         cookie1,
@@ -681,8 +681,8 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 						})
 					}
 					tableSize := new(int)
-					if !toItem.Default.LoadBalancer.Maglev.TableSize.IsUnknown() && !toItem.Default.LoadBalancer.Maglev.TableSize.IsNull() {
-						*tableSize = int(toItem.Default.LoadBalancer.Maglev.TableSize.ValueInt32())
+					if !r.Spec.To[toIndex].Default.LoadBalancer.Maglev.TableSize.IsUnknown() && !r.Spec.To[toIndex].Default.LoadBalancer.Maglev.TableSize.IsNull() {
+						*tableSize = int(r.Spec.To[toIndex].Default.LoadBalancer.Maglev.TableSize.ValueInt32())
 					} else {
 						tableSize = nil
 					}
@@ -692,24 +692,24 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 					}
 				}
 				var random *shared.MeshLoadBalancingStrategyItemRandom
-				if toItem.Default.LoadBalancer.Random != nil {
+				if r.Spec.To[toIndex].Default.LoadBalancer.Random != nil {
 					random = &shared.MeshLoadBalancingStrategyItemRandom{}
 				}
 				var ringHash *shared.RingHash
-				if toItem.Default.LoadBalancer.RingHash != nil {
+				if r.Spec.To[toIndex].Default.LoadBalancer.RingHash != nil {
 					hashFunction := new(shared.HashFunction)
-					if !toItem.Default.LoadBalancer.RingHash.HashFunction.IsUnknown() && !toItem.Default.LoadBalancer.RingHash.HashFunction.IsNull() {
-						*hashFunction = shared.HashFunction(toItem.Default.LoadBalancer.RingHash.HashFunction.ValueString())
+					if !r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashFunction.IsUnknown() && !r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashFunction.IsNull() {
+						*hashFunction = shared.HashFunction(r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashFunction.ValueString())
 					} else {
 						hashFunction = nil
 					}
-					hashPolicies2 := make([]shared.MeshLoadBalancingStrategyItemSpecHashPolicies, 0, len(toItem.Default.LoadBalancer.RingHash.HashPolicies))
-					for _, hashPoliciesItem2 := range toItem.Default.LoadBalancer.RingHash.HashPolicies {
+					hashPolicies2 := make([]shared.MeshLoadBalancingStrategyItemSpecHashPolicies, 0, len(r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies))
+					for hashPoliciesIndex2 := range r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies {
 						var connection2 *shared.MeshLoadBalancingStrategyItemSpecConnection
-						if hashPoliciesItem2.Connection != nil {
+						if r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Connection != nil {
 							sourceIp2 := new(bool)
-							if !hashPoliciesItem2.Connection.SourceIP.IsUnknown() && !hashPoliciesItem2.Connection.SourceIP.IsNull() {
-								*sourceIp2 = hashPoliciesItem2.Connection.SourceIP.ValueBool()
+							if !r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Connection.SourceIP.IsUnknown() && !r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Connection.SourceIP.IsNull() {
+								*sourceIp2 = r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Connection.SourceIP.ValueBool()
 							} else {
 								sourceIp2 = nil
 							}
@@ -718,19 +718,19 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 							}
 						}
 						var cookie2 *shared.MeshLoadBalancingStrategyItemSpecCookie
-						if hashPoliciesItem2.Cookie != nil {
+						if r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Cookie != nil {
 							var name8 string
-							name8 = hashPoliciesItem2.Cookie.Name.ValueString()
+							name8 = r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Cookie.Name.ValueString()
 
 							path2 := new(string)
-							if !hashPoliciesItem2.Cookie.Path.IsUnknown() && !hashPoliciesItem2.Cookie.Path.IsNull() {
-								*path2 = hashPoliciesItem2.Cookie.Path.ValueString()
+							if !r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Cookie.Path.IsUnknown() && !r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Cookie.Path.IsNull() {
+								*path2 = r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Cookie.Path.ValueString()
 							} else {
 								path2 = nil
 							}
 							ttl2 := new(string)
-							if !hashPoliciesItem2.Cookie.TTL.IsUnknown() && !hashPoliciesItem2.Cookie.TTL.IsNull() {
-								*ttl2 = hashPoliciesItem2.Cookie.TTL.ValueString()
+							if !r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Cookie.TTL.IsUnknown() && !r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Cookie.TTL.IsNull() {
+								*ttl2 = r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Cookie.TTL.ValueString()
 							} else {
 								ttl2 = nil
 							}
@@ -741,39 +741,39 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 							}
 						}
 						var filterState2 *shared.MeshLoadBalancingStrategyItemSpecFilterState
-						if hashPoliciesItem2.FilterState != nil {
+						if r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].FilterState != nil {
 							var key2 string
-							key2 = hashPoliciesItem2.FilterState.Key.ValueString()
+							key2 = r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].FilterState.Key.ValueString()
 
 							filterState2 = &shared.MeshLoadBalancingStrategyItemSpecFilterState{
 								Key: key2,
 							}
 						}
 						var header2 *shared.MeshLoadBalancingStrategyItemSpecHeader
-						if hashPoliciesItem2.Header != nil {
+						if r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Header != nil {
 							var name9 string
-							name9 = hashPoliciesItem2.Header.Name.ValueString()
+							name9 = r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Header.Name.ValueString()
 
 							header2 = &shared.MeshLoadBalancingStrategyItemSpecHeader{
 								Name: name9,
 							}
 						}
 						var queryParameter2 *shared.MeshLoadBalancingStrategyItemSpecQueryParameter
-						if hashPoliciesItem2.QueryParameter != nil {
+						if r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].QueryParameter != nil {
 							var name10 string
-							name10 = hashPoliciesItem2.QueryParameter.Name.ValueString()
+							name10 = r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].QueryParameter.Name.ValueString()
 
 							queryParameter2 = &shared.MeshLoadBalancingStrategyItemSpecQueryParameter{
 								Name: name10,
 							}
 						}
 						terminal2 := new(bool)
-						if !hashPoliciesItem2.Terminal.IsUnknown() && !hashPoliciesItem2.Terminal.IsNull() {
-							*terminal2 = hashPoliciesItem2.Terminal.ValueBool()
+						if !r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Terminal.IsUnknown() && !r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Terminal.IsNull() {
+							*terminal2 = r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Terminal.ValueBool()
 						} else {
 							terminal2 = nil
 						}
-						type3 := shared.MeshLoadBalancingStrategyItemSpecToDefaultType(hashPoliciesItem2.Type.ValueString())
+						type3 := shared.MeshLoadBalancingStrategyItemSpecToDefaultType(r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Type.ValueString())
 						hashPolicies2 = append(hashPolicies2, shared.MeshLoadBalancingStrategyItemSpecHashPolicies{
 							Connection:     connection2,
 							Cookie:         cookie2,
@@ -785,14 +785,14 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 						})
 					}
 					maxRingSize := new(int)
-					if !toItem.Default.LoadBalancer.RingHash.MaxRingSize.IsUnknown() && !toItem.Default.LoadBalancer.RingHash.MaxRingSize.IsNull() {
-						*maxRingSize = int(toItem.Default.LoadBalancer.RingHash.MaxRingSize.ValueInt32())
+					if !r.Spec.To[toIndex].Default.LoadBalancer.RingHash.MaxRingSize.IsUnknown() && !r.Spec.To[toIndex].Default.LoadBalancer.RingHash.MaxRingSize.IsNull() {
+						*maxRingSize = int(r.Spec.To[toIndex].Default.LoadBalancer.RingHash.MaxRingSize.ValueInt32())
 					} else {
 						maxRingSize = nil
 					}
 					minRingSize := new(int)
-					if !toItem.Default.LoadBalancer.RingHash.MinRingSize.IsUnknown() && !toItem.Default.LoadBalancer.RingHash.MinRingSize.IsNull() {
-						*minRingSize = int(toItem.Default.LoadBalancer.RingHash.MinRingSize.ValueInt32())
+					if !r.Spec.To[toIndex].Default.LoadBalancer.RingHash.MinRingSize.IsUnknown() && !r.Spec.To[toIndex].Default.LoadBalancer.RingHash.MinRingSize.IsNull() {
+						*minRingSize = int(r.Spec.To[toIndex].Default.LoadBalancer.RingHash.MinRingSize.ValueInt32())
 					} else {
 						minRingSize = nil
 					}
@@ -804,10 +804,10 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 					}
 				}
 				var roundRobin *shared.RoundRobin
-				if toItem.Default.LoadBalancer.RoundRobin != nil {
+				if r.Spec.To[toIndex].Default.LoadBalancer.RoundRobin != nil {
 					roundRobin = &shared.RoundRobin{}
 				}
-				typeVar1 := shared.MeshLoadBalancingStrategyItemSpecToType(toItem.Default.LoadBalancer.Type.ValueString())
+				typeVar1 := shared.MeshLoadBalancingStrategyItemSpecToType(r.Spec.To[toIndex].Default.LoadBalancer.Type.ValueString())
 				loadBalancer = &shared.LoadBalancer{
 					LeastRequest: leastRequest,
 					Maglev:       maglev,
@@ -818,25 +818,25 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 				}
 			}
 			var localityAwareness *shared.LocalityAwareness
-			if toItem.Default.LocalityAwareness != nil {
+			if r.Spec.To[toIndex].Default.LocalityAwareness != nil {
 				var crossZone *shared.CrossZone
-				if toItem.Default.LocalityAwareness.CrossZone != nil {
-					failover := make([]shared.Failover, 0, len(toItem.Default.LocalityAwareness.CrossZone.Failover))
-					for _, failoverItem := range toItem.Default.LocalityAwareness.CrossZone.Failover {
+				if r.Spec.To[toIndex].Default.LocalityAwareness.CrossZone != nil {
+					failover := make([]shared.Failover, 0, len(r.Spec.To[toIndex].Default.LocalityAwareness.CrossZone.Failover))
+					for failoverIndex := range r.Spec.To[toIndex].Default.LocalityAwareness.CrossZone.Failover {
 						var from *shared.MeshLoadBalancingStrategyItemFrom
-						if failoverItem.From != nil {
-							zones := make([]string, 0, len(failoverItem.From.Zones))
-							for _, zonesItem := range failoverItem.From.Zones {
-								zones = append(zones, zonesItem.ValueString())
+						if r.Spec.To[toIndex].Default.LocalityAwareness.CrossZone.Failover[failoverIndex].From != nil {
+							zones := make([]string, 0, len(r.Spec.To[toIndex].Default.LocalityAwareness.CrossZone.Failover[failoverIndex].From.Zones))
+							for zonesIndex := range r.Spec.To[toIndex].Default.LocalityAwareness.CrossZone.Failover[failoverIndex].From.Zones {
+								zones = append(zones, r.Spec.To[toIndex].Default.LocalityAwareness.CrossZone.Failover[failoverIndex].From.Zones[zonesIndex].ValueString())
 							}
 							from = &shared.MeshLoadBalancingStrategyItemFrom{
 								Zones: zones,
 							}
 						}
-						typeVar2 := shared.MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessType(failoverItem.To.Type.ValueString())
-						zones1 := make([]string, 0, len(failoverItem.To.Zones))
-						for _, zonesItem1 := range failoverItem.To.Zones {
-							zones1 = append(zones1, zonesItem1.ValueString())
+						typeVar2 := shared.MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessType(r.Spec.To[toIndex].Default.LocalityAwareness.CrossZone.Failover[failoverIndex].To.Type.ValueString())
+						zones1 := make([]string, 0, len(r.Spec.To[toIndex].Default.LocalityAwareness.CrossZone.Failover[failoverIndex].To.Zones))
+						for zonesIndex1 := range r.Spec.To[toIndex].Default.LocalityAwareness.CrossZone.Failover[failoverIndex].To.Zones {
+							zones1 = append(zones1, r.Spec.To[toIndex].Default.LocalityAwareness.CrossZone.Failover[failoverIndex].To.Zones[zonesIndex1].ValueString())
 						}
 						to1 := shared.MeshLoadBalancingStrategyItemSpecTo{
 							Type:  typeVar2,
@@ -848,11 +848,11 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 						})
 					}
 					var failoverThreshold *shared.FailoverThreshold
-					if toItem.Default.LocalityAwareness.CrossZone.FailoverThreshold != nil {
+					if r.Spec.To[toIndex].Default.LocalityAwareness.CrossZone.FailoverThreshold != nil {
 						var percentage shared.MeshLoadBalancingStrategyItemPercentage
 						integer1 := new(int64)
-						if !toItem.Default.LocalityAwareness.CrossZone.FailoverThreshold.Percentage.Integer.IsUnknown() && !toItem.Default.LocalityAwareness.CrossZone.FailoverThreshold.Percentage.Integer.IsNull() {
-							*integer1 = toItem.Default.LocalityAwareness.CrossZone.FailoverThreshold.Percentage.Integer.ValueInt64()
+						if !r.Spec.To[toIndex].Default.LocalityAwareness.CrossZone.FailoverThreshold.Percentage.Integer.IsUnknown() && !r.Spec.To[toIndex].Default.LocalityAwareness.CrossZone.FailoverThreshold.Percentage.Integer.IsNull() {
+							*integer1 = r.Spec.To[toIndex].Default.LocalityAwareness.CrossZone.FailoverThreshold.Percentage.Integer.ValueInt64()
 						} else {
 							integer1 = nil
 						}
@@ -862,8 +862,8 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 							}
 						}
 						str1 := new(string)
-						if !toItem.Default.LocalityAwareness.CrossZone.FailoverThreshold.Percentage.Str.IsUnknown() && !toItem.Default.LocalityAwareness.CrossZone.FailoverThreshold.Percentage.Str.IsNull() {
-							*str1 = toItem.Default.LocalityAwareness.CrossZone.FailoverThreshold.Percentage.Str.ValueString()
+						if !r.Spec.To[toIndex].Default.LocalityAwareness.CrossZone.FailoverThreshold.Percentage.Str.IsUnknown() && !r.Spec.To[toIndex].Default.LocalityAwareness.CrossZone.FailoverThreshold.Percentage.Str.IsNull() {
+							*str1 = r.Spec.To[toIndex].Default.LocalityAwareness.CrossZone.FailoverThreshold.Percentage.Str.ValueString()
 						} else {
 							str1 = nil
 						}
@@ -882,21 +882,21 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 					}
 				}
 				disabled := new(bool)
-				if !toItem.Default.LocalityAwareness.Disabled.IsUnknown() && !toItem.Default.LocalityAwareness.Disabled.IsNull() {
-					*disabled = toItem.Default.LocalityAwareness.Disabled.ValueBool()
+				if !r.Spec.To[toIndex].Default.LocalityAwareness.Disabled.IsUnknown() && !r.Spec.To[toIndex].Default.LocalityAwareness.Disabled.IsNull() {
+					*disabled = r.Spec.To[toIndex].Default.LocalityAwareness.Disabled.ValueBool()
 				} else {
 					disabled = nil
 				}
 				var localZone *shared.LocalZone
-				if toItem.Default.LocalityAwareness.LocalZone != nil {
-					affinityTags := make([]shared.AffinityTags, 0, len(toItem.Default.LocalityAwareness.LocalZone.AffinityTags))
-					for _, affinityTagsItem := range toItem.Default.LocalityAwareness.LocalZone.AffinityTags {
+				if r.Spec.To[toIndex].Default.LocalityAwareness.LocalZone != nil {
+					affinityTags := make([]shared.AffinityTags, 0, len(r.Spec.To[toIndex].Default.LocalityAwareness.LocalZone.AffinityTags))
+					for affinityTagsIndex := range r.Spec.To[toIndex].Default.LocalityAwareness.LocalZone.AffinityTags {
 						var key3 string
-						key3 = affinityTagsItem.Key.ValueString()
+						key3 = r.Spec.To[toIndex].Default.LocalityAwareness.LocalZone.AffinityTags[affinityTagsIndex].Key.ValueString()
 
 						weight := new(int)
-						if !affinityTagsItem.Weight.IsUnknown() && !affinityTagsItem.Weight.IsNull() {
-							*weight = int(affinityTagsItem.Weight.ValueInt32())
+						if !r.Spec.To[toIndex].Default.LocalityAwareness.LocalZone.AffinityTags[affinityTagsIndex].Weight.IsUnknown() && !r.Spec.To[toIndex].Default.LocalityAwareness.LocalZone.AffinityTags[affinityTagsIndex].Weight.IsNull() {
+							*weight = int(r.Spec.To[toIndex].Default.LocalityAwareness.LocalZone.AffinityTags[affinityTagsIndex].Weight.ValueInt32())
 						} else {
 							weight = nil
 						}
@@ -921,46 +921,46 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 				LocalityAwareness: localityAwareness,
 			}
 		}
-		kind1 := shared.MeshLoadBalancingStrategyItemSpecKind(toItem.TargetRef.Kind.ValueString())
+		kind1 := shared.MeshLoadBalancingStrategyItemSpecKind(r.Spec.To[toIndex].TargetRef.Kind.ValueString())
 		labels2 := make(map[string]string)
-		for labelsKey1, labelsValue1 := range toItem.TargetRef.Labels {
+		for labelsKey1 := range r.Spec.To[toIndex].TargetRef.Labels {
 			var labelsInst1 string
-			labelsInst1 = labelsValue1.ValueString()
+			labelsInst1 = r.Spec.To[toIndex].TargetRef.Labels[labelsKey1].ValueString()
 
 			labels2[labelsKey1] = labelsInst1
 		}
 		mesh2 := new(string)
-		if !toItem.TargetRef.Mesh.IsUnknown() && !toItem.TargetRef.Mesh.IsNull() {
-			*mesh2 = toItem.TargetRef.Mesh.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Mesh.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Mesh.IsNull() {
+			*mesh2 = r.Spec.To[toIndex].TargetRef.Mesh.ValueString()
 		} else {
 			mesh2 = nil
 		}
 		name11 := new(string)
-		if !toItem.TargetRef.Name.IsUnknown() && !toItem.TargetRef.Name.IsNull() {
-			*name11 = toItem.TargetRef.Name.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Name.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Name.IsNull() {
+			*name11 = r.Spec.To[toIndex].TargetRef.Name.ValueString()
 		} else {
 			name11 = nil
 		}
 		namespace1 := new(string)
-		if !toItem.TargetRef.Namespace.IsUnknown() && !toItem.TargetRef.Namespace.IsNull() {
-			*namespace1 = toItem.TargetRef.Namespace.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Namespace.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Namespace.IsNull() {
+			*namespace1 = r.Spec.To[toIndex].TargetRef.Namespace.ValueString()
 		} else {
 			namespace1 = nil
 		}
-		proxyTypes1 := make([]shared.MeshLoadBalancingStrategyItemSpecProxyTypes, 0, len(toItem.TargetRef.ProxyTypes))
-		for _, proxyTypesItem1 := range toItem.TargetRef.ProxyTypes {
+		proxyTypes1 := make([]shared.MeshLoadBalancingStrategyItemSpecProxyTypes, 0, len(r.Spec.To[toIndex].TargetRef.ProxyTypes))
+		for _, proxyTypesItem1 := range r.Spec.To[toIndex].TargetRef.ProxyTypes {
 			proxyTypes1 = append(proxyTypes1, shared.MeshLoadBalancingStrategyItemSpecProxyTypes(proxyTypesItem1.ValueString()))
 		}
 		sectionName1 := new(string)
-		if !toItem.TargetRef.SectionName.IsUnknown() && !toItem.TargetRef.SectionName.IsNull() {
-			*sectionName1 = toItem.TargetRef.SectionName.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.SectionName.IsUnknown() && !r.Spec.To[toIndex].TargetRef.SectionName.IsNull() {
+			*sectionName1 = r.Spec.To[toIndex].TargetRef.SectionName.ValueString()
 		} else {
 			sectionName1 = nil
 		}
 		tags1 := make(map[string]string)
-		for tagsKey1, tagsValue1 := range toItem.TargetRef.Tags {
+		for tagsKey1 := range r.Spec.To[toIndex].TargetRef.Tags {
 			var tagsInst1 string
-			tagsInst1 = tagsValue1.ValueString()
+			tagsInst1 = r.Spec.To[toIndex].TargetRef.Tags[tagsKey1].ValueString()
 
 			tags1[tagsKey1] = tagsInst1
 		}

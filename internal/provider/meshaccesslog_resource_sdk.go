@@ -454,20 +454,20 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 		diags.Append(r.Labels.ElementsAs(ctx, &labels, true)...)
 	}
 	from := make([]shared.From, 0, len(r.Spec.From))
-	for _, fromItem := range r.Spec.From {
-		backends := make([]shared.MeshAccessLogItemSpecFromBackends, 0, len(fromItem.Default.Backends))
-		for _, backendsItem := range fromItem.Default.Backends {
+	for fromIndex := range r.Spec.From {
+		backends := make([]shared.MeshAccessLogItemSpecFromBackends, 0, len(r.Spec.From[fromIndex].Default.Backends))
+		for backendsIndex := range r.Spec.From[fromIndex].Default.Backends {
 			var file *shared.File
-			if backendsItem.File != nil {
+			if r.Spec.From[fromIndex].Default.Backends[backendsIndex].File != nil {
 				var format *shared.Format
-				if backendsItem.File.Format != nil {
-					jsonVar := make([]shared.JSON, 0, len(backendsItem.File.Format.JSON))
-					for _, jsonItem := range backendsItem.File.Format.JSON {
+				if r.Spec.From[fromIndex].Default.Backends[backendsIndex].File.Format != nil {
+					jsonVar := make([]shared.JSON, 0, len(r.Spec.From[fromIndex].Default.Backends[backendsIndex].File.Format.JSON))
+					for jsonIndex := range r.Spec.From[fromIndex].Default.Backends[backendsIndex].File.Format.JSON {
 						var key string
-						key = jsonItem.Key.ValueString()
+						key = r.Spec.From[fromIndex].Default.Backends[backendsIndex].File.Format.JSON[jsonIndex].Key.ValueString()
 
 						var value string
-						value = jsonItem.Value.ValueString()
+						value = r.Spec.From[fromIndex].Default.Backends[backendsIndex].File.Format.JSON[jsonIndex].Value.ValueString()
 
 						jsonVar = append(jsonVar, shared.JSON{
 							Key:   key,
@@ -475,18 +475,18 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 						})
 					}
 					omitEmptyValues := new(bool)
-					if !backendsItem.File.Format.OmitEmptyValues.IsUnknown() && !backendsItem.File.Format.OmitEmptyValues.IsNull() {
-						*omitEmptyValues = backendsItem.File.Format.OmitEmptyValues.ValueBool()
+					if !r.Spec.From[fromIndex].Default.Backends[backendsIndex].File.Format.OmitEmptyValues.IsUnknown() && !r.Spec.From[fromIndex].Default.Backends[backendsIndex].File.Format.OmitEmptyValues.IsNull() {
+						*omitEmptyValues = r.Spec.From[fromIndex].Default.Backends[backendsIndex].File.Format.OmitEmptyValues.ValueBool()
 					} else {
 						omitEmptyValues = nil
 					}
 					plain := new(string)
-					if !backendsItem.File.Format.Plain.IsUnknown() && !backendsItem.File.Format.Plain.IsNull() {
-						*plain = backendsItem.File.Format.Plain.ValueString()
+					if !r.Spec.From[fromIndex].Default.Backends[backendsIndex].File.Format.Plain.IsUnknown() && !r.Spec.From[fromIndex].Default.Backends[backendsIndex].File.Format.Plain.IsNull() {
+						*plain = r.Spec.From[fromIndex].Default.Backends[backendsIndex].File.Format.Plain.ValueString()
 					} else {
 						plain = nil
 					}
-					typeVar1 := shared.MeshAccessLogItemSpecFromType(backendsItem.File.Format.Type.ValueString())
+					typeVar1 := shared.MeshAccessLogItemSpecFromType(r.Spec.From[fromIndex].Default.Backends[backendsIndex].File.Format.Type.ValueString())
 					format = &shared.Format{
 						JSON:            jsonVar,
 						OmitEmptyValues: omitEmptyValues,
@@ -495,7 +495,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 					}
 				}
 				var path string
-				path = backendsItem.File.Path.ValueString()
+				path = r.Spec.From[fromIndex].Default.Backends[backendsIndex].File.Path.ValueString()
 
 				file = &shared.File{
 					Format: format,
@@ -503,14 +503,14 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 				}
 			}
 			var openTelemetry *shared.MeshAccessLogItemSpecFromOpenTelemetry
-			if backendsItem.OpenTelemetry != nil {
-				attributes := make([]shared.Attributes, 0, len(backendsItem.OpenTelemetry.Attributes))
-				for _, attributesItem := range backendsItem.OpenTelemetry.Attributes {
+			if r.Spec.From[fromIndex].Default.Backends[backendsIndex].OpenTelemetry != nil {
+				attributes := make([]shared.Attributes, 0, len(r.Spec.From[fromIndex].Default.Backends[backendsIndex].OpenTelemetry.Attributes))
+				for attributesIndex := range r.Spec.From[fromIndex].Default.Backends[backendsIndex].OpenTelemetry.Attributes {
 					var key1 string
-					key1 = attributesItem.Key.ValueString()
+					key1 = r.Spec.From[fromIndex].Default.Backends[backendsIndex].OpenTelemetry.Attributes[attributesIndex].Key.ValueString()
 
 					var value1 string
-					value1 = attributesItem.Value.ValueString()
+					value1 = r.Spec.From[fromIndex].Default.Backends[backendsIndex].OpenTelemetry.Attributes[attributesIndex].Value.ValueString()
 
 					attributes = append(attributes, shared.Attributes{
 						Key:   key1,
@@ -518,11 +518,11 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 					})
 				}
 				var body interface{}
-				if !backendsItem.OpenTelemetry.Body.IsUnknown() && !backendsItem.OpenTelemetry.Body.IsNull() {
-					_ = json.Unmarshal([]byte(backendsItem.OpenTelemetry.Body.ValueString()), &body)
+				if !r.Spec.From[fromIndex].Default.Backends[backendsIndex].OpenTelemetry.Body.IsUnknown() && !r.Spec.From[fromIndex].Default.Backends[backendsIndex].OpenTelemetry.Body.IsNull() {
+					_ = json.Unmarshal([]byte(r.Spec.From[fromIndex].Default.Backends[backendsIndex].OpenTelemetry.Body.ValueString()), &body)
 				}
 				var endpoint string
-				endpoint = backendsItem.OpenTelemetry.Endpoint.ValueString()
+				endpoint = r.Spec.From[fromIndex].Default.Backends[backendsIndex].OpenTelemetry.Endpoint.ValueString()
 
 				openTelemetry = &shared.MeshAccessLogItemSpecFromOpenTelemetry{
 					Attributes: attributes,
@@ -531,19 +531,19 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 				}
 			}
 			var tcp *shared.MeshAccessLogItemSpecFromTCP
-			if backendsItem.TCP != nil {
+			if r.Spec.From[fromIndex].Default.Backends[backendsIndex].TCP != nil {
 				var address string
-				address = backendsItem.TCP.Address.ValueString()
+				address = r.Spec.From[fromIndex].Default.Backends[backendsIndex].TCP.Address.ValueString()
 
 				var format1 *shared.MeshAccessLogItemFormat
-				if backendsItem.TCP.Format != nil {
-					jsonVar1 := make([]shared.MeshAccessLogItemJSON, 0, len(backendsItem.TCP.Format.JSON))
-					for _, jsonItem1 := range backendsItem.TCP.Format.JSON {
+				if r.Spec.From[fromIndex].Default.Backends[backendsIndex].TCP.Format != nil {
+					jsonVar1 := make([]shared.MeshAccessLogItemJSON, 0, len(r.Spec.From[fromIndex].Default.Backends[backendsIndex].TCP.Format.JSON))
+					for jsonIndex1 := range r.Spec.From[fromIndex].Default.Backends[backendsIndex].TCP.Format.JSON {
 						var key2 string
-						key2 = jsonItem1.Key.ValueString()
+						key2 = r.Spec.From[fromIndex].Default.Backends[backendsIndex].TCP.Format.JSON[jsonIndex1].Key.ValueString()
 
 						var value2 string
-						value2 = jsonItem1.Value.ValueString()
+						value2 = r.Spec.From[fromIndex].Default.Backends[backendsIndex].TCP.Format.JSON[jsonIndex1].Value.ValueString()
 
 						jsonVar1 = append(jsonVar1, shared.MeshAccessLogItemJSON{
 							Key:   key2,
@@ -551,18 +551,18 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 						})
 					}
 					omitEmptyValues1 := new(bool)
-					if !backendsItem.TCP.Format.OmitEmptyValues.IsUnknown() && !backendsItem.TCP.Format.OmitEmptyValues.IsNull() {
-						*omitEmptyValues1 = backendsItem.TCP.Format.OmitEmptyValues.ValueBool()
+					if !r.Spec.From[fromIndex].Default.Backends[backendsIndex].TCP.Format.OmitEmptyValues.IsUnknown() && !r.Spec.From[fromIndex].Default.Backends[backendsIndex].TCP.Format.OmitEmptyValues.IsNull() {
+						*omitEmptyValues1 = r.Spec.From[fromIndex].Default.Backends[backendsIndex].TCP.Format.OmitEmptyValues.ValueBool()
 					} else {
 						omitEmptyValues1 = nil
 					}
 					plain1 := new(string)
-					if !backendsItem.TCP.Format.Plain.IsUnknown() && !backendsItem.TCP.Format.Plain.IsNull() {
-						*plain1 = backendsItem.TCP.Format.Plain.ValueString()
+					if !r.Spec.From[fromIndex].Default.Backends[backendsIndex].TCP.Format.Plain.IsUnknown() && !r.Spec.From[fromIndex].Default.Backends[backendsIndex].TCP.Format.Plain.IsNull() {
+						*plain1 = r.Spec.From[fromIndex].Default.Backends[backendsIndex].TCP.Format.Plain.ValueString()
 					} else {
 						plain1 = nil
 					}
-					typeVar2 := shared.MeshAccessLogItemSpecFromDefaultType(backendsItem.TCP.Format.Type.ValueString())
+					typeVar2 := shared.MeshAccessLogItemSpecFromDefaultType(r.Spec.From[fromIndex].Default.Backends[backendsIndex].TCP.Format.Type.ValueString())
 					format1 = &shared.MeshAccessLogItemFormat{
 						JSON:            jsonVar1,
 						OmitEmptyValues: omitEmptyValues1,
@@ -575,7 +575,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 					Format:  format1,
 				}
 			}
-			type1 := shared.MeshAccessLogItemType(backendsItem.Type.ValueString())
+			type1 := shared.MeshAccessLogItemType(r.Spec.From[fromIndex].Default.Backends[backendsIndex].Type.ValueString())
 			backends = append(backends, shared.MeshAccessLogItemSpecFromBackends{
 				File:          file,
 				OpenTelemetry: openTelemetry,
@@ -586,46 +586,46 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 		defaultVar := shared.MeshAccessLogItemSpecFromDefault{
 			Backends: backends,
 		}
-		kind := shared.MeshAccessLogItemKind(fromItem.TargetRef.Kind.ValueString())
+		kind := shared.MeshAccessLogItemKind(r.Spec.From[fromIndex].TargetRef.Kind.ValueString())
 		labels1 := make(map[string]string)
-		for labelsKey, labelsValue := range fromItem.TargetRef.Labels {
+		for labelsKey := range r.Spec.From[fromIndex].TargetRef.Labels {
 			var labelsInst string
-			labelsInst = labelsValue.ValueString()
+			labelsInst = r.Spec.From[fromIndex].TargetRef.Labels[labelsKey].ValueString()
 
 			labels1[labelsKey] = labelsInst
 		}
 		mesh1 := new(string)
-		if !fromItem.TargetRef.Mesh.IsUnknown() && !fromItem.TargetRef.Mesh.IsNull() {
-			*mesh1 = fromItem.TargetRef.Mesh.ValueString()
+		if !r.Spec.From[fromIndex].TargetRef.Mesh.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.Mesh.IsNull() {
+			*mesh1 = r.Spec.From[fromIndex].TargetRef.Mesh.ValueString()
 		} else {
 			mesh1 = nil
 		}
 		name1 := new(string)
-		if !fromItem.TargetRef.Name.IsUnknown() && !fromItem.TargetRef.Name.IsNull() {
-			*name1 = fromItem.TargetRef.Name.ValueString()
+		if !r.Spec.From[fromIndex].TargetRef.Name.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.Name.IsNull() {
+			*name1 = r.Spec.From[fromIndex].TargetRef.Name.ValueString()
 		} else {
 			name1 = nil
 		}
 		namespace := new(string)
-		if !fromItem.TargetRef.Namespace.IsUnknown() && !fromItem.TargetRef.Namespace.IsNull() {
-			*namespace = fromItem.TargetRef.Namespace.ValueString()
+		if !r.Spec.From[fromIndex].TargetRef.Namespace.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.Namespace.IsNull() {
+			*namespace = r.Spec.From[fromIndex].TargetRef.Namespace.ValueString()
 		} else {
 			namespace = nil
 		}
-		proxyTypes := make([]shared.MeshAccessLogItemProxyTypes, 0, len(fromItem.TargetRef.ProxyTypes))
-		for _, proxyTypesItem := range fromItem.TargetRef.ProxyTypes {
+		proxyTypes := make([]shared.MeshAccessLogItemProxyTypes, 0, len(r.Spec.From[fromIndex].TargetRef.ProxyTypes))
+		for _, proxyTypesItem := range r.Spec.From[fromIndex].TargetRef.ProxyTypes {
 			proxyTypes = append(proxyTypes, shared.MeshAccessLogItemProxyTypes(proxyTypesItem.ValueString()))
 		}
 		sectionName := new(string)
-		if !fromItem.TargetRef.SectionName.IsUnknown() && !fromItem.TargetRef.SectionName.IsNull() {
-			*sectionName = fromItem.TargetRef.SectionName.ValueString()
+		if !r.Spec.From[fromIndex].TargetRef.SectionName.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.SectionName.IsNull() {
+			*sectionName = r.Spec.From[fromIndex].TargetRef.SectionName.ValueString()
 		} else {
 			sectionName = nil
 		}
 		tags := make(map[string]string)
-		for tagsKey, tagsValue := range fromItem.TargetRef.Tags {
+		for tagsKey := range r.Spec.From[fromIndex].TargetRef.Tags {
 			var tagsInst string
-			tagsInst = tagsValue.ValueString()
+			tagsInst = r.Spec.From[fromIndex].TargetRef.Tags[tagsKey].ValueString()
 
 			tags[tagsKey] = tagsInst
 		}
@@ -645,20 +645,20 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 		})
 	}
 	rules := make([]shared.Rules, 0, len(r.Spec.Rules))
-	for _, rulesItem := range r.Spec.Rules {
-		backends1 := make([]shared.MeshAccessLogItemBackends, 0, len(rulesItem.Default.Backends))
-		for _, backendsItem1 := range rulesItem.Default.Backends {
+	for rulesIndex := range r.Spec.Rules {
+		backends1 := make([]shared.MeshAccessLogItemBackends, 0, len(r.Spec.Rules[rulesIndex].Default.Backends))
+		for backendsIndex1 := range r.Spec.Rules[rulesIndex].Default.Backends {
 			var file1 *shared.MeshAccessLogItemFile
-			if backendsItem1.File != nil {
+			if r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].File != nil {
 				var format2 *shared.MeshAccessLogItemSpecFormat
-				if backendsItem1.File.Format != nil {
-					jsonVar2 := make([]shared.MeshAccessLogItemSpecJSON, 0, len(backendsItem1.File.Format.JSON))
-					for _, jsonItem2 := range backendsItem1.File.Format.JSON {
+				if r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].File.Format != nil {
+					jsonVar2 := make([]shared.MeshAccessLogItemSpecJSON, 0, len(r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].File.Format.JSON))
+					for jsonIndex2 := range r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].File.Format.JSON {
 						var key3 string
-						key3 = jsonItem2.Key.ValueString()
+						key3 = r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].File.Format.JSON[jsonIndex2].Key.ValueString()
 
 						var value3 string
-						value3 = jsonItem2.Value.ValueString()
+						value3 = r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].File.Format.JSON[jsonIndex2].Value.ValueString()
 
 						jsonVar2 = append(jsonVar2, shared.MeshAccessLogItemSpecJSON{
 							Key:   key3,
@@ -666,18 +666,18 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 						})
 					}
 					omitEmptyValues2 := new(bool)
-					if !backendsItem1.File.Format.OmitEmptyValues.IsUnknown() && !backendsItem1.File.Format.OmitEmptyValues.IsNull() {
-						*omitEmptyValues2 = backendsItem1.File.Format.OmitEmptyValues.ValueBool()
+					if !r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].File.Format.OmitEmptyValues.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].File.Format.OmitEmptyValues.IsNull() {
+						*omitEmptyValues2 = r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].File.Format.OmitEmptyValues.ValueBool()
 					} else {
 						omitEmptyValues2 = nil
 					}
 					plain2 := new(string)
-					if !backendsItem1.File.Format.Plain.IsUnknown() && !backendsItem1.File.Format.Plain.IsNull() {
-						*plain2 = backendsItem1.File.Format.Plain.ValueString()
+					if !r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].File.Format.Plain.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].File.Format.Plain.IsNull() {
+						*plain2 = r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].File.Format.Plain.ValueString()
 					} else {
 						plain2 = nil
 					}
-					typeVar3 := shared.MeshAccessLogItemSpecRulesType(backendsItem1.File.Format.Type.ValueString())
+					typeVar3 := shared.MeshAccessLogItemSpecRulesType(r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].File.Format.Type.ValueString())
 					format2 = &shared.MeshAccessLogItemSpecFormat{
 						JSON:            jsonVar2,
 						OmitEmptyValues: omitEmptyValues2,
@@ -686,7 +686,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 					}
 				}
 				var path1 string
-				path1 = backendsItem1.File.Path.ValueString()
+				path1 = r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].File.Path.ValueString()
 
 				file1 = &shared.MeshAccessLogItemFile{
 					Format: format2,
@@ -694,14 +694,14 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 				}
 			}
 			var openTelemetry1 *shared.MeshAccessLogItemOpenTelemetry
-			if backendsItem1.OpenTelemetry != nil {
-				attributes1 := make([]shared.MeshAccessLogItemAttributes, 0, len(backendsItem1.OpenTelemetry.Attributes))
-				for _, attributesItem1 := range backendsItem1.OpenTelemetry.Attributes {
+			if r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].OpenTelemetry != nil {
+				attributes1 := make([]shared.MeshAccessLogItemAttributes, 0, len(r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].OpenTelemetry.Attributes))
+				for attributesIndex1 := range r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].OpenTelemetry.Attributes {
 					var key4 string
-					key4 = attributesItem1.Key.ValueString()
+					key4 = r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].OpenTelemetry.Attributes[attributesIndex1].Key.ValueString()
 
 					var value4 string
-					value4 = attributesItem1.Value.ValueString()
+					value4 = r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].OpenTelemetry.Attributes[attributesIndex1].Value.ValueString()
 
 					attributes1 = append(attributes1, shared.MeshAccessLogItemAttributes{
 						Key:   key4,
@@ -709,11 +709,11 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 					})
 				}
 				var body1 interface{}
-				if !backendsItem1.OpenTelemetry.Body.IsUnknown() && !backendsItem1.OpenTelemetry.Body.IsNull() {
-					_ = json.Unmarshal([]byte(backendsItem1.OpenTelemetry.Body.ValueString()), &body1)
+				if !r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].OpenTelemetry.Body.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].OpenTelemetry.Body.IsNull() {
+					_ = json.Unmarshal([]byte(r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].OpenTelemetry.Body.ValueString()), &body1)
 				}
 				var endpoint1 string
-				endpoint1 = backendsItem1.OpenTelemetry.Endpoint.ValueString()
+				endpoint1 = r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].OpenTelemetry.Endpoint.ValueString()
 
 				openTelemetry1 = &shared.MeshAccessLogItemOpenTelemetry{
 					Attributes: attributes1,
@@ -722,19 +722,19 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 				}
 			}
 			var tcp1 *shared.MeshAccessLogItemTCP
-			if backendsItem1.TCP != nil {
+			if r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].TCP != nil {
 				var address1 string
-				address1 = backendsItem1.TCP.Address.ValueString()
+				address1 = r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].TCP.Address.ValueString()
 
 				var format3 *shared.MeshAccessLogItemSpecRulesFormat
-				if backendsItem1.TCP.Format != nil {
-					jsonVar3 := make([]shared.MeshAccessLogItemSpecRulesJSON, 0, len(backendsItem1.TCP.Format.JSON))
-					for _, jsonItem3 := range backendsItem1.TCP.Format.JSON {
+				if r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].TCP.Format != nil {
+					jsonVar3 := make([]shared.MeshAccessLogItemSpecRulesJSON, 0, len(r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].TCP.Format.JSON))
+					for jsonIndex3 := range r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].TCP.Format.JSON {
 						var key5 string
-						key5 = jsonItem3.Key.ValueString()
+						key5 = r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].TCP.Format.JSON[jsonIndex3].Key.ValueString()
 
 						var value5 string
-						value5 = jsonItem3.Value.ValueString()
+						value5 = r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].TCP.Format.JSON[jsonIndex3].Value.ValueString()
 
 						jsonVar3 = append(jsonVar3, shared.MeshAccessLogItemSpecRulesJSON{
 							Key:   key5,
@@ -742,18 +742,18 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 						})
 					}
 					omitEmptyValues3 := new(bool)
-					if !backendsItem1.TCP.Format.OmitEmptyValues.IsUnknown() && !backendsItem1.TCP.Format.OmitEmptyValues.IsNull() {
-						*omitEmptyValues3 = backendsItem1.TCP.Format.OmitEmptyValues.ValueBool()
+					if !r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].TCP.Format.OmitEmptyValues.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].TCP.Format.OmitEmptyValues.IsNull() {
+						*omitEmptyValues3 = r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].TCP.Format.OmitEmptyValues.ValueBool()
 					} else {
 						omitEmptyValues3 = nil
 					}
 					plain3 := new(string)
-					if !backendsItem1.TCP.Format.Plain.IsUnknown() && !backendsItem1.TCP.Format.Plain.IsNull() {
-						*plain3 = backendsItem1.TCP.Format.Plain.ValueString()
+					if !r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].TCP.Format.Plain.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].TCP.Format.Plain.IsNull() {
+						*plain3 = r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].TCP.Format.Plain.ValueString()
 					} else {
 						plain3 = nil
 					}
-					typeVar4 := shared.MeshAccessLogItemSpecRulesDefaultType(backendsItem1.TCP.Format.Type.ValueString())
+					typeVar4 := shared.MeshAccessLogItemSpecRulesDefaultType(r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].TCP.Format.Type.ValueString())
 					format3 = &shared.MeshAccessLogItemSpecRulesFormat{
 						JSON:            jsonVar3,
 						OmitEmptyValues: omitEmptyValues3,
@@ -766,7 +766,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 					Format:  format3,
 				}
 			}
-			type2 := shared.MeshAccessLogItemSpecType(backendsItem1.Type.ValueString())
+			type2 := shared.MeshAccessLogItemSpecType(r.Spec.Rules[rulesIndex].Default.Backends[backendsIndex1].Type.ValueString())
 			backends1 = append(backends1, shared.MeshAccessLogItemBackends{
 				File:          file1,
 				OpenTelemetry: openTelemetry1,
@@ -785,9 +785,9 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 	if r.Spec.TargetRef != nil {
 		kind1 := shared.Kind(r.Spec.TargetRef.Kind.ValueString())
 		labels2 := make(map[string]string)
-		for labelsKey1, labelsValue1 := range r.Spec.TargetRef.Labels {
+		for labelsKey1 := range r.Spec.TargetRef.Labels {
 			var labelsInst1 string
-			labelsInst1 = labelsValue1.ValueString()
+			labelsInst1 = r.Spec.TargetRef.Labels[labelsKey1].ValueString()
 
 			labels2[labelsKey1] = labelsInst1
 		}
@@ -820,9 +820,9 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 			sectionName1 = nil
 		}
 		tags1 := make(map[string]string)
-		for tagsKey1, tagsValue1 := range r.Spec.TargetRef.Tags {
+		for tagsKey1 := range r.Spec.TargetRef.Tags {
 			var tagsInst1 string
-			tagsInst1 = tagsValue1.ValueString()
+			tagsInst1 = r.Spec.TargetRef.Tags[tagsKey1].ValueString()
 
 			tags1[tagsKey1] = tagsInst1
 		}
@@ -838,20 +838,20 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 		}
 	}
 	to := make([]shared.To, 0, len(r.Spec.To))
-	for _, toItem := range r.Spec.To {
-		backends2 := make([]shared.MeshAccessLogItemSpecBackends, 0, len(toItem.Default.Backends))
-		for _, backendsItem2 := range toItem.Default.Backends {
+	for toIndex := range r.Spec.To {
+		backends2 := make([]shared.MeshAccessLogItemSpecBackends, 0, len(r.Spec.To[toIndex].Default.Backends))
+		for backendsIndex2 := range r.Spec.To[toIndex].Default.Backends {
 			var file2 *shared.MeshAccessLogItemSpecFile
-			if backendsItem2.File != nil {
+			if r.Spec.To[toIndex].Default.Backends[backendsIndex2].File != nil {
 				var format4 *shared.MeshAccessLogItemSpecToFormat
-				if backendsItem2.File.Format != nil {
-					jsonVar4 := make([]shared.MeshAccessLogItemSpecToJSON, 0, len(backendsItem2.File.Format.JSON))
-					for _, jsonItem4 := range backendsItem2.File.Format.JSON {
+				if r.Spec.To[toIndex].Default.Backends[backendsIndex2].File.Format != nil {
+					jsonVar4 := make([]shared.MeshAccessLogItemSpecToJSON, 0, len(r.Spec.To[toIndex].Default.Backends[backendsIndex2].File.Format.JSON))
+					for jsonIndex4 := range r.Spec.To[toIndex].Default.Backends[backendsIndex2].File.Format.JSON {
 						var key6 string
-						key6 = jsonItem4.Key.ValueString()
+						key6 = r.Spec.To[toIndex].Default.Backends[backendsIndex2].File.Format.JSON[jsonIndex4].Key.ValueString()
 
 						var value6 string
-						value6 = jsonItem4.Value.ValueString()
+						value6 = r.Spec.To[toIndex].Default.Backends[backendsIndex2].File.Format.JSON[jsonIndex4].Value.ValueString()
 
 						jsonVar4 = append(jsonVar4, shared.MeshAccessLogItemSpecToJSON{
 							Key:   key6,
@@ -859,18 +859,18 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 						})
 					}
 					omitEmptyValues4 := new(bool)
-					if !backendsItem2.File.Format.OmitEmptyValues.IsUnknown() && !backendsItem2.File.Format.OmitEmptyValues.IsNull() {
-						*omitEmptyValues4 = backendsItem2.File.Format.OmitEmptyValues.ValueBool()
+					if !r.Spec.To[toIndex].Default.Backends[backendsIndex2].File.Format.OmitEmptyValues.IsUnknown() && !r.Spec.To[toIndex].Default.Backends[backendsIndex2].File.Format.OmitEmptyValues.IsNull() {
+						*omitEmptyValues4 = r.Spec.To[toIndex].Default.Backends[backendsIndex2].File.Format.OmitEmptyValues.ValueBool()
 					} else {
 						omitEmptyValues4 = nil
 					}
 					plain4 := new(string)
-					if !backendsItem2.File.Format.Plain.IsUnknown() && !backendsItem2.File.Format.Plain.IsNull() {
-						*plain4 = backendsItem2.File.Format.Plain.ValueString()
+					if !r.Spec.To[toIndex].Default.Backends[backendsIndex2].File.Format.Plain.IsUnknown() && !r.Spec.To[toIndex].Default.Backends[backendsIndex2].File.Format.Plain.IsNull() {
+						*plain4 = r.Spec.To[toIndex].Default.Backends[backendsIndex2].File.Format.Plain.ValueString()
 					} else {
 						plain4 = nil
 					}
-					typeVar5 := shared.MeshAccessLogItemSpecToDefaultBackendsType(backendsItem2.File.Format.Type.ValueString())
+					typeVar5 := shared.MeshAccessLogItemSpecToDefaultBackendsType(r.Spec.To[toIndex].Default.Backends[backendsIndex2].File.Format.Type.ValueString())
 					format4 = &shared.MeshAccessLogItemSpecToFormat{
 						JSON:            jsonVar4,
 						OmitEmptyValues: omitEmptyValues4,
@@ -879,7 +879,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 					}
 				}
 				var path2 string
-				path2 = backendsItem2.File.Path.ValueString()
+				path2 = r.Spec.To[toIndex].Default.Backends[backendsIndex2].File.Path.ValueString()
 
 				file2 = &shared.MeshAccessLogItemSpecFile{
 					Format: format4,
@@ -887,14 +887,14 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 				}
 			}
 			var openTelemetry2 *shared.MeshAccessLogItemSpecOpenTelemetry
-			if backendsItem2.OpenTelemetry != nil {
-				attributes2 := make([]shared.MeshAccessLogItemSpecAttributes, 0, len(backendsItem2.OpenTelemetry.Attributes))
-				for _, attributesItem2 := range backendsItem2.OpenTelemetry.Attributes {
+			if r.Spec.To[toIndex].Default.Backends[backendsIndex2].OpenTelemetry != nil {
+				attributes2 := make([]shared.MeshAccessLogItemSpecAttributes, 0, len(r.Spec.To[toIndex].Default.Backends[backendsIndex2].OpenTelemetry.Attributes))
+				for attributesIndex2 := range r.Spec.To[toIndex].Default.Backends[backendsIndex2].OpenTelemetry.Attributes {
 					var key7 string
-					key7 = attributesItem2.Key.ValueString()
+					key7 = r.Spec.To[toIndex].Default.Backends[backendsIndex2].OpenTelemetry.Attributes[attributesIndex2].Key.ValueString()
 
 					var value7 string
-					value7 = attributesItem2.Value.ValueString()
+					value7 = r.Spec.To[toIndex].Default.Backends[backendsIndex2].OpenTelemetry.Attributes[attributesIndex2].Value.ValueString()
 
 					attributes2 = append(attributes2, shared.MeshAccessLogItemSpecAttributes{
 						Key:   key7,
@@ -902,11 +902,11 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 					})
 				}
 				var body2 interface{}
-				if !backendsItem2.OpenTelemetry.Body.IsUnknown() && !backendsItem2.OpenTelemetry.Body.IsNull() {
-					_ = json.Unmarshal([]byte(backendsItem2.OpenTelemetry.Body.ValueString()), &body2)
+				if !r.Spec.To[toIndex].Default.Backends[backendsIndex2].OpenTelemetry.Body.IsUnknown() && !r.Spec.To[toIndex].Default.Backends[backendsIndex2].OpenTelemetry.Body.IsNull() {
+					_ = json.Unmarshal([]byte(r.Spec.To[toIndex].Default.Backends[backendsIndex2].OpenTelemetry.Body.ValueString()), &body2)
 				}
 				var endpoint2 string
-				endpoint2 = backendsItem2.OpenTelemetry.Endpoint.ValueString()
+				endpoint2 = r.Spec.To[toIndex].Default.Backends[backendsIndex2].OpenTelemetry.Endpoint.ValueString()
 
 				openTelemetry2 = &shared.MeshAccessLogItemSpecOpenTelemetry{
 					Attributes: attributes2,
@@ -915,19 +915,19 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 				}
 			}
 			var tcp2 *shared.MeshAccessLogItemSpecTCP
-			if backendsItem2.TCP != nil {
+			if r.Spec.To[toIndex].Default.Backends[backendsIndex2].TCP != nil {
 				var address2 string
-				address2 = backendsItem2.TCP.Address.ValueString()
+				address2 = r.Spec.To[toIndex].Default.Backends[backendsIndex2].TCP.Address.ValueString()
 
 				var format5 *shared.MeshAccessLogItemSpecToDefaultFormat
-				if backendsItem2.TCP.Format != nil {
-					jsonVar5 := make([]shared.MeshAccessLogItemSpecToDefaultJSON, 0, len(backendsItem2.TCP.Format.JSON))
-					for _, jsonItem5 := range backendsItem2.TCP.Format.JSON {
+				if r.Spec.To[toIndex].Default.Backends[backendsIndex2].TCP.Format != nil {
+					jsonVar5 := make([]shared.MeshAccessLogItemSpecToDefaultJSON, 0, len(r.Spec.To[toIndex].Default.Backends[backendsIndex2].TCP.Format.JSON))
+					for jsonIndex5 := range r.Spec.To[toIndex].Default.Backends[backendsIndex2].TCP.Format.JSON {
 						var key8 string
-						key8 = jsonItem5.Key.ValueString()
+						key8 = r.Spec.To[toIndex].Default.Backends[backendsIndex2].TCP.Format.JSON[jsonIndex5].Key.ValueString()
 
 						var value8 string
-						value8 = jsonItem5.Value.ValueString()
+						value8 = r.Spec.To[toIndex].Default.Backends[backendsIndex2].TCP.Format.JSON[jsonIndex5].Value.ValueString()
 
 						jsonVar5 = append(jsonVar5, shared.MeshAccessLogItemSpecToDefaultJSON{
 							Key:   key8,
@@ -935,18 +935,18 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 						})
 					}
 					omitEmptyValues5 := new(bool)
-					if !backendsItem2.TCP.Format.OmitEmptyValues.IsUnknown() && !backendsItem2.TCP.Format.OmitEmptyValues.IsNull() {
-						*omitEmptyValues5 = backendsItem2.TCP.Format.OmitEmptyValues.ValueBool()
+					if !r.Spec.To[toIndex].Default.Backends[backendsIndex2].TCP.Format.OmitEmptyValues.IsUnknown() && !r.Spec.To[toIndex].Default.Backends[backendsIndex2].TCP.Format.OmitEmptyValues.IsNull() {
+						*omitEmptyValues5 = r.Spec.To[toIndex].Default.Backends[backendsIndex2].TCP.Format.OmitEmptyValues.ValueBool()
 					} else {
 						omitEmptyValues5 = nil
 					}
 					plain5 := new(string)
-					if !backendsItem2.TCP.Format.Plain.IsUnknown() && !backendsItem2.TCP.Format.Plain.IsNull() {
-						*plain5 = backendsItem2.TCP.Format.Plain.ValueString()
+					if !r.Spec.To[toIndex].Default.Backends[backendsIndex2].TCP.Format.Plain.IsUnknown() && !r.Spec.To[toIndex].Default.Backends[backendsIndex2].TCP.Format.Plain.IsNull() {
+						*plain5 = r.Spec.To[toIndex].Default.Backends[backendsIndex2].TCP.Format.Plain.ValueString()
 					} else {
 						plain5 = nil
 					}
-					typeVar6 := shared.MeshAccessLogItemSpecToDefaultType(backendsItem2.TCP.Format.Type.ValueString())
+					typeVar6 := shared.MeshAccessLogItemSpecToDefaultType(r.Spec.To[toIndex].Default.Backends[backendsIndex2].TCP.Format.Type.ValueString())
 					format5 = &shared.MeshAccessLogItemSpecToDefaultFormat{
 						JSON:            jsonVar5,
 						OmitEmptyValues: omitEmptyValues5,
@@ -959,7 +959,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 					Format:  format5,
 				}
 			}
-			type3 := shared.MeshAccessLogItemSpecToType(backendsItem2.Type.ValueString())
+			type3 := shared.MeshAccessLogItemSpecToType(r.Spec.To[toIndex].Default.Backends[backendsIndex2].Type.ValueString())
 			backends2 = append(backends2, shared.MeshAccessLogItemSpecBackends{
 				File:          file2,
 				OpenTelemetry: openTelemetry2,
@@ -970,46 +970,46 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 		default2 := shared.MeshAccessLogItemSpecDefault{
 			Backends: backends2,
 		}
-		kind2 := shared.MeshAccessLogItemSpecKind(toItem.TargetRef.Kind.ValueString())
+		kind2 := shared.MeshAccessLogItemSpecKind(r.Spec.To[toIndex].TargetRef.Kind.ValueString())
 		labels3 := make(map[string]string)
-		for labelsKey2, labelsValue2 := range toItem.TargetRef.Labels {
+		for labelsKey2 := range r.Spec.To[toIndex].TargetRef.Labels {
 			var labelsInst2 string
-			labelsInst2 = labelsValue2.ValueString()
+			labelsInst2 = r.Spec.To[toIndex].TargetRef.Labels[labelsKey2].ValueString()
 
 			labels3[labelsKey2] = labelsInst2
 		}
 		mesh3 := new(string)
-		if !toItem.TargetRef.Mesh.IsUnknown() && !toItem.TargetRef.Mesh.IsNull() {
-			*mesh3 = toItem.TargetRef.Mesh.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Mesh.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Mesh.IsNull() {
+			*mesh3 = r.Spec.To[toIndex].TargetRef.Mesh.ValueString()
 		} else {
 			mesh3 = nil
 		}
 		name3 := new(string)
-		if !toItem.TargetRef.Name.IsUnknown() && !toItem.TargetRef.Name.IsNull() {
-			*name3 = toItem.TargetRef.Name.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Name.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Name.IsNull() {
+			*name3 = r.Spec.To[toIndex].TargetRef.Name.ValueString()
 		} else {
 			name3 = nil
 		}
 		namespace2 := new(string)
-		if !toItem.TargetRef.Namespace.IsUnknown() && !toItem.TargetRef.Namespace.IsNull() {
-			*namespace2 = toItem.TargetRef.Namespace.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Namespace.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Namespace.IsNull() {
+			*namespace2 = r.Spec.To[toIndex].TargetRef.Namespace.ValueString()
 		} else {
 			namespace2 = nil
 		}
-		proxyTypes2 := make([]shared.MeshAccessLogItemSpecProxyTypes, 0, len(toItem.TargetRef.ProxyTypes))
-		for _, proxyTypesItem2 := range toItem.TargetRef.ProxyTypes {
+		proxyTypes2 := make([]shared.MeshAccessLogItemSpecProxyTypes, 0, len(r.Spec.To[toIndex].TargetRef.ProxyTypes))
+		for _, proxyTypesItem2 := range r.Spec.To[toIndex].TargetRef.ProxyTypes {
 			proxyTypes2 = append(proxyTypes2, shared.MeshAccessLogItemSpecProxyTypes(proxyTypesItem2.ValueString()))
 		}
 		sectionName2 := new(string)
-		if !toItem.TargetRef.SectionName.IsUnknown() && !toItem.TargetRef.SectionName.IsNull() {
-			*sectionName2 = toItem.TargetRef.SectionName.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.SectionName.IsUnknown() && !r.Spec.To[toIndex].TargetRef.SectionName.IsNull() {
+			*sectionName2 = r.Spec.To[toIndex].TargetRef.SectionName.ValueString()
 		} else {
 			sectionName2 = nil
 		}
 		tags2 := make(map[string]string)
-		for tagsKey2, tagsValue2 := range toItem.TargetRef.Tags {
+		for tagsKey2 := range r.Spec.To[toIndex].TargetRef.Tags {
 			var tagsInst2 string
-			tagsInst2 = tagsValue2.ValueString()
+			tagsInst2 = r.Spec.To[toIndex].TargetRef.Tags[tagsKey2].ValueString()
 
 			tags2[tagsKey2] = tagsInst2
 		}

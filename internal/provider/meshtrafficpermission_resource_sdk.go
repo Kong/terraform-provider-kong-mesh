@@ -241,12 +241,12 @@ func (r *MeshTrafficPermissionResourceModel) ToSharedMeshTrafficPermissionItemIn
 		diags.Append(r.Labels.ElementsAs(ctx, &labels, true)...)
 	}
 	from := make([]shared.MeshTrafficPermissionItemFrom, 0, len(r.Spec.From))
-	for _, fromItem := range r.Spec.From {
+	for fromIndex := range r.Spec.From {
 		var defaultVar *shared.MeshTrafficPermissionItemDefault
-		if fromItem.Default != nil {
+		if r.Spec.From[fromIndex].Default != nil {
 			action := new(shared.Action)
-			if !fromItem.Default.Action.IsUnknown() && !fromItem.Default.Action.IsNull() {
-				*action = shared.Action(fromItem.Default.Action.ValueString())
+			if !r.Spec.From[fromIndex].Default.Action.IsUnknown() && !r.Spec.From[fromIndex].Default.Action.IsNull() {
+				*action = shared.Action(r.Spec.From[fromIndex].Default.Action.ValueString())
 			} else {
 				action = nil
 			}
@@ -254,46 +254,46 @@ func (r *MeshTrafficPermissionResourceModel) ToSharedMeshTrafficPermissionItemIn
 				Action: action,
 			}
 		}
-		kind := shared.MeshTrafficPermissionItemSpecKind(fromItem.TargetRef.Kind.ValueString())
+		kind := shared.MeshTrafficPermissionItemSpecKind(r.Spec.From[fromIndex].TargetRef.Kind.ValueString())
 		labels1 := make(map[string]string)
-		for labelsKey, labelsValue := range fromItem.TargetRef.Labels {
+		for labelsKey := range r.Spec.From[fromIndex].TargetRef.Labels {
 			var labelsInst string
-			labelsInst = labelsValue.ValueString()
+			labelsInst = r.Spec.From[fromIndex].TargetRef.Labels[labelsKey].ValueString()
 
 			labels1[labelsKey] = labelsInst
 		}
 		mesh1 := new(string)
-		if !fromItem.TargetRef.Mesh.IsUnknown() && !fromItem.TargetRef.Mesh.IsNull() {
-			*mesh1 = fromItem.TargetRef.Mesh.ValueString()
+		if !r.Spec.From[fromIndex].TargetRef.Mesh.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.Mesh.IsNull() {
+			*mesh1 = r.Spec.From[fromIndex].TargetRef.Mesh.ValueString()
 		} else {
 			mesh1 = nil
 		}
 		name1 := new(string)
-		if !fromItem.TargetRef.Name.IsUnknown() && !fromItem.TargetRef.Name.IsNull() {
-			*name1 = fromItem.TargetRef.Name.ValueString()
+		if !r.Spec.From[fromIndex].TargetRef.Name.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.Name.IsNull() {
+			*name1 = r.Spec.From[fromIndex].TargetRef.Name.ValueString()
 		} else {
 			name1 = nil
 		}
 		namespace := new(string)
-		if !fromItem.TargetRef.Namespace.IsUnknown() && !fromItem.TargetRef.Namespace.IsNull() {
-			*namespace = fromItem.TargetRef.Namespace.ValueString()
+		if !r.Spec.From[fromIndex].TargetRef.Namespace.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.Namespace.IsNull() {
+			*namespace = r.Spec.From[fromIndex].TargetRef.Namespace.ValueString()
 		} else {
 			namespace = nil
 		}
-		proxyTypes := make([]shared.MeshTrafficPermissionItemSpecProxyTypes, 0, len(fromItem.TargetRef.ProxyTypes))
-		for _, proxyTypesItem := range fromItem.TargetRef.ProxyTypes {
+		proxyTypes := make([]shared.MeshTrafficPermissionItemSpecProxyTypes, 0, len(r.Spec.From[fromIndex].TargetRef.ProxyTypes))
+		for _, proxyTypesItem := range r.Spec.From[fromIndex].TargetRef.ProxyTypes {
 			proxyTypes = append(proxyTypes, shared.MeshTrafficPermissionItemSpecProxyTypes(proxyTypesItem.ValueString()))
 		}
 		sectionName := new(string)
-		if !fromItem.TargetRef.SectionName.IsUnknown() && !fromItem.TargetRef.SectionName.IsNull() {
-			*sectionName = fromItem.TargetRef.SectionName.ValueString()
+		if !r.Spec.From[fromIndex].TargetRef.SectionName.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.SectionName.IsNull() {
+			*sectionName = r.Spec.From[fromIndex].TargetRef.SectionName.ValueString()
 		} else {
 			sectionName = nil
 		}
 		tags := make(map[string]string)
-		for tagsKey, tagsValue := range fromItem.TargetRef.Tags {
+		for tagsKey := range r.Spec.From[fromIndex].TargetRef.Tags {
 			var tagsInst string
-			tagsInst = tagsValue.ValueString()
+			tagsInst = r.Spec.From[fromIndex].TargetRef.Tags[tagsKey].ValueString()
 
 			tags[tagsKey] = tagsInst
 		}
@@ -313,14 +313,14 @@ func (r *MeshTrafficPermissionResourceModel) ToSharedMeshTrafficPermissionItemIn
 		})
 	}
 	rules := make([]shared.MeshTrafficPermissionItemRules, 0, len(r.Spec.Rules))
-	for _, rulesItem := range r.Spec.Rules {
-		allow := make([]shared.Allow, 0, len(rulesItem.Default.Allow))
-		for _, allowItem := range rulesItem.Default.Allow {
+	for rulesIndex := range r.Spec.Rules {
+		allow := make([]shared.Allow, 0, len(r.Spec.Rules[rulesIndex].Default.Allow))
+		for allowIndex := range r.Spec.Rules[rulesIndex].Default.Allow {
 			var spiffeID *shared.MeshTrafficPermissionItemSpiffeID
-			if allowItem.SpiffeID != nil {
-				typeVar1 := shared.MeshTrafficPermissionItemSpecType(allowItem.SpiffeID.Type.ValueString())
+			if r.Spec.Rules[rulesIndex].Default.Allow[allowIndex].SpiffeID != nil {
+				typeVar1 := shared.MeshTrafficPermissionItemSpecType(r.Spec.Rules[rulesIndex].Default.Allow[allowIndex].SpiffeID.Type.ValueString())
 				var value string
-				value = allowItem.SpiffeID.Value.ValueString()
+				value = r.Spec.Rules[rulesIndex].Default.Allow[allowIndex].SpiffeID.Value.ValueString()
 
 				spiffeID = &shared.MeshTrafficPermissionItemSpiffeID{
 					Type:  typeVar1,
@@ -331,13 +331,13 @@ func (r *MeshTrafficPermissionResourceModel) ToSharedMeshTrafficPermissionItemIn
 				SpiffeID: spiffeID,
 			})
 		}
-		allowWithShadowDeny := make([]shared.AllowWithShadowDeny, 0, len(rulesItem.Default.AllowWithShadowDeny))
-		for _, allowWithShadowDenyItem := range rulesItem.Default.AllowWithShadowDeny {
+		allowWithShadowDeny := make([]shared.AllowWithShadowDeny, 0, len(r.Spec.Rules[rulesIndex].Default.AllowWithShadowDeny))
+		for allowWithShadowDenyIndex := range r.Spec.Rules[rulesIndex].Default.AllowWithShadowDeny {
 			var spiffeId1 *shared.MeshTrafficPermissionItemSpecSpiffeID
-			if allowWithShadowDenyItem.SpiffeID != nil {
-				typeVar2 := shared.MeshTrafficPermissionItemSpecRulesType(allowWithShadowDenyItem.SpiffeID.Type.ValueString())
+			if r.Spec.Rules[rulesIndex].Default.AllowWithShadowDeny[allowWithShadowDenyIndex].SpiffeID != nil {
+				typeVar2 := shared.MeshTrafficPermissionItemSpecRulesType(r.Spec.Rules[rulesIndex].Default.AllowWithShadowDeny[allowWithShadowDenyIndex].SpiffeID.Type.ValueString())
 				var value1 string
-				value1 = allowWithShadowDenyItem.SpiffeID.Value.ValueString()
+				value1 = r.Spec.Rules[rulesIndex].Default.AllowWithShadowDeny[allowWithShadowDenyIndex].SpiffeID.Value.ValueString()
 
 				spiffeId1 = &shared.MeshTrafficPermissionItemSpecSpiffeID{
 					Type:  typeVar2,
@@ -348,13 +348,13 @@ func (r *MeshTrafficPermissionResourceModel) ToSharedMeshTrafficPermissionItemIn
 				SpiffeID: spiffeId1,
 			})
 		}
-		deny := make([]shared.Deny, 0, len(rulesItem.Default.Deny))
-		for _, denyItem := range rulesItem.Default.Deny {
+		deny := make([]shared.Deny, 0, len(r.Spec.Rules[rulesIndex].Default.Deny))
+		for denyIndex := range r.Spec.Rules[rulesIndex].Default.Deny {
 			var spiffeId2 *shared.MeshTrafficPermissionItemSpecRulesSpiffeID
-			if denyItem.SpiffeID != nil {
-				typeVar3 := shared.MeshTrafficPermissionItemSpecRulesDefaultType(denyItem.SpiffeID.Type.ValueString())
+			if r.Spec.Rules[rulesIndex].Default.Deny[denyIndex].SpiffeID != nil {
+				typeVar3 := shared.MeshTrafficPermissionItemSpecRulesDefaultType(r.Spec.Rules[rulesIndex].Default.Deny[denyIndex].SpiffeID.Type.ValueString())
 				var value2 string
-				value2 = denyItem.SpiffeID.Value.ValueString()
+				value2 = r.Spec.Rules[rulesIndex].Default.Deny[denyIndex].SpiffeID.Value.ValueString()
 
 				spiffeId2 = &shared.MeshTrafficPermissionItemSpecRulesSpiffeID{
 					Type:  typeVar3,
@@ -378,9 +378,9 @@ func (r *MeshTrafficPermissionResourceModel) ToSharedMeshTrafficPermissionItemIn
 	if r.Spec.TargetRef != nil {
 		kind1 := shared.MeshTrafficPermissionItemKind(r.Spec.TargetRef.Kind.ValueString())
 		labels2 := make(map[string]string)
-		for labelsKey1, labelsValue1 := range r.Spec.TargetRef.Labels {
+		for labelsKey1 := range r.Spec.TargetRef.Labels {
 			var labelsInst1 string
-			labelsInst1 = labelsValue1.ValueString()
+			labelsInst1 = r.Spec.TargetRef.Labels[labelsKey1].ValueString()
 
 			labels2[labelsKey1] = labelsInst1
 		}
@@ -413,9 +413,9 @@ func (r *MeshTrafficPermissionResourceModel) ToSharedMeshTrafficPermissionItemIn
 			sectionName1 = nil
 		}
 		tags1 := make(map[string]string)
-		for tagsKey1, tagsValue1 := range r.Spec.TargetRef.Tags {
+		for tagsKey1 := range r.Spec.TargetRef.Tags {
 			var tagsInst1 string
-			tagsInst1 = tagsValue1.ValueString()
+			tagsInst1 = r.Spec.TargetRef.Tags[tagsKey1].ValueString()
 
 			tags1[tagsKey1] = tagsInst1
 		}

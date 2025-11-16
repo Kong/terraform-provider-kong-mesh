@@ -414,9 +414,9 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.
 	if r.Spec.TargetRef != nil {
 		kind := shared.MeshHTTPRouteItemKind(r.Spec.TargetRef.Kind.ValueString())
 		labels1 := make(map[string]string)
-		for labelsKey, labelsValue := range r.Spec.TargetRef.Labels {
+		for labelsKey := range r.Spec.TargetRef.Labels {
 			var labelsInst string
-			labelsInst = labelsValue.ValueString()
+			labelsInst = r.Spec.TargetRef.Labels[labelsKey].ValueString()
 
 			labels1[labelsKey] = labelsInst
 		}
@@ -449,9 +449,9 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.
 			sectionName = nil
 		}
 		tags := make(map[string]string)
-		for tagsKey, tagsValue := range r.Spec.TargetRef.Tags {
+		for tagsKey := range r.Spec.TargetRef.Tags {
 			var tagsInst string
-			tagsInst = tagsValue.ValueString()
+			tagsInst = r.Spec.TargetRef.Tags[tagsKey].ValueString()
 
 			tags[tagsKey] = tagsInst
 		}
@@ -467,67 +467,67 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.
 		}
 	}
 	to := make([]shared.MeshHTTPRouteItemTo, 0, len(r.Spec.To))
-	for _, toItem := range r.Spec.To {
-		hostnames := make([]string, 0, len(toItem.Hostnames))
-		for _, hostnamesItem := range toItem.Hostnames {
-			hostnames = append(hostnames, hostnamesItem.ValueString())
+	for toIndex := range r.Spec.To {
+		hostnames := make([]string, 0, len(r.Spec.To[toIndex].Hostnames))
+		for hostnamesIndex := range r.Spec.To[toIndex].Hostnames {
+			hostnames = append(hostnames, r.Spec.To[toIndex].Hostnames[hostnamesIndex].ValueString())
 		}
-		rules := make([]shared.MeshHTTPRouteItemRules, 0, len(toItem.Rules))
-		for _, rulesItem := range toItem.Rules {
-			backendRefs := make([]shared.BackendRefs, 0, len(rulesItem.Default.BackendRefs))
-			for _, backendRefsItem := range rulesItem.Default.BackendRefs {
-				kind1 := shared.MeshHTTPRouteItemSpecToKind(backendRefsItem.Kind.ValueString())
+		rules := make([]shared.MeshHTTPRouteItemRules, 0, len(r.Spec.To[toIndex].Rules))
+		for rulesIndex := range r.Spec.To[toIndex].Rules {
+			backendRefs := make([]shared.BackendRefs, 0, len(r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs))
+			for backendRefsIndex := range r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs {
+				kind1 := shared.MeshHTTPRouteItemSpecToKind(r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Kind.ValueString())
 				labels2 := make(map[string]string)
-				for labelsKey1, labelsValue1 := range backendRefsItem.Labels {
+				for labelsKey1 := range r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Labels {
 					var labelsInst1 string
-					labelsInst1 = labelsValue1.ValueString()
+					labelsInst1 = r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Labels[labelsKey1].ValueString()
 
 					labels2[labelsKey1] = labelsInst1
 				}
 				mesh2 := new(string)
-				if !backendRefsItem.Mesh.IsUnknown() && !backendRefsItem.Mesh.IsNull() {
-					*mesh2 = backendRefsItem.Mesh.ValueString()
+				if !r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Mesh.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Mesh.IsNull() {
+					*mesh2 = r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Mesh.ValueString()
 				} else {
 					mesh2 = nil
 				}
 				name2 := new(string)
-				if !backendRefsItem.Name.IsUnknown() && !backendRefsItem.Name.IsNull() {
-					*name2 = backendRefsItem.Name.ValueString()
+				if !r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Name.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Name.IsNull() {
+					*name2 = r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Name.ValueString()
 				} else {
 					name2 = nil
 				}
 				namespace1 := new(string)
-				if !backendRefsItem.Namespace.IsUnknown() && !backendRefsItem.Namespace.IsNull() {
-					*namespace1 = backendRefsItem.Namespace.ValueString()
+				if !r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Namespace.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Namespace.IsNull() {
+					*namespace1 = r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Namespace.ValueString()
 				} else {
 					namespace1 = nil
 				}
 				port := new(int)
-				if !backendRefsItem.Port.IsUnknown() && !backendRefsItem.Port.IsNull() {
-					*port = int(backendRefsItem.Port.ValueInt32())
+				if !r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Port.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Port.IsNull() {
+					*port = int(r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Port.ValueInt32())
 				} else {
 					port = nil
 				}
-				proxyTypes1 := make([]shared.MeshHTTPRouteItemSpecToProxyTypes, 0, len(backendRefsItem.ProxyTypes))
-				for _, proxyTypesItem1 := range backendRefsItem.ProxyTypes {
+				proxyTypes1 := make([]shared.MeshHTTPRouteItemSpecToProxyTypes, 0, len(r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].ProxyTypes))
+				for _, proxyTypesItem1 := range r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].ProxyTypes {
 					proxyTypes1 = append(proxyTypes1, shared.MeshHTTPRouteItemSpecToProxyTypes(proxyTypesItem1.ValueString()))
 				}
 				sectionName1 := new(string)
-				if !backendRefsItem.SectionName.IsUnknown() && !backendRefsItem.SectionName.IsNull() {
-					*sectionName1 = backendRefsItem.SectionName.ValueString()
+				if !r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].SectionName.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].SectionName.IsNull() {
+					*sectionName1 = r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].SectionName.ValueString()
 				} else {
 					sectionName1 = nil
 				}
 				tags1 := make(map[string]string)
-				for tagsKey1, tagsValue1 := range backendRefsItem.Tags {
+				for tagsKey1 := range r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Tags {
 					var tagsInst1 string
-					tagsInst1 = tagsValue1.ValueString()
+					tagsInst1 = r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Tags[tagsKey1].ValueString()
 
 					tags1[tagsKey1] = tagsInst1
 				}
 				weight := new(int64)
-				if !backendRefsItem.Weight.IsUnknown() && !backendRefsItem.Weight.IsNull() {
-					*weight = backendRefsItem.Weight.ValueInt64()
+				if !r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Weight.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Weight.IsNull() {
+					*weight = r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].Weight.ValueInt64()
 				} else {
 					weight = nil
 				}
@@ -544,34 +544,34 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.
 					Weight:      weight,
 				})
 			}
-			filters := make([]shared.Filters, 0, len(rulesItem.Default.Filters))
-			for _, filtersItem := range rulesItem.Default.Filters {
+			filters := make([]shared.Filters, 0, len(r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters))
+			for filtersIndex := range r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters {
 				var requestHeaderModifier *shared.RequestHeaderModifier
-				if filtersItem.RequestHeaderModifier != nil {
-					add := make([]shared.MeshHTTPRouteItemAdd, 0, len(filtersItem.RequestHeaderModifier.Add))
-					for _, addItem := range filtersItem.RequestHeaderModifier.Add {
+				if r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestHeaderModifier != nil {
+					add := make([]shared.MeshHTTPRouteItemAdd, 0, len(r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestHeaderModifier.Add))
+					for addIndex := range r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestHeaderModifier.Add {
 						var name3 string
-						name3 = addItem.Name.ValueString()
+						name3 = r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestHeaderModifier.Add[addIndex].Name.ValueString()
 
 						var value string
-						value = addItem.Value.ValueString()
+						value = r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestHeaderModifier.Add[addIndex].Value.ValueString()
 
 						add = append(add, shared.MeshHTTPRouteItemAdd{
 							Name:  name3,
 							Value: value,
 						})
 					}
-					remove := make([]string, 0, len(filtersItem.RequestHeaderModifier.Remove))
-					for _, removeItem := range filtersItem.RequestHeaderModifier.Remove {
-						remove = append(remove, removeItem.ValueString())
+					remove := make([]string, 0, len(r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestHeaderModifier.Remove))
+					for removeIndex := range r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestHeaderModifier.Remove {
+						remove = append(remove, r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestHeaderModifier.Remove[removeIndex].ValueString())
 					}
-					set := make([]shared.MeshHTTPRouteItemSet, 0, len(filtersItem.RequestHeaderModifier.Set))
-					for _, setItem := range filtersItem.RequestHeaderModifier.Set {
+					set := make([]shared.MeshHTTPRouteItemSet, 0, len(r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestHeaderModifier.Set))
+					for setIndex := range r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestHeaderModifier.Set {
 						var name4 string
-						name4 = setItem.Name.ValueString()
+						name4 = r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestHeaderModifier.Set[setIndex].Name.ValueString()
 
 						var value1 string
-						value1 = setItem.Value.ValueString()
+						value1 = r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestHeaderModifier.Set[setIndex].Value.ValueString()
 
 						set = append(set, shared.MeshHTTPRouteItemSet{
 							Name:  name4,
@@ -585,59 +585,59 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.
 					}
 				}
 				var requestMirror *shared.RequestMirror
-				if filtersItem.RequestMirror != nil {
-					kind2 := shared.MeshHTTPRouteItemSpecToRulesKind(filtersItem.RequestMirror.BackendRef.Kind.ValueString())
+				if r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror != nil {
+					kind2 := shared.MeshHTTPRouteItemSpecToRulesKind(r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.Kind.ValueString())
 					labels3 := make(map[string]string)
-					for labelsKey2, labelsValue2 := range filtersItem.RequestMirror.BackendRef.Labels {
+					for labelsKey2 := range r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.Labels {
 						var labelsInst2 string
-						labelsInst2 = labelsValue2.ValueString()
+						labelsInst2 = r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.Labels[labelsKey2].ValueString()
 
 						labels3[labelsKey2] = labelsInst2
 					}
 					mesh3 := new(string)
-					if !filtersItem.RequestMirror.BackendRef.Mesh.IsUnknown() && !filtersItem.RequestMirror.BackendRef.Mesh.IsNull() {
-						*mesh3 = filtersItem.RequestMirror.BackendRef.Mesh.ValueString()
+					if !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.Mesh.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.Mesh.IsNull() {
+						*mesh3 = r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.Mesh.ValueString()
 					} else {
 						mesh3 = nil
 					}
 					name5 := new(string)
-					if !filtersItem.RequestMirror.BackendRef.Name.IsUnknown() && !filtersItem.RequestMirror.BackendRef.Name.IsNull() {
-						*name5 = filtersItem.RequestMirror.BackendRef.Name.ValueString()
+					if !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.Name.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.Name.IsNull() {
+						*name5 = r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.Name.ValueString()
 					} else {
 						name5 = nil
 					}
 					namespace2 := new(string)
-					if !filtersItem.RequestMirror.BackendRef.Namespace.IsUnknown() && !filtersItem.RequestMirror.BackendRef.Namespace.IsNull() {
-						*namespace2 = filtersItem.RequestMirror.BackendRef.Namespace.ValueString()
+					if !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.Namespace.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.Namespace.IsNull() {
+						*namespace2 = r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.Namespace.ValueString()
 					} else {
 						namespace2 = nil
 					}
 					port1 := new(int)
-					if !filtersItem.RequestMirror.BackendRef.Port.IsUnknown() && !filtersItem.RequestMirror.BackendRef.Port.IsNull() {
-						*port1 = int(filtersItem.RequestMirror.BackendRef.Port.ValueInt32())
+					if !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.Port.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.Port.IsNull() {
+						*port1 = int(r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.Port.ValueInt32())
 					} else {
 						port1 = nil
 					}
-					proxyTypes2 := make([]shared.MeshHTTPRouteItemSpecToRulesProxyTypes, 0, len(filtersItem.RequestMirror.BackendRef.ProxyTypes))
-					for _, proxyTypesItem2 := range filtersItem.RequestMirror.BackendRef.ProxyTypes {
+					proxyTypes2 := make([]shared.MeshHTTPRouteItemSpecToRulesProxyTypes, 0, len(r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.ProxyTypes))
+					for _, proxyTypesItem2 := range r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.ProxyTypes {
 						proxyTypes2 = append(proxyTypes2, shared.MeshHTTPRouteItemSpecToRulesProxyTypes(proxyTypesItem2.ValueString()))
 					}
 					sectionName2 := new(string)
-					if !filtersItem.RequestMirror.BackendRef.SectionName.IsUnknown() && !filtersItem.RequestMirror.BackendRef.SectionName.IsNull() {
-						*sectionName2 = filtersItem.RequestMirror.BackendRef.SectionName.ValueString()
+					if !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.SectionName.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.SectionName.IsNull() {
+						*sectionName2 = r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.SectionName.ValueString()
 					} else {
 						sectionName2 = nil
 					}
 					tags2 := make(map[string]string)
-					for tagsKey2, tagsValue2 := range filtersItem.RequestMirror.BackendRef.Tags {
+					for tagsKey2 := range r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.Tags {
 						var tagsInst2 string
-						tagsInst2 = tagsValue2.ValueString()
+						tagsInst2 = r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.Tags[tagsKey2].ValueString()
 
 						tags2[tagsKey2] = tagsInst2
 					}
 					weight1 := new(int64)
-					if !filtersItem.RequestMirror.BackendRef.Weight.IsUnknown() && !filtersItem.RequestMirror.BackendRef.Weight.IsNull() {
-						*weight1 = filtersItem.RequestMirror.BackendRef.Weight.ValueInt64()
+					if !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.Weight.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.Weight.IsNull() {
+						*weight1 = r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.Weight.ValueInt64()
 					} else {
 						weight1 = nil
 					}
@@ -654,10 +654,10 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.
 						Weight:      weight1,
 					}
 					var percentage *shared.MeshHTTPRouteItemPercentage
-					if filtersItem.RequestMirror.Percentage != nil {
+					if r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.Percentage != nil {
 						integer := new(int64)
-						if !filtersItem.RequestMirror.Percentage.Integer.IsUnknown() && !filtersItem.RequestMirror.Percentage.Integer.IsNull() {
-							*integer = filtersItem.RequestMirror.Percentage.Integer.ValueInt64()
+						if !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.Percentage.Integer.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.Percentage.Integer.IsNull() {
+							*integer = r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.Percentage.Integer.ValueInt64()
 						} else {
 							integer = nil
 						}
@@ -667,8 +667,8 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.
 							}
 						}
 						str := new(string)
-						if !filtersItem.RequestMirror.Percentage.Str.IsUnknown() && !filtersItem.RequestMirror.Percentage.Str.IsNull() {
-							*str = filtersItem.RequestMirror.Percentage.Str.ValueString()
+						if !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.Percentage.Str.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.Percentage.Str.IsNull() {
+							*str = r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.Percentage.Str.ValueString()
 						} else {
 							str = nil
 						}
@@ -684,28 +684,28 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.
 					}
 				}
 				var requestRedirect *shared.RequestRedirect
-				if filtersItem.RequestRedirect != nil {
+				if r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestRedirect != nil {
 					hostname := new(string)
-					if !filtersItem.RequestRedirect.Hostname.IsUnknown() && !filtersItem.RequestRedirect.Hostname.IsNull() {
-						*hostname = filtersItem.RequestRedirect.Hostname.ValueString()
+					if !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestRedirect.Hostname.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestRedirect.Hostname.IsNull() {
+						*hostname = r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestRedirect.Hostname.ValueString()
 					} else {
 						hostname = nil
 					}
 					var path *shared.MeshHTTPRouteItemSpecPath
-					if filtersItem.RequestRedirect.Path != nil {
+					if r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestRedirect.Path != nil {
 						replaceFullPath := new(string)
-						if !filtersItem.RequestRedirect.Path.ReplaceFullPath.IsUnknown() && !filtersItem.RequestRedirect.Path.ReplaceFullPath.IsNull() {
-							*replaceFullPath = filtersItem.RequestRedirect.Path.ReplaceFullPath.ValueString()
+						if !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestRedirect.Path.ReplaceFullPath.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestRedirect.Path.ReplaceFullPath.IsNull() {
+							*replaceFullPath = r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestRedirect.Path.ReplaceFullPath.ValueString()
 						} else {
 							replaceFullPath = nil
 						}
 						replacePrefixMatch := new(string)
-						if !filtersItem.RequestRedirect.Path.ReplacePrefixMatch.IsUnknown() && !filtersItem.RequestRedirect.Path.ReplacePrefixMatch.IsNull() {
-							*replacePrefixMatch = filtersItem.RequestRedirect.Path.ReplacePrefixMatch.ValueString()
+						if !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestRedirect.Path.ReplacePrefixMatch.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestRedirect.Path.ReplacePrefixMatch.IsNull() {
+							*replacePrefixMatch = r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestRedirect.Path.ReplacePrefixMatch.ValueString()
 						} else {
 							replacePrefixMatch = nil
 						}
-						typeVar1 := shared.MeshHTTPRouteItemSpecToRulesDefaultType(filtersItem.RequestRedirect.Path.Type.ValueString())
+						typeVar1 := shared.MeshHTTPRouteItemSpecToRulesDefaultType(r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestRedirect.Path.Type.ValueString())
 						path = &shared.MeshHTTPRouteItemSpecPath{
 							ReplaceFullPath:    replaceFullPath,
 							ReplacePrefixMatch: replacePrefixMatch,
@@ -713,20 +713,20 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.
 						}
 					}
 					port2 := new(int)
-					if !filtersItem.RequestRedirect.Port.IsUnknown() && !filtersItem.RequestRedirect.Port.IsNull() {
-						*port2 = int(filtersItem.RequestRedirect.Port.ValueInt32())
+					if !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestRedirect.Port.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestRedirect.Port.IsNull() {
+						*port2 = int(r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestRedirect.Port.ValueInt32())
 					} else {
 						port2 = nil
 					}
 					scheme := new(shared.Scheme)
-					if !filtersItem.RequestRedirect.Scheme.IsUnknown() && !filtersItem.RequestRedirect.Scheme.IsNull() {
-						*scheme = shared.Scheme(filtersItem.RequestRedirect.Scheme.ValueString())
+					if !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestRedirect.Scheme.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestRedirect.Scheme.IsNull() {
+						*scheme = shared.Scheme(r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestRedirect.Scheme.ValueString())
 					} else {
 						scheme = nil
 					}
 					statusCode := new(shared.StatusCode)
-					if !filtersItem.RequestRedirect.StatusCode.IsUnknown() && !filtersItem.RequestRedirect.StatusCode.IsNull() {
-						*statusCode = shared.StatusCode(filtersItem.RequestRedirect.StatusCode.ValueInt64())
+					if !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestRedirect.StatusCode.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestRedirect.StatusCode.IsNull() {
+						*statusCode = shared.StatusCode(r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestRedirect.StatusCode.ValueInt64())
 					} else {
 						statusCode = nil
 					}
@@ -739,31 +739,31 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.
 					}
 				}
 				var responseHeaderModifier *shared.ResponseHeaderModifier
-				if filtersItem.ResponseHeaderModifier != nil {
-					add1 := make([]shared.MeshHTTPRouteItemSpecAdd, 0, len(filtersItem.ResponseHeaderModifier.Add))
-					for _, addItem1 := range filtersItem.ResponseHeaderModifier.Add {
+				if r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].ResponseHeaderModifier != nil {
+					add1 := make([]shared.MeshHTTPRouteItemSpecAdd, 0, len(r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].ResponseHeaderModifier.Add))
+					for addIndex1 := range r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].ResponseHeaderModifier.Add {
 						var name6 string
-						name6 = addItem1.Name.ValueString()
+						name6 = r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].ResponseHeaderModifier.Add[addIndex1].Name.ValueString()
 
 						var value2 string
-						value2 = addItem1.Value.ValueString()
+						value2 = r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].ResponseHeaderModifier.Add[addIndex1].Value.ValueString()
 
 						add1 = append(add1, shared.MeshHTTPRouteItemSpecAdd{
 							Name:  name6,
 							Value: value2,
 						})
 					}
-					remove1 := make([]string, 0, len(filtersItem.ResponseHeaderModifier.Remove))
-					for _, removeItem1 := range filtersItem.ResponseHeaderModifier.Remove {
-						remove1 = append(remove1, removeItem1.ValueString())
+					remove1 := make([]string, 0, len(r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].ResponseHeaderModifier.Remove))
+					for removeIndex1 := range r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].ResponseHeaderModifier.Remove {
+						remove1 = append(remove1, r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].ResponseHeaderModifier.Remove[removeIndex1].ValueString())
 					}
-					set1 := make([]shared.MeshHTTPRouteItemSpecSet, 0, len(filtersItem.ResponseHeaderModifier.Set))
-					for _, setItem1 := range filtersItem.ResponseHeaderModifier.Set {
+					set1 := make([]shared.MeshHTTPRouteItemSpecSet, 0, len(r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].ResponseHeaderModifier.Set))
+					for setIndex1 := range r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].ResponseHeaderModifier.Set {
 						var name7 string
-						name7 = setItem1.Name.ValueString()
+						name7 = r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].ResponseHeaderModifier.Set[setIndex1].Name.ValueString()
 
 						var value3 string
-						value3 = setItem1.Value.ValueString()
+						value3 = r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].ResponseHeaderModifier.Set[setIndex1].Value.ValueString()
 
 						set1 = append(set1, shared.MeshHTTPRouteItemSpecSet{
 							Name:  name7,
@@ -776,36 +776,36 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.
 						Set:    set1,
 					}
 				}
-				type1 := shared.MeshHTTPRouteItemSpecType(filtersItem.Type.ValueString())
+				type1 := shared.MeshHTTPRouteItemSpecType(r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].Type.ValueString())
 				var urlRewrite *shared.URLRewrite
-				if filtersItem.URLRewrite != nil {
+				if r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].URLRewrite != nil {
 					hostToBackendHostname := new(bool)
-					if !filtersItem.URLRewrite.HostToBackendHostname.IsUnknown() && !filtersItem.URLRewrite.HostToBackendHostname.IsNull() {
-						*hostToBackendHostname = filtersItem.URLRewrite.HostToBackendHostname.ValueBool()
+					if !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].URLRewrite.HostToBackendHostname.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].URLRewrite.HostToBackendHostname.IsNull() {
+						*hostToBackendHostname = r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].URLRewrite.HostToBackendHostname.ValueBool()
 					} else {
 						hostToBackendHostname = nil
 					}
 					hostname1 := new(string)
-					if !filtersItem.URLRewrite.Hostname.IsUnknown() && !filtersItem.URLRewrite.Hostname.IsNull() {
-						*hostname1 = filtersItem.URLRewrite.Hostname.ValueString()
+					if !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].URLRewrite.Hostname.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].URLRewrite.Hostname.IsNull() {
+						*hostname1 = r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].URLRewrite.Hostname.ValueString()
 					} else {
 						hostname1 = nil
 					}
 					var path1 *shared.MeshHTTPRouteItemPath
-					if filtersItem.URLRewrite.Path != nil {
+					if r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].URLRewrite.Path != nil {
 						replaceFullPath1 := new(string)
-						if !filtersItem.URLRewrite.Path.ReplaceFullPath.IsUnknown() && !filtersItem.URLRewrite.Path.ReplaceFullPath.IsNull() {
-							*replaceFullPath1 = filtersItem.URLRewrite.Path.ReplaceFullPath.ValueString()
+						if !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].URLRewrite.Path.ReplaceFullPath.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].URLRewrite.Path.ReplaceFullPath.IsNull() {
+							*replaceFullPath1 = r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].URLRewrite.Path.ReplaceFullPath.ValueString()
 						} else {
 							replaceFullPath1 = nil
 						}
 						replacePrefixMatch1 := new(string)
-						if !filtersItem.URLRewrite.Path.ReplacePrefixMatch.IsUnknown() && !filtersItem.URLRewrite.Path.ReplacePrefixMatch.IsNull() {
-							*replacePrefixMatch1 = filtersItem.URLRewrite.Path.ReplacePrefixMatch.ValueString()
+						if !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].URLRewrite.Path.ReplacePrefixMatch.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].URLRewrite.Path.ReplacePrefixMatch.IsNull() {
+							*replacePrefixMatch1 = r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].URLRewrite.Path.ReplacePrefixMatch.ValueString()
 						} else {
 							replacePrefixMatch1 = nil
 						}
-						typeVar2 := shared.MeshHTTPRouteItemSpecToRulesDefaultFiltersType(filtersItem.URLRewrite.Path.Type.ValueString())
+						typeVar2 := shared.MeshHTTPRouteItemSpecToRulesDefaultFiltersType(r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].URLRewrite.Path.Type.ValueString())
 						path1 = &shared.MeshHTTPRouteItemPath{
 							ReplaceFullPath:    replaceFullPath1,
 							ReplacePrefixMatch: replacePrefixMatch1,
@@ -831,22 +831,22 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.
 				BackendRefs: backendRefs,
 				Filters:     filters,
 			}
-			matches := make([]shared.MeshHTTPRouteItemMatches, 0, len(rulesItem.Matches))
-			for _, matchesItem := range rulesItem.Matches {
-				headers := make([]shared.Headers, 0, len(matchesItem.Headers))
-				for _, headersItem := range matchesItem.Headers {
+			matches := make([]shared.MeshHTTPRouteItemMatches, 0, len(r.Spec.To[toIndex].Rules[rulesIndex].Matches))
+			for matchesIndex := range r.Spec.To[toIndex].Rules[rulesIndex].Matches {
+				headers := make([]shared.Headers, 0, len(r.Spec.To[toIndex].Rules[rulesIndex].Matches[matchesIndex].Headers))
+				for headersIndex := range r.Spec.To[toIndex].Rules[rulesIndex].Matches[matchesIndex].Headers {
 					var name8 string
-					name8 = headersItem.Name.ValueString()
+					name8 = r.Spec.To[toIndex].Rules[rulesIndex].Matches[matchesIndex].Headers[headersIndex].Name.ValueString()
 
 					type2 := new(shared.MeshHTTPRouteItemSpecToType)
-					if !headersItem.Type.IsUnknown() && !headersItem.Type.IsNull() {
-						*type2 = shared.MeshHTTPRouteItemSpecToType(headersItem.Type.ValueString())
+					if !r.Spec.To[toIndex].Rules[rulesIndex].Matches[matchesIndex].Headers[headersIndex].Type.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Matches[matchesIndex].Headers[headersIndex].Type.IsNull() {
+						*type2 = shared.MeshHTTPRouteItemSpecToType(r.Spec.To[toIndex].Rules[rulesIndex].Matches[matchesIndex].Headers[headersIndex].Type.ValueString())
 					} else {
 						type2 = nil
 					}
 					value4 := new(string)
-					if !headersItem.Value.IsUnknown() && !headersItem.Value.IsNull() {
-						*value4 = headersItem.Value.ValueString()
+					if !r.Spec.To[toIndex].Rules[rulesIndex].Matches[matchesIndex].Headers[headersIndex].Value.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Matches[matchesIndex].Headers[headersIndex].Value.IsNull() {
+						*value4 = r.Spec.To[toIndex].Rules[rulesIndex].Matches[matchesIndex].Headers[headersIndex].Value.ValueString()
 					} else {
 						value4 = nil
 					}
@@ -857,30 +857,30 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.
 					})
 				}
 				method := new(shared.Method)
-				if !matchesItem.Method.IsUnknown() && !matchesItem.Method.IsNull() {
-					*method = shared.Method(matchesItem.Method.ValueString())
+				if !r.Spec.To[toIndex].Rules[rulesIndex].Matches[matchesIndex].Method.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Matches[matchesIndex].Method.IsNull() {
+					*method = shared.Method(r.Spec.To[toIndex].Rules[rulesIndex].Matches[matchesIndex].Method.ValueString())
 				} else {
 					method = nil
 				}
 				var path2 *shared.Path
-				if matchesItem.Path != nil {
-					typeVar3 := shared.MeshHTTPRouteItemSpecToRulesType(matchesItem.Path.Type.ValueString())
+				if r.Spec.To[toIndex].Rules[rulesIndex].Matches[matchesIndex].Path != nil {
+					typeVar3 := shared.MeshHTTPRouteItemSpecToRulesType(r.Spec.To[toIndex].Rules[rulesIndex].Matches[matchesIndex].Path.Type.ValueString())
 					var value5 string
-					value5 = matchesItem.Path.Value.ValueString()
+					value5 = r.Spec.To[toIndex].Rules[rulesIndex].Matches[matchesIndex].Path.Value.ValueString()
 
 					path2 = &shared.Path{
 						Type:  typeVar3,
 						Value: value5,
 					}
 				}
-				queryParams := make([]shared.QueryParams, 0, len(matchesItem.QueryParams))
-				for _, queryParamsItem := range matchesItem.QueryParams {
+				queryParams := make([]shared.QueryParams, 0, len(r.Spec.To[toIndex].Rules[rulesIndex].Matches[matchesIndex].QueryParams))
+				for queryParamsIndex := range r.Spec.To[toIndex].Rules[rulesIndex].Matches[matchesIndex].QueryParams {
 					var name9 string
-					name9 = queryParamsItem.Name.ValueString()
+					name9 = r.Spec.To[toIndex].Rules[rulesIndex].Matches[matchesIndex].QueryParams[queryParamsIndex].Name.ValueString()
 
-					type3 := shared.MeshHTTPRouteItemSpecToRulesMatchesType(queryParamsItem.Type.ValueString())
+					type3 := shared.MeshHTTPRouteItemSpecToRulesMatchesType(r.Spec.To[toIndex].Rules[rulesIndex].Matches[matchesIndex].QueryParams[queryParamsIndex].Type.ValueString())
 					var value6 string
-					value6 = queryParamsItem.Value.ValueString()
+					value6 = r.Spec.To[toIndex].Rules[rulesIndex].Matches[matchesIndex].QueryParams[queryParamsIndex].Value.ValueString()
 
 					queryParams = append(queryParams, shared.QueryParams{
 						Name:  name9,
@@ -900,46 +900,46 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.
 				Matches: matches,
 			})
 		}
-		kind3 := shared.MeshHTTPRouteItemSpecKind(toItem.TargetRef.Kind.ValueString())
+		kind3 := shared.MeshHTTPRouteItemSpecKind(r.Spec.To[toIndex].TargetRef.Kind.ValueString())
 		labels4 := make(map[string]string)
-		for labelsKey3, labelsValue3 := range toItem.TargetRef.Labels {
+		for labelsKey3 := range r.Spec.To[toIndex].TargetRef.Labels {
 			var labelsInst3 string
-			labelsInst3 = labelsValue3.ValueString()
+			labelsInst3 = r.Spec.To[toIndex].TargetRef.Labels[labelsKey3].ValueString()
 
 			labels4[labelsKey3] = labelsInst3
 		}
 		mesh4 := new(string)
-		if !toItem.TargetRef.Mesh.IsUnknown() && !toItem.TargetRef.Mesh.IsNull() {
-			*mesh4 = toItem.TargetRef.Mesh.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Mesh.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Mesh.IsNull() {
+			*mesh4 = r.Spec.To[toIndex].TargetRef.Mesh.ValueString()
 		} else {
 			mesh4 = nil
 		}
 		name10 := new(string)
-		if !toItem.TargetRef.Name.IsUnknown() && !toItem.TargetRef.Name.IsNull() {
-			*name10 = toItem.TargetRef.Name.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Name.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Name.IsNull() {
+			*name10 = r.Spec.To[toIndex].TargetRef.Name.ValueString()
 		} else {
 			name10 = nil
 		}
 		namespace3 := new(string)
-		if !toItem.TargetRef.Namespace.IsUnknown() && !toItem.TargetRef.Namespace.IsNull() {
-			*namespace3 = toItem.TargetRef.Namespace.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Namespace.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Namespace.IsNull() {
+			*namespace3 = r.Spec.To[toIndex].TargetRef.Namespace.ValueString()
 		} else {
 			namespace3 = nil
 		}
-		proxyTypes3 := make([]shared.MeshHTTPRouteItemSpecProxyTypes, 0, len(toItem.TargetRef.ProxyTypes))
-		for _, proxyTypesItem3 := range toItem.TargetRef.ProxyTypes {
+		proxyTypes3 := make([]shared.MeshHTTPRouteItemSpecProxyTypes, 0, len(r.Spec.To[toIndex].TargetRef.ProxyTypes))
+		for _, proxyTypesItem3 := range r.Spec.To[toIndex].TargetRef.ProxyTypes {
 			proxyTypes3 = append(proxyTypes3, shared.MeshHTTPRouteItemSpecProxyTypes(proxyTypesItem3.ValueString()))
 		}
 		sectionName3 := new(string)
-		if !toItem.TargetRef.SectionName.IsUnknown() && !toItem.TargetRef.SectionName.IsNull() {
-			*sectionName3 = toItem.TargetRef.SectionName.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.SectionName.IsUnknown() && !r.Spec.To[toIndex].TargetRef.SectionName.IsNull() {
+			*sectionName3 = r.Spec.To[toIndex].TargetRef.SectionName.ValueString()
 		} else {
 			sectionName3 = nil
 		}
 		tags3 := make(map[string]string)
-		for tagsKey3, tagsValue3 := range toItem.TargetRef.Tags {
+		for tagsKey3 := range r.Spec.To[toIndex].TargetRef.Tags {
 			var tagsInst3 string
-			tagsInst3 = tagsValue3.ValueString()
+			tagsInst3 = r.Spec.To[toIndex].TargetRef.Tags[tagsKey3].ValueString()
 
 			tags3[tagsKey3] = tagsInst3
 		}

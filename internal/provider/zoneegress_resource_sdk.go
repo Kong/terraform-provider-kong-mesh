@@ -106,9 +106,9 @@ func (r *ZoneEgressResourceModel) ToSharedZoneEgressItem(ctx context.Context) (*
 	var diags diag.Diagnostics
 
 	labels := make(map[string]string)
-	for labelsKey, labelsValue := range r.Labels {
+	for labelsKey := range r.Labels {
 		var labelsInst string
-		labelsInst = labelsValue.ValueString()
+		labelsInst = r.Labels[labelsKey].ValueString()
 
 		labels[labelsKey] = labelsInst
 	}

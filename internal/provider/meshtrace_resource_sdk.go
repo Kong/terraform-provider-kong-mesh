@@ -240,17 +240,17 @@ func (r *MeshTraceResourceModel) ToSharedMeshTraceItemInput(ctx context.Context)
 	var defaultVar *shared.MeshTraceItemDefault
 	if r.Spec.Default != nil {
 		backends := make([]shared.MeshTraceItemBackends, 0, len(r.Spec.Default.Backends))
-		for _, backendsItem := range r.Spec.Default.Backends {
+		for backendsIndex := range r.Spec.Default.Backends {
 			var datadog *shared.Datadog
-			if backendsItem.Datadog != nil {
+			if r.Spec.Default.Backends[backendsIndex].Datadog != nil {
 				splitService := new(bool)
-				if !backendsItem.Datadog.SplitService.IsUnknown() && !backendsItem.Datadog.SplitService.IsNull() {
-					*splitService = backendsItem.Datadog.SplitService.ValueBool()
+				if !r.Spec.Default.Backends[backendsIndex].Datadog.SplitService.IsUnknown() && !r.Spec.Default.Backends[backendsIndex].Datadog.SplitService.IsNull() {
+					*splitService = r.Spec.Default.Backends[backendsIndex].Datadog.SplitService.ValueBool()
 				} else {
 					splitService = nil
 				}
 				var url string
-				url = backendsItem.Datadog.URL.ValueString()
+				url = r.Spec.Default.Backends[backendsIndex].Datadog.URL.ValueString()
 
 				datadog = &shared.Datadog{
 					SplitService: splitService,
@@ -258,37 +258,37 @@ func (r *MeshTraceResourceModel) ToSharedMeshTraceItemInput(ctx context.Context)
 				}
 			}
 			var openTelemetry *shared.MeshTraceItemOpenTelemetry
-			if backendsItem.OpenTelemetry != nil {
+			if r.Spec.Default.Backends[backendsIndex].OpenTelemetry != nil {
 				var endpoint string
-				endpoint = backendsItem.OpenTelemetry.Endpoint.ValueString()
+				endpoint = r.Spec.Default.Backends[backendsIndex].OpenTelemetry.Endpoint.ValueString()
 
 				openTelemetry = &shared.MeshTraceItemOpenTelemetry{
 					Endpoint: endpoint,
 				}
 			}
-			type1 := shared.MeshTraceItemSpecType(backendsItem.Type.ValueString())
+			type1 := shared.MeshTraceItemSpecType(r.Spec.Default.Backends[backendsIndex].Type.ValueString())
 			var zipkin *shared.Zipkin
-			if backendsItem.Zipkin != nil {
+			if r.Spec.Default.Backends[backendsIndex].Zipkin != nil {
 				apiVersion := new(shared.APIVersion)
-				if !backendsItem.Zipkin.APIVersion.IsUnknown() && !backendsItem.Zipkin.APIVersion.IsNull() {
-					*apiVersion = shared.APIVersion(backendsItem.Zipkin.APIVersion.ValueString())
+				if !r.Spec.Default.Backends[backendsIndex].Zipkin.APIVersion.IsUnknown() && !r.Spec.Default.Backends[backendsIndex].Zipkin.APIVersion.IsNull() {
+					*apiVersion = shared.APIVersion(r.Spec.Default.Backends[backendsIndex].Zipkin.APIVersion.ValueString())
 				} else {
 					apiVersion = nil
 				}
 				sharedSpanContext := new(bool)
-				if !backendsItem.Zipkin.SharedSpanContext.IsUnknown() && !backendsItem.Zipkin.SharedSpanContext.IsNull() {
-					*sharedSpanContext = backendsItem.Zipkin.SharedSpanContext.ValueBool()
+				if !r.Spec.Default.Backends[backendsIndex].Zipkin.SharedSpanContext.IsUnknown() && !r.Spec.Default.Backends[backendsIndex].Zipkin.SharedSpanContext.IsNull() {
+					*sharedSpanContext = r.Spec.Default.Backends[backendsIndex].Zipkin.SharedSpanContext.ValueBool()
 				} else {
 					sharedSpanContext = nil
 				}
 				traceId128bit := new(bool)
-				if !backendsItem.Zipkin.TraceId128bit.IsUnknown() && !backendsItem.Zipkin.TraceId128bit.IsNull() {
-					*traceId128bit = backendsItem.Zipkin.TraceId128bit.ValueBool()
+				if !r.Spec.Default.Backends[backendsIndex].Zipkin.TraceId128bit.IsUnknown() && !r.Spec.Default.Backends[backendsIndex].Zipkin.TraceId128bit.IsNull() {
+					*traceId128bit = r.Spec.Default.Backends[backendsIndex].Zipkin.TraceId128bit.ValueBool()
 				} else {
 					traceId128bit = nil
 				}
 				var url1 string
-				url1 = backendsItem.Zipkin.URL.ValueString()
+				url1 = r.Spec.Default.Backends[backendsIndex].Zipkin.URL.ValueString()
 
 				zipkin = &shared.Zipkin{
 					APIVersion:        apiVersion,
@@ -388,17 +388,17 @@ func (r *MeshTraceResourceModel) ToSharedMeshTraceItemInput(ctx context.Context)
 			}
 		}
 		tags := make([]shared.Tags, 0, len(r.Spec.Default.Tags))
-		for _, tagsItem := range r.Spec.Default.Tags {
+		for tagsIndex := range r.Spec.Default.Tags {
 			var header *shared.Header
-			if tagsItem.Header != nil {
+			if r.Spec.Default.Tags[tagsIndex].Header != nil {
 				defaultVar1 := new(string)
-				if !tagsItem.Header.Default.IsUnknown() && !tagsItem.Header.Default.IsNull() {
-					*defaultVar1 = tagsItem.Header.Default.ValueString()
+				if !r.Spec.Default.Tags[tagsIndex].Header.Default.IsUnknown() && !r.Spec.Default.Tags[tagsIndex].Header.Default.IsNull() {
+					*defaultVar1 = r.Spec.Default.Tags[tagsIndex].Header.Default.ValueString()
 				} else {
 					defaultVar1 = nil
 				}
 				var name1 string
-				name1 = tagsItem.Header.Name.ValueString()
+				name1 = r.Spec.Default.Tags[tagsIndex].Header.Name.ValueString()
 
 				header = &shared.Header{
 					Default: defaultVar1,
@@ -406,13 +406,13 @@ func (r *MeshTraceResourceModel) ToSharedMeshTraceItemInput(ctx context.Context)
 				}
 			}
 			literal := new(string)
-			if !tagsItem.Literal.IsUnknown() && !tagsItem.Literal.IsNull() {
-				*literal = tagsItem.Literal.ValueString()
+			if !r.Spec.Default.Tags[tagsIndex].Literal.IsUnknown() && !r.Spec.Default.Tags[tagsIndex].Literal.IsNull() {
+				*literal = r.Spec.Default.Tags[tagsIndex].Literal.ValueString()
 			} else {
 				literal = nil
 			}
 			var name2 string
-			name2 = tagsItem.Name.ValueString()
+			name2 = r.Spec.Default.Tags[tagsIndex].Name.ValueString()
 
 			tags = append(tags, shared.Tags{
 				Header:  header,
@@ -430,9 +430,9 @@ func (r *MeshTraceResourceModel) ToSharedMeshTraceItemInput(ctx context.Context)
 	if r.Spec.TargetRef != nil {
 		kind := shared.MeshTraceItemKind(r.Spec.TargetRef.Kind.ValueString())
 		labels1 := make(map[string]string)
-		for labelsKey, labelsValue := range r.Spec.TargetRef.Labels {
+		for labelsKey := range r.Spec.TargetRef.Labels {
 			var labelsInst string
-			labelsInst = labelsValue.ValueString()
+			labelsInst = r.Spec.TargetRef.Labels[labelsKey].ValueString()
 
 			labels1[labelsKey] = labelsInst
 		}
@@ -465,9 +465,9 @@ func (r *MeshTraceResourceModel) ToSharedMeshTraceItemInput(ctx context.Context)
 			sectionName = nil
 		}
 		tags1 := make(map[string]string)
-		for tagsKey, tagsValue := range r.Spec.TargetRef.Tags {
+		for tagsKey := range r.Spec.TargetRef.Tags {
 			var tagsInst string
-			tagsInst = tagsValue.ValueString()
+			tagsInst = r.Spec.TargetRef.Tags[tagsKey].ValueString()
 
 			tags1[tagsKey] = tagsInst
 		}

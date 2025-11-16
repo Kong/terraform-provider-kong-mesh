@@ -1,11 +1,11 @@
-speakeasyVersion: 1.642.1
+speakeasyVersion: 1.657.0
 sources: {}
 targets:
     terraform:
         source: kong-mesh
 workflow:
     workflowVersion: 1.0.0
-    speakeasyVersion: 1.642.1
+    speakeasyVersion: 1.657.0
     sources:
         kong-mesh:
             inputs:

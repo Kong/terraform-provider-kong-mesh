@@ -363,24 +363,24 @@ func (r *MeshGlobalRateLimitResourceModel) ToSharedMeshGlobalRateLimitItemInput(
 		diags.Append(r.Labels.ElementsAs(ctx, &labels, true)...)
 	}
 	from := make([]shared.MeshGlobalRateLimitItemFrom, 0, len(r.Spec.From))
-	for _, fromItem := range r.Spec.From {
+	for fromIndex := range r.Spec.From {
 		var defaultVar *shared.MeshGlobalRateLimitItemDefault
-		if fromItem.Default != nil {
+		if r.Spec.From[fromIndex].Default != nil {
 			limitOnServiceFail := new(bool)
-			if !fromItem.Default.Backend.RateLimitService.LimitOnServiceFail.IsUnknown() && !fromItem.Default.Backend.RateLimitService.LimitOnServiceFail.IsNull() {
-				*limitOnServiceFail = fromItem.Default.Backend.RateLimitService.LimitOnServiceFail.ValueBool()
+			if !r.Spec.From[fromIndex].Default.Backend.RateLimitService.LimitOnServiceFail.IsUnknown() && !r.Spec.From[fromIndex].Default.Backend.RateLimitService.LimitOnServiceFail.IsNull() {
+				*limitOnServiceFail = r.Spec.From[fromIndex].Default.Backend.RateLimitService.LimitOnServiceFail.ValueBool()
 			} else {
 				limitOnServiceFail = nil
 			}
 			timeout := new(string)
-			if !fromItem.Default.Backend.RateLimitService.Timeout.IsUnknown() && !fromItem.Default.Backend.RateLimitService.Timeout.IsNull() {
-				*timeout = fromItem.Default.Backend.RateLimitService.Timeout.ValueString()
+			if !r.Spec.From[fromIndex].Default.Backend.RateLimitService.Timeout.IsUnknown() && !r.Spec.From[fromIndex].Default.Backend.RateLimitService.Timeout.IsNull() {
+				*timeout = r.Spec.From[fromIndex].Default.Backend.RateLimitService.Timeout.ValueString()
 			} else {
 				timeout = nil
 			}
 			url := new(string)
-			if !fromItem.Default.Backend.RateLimitService.URL.IsUnknown() && !fromItem.Default.Backend.RateLimitService.URL.IsNull() {
-				*url = fromItem.Default.Backend.RateLimitService.URL.ValueString()
+			if !r.Spec.From[fromIndex].Default.Backend.RateLimitService.URL.IsUnknown() && !r.Spec.From[fromIndex].Default.Backend.RateLimitService.URL.IsNull() {
+				*url = r.Spec.From[fromIndex].Default.Backend.RateLimitService.URL.ValueString()
 			} else {
 				url = nil
 			}
@@ -393,35 +393,35 @@ func (r *MeshGlobalRateLimitResourceModel) ToSharedMeshGlobalRateLimitItemInput(
 				RateLimitService: rateLimitService,
 			}
 			disabled := new(bool)
-			if !fromItem.Default.HTTP.Disabled.IsUnknown() && !fromItem.Default.HTTP.Disabled.IsNull() {
-				*disabled = fromItem.Default.HTTP.Disabled.ValueBool()
+			if !r.Spec.From[fromIndex].Default.HTTP.Disabled.IsUnknown() && !r.Spec.From[fromIndex].Default.HTTP.Disabled.IsNull() {
+				*disabled = r.Spec.From[fromIndex].Default.HTTP.Disabled.ValueBool()
 			} else {
 				disabled = nil
 			}
 			var onRateLimit *shared.OnRateLimit
-			if fromItem.Default.HTTP.OnRateLimit != nil {
+			if r.Spec.From[fromIndex].Default.HTTP.OnRateLimit != nil {
 				var headers *shared.MeshGlobalRateLimitItemHeaders
-				if fromItem.Default.HTTP.OnRateLimit.Headers != nil {
-					add := make([]shared.MeshGlobalRateLimitItemAdd, 0, len(fromItem.Default.HTTP.OnRateLimit.Headers.Add))
-					for _, addItem := range fromItem.Default.HTTP.OnRateLimit.Headers.Add {
+				if r.Spec.From[fromIndex].Default.HTTP.OnRateLimit.Headers != nil {
+					add := make([]shared.MeshGlobalRateLimitItemAdd, 0, len(r.Spec.From[fromIndex].Default.HTTP.OnRateLimit.Headers.Add))
+					for addIndex := range r.Spec.From[fromIndex].Default.HTTP.OnRateLimit.Headers.Add {
 						var name1 string
-						name1 = addItem.Name.ValueString()
+						name1 = r.Spec.From[fromIndex].Default.HTTP.OnRateLimit.Headers.Add[addIndex].Name.ValueString()
 
 						var value string
-						value = addItem.Value.ValueString()
+						value = r.Spec.From[fromIndex].Default.HTTP.OnRateLimit.Headers.Add[addIndex].Value.ValueString()
 
 						add = append(add, shared.MeshGlobalRateLimitItemAdd{
 							Name:  name1,
 							Value: value,
 						})
 					}
-					set := make([]shared.MeshGlobalRateLimitItemSet, 0, len(fromItem.Default.HTTP.OnRateLimit.Headers.Set))
-					for _, setItem := range fromItem.Default.HTTP.OnRateLimit.Headers.Set {
+					set := make([]shared.MeshGlobalRateLimitItemSet, 0, len(r.Spec.From[fromIndex].Default.HTTP.OnRateLimit.Headers.Set))
+					for setIndex := range r.Spec.From[fromIndex].Default.HTTP.OnRateLimit.Headers.Set {
 						var name2 string
-						name2 = setItem.Name.ValueString()
+						name2 = r.Spec.From[fromIndex].Default.HTTP.OnRateLimit.Headers.Set[setIndex].Name.ValueString()
 
 						var value1 string
-						value1 = setItem.Value.ValueString()
+						value1 = r.Spec.From[fromIndex].Default.HTTP.OnRateLimit.Headers.Set[setIndex].Value.ValueString()
 
 						set = append(set, shared.MeshGlobalRateLimitItemSet{
 							Name:  name2,
@@ -434,8 +434,8 @@ func (r *MeshGlobalRateLimitResourceModel) ToSharedMeshGlobalRateLimitItemInput(
 					}
 				}
 				status := new(int)
-				if !fromItem.Default.HTTP.OnRateLimit.Status.IsUnknown() && !fromItem.Default.HTTP.OnRateLimit.Status.IsNull() {
-					*status = int(fromItem.Default.HTTP.OnRateLimit.Status.ValueInt32())
+				if !r.Spec.From[fromIndex].Default.HTTP.OnRateLimit.Status.IsUnknown() && !r.Spec.From[fromIndex].Default.HTTP.OnRateLimit.Status.IsNull() {
+					*status = int(r.Spec.From[fromIndex].Default.HTTP.OnRateLimit.Status.ValueInt32())
 				} else {
 					status = nil
 				}
@@ -444,18 +444,18 @@ func (r *MeshGlobalRateLimitResourceModel) ToSharedMeshGlobalRateLimitItemInput(
 					Status:  status,
 				}
 			}
-			ratelimitOnRequest := make([]shared.RatelimitOnRequest, 0, len(fromItem.Default.HTTP.RatelimitOnRequest))
-			for _, ratelimitOnRequestItem := range fromItem.Default.HTTP.RatelimitOnRequest {
-				kind := shared.MeshGlobalRateLimitItemSpecFromKind(ratelimitOnRequestItem.Kind.ValueString())
-				limits := make([]shared.Limits, 0, len(ratelimitOnRequestItem.Limits))
-				for _, limitsItem := range ratelimitOnRequestItem.Limits {
+			ratelimitOnRequest := make([]shared.RatelimitOnRequest, 0, len(r.Spec.From[fromIndex].Default.HTTP.RatelimitOnRequest))
+			for ratelimitOnRequestIndex := range r.Spec.From[fromIndex].Default.HTTP.RatelimitOnRequest {
+				kind := shared.MeshGlobalRateLimitItemSpecFromKind(r.Spec.From[fromIndex].Default.HTTP.RatelimitOnRequest[ratelimitOnRequestIndex].Kind.ValueString())
+				limits := make([]shared.Limits, 0, len(r.Spec.From[fromIndex].Default.HTTP.RatelimitOnRequest[ratelimitOnRequestIndex].Limits))
+				for limitsIndex := range r.Spec.From[fromIndex].Default.HTTP.RatelimitOnRequest[ratelimitOnRequestIndex].Limits {
 					var requestRate *shared.MeshGlobalRateLimitItemSpecFromRequestRate
-					if limitsItem.RequestRate != nil {
+					if r.Spec.From[fromIndex].Default.HTTP.RatelimitOnRequest[ratelimitOnRequestIndex].Limits[limitsIndex].RequestRate != nil {
 						var interval string
-						interval = limitsItem.RequestRate.Interval.ValueString()
+						interval = r.Spec.From[fromIndex].Default.HTTP.RatelimitOnRequest[ratelimitOnRequestIndex].Limits[limitsIndex].RequestRate.Interval.ValueString()
 
 						var num int
-						num = int(limitsItem.RequestRate.Num.ValueInt32())
+						num = int(r.Spec.From[fromIndex].Default.HTTP.RatelimitOnRequest[ratelimitOnRequestIndex].Limits[limitsIndex].RequestRate.Num.ValueInt32())
 
 						requestRate = &shared.MeshGlobalRateLimitItemSpecFromRequestRate{
 							Interval: interval,
@@ -463,7 +463,7 @@ func (r *MeshGlobalRateLimitResourceModel) ToSharedMeshGlobalRateLimitItemInput(
 						}
 					}
 					var value2 string
-					value2 = limitsItem.Value.ValueString()
+					value2 = r.Spec.From[fromIndex].Default.HTTP.RatelimitOnRequest[ratelimitOnRequestIndex].Limits[limitsIndex].Value.ValueString()
 
 					limits = append(limits, shared.Limits{
 						RequestRate: requestRate,
@@ -471,7 +471,7 @@ func (r *MeshGlobalRateLimitResourceModel) ToSharedMeshGlobalRateLimitItemInput(
 					})
 				}
 				var name3 string
-				name3 = ratelimitOnRequestItem.Name.ValueString()
+				name3 = r.Spec.From[fromIndex].Default.HTTP.RatelimitOnRequest[ratelimitOnRequestIndex].Name.ValueString()
 
 				ratelimitOnRequest = append(ratelimitOnRequest, shared.RatelimitOnRequest{
 					Kind:   kind,
@@ -480,12 +480,12 @@ func (r *MeshGlobalRateLimitResourceModel) ToSharedMeshGlobalRateLimitItemInput(
 				})
 			}
 			var requestRate1 *shared.RequestRate
-			if fromItem.Default.HTTP.RequestRate != nil {
+			if r.Spec.From[fromIndex].Default.HTTP.RequestRate != nil {
 				var interval1 string
-				interval1 = fromItem.Default.HTTP.RequestRate.Interval.ValueString()
+				interval1 = r.Spec.From[fromIndex].Default.HTTP.RequestRate.Interval.ValueString()
 
 				var num1 int
-				num1 = int(fromItem.Default.HTTP.RequestRate.Num.ValueInt32())
+				num1 = int(r.Spec.From[fromIndex].Default.HTTP.RequestRate.Num.ValueInt32())
 
 				requestRate1 = &shared.RequestRate{
 					Interval: interval1,
@@ -499,8 +499,8 @@ func (r *MeshGlobalRateLimitResourceModel) ToSharedMeshGlobalRateLimitItemInput(
 				RequestRate:        requestRate1,
 			}
 			mode := new(shared.MeshGlobalRateLimitItemMode)
-			if !fromItem.Default.Mode.IsUnknown() && !fromItem.Default.Mode.IsNull() {
-				*mode = shared.MeshGlobalRateLimitItemMode(fromItem.Default.Mode.ValueString())
+			if !r.Spec.From[fromIndex].Default.Mode.IsUnknown() && !r.Spec.From[fromIndex].Default.Mode.IsNull() {
+				*mode = shared.MeshGlobalRateLimitItemMode(r.Spec.From[fromIndex].Default.Mode.ValueString())
 			} else {
 				mode = nil
 			}
@@ -510,46 +510,46 @@ func (r *MeshGlobalRateLimitResourceModel) ToSharedMeshGlobalRateLimitItemInput(
 				Mode:    mode,
 			}
 		}
-		kind1 := shared.MeshGlobalRateLimitItemSpecKind(fromItem.TargetRef.Kind.ValueString())
+		kind1 := shared.MeshGlobalRateLimitItemSpecKind(r.Spec.From[fromIndex].TargetRef.Kind.ValueString())
 		labels1 := make(map[string]string)
-		for labelsKey, labelsValue := range fromItem.TargetRef.Labels {
+		for labelsKey := range r.Spec.From[fromIndex].TargetRef.Labels {
 			var labelsInst string
-			labelsInst = labelsValue.ValueString()
+			labelsInst = r.Spec.From[fromIndex].TargetRef.Labels[labelsKey].ValueString()
 
 			labels1[labelsKey] = labelsInst
 		}
 		mesh1 := new(string)
-		if !fromItem.TargetRef.Mesh.IsUnknown() && !fromItem.TargetRef.Mesh.IsNull() {
-			*mesh1 = fromItem.TargetRef.Mesh.ValueString()
+		if !r.Spec.From[fromIndex].TargetRef.Mesh.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.Mesh.IsNull() {
+			*mesh1 = r.Spec.From[fromIndex].TargetRef.Mesh.ValueString()
 		} else {
 			mesh1 = nil
 		}
 		name4 := new(string)
-		if !fromItem.TargetRef.Name.IsUnknown() && !fromItem.TargetRef.Name.IsNull() {
-			*name4 = fromItem.TargetRef.Name.ValueString()
+		if !r.Spec.From[fromIndex].TargetRef.Name.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.Name.IsNull() {
+			*name4 = r.Spec.From[fromIndex].TargetRef.Name.ValueString()
 		} else {
 			name4 = nil
 		}
 		namespace := new(string)
-		if !fromItem.TargetRef.Namespace.IsUnknown() && !fromItem.TargetRef.Namespace.IsNull() {
-			*namespace = fromItem.TargetRef.Namespace.ValueString()
+		if !r.Spec.From[fromIndex].TargetRef.Namespace.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.Namespace.IsNull() {
+			*namespace = r.Spec.From[fromIndex].TargetRef.Namespace.ValueString()
 		} else {
 			namespace = nil
 		}
-		proxyTypes := make([]shared.MeshGlobalRateLimitItemSpecProxyTypes, 0, len(fromItem.TargetRef.ProxyTypes))
-		for _, proxyTypesItem := range fromItem.TargetRef.ProxyTypes {
+		proxyTypes := make([]shared.MeshGlobalRateLimitItemSpecProxyTypes, 0, len(r.Spec.From[fromIndex].TargetRef.ProxyTypes))
+		for _, proxyTypesItem := range r.Spec.From[fromIndex].TargetRef.ProxyTypes {
 			proxyTypes = append(proxyTypes, shared.MeshGlobalRateLimitItemSpecProxyTypes(proxyTypesItem.ValueString()))
 		}
 		sectionName := new(string)
-		if !fromItem.TargetRef.SectionName.IsUnknown() && !fromItem.TargetRef.SectionName.IsNull() {
-			*sectionName = fromItem.TargetRef.SectionName.ValueString()
+		if !r.Spec.From[fromIndex].TargetRef.SectionName.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.SectionName.IsNull() {
+			*sectionName = r.Spec.From[fromIndex].TargetRef.SectionName.ValueString()
 		} else {
 			sectionName = nil
 		}
 		tags := make(map[string]string)
-		for tagsKey, tagsValue := range fromItem.TargetRef.Tags {
+		for tagsKey := range r.Spec.From[fromIndex].TargetRef.Tags {
 			var tagsInst string
-			tagsInst = tagsValue.ValueString()
+			tagsInst = r.Spec.From[fromIndex].TargetRef.Tags[tagsKey].ValueString()
 
 			tags[tagsKey] = tagsInst
 		}
@@ -572,9 +572,9 @@ func (r *MeshGlobalRateLimitResourceModel) ToSharedMeshGlobalRateLimitItemInput(
 	if r.Spec.TargetRef != nil {
 		kind2 := shared.MeshGlobalRateLimitItemKind(r.Spec.TargetRef.Kind.ValueString())
 		labels2 := make(map[string]string)
-		for labelsKey1, labelsValue1 := range r.Spec.TargetRef.Labels {
+		for labelsKey1 := range r.Spec.TargetRef.Labels {
 			var labelsInst1 string
-			labelsInst1 = labelsValue1.ValueString()
+			labelsInst1 = r.Spec.TargetRef.Labels[labelsKey1].ValueString()
 
 			labels2[labelsKey1] = labelsInst1
 		}
@@ -607,9 +607,9 @@ func (r *MeshGlobalRateLimitResourceModel) ToSharedMeshGlobalRateLimitItemInput(
 			sectionName1 = nil
 		}
 		tags1 := make(map[string]string)
-		for tagsKey1, tagsValue1 := range r.Spec.TargetRef.Tags {
+		for tagsKey1 := range r.Spec.TargetRef.Tags {
 			var tagsInst1 string
-			tagsInst1 = tagsValue1.ValueString()
+			tagsInst1 = r.Spec.TargetRef.Tags[tagsKey1].ValueString()
 
 			tags1[tagsKey1] = tagsInst1
 		}
@@ -625,24 +625,24 @@ func (r *MeshGlobalRateLimitResourceModel) ToSharedMeshGlobalRateLimitItemInput(
 		}
 	}
 	to := make([]shared.MeshGlobalRateLimitItemTo, 0, len(r.Spec.To))
-	for _, toItem := range r.Spec.To {
+	for toIndex := range r.Spec.To {
 		var default1 *shared.MeshGlobalRateLimitItemSpecDefault
-		if toItem.Default != nil {
+		if r.Spec.To[toIndex].Default != nil {
 			limitOnServiceFail1 := new(bool)
-			if !toItem.Default.Backend.RateLimitService.LimitOnServiceFail.IsUnknown() && !toItem.Default.Backend.RateLimitService.LimitOnServiceFail.IsNull() {
-				*limitOnServiceFail1 = toItem.Default.Backend.RateLimitService.LimitOnServiceFail.ValueBool()
+			if !r.Spec.To[toIndex].Default.Backend.RateLimitService.LimitOnServiceFail.IsUnknown() && !r.Spec.To[toIndex].Default.Backend.RateLimitService.LimitOnServiceFail.IsNull() {
+				*limitOnServiceFail1 = r.Spec.To[toIndex].Default.Backend.RateLimitService.LimitOnServiceFail.ValueBool()
 			} else {
 				limitOnServiceFail1 = nil
 			}
 			timeout1 := new(string)
-			if !toItem.Default.Backend.RateLimitService.Timeout.IsUnknown() && !toItem.Default.Backend.RateLimitService.Timeout.IsNull() {
-				*timeout1 = toItem.Default.Backend.RateLimitService.Timeout.ValueString()
+			if !r.Spec.To[toIndex].Default.Backend.RateLimitService.Timeout.IsUnknown() && !r.Spec.To[toIndex].Default.Backend.RateLimitService.Timeout.IsNull() {
+				*timeout1 = r.Spec.To[toIndex].Default.Backend.RateLimitService.Timeout.ValueString()
 			} else {
 				timeout1 = nil
 			}
 			url1 := new(string)
-			if !toItem.Default.Backend.RateLimitService.URL.IsUnknown() && !toItem.Default.Backend.RateLimitService.URL.IsNull() {
-				*url1 = toItem.Default.Backend.RateLimitService.URL.ValueString()
+			if !r.Spec.To[toIndex].Default.Backend.RateLimitService.URL.IsUnknown() && !r.Spec.To[toIndex].Default.Backend.RateLimitService.URL.IsNull() {
+				*url1 = r.Spec.To[toIndex].Default.Backend.RateLimitService.URL.ValueString()
 			} else {
 				url1 = nil
 			}
@@ -655,35 +655,35 @@ func (r *MeshGlobalRateLimitResourceModel) ToSharedMeshGlobalRateLimitItemInput(
 				RateLimitService: rateLimitService1,
 			}
 			disabled1 := new(bool)
-			if !toItem.Default.HTTP.Disabled.IsUnknown() && !toItem.Default.HTTP.Disabled.IsNull() {
-				*disabled1 = toItem.Default.HTTP.Disabled.ValueBool()
+			if !r.Spec.To[toIndex].Default.HTTP.Disabled.IsUnknown() && !r.Spec.To[toIndex].Default.HTTP.Disabled.IsNull() {
+				*disabled1 = r.Spec.To[toIndex].Default.HTTP.Disabled.ValueBool()
 			} else {
 				disabled1 = nil
 			}
 			var onRateLimit1 *shared.MeshGlobalRateLimitItemOnRateLimit
-			if toItem.Default.HTTP.OnRateLimit != nil {
+			if r.Spec.To[toIndex].Default.HTTP.OnRateLimit != nil {
 				var headers1 *shared.MeshGlobalRateLimitItemSpecHeaders
-				if toItem.Default.HTTP.OnRateLimit.Headers != nil {
-					add1 := make([]shared.MeshGlobalRateLimitItemSpecAdd, 0, len(toItem.Default.HTTP.OnRateLimit.Headers.Add))
-					for _, addItem1 := range toItem.Default.HTTP.OnRateLimit.Headers.Add {
+				if r.Spec.To[toIndex].Default.HTTP.OnRateLimit.Headers != nil {
+					add1 := make([]shared.MeshGlobalRateLimitItemSpecAdd, 0, len(r.Spec.To[toIndex].Default.HTTP.OnRateLimit.Headers.Add))
+					for addIndex1 := range r.Spec.To[toIndex].Default.HTTP.OnRateLimit.Headers.Add {
 						var name6 string
-						name6 = addItem1.Name.ValueString()
+						name6 = r.Spec.To[toIndex].Default.HTTP.OnRateLimit.Headers.Add[addIndex1].Name.ValueString()
 
 						var value3 string
-						value3 = addItem1.Value.ValueString()
+						value3 = r.Spec.To[toIndex].Default.HTTP.OnRateLimit.Headers.Add[addIndex1].Value.ValueString()
 
 						add1 = append(add1, shared.MeshGlobalRateLimitItemSpecAdd{
 							Name:  name6,
 							Value: value3,
 						})
 					}
-					set1 := make([]shared.MeshGlobalRateLimitItemSpecSet, 0, len(toItem.Default.HTTP.OnRateLimit.Headers.Set))
-					for _, setItem1 := range toItem.Default.HTTP.OnRateLimit.Headers.Set {
+					set1 := make([]shared.MeshGlobalRateLimitItemSpecSet, 0, len(r.Spec.To[toIndex].Default.HTTP.OnRateLimit.Headers.Set))
+					for setIndex1 := range r.Spec.To[toIndex].Default.HTTP.OnRateLimit.Headers.Set {
 						var name7 string
-						name7 = setItem1.Name.ValueString()
+						name7 = r.Spec.To[toIndex].Default.HTTP.OnRateLimit.Headers.Set[setIndex1].Name.ValueString()
 
 						var value4 string
-						value4 = setItem1.Value.ValueString()
+						value4 = r.Spec.To[toIndex].Default.HTTP.OnRateLimit.Headers.Set[setIndex1].Value.ValueString()
 
 						set1 = append(set1, shared.MeshGlobalRateLimitItemSpecSet{
 							Name:  name7,
@@ -696,8 +696,8 @@ func (r *MeshGlobalRateLimitResourceModel) ToSharedMeshGlobalRateLimitItemInput(
 					}
 				}
 				status1 := new(int)
-				if !toItem.Default.HTTP.OnRateLimit.Status.IsUnknown() && !toItem.Default.HTTP.OnRateLimit.Status.IsNull() {
-					*status1 = int(toItem.Default.HTTP.OnRateLimit.Status.ValueInt32())
+				if !r.Spec.To[toIndex].Default.HTTP.OnRateLimit.Status.IsUnknown() && !r.Spec.To[toIndex].Default.HTTP.OnRateLimit.Status.IsNull() {
+					*status1 = int(r.Spec.To[toIndex].Default.HTTP.OnRateLimit.Status.ValueInt32())
 				} else {
 					status1 = nil
 				}
@@ -706,18 +706,18 @@ func (r *MeshGlobalRateLimitResourceModel) ToSharedMeshGlobalRateLimitItemInput(
 					Status:  status1,
 				}
 			}
-			ratelimitOnRequest1 := make([]shared.MeshGlobalRateLimitItemRatelimitOnRequest, 0, len(toItem.Default.HTTP.RatelimitOnRequest))
-			for _, ratelimitOnRequestItem1 := range toItem.Default.HTTP.RatelimitOnRequest {
-				kind3 := shared.MeshGlobalRateLimitItemSpecToDefaultKind(ratelimitOnRequestItem1.Kind.ValueString())
-				limits1 := make([]shared.MeshGlobalRateLimitItemLimits, 0, len(ratelimitOnRequestItem1.Limits))
-				for _, limitsItem1 := range ratelimitOnRequestItem1.Limits {
+			ratelimitOnRequest1 := make([]shared.MeshGlobalRateLimitItemRatelimitOnRequest, 0, len(r.Spec.To[toIndex].Default.HTTP.RatelimitOnRequest))
+			for ratelimitOnRequestIndex1 := range r.Spec.To[toIndex].Default.HTTP.RatelimitOnRequest {
+				kind3 := shared.MeshGlobalRateLimitItemSpecToDefaultKind(r.Spec.To[toIndex].Default.HTTP.RatelimitOnRequest[ratelimitOnRequestIndex1].Kind.ValueString())
+				limits1 := make([]shared.MeshGlobalRateLimitItemLimits, 0, len(r.Spec.To[toIndex].Default.HTTP.RatelimitOnRequest[ratelimitOnRequestIndex1].Limits))
+				for limitsIndex1 := range r.Spec.To[toIndex].Default.HTTP.RatelimitOnRequest[ratelimitOnRequestIndex1].Limits {
 					var requestRate2 *shared.MeshGlobalRateLimitItemSpecRequestRate
-					if limitsItem1.RequestRate != nil {
+					if r.Spec.To[toIndex].Default.HTTP.RatelimitOnRequest[ratelimitOnRequestIndex1].Limits[limitsIndex1].RequestRate != nil {
 						var interval2 string
-						interval2 = limitsItem1.RequestRate.Interval.ValueString()
+						interval2 = r.Spec.To[toIndex].Default.HTTP.RatelimitOnRequest[ratelimitOnRequestIndex1].Limits[limitsIndex1].RequestRate.Interval.ValueString()
 
 						var num2 int
-						num2 = int(limitsItem1.RequestRate.Num.ValueInt32())
+						num2 = int(r.Spec.To[toIndex].Default.HTTP.RatelimitOnRequest[ratelimitOnRequestIndex1].Limits[limitsIndex1].RequestRate.Num.ValueInt32())
 
 						requestRate2 = &shared.MeshGlobalRateLimitItemSpecRequestRate{
 							Interval: interval2,
@@ -725,7 +725,7 @@ func (r *MeshGlobalRateLimitResourceModel) ToSharedMeshGlobalRateLimitItemInput(
 						}
 					}
 					var value5 string
-					value5 = limitsItem1.Value.ValueString()
+					value5 = r.Spec.To[toIndex].Default.HTTP.RatelimitOnRequest[ratelimitOnRequestIndex1].Limits[limitsIndex1].Value.ValueString()
 
 					limits1 = append(limits1, shared.MeshGlobalRateLimitItemLimits{
 						RequestRate: requestRate2,
@@ -733,7 +733,7 @@ func (r *MeshGlobalRateLimitResourceModel) ToSharedMeshGlobalRateLimitItemInput(
 					})
 				}
 				var name8 string
-				name8 = ratelimitOnRequestItem1.Name.ValueString()
+				name8 = r.Spec.To[toIndex].Default.HTTP.RatelimitOnRequest[ratelimitOnRequestIndex1].Name.ValueString()
 
 				ratelimitOnRequest1 = append(ratelimitOnRequest1, shared.MeshGlobalRateLimitItemRatelimitOnRequest{
 					Kind:   kind3,
@@ -742,12 +742,12 @@ func (r *MeshGlobalRateLimitResourceModel) ToSharedMeshGlobalRateLimitItemInput(
 				})
 			}
 			var requestRate3 *shared.MeshGlobalRateLimitItemRequestRate
-			if toItem.Default.HTTP.RequestRate != nil {
+			if r.Spec.To[toIndex].Default.HTTP.RequestRate != nil {
 				var interval3 string
-				interval3 = toItem.Default.HTTP.RequestRate.Interval.ValueString()
+				interval3 = r.Spec.To[toIndex].Default.HTTP.RequestRate.Interval.ValueString()
 
 				var num3 int
-				num3 = int(toItem.Default.HTTP.RequestRate.Num.ValueInt32())
+				num3 = int(r.Spec.To[toIndex].Default.HTTP.RequestRate.Num.ValueInt32())
 
 				requestRate3 = &shared.MeshGlobalRateLimitItemRequestRate{
 					Interval: interval3,
@@ -761,8 +761,8 @@ func (r *MeshGlobalRateLimitResourceModel) ToSharedMeshGlobalRateLimitItemInput(
 				RequestRate:        requestRate3,
 			}
 			mode1 := new(shared.MeshGlobalRateLimitItemSpecMode)
-			if !toItem.Default.Mode.IsUnknown() && !toItem.Default.Mode.IsNull() {
-				*mode1 = shared.MeshGlobalRateLimitItemSpecMode(toItem.Default.Mode.ValueString())
+			if !r.Spec.To[toIndex].Default.Mode.IsUnknown() && !r.Spec.To[toIndex].Default.Mode.IsNull() {
+				*mode1 = shared.MeshGlobalRateLimitItemSpecMode(r.Spec.To[toIndex].Default.Mode.ValueString())
 			} else {
 				mode1 = nil
 			}
@@ -772,46 +772,46 @@ func (r *MeshGlobalRateLimitResourceModel) ToSharedMeshGlobalRateLimitItemInput(
 				Mode:    mode1,
 			}
 		}
-		kind4 := shared.MeshGlobalRateLimitItemSpecToKind(toItem.TargetRef.Kind.ValueString())
+		kind4 := shared.MeshGlobalRateLimitItemSpecToKind(r.Spec.To[toIndex].TargetRef.Kind.ValueString())
 		labels3 := make(map[string]string)
-		for labelsKey2, labelsValue2 := range toItem.TargetRef.Labels {
+		for labelsKey2 := range r.Spec.To[toIndex].TargetRef.Labels {
 			var labelsInst2 string
-			labelsInst2 = labelsValue2.ValueString()
+			labelsInst2 = r.Spec.To[toIndex].TargetRef.Labels[labelsKey2].ValueString()
 
 			labels3[labelsKey2] = labelsInst2
 		}
 		mesh3 := new(string)
-		if !toItem.TargetRef.Mesh.IsUnknown() && !toItem.TargetRef.Mesh.IsNull() {
-			*mesh3 = toItem.TargetRef.Mesh.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Mesh.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Mesh.IsNull() {
+			*mesh3 = r.Spec.To[toIndex].TargetRef.Mesh.ValueString()
 		} else {
 			mesh3 = nil
 		}
 		name9 := new(string)
-		if !toItem.TargetRef.Name.IsUnknown() && !toItem.TargetRef.Name.IsNull() {
-			*name9 = toItem.TargetRef.Name.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Name.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Name.IsNull() {
+			*name9 = r.Spec.To[toIndex].TargetRef.Name.ValueString()
 		} else {
 			name9 = nil
 		}
 		namespace2 := new(string)
-		if !toItem.TargetRef.Namespace.IsUnknown() && !toItem.TargetRef.Namespace.IsNull() {
-			*namespace2 = toItem.TargetRef.Namespace.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Namespace.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Namespace.IsNull() {
+			*namespace2 = r.Spec.To[toIndex].TargetRef.Namespace.ValueString()
 		} else {
 			namespace2 = nil
 		}
-		proxyTypes2 := make([]shared.MeshGlobalRateLimitItemSpecToProxyTypes, 0, len(toItem.TargetRef.ProxyTypes))
-		for _, proxyTypesItem2 := range toItem.TargetRef.ProxyTypes {
+		proxyTypes2 := make([]shared.MeshGlobalRateLimitItemSpecToProxyTypes, 0, len(r.Spec.To[toIndex].TargetRef.ProxyTypes))
+		for _, proxyTypesItem2 := range r.Spec.To[toIndex].TargetRef.ProxyTypes {
 			proxyTypes2 = append(proxyTypes2, shared.MeshGlobalRateLimitItemSpecToProxyTypes(proxyTypesItem2.ValueString()))
 		}
 		sectionName2 := new(string)
-		if !toItem.TargetRef.SectionName.IsUnknown() && !toItem.TargetRef.SectionName.IsNull() {
-			*sectionName2 = toItem.TargetRef.SectionName.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.SectionName.IsUnknown() && !r.Spec.To[toIndex].TargetRef.SectionName.IsNull() {
+			*sectionName2 = r.Spec.To[toIndex].TargetRef.SectionName.ValueString()
 		} else {
 			sectionName2 = nil
 		}
 		tags2 := make(map[string]string)
-		for tagsKey2, tagsValue2 := range toItem.TargetRef.Tags {
+		for tagsKey2 := range r.Spec.To[toIndex].TargetRef.Tags {
 			var tagsInst2 string
-			tagsInst2 = tagsValue2.ValueString()
+			tagsInst2 = r.Spec.To[toIndex].TargetRef.Tags[tagsKey2].ValueString()
 
 			tags2[tagsKey2] = tagsInst2
 		}

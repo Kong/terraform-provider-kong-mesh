@@ -221,28 +221,28 @@ func (r *MeshOPAResourceModel) ToSharedMeshOPAItemInput(ctx context.Context) (*s
 			}
 		}
 		appendPolicies := make([]shared.AppendPolicies, 0, len(r.Spec.Default.AppendPolicies))
-		for _, appendPoliciesItem := range r.Spec.Default.AppendPolicies {
+		for appendPoliciesIndex := range r.Spec.Default.AppendPolicies {
 			ignoreDecision := new(bool)
-			if !appendPoliciesItem.IgnoreDecision.IsUnknown() && !appendPoliciesItem.IgnoreDecision.IsNull() {
-				*ignoreDecision = appendPoliciesItem.IgnoreDecision.ValueBool()
+			if !r.Spec.Default.AppendPolicies[appendPoliciesIndex].IgnoreDecision.IsUnknown() && !r.Spec.Default.AppendPolicies[appendPoliciesIndex].IgnoreDecision.IsNull() {
+				*ignoreDecision = r.Spec.Default.AppendPolicies[appendPoliciesIndex].IgnoreDecision.ValueBool()
 			} else {
 				ignoreDecision = nil
 			}
 			inline1 := new(string)
-			if !appendPoliciesItem.Rego.Inline.IsUnknown() && !appendPoliciesItem.Rego.Inline.IsNull() {
-				*inline1 = appendPoliciesItem.Rego.Inline.ValueString()
+			if !r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.Inline.IsUnknown() && !r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.Inline.IsNull() {
+				*inline1 = r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.Inline.ValueString()
 			} else {
 				inline1 = nil
 			}
 			inlineString1 := new(string)
-			if !appendPoliciesItem.Rego.InlineString.IsUnknown() && !appendPoliciesItem.Rego.InlineString.IsNull() {
-				*inlineString1 = appendPoliciesItem.Rego.InlineString.ValueString()
+			if !r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.InlineString.IsUnknown() && !r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.InlineString.IsNull() {
+				*inlineString1 = r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.InlineString.ValueString()
 			} else {
 				inlineString1 = nil
 			}
 			secret1 := new(string)
-			if !appendPoliciesItem.Rego.Secret.IsUnknown() && !appendPoliciesItem.Rego.Secret.IsNull() {
-				*secret1 = appendPoliciesItem.Rego.Secret.ValueString()
+			if !r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.Secret.IsUnknown() && !r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.Secret.IsNull() {
+				*secret1 = r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.Secret.ValueString()
 			} else {
 				secret1 = nil
 			}
@@ -312,9 +312,9 @@ func (r *MeshOPAResourceModel) ToSharedMeshOPAItemInput(ctx context.Context) (*s
 	if r.Spec.TargetRef != nil {
 		kind := shared.MeshOPAItemKind(r.Spec.TargetRef.Kind.ValueString())
 		labels1 := make(map[string]string)
-		for labelsKey, labelsValue := range r.Spec.TargetRef.Labels {
+		for labelsKey := range r.Spec.TargetRef.Labels {
 			var labelsInst string
-			labelsInst = labelsValue.ValueString()
+			labelsInst = r.Spec.TargetRef.Labels[labelsKey].ValueString()
 
 			labels1[labelsKey] = labelsInst
 		}
@@ -347,9 +347,9 @@ func (r *MeshOPAResourceModel) ToSharedMeshOPAItemInput(ctx context.Context) (*s
 			sectionName = nil
 		}
 		tags := make(map[string]string)
-		for tagsKey, tagsValue := range r.Spec.TargetRef.Tags {
+		for tagsKey := range r.Spec.TargetRef.Tags {
 			var tagsInst string
-			tagsInst = tagsValue.ValueString()
+			tagsInst = r.Spec.TargetRef.Tags[tagsKey].ValueString()
 
 			tags[tagsKey] = tagsInst
 		}
