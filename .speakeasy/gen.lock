@@ -3,21 +3,21 @@ id: 322c4806-8b53-493c-a05f-50d4d113c747
 management:
   docChecksum: e56956b1d82474720c4d946511b299a9
   docVersion: 2.0.0
-  speakeasyVersion: 1.642.1
-  generationVersion: 2.731.4
+  speakeasyVersion: 1.657.0
+  generationVersion: 2.755.0
   releaseVersion: 0.6.1
-  configChecksum: 3ea68be73140b0940c387d4b0effdf83
+  configChecksum: 35ffadcb067176255f6b42e490f18a7b
 features:
   terraform:
     additionalDependencies: 0.1.0
     constsAndDefaults: 0.3.0
-    core: 3.46.3
+    core: 3.46.16
     globalSecurity: 2.82.1
     globalServerURLs: 2.83.0
     inputOutputModels: 2.83.0
     nullables: 0.0.0
     retries: 2.81.4
-    unions: 2.82.1
+    unions: 2.82.2
 generatedFiles:
   - .gitattributes
   - USAGE.md

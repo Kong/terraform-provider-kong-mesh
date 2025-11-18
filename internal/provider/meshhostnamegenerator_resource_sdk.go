@@ -153,9 +153,9 @@ func (r *MeshHostnameGeneratorResourceModel) ToSharedHostnameGeneratorItemInput(
 	name = r.Name.ValueString()
 
 	labels := make(map[string]string)
-	for labelsKey, labelsValue := range r.Labels {
+	for labelsKey := range r.Labels {
 		var labelsInst string
-		labelsInst = labelsValue.ValueString()
+		labelsInst = r.Labels[labelsKey].ValueString()
 
 		labels[labelsKey] = labelsInst
 	}
@@ -178,9 +178,9 @@ func (r *MeshHostnameGeneratorResourceModel) ToSharedHostnameGeneratorItemInput(
 		var meshExternalService *shared.MeshExternalService
 		if r.Spec.Selector.MeshExternalService != nil {
 			matchLabels := make(map[string]string)
-			for matchLabelsKey, matchLabelsValue := range r.Spec.Selector.MeshExternalService.MatchLabels {
+			for matchLabelsKey := range r.Spec.Selector.MeshExternalService.MatchLabels {
 				var matchLabelsInst string
-				matchLabelsInst = matchLabelsValue.ValueString()
+				matchLabelsInst = r.Spec.Selector.MeshExternalService.MatchLabels[matchLabelsKey].ValueString()
 
 				matchLabels[matchLabelsKey] = matchLabelsInst
 			}
@@ -191,9 +191,9 @@ func (r *MeshHostnameGeneratorResourceModel) ToSharedHostnameGeneratorItemInput(
 		var meshMultiZoneService *shared.MeshMultiZoneService
 		if r.Spec.Selector.MeshMultiZoneService != nil {
 			matchLabels1 := make(map[string]string)
-			for matchLabelsKey1, matchLabelsValue1 := range r.Spec.Selector.MeshMultiZoneService.MatchLabels {
+			for matchLabelsKey1 := range r.Spec.Selector.MeshMultiZoneService.MatchLabels {
 				var matchLabelsInst1 string
-				matchLabelsInst1 = matchLabelsValue1.ValueString()
+				matchLabelsInst1 = r.Spec.Selector.MeshMultiZoneService.MatchLabels[matchLabelsKey1].ValueString()
 
 				matchLabels1[matchLabelsKey1] = matchLabelsInst1
 			}
@@ -204,9 +204,9 @@ func (r *MeshHostnameGeneratorResourceModel) ToSharedHostnameGeneratorItemInput(
 		var meshService *shared.MeshService
 		if r.Spec.Selector.MeshService != nil {
 			matchLabels2 := make(map[string]string)
-			for matchLabelsKey2, matchLabelsValue2 := range r.Spec.Selector.MeshService.MatchLabels {
+			for matchLabelsKey2 := range r.Spec.Selector.MeshService.MatchLabels {
 				var matchLabelsInst2 string
-				matchLabelsInst2 = matchLabelsValue2.ValueString()
+				matchLabelsInst2 = r.Spec.Selector.MeshService.MatchLabels[matchLabelsKey2].ValueString()
 
 				matchLabels2[matchLabelsKey2] = matchLabelsInst2
 			}

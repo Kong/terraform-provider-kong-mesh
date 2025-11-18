@@ -444,9 +444,9 @@ func (r *MeshIdentityResourceModel) ToSharedMeshIdentityItemInput(ctx context.Co
 		var dataplane *shared.Dataplane
 		if r.Spec.Selector.Dataplane != nil {
 			matchLabels := make(map[string]string)
-			for matchLabelsKey, matchLabelsValue := range r.Spec.Selector.Dataplane.MatchLabels {
+			for matchLabelsKey := range r.Spec.Selector.Dataplane.MatchLabels {
 				var matchLabelsInst string
-				matchLabelsInst = matchLabelsValue.ValueString()
+				matchLabelsInst = r.Spec.Selector.Dataplane.MatchLabels[matchLabelsKey].ValueString()
 
 				matchLabels[matchLabelsKey] = matchLabelsInst
 			}

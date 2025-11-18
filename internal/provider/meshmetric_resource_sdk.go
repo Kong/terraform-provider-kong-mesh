@@ -242,27 +242,27 @@ func (r *MeshMetricResourceModel) ToSharedMeshMetricItemInput(ctx context.Contex
 	var defaultVar *shared.Default
 	if r.Spec.Default != nil {
 		applications := make([]shared.Applications, 0, len(r.Spec.Default.Applications))
-		for _, applicationsItem := range r.Spec.Default.Applications {
+		for applicationsIndex := range r.Spec.Default.Applications {
 			address := new(string)
-			if !applicationsItem.Address.IsUnknown() && !applicationsItem.Address.IsNull() {
-				*address = applicationsItem.Address.ValueString()
+			if !r.Spec.Default.Applications[applicationsIndex].Address.IsUnknown() && !r.Spec.Default.Applications[applicationsIndex].Address.IsNull() {
+				*address = r.Spec.Default.Applications[applicationsIndex].Address.ValueString()
 			} else {
 				address = nil
 			}
 			name1 := new(string)
-			if !applicationsItem.Name.IsUnknown() && !applicationsItem.Name.IsNull() {
-				*name1 = applicationsItem.Name.ValueString()
+			if !r.Spec.Default.Applications[applicationsIndex].Name.IsUnknown() && !r.Spec.Default.Applications[applicationsIndex].Name.IsNull() {
+				*name1 = r.Spec.Default.Applications[applicationsIndex].Name.ValueString()
 			} else {
 				name1 = nil
 			}
 			path := new(string)
-			if !applicationsItem.Path.IsUnknown() && !applicationsItem.Path.IsNull() {
-				*path = applicationsItem.Path.ValueString()
+			if !r.Spec.Default.Applications[applicationsIndex].Path.IsUnknown() && !r.Spec.Default.Applications[applicationsIndex].Path.IsNull() {
+				*path = r.Spec.Default.Applications[applicationsIndex].Path.ValueString()
 			} else {
 				path = nil
 			}
 			var port int
-			port = int(applicationsItem.Port.ValueInt32())
+			port = int(r.Spec.Default.Applications[applicationsIndex].Port.ValueInt32())
 
 			applications = append(applications, shared.Applications{
 				Address: address,
@@ -272,15 +272,15 @@ func (r *MeshMetricResourceModel) ToSharedMeshMetricItemInput(ctx context.Contex
 			})
 		}
 		backends := make([]shared.MeshMetricItemBackends, 0, len(r.Spec.Default.Backends))
-		for _, backendsItem := range r.Spec.Default.Backends {
+		for backendsIndex := range r.Spec.Default.Backends {
 			var openTelemetry *shared.OpenTelemetry
-			if backendsItem.OpenTelemetry != nil {
+			if r.Spec.Default.Backends[backendsIndex].OpenTelemetry != nil {
 				var endpoint string
-				endpoint = backendsItem.OpenTelemetry.Endpoint.ValueString()
+				endpoint = r.Spec.Default.Backends[backendsIndex].OpenTelemetry.Endpoint.ValueString()
 
 				refreshInterval := new(string)
-				if !backendsItem.OpenTelemetry.RefreshInterval.IsUnknown() && !backendsItem.OpenTelemetry.RefreshInterval.IsNull() {
-					*refreshInterval = backendsItem.OpenTelemetry.RefreshInterval.ValueString()
+				if !r.Spec.Default.Backends[backendsIndex].OpenTelemetry.RefreshInterval.IsUnknown() && !r.Spec.Default.Backends[backendsIndex].OpenTelemetry.RefreshInterval.IsNull() {
+					*refreshInterval = r.Spec.Default.Backends[backendsIndex].OpenTelemetry.RefreshInterval.ValueString()
 				} else {
 					refreshInterval = nil
 				}
@@ -290,30 +290,30 @@ func (r *MeshMetricResourceModel) ToSharedMeshMetricItemInput(ctx context.Contex
 				}
 			}
 			var prometheus *shared.Prometheus
-			if backendsItem.Prometheus != nil {
+			if r.Spec.Default.Backends[backendsIndex].Prometheus != nil {
 				clientID := new(string)
-				if !backendsItem.Prometheus.ClientID.IsUnknown() && !backendsItem.Prometheus.ClientID.IsNull() {
-					*clientID = backendsItem.Prometheus.ClientID.ValueString()
+				if !r.Spec.Default.Backends[backendsIndex].Prometheus.ClientID.IsUnknown() && !r.Spec.Default.Backends[backendsIndex].Prometheus.ClientID.IsNull() {
+					*clientID = r.Spec.Default.Backends[backendsIndex].Prometheus.ClientID.ValueString()
 				} else {
 					clientID = nil
 				}
 				path1 := new(string)
-				if !backendsItem.Prometheus.Path.IsUnknown() && !backendsItem.Prometheus.Path.IsNull() {
-					*path1 = backendsItem.Prometheus.Path.ValueString()
+				if !r.Spec.Default.Backends[backendsIndex].Prometheus.Path.IsUnknown() && !r.Spec.Default.Backends[backendsIndex].Prometheus.Path.IsNull() {
+					*path1 = r.Spec.Default.Backends[backendsIndex].Prometheus.Path.ValueString()
 				} else {
 					path1 = nil
 				}
 				port1 := new(int)
-				if !backendsItem.Prometheus.Port.IsUnknown() && !backendsItem.Prometheus.Port.IsNull() {
-					*port1 = int(backendsItem.Prometheus.Port.ValueInt32())
+				if !r.Spec.Default.Backends[backendsIndex].Prometheus.Port.IsUnknown() && !r.Spec.Default.Backends[backendsIndex].Prometheus.Port.IsNull() {
+					*port1 = int(r.Spec.Default.Backends[backendsIndex].Prometheus.Port.ValueInt32())
 				} else {
 					port1 = nil
 				}
 				var tls *shared.MeshMetricItemTLS
-				if backendsItem.Prometheus.TLS != nil {
+				if r.Spec.Default.Backends[backendsIndex].Prometheus.TLS != nil {
 					mode := new(shared.MeshMetricItemMode)
-					if !backendsItem.Prometheus.TLS.Mode.IsUnknown() && !backendsItem.Prometheus.TLS.Mode.IsNull() {
-						*mode = shared.MeshMetricItemMode(backendsItem.Prometheus.TLS.Mode.ValueString())
+					if !r.Spec.Default.Backends[backendsIndex].Prometheus.TLS.Mode.IsUnknown() && !r.Spec.Default.Backends[backendsIndex].Prometheus.TLS.Mode.IsNull() {
+						*mode = shared.MeshMetricItemMode(r.Spec.Default.Backends[backendsIndex].Prometheus.TLS.Mode.ValueString())
 					} else {
 						mode = nil
 					}
@@ -328,7 +328,7 @@ func (r *MeshMetricResourceModel) ToSharedMeshMetricItemInput(ctx context.Contex
 					TLS:      tls,
 				}
 			}
-			type1 := shared.MeshMetricItemSpecType(backendsItem.Type.ValueString())
+			type1 := shared.MeshMetricItemSpecType(r.Spec.Default.Backends[backendsIndex].Type.ValueString())
 			backends = append(backends, shared.MeshMetricItemBackends{
 				OpenTelemetry: openTelemetry,
 				Prometheus:    prometheus,
@@ -346,29 +346,29 @@ func (r *MeshMetricResourceModel) ToSharedMeshMetricItemInput(ctx context.Contex
 			var profiles *shared.Profiles
 			if r.Spec.Default.Sidecar.Profiles != nil {
 				appendProfiles := make([]shared.AppendProfiles, 0, len(r.Spec.Default.Sidecar.Profiles.AppendProfiles))
-				for _, appendProfilesItem := range r.Spec.Default.Sidecar.Profiles.AppendProfiles {
-					name2 := shared.Name(appendProfilesItem.Name.ValueString())
+				for appendProfilesIndex := range r.Spec.Default.Sidecar.Profiles.AppendProfiles {
+					name2 := shared.Name(r.Spec.Default.Sidecar.Profiles.AppendProfiles[appendProfilesIndex].Name.ValueString())
 					appendProfiles = append(appendProfiles, shared.AppendProfiles{
 						Name: name2,
 					})
 				}
 				exclude := make([]shared.Exclude, 0, len(r.Spec.Default.Sidecar.Profiles.Exclude))
-				for _, excludeItem := range r.Spec.Default.Sidecar.Profiles.Exclude {
+				for excludeIndex := range r.Spec.Default.Sidecar.Profiles.Exclude {
 					var match string
-					match = excludeItem.Match.ValueString()
+					match = r.Spec.Default.Sidecar.Profiles.Exclude[excludeIndex].Match.ValueString()
 
-					type2 := shared.MeshMetricItemSpecDefaultType(excludeItem.Type.ValueString())
+					type2 := shared.MeshMetricItemSpecDefaultType(r.Spec.Default.Sidecar.Profiles.Exclude[excludeIndex].Type.ValueString())
 					exclude = append(exclude, shared.Exclude{
 						Match: match,
 						Type:  type2,
 					})
 				}
 				include := make([]shared.Include, 0, len(r.Spec.Default.Sidecar.Profiles.Include))
-				for _, includeItem := range r.Spec.Default.Sidecar.Profiles.Include {
+				for includeIndex := range r.Spec.Default.Sidecar.Profiles.Include {
 					var match1 string
-					match1 = includeItem.Match.ValueString()
+					match1 = r.Spec.Default.Sidecar.Profiles.Include[includeIndex].Match.ValueString()
 
-					type3 := shared.MeshMetricItemSpecDefaultSidecarType(includeItem.Type.ValueString())
+					type3 := shared.MeshMetricItemSpecDefaultSidecarType(r.Spec.Default.Sidecar.Profiles.Include[includeIndex].Type.ValueString())
 					include = append(include, shared.Include{
 						Match: match1,
 						Type:  type3,
@@ -395,9 +395,9 @@ func (r *MeshMetricResourceModel) ToSharedMeshMetricItemInput(ctx context.Contex
 	if r.Spec.TargetRef != nil {
 		kind := shared.MeshMetricItemKind(r.Spec.TargetRef.Kind.ValueString())
 		labels1 := make(map[string]string)
-		for labelsKey, labelsValue := range r.Spec.TargetRef.Labels {
+		for labelsKey := range r.Spec.TargetRef.Labels {
 			var labelsInst string
-			labelsInst = labelsValue.ValueString()
+			labelsInst = r.Spec.TargetRef.Labels[labelsKey].ValueString()
 
 			labels1[labelsKey] = labelsInst
 		}
@@ -430,9 +430,9 @@ func (r *MeshMetricResourceModel) ToSharedMeshMetricItemInput(ctx context.Contex
 			sectionName = nil
 		}
 		tags := make(map[string]string)
-		for tagsKey, tagsValue := range r.Spec.TargetRef.Tags {
+		for tagsKey := range r.Spec.TargetRef.Tags {
 			var tagsInst string
-			tagsInst = tagsValue.ValueString()
+			tagsInst = r.Spec.TargetRef.Tags[tagsKey].ValueString()
 
 			tags[tagsKey] = tagsInst
 		}

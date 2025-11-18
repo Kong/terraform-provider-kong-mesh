@@ -244,10 +244,10 @@ func (r *MeshServiceResourceModel) ToSharedMeshServiceItemInput(ctx context.Cont
 		diags.Append(r.Labels.ElementsAs(ctx, &labels, true)...)
 	}
 	identities := make([]shared.Identities, 0, len(r.Spec.Identities))
-	for _, identitiesItem := range r.Spec.Identities {
-		type1 := shared.MeshServiceItemSpecType(identitiesItem.Type.ValueString())
+	for identitiesIndex := range r.Spec.Identities {
+		type1 := shared.MeshServiceItemSpecType(r.Spec.Identities[identitiesIndex].Type.ValueString())
 		var value string
-		value = identitiesItem.Value.ValueString()
+		value = r.Spec.Identities[identitiesIndex].Value.ValueString()
 
 		identities = append(identities, shared.Identities{
 			Type:  type1,
@@ -255,27 +255,27 @@ func (r *MeshServiceResourceModel) ToSharedMeshServiceItemInput(ctx context.Cont
 		})
 	}
 	ports := make([]shared.MeshServiceItemPorts, 0, len(r.Spec.Ports))
-	for _, portsItem := range r.Spec.Ports {
+	for portsIndex := range r.Spec.Ports {
 		appProtocol := new(string)
-		if !portsItem.AppProtocol.IsUnknown() && !portsItem.AppProtocol.IsNull() {
-			*appProtocol = portsItem.AppProtocol.ValueString()
+		if !r.Spec.Ports[portsIndex].AppProtocol.IsUnknown() && !r.Spec.Ports[portsIndex].AppProtocol.IsNull() {
+			*appProtocol = r.Spec.Ports[portsIndex].AppProtocol.ValueString()
 		} else {
 			appProtocol = nil
 		}
 		name1 := new(string)
-		if !portsItem.Name.IsUnknown() && !portsItem.Name.IsNull() {
-			*name1 = portsItem.Name.ValueString()
+		if !r.Spec.Ports[portsIndex].Name.IsUnknown() && !r.Spec.Ports[portsIndex].Name.IsNull() {
+			*name1 = r.Spec.Ports[portsIndex].Name.ValueString()
 		} else {
 			name1 = nil
 		}
 		var port int
-		port = int(portsItem.Port.ValueInt32())
+		port = int(r.Spec.Ports[portsIndex].Port.ValueInt32())
 
 		var targetPort *shared.TargetPort
-		if portsItem.TargetPort != nil {
+		if r.Spec.Ports[portsIndex].TargetPort != nil {
 			integer := new(int64)
-			if !portsItem.TargetPort.Integer.IsUnknown() && !portsItem.TargetPort.Integer.IsNull() {
-				*integer = portsItem.TargetPort.Integer.ValueInt64()
+			if !r.Spec.Ports[portsIndex].TargetPort.Integer.IsUnknown() && !r.Spec.Ports[portsIndex].TargetPort.Integer.IsNull() {
+				*integer = r.Spec.Ports[portsIndex].TargetPort.Integer.ValueInt64()
 			} else {
 				integer = nil
 			}
@@ -285,8 +285,8 @@ func (r *MeshServiceResourceModel) ToSharedMeshServiceItemInput(ctx context.Cont
 				}
 			}
 			str := new(string)
-			if !portsItem.TargetPort.Str.IsUnknown() && !portsItem.TargetPort.Str.IsNull() {
-				*str = portsItem.TargetPort.Str.ValueString()
+			if !r.Spec.Ports[portsIndex].TargetPort.Str.IsUnknown() && !r.Spec.Ports[portsIndex].TargetPort.Str.IsNull() {
+				*str = r.Spec.Ports[portsIndex].TargetPort.Str.ValueString()
 			} else {
 				str = nil
 			}
@@ -318,9 +318,9 @@ func (r *MeshServiceResourceModel) ToSharedMeshServiceItemInput(ctx context.Cont
 			}
 		}
 		dataplaneTags := make(map[string]string)
-		for dataplaneTagsKey, dataplaneTagsValue := range r.Spec.Selector.DataplaneTags {
+		for dataplaneTagsKey := range r.Spec.Selector.DataplaneTags {
 			var dataplaneTagsInst string
-			dataplaneTagsInst = dataplaneTagsValue.ValueString()
+			dataplaneTagsInst = r.Spec.Selector.DataplaneTags[dataplaneTagsKey].ValueString()
 
 			dataplaneTags[dataplaneTagsKey] = dataplaneTagsInst
 		}

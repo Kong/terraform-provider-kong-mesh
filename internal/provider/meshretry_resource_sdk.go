@@ -307,9 +307,9 @@ func (r *MeshRetryResourceModel) ToSharedMeshRetryItemInput(ctx context.Context)
 	if r.Spec.TargetRef != nil {
 		kind := shared.MeshRetryItemKind(r.Spec.TargetRef.Kind.ValueString())
 		labels1 := make(map[string]string)
-		for labelsKey, labelsValue := range r.Spec.TargetRef.Labels {
+		for labelsKey := range r.Spec.TargetRef.Labels {
 			var labelsInst string
-			labelsInst = labelsValue.ValueString()
+			labelsInst = r.Spec.TargetRef.Labels[labelsKey].ValueString()
 
 			labels1[labelsKey] = labelsInst
 		}
@@ -342,9 +342,9 @@ func (r *MeshRetryResourceModel) ToSharedMeshRetryItemInput(ctx context.Context)
 			sectionName = nil
 		}
 		tags := make(map[string]string)
-		for tagsKey, tagsValue := range r.Spec.TargetRef.Tags {
+		for tagsKey := range r.Spec.TargetRef.Tags {
 			var tagsInst string
-			tagsInst = tagsValue.ValueString()
+			tagsInst = r.Spec.TargetRef.Tags[tagsKey].ValueString()
 
 			tags[tagsKey] = tagsInst
 		}
@@ -360,22 +360,22 @@ func (r *MeshRetryResourceModel) ToSharedMeshRetryItemInput(ctx context.Context)
 		}
 	}
 	to := make([]shared.MeshRetryItemTo, 0, len(r.Spec.To))
-	for _, toItem := range r.Spec.To {
+	for toIndex := range r.Spec.To {
 		var defaultVar *shared.MeshRetryItemDefault
-		if toItem.Default != nil {
+		if r.Spec.To[toIndex].Default != nil {
 			var grpc *shared.MeshRetryItemGrpc
-			if toItem.Default.Grpc != nil {
+			if r.Spec.To[toIndex].Default.Grpc != nil {
 				var backOff *shared.BackOff
-				if toItem.Default.Grpc.BackOff != nil {
+				if r.Spec.To[toIndex].Default.Grpc.BackOff != nil {
 					baseInterval := new(string)
-					if !toItem.Default.Grpc.BackOff.BaseInterval.IsUnknown() && !toItem.Default.Grpc.BackOff.BaseInterval.IsNull() {
-						*baseInterval = toItem.Default.Grpc.BackOff.BaseInterval.ValueString()
+					if !r.Spec.To[toIndex].Default.Grpc.BackOff.BaseInterval.IsUnknown() && !r.Spec.To[toIndex].Default.Grpc.BackOff.BaseInterval.IsNull() {
+						*baseInterval = r.Spec.To[toIndex].Default.Grpc.BackOff.BaseInterval.ValueString()
 					} else {
 						baseInterval = nil
 					}
 					maxInterval := new(string)
-					if !toItem.Default.Grpc.BackOff.MaxInterval.IsUnknown() && !toItem.Default.Grpc.BackOff.MaxInterval.IsNull() {
-						*maxInterval = toItem.Default.Grpc.BackOff.MaxInterval.ValueString()
+					if !r.Spec.To[toIndex].Default.Grpc.BackOff.MaxInterval.IsUnknown() && !r.Spec.To[toIndex].Default.Grpc.BackOff.MaxInterval.IsNull() {
+						*maxInterval = r.Spec.To[toIndex].Default.Grpc.BackOff.MaxInterval.ValueString()
 					} else {
 						maxInterval = nil
 					}
@@ -385,30 +385,30 @@ func (r *MeshRetryResourceModel) ToSharedMeshRetryItemInput(ctx context.Context)
 					}
 				}
 				numRetries := new(int)
-				if !toItem.Default.Grpc.NumRetries.IsUnknown() && !toItem.Default.Grpc.NumRetries.IsNull() {
-					*numRetries = int(toItem.Default.Grpc.NumRetries.ValueInt32())
+				if !r.Spec.To[toIndex].Default.Grpc.NumRetries.IsUnknown() && !r.Spec.To[toIndex].Default.Grpc.NumRetries.IsNull() {
+					*numRetries = int(r.Spec.To[toIndex].Default.Grpc.NumRetries.ValueInt32())
 				} else {
 					numRetries = nil
 				}
 				perTryTimeout := new(string)
-				if !toItem.Default.Grpc.PerTryTimeout.IsUnknown() && !toItem.Default.Grpc.PerTryTimeout.IsNull() {
-					*perTryTimeout = toItem.Default.Grpc.PerTryTimeout.ValueString()
+				if !r.Spec.To[toIndex].Default.Grpc.PerTryTimeout.IsUnknown() && !r.Spec.To[toIndex].Default.Grpc.PerTryTimeout.IsNull() {
+					*perTryTimeout = r.Spec.To[toIndex].Default.Grpc.PerTryTimeout.ValueString()
 				} else {
 					perTryTimeout = nil
 				}
 				var rateLimitedBackOff *shared.RateLimitedBackOff
-				if toItem.Default.Grpc.RateLimitedBackOff != nil {
+				if r.Spec.To[toIndex].Default.Grpc.RateLimitedBackOff != nil {
 					maxInterval1 := new(string)
-					if !toItem.Default.Grpc.RateLimitedBackOff.MaxInterval.IsUnknown() && !toItem.Default.Grpc.RateLimitedBackOff.MaxInterval.IsNull() {
-						*maxInterval1 = toItem.Default.Grpc.RateLimitedBackOff.MaxInterval.ValueString()
+					if !r.Spec.To[toIndex].Default.Grpc.RateLimitedBackOff.MaxInterval.IsUnknown() && !r.Spec.To[toIndex].Default.Grpc.RateLimitedBackOff.MaxInterval.IsNull() {
+						*maxInterval1 = r.Spec.To[toIndex].Default.Grpc.RateLimitedBackOff.MaxInterval.ValueString()
 					} else {
 						maxInterval1 = nil
 					}
-					resetHeaders := make([]shared.ResetHeaders, 0, len(toItem.Default.Grpc.RateLimitedBackOff.ResetHeaders))
-					for _, resetHeadersItem := range toItem.Default.Grpc.RateLimitedBackOff.ResetHeaders {
-						format := shared.MeshRetryItemFormat(resetHeadersItem.Format.ValueString())
+					resetHeaders := make([]shared.ResetHeaders, 0, len(r.Spec.To[toIndex].Default.Grpc.RateLimitedBackOff.ResetHeaders))
+					for resetHeadersIndex := range r.Spec.To[toIndex].Default.Grpc.RateLimitedBackOff.ResetHeaders {
+						format := shared.MeshRetryItemFormat(r.Spec.To[toIndex].Default.Grpc.RateLimitedBackOff.ResetHeaders[resetHeadersIndex].Format.ValueString())
 						var name2 string
-						name2 = resetHeadersItem.Name.ValueString()
+						name2 = r.Spec.To[toIndex].Default.Grpc.RateLimitedBackOff.ResetHeaders[resetHeadersIndex].Name.ValueString()
 
 						resetHeaders = append(resetHeaders, shared.ResetHeaders{
 							Format: format,
@@ -420,8 +420,8 @@ func (r *MeshRetryResourceModel) ToSharedMeshRetryItemInput(ctx context.Context)
 						ResetHeaders: resetHeaders,
 					}
 				}
-				retryOn := make([]shared.RetryOn, 0, len(toItem.Default.Grpc.RetryOn))
-				for _, retryOnItem := range toItem.Default.Grpc.RetryOn {
+				retryOn := make([]shared.RetryOn, 0, len(r.Spec.To[toIndex].Default.Grpc.RetryOn))
+				for _, retryOnItem := range r.Spec.To[toIndex].Default.Grpc.RetryOn {
 					retryOn = append(retryOn, shared.RetryOn(retryOnItem.ValueString()))
 				}
 				grpc = &shared.MeshRetryItemGrpc{
@@ -433,18 +433,18 @@ func (r *MeshRetryResourceModel) ToSharedMeshRetryItemInput(ctx context.Context)
 				}
 			}
 			var http *shared.MeshRetryItemHTTP
-			if toItem.Default.HTTP != nil {
+			if r.Spec.To[toIndex].Default.HTTP != nil {
 				var backOff1 *shared.MeshRetryItemBackOff
-				if toItem.Default.HTTP.BackOff != nil {
+				if r.Spec.To[toIndex].Default.HTTP.BackOff != nil {
 					baseInterval1 := new(string)
-					if !toItem.Default.HTTP.BackOff.BaseInterval.IsUnknown() && !toItem.Default.HTTP.BackOff.BaseInterval.IsNull() {
-						*baseInterval1 = toItem.Default.HTTP.BackOff.BaseInterval.ValueString()
+					if !r.Spec.To[toIndex].Default.HTTP.BackOff.BaseInterval.IsUnknown() && !r.Spec.To[toIndex].Default.HTTP.BackOff.BaseInterval.IsNull() {
+						*baseInterval1 = r.Spec.To[toIndex].Default.HTTP.BackOff.BaseInterval.ValueString()
 					} else {
 						baseInterval1 = nil
 					}
 					maxInterval2 := new(string)
-					if !toItem.Default.HTTP.BackOff.MaxInterval.IsUnknown() && !toItem.Default.HTTP.BackOff.MaxInterval.IsNull() {
-						*maxInterval2 = toItem.Default.HTTP.BackOff.MaxInterval.ValueString()
+					if !r.Spec.To[toIndex].Default.HTTP.BackOff.MaxInterval.IsUnknown() && !r.Spec.To[toIndex].Default.HTTP.BackOff.MaxInterval.IsNull() {
+						*maxInterval2 = r.Spec.To[toIndex].Default.HTTP.BackOff.MaxInterval.ValueString()
 					} else {
 						maxInterval2 = nil
 					}
@@ -453,19 +453,19 @@ func (r *MeshRetryResourceModel) ToSharedMeshRetryItemInput(ctx context.Context)
 						MaxInterval:  maxInterval2,
 					}
 				}
-				hostSelection := make([]shared.HostSelection, 0, len(toItem.Default.HTTP.HostSelection))
-				for _, hostSelectionItem := range toItem.Default.HTTP.HostSelection {
-					predicate := shared.Predicate(hostSelectionItem.Predicate.ValueString())
+				hostSelection := make([]shared.HostSelection, 0, len(r.Spec.To[toIndex].Default.HTTP.HostSelection))
+				for hostSelectionIndex := range r.Spec.To[toIndex].Default.HTTP.HostSelection {
+					predicate := shared.Predicate(r.Spec.To[toIndex].Default.HTTP.HostSelection[hostSelectionIndex].Predicate.ValueString())
 					tags1 := make(map[string]string)
-					for tagsKey1, tagsValue1 := range hostSelectionItem.Tags {
+					for tagsKey1 := range r.Spec.To[toIndex].Default.HTTP.HostSelection[hostSelectionIndex].Tags {
 						var tagsInst1 string
-						tagsInst1 = tagsValue1.ValueString()
+						tagsInst1 = r.Spec.To[toIndex].Default.HTTP.HostSelection[hostSelectionIndex].Tags[tagsKey1].ValueString()
 
 						tags1[tagsKey1] = tagsInst1
 					}
 					updateFrequency := new(int)
-					if !hostSelectionItem.UpdateFrequency.IsUnknown() && !hostSelectionItem.UpdateFrequency.IsNull() {
-						*updateFrequency = int(hostSelectionItem.UpdateFrequency.ValueInt32())
+					if !r.Spec.To[toIndex].Default.HTTP.HostSelection[hostSelectionIndex].UpdateFrequency.IsUnknown() && !r.Spec.To[toIndex].Default.HTTP.HostSelection[hostSelectionIndex].UpdateFrequency.IsNull() {
+						*updateFrequency = int(r.Spec.To[toIndex].Default.HTTP.HostSelection[hostSelectionIndex].UpdateFrequency.ValueInt32())
 					} else {
 						updateFrequency = nil
 					}
@@ -476,36 +476,36 @@ func (r *MeshRetryResourceModel) ToSharedMeshRetryItemInput(ctx context.Context)
 					})
 				}
 				hostSelectionMaxAttempts := new(int64)
-				if !toItem.Default.HTTP.HostSelectionMaxAttempts.IsUnknown() && !toItem.Default.HTTP.HostSelectionMaxAttempts.IsNull() {
-					*hostSelectionMaxAttempts = toItem.Default.HTTP.HostSelectionMaxAttempts.ValueInt64()
+				if !r.Spec.To[toIndex].Default.HTTP.HostSelectionMaxAttempts.IsUnknown() && !r.Spec.To[toIndex].Default.HTTP.HostSelectionMaxAttempts.IsNull() {
+					*hostSelectionMaxAttempts = r.Spec.To[toIndex].Default.HTTP.HostSelectionMaxAttempts.ValueInt64()
 				} else {
 					hostSelectionMaxAttempts = nil
 				}
 				numRetries1 := new(int)
-				if !toItem.Default.HTTP.NumRetries.IsUnknown() && !toItem.Default.HTTP.NumRetries.IsNull() {
-					*numRetries1 = int(toItem.Default.HTTP.NumRetries.ValueInt32())
+				if !r.Spec.To[toIndex].Default.HTTP.NumRetries.IsUnknown() && !r.Spec.To[toIndex].Default.HTTP.NumRetries.IsNull() {
+					*numRetries1 = int(r.Spec.To[toIndex].Default.HTTP.NumRetries.ValueInt32())
 				} else {
 					numRetries1 = nil
 				}
 				perTryTimeout1 := new(string)
-				if !toItem.Default.HTTP.PerTryTimeout.IsUnknown() && !toItem.Default.HTTP.PerTryTimeout.IsNull() {
-					*perTryTimeout1 = toItem.Default.HTTP.PerTryTimeout.ValueString()
+				if !r.Spec.To[toIndex].Default.HTTP.PerTryTimeout.IsUnknown() && !r.Spec.To[toIndex].Default.HTTP.PerTryTimeout.IsNull() {
+					*perTryTimeout1 = r.Spec.To[toIndex].Default.HTTP.PerTryTimeout.ValueString()
 				} else {
 					perTryTimeout1 = nil
 				}
 				var rateLimitedBackOff1 *shared.MeshRetryItemRateLimitedBackOff
-				if toItem.Default.HTTP.RateLimitedBackOff != nil {
+				if r.Spec.To[toIndex].Default.HTTP.RateLimitedBackOff != nil {
 					maxInterval3 := new(string)
-					if !toItem.Default.HTTP.RateLimitedBackOff.MaxInterval.IsUnknown() && !toItem.Default.HTTP.RateLimitedBackOff.MaxInterval.IsNull() {
-						*maxInterval3 = toItem.Default.HTTP.RateLimitedBackOff.MaxInterval.ValueString()
+					if !r.Spec.To[toIndex].Default.HTTP.RateLimitedBackOff.MaxInterval.IsUnknown() && !r.Spec.To[toIndex].Default.HTTP.RateLimitedBackOff.MaxInterval.IsNull() {
+						*maxInterval3 = r.Spec.To[toIndex].Default.HTTP.RateLimitedBackOff.MaxInterval.ValueString()
 					} else {
 						maxInterval3 = nil
 					}
-					resetHeaders1 := make([]shared.MeshRetryItemResetHeaders, 0, len(toItem.Default.HTTP.RateLimitedBackOff.ResetHeaders))
-					for _, resetHeadersItem1 := range toItem.Default.HTTP.RateLimitedBackOff.ResetHeaders {
-						format1 := shared.MeshRetryItemSpecFormat(resetHeadersItem1.Format.ValueString())
+					resetHeaders1 := make([]shared.MeshRetryItemResetHeaders, 0, len(r.Spec.To[toIndex].Default.HTTP.RateLimitedBackOff.ResetHeaders))
+					for resetHeadersIndex1 := range r.Spec.To[toIndex].Default.HTTP.RateLimitedBackOff.ResetHeaders {
+						format1 := shared.MeshRetryItemSpecFormat(r.Spec.To[toIndex].Default.HTTP.RateLimitedBackOff.ResetHeaders[resetHeadersIndex1].Format.ValueString())
 						var name3 string
-						name3 = resetHeadersItem1.Name.ValueString()
+						name3 = r.Spec.To[toIndex].Default.HTTP.RateLimitedBackOff.ResetHeaders[resetHeadersIndex1].Name.ValueString()
 
 						resetHeaders1 = append(resetHeaders1, shared.MeshRetryItemResetHeaders{
 							Format: format1,
@@ -517,20 +517,20 @@ func (r *MeshRetryResourceModel) ToSharedMeshRetryItemInput(ctx context.Context)
 						ResetHeaders: resetHeaders1,
 					}
 				}
-				retriableRequestHeaders := make([]shared.RetriableRequestHeaders, 0, len(toItem.Default.HTTP.RetriableRequestHeaders))
-				for _, retriableRequestHeadersItem := range toItem.Default.HTTP.RetriableRequestHeaders {
+				retriableRequestHeaders := make([]shared.RetriableRequestHeaders, 0, len(r.Spec.To[toIndex].Default.HTTP.RetriableRequestHeaders))
+				for retriableRequestHeadersIndex := range r.Spec.To[toIndex].Default.HTTP.RetriableRequestHeaders {
 					var name4 string
-					name4 = retriableRequestHeadersItem.Name.ValueString()
+					name4 = r.Spec.To[toIndex].Default.HTTP.RetriableRequestHeaders[retriableRequestHeadersIndex].Name.ValueString()
 
 					type1 := new(shared.MeshRetryItemSpecType)
-					if !retriableRequestHeadersItem.Type.IsUnknown() && !retriableRequestHeadersItem.Type.IsNull() {
-						*type1 = shared.MeshRetryItemSpecType(retriableRequestHeadersItem.Type.ValueString())
+					if !r.Spec.To[toIndex].Default.HTTP.RetriableRequestHeaders[retriableRequestHeadersIndex].Type.IsUnknown() && !r.Spec.To[toIndex].Default.HTTP.RetriableRequestHeaders[retriableRequestHeadersIndex].Type.IsNull() {
+						*type1 = shared.MeshRetryItemSpecType(r.Spec.To[toIndex].Default.HTTP.RetriableRequestHeaders[retriableRequestHeadersIndex].Type.ValueString())
 					} else {
 						type1 = nil
 					}
 					value := new(string)
-					if !retriableRequestHeadersItem.Value.IsUnknown() && !retriableRequestHeadersItem.Value.IsNull() {
-						*value = retriableRequestHeadersItem.Value.ValueString()
+					if !r.Spec.To[toIndex].Default.HTTP.RetriableRequestHeaders[retriableRequestHeadersIndex].Value.IsUnknown() && !r.Spec.To[toIndex].Default.HTTP.RetriableRequestHeaders[retriableRequestHeadersIndex].Value.IsNull() {
+						*value = r.Spec.To[toIndex].Default.HTTP.RetriableRequestHeaders[retriableRequestHeadersIndex].Value.ValueString()
 					} else {
 						value = nil
 					}
@@ -540,20 +540,20 @@ func (r *MeshRetryResourceModel) ToSharedMeshRetryItemInput(ctx context.Context)
 						Value: value,
 					})
 				}
-				retriableResponseHeaders := make([]shared.RetriableResponseHeaders, 0, len(toItem.Default.HTTP.RetriableResponseHeaders))
-				for _, retriableResponseHeadersItem := range toItem.Default.HTTP.RetriableResponseHeaders {
+				retriableResponseHeaders := make([]shared.RetriableResponseHeaders, 0, len(r.Spec.To[toIndex].Default.HTTP.RetriableResponseHeaders))
+				for retriableResponseHeadersIndex := range r.Spec.To[toIndex].Default.HTTP.RetriableResponseHeaders {
 					var name5 string
-					name5 = retriableResponseHeadersItem.Name.ValueString()
+					name5 = r.Spec.To[toIndex].Default.HTTP.RetriableResponseHeaders[retriableResponseHeadersIndex].Name.ValueString()
 
 					type2 := new(shared.MeshRetryItemSpecToType)
-					if !retriableResponseHeadersItem.Type.IsUnknown() && !retriableResponseHeadersItem.Type.IsNull() {
-						*type2 = shared.MeshRetryItemSpecToType(retriableResponseHeadersItem.Type.ValueString())
+					if !r.Spec.To[toIndex].Default.HTTP.RetriableResponseHeaders[retriableResponseHeadersIndex].Type.IsUnknown() && !r.Spec.To[toIndex].Default.HTTP.RetriableResponseHeaders[retriableResponseHeadersIndex].Type.IsNull() {
+						*type2 = shared.MeshRetryItemSpecToType(r.Spec.To[toIndex].Default.HTTP.RetriableResponseHeaders[retriableResponseHeadersIndex].Type.ValueString())
 					} else {
 						type2 = nil
 					}
 					value1 := new(string)
-					if !retriableResponseHeadersItem.Value.IsUnknown() && !retriableResponseHeadersItem.Value.IsNull() {
-						*value1 = retriableResponseHeadersItem.Value.ValueString()
+					if !r.Spec.To[toIndex].Default.HTTP.RetriableResponseHeaders[retriableResponseHeadersIndex].Value.IsUnknown() && !r.Spec.To[toIndex].Default.HTTP.RetriableResponseHeaders[retriableResponseHeadersIndex].Value.IsNull() {
+						*value1 = r.Spec.To[toIndex].Default.HTTP.RetriableResponseHeaders[retriableResponseHeadersIndex].Value.ValueString()
 					} else {
 						value1 = nil
 					}
@@ -563,9 +563,9 @@ func (r *MeshRetryResourceModel) ToSharedMeshRetryItemInput(ctx context.Context)
 						Value: value1,
 					})
 				}
-				retryOn1 := make([]string, 0, len(toItem.Default.HTTP.RetryOn))
-				for _, retryOnItem1 := range toItem.Default.HTTP.RetryOn {
-					retryOn1 = append(retryOn1, retryOnItem1.ValueString())
+				retryOn1 := make([]string, 0, len(r.Spec.To[toIndex].Default.HTTP.RetryOn))
+				for retryOnIndex := range r.Spec.To[toIndex].Default.HTTP.RetryOn {
+					retryOn1 = append(retryOn1, r.Spec.To[toIndex].Default.HTTP.RetryOn[retryOnIndex].ValueString())
 				}
 				http = &shared.MeshRetryItemHTTP{
 					BackOff:                  backOff1,
@@ -580,10 +580,10 @@ func (r *MeshRetryResourceModel) ToSharedMeshRetryItemInput(ctx context.Context)
 				}
 			}
 			var tcp *shared.MeshRetryItemTCP
-			if toItem.Default.TCP != nil {
+			if r.Spec.To[toIndex].Default.TCP != nil {
 				maxConnectAttempt := new(int)
-				if !toItem.Default.TCP.MaxConnectAttempt.IsUnknown() && !toItem.Default.TCP.MaxConnectAttempt.IsNull() {
-					*maxConnectAttempt = int(toItem.Default.TCP.MaxConnectAttempt.ValueInt32())
+				if !r.Spec.To[toIndex].Default.TCP.MaxConnectAttempt.IsUnknown() && !r.Spec.To[toIndex].Default.TCP.MaxConnectAttempt.IsNull() {
+					*maxConnectAttempt = int(r.Spec.To[toIndex].Default.TCP.MaxConnectAttempt.ValueInt32())
 				} else {
 					maxConnectAttempt = nil
 				}
@@ -597,46 +597,46 @@ func (r *MeshRetryResourceModel) ToSharedMeshRetryItemInput(ctx context.Context)
 				TCP:  tcp,
 			}
 		}
-		kind1 := shared.MeshRetryItemSpecKind(toItem.TargetRef.Kind.ValueString())
+		kind1 := shared.MeshRetryItemSpecKind(r.Spec.To[toIndex].TargetRef.Kind.ValueString())
 		labels2 := make(map[string]string)
-		for labelsKey1, labelsValue1 := range toItem.TargetRef.Labels {
+		for labelsKey1 := range r.Spec.To[toIndex].TargetRef.Labels {
 			var labelsInst1 string
-			labelsInst1 = labelsValue1.ValueString()
+			labelsInst1 = r.Spec.To[toIndex].TargetRef.Labels[labelsKey1].ValueString()
 
 			labels2[labelsKey1] = labelsInst1
 		}
 		mesh2 := new(string)
-		if !toItem.TargetRef.Mesh.IsUnknown() && !toItem.TargetRef.Mesh.IsNull() {
-			*mesh2 = toItem.TargetRef.Mesh.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Mesh.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Mesh.IsNull() {
+			*mesh2 = r.Spec.To[toIndex].TargetRef.Mesh.ValueString()
 		} else {
 			mesh2 = nil
 		}
 		name6 := new(string)
-		if !toItem.TargetRef.Name.IsUnknown() && !toItem.TargetRef.Name.IsNull() {
-			*name6 = toItem.TargetRef.Name.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Name.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Name.IsNull() {
+			*name6 = r.Spec.To[toIndex].TargetRef.Name.ValueString()
 		} else {
 			name6 = nil
 		}
 		namespace1 := new(string)
-		if !toItem.TargetRef.Namespace.IsUnknown() && !toItem.TargetRef.Namespace.IsNull() {
-			*namespace1 = toItem.TargetRef.Namespace.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Namespace.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Namespace.IsNull() {
+			*namespace1 = r.Spec.To[toIndex].TargetRef.Namespace.ValueString()
 		} else {
 			namespace1 = nil
 		}
-		proxyTypes1 := make([]shared.MeshRetryItemSpecProxyTypes, 0, len(toItem.TargetRef.ProxyTypes))
-		for _, proxyTypesItem1 := range toItem.TargetRef.ProxyTypes {
+		proxyTypes1 := make([]shared.MeshRetryItemSpecProxyTypes, 0, len(r.Spec.To[toIndex].TargetRef.ProxyTypes))
+		for _, proxyTypesItem1 := range r.Spec.To[toIndex].TargetRef.ProxyTypes {
 			proxyTypes1 = append(proxyTypes1, shared.MeshRetryItemSpecProxyTypes(proxyTypesItem1.ValueString()))
 		}
 		sectionName1 := new(string)
-		if !toItem.TargetRef.SectionName.IsUnknown() && !toItem.TargetRef.SectionName.IsNull() {
-			*sectionName1 = toItem.TargetRef.SectionName.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.SectionName.IsUnknown() && !r.Spec.To[toIndex].TargetRef.SectionName.IsNull() {
+			*sectionName1 = r.Spec.To[toIndex].TargetRef.SectionName.ValueString()
 		} else {
 			sectionName1 = nil
 		}
 		tags2 := make(map[string]string)
-		for tagsKey2, tagsValue2 := range toItem.TargetRef.Tags {
+		for tagsKey2 := range r.Spec.To[toIndex].TargetRef.Tags {
 			var tagsInst2 string
-			tagsInst2 = tagsValue2.ValueString()
+			tagsInst2 = r.Spec.To[toIndex].TargetRef.Tags[tagsKey2].ValueString()
 
 			tags2[tagsKey2] = tagsInst2
 		}

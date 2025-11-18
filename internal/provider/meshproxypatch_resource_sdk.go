@@ -330,24 +330,24 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 		diags.Append(r.Labels.ElementsAs(ctx, &labels, true)...)
 	}
 	appendModifications := make([]shared.AppendModifications, 0, len(r.Spec.Default.AppendModifications))
-	for _, appendModificationsItem := range r.Spec.Default.AppendModifications {
+	for appendModificationsIndex := range r.Spec.Default.AppendModifications {
 		var cluster *shared.Cluster
-		if appendModificationsItem.Cluster != nil {
-			jsonPatches := make([]shared.JSONPatches, 0, len(appendModificationsItem.Cluster.JSONPatches))
-			for _, jsonPatchesItem := range appendModificationsItem.Cluster.JSONPatches {
+		if r.Spec.Default.AppendModifications[appendModificationsIndex].Cluster != nil {
+			jsonPatches := make([]shared.JSONPatches, 0, len(r.Spec.Default.AppendModifications[appendModificationsIndex].Cluster.JSONPatches))
+			for jsonPatchesIndex := range r.Spec.Default.AppendModifications[appendModificationsIndex].Cluster.JSONPatches {
 				from := new(string)
-				if !jsonPatchesItem.From.IsUnknown() && !jsonPatchesItem.From.IsNull() {
-					*from = jsonPatchesItem.From.ValueString()
+				if !r.Spec.Default.AppendModifications[appendModificationsIndex].Cluster.JSONPatches[jsonPatchesIndex].From.IsUnknown() && !r.Spec.Default.AppendModifications[appendModificationsIndex].Cluster.JSONPatches[jsonPatchesIndex].From.IsNull() {
+					*from = r.Spec.Default.AppendModifications[appendModificationsIndex].Cluster.JSONPatches[jsonPatchesIndex].From.ValueString()
 				} else {
 					from = nil
 				}
-				op := shared.Op(jsonPatchesItem.Op.ValueString())
+				op := shared.Op(r.Spec.Default.AppendModifications[appendModificationsIndex].Cluster.JSONPatches[jsonPatchesIndex].Op.ValueString())
 				var path string
-				path = jsonPatchesItem.Path.ValueString()
+				path = r.Spec.Default.AppendModifications[appendModificationsIndex].Cluster.JSONPatches[jsonPatchesIndex].Path.ValueString()
 
 				var value interface{}
-				if !jsonPatchesItem.Value.IsUnknown() && !jsonPatchesItem.Value.IsNull() {
-					_ = json.Unmarshal([]byte(jsonPatchesItem.Value.ValueString()), &value)
+				if !r.Spec.Default.AppendModifications[appendModificationsIndex].Cluster.JSONPatches[jsonPatchesIndex].Value.IsUnknown() && !r.Spec.Default.AppendModifications[appendModificationsIndex].Cluster.JSONPatches[jsonPatchesIndex].Value.IsNull() {
+					_ = json.Unmarshal([]byte(r.Spec.Default.AppendModifications[appendModificationsIndex].Cluster.JSONPatches[jsonPatchesIndex].Value.ValueString()), &value)
 				}
 				jsonPatches = append(jsonPatches, shared.JSONPatches{
 					From:  from,
@@ -357,16 +357,16 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 				})
 			}
 			var match *shared.MeshProxyPatchItemSpecDefaultAppendModificationsClusterMatch
-			if appendModificationsItem.Cluster.Match != nil {
+			if r.Spec.Default.AppendModifications[appendModificationsIndex].Cluster.Match != nil {
 				name1 := new(string)
-				if !appendModificationsItem.Cluster.Match.Name.IsUnknown() && !appendModificationsItem.Cluster.Match.Name.IsNull() {
-					*name1 = appendModificationsItem.Cluster.Match.Name.ValueString()
+				if !r.Spec.Default.AppendModifications[appendModificationsIndex].Cluster.Match.Name.IsUnknown() && !r.Spec.Default.AppendModifications[appendModificationsIndex].Cluster.Match.Name.IsNull() {
+					*name1 = r.Spec.Default.AppendModifications[appendModificationsIndex].Cluster.Match.Name.ValueString()
 				} else {
 					name1 = nil
 				}
 				origin := new(string)
-				if !appendModificationsItem.Cluster.Match.Origin.IsUnknown() && !appendModificationsItem.Cluster.Match.Origin.IsNull() {
-					*origin = appendModificationsItem.Cluster.Match.Origin.ValueString()
+				if !r.Spec.Default.AppendModifications[appendModificationsIndex].Cluster.Match.Origin.IsUnknown() && !r.Spec.Default.AppendModifications[appendModificationsIndex].Cluster.Match.Origin.IsNull() {
+					*origin = r.Spec.Default.AppendModifications[appendModificationsIndex].Cluster.Match.Origin.ValueString()
 				} else {
 					origin = nil
 				}
@@ -375,10 +375,10 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 					Origin: origin,
 				}
 			}
-			operation := shared.Operation(appendModificationsItem.Cluster.Operation.ValueString())
+			operation := shared.Operation(r.Spec.Default.AppendModifications[appendModificationsIndex].Cluster.Operation.ValueString())
 			value1 := new(string)
-			if !appendModificationsItem.Cluster.Value.IsUnknown() && !appendModificationsItem.Cluster.Value.IsNull() {
-				*value1 = appendModificationsItem.Cluster.Value.ValueString()
+			if !r.Spec.Default.AppendModifications[appendModificationsIndex].Cluster.Value.IsUnknown() && !r.Spec.Default.AppendModifications[appendModificationsIndex].Cluster.Value.IsNull() {
+				*value1 = r.Spec.Default.AppendModifications[appendModificationsIndex].Cluster.Value.ValueString()
 			} else {
 				value1 = nil
 			}
@@ -390,22 +390,22 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 			}
 		}
 		var httpFilter *shared.HTTPFilter
-		if appendModificationsItem.HTTPFilter != nil {
-			jsonPatches1 := make([]shared.MeshProxyPatchItemJSONPatches, 0, len(appendModificationsItem.HTTPFilter.JSONPatches))
-			for _, jsonPatchesItem1 := range appendModificationsItem.HTTPFilter.JSONPatches {
+		if r.Spec.Default.AppendModifications[appendModificationsIndex].HTTPFilter != nil {
+			jsonPatches1 := make([]shared.MeshProxyPatchItemJSONPatches, 0, len(r.Spec.Default.AppendModifications[appendModificationsIndex].HTTPFilter.JSONPatches))
+			for jsonPatchesIndex1 := range r.Spec.Default.AppendModifications[appendModificationsIndex].HTTPFilter.JSONPatches {
 				from1 := new(string)
-				if !jsonPatchesItem1.From.IsUnknown() && !jsonPatchesItem1.From.IsNull() {
-					*from1 = jsonPatchesItem1.From.ValueString()
+				if !r.Spec.Default.AppendModifications[appendModificationsIndex].HTTPFilter.JSONPatches[jsonPatchesIndex1].From.IsUnknown() && !r.Spec.Default.AppendModifications[appendModificationsIndex].HTTPFilter.JSONPatches[jsonPatchesIndex1].From.IsNull() {
+					*from1 = r.Spec.Default.AppendModifications[appendModificationsIndex].HTTPFilter.JSONPatches[jsonPatchesIndex1].From.ValueString()
 				} else {
 					from1 = nil
 				}
-				op1 := shared.MeshProxyPatchItemOp(jsonPatchesItem1.Op.ValueString())
+				op1 := shared.MeshProxyPatchItemOp(r.Spec.Default.AppendModifications[appendModificationsIndex].HTTPFilter.JSONPatches[jsonPatchesIndex1].Op.ValueString())
 				var path1 string
-				path1 = jsonPatchesItem1.Path.ValueString()
+				path1 = r.Spec.Default.AppendModifications[appendModificationsIndex].HTTPFilter.JSONPatches[jsonPatchesIndex1].Path.ValueString()
 
 				var value2 interface{}
-				if !jsonPatchesItem1.Value.IsUnknown() && !jsonPatchesItem1.Value.IsNull() {
-					_ = json.Unmarshal([]byte(jsonPatchesItem1.Value.ValueString()), &value2)
+				if !r.Spec.Default.AppendModifications[appendModificationsIndex].HTTPFilter.JSONPatches[jsonPatchesIndex1].Value.IsUnknown() && !r.Spec.Default.AppendModifications[appendModificationsIndex].HTTPFilter.JSONPatches[jsonPatchesIndex1].Value.IsNull() {
+					_ = json.Unmarshal([]byte(r.Spec.Default.AppendModifications[appendModificationsIndex].HTTPFilter.JSONPatches[jsonPatchesIndex1].Value.ValueString()), &value2)
 				}
 				jsonPatches1 = append(jsonPatches1, shared.MeshProxyPatchItemJSONPatches{
 					From:  from1,
@@ -415,29 +415,29 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 				})
 			}
 			var match1 *shared.MeshProxyPatchItemMatch
-			if appendModificationsItem.HTTPFilter.Match != nil {
+			if r.Spec.Default.AppendModifications[appendModificationsIndex].HTTPFilter.Match != nil {
 				listenerName := new(string)
-				if !appendModificationsItem.HTTPFilter.Match.ListenerName.IsUnknown() && !appendModificationsItem.HTTPFilter.Match.ListenerName.IsNull() {
-					*listenerName = appendModificationsItem.HTTPFilter.Match.ListenerName.ValueString()
+				if !r.Spec.Default.AppendModifications[appendModificationsIndex].HTTPFilter.Match.ListenerName.IsUnknown() && !r.Spec.Default.AppendModifications[appendModificationsIndex].HTTPFilter.Match.ListenerName.IsNull() {
+					*listenerName = r.Spec.Default.AppendModifications[appendModificationsIndex].HTTPFilter.Match.ListenerName.ValueString()
 				} else {
 					listenerName = nil
 				}
 				listenerTags := make(map[string]string)
-				for listenerTagsKey, listenerTagsValue := range appendModificationsItem.HTTPFilter.Match.ListenerTags {
+				for listenerTagsKey := range r.Spec.Default.AppendModifications[appendModificationsIndex].HTTPFilter.Match.ListenerTags {
 					var listenerTagsInst string
-					listenerTagsInst = listenerTagsValue.ValueString()
+					listenerTagsInst = r.Spec.Default.AppendModifications[appendModificationsIndex].HTTPFilter.Match.ListenerTags[listenerTagsKey].ValueString()
 
 					listenerTags[listenerTagsKey] = listenerTagsInst
 				}
 				name2 := new(string)
-				if !appendModificationsItem.HTTPFilter.Match.Name.IsUnknown() && !appendModificationsItem.HTTPFilter.Match.Name.IsNull() {
-					*name2 = appendModificationsItem.HTTPFilter.Match.Name.ValueString()
+				if !r.Spec.Default.AppendModifications[appendModificationsIndex].HTTPFilter.Match.Name.IsUnknown() && !r.Spec.Default.AppendModifications[appendModificationsIndex].HTTPFilter.Match.Name.IsNull() {
+					*name2 = r.Spec.Default.AppendModifications[appendModificationsIndex].HTTPFilter.Match.Name.ValueString()
 				} else {
 					name2 = nil
 				}
 				origin1 := new(string)
-				if !appendModificationsItem.HTTPFilter.Match.Origin.IsUnknown() && !appendModificationsItem.HTTPFilter.Match.Origin.IsNull() {
-					*origin1 = appendModificationsItem.HTTPFilter.Match.Origin.ValueString()
+				if !r.Spec.Default.AppendModifications[appendModificationsIndex].HTTPFilter.Match.Origin.IsUnknown() && !r.Spec.Default.AppendModifications[appendModificationsIndex].HTTPFilter.Match.Origin.IsNull() {
+					*origin1 = r.Spec.Default.AppendModifications[appendModificationsIndex].HTTPFilter.Match.Origin.ValueString()
 				} else {
 					origin1 = nil
 				}
@@ -448,10 +448,10 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 					Origin:       origin1,
 				}
 			}
-			operation1 := shared.MeshProxyPatchItemOperation(appendModificationsItem.HTTPFilter.Operation.ValueString())
+			operation1 := shared.MeshProxyPatchItemOperation(r.Spec.Default.AppendModifications[appendModificationsIndex].HTTPFilter.Operation.ValueString())
 			value3 := new(string)
-			if !appendModificationsItem.HTTPFilter.Value.IsUnknown() && !appendModificationsItem.HTTPFilter.Value.IsNull() {
-				*value3 = appendModificationsItem.HTTPFilter.Value.ValueString()
+			if !r.Spec.Default.AppendModifications[appendModificationsIndex].HTTPFilter.Value.IsUnknown() && !r.Spec.Default.AppendModifications[appendModificationsIndex].HTTPFilter.Value.IsNull() {
+				*value3 = r.Spec.Default.AppendModifications[appendModificationsIndex].HTTPFilter.Value.ValueString()
 			} else {
 				value3 = nil
 			}
@@ -463,22 +463,22 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 			}
 		}
 		var listener *shared.Listener
-		if appendModificationsItem.Listener != nil {
-			jsonPatches2 := make([]shared.MeshProxyPatchItemSpecJSONPatches, 0, len(appendModificationsItem.Listener.JSONPatches))
-			for _, jsonPatchesItem2 := range appendModificationsItem.Listener.JSONPatches {
+		if r.Spec.Default.AppendModifications[appendModificationsIndex].Listener != nil {
+			jsonPatches2 := make([]shared.MeshProxyPatchItemSpecJSONPatches, 0, len(r.Spec.Default.AppendModifications[appendModificationsIndex].Listener.JSONPatches))
+			for jsonPatchesIndex2 := range r.Spec.Default.AppendModifications[appendModificationsIndex].Listener.JSONPatches {
 				from2 := new(string)
-				if !jsonPatchesItem2.From.IsUnknown() && !jsonPatchesItem2.From.IsNull() {
-					*from2 = jsonPatchesItem2.From.ValueString()
+				if !r.Spec.Default.AppendModifications[appendModificationsIndex].Listener.JSONPatches[jsonPatchesIndex2].From.IsUnknown() && !r.Spec.Default.AppendModifications[appendModificationsIndex].Listener.JSONPatches[jsonPatchesIndex2].From.IsNull() {
+					*from2 = r.Spec.Default.AppendModifications[appendModificationsIndex].Listener.JSONPatches[jsonPatchesIndex2].From.ValueString()
 				} else {
 					from2 = nil
 				}
-				op2 := shared.MeshProxyPatchItemSpecOp(jsonPatchesItem2.Op.ValueString())
+				op2 := shared.MeshProxyPatchItemSpecOp(r.Spec.Default.AppendModifications[appendModificationsIndex].Listener.JSONPatches[jsonPatchesIndex2].Op.ValueString())
 				var path2 string
-				path2 = jsonPatchesItem2.Path.ValueString()
+				path2 = r.Spec.Default.AppendModifications[appendModificationsIndex].Listener.JSONPatches[jsonPatchesIndex2].Path.ValueString()
 
 				var value4 interface{}
-				if !jsonPatchesItem2.Value.IsUnknown() && !jsonPatchesItem2.Value.IsNull() {
-					_ = json.Unmarshal([]byte(jsonPatchesItem2.Value.ValueString()), &value4)
+				if !r.Spec.Default.AppendModifications[appendModificationsIndex].Listener.JSONPatches[jsonPatchesIndex2].Value.IsUnknown() && !r.Spec.Default.AppendModifications[appendModificationsIndex].Listener.JSONPatches[jsonPatchesIndex2].Value.IsNull() {
+					_ = json.Unmarshal([]byte(r.Spec.Default.AppendModifications[appendModificationsIndex].Listener.JSONPatches[jsonPatchesIndex2].Value.ValueString()), &value4)
 				}
 				jsonPatches2 = append(jsonPatches2, shared.MeshProxyPatchItemSpecJSONPatches{
 					From:  from2,
@@ -488,23 +488,23 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 				})
 			}
 			var match2 *shared.MeshProxyPatchItemSpecMatch
-			if appendModificationsItem.Listener.Match != nil {
+			if r.Spec.Default.AppendModifications[appendModificationsIndex].Listener.Match != nil {
 				name3 := new(string)
-				if !appendModificationsItem.Listener.Match.Name.IsUnknown() && !appendModificationsItem.Listener.Match.Name.IsNull() {
-					*name3 = appendModificationsItem.Listener.Match.Name.ValueString()
+				if !r.Spec.Default.AppendModifications[appendModificationsIndex].Listener.Match.Name.IsUnknown() && !r.Spec.Default.AppendModifications[appendModificationsIndex].Listener.Match.Name.IsNull() {
+					*name3 = r.Spec.Default.AppendModifications[appendModificationsIndex].Listener.Match.Name.ValueString()
 				} else {
 					name3 = nil
 				}
 				origin2 := new(string)
-				if !appendModificationsItem.Listener.Match.Origin.IsUnknown() && !appendModificationsItem.Listener.Match.Origin.IsNull() {
-					*origin2 = appendModificationsItem.Listener.Match.Origin.ValueString()
+				if !r.Spec.Default.AppendModifications[appendModificationsIndex].Listener.Match.Origin.IsUnknown() && !r.Spec.Default.AppendModifications[appendModificationsIndex].Listener.Match.Origin.IsNull() {
+					*origin2 = r.Spec.Default.AppendModifications[appendModificationsIndex].Listener.Match.Origin.ValueString()
 				} else {
 					origin2 = nil
 				}
 				tags := make(map[string]string)
-				for tagsKey, tagsValue := range appendModificationsItem.Listener.Match.Tags {
+				for tagsKey := range r.Spec.Default.AppendModifications[appendModificationsIndex].Listener.Match.Tags {
 					var tagsInst string
-					tagsInst = tagsValue.ValueString()
+					tagsInst = r.Spec.Default.AppendModifications[appendModificationsIndex].Listener.Match.Tags[tagsKey].ValueString()
 
 					tags[tagsKey] = tagsInst
 				}
@@ -514,10 +514,10 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 					Tags:   tags,
 				}
 			}
-			operation2 := shared.MeshProxyPatchItemSpecOperation(appendModificationsItem.Listener.Operation.ValueString())
+			operation2 := shared.MeshProxyPatchItemSpecOperation(r.Spec.Default.AppendModifications[appendModificationsIndex].Listener.Operation.ValueString())
 			value5 := new(string)
-			if !appendModificationsItem.Listener.Value.IsUnknown() && !appendModificationsItem.Listener.Value.IsNull() {
-				*value5 = appendModificationsItem.Listener.Value.ValueString()
+			if !r.Spec.Default.AppendModifications[appendModificationsIndex].Listener.Value.IsUnknown() && !r.Spec.Default.AppendModifications[appendModificationsIndex].Listener.Value.IsNull() {
+				*value5 = r.Spec.Default.AppendModifications[appendModificationsIndex].Listener.Value.ValueString()
 			} else {
 				value5 = nil
 			}
@@ -529,22 +529,22 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 			}
 		}
 		var networkFilter *shared.NetworkFilter
-		if appendModificationsItem.NetworkFilter != nil {
-			jsonPatches3 := make([]shared.MeshProxyPatchItemSpecDefaultJSONPatches, 0, len(appendModificationsItem.NetworkFilter.JSONPatches))
-			for _, jsonPatchesItem3 := range appendModificationsItem.NetworkFilter.JSONPatches {
+		if r.Spec.Default.AppendModifications[appendModificationsIndex].NetworkFilter != nil {
+			jsonPatches3 := make([]shared.MeshProxyPatchItemSpecDefaultJSONPatches, 0, len(r.Spec.Default.AppendModifications[appendModificationsIndex].NetworkFilter.JSONPatches))
+			for jsonPatchesIndex3 := range r.Spec.Default.AppendModifications[appendModificationsIndex].NetworkFilter.JSONPatches {
 				from3 := new(string)
-				if !jsonPatchesItem3.From.IsUnknown() && !jsonPatchesItem3.From.IsNull() {
-					*from3 = jsonPatchesItem3.From.ValueString()
+				if !r.Spec.Default.AppendModifications[appendModificationsIndex].NetworkFilter.JSONPatches[jsonPatchesIndex3].From.IsUnknown() && !r.Spec.Default.AppendModifications[appendModificationsIndex].NetworkFilter.JSONPatches[jsonPatchesIndex3].From.IsNull() {
+					*from3 = r.Spec.Default.AppendModifications[appendModificationsIndex].NetworkFilter.JSONPatches[jsonPatchesIndex3].From.ValueString()
 				} else {
 					from3 = nil
 				}
-				op3 := shared.MeshProxyPatchItemSpecDefaultOp(jsonPatchesItem3.Op.ValueString())
+				op3 := shared.MeshProxyPatchItemSpecDefaultOp(r.Spec.Default.AppendModifications[appendModificationsIndex].NetworkFilter.JSONPatches[jsonPatchesIndex3].Op.ValueString())
 				var path3 string
-				path3 = jsonPatchesItem3.Path.ValueString()
+				path3 = r.Spec.Default.AppendModifications[appendModificationsIndex].NetworkFilter.JSONPatches[jsonPatchesIndex3].Path.ValueString()
 
 				var value6 interface{}
-				if !jsonPatchesItem3.Value.IsUnknown() && !jsonPatchesItem3.Value.IsNull() {
-					_ = json.Unmarshal([]byte(jsonPatchesItem3.Value.ValueString()), &value6)
+				if !r.Spec.Default.AppendModifications[appendModificationsIndex].NetworkFilter.JSONPatches[jsonPatchesIndex3].Value.IsUnknown() && !r.Spec.Default.AppendModifications[appendModificationsIndex].NetworkFilter.JSONPatches[jsonPatchesIndex3].Value.IsNull() {
+					_ = json.Unmarshal([]byte(r.Spec.Default.AppendModifications[appendModificationsIndex].NetworkFilter.JSONPatches[jsonPatchesIndex3].Value.ValueString()), &value6)
 				}
 				jsonPatches3 = append(jsonPatches3, shared.MeshProxyPatchItemSpecDefaultJSONPatches{
 					From:  from3,
@@ -554,29 +554,29 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 				})
 			}
 			var match3 *shared.MeshProxyPatchItemSpecDefaultMatch
-			if appendModificationsItem.NetworkFilter.Match != nil {
+			if r.Spec.Default.AppendModifications[appendModificationsIndex].NetworkFilter.Match != nil {
 				listenerName1 := new(string)
-				if !appendModificationsItem.NetworkFilter.Match.ListenerName.IsUnknown() && !appendModificationsItem.NetworkFilter.Match.ListenerName.IsNull() {
-					*listenerName1 = appendModificationsItem.NetworkFilter.Match.ListenerName.ValueString()
+				if !r.Spec.Default.AppendModifications[appendModificationsIndex].NetworkFilter.Match.ListenerName.IsUnknown() && !r.Spec.Default.AppendModifications[appendModificationsIndex].NetworkFilter.Match.ListenerName.IsNull() {
+					*listenerName1 = r.Spec.Default.AppendModifications[appendModificationsIndex].NetworkFilter.Match.ListenerName.ValueString()
 				} else {
 					listenerName1 = nil
 				}
 				listenerTags1 := make(map[string]string)
-				for listenerTagsKey1, listenerTagsValue1 := range appendModificationsItem.NetworkFilter.Match.ListenerTags {
+				for listenerTagsKey1 := range r.Spec.Default.AppendModifications[appendModificationsIndex].NetworkFilter.Match.ListenerTags {
 					var listenerTagsInst1 string
-					listenerTagsInst1 = listenerTagsValue1.ValueString()
+					listenerTagsInst1 = r.Spec.Default.AppendModifications[appendModificationsIndex].NetworkFilter.Match.ListenerTags[listenerTagsKey1].ValueString()
 
 					listenerTags1[listenerTagsKey1] = listenerTagsInst1
 				}
 				name4 := new(string)
-				if !appendModificationsItem.NetworkFilter.Match.Name.IsUnknown() && !appendModificationsItem.NetworkFilter.Match.Name.IsNull() {
-					*name4 = appendModificationsItem.NetworkFilter.Match.Name.ValueString()
+				if !r.Spec.Default.AppendModifications[appendModificationsIndex].NetworkFilter.Match.Name.IsUnknown() && !r.Spec.Default.AppendModifications[appendModificationsIndex].NetworkFilter.Match.Name.IsNull() {
+					*name4 = r.Spec.Default.AppendModifications[appendModificationsIndex].NetworkFilter.Match.Name.ValueString()
 				} else {
 					name4 = nil
 				}
 				origin3 := new(string)
-				if !appendModificationsItem.NetworkFilter.Match.Origin.IsUnknown() && !appendModificationsItem.NetworkFilter.Match.Origin.IsNull() {
-					*origin3 = appendModificationsItem.NetworkFilter.Match.Origin.ValueString()
+				if !r.Spec.Default.AppendModifications[appendModificationsIndex].NetworkFilter.Match.Origin.IsUnknown() && !r.Spec.Default.AppendModifications[appendModificationsIndex].NetworkFilter.Match.Origin.IsNull() {
+					*origin3 = r.Spec.Default.AppendModifications[appendModificationsIndex].NetworkFilter.Match.Origin.ValueString()
 				} else {
 					origin3 = nil
 				}
@@ -587,10 +587,10 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 					Origin:       origin3,
 				}
 			}
-			operation3 := shared.MeshProxyPatchItemSpecDefaultOperation(appendModificationsItem.NetworkFilter.Operation.ValueString())
+			operation3 := shared.MeshProxyPatchItemSpecDefaultOperation(r.Spec.Default.AppendModifications[appendModificationsIndex].NetworkFilter.Operation.ValueString())
 			value7 := new(string)
-			if !appendModificationsItem.NetworkFilter.Value.IsUnknown() && !appendModificationsItem.NetworkFilter.Value.IsNull() {
-				*value7 = appendModificationsItem.NetworkFilter.Value.ValueString()
+			if !r.Spec.Default.AppendModifications[appendModificationsIndex].NetworkFilter.Value.IsUnknown() && !r.Spec.Default.AppendModifications[appendModificationsIndex].NetworkFilter.Value.IsNull() {
+				*value7 = r.Spec.Default.AppendModifications[appendModificationsIndex].NetworkFilter.Value.ValueString()
 			} else {
 				value7 = nil
 			}
@@ -602,22 +602,22 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 			}
 		}
 		var virtualHost *shared.VirtualHost
-		if appendModificationsItem.VirtualHost != nil {
-			jsonPatches4 := make([]shared.MeshProxyPatchItemSpecDefaultAppendModificationsJSONPatches, 0, len(appendModificationsItem.VirtualHost.JSONPatches))
-			for _, jsonPatchesItem4 := range appendModificationsItem.VirtualHost.JSONPatches {
+		if r.Spec.Default.AppendModifications[appendModificationsIndex].VirtualHost != nil {
+			jsonPatches4 := make([]shared.MeshProxyPatchItemSpecDefaultAppendModificationsJSONPatches, 0, len(r.Spec.Default.AppendModifications[appendModificationsIndex].VirtualHost.JSONPatches))
+			for jsonPatchesIndex4 := range r.Spec.Default.AppendModifications[appendModificationsIndex].VirtualHost.JSONPatches {
 				from4 := new(string)
-				if !jsonPatchesItem4.From.IsUnknown() && !jsonPatchesItem4.From.IsNull() {
-					*from4 = jsonPatchesItem4.From.ValueString()
+				if !r.Spec.Default.AppendModifications[appendModificationsIndex].VirtualHost.JSONPatches[jsonPatchesIndex4].From.IsUnknown() && !r.Spec.Default.AppendModifications[appendModificationsIndex].VirtualHost.JSONPatches[jsonPatchesIndex4].From.IsNull() {
+					*from4 = r.Spec.Default.AppendModifications[appendModificationsIndex].VirtualHost.JSONPatches[jsonPatchesIndex4].From.ValueString()
 				} else {
 					from4 = nil
 				}
-				op4 := shared.MeshProxyPatchItemSpecDefaultAppendModificationsOp(jsonPatchesItem4.Op.ValueString())
+				op4 := shared.MeshProxyPatchItemSpecDefaultAppendModificationsOp(r.Spec.Default.AppendModifications[appendModificationsIndex].VirtualHost.JSONPatches[jsonPatchesIndex4].Op.ValueString())
 				var path4 string
-				path4 = jsonPatchesItem4.Path.ValueString()
+				path4 = r.Spec.Default.AppendModifications[appendModificationsIndex].VirtualHost.JSONPatches[jsonPatchesIndex4].Path.ValueString()
 
 				var value8 interface{}
-				if !jsonPatchesItem4.Value.IsUnknown() && !jsonPatchesItem4.Value.IsNull() {
-					_ = json.Unmarshal([]byte(jsonPatchesItem4.Value.ValueString()), &value8)
+				if !r.Spec.Default.AppendModifications[appendModificationsIndex].VirtualHost.JSONPatches[jsonPatchesIndex4].Value.IsUnknown() && !r.Spec.Default.AppendModifications[appendModificationsIndex].VirtualHost.JSONPatches[jsonPatchesIndex4].Value.IsNull() {
+					_ = json.Unmarshal([]byte(r.Spec.Default.AppendModifications[appendModificationsIndex].VirtualHost.JSONPatches[jsonPatchesIndex4].Value.ValueString()), &value8)
 				}
 				jsonPatches4 = append(jsonPatches4, shared.MeshProxyPatchItemSpecDefaultAppendModificationsJSONPatches{
 					From:  from4,
@@ -627,20 +627,20 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 				})
 			}
 			name5 := new(string)
-			if !appendModificationsItem.VirtualHost.Match.Name.IsUnknown() && !appendModificationsItem.VirtualHost.Match.Name.IsNull() {
-				*name5 = appendModificationsItem.VirtualHost.Match.Name.ValueString()
+			if !r.Spec.Default.AppendModifications[appendModificationsIndex].VirtualHost.Match.Name.IsUnknown() && !r.Spec.Default.AppendModifications[appendModificationsIndex].VirtualHost.Match.Name.IsNull() {
+				*name5 = r.Spec.Default.AppendModifications[appendModificationsIndex].VirtualHost.Match.Name.ValueString()
 			} else {
 				name5 = nil
 			}
 			origin4 := new(string)
-			if !appendModificationsItem.VirtualHost.Match.Origin.IsUnknown() && !appendModificationsItem.VirtualHost.Match.Origin.IsNull() {
-				*origin4 = appendModificationsItem.VirtualHost.Match.Origin.ValueString()
+			if !r.Spec.Default.AppendModifications[appendModificationsIndex].VirtualHost.Match.Origin.IsUnknown() && !r.Spec.Default.AppendModifications[appendModificationsIndex].VirtualHost.Match.Origin.IsNull() {
+				*origin4 = r.Spec.Default.AppendModifications[appendModificationsIndex].VirtualHost.Match.Origin.ValueString()
 			} else {
 				origin4 = nil
 			}
 			routeConfigurationName := new(string)
-			if !appendModificationsItem.VirtualHost.Match.RouteConfigurationName.IsUnknown() && !appendModificationsItem.VirtualHost.Match.RouteConfigurationName.IsNull() {
-				*routeConfigurationName = appendModificationsItem.VirtualHost.Match.RouteConfigurationName.ValueString()
+			if !r.Spec.Default.AppendModifications[appendModificationsIndex].VirtualHost.Match.RouteConfigurationName.IsUnknown() && !r.Spec.Default.AppendModifications[appendModificationsIndex].VirtualHost.Match.RouteConfigurationName.IsNull() {
+				*routeConfigurationName = r.Spec.Default.AppendModifications[appendModificationsIndex].VirtualHost.Match.RouteConfigurationName.ValueString()
 			} else {
 				routeConfigurationName = nil
 			}
@@ -649,10 +649,10 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 				Origin:                 origin4,
 				RouteConfigurationName: routeConfigurationName,
 			}
-			operation4 := shared.MeshProxyPatchItemSpecDefaultAppendModificationsOperation(appendModificationsItem.VirtualHost.Operation.ValueString())
+			operation4 := shared.MeshProxyPatchItemSpecDefaultAppendModificationsOperation(r.Spec.Default.AppendModifications[appendModificationsIndex].VirtualHost.Operation.ValueString())
 			value9 := new(string)
-			if !appendModificationsItem.VirtualHost.Value.IsUnknown() && !appendModificationsItem.VirtualHost.Value.IsNull() {
-				*value9 = appendModificationsItem.VirtualHost.Value.ValueString()
+			if !r.Spec.Default.AppendModifications[appendModificationsIndex].VirtualHost.Value.IsUnknown() && !r.Spec.Default.AppendModifications[appendModificationsIndex].VirtualHost.Value.IsNull() {
+				*value9 = r.Spec.Default.AppendModifications[appendModificationsIndex].VirtualHost.Value.ValueString()
 			} else {
 				value9 = nil
 			}
@@ -678,9 +678,9 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 	if r.Spec.TargetRef != nil {
 		kind := shared.MeshProxyPatchItemKind(r.Spec.TargetRef.Kind.ValueString())
 		labels1 := make(map[string]string)
-		for labelsKey, labelsValue := range r.Spec.TargetRef.Labels {
+		for labelsKey := range r.Spec.TargetRef.Labels {
 			var labelsInst string
-			labelsInst = labelsValue.ValueString()
+			labelsInst = r.Spec.TargetRef.Labels[labelsKey].ValueString()
 
 			labels1[labelsKey] = labelsInst
 		}
@@ -713,9 +713,9 @@ func (r *MeshProxyPatchResourceModel) ToSharedMeshProxyPatchItemInput(ctx contex
 			sectionName = nil
 		}
 		tags1 := make(map[string]string)
-		for tagsKey1, tagsValue1 := range r.Spec.TargetRef.Tags {
+		for tagsKey1 := range r.Spec.TargetRef.Tags {
 			var tagsInst1 string
-			tagsInst1 = tagsValue1.ValueString()
+			tagsInst1 = r.Spec.TargetRef.Tags[tagsKey1].ValueString()
 
 			tags1[tagsKey1] = tagsInst1
 		}

@@ -145,17 +145,17 @@ func (r *MeshTrustResourceModel) ToSharedMeshTrustItemInput(ctx context.Context)
 		diags.Append(r.Labels.ElementsAs(ctx, &labels, true)...)
 	}
 	caBundles := make([]shared.CaBundles, 0, len(r.Spec.CaBundles))
-	for _, caBundlesItem := range r.Spec.CaBundles {
+	for caBundlesIndex := range r.Spec.CaBundles {
 		var pem *shared.Pem
-		if caBundlesItem.Pem != nil {
+		if r.Spec.CaBundles[caBundlesIndex].Pem != nil {
 			var value string
-			value = caBundlesItem.Pem.Value.ValueString()
+			value = r.Spec.CaBundles[caBundlesIndex].Pem.Value.ValueString()
 
 			pem = &shared.Pem{
 				Value: value,
 			}
 		}
-		type1 := shared.MeshTrustItemSpecType(caBundlesItem.Type.ValueString())
+		type1 := shared.MeshTrustItemSpecType(r.Spec.CaBundles[caBundlesIndex].Type.ValueString())
 		caBundles = append(caBundles, shared.CaBundles{
 			Pem:  pem,
 			Type: type1,

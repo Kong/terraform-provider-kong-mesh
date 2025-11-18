@@ -207,30 +207,30 @@ func (r *MeshGatewayResourceModel) ToSharedMeshGatewayItem(ctx context.Context) 
 	var conf *shared.Conf
 	if r.Conf != nil {
 		listeners := make([]shared.Listeners, 0, len(r.Conf.Listeners))
-		for _, listenersItem := range r.Conf.Listeners {
+		for listenersIndex := range r.Conf.Listeners {
 			crossMesh := new(bool)
-			if !listenersItem.CrossMesh.IsUnknown() && !listenersItem.CrossMesh.IsNull() {
-				*crossMesh = listenersItem.CrossMesh.ValueBool()
+			if !r.Conf.Listeners[listenersIndex].CrossMesh.IsUnknown() && !r.Conf.Listeners[listenersIndex].CrossMesh.IsNull() {
+				*crossMesh = r.Conf.Listeners[listenersIndex].CrossMesh.ValueBool()
 			} else {
 				crossMesh = nil
 			}
 			hostname := new(string)
-			if !listenersItem.Hostname.IsUnknown() && !listenersItem.Hostname.IsNull() {
-				*hostname = listenersItem.Hostname.ValueString()
+			if !r.Conf.Listeners[listenersIndex].Hostname.IsUnknown() && !r.Conf.Listeners[listenersIndex].Hostname.IsNull() {
+				*hostname = r.Conf.Listeners[listenersIndex].Hostname.ValueString()
 			} else {
 				hostname = nil
 			}
 			port := new(int64)
-			if !listenersItem.Port.IsUnknown() && !listenersItem.Port.IsNull() {
-				*port = listenersItem.Port.ValueInt64()
+			if !r.Conf.Listeners[listenersIndex].Port.IsUnknown() && !r.Conf.Listeners[listenersIndex].Port.IsNull() {
+				*port = r.Conf.Listeners[listenersIndex].Port.ValueInt64()
 			} else {
 				port = nil
 			}
 			var protocol *shared.Protocol
-			if listenersItem.Protocol != nil {
+			if r.Conf.Listeners[listenersIndex].Protocol != nil {
 				str := new(string)
-				if !listenersItem.Protocol.Str.IsUnknown() && !listenersItem.Protocol.Str.IsNull() {
-					*str = listenersItem.Protocol.Str.ValueString()
+				if !r.Conf.Listeners[listenersIndex].Protocol.Str.IsUnknown() && !r.Conf.Listeners[listenersIndex].Protocol.Str.IsNull() {
+					*str = r.Conf.Listeners[listenersIndex].Protocol.Str.ValueString()
 				} else {
 					str = nil
 				}
@@ -240,8 +240,8 @@ func (r *MeshGatewayResourceModel) ToSharedMeshGatewayItem(ctx context.Context) 
 					}
 				}
 				integer := new(int64)
-				if !listenersItem.Protocol.Integer.IsUnknown() && !listenersItem.Protocol.Integer.IsNull() {
-					*integer = listenersItem.Protocol.Integer.ValueInt64()
+				if !r.Conf.Listeners[listenersIndex].Protocol.Integer.IsUnknown() && !r.Conf.Listeners[listenersIndex].Protocol.Integer.IsNull() {
+					*integer = r.Conf.Listeners[listenersIndex].Protocol.Integer.ValueInt64()
 				} else {
 					integer = nil
 				}
@@ -252,10 +252,10 @@ func (r *MeshGatewayResourceModel) ToSharedMeshGatewayItem(ctx context.Context) 
 				}
 			}
 			var resources *shared.Resources
-			if listenersItem.Resources != nil {
+			if r.Conf.Listeners[listenersIndex].Resources != nil {
 				connectionLimit := new(int64)
-				if !listenersItem.Resources.ConnectionLimit.IsUnknown() && !listenersItem.Resources.ConnectionLimit.IsNull() {
-					*connectionLimit = listenersItem.Resources.ConnectionLimit.ValueInt64()
+				if !r.Conf.Listeners[listenersIndex].Resources.ConnectionLimit.IsUnknown() && !r.Conf.Listeners[listenersIndex].Resources.ConnectionLimit.IsNull() {
+					*connectionLimit = r.Conf.Listeners[listenersIndex].Resources.ConnectionLimit.ValueInt64()
 				} else {
 					connectionLimit = nil
 				}
@@ -264,20 +264,20 @@ func (r *MeshGatewayResourceModel) ToSharedMeshGatewayItem(ctx context.Context) 
 				}
 			}
 			tags := make(map[string]string)
-			for tagsKey, tagsValue := range listenersItem.Tags {
+			for tagsKey := range r.Conf.Listeners[listenersIndex].Tags {
 				var tagsInst string
-				tagsInst = tagsValue.ValueString()
+				tagsInst = r.Conf.Listeners[listenersIndex].Tags[tagsKey].ValueString()
 
 				tags[tagsKey] = tagsInst
 			}
 			var tls *shared.MeshGatewayItemTLS
-			if listenersItem.TLS != nil {
-				certificates := make([]shared.Certificates, 0, len(listenersItem.TLS.Certificates))
-				for _, certificatesItem := range listenersItem.TLS.Certificates {
-					if certificatesItem.DataSourceFile != nil {
+			if r.Conf.Listeners[listenersIndex].TLS != nil {
+				certificates := make([]shared.Certificates, 0, len(r.Conf.Listeners[listenersIndex].TLS.Certificates))
+				for certificatesItem := range r.Conf.Listeners[listenersIndex].TLS.Certificates {
+					if r.Conf.Listeners[listenersIndex].TLS.Certificates[certificatesItem].DataSourceFile != nil {
 						file := new(string)
-						if !certificatesItem.DataSourceFile.File.IsUnknown() && !certificatesItem.DataSourceFile.File.IsNull() {
-							*file = certificatesItem.DataSourceFile.File.ValueString()
+						if !r.Conf.Listeners[listenersIndex].TLS.Certificates[certificatesItem].DataSourceFile.File.IsUnknown() && !r.Conf.Listeners[listenersIndex].TLS.Certificates[certificatesItem].DataSourceFile.File.IsNull() {
+							*file = r.Conf.Listeners[listenersIndex].TLS.Certificates[certificatesItem].DataSourceFile.File.ValueString()
 						} else {
 							file = nil
 						}
@@ -288,10 +288,10 @@ func (r *MeshGatewayResourceModel) ToSharedMeshGatewayItem(ctx context.Context) 
 							DataSourceFile: &dataSourceFile,
 						})
 					}
-					if certificatesItem.DataSourceInline != nil {
+					if r.Conf.Listeners[listenersIndex].TLS.Certificates[certificatesItem].DataSourceInline != nil {
 						inline := new(string)
-						if !certificatesItem.DataSourceInline.Inline.IsUnknown() && !certificatesItem.DataSourceInline.Inline.IsNull() {
-							*inline = certificatesItem.DataSourceInline.Inline.ValueString()
+						if !r.Conf.Listeners[listenersIndex].TLS.Certificates[certificatesItem].DataSourceInline.Inline.IsUnknown() && !r.Conf.Listeners[listenersIndex].TLS.Certificates[certificatesItem].DataSourceInline.Inline.IsNull() {
+							*inline = r.Conf.Listeners[listenersIndex].TLS.Certificates[certificatesItem].DataSourceInline.Inline.ValueString()
 						} else {
 							inline = nil
 						}
@@ -302,10 +302,10 @@ func (r *MeshGatewayResourceModel) ToSharedMeshGatewayItem(ctx context.Context) 
 							DataSourceInline: &dataSourceInline,
 						})
 					}
-					if certificatesItem.DataSourceInlineString != nil {
+					if r.Conf.Listeners[listenersIndex].TLS.Certificates[certificatesItem].DataSourceInlineString != nil {
 						inlineString := new(string)
-						if !certificatesItem.DataSourceInlineString.InlineString.IsUnknown() && !certificatesItem.DataSourceInlineString.InlineString.IsNull() {
-							*inlineString = certificatesItem.DataSourceInlineString.InlineString.ValueString()
+						if !r.Conf.Listeners[listenersIndex].TLS.Certificates[certificatesItem].DataSourceInlineString.InlineString.IsUnknown() && !r.Conf.Listeners[listenersIndex].TLS.Certificates[certificatesItem].DataSourceInlineString.InlineString.IsNull() {
+							*inlineString = r.Conf.Listeners[listenersIndex].TLS.Certificates[certificatesItem].DataSourceInlineString.InlineString.ValueString()
 						} else {
 							inlineString = nil
 						}
@@ -316,10 +316,10 @@ func (r *MeshGatewayResourceModel) ToSharedMeshGatewayItem(ctx context.Context) 
 							DataSourceInlineString: &dataSourceInlineString,
 						})
 					}
-					if certificatesItem.DataSourceSecret != nil {
+					if r.Conf.Listeners[listenersIndex].TLS.Certificates[certificatesItem].DataSourceSecret != nil {
 						secret := new(string)
-						if !certificatesItem.DataSourceSecret.Secret.IsUnknown() && !certificatesItem.DataSourceSecret.Secret.IsNull() {
-							*secret = certificatesItem.DataSourceSecret.Secret.ValueString()
+						if !r.Conf.Listeners[listenersIndex].TLS.Certificates[certificatesItem].DataSourceSecret.Secret.IsUnknown() && !r.Conf.Listeners[listenersIndex].TLS.Certificates[certificatesItem].DataSourceSecret.Secret.IsNull() {
+							*secret = r.Conf.Listeners[listenersIndex].TLS.Certificates[certificatesItem].DataSourceSecret.Secret.ValueString()
 						} else {
 							secret = nil
 						}
@@ -332,10 +332,10 @@ func (r *MeshGatewayResourceModel) ToSharedMeshGatewayItem(ctx context.Context) 
 					}
 				}
 				var mode *shared.MeshGatewayItemMode
-				if listenersItem.TLS.Mode != nil {
+				if r.Conf.Listeners[listenersIndex].TLS.Mode != nil {
 					str1 := new(string)
-					if !listenersItem.TLS.Mode.Str.IsUnknown() && !listenersItem.TLS.Mode.Str.IsNull() {
-						*str1 = listenersItem.TLS.Mode.Str.ValueString()
+					if !r.Conf.Listeners[listenersIndex].TLS.Mode.Str.IsUnknown() && !r.Conf.Listeners[listenersIndex].TLS.Mode.Str.IsNull() {
+						*str1 = r.Conf.Listeners[listenersIndex].TLS.Mode.Str.ValueString()
 					} else {
 						str1 = nil
 					}
@@ -345,8 +345,8 @@ func (r *MeshGatewayResourceModel) ToSharedMeshGatewayItem(ctx context.Context) 
 						}
 					}
 					integer1 := new(int64)
-					if !listenersItem.TLS.Mode.Integer.IsUnknown() && !listenersItem.TLS.Mode.Integer.IsNull() {
-						*integer1 = listenersItem.TLS.Mode.Integer.ValueInt64()
+					if !r.Conf.Listeners[listenersIndex].TLS.Mode.Integer.IsUnknown() && !r.Conf.Listeners[listenersIndex].TLS.Mode.Integer.IsNull() {
+						*integer1 = r.Conf.Listeners[listenersIndex].TLS.Mode.Integer.ValueInt64()
 					} else {
 						integer1 = nil
 					}
@@ -357,7 +357,7 @@ func (r *MeshGatewayResourceModel) ToSharedMeshGatewayItem(ctx context.Context) 
 					}
 				}
 				var optionsVar *shared.OptionsObj
-				if listenersItem.TLS.Options != nil {
+				if r.Conf.Listeners[listenersIndex].TLS.Options != nil {
 					optionsVar = &shared.OptionsObj{}
 				}
 				tls = &shared.MeshGatewayItemTLS{
@@ -391,11 +391,11 @@ func (r *MeshGatewayResourceModel) ToSharedMeshGatewayItem(ctx context.Context) 
 	name = r.Name.ValueString()
 
 	selectors := make([]shared.Selectors, 0, len(r.Selectors))
-	for _, selectorsItem := range r.Selectors {
+	for selectorsIndex := range r.Selectors {
 		match := make(map[string]string)
-		for matchKey, matchValue := range selectorsItem.Match {
+		for matchKey := range r.Selectors[selectorsIndex].Match {
 			var matchInst string
-			matchInst = matchValue.ValueString()
+			matchInst = r.Selectors[selectorsIndex].Match[matchKey].ValueString()
 
 			match[matchKey] = matchInst
 		}
@@ -404,9 +404,9 @@ func (r *MeshGatewayResourceModel) ToSharedMeshGatewayItem(ctx context.Context) 
 		})
 	}
 	tags1 := make(map[string]string)
-	for tagsKey1, tagsValue1 := range r.Tags {
+	for tagsKey1 := range r.Tags {
 		var tagsInst1 string
-		tagsInst1 = tagsValue1.ValueString()
+		tagsInst1 = r.Tags[tagsKey1].ValueString()
 
 		tags1[tagsKey1] = tagsInst1
 	}

@@ -647,11 +647,11 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 		var dataplaneProxy *shared.DataplaneProxy
 		if r.Constraints.DataplaneProxy != nil {
 			requirements := make([]shared.Requirements, 0, len(r.Constraints.DataplaneProxy.Requirements))
-			for _, requirementsItem := range r.Constraints.DataplaneProxy.Requirements {
+			for requirementsIndex := range r.Constraints.DataplaneProxy.Requirements {
 				tags := make(map[string]string)
-				for tagsKey, tagsValue := range requirementsItem.Tags {
+				for tagsKey := range r.Constraints.DataplaneProxy.Requirements[requirementsIndex].Tags {
 					var tagsInst string
-					tagsInst = tagsValue.ValueString()
+					tagsInst = r.Constraints.DataplaneProxy.Requirements[requirementsIndex].Tags[tagsKey].ValueString()
 
 					tags[tagsKey] = tagsInst
 				}
@@ -660,11 +660,11 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 				})
 			}
 			restrictions := make([]shared.Restrictions, 0, len(r.Constraints.DataplaneProxy.Restrictions))
-			for _, restrictionsItem := range r.Constraints.DataplaneProxy.Restrictions {
+			for restrictionsIndex := range r.Constraints.DataplaneProxy.Restrictions {
 				tags1 := make(map[string]string)
-				for tagsKey1, tagsValue1 := range restrictionsItem.Tags {
+				for tagsKey1 := range r.Constraints.DataplaneProxy.Restrictions[restrictionsIndex].Tags {
 					var tagsInst1 string
-					tagsInst1 = tagsValue1.ValueString()
+					tagsInst1 = r.Constraints.DataplaneProxy.Restrictions[restrictionsIndex].Tags[tagsKey1].ValueString()
 
 					tags1[tagsKey1] = tagsInst1
 				}
@@ -682,23 +682,23 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 		}
 	}
 	labels := make(map[string]string)
-	for labelsKey, labelsValue := range r.Labels {
+	for labelsKey := range r.Labels {
 		var labelsInst string
-		labelsInst = labelsValue.ValueString()
+		labelsInst = r.Labels[labelsKey].ValueString()
 
 		labels[labelsKey] = labelsInst
 	}
 	var logging *shared.Logging
 	if r.Logging != nil {
 		backends := make([]shared.Backends, 0, len(r.Logging.Backends))
-		for _, backendsItem := range r.Logging.Backends {
+		for backendsIndex := range r.Logging.Backends {
 			var conf *shared.MeshItemLoggingConf
-			if backendsItem.Conf != nil {
+			if r.Logging.Backends[backendsIndex].Conf != nil {
 				var fileLoggingBackendConfig *shared.FileLoggingBackendConfig
-				if backendsItem.Conf.FileLoggingBackendConfig != nil {
+				if r.Logging.Backends[backendsIndex].Conf.FileLoggingBackendConfig != nil {
 					path := new(string)
-					if !backendsItem.Conf.FileLoggingBackendConfig.Path.IsUnknown() && !backendsItem.Conf.FileLoggingBackendConfig.Path.IsNull() {
-						*path = backendsItem.Conf.FileLoggingBackendConfig.Path.ValueString()
+					if !r.Logging.Backends[backendsIndex].Conf.FileLoggingBackendConfig.Path.IsUnknown() && !r.Logging.Backends[backendsIndex].Conf.FileLoggingBackendConfig.Path.IsNull() {
+						*path = r.Logging.Backends[backendsIndex].Conf.FileLoggingBackendConfig.Path.ValueString()
 					} else {
 						path = nil
 					}
@@ -712,10 +712,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 					}
 				}
 				var tcpLoggingBackendConfig *shared.TCPLoggingBackendConfig
-				if backendsItem.Conf.TCPLoggingBackendConfig != nil {
+				if r.Logging.Backends[backendsIndex].Conf.TCPLoggingBackendConfig != nil {
 					address := new(string)
-					if !backendsItem.Conf.TCPLoggingBackendConfig.Address.IsUnknown() && !backendsItem.Conf.TCPLoggingBackendConfig.Address.IsNull() {
-						*address = backendsItem.Conf.TCPLoggingBackendConfig.Address.ValueString()
+					if !r.Logging.Backends[backendsIndex].Conf.TCPLoggingBackendConfig.Address.IsUnknown() && !r.Logging.Backends[backendsIndex].Conf.TCPLoggingBackendConfig.Address.IsNull() {
+						*address = r.Logging.Backends[backendsIndex].Conf.TCPLoggingBackendConfig.Address.ValueString()
 					} else {
 						address = nil
 					}
@@ -730,20 +730,20 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 				}
 			}
 			format := new(string)
-			if !backendsItem.Format.IsUnknown() && !backendsItem.Format.IsNull() {
-				*format = backendsItem.Format.ValueString()
+			if !r.Logging.Backends[backendsIndex].Format.IsUnknown() && !r.Logging.Backends[backendsIndex].Format.IsNull() {
+				*format = r.Logging.Backends[backendsIndex].Format.ValueString()
 			} else {
 				format = nil
 			}
 			name := new(string)
-			if !backendsItem.Name.IsUnknown() && !backendsItem.Name.IsNull() {
-				*name = backendsItem.Name.ValueString()
+			if !r.Logging.Backends[backendsIndex].Name.IsUnknown() && !r.Logging.Backends[backendsIndex].Name.IsNull() {
+				*name = r.Logging.Backends[backendsIndex].Name.ValueString()
 			} else {
 				name = nil
 			}
 			typeVar := new(string)
-			if !backendsItem.Type.IsUnknown() && !backendsItem.Type.IsNull() {
-				*typeVar = backendsItem.Type.ValueString()
+			if !r.Logging.Backends[backendsIndex].Type.IsUnknown() && !r.Logging.Backends[backendsIndex].Type.IsNull() {
+				*typeVar = r.Logging.Backends[backendsIndex].Type.ValueString()
 			} else {
 				typeVar = nil
 			}
@@ -799,40 +799,40 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 	var metrics *shared.Metrics
 	if r.Metrics != nil {
 		backends1 := make([]shared.MeshItemBackends, 0, len(r.Metrics.Backends))
-		for _, backendsItem1 := range r.Metrics.Backends {
+		for backendsIndex1 := range r.Metrics.Backends {
 			var conf1 *shared.MeshItemConf
-			if backendsItem1.Conf != nil {
+			if r.Metrics.Backends[backendsIndex1].Conf != nil {
 				var prometheusMetricsBackendConfig *shared.PrometheusMetricsBackendConfig
-				if backendsItem1.Conf.PrometheusMetricsBackendConfig != nil {
-					aggregate := make([]shared.Aggregate, 0, len(backendsItem1.Conf.PrometheusMetricsBackendConfig.Aggregate))
-					for _, aggregateItem := range backendsItem1.Conf.PrometheusMetricsBackendConfig.Aggregate {
+				if r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig != nil {
+					aggregate := make([]shared.Aggregate, 0, len(r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Aggregate))
+					for aggregateIndex := range r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Aggregate {
 						address1 := new(string)
-						if !aggregateItem.Address.IsUnknown() && !aggregateItem.Address.IsNull() {
-							*address1 = aggregateItem.Address.ValueString()
+						if !r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Aggregate[aggregateIndex].Address.IsUnknown() && !r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Aggregate[aggregateIndex].Address.IsNull() {
+							*address1 = r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Aggregate[aggregateIndex].Address.ValueString()
 						} else {
 							address1 = nil
 						}
 						enabled := new(bool)
-						if !aggregateItem.Enabled.IsUnknown() && !aggregateItem.Enabled.IsNull() {
-							*enabled = aggregateItem.Enabled.ValueBool()
+						if !r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Aggregate[aggregateIndex].Enabled.IsUnknown() && !r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Aggregate[aggregateIndex].Enabled.IsNull() {
+							*enabled = r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Aggregate[aggregateIndex].Enabled.ValueBool()
 						} else {
 							enabled = nil
 						}
 						name1 := new(string)
-						if !aggregateItem.Name.IsUnknown() && !aggregateItem.Name.IsNull() {
-							*name1 = aggregateItem.Name.ValueString()
+						if !r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Aggregate[aggregateIndex].Name.IsUnknown() && !r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Aggregate[aggregateIndex].Name.IsNull() {
+							*name1 = r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Aggregate[aggregateIndex].Name.ValueString()
 						} else {
 							name1 = nil
 						}
 						path1 := new(string)
-						if !aggregateItem.Path.IsUnknown() && !aggregateItem.Path.IsNull() {
-							*path1 = aggregateItem.Path.ValueString()
+						if !r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Aggregate[aggregateIndex].Path.IsUnknown() && !r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Aggregate[aggregateIndex].Path.IsNull() {
+							*path1 = r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Aggregate[aggregateIndex].Path.ValueString()
 						} else {
 							path1 = nil
 						}
 						port := new(int64)
-						if !aggregateItem.Port.IsUnknown() && !aggregateItem.Port.IsNull() {
-							*port = aggregateItem.Port.ValueInt64()
+						if !r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Aggregate[aggregateIndex].Port.IsUnknown() && !r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Aggregate[aggregateIndex].Port.IsNull() {
+							*port = r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Aggregate[aggregateIndex].Port.ValueInt64()
 						} else {
 							port = nil
 						}
@@ -845,16 +845,16 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 						})
 					}
 					var envoy *shared.Envoy
-					if backendsItem1.Conf.PrometheusMetricsBackendConfig.Envoy != nil {
+					if r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Envoy != nil {
 						filterRegex := new(string)
-						if !backendsItem1.Conf.PrometheusMetricsBackendConfig.Envoy.FilterRegex.IsUnknown() && !backendsItem1.Conf.PrometheusMetricsBackendConfig.Envoy.FilterRegex.IsNull() {
-							*filterRegex = backendsItem1.Conf.PrometheusMetricsBackendConfig.Envoy.FilterRegex.ValueString()
+						if !r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Envoy.FilterRegex.IsUnknown() && !r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Envoy.FilterRegex.IsNull() {
+							*filterRegex = r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Envoy.FilterRegex.ValueString()
 						} else {
 							filterRegex = nil
 						}
 						usedOnly := new(bool)
-						if !backendsItem1.Conf.PrometheusMetricsBackendConfig.Envoy.UsedOnly.IsUnknown() && !backendsItem1.Conf.PrometheusMetricsBackendConfig.Envoy.UsedOnly.IsNull() {
-							*usedOnly = backendsItem1.Conf.PrometheusMetricsBackendConfig.Envoy.UsedOnly.ValueBool()
+						if !r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Envoy.UsedOnly.IsUnknown() && !r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Envoy.UsedOnly.IsNull() {
+							*usedOnly = r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Envoy.UsedOnly.ValueBool()
 						} else {
 							usedOnly = nil
 						}
@@ -864,37 +864,37 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 						}
 					}
 					path2 := new(string)
-					if !backendsItem1.Conf.PrometheusMetricsBackendConfig.Path.IsUnknown() && !backendsItem1.Conf.PrometheusMetricsBackendConfig.Path.IsNull() {
-						*path2 = backendsItem1.Conf.PrometheusMetricsBackendConfig.Path.ValueString()
+					if !r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Path.IsUnknown() && !r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Path.IsNull() {
+						*path2 = r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Path.ValueString()
 					} else {
 						path2 = nil
 					}
 					port1 := new(int64)
-					if !backendsItem1.Conf.PrometheusMetricsBackendConfig.Port.IsUnknown() && !backendsItem1.Conf.PrometheusMetricsBackendConfig.Port.IsNull() {
-						*port1 = backendsItem1.Conf.PrometheusMetricsBackendConfig.Port.ValueInt64()
+					if !r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Port.IsUnknown() && !r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Port.IsNull() {
+						*port1 = r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Port.ValueInt64()
 					} else {
 						port1 = nil
 					}
 					skipMTLS := new(bool)
-					if !backendsItem1.Conf.PrometheusMetricsBackendConfig.SkipMTLS.IsUnknown() && !backendsItem1.Conf.PrometheusMetricsBackendConfig.SkipMTLS.IsNull() {
-						*skipMTLS = backendsItem1.Conf.PrometheusMetricsBackendConfig.SkipMTLS.ValueBool()
+					if !r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.SkipMTLS.IsUnknown() && !r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.SkipMTLS.IsNull() {
+						*skipMTLS = r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.SkipMTLS.ValueBool()
 					} else {
 						skipMTLS = nil
 					}
 					tags2 := make(map[string]string)
-					for tagsKey2, tagsValue2 := range backendsItem1.Conf.PrometheusMetricsBackendConfig.Tags {
+					for tagsKey2 := range r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Tags {
 						var tagsInst2 string
-						tagsInst2 = tagsValue2.ValueString()
+						tagsInst2 = r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.Tags[tagsKey2].ValueString()
 
 						tags2[tagsKey2] = tagsInst2
 					}
 					var tls *shared.ConfTLS
-					if backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS != nil {
+					if r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.TLS != nil {
 						var mode1 *shared.ConfMode
-						if backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS.Mode != nil {
+						if r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.TLS.Mode != nil {
 							str1 := new(string)
-							if !backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Str.IsUnknown() && !backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Str.IsNull() {
-								*str1 = backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Str.ValueString()
+							if !r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.TLS.Mode.Str.IsUnknown() && !r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.TLS.Mode.Str.IsNull() {
+								*str1 = r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.TLS.Mode.Str.ValueString()
 							} else {
 								str1 = nil
 							}
@@ -904,8 +904,8 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 								}
 							}
 							integer1 := new(int64)
-							if !backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Integer.IsUnknown() && !backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Integer.IsNull() {
-								*integer1 = backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Integer.ValueInt64()
+							if !r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.TLS.Mode.Integer.IsUnknown() && !r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.TLS.Mode.Integer.IsNull() {
+								*integer1 = r.Metrics.Backends[backendsIndex1].Conf.PrometheusMetricsBackendConfig.TLS.Mode.Integer.ValueInt64()
 							} else {
 								integer1 = nil
 							}
@@ -936,14 +936,14 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 				}
 			}
 			name2 := new(string)
-			if !backendsItem1.Name.IsUnknown() && !backendsItem1.Name.IsNull() {
-				*name2 = backendsItem1.Name.ValueString()
+			if !r.Metrics.Backends[backendsIndex1].Name.IsUnknown() && !r.Metrics.Backends[backendsIndex1].Name.IsNull() {
+				*name2 = r.Metrics.Backends[backendsIndex1].Name.ValueString()
 			} else {
 				name2 = nil
 			}
 			type1 := new(string)
-			if !backendsItem1.Type.IsUnknown() && !backendsItem1.Type.IsNull() {
-				*type1 = backendsItem1.Type.ValueString()
+			if !r.Metrics.Backends[backendsIndex1].Type.IsUnknown() && !r.Metrics.Backends[backendsIndex1].Type.IsNull() {
+				*type1 = r.Metrics.Backends[backendsIndex1].Type.ValueString()
 			} else {
 				type1 = nil
 			}
@@ -967,18 +967,18 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 	var mtls *shared.Mtls
 	if r.Mtls != nil {
 		backends2 := make([]shared.MeshItemMtlsBackends, 0, len(r.Mtls.Backends))
-		for _, backendsItem2 := range r.Mtls.Backends {
+		for backendsIndex2 := range r.Mtls.Backends {
 			var conf2 *shared.MeshItemMtlsConf
-			if backendsItem2.Conf != nil {
+			if r.Mtls.Backends[backendsIndex2].Conf != nil {
 				var providedCertificateAuthorityConfig *shared.ProvidedCertificateAuthorityConfig
-				if backendsItem2.Conf.ProvidedCertificateAuthorityConfig != nil {
+				if r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig != nil {
 					var cert *shared.Cert
-					if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert != nil {
+					if r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Cert != nil {
 						var certDataSourceFile *shared.CertDataSourceFile
-						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceFile != nil {
+						if r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceFile != nil {
 							file := new(string)
-							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceFile.File.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceFile.File.IsNull() {
-								*file = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceFile.File.ValueString()
+							if !r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceFile.File.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceFile.File.IsNull() {
+								*file = r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceFile.File.ValueString()
 							} else {
 								file = nil
 							}
@@ -992,10 +992,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 							}
 						}
 						var certDataSourceInline *shared.CertDataSourceInline
-						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInline != nil {
+						if r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInline != nil {
 							inline := new(string)
-							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInline.Inline.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInline.Inline.IsNull() {
-								*inline = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInline.Inline.ValueString()
+							if !r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInline.Inline.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInline.Inline.IsNull() {
+								*inline = r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInline.Inline.ValueString()
 							} else {
 								inline = nil
 							}
@@ -1009,10 +1009,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 							}
 						}
 						var certDataSourceInlineString *shared.CertDataSourceInlineString
-						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInlineString != nil {
+						if r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInlineString != nil {
 							inlineString := new(string)
-							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInlineString.InlineString.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInlineString.InlineString.IsNull() {
-								*inlineString = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInlineString.InlineString.ValueString()
+							if !r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInlineString.InlineString.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInlineString.InlineString.IsNull() {
+								*inlineString = r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceInlineString.InlineString.ValueString()
 							} else {
 								inlineString = nil
 							}
@@ -1026,10 +1026,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 							}
 						}
 						var certDataSourceSecret *shared.CertDataSourceSecret
-						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceSecret != nil {
+						if r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceSecret != nil {
 							secret := new(string)
-							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceSecret.Secret.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceSecret.Secret.IsNull() {
-								*secret = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceSecret.Secret.ValueString()
+							if !r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceSecret.Secret.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceSecret.Secret.IsNull() {
+								*secret = r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Cert.DataSourceSecret.Secret.ValueString()
 							} else {
 								secret = nil
 							}
@@ -1044,12 +1044,12 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 						}
 					}
 					var key *shared.Key
-					if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key != nil {
+					if r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Key != nil {
 						var keyDataSourceFile *shared.KeyDataSourceFile
-						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceFile != nil {
+						if r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceFile != nil {
 							file1 := new(string)
-							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceFile.File.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceFile.File.IsNull() {
-								*file1 = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceFile.File.ValueString()
+							if !r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceFile.File.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceFile.File.IsNull() {
+								*file1 = r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceFile.File.ValueString()
 							} else {
 								file1 = nil
 							}
@@ -1063,10 +1063,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 							}
 						}
 						var keyDataSourceInline *shared.KeyDataSourceInline
-						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInline != nil {
+						if r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInline != nil {
 							inline1 := new(string)
-							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInline.Inline.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInline.Inline.IsNull() {
-								*inline1 = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInline.Inline.ValueString()
+							if !r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInline.Inline.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInline.Inline.IsNull() {
+								*inline1 = r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInline.Inline.ValueString()
 							} else {
 								inline1 = nil
 							}
@@ -1080,10 +1080,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 							}
 						}
 						var keyDataSourceInlineString *shared.KeyDataSourceInlineString
-						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInlineString != nil {
+						if r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInlineString != nil {
 							inlineString1 := new(string)
-							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInlineString.InlineString.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInlineString.InlineString.IsNull() {
-								*inlineString1 = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInlineString.InlineString.ValueString()
+							if !r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInlineString.InlineString.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInlineString.InlineString.IsNull() {
+								*inlineString1 = r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceInlineString.InlineString.ValueString()
 							} else {
 								inlineString1 = nil
 							}
@@ -1097,10 +1097,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 							}
 						}
 						var keyDataSourceSecret *shared.KeyDataSourceSecret
-						if backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceSecret != nil {
+						if r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceSecret != nil {
 							secret1 := new(string)
-							if !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceSecret.Secret.IsUnknown() && !backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceSecret.Secret.IsNull() {
-								*secret1 = backendsItem2.Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceSecret.Secret.ValueString()
+							if !r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceSecret.Secret.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceSecret.Secret.IsNull() {
+								*secret1 = r.Mtls.Backends[backendsIndex2].Conf.ProvidedCertificateAuthorityConfig.Key.DataSourceSecret.Secret.ValueString()
 							} else {
 								secret1 = nil
 							}
@@ -1125,18 +1125,18 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 					}
 				}
 				var builtinCertificateAuthorityConfig *shared.BuiltinCertificateAuthorityConfig
-				if backendsItem2.Conf.BuiltinCertificateAuthorityConfig != nil {
+				if r.Mtls.Backends[backendsIndex2].Conf.BuiltinCertificateAuthorityConfig != nil {
 					var caCert *shared.BuiltinCertificateAuthorityConfigConfCaCert
-					if backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert != nil {
+					if r.Mtls.Backends[backendsIndex2].Conf.BuiltinCertificateAuthorityConfig.CaCert != nil {
 						expiration := new(string)
-						if !backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert.Expiration.IsUnknown() && !backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert.Expiration.IsNull() {
-							*expiration = backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert.Expiration.ValueString()
+						if !r.Mtls.Backends[backendsIndex2].Conf.BuiltinCertificateAuthorityConfig.CaCert.Expiration.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.BuiltinCertificateAuthorityConfig.CaCert.Expiration.IsNull() {
+							*expiration = r.Mtls.Backends[backendsIndex2].Conf.BuiltinCertificateAuthorityConfig.CaCert.Expiration.ValueString()
 						} else {
 							expiration = nil
 						}
 						rsaBits := new(int64)
-						if !backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert.RsaBits.IsUnknown() && !backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert.RsaBits.IsNull() {
-							*rsaBits = backendsItem2.Conf.BuiltinCertificateAuthorityConfig.CaCert.RsaBits.ValueInt64()
+						if !r.Mtls.Backends[backendsIndex2].Conf.BuiltinCertificateAuthorityConfig.CaCert.RsaBits.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.BuiltinCertificateAuthorityConfig.CaCert.RsaBits.IsNull() {
+							*rsaBits = r.Mtls.Backends[backendsIndex2].Conf.BuiltinCertificateAuthorityConfig.CaCert.RsaBits.ValueInt64()
 						} else {
 							rsaBits = nil
 						}
@@ -1155,46 +1155,46 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 					}
 				}
 				var vaultCertificateAuthorityConfig *shared.VaultCertificateAuthorityConfig
-				if backendsItem2.Conf.VaultCertificateAuthorityConfig != nil {
+				if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig != nil {
 					var vaultCertificateAuthorityConfigFromCp *shared.VaultCertificateAuthorityConfigFromCp
-					if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp != nil {
+					if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp != nil {
 						var fromCp *shared.FromCp
-						if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp != nil {
+						if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp != nil {
 							address2 := new(string)
-							if !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Address.IsUnknown() && !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Address.IsNull() {
-								*address2 = backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Address.ValueString()
+							if !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Address.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Address.IsNull() {
+								*address2 = r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Address.ValueString()
 							} else {
 								address2 = nil
 							}
 							agentAddress := new(string)
-							if !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.AgentAddress.IsUnknown() && !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.AgentAddress.IsNull() {
-								*agentAddress = backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.AgentAddress.ValueString()
+							if !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.AgentAddress.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.AgentAddress.IsNull() {
+								*agentAddress = r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.AgentAddress.ValueString()
 							} else {
 								agentAddress = nil
 							}
 							var auth *shared.VaultCertificateAuthorityConfigAuth
-							if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth != nil {
+							if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth != nil {
 								var vaultCertificateAuthorityConfigFromCpAuthAws *shared.VaultCertificateAuthorityConfigFromCpAuthAws
-								if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws != nil {
+								if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws != nil {
 									var aws *shared.Aws
-									if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws != nil {
+									if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws != nil {
 										iamServerIDHeader := new(string)
-										if !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.IamServerIDHeader.IsUnknown() && !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.IamServerIDHeader.IsNull() {
-											*iamServerIDHeader = backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.IamServerIDHeader.ValueString()
+										if !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.IamServerIDHeader.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.IamServerIDHeader.IsNull() {
+											*iamServerIDHeader = r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.IamServerIDHeader.ValueString()
 										} else {
 											iamServerIDHeader = nil
 										}
 										role := new(string)
-										if !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Role.IsUnknown() && !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Role.IsNull() {
-											*role = backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Role.ValueString()
+										if !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Role.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Role.IsNull() {
+											*role = r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Role.ValueString()
 										} else {
 											role = nil
 										}
 										var typeVar1 *shared.AuthType
-										if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type != nil {
+										if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type != nil {
 											str2 := new(string)
-											if !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type.Str.IsUnknown() && !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type.Str.IsNull() {
-												*str2 = backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type.Str.ValueString()
+											if !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type.Str.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type.Str.IsNull() {
+												*str2 = r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type.Str.ValueString()
 											} else {
 												str2 = nil
 											}
@@ -1204,8 +1204,8 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 												}
 											}
 											integer2 := new(int64)
-											if !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type.Integer.IsUnknown() && !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type.Integer.IsNull() {
-												*integer2 = backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type.Integer.ValueInt64()
+											if !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type.Integer.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type.Integer.IsNull() {
+												*integer2 = r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type.Integer.ValueInt64()
 											} else {
 												integer2 = nil
 											}
@@ -1231,16 +1231,16 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 									}
 								}
 								var vaultCertificateAuthorityConfigFromCpAuthTLS *shared.VaultCertificateAuthorityConfigFromCpAuthTLS
-								if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS != nil {
+								if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS != nil {
 									var tls1 *shared.AuthTLS
-									if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS != nil {
+									if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS != nil {
 										var clientCert *shared.AuthClientCert
-										if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert != nil {
+										if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert != nil {
 											var clientCertDataSourceFile *shared.ClientCertDataSourceFile
-											if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceFile != nil {
+											if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceFile != nil {
 												file2 := new(string)
-												if !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceFile.File.IsUnknown() && !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceFile.File.IsNull() {
-													*file2 = backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceFile.File.ValueString()
+												if !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceFile.File.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceFile.File.IsNull() {
+													*file2 = r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceFile.File.ValueString()
 												} else {
 													file2 = nil
 												}
@@ -1254,10 +1254,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 												}
 											}
 											var clientCertDataSourceInline *shared.ClientCertDataSourceInline
-											if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceInline != nil {
+											if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceInline != nil {
 												inline2 := new(string)
-												if !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceInline.Inline.IsUnknown() && !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceInline.Inline.IsNull() {
-													*inline2 = backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceInline.Inline.ValueString()
+												if !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceInline.Inline.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceInline.Inline.IsNull() {
+													*inline2 = r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceInline.Inline.ValueString()
 												} else {
 													inline2 = nil
 												}
@@ -1271,10 +1271,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 												}
 											}
 											var clientCertDataSourceInlineString *shared.ClientCertDataSourceInlineString
-											if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceInlineString != nil {
+											if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceInlineString != nil {
 												inlineString2 := new(string)
-												if !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceInlineString.InlineString.IsUnknown() && !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceInlineString.InlineString.IsNull() {
-													*inlineString2 = backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceInlineString.InlineString.ValueString()
+												if !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceInlineString.InlineString.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceInlineString.InlineString.IsNull() {
+													*inlineString2 = r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceInlineString.InlineString.ValueString()
 												} else {
 													inlineString2 = nil
 												}
@@ -1288,10 +1288,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 												}
 											}
 											var clientCertDataSourceSecret *shared.ClientCertDataSourceSecret
-											if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceSecret != nil {
+											if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceSecret != nil {
 												secret2 := new(string)
-												if !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceSecret.Secret.IsUnknown() && !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceSecret.Secret.IsNull() {
-													*secret2 = backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceSecret.Secret.ValueString()
+												if !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceSecret.Secret.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceSecret.Secret.IsNull() {
+													*secret2 = r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientCert.DataSourceSecret.Secret.ValueString()
 												} else {
 													secret2 = nil
 												}
@@ -1306,12 +1306,12 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 											}
 										}
 										var clientKey *shared.AuthClientKey
-										if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey != nil {
+										if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey != nil {
 											var clientKeyDataSourceFile *shared.ClientKeyDataSourceFile
-											if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceFile != nil {
+											if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceFile != nil {
 												file3 := new(string)
-												if !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceFile.File.IsUnknown() && !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceFile.File.IsNull() {
-													*file3 = backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceFile.File.ValueString()
+												if !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceFile.File.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceFile.File.IsNull() {
+													*file3 = r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceFile.File.ValueString()
 												} else {
 													file3 = nil
 												}
@@ -1325,10 +1325,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 												}
 											}
 											var clientKeyDataSourceInline *shared.ClientKeyDataSourceInline
-											if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceInline != nil {
+											if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceInline != nil {
 												inline3 := new(string)
-												if !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceInline.Inline.IsUnknown() && !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceInline.Inline.IsNull() {
-													*inline3 = backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceInline.Inline.ValueString()
+												if !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceInline.Inline.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceInline.Inline.IsNull() {
+													*inline3 = r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceInline.Inline.ValueString()
 												} else {
 													inline3 = nil
 												}
@@ -1342,10 +1342,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 												}
 											}
 											var clientKeyDataSourceInlineString *shared.ClientKeyDataSourceInlineString
-											if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceInlineString != nil {
+											if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceInlineString != nil {
 												inlineString3 := new(string)
-												if !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceInlineString.InlineString.IsUnknown() && !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceInlineString.InlineString.IsNull() {
-													*inlineString3 = backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceInlineString.InlineString.ValueString()
+												if !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceInlineString.InlineString.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceInlineString.InlineString.IsNull() {
+													*inlineString3 = r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceInlineString.InlineString.ValueString()
 												} else {
 													inlineString3 = nil
 												}
@@ -1359,10 +1359,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 												}
 											}
 											var clientKeyDataSourceSecret *shared.ClientKeyDataSourceSecret
-											if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceSecret != nil {
+											if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceSecret != nil {
 												secret3 := new(string)
-												if !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceSecret.Secret.IsUnknown() && !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceSecret.Secret.IsNull() {
-													*secret3 = backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceSecret.Secret.ValueString()
+												if !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceSecret.Secret.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceSecret.Secret.IsNull() {
+													*secret3 = r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthTLS.TLS.ClientKey.DataSourceSecret.Secret.ValueString()
 												} else {
 													secret3 = nil
 												}
@@ -1391,14 +1391,14 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 									}
 								}
 								var vaultCertificateAuthorityConfigFromCpAuthToken *shared.VaultCertificateAuthorityConfigFromCpAuthToken
-								if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken != nil {
+								if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken != nil {
 									var token *shared.Token
-									if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token != nil {
+									if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token != nil {
 										var tokenDataSourceFile *shared.TokenDataSourceFile
-										if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceFile != nil {
+										if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceFile != nil {
 											file4 := new(string)
-											if !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceFile.File.IsUnknown() && !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceFile.File.IsNull() {
-												*file4 = backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceFile.File.ValueString()
+											if !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceFile.File.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceFile.File.IsNull() {
+												*file4 = r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceFile.File.ValueString()
 											} else {
 												file4 = nil
 											}
@@ -1412,10 +1412,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 											}
 										}
 										var tokenDataSourceInline *shared.TokenDataSourceInline
-										if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceInline != nil {
+										if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceInline != nil {
 											inline4 := new(string)
-											if !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceInline.Inline.IsUnknown() && !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceInline.Inline.IsNull() {
-												*inline4 = backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceInline.Inline.ValueString()
+											if !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceInline.Inline.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceInline.Inline.IsNull() {
+												*inline4 = r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceInline.Inline.ValueString()
 											} else {
 												inline4 = nil
 											}
@@ -1429,10 +1429,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 											}
 										}
 										var tokenDataSourceInlineString *shared.TokenDataSourceInlineString
-										if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceInlineString != nil {
+										if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceInlineString != nil {
 											inlineString4 := new(string)
-											if !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceInlineString.InlineString.IsUnknown() && !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceInlineString.InlineString.IsNull() {
-												*inlineString4 = backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceInlineString.InlineString.ValueString()
+											if !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceInlineString.InlineString.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceInlineString.InlineString.IsNull() {
+												*inlineString4 = r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceInlineString.InlineString.ValueString()
 											} else {
 												inlineString4 = nil
 											}
@@ -1446,10 +1446,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 											}
 										}
 										var tokenDataSourceSecret *shared.TokenDataSourceSecret
-										if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceSecret != nil {
+										if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceSecret != nil {
 											secret4 := new(string)
-											if !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceSecret.Secret.IsUnknown() && !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceSecret.Secret.IsNull() {
-												*secret4 = backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceSecret.Secret.ValueString()
+											if !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceSecret.Secret.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceSecret.Secret.IsNull() {
+												*secret4 = r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthToken.Token.DataSourceSecret.Secret.ValueString()
 											} else {
 												secret4 = nil
 											}
@@ -1474,38 +1474,38 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 								}
 							}
 							commonName := new(string)
-							if !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.CommonName.IsUnknown() && !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.CommonName.IsNull() {
-								*commonName = backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.CommonName.ValueString()
+							if !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.CommonName.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.CommonName.IsNull() {
+								*commonName = r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.CommonName.ValueString()
 							} else {
 								commonName = nil
 							}
 							namespace := new(string)
-							if !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Namespace.IsUnknown() && !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Namespace.IsNull() {
-								*namespace = backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Namespace.ValueString()
+							if !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Namespace.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Namespace.IsNull() {
+								*namespace = r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Namespace.ValueString()
 							} else {
 								namespace = nil
 							}
 							pki := new(string)
-							if !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Pki.IsUnknown() && !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Pki.IsNull() {
-								*pki = backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Pki.ValueString()
+							if !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Pki.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Pki.IsNull() {
+								*pki = r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Pki.ValueString()
 							} else {
 								pki = nil
 							}
 							role1 := new(string)
-							if !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Role.IsUnknown() && !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Role.IsNull() {
-								*role1 = backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Role.ValueString()
+							if !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Role.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Role.IsNull() {
+								*role1 = r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Role.ValueString()
 							} else {
 								role1 = nil
 							}
 							var tls2 *shared.VaultCertificateAuthorityConfigTLS
-							if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS != nil {
+							if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS != nil {
 								var caCert1 *shared.VaultCertificateAuthorityConfigCaCert
-								if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert != nil {
+								if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert != nil {
 									var vaultCertificateAuthorityConfigFromCpCaCertDataSourceFile *shared.VaultCertificateAuthorityConfigFromCpCaCertDataSourceFile
-									if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceFile != nil {
+									if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceFile != nil {
 										file5 := new(string)
-										if !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceFile.File.IsUnknown() && !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceFile.File.IsNull() {
-											*file5 = backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceFile.File.ValueString()
+										if !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceFile.File.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceFile.File.IsNull() {
+											*file5 = r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceFile.File.ValueString()
 										} else {
 											file5 = nil
 										}
@@ -1519,10 +1519,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 										}
 									}
 									var vaultCertificateAuthorityConfigFromCpCaCertDataSourceInline *shared.VaultCertificateAuthorityConfigFromCpCaCertDataSourceInline
-									if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceInline != nil {
+									if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceInline != nil {
 										inline5 := new(string)
-										if !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceInline.Inline.IsUnknown() && !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceInline.Inline.IsNull() {
-											*inline5 = backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceInline.Inline.ValueString()
+										if !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceInline.Inline.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceInline.Inline.IsNull() {
+											*inline5 = r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceInline.Inline.ValueString()
 										} else {
 											inline5 = nil
 										}
@@ -1536,10 +1536,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 										}
 									}
 									var vaultCertificateAuthorityConfigFromCpCaCertDataSourceInlineString *shared.VaultCertificateAuthorityConfigFromCpCaCertDataSourceInlineString
-									if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceInlineString != nil {
+									if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceInlineString != nil {
 										inlineString5 := new(string)
-										if !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceInlineString.InlineString.IsUnknown() && !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceInlineString.InlineString.IsNull() {
-											*inlineString5 = backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceInlineString.InlineString.ValueString()
+										if !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceInlineString.InlineString.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceInlineString.InlineString.IsNull() {
+											*inlineString5 = r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceInlineString.InlineString.ValueString()
 										} else {
 											inlineString5 = nil
 										}
@@ -1553,10 +1553,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 										}
 									}
 									var vaultCertificateAuthorityConfigFromCpCaCertDataSourceSecret *shared.VaultCertificateAuthorityConfigFromCpCaCertDataSourceSecret
-									if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceSecret != nil {
+									if r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceSecret != nil {
 										secret5 := new(string)
-										if !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceSecret.Secret.IsUnknown() && !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceSecret.Secret.IsNull() {
-											*secret5 = backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceSecret.Secret.ValueString()
+										if !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceSecret.Secret.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceSecret.Secret.IsNull() {
+											*secret5 = r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.CaCert.DataSourceSecret.Secret.ValueString()
 										} else {
 											secret5 = nil
 										}
@@ -1571,14 +1571,14 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 									}
 								}
 								serverName := new(string)
-								if !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.ServerName.IsUnknown() && !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.ServerName.IsNull() {
-									*serverName = backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.ServerName.ValueString()
+								if !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.ServerName.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.ServerName.IsNull() {
+									*serverName = r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.ServerName.ValueString()
 								} else {
 									serverName = nil
 								}
 								skipVerify := new(bool)
-								if !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.SkipVerify.IsUnknown() && !backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.SkipVerify.IsNull() {
-									*skipVerify = backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.SkipVerify.ValueBool()
+								if !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.SkipVerify.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.SkipVerify.IsNull() {
+									*skipVerify = r.Mtls.Backends[backendsIndex2].Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.TLS.SkipVerify.ValueBool()
 								} else {
 									skipVerify = nil
 								}
@@ -1615,24 +1615,24 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 					}
 				}
 				var acmCertificateAuthorityConfig *shared.ACMCertificateAuthorityConfig
-				if backendsItem2.Conf.ACMCertificateAuthorityConfig != nil {
+				if r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig != nil {
 					arn := new(string)
-					if !backendsItem2.Conf.ACMCertificateAuthorityConfig.Arn.IsUnknown() && !backendsItem2.Conf.ACMCertificateAuthorityConfig.Arn.IsNull() {
-						*arn = backendsItem2.Conf.ACMCertificateAuthorityConfig.Arn.ValueString()
+					if !r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Arn.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Arn.IsNull() {
+						*arn = r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Arn.ValueString()
 					} else {
 						arn = nil
 					}
 					var auth1 *shared.Auth
-					if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth != nil {
+					if r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth != nil {
 						var awsCredentials *shared.AwsCredentials
-						if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials != nil {
+						if r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials != nil {
 							var accessKey *shared.AccessKey
-							if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey != nil {
+							if r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey != nil {
 								var accessKeyDataSourceFile *shared.AccessKeyDataSourceFile
-								if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceFile != nil {
+								if r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceFile != nil {
 									file6 := new(string)
-									if !backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceFile.File.IsUnknown() && !backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceFile.File.IsNull() {
-										*file6 = backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceFile.File.ValueString()
+									if !r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceFile.File.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceFile.File.IsNull() {
+										*file6 = r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceFile.File.ValueString()
 									} else {
 										file6 = nil
 									}
@@ -1646,10 +1646,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 									}
 								}
 								var accessKeyDataSourceInline *shared.AccessKeyDataSourceInline
-								if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceInline != nil {
+								if r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceInline != nil {
 									inline6 := new(string)
-									if !backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceInline.Inline.IsUnknown() && !backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceInline.Inline.IsNull() {
-										*inline6 = backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceInline.Inline.ValueString()
+									if !r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceInline.Inline.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceInline.Inline.IsNull() {
+										*inline6 = r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceInline.Inline.ValueString()
 									} else {
 										inline6 = nil
 									}
@@ -1663,10 +1663,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 									}
 								}
 								var accessKeyDataSourceInlineString *shared.AccessKeyDataSourceInlineString
-								if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceInlineString != nil {
+								if r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceInlineString != nil {
 									inlineString6 := new(string)
-									if !backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceInlineString.InlineString.IsUnknown() && !backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceInlineString.InlineString.IsNull() {
-										*inlineString6 = backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceInlineString.InlineString.ValueString()
+									if !r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceInlineString.InlineString.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceInlineString.InlineString.IsNull() {
+										*inlineString6 = r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceInlineString.InlineString.ValueString()
 									} else {
 										inlineString6 = nil
 									}
@@ -1680,10 +1680,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 									}
 								}
 								var accessKeyDataSourceSecret *shared.AccessKeyDataSourceSecret
-								if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceSecret != nil {
+								if r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceSecret != nil {
 									secret6 := new(string)
-									if !backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceSecret.Secret.IsUnknown() && !backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceSecret.Secret.IsNull() {
-										*secret6 = backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceSecret.Secret.ValueString()
+									if !r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceSecret.Secret.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceSecret.Secret.IsNull() {
+										*secret6 = r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKey.DataSourceSecret.Secret.ValueString()
 									} else {
 										secret6 = nil
 									}
@@ -1698,12 +1698,12 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 								}
 							}
 							var accessKeySecret *shared.AccessKeySecret
-							if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret != nil {
+							if r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret != nil {
 								var accessKeySecretDataSourceFile *shared.AccessKeySecretDataSourceFile
-								if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceFile != nil {
+								if r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceFile != nil {
 									file7 := new(string)
-									if !backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceFile.File.IsUnknown() && !backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceFile.File.IsNull() {
-										*file7 = backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceFile.File.ValueString()
+									if !r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceFile.File.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceFile.File.IsNull() {
+										*file7 = r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceFile.File.ValueString()
 									} else {
 										file7 = nil
 									}
@@ -1717,10 +1717,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 									}
 								}
 								var accessKeySecretDataSourceInline *shared.AccessKeySecretDataSourceInline
-								if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceInline != nil {
+								if r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceInline != nil {
 									inline7 := new(string)
-									if !backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceInline.Inline.IsUnknown() && !backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceInline.Inline.IsNull() {
-										*inline7 = backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceInline.Inline.ValueString()
+									if !r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceInline.Inline.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceInline.Inline.IsNull() {
+										*inline7 = r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceInline.Inline.ValueString()
 									} else {
 										inline7 = nil
 									}
@@ -1734,10 +1734,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 									}
 								}
 								var accessKeySecretDataSourceInlineString *shared.AccessKeySecretDataSourceInlineString
-								if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceInlineString != nil {
+								if r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceInlineString != nil {
 									inlineString7 := new(string)
-									if !backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceInlineString.InlineString.IsUnknown() && !backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceInlineString.InlineString.IsNull() {
-										*inlineString7 = backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceInlineString.InlineString.ValueString()
+									if !r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceInlineString.InlineString.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceInlineString.InlineString.IsNull() {
+										*inlineString7 = r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceInlineString.InlineString.ValueString()
 									} else {
 										inlineString7 = nil
 									}
@@ -1751,10 +1751,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 									}
 								}
 								var accessKeySecretDataSourceSecret *shared.AccessKeySecretDataSourceSecret
-								if backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceSecret != nil {
+								if r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceSecret != nil {
 									secret7 := new(string)
-									if !backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceSecret.Secret.IsUnknown() && !backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceSecret.Secret.IsNull() {
-										*secret7 = backendsItem2.Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceSecret.Secret.ValueString()
+									if !r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceSecret.Secret.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceSecret.Secret.IsNull() {
+										*secret7 = r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.Auth.AwsCredentials.AccessKeySecret.DataSourceSecret.Secret.ValueString()
 									} else {
 										secret7 = nil
 									}
@@ -1778,12 +1778,12 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 						}
 					}
 					var caCert2 *shared.ConfCaCert
-					if backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert != nil {
+					if r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.CaCert != nil {
 						var caCertDataSourceFile *shared.CaCertDataSourceFile
-						if backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceFile != nil {
+						if r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceFile != nil {
 							file8 := new(string)
-							if !backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceFile.File.IsUnknown() && !backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceFile.File.IsNull() {
-								*file8 = backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceFile.File.ValueString()
+							if !r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceFile.File.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceFile.File.IsNull() {
+								*file8 = r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceFile.File.ValueString()
 							} else {
 								file8 = nil
 							}
@@ -1797,10 +1797,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 							}
 						}
 						var caCertDataSourceInline *shared.CaCertDataSourceInline
-						if backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceInline != nil {
+						if r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceInline != nil {
 							inline8 := new(string)
-							if !backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceInline.Inline.IsUnknown() && !backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceInline.Inline.IsNull() {
-								*inline8 = backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceInline.Inline.ValueString()
+							if !r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceInline.Inline.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceInline.Inline.IsNull() {
+								*inline8 = r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceInline.Inline.ValueString()
 							} else {
 								inline8 = nil
 							}
@@ -1814,10 +1814,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 							}
 						}
 						var caCertDataSourceInlineString *shared.CaCertDataSourceInlineString
-						if backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceInlineString != nil {
+						if r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceInlineString != nil {
 							inlineString8 := new(string)
-							if !backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceInlineString.InlineString.IsUnknown() && !backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceInlineString.InlineString.IsNull() {
-								*inlineString8 = backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceInlineString.InlineString.ValueString()
+							if !r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceInlineString.InlineString.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceInlineString.InlineString.IsNull() {
+								*inlineString8 = r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceInlineString.InlineString.ValueString()
 							} else {
 								inlineString8 = nil
 							}
@@ -1831,10 +1831,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 							}
 						}
 						var caCertDataSourceSecret *shared.CaCertDataSourceSecret
-						if backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceSecret != nil {
+						if r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceSecret != nil {
 							secret8 := new(string)
-							if !backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceSecret.Secret.IsUnknown() && !backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceSecret.Secret.IsNull() {
-								*secret8 = backendsItem2.Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceSecret.Secret.ValueString()
+							if !r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceSecret.Secret.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceSecret.Secret.IsNull() {
+								*secret8 = r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.CaCert.DataSourceSecret.Secret.ValueString()
 							} else {
 								secret8 = nil
 							}
@@ -1849,8 +1849,8 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 						}
 					}
 					commonName1 := new(string)
-					if !backendsItem2.Conf.ACMCertificateAuthorityConfig.CommonName.IsUnknown() && !backendsItem2.Conf.ACMCertificateAuthorityConfig.CommonName.IsNull() {
-						*commonName1 = backendsItem2.Conf.ACMCertificateAuthorityConfig.CommonName.ValueString()
+					if !r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.CommonName.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.CommonName.IsNull() {
+						*commonName1 = r.Mtls.Backends[backendsIndex2].Conf.ACMCertificateAuthorityConfig.CommonName.ValueString()
 					} else {
 						commonName1 = nil
 					}
@@ -1867,14 +1867,14 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 					}
 				}
 				var certManagerCertificateAuthorityConfig *shared.CertManagerCertificateAuthorityConfig
-				if backendsItem2.Conf.CertManagerCertificateAuthorityConfig != nil {
+				if r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig != nil {
 					var caCert3 *shared.CertManagerCertificateAuthorityConfigConfCaCert
-					if backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert != nil {
+					if r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.CaCert != nil {
 						var certManagerCertificateAuthorityConfigCaCertDataSourceFile *shared.CertManagerCertificateAuthorityConfigCaCertDataSourceFile
-						if backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceFile != nil {
+						if r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceFile != nil {
 							file9 := new(string)
-							if !backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceFile.File.IsUnknown() && !backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceFile.File.IsNull() {
-								*file9 = backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceFile.File.ValueString()
+							if !r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceFile.File.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceFile.File.IsNull() {
+								*file9 = r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceFile.File.ValueString()
 							} else {
 								file9 = nil
 							}
@@ -1888,10 +1888,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 							}
 						}
 						var certManagerCertificateAuthorityConfigCaCertDataSourceInline *shared.CertManagerCertificateAuthorityConfigCaCertDataSourceInline
-						if backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceInline != nil {
+						if r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceInline != nil {
 							inline9 := new(string)
-							if !backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceInline.Inline.IsUnknown() && !backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceInline.Inline.IsNull() {
-								*inline9 = backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceInline.Inline.ValueString()
+							if !r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceInline.Inline.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceInline.Inline.IsNull() {
+								*inline9 = r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceInline.Inline.ValueString()
 							} else {
 								inline9 = nil
 							}
@@ -1905,10 +1905,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 							}
 						}
 						var certManagerCertificateAuthorityConfigCaCertDataSourceInlineString *shared.CertManagerCertificateAuthorityConfigCaCertDataSourceInlineString
-						if backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceInlineString != nil {
+						if r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceInlineString != nil {
 							inlineString9 := new(string)
-							if !backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceInlineString.InlineString.IsUnknown() && !backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceInlineString.InlineString.IsNull() {
-								*inlineString9 = backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceInlineString.InlineString.ValueString()
+							if !r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceInlineString.InlineString.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceInlineString.InlineString.IsNull() {
+								*inlineString9 = r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceInlineString.InlineString.ValueString()
 							} else {
 								inlineString9 = nil
 							}
@@ -1922,10 +1922,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 							}
 						}
 						var certManagerCertificateAuthorityConfigCaCertDataSourceSecret *shared.CertManagerCertificateAuthorityConfigCaCertDataSourceSecret
-						if backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceSecret != nil {
+						if r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceSecret != nil {
 							secret9 := new(string)
-							if !backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceSecret.Secret.IsUnknown() && !backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceSecret.Secret.IsNull() {
-								*secret9 = backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceSecret.Secret.ValueString()
+							if !r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceSecret.Secret.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceSecret.Secret.IsNull() {
+								*secret9 = r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.CaCert.DataSourceSecret.Secret.ValueString()
 							} else {
 								secret9 = nil
 							}
@@ -1940,32 +1940,32 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 						}
 					}
 					commonName2 := new(string)
-					if !backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CommonName.IsUnknown() && !backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CommonName.IsNull() {
-						*commonName2 = backendsItem2.Conf.CertManagerCertificateAuthorityConfig.CommonName.ValueString()
+					if !r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.CommonName.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.CommonName.IsNull() {
+						*commonName2 = r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.CommonName.ValueString()
 					} else {
 						commonName2 = nil
 					}
-					dnsNames := make([]string, 0, len(backendsItem2.Conf.CertManagerCertificateAuthorityConfig.DNSNames))
-					for _, dnsNamesItem := range backendsItem2.Conf.CertManagerCertificateAuthorityConfig.DNSNames {
-						dnsNames = append(dnsNames, dnsNamesItem.ValueString())
+					dnsNames := make([]string, 0, len(r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.DNSNames))
+					for dnsNamesIndex := range r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.DNSNames {
+						dnsNames = append(dnsNames, r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.DNSNames[dnsNamesIndex].ValueString())
 					}
 					var issuerRef *shared.IssuerRef
-					if backendsItem2.Conf.CertManagerCertificateAuthorityConfig.IssuerRef != nil {
+					if r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.IssuerRef != nil {
 						group := new(string)
-						if !backendsItem2.Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Group.IsUnknown() && !backendsItem2.Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Group.IsNull() {
-							*group = backendsItem2.Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Group.ValueString()
+						if !r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Group.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Group.IsNull() {
+							*group = r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Group.ValueString()
 						} else {
 							group = nil
 						}
 						kind := new(string)
-						if !backendsItem2.Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Kind.IsUnknown() && !backendsItem2.Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Kind.IsNull() {
-							*kind = backendsItem2.Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Kind.ValueString()
+						if !r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Kind.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Kind.IsNull() {
+							*kind = r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Kind.ValueString()
 						} else {
 							kind = nil
 						}
 						name3 := new(string)
-						if !backendsItem2.Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Name.IsUnknown() && !backendsItem2.Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Name.IsNull() {
-							*name3 = backendsItem2.Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Name.ValueString()
+						if !r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Name.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Name.IsNull() {
+							*name3 = r.Mtls.Backends[backendsIndex2].Conf.CertManagerCertificateAuthorityConfig.IssuerRef.Name.ValueString()
 						} else {
 							name3 = nil
 						}
@@ -1989,18 +1989,18 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 				}
 			}
 			var dpCert *shared.DpCert
-			if backendsItem2.DpCert != nil {
+			if r.Mtls.Backends[backendsIndex2].DpCert != nil {
 				var requestTimeout *shared.RequestTimeout
-				if backendsItem2.DpCert.RequestTimeout != nil {
+				if r.Mtls.Backends[backendsIndex2].DpCert.RequestTimeout != nil {
 					nanos := new(int64)
-					if !backendsItem2.DpCert.RequestTimeout.Nanos.IsUnknown() && !backendsItem2.DpCert.RequestTimeout.Nanos.IsNull() {
-						*nanos = backendsItem2.DpCert.RequestTimeout.Nanos.ValueInt64()
+					if !r.Mtls.Backends[backendsIndex2].DpCert.RequestTimeout.Nanos.IsUnknown() && !r.Mtls.Backends[backendsIndex2].DpCert.RequestTimeout.Nanos.IsNull() {
+						*nanos = r.Mtls.Backends[backendsIndex2].DpCert.RequestTimeout.Nanos.ValueInt64()
 					} else {
 						nanos = nil
 					}
 					seconds := new(int64)
-					if !backendsItem2.DpCert.RequestTimeout.Seconds.IsUnknown() && !backendsItem2.DpCert.RequestTimeout.Seconds.IsNull() {
-						*seconds = backendsItem2.DpCert.RequestTimeout.Seconds.ValueInt64()
+					if !r.Mtls.Backends[backendsIndex2].DpCert.RequestTimeout.Seconds.IsUnknown() && !r.Mtls.Backends[backendsIndex2].DpCert.RequestTimeout.Seconds.IsNull() {
+						*seconds = r.Mtls.Backends[backendsIndex2].DpCert.RequestTimeout.Seconds.ValueInt64()
 					} else {
 						seconds = nil
 					}
@@ -2010,10 +2010,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 					}
 				}
 				var rotation *shared.Rotation
-				if backendsItem2.DpCert.Rotation != nil {
+				if r.Mtls.Backends[backendsIndex2].DpCert.Rotation != nil {
 					expiration1 := new(string)
-					if !backendsItem2.DpCert.Rotation.Expiration.IsUnknown() && !backendsItem2.DpCert.Rotation.Expiration.IsNull() {
-						*expiration1 = backendsItem2.DpCert.Rotation.Expiration.ValueString()
+					if !r.Mtls.Backends[backendsIndex2].DpCert.Rotation.Expiration.IsUnknown() && !r.Mtls.Backends[backendsIndex2].DpCert.Rotation.Expiration.IsNull() {
+						*expiration1 = r.Mtls.Backends[backendsIndex2].DpCert.Rotation.Expiration.ValueString()
 					} else {
 						expiration1 = nil
 					}
@@ -2027,10 +2027,10 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 				}
 			}
 			var mode2 *shared.MeshItemMode
-			if backendsItem2.Mode != nil {
+			if r.Mtls.Backends[backendsIndex2].Mode != nil {
 				str3 := new(string)
-				if !backendsItem2.Mode.Str.IsUnknown() && !backendsItem2.Mode.Str.IsNull() {
-					*str3 = backendsItem2.Mode.Str.ValueString()
+				if !r.Mtls.Backends[backendsIndex2].Mode.Str.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Mode.Str.IsNull() {
+					*str3 = r.Mtls.Backends[backendsIndex2].Mode.Str.ValueString()
 				} else {
 					str3 = nil
 				}
@@ -2040,8 +2040,8 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 					}
 				}
 				integer3 := new(int64)
-				if !backendsItem2.Mode.Integer.IsUnknown() && !backendsItem2.Mode.Integer.IsNull() {
-					*integer3 = backendsItem2.Mode.Integer.ValueInt64()
+				if !r.Mtls.Backends[backendsIndex2].Mode.Integer.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Mode.Integer.IsNull() {
+					*integer3 = r.Mtls.Backends[backendsIndex2].Mode.Integer.ValueInt64()
 				} else {
 					integer3 = nil
 				}
@@ -2052,24 +2052,24 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 				}
 			}
 			name4 := new(string)
-			if !backendsItem2.Name.IsUnknown() && !backendsItem2.Name.IsNull() {
-				*name4 = backendsItem2.Name.ValueString()
+			if !r.Mtls.Backends[backendsIndex2].Name.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Name.IsNull() {
+				*name4 = r.Mtls.Backends[backendsIndex2].Name.ValueString()
 			} else {
 				name4 = nil
 			}
 			var rootChain *shared.RootChain
-			if backendsItem2.RootChain != nil {
+			if r.Mtls.Backends[backendsIndex2].RootChain != nil {
 				var requestTimeout1 *shared.MeshItemRequestTimeout
-				if backendsItem2.RootChain.RequestTimeout != nil {
+				if r.Mtls.Backends[backendsIndex2].RootChain.RequestTimeout != nil {
 					nanos1 := new(int64)
-					if !backendsItem2.RootChain.RequestTimeout.Nanos.IsUnknown() && !backendsItem2.RootChain.RequestTimeout.Nanos.IsNull() {
-						*nanos1 = backendsItem2.RootChain.RequestTimeout.Nanos.ValueInt64()
+					if !r.Mtls.Backends[backendsIndex2].RootChain.RequestTimeout.Nanos.IsUnknown() && !r.Mtls.Backends[backendsIndex2].RootChain.RequestTimeout.Nanos.IsNull() {
+						*nanos1 = r.Mtls.Backends[backendsIndex2].RootChain.RequestTimeout.Nanos.ValueInt64()
 					} else {
 						nanos1 = nil
 					}
 					seconds1 := new(int64)
-					if !backendsItem2.RootChain.RequestTimeout.Seconds.IsUnknown() && !backendsItem2.RootChain.RequestTimeout.Seconds.IsNull() {
-						*seconds1 = backendsItem2.RootChain.RequestTimeout.Seconds.ValueInt64()
+					if !r.Mtls.Backends[backendsIndex2].RootChain.RequestTimeout.Seconds.IsUnknown() && !r.Mtls.Backends[backendsIndex2].RootChain.RequestTimeout.Seconds.IsNull() {
+						*seconds1 = r.Mtls.Backends[backendsIndex2].RootChain.RequestTimeout.Seconds.ValueInt64()
 					} else {
 						seconds1 = nil
 					}
@@ -2083,8 +2083,8 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 				}
 			}
 			type2 := new(string)
-			if !backendsItem2.Type.IsUnknown() && !backendsItem2.Type.IsNull() {
-				*type2 = backendsItem2.Type.ValueString()
+			if !r.Mtls.Backends[backendsIndex2].Type.IsUnknown() && !r.Mtls.Backends[backendsIndex2].Type.IsNull() {
+				*type2 = r.Mtls.Backends[backendsIndex2].Type.ValueString()
 			} else {
 				type2 = nil
 			}
@@ -2163,32 +2163,32 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 		}
 	}
 	skipCreatingInitialPolicies := make([]string, 0, len(r.SkipCreatingInitialPolicies))
-	for _, skipCreatingInitialPoliciesItem := range r.SkipCreatingInitialPolicies {
-		skipCreatingInitialPolicies = append(skipCreatingInitialPolicies, skipCreatingInitialPoliciesItem.ValueString())
+	for skipCreatingInitialPoliciesIndex := range r.SkipCreatingInitialPolicies {
+		skipCreatingInitialPolicies = append(skipCreatingInitialPolicies, r.SkipCreatingInitialPolicies[skipCreatingInitialPoliciesIndex].ValueString())
 	}
 	var tracing *shared.Tracing
 	if r.Tracing != nil {
 		backends3 := make([]shared.MeshItemTracingBackends, 0, len(r.Tracing.Backends))
-		for _, backendsItem3 := range r.Tracing.Backends {
+		for backendsIndex3 := range r.Tracing.Backends {
 			var conf3 *shared.MeshItemTracingConf
-			if backendsItem3.Conf != nil {
+			if r.Tracing.Backends[backendsIndex3].Conf != nil {
 				var datadogTracingBackendConfig *shared.DatadogTracingBackendConfig
-				if backendsItem3.Conf.DatadogTracingBackendConfig != nil {
+				if r.Tracing.Backends[backendsIndex3].Conf.DatadogTracingBackendConfig != nil {
 					address3 := new(string)
-					if !backendsItem3.Conf.DatadogTracingBackendConfig.Address.IsUnknown() && !backendsItem3.Conf.DatadogTracingBackendConfig.Address.IsNull() {
-						*address3 = backendsItem3.Conf.DatadogTracingBackendConfig.Address.ValueString()
+					if !r.Tracing.Backends[backendsIndex3].Conf.DatadogTracingBackendConfig.Address.IsUnknown() && !r.Tracing.Backends[backendsIndex3].Conf.DatadogTracingBackendConfig.Address.IsNull() {
+						*address3 = r.Tracing.Backends[backendsIndex3].Conf.DatadogTracingBackendConfig.Address.ValueString()
 					} else {
 						address3 = nil
 					}
 					port2 := new(int64)
-					if !backendsItem3.Conf.DatadogTracingBackendConfig.Port.IsUnknown() && !backendsItem3.Conf.DatadogTracingBackendConfig.Port.IsNull() {
-						*port2 = backendsItem3.Conf.DatadogTracingBackendConfig.Port.ValueInt64()
+					if !r.Tracing.Backends[backendsIndex3].Conf.DatadogTracingBackendConfig.Port.IsUnknown() && !r.Tracing.Backends[backendsIndex3].Conf.DatadogTracingBackendConfig.Port.IsNull() {
+						*port2 = r.Tracing.Backends[backendsIndex3].Conf.DatadogTracingBackendConfig.Port.ValueInt64()
 					} else {
 						port2 = nil
 					}
 					splitService := new(bool)
-					if !backendsItem3.Conf.DatadogTracingBackendConfig.SplitService.IsUnknown() && !backendsItem3.Conf.DatadogTracingBackendConfig.SplitService.IsNull() {
-						*splitService = backendsItem3.Conf.DatadogTracingBackendConfig.SplitService.ValueBool()
+					if !r.Tracing.Backends[backendsIndex3].Conf.DatadogTracingBackendConfig.SplitService.IsUnknown() && !r.Tracing.Backends[backendsIndex3].Conf.DatadogTracingBackendConfig.SplitService.IsNull() {
+						*splitService = r.Tracing.Backends[backendsIndex3].Conf.DatadogTracingBackendConfig.SplitService.ValueBool()
 					} else {
 						splitService = nil
 					}
@@ -2204,28 +2204,28 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 					}
 				}
 				var zipkinTracingBackendConfig *shared.ZipkinTracingBackendConfig
-				if backendsItem3.Conf.ZipkinTracingBackendConfig != nil {
+				if r.Tracing.Backends[backendsIndex3].Conf.ZipkinTracingBackendConfig != nil {
 					apiVersion := new(string)
-					if !backendsItem3.Conf.ZipkinTracingBackendConfig.APIVersion.IsUnknown() && !backendsItem3.Conf.ZipkinTracingBackendConfig.APIVersion.IsNull() {
-						*apiVersion = backendsItem3.Conf.ZipkinTracingBackendConfig.APIVersion.ValueString()
+					if !r.Tracing.Backends[backendsIndex3].Conf.ZipkinTracingBackendConfig.APIVersion.IsUnknown() && !r.Tracing.Backends[backendsIndex3].Conf.ZipkinTracingBackendConfig.APIVersion.IsNull() {
+						*apiVersion = r.Tracing.Backends[backendsIndex3].Conf.ZipkinTracingBackendConfig.APIVersion.ValueString()
 					} else {
 						apiVersion = nil
 					}
 					sharedSpanContext := new(bool)
-					if !backendsItem3.Conf.ZipkinTracingBackendConfig.SharedSpanContext.IsUnknown() && !backendsItem3.Conf.ZipkinTracingBackendConfig.SharedSpanContext.IsNull() {
-						*sharedSpanContext = backendsItem3.Conf.ZipkinTracingBackendConfig.SharedSpanContext.ValueBool()
+					if !r.Tracing.Backends[backendsIndex3].Conf.ZipkinTracingBackendConfig.SharedSpanContext.IsUnknown() && !r.Tracing.Backends[backendsIndex3].Conf.ZipkinTracingBackendConfig.SharedSpanContext.IsNull() {
+						*sharedSpanContext = r.Tracing.Backends[backendsIndex3].Conf.ZipkinTracingBackendConfig.SharedSpanContext.ValueBool()
 					} else {
 						sharedSpanContext = nil
 					}
 					traceId128bit := new(bool)
-					if !backendsItem3.Conf.ZipkinTracingBackendConfig.TraceId128bit.IsUnknown() && !backendsItem3.Conf.ZipkinTracingBackendConfig.TraceId128bit.IsNull() {
-						*traceId128bit = backendsItem3.Conf.ZipkinTracingBackendConfig.TraceId128bit.ValueBool()
+					if !r.Tracing.Backends[backendsIndex3].Conf.ZipkinTracingBackendConfig.TraceId128bit.IsUnknown() && !r.Tracing.Backends[backendsIndex3].Conf.ZipkinTracingBackendConfig.TraceId128bit.IsNull() {
+						*traceId128bit = r.Tracing.Backends[backendsIndex3].Conf.ZipkinTracingBackendConfig.TraceId128bit.ValueBool()
 					} else {
 						traceId128bit = nil
 					}
 					url := new(string)
-					if !backendsItem3.Conf.ZipkinTracingBackendConfig.URL.IsUnknown() && !backendsItem3.Conf.ZipkinTracingBackendConfig.URL.IsNull() {
-						*url = backendsItem3.Conf.ZipkinTracingBackendConfig.URL.ValueString()
+					if !r.Tracing.Backends[backendsIndex3].Conf.ZipkinTracingBackendConfig.URL.IsUnknown() && !r.Tracing.Backends[backendsIndex3].Conf.ZipkinTracingBackendConfig.URL.IsNull() {
+						*url = r.Tracing.Backends[backendsIndex3].Conf.ZipkinTracingBackendConfig.URL.ValueString()
 					} else {
 						url = nil
 					}
@@ -2243,20 +2243,20 @@ func (r *MeshResourceModel) ToSharedMeshItem(ctx context.Context) (*shared.MeshI
 				}
 			}
 			name6 := new(string)
-			if !backendsItem3.Name.IsUnknown() && !backendsItem3.Name.IsNull() {
-				*name6 = backendsItem3.Name.ValueString()
+			if !r.Tracing.Backends[backendsIndex3].Name.IsUnknown() && !r.Tracing.Backends[backendsIndex3].Name.IsNull() {
+				*name6 = r.Tracing.Backends[backendsIndex3].Name.ValueString()
 			} else {
 				name6 = nil
 			}
 			sampling := new(float64)
-			if !backendsItem3.Sampling.IsUnknown() && !backendsItem3.Sampling.IsNull() {
-				*sampling = backendsItem3.Sampling.ValueFloat64()
+			if !r.Tracing.Backends[backendsIndex3].Sampling.IsUnknown() && !r.Tracing.Backends[backendsIndex3].Sampling.IsNull() {
+				*sampling = r.Tracing.Backends[backendsIndex3].Sampling.ValueFloat64()
 			} else {
 				sampling = nil
 			}
 			type3 := new(string)
-			if !backendsItem3.Type.IsUnknown() && !backendsItem3.Type.IsNull() {
-				*type3 = backendsItem3.Type.ValueString()
+			if !r.Tracing.Backends[backendsIndex3].Type.IsUnknown() && !r.Tracing.Backends[backendsIndex3].Type.IsNull() {
+				*type3 = r.Tracing.Backends[backendsIndex3].Type.ValueString()
 			} else {
 				type3 = nil
 			}

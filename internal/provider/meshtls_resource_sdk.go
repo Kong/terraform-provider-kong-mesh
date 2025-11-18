@@ -244,30 +244,30 @@ func (r *MeshTLSResourceModel) ToSharedMeshTLSItemInput(ctx context.Context) (*s
 		diags.Append(r.Labels.ElementsAs(ctx, &labels, true)...)
 	}
 	from := make([]shared.MeshTLSItemFrom, 0, len(r.Spec.From))
-	for _, fromItem := range r.Spec.From {
+	for fromIndex := range r.Spec.From {
 		var defaultVar *shared.MeshTLSItemDefault
-		if fromItem.Default != nil {
+		if r.Spec.From[fromIndex].Default != nil {
 			mode := new(shared.MeshTLSItemSpecMode)
-			if !fromItem.Default.Mode.IsUnknown() && !fromItem.Default.Mode.IsNull() {
-				*mode = shared.MeshTLSItemSpecMode(fromItem.Default.Mode.ValueString())
+			if !r.Spec.From[fromIndex].Default.Mode.IsUnknown() && !r.Spec.From[fromIndex].Default.Mode.IsNull() {
+				*mode = shared.MeshTLSItemSpecMode(r.Spec.From[fromIndex].Default.Mode.ValueString())
 			} else {
 				mode = nil
 			}
-			tlsCiphers := make([]shared.TLSCiphers, 0, len(fromItem.Default.TLSCiphers))
-			for _, tlsCiphersItem := range fromItem.Default.TLSCiphers {
+			tlsCiphers := make([]shared.TLSCiphers, 0, len(r.Spec.From[fromIndex].Default.TLSCiphers))
+			for _, tlsCiphersItem := range r.Spec.From[fromIndex].Default.TLSCiphers {
 				tlsCiphers = append(tlsCiphers, shared.TLSCiphers(tlsCiphersItem.ValueString()))
 			}
 			var tlsVersion *shared.TLSVersion
-			if fromItem.Default.TLSVersion != nil {
+			if r.Spec.From[fromIndex].Default.TLSVersion != nil {
 				max := new(shared.MeshTLSItemSpecMax)
-				if !fromItem.Default.TLSVersion.Max.IsUnknown() && !fromItem.Default.TLSVersion.Max.IsNull() {
-					*max = shared.MeshTLSItemSpecMax(fromItem.Default.TLSVersion.Max.ValueString())
+				if !r.Spec.From[fromIndex].Default.TLSVersion.Max.IsUnknown() && !r.Spec.From[fromIndex].Default.TLSVersion.Max.IsNull() {
+					*max = shared.MeshTLSItemSpecMax(r.Spec.From[fromIndex].Default.TLSVersion.Max.ValueString())
 				} else {
 					max = nil
 				}
 				min := new(shared.MeshTLSItemSpecMin)
-				if !fromItem.Default.TLSVersion.Min.IsUnknown() && !fromItem.Default.TLSVersion.Min.IsNull() {
-					*min = shared.MeshTLSItemSpecMin(fromItem.Default.TLSVersion.Min.ValueString())
+				if !r.Spec.From[fromIndex].Default.TLSVersion.Min.IsUnknown() && !r.Spec.From[fromIndex].Default.TLSVersion.Min.IsNull() {
+					*min = shared.MeshTLSItemSpecMin(r.Spec.From[fromIndex].Default.TLSVersion.Min.ValueString())
 				} else {
 					min = nil
 				}
@@ -282,46 +282,46 @@ func (r *MeshTLSResourceModel) ToSharedMeshTLSItemInput(ctx context.Context) (*s
 				TLSVersion: tlsVersion,
 			}
 		}
-		kind := shared.MeshTLSItemSpecKind(fromItem.TargetRef.Kind.ValueString())
+		kind := shared.MeshTLSItemSpecKind(r.Spec.From[fromIndex].TargetRef.Kind.ValueString())
 		labels1 := make(map[string]string)
-		for labelsKey, labelsValue := range fromItem.TargetRef.Labels {
+		for labelsKey := range r.Spec.From[fromIndex].TargetRef.Labels {
 			var labelsInst string
-			labelsInst = labelsValue.ValueString()
+			labelsInst = r.Spec.From[fromIndex].TargetRef.Labels[labelsKey].ValueString()
 
 			labels1[labelsKey] = labelsInst
 		}
 		mesh1 := new(string)
-		if !fromItem.TargetRef.Mesh.IsUnknown() && !fromItem.TargetRef.Mesh.IsNull() {
-			*mesh1 = fromItem.TargetRef.Mesh.ValueString()
+		if !r.Spec.From[fromIndex].TargetRef.Mesh.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.Mesh.IsNull() {
+			*mesh1 = r.Spec.From[fromIndex].TargetRef.Mesh.ValueString()
 		} else {
 			mesh1 = nil
 		}
 		name1 := new(string)
-		if !fromItem.TargetRef.Name.IsUnknown() && !fromItem.TargetRef.Name.IsNull() {
-			*name1 = fromItem.TargetRef.Name.ValueString()
+		if !r.Spec.From[fromIndex].TargetRef.Name.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.Name.IsNull() {
+			*name1 = r.Spec.From[fromIndex].TargetRef.Name.ValueString()
 		} else {
 			name1 = nil
 		}
 		namespace := new(string)
-		if !fromItem.TargetRef.Namespace.IsUnknown() && !fromItem.TargetRef.Namespace.IsNull() {
-			*namespace = fromItem.TargetRef.Namespace.ValueString()
+		if !r.Spec.From[fromIndex].TargetRef.Namespace.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.Namespace.IsNull() {
+			*namespace = r.Spec.From[fromIndex].TargetRef.Namespace.ValueString()
 		} else {
 			namespace = nil
 		}
-		proxyTypes := make([]shared.MeshTLSItemSpecProxyTypes, 0, len(fromItem.TargetRef.ProxyTypes))
-		for _, proxyTypesItem := range fromItem.TargetRef.ProxyTypes {
+		proxyTypes := make([]shared.MeshTLSItemSpecProxyTypes, 0, len(r.Spec.From[fromIndex].TargetRef.ProxyTypes))
+		for _, proxyTypesItem := range r.Spec.From[fromIndex].TargetRef.ProxyTypes {
 			proxyTypes = append(proxyTypes, shared.MeshTLSItemSpecProxyTypes(proxyTypesItem.ValueString()))
 		}
 		sectionName := new(string)
-		if !fromItem.TargetRef.SectionName.IsUnknown() && !fromItem.TargetRef.SectionName.IsNull() {
-			*sectionName = fromItem.TargetRef.SectionName.ValueString()
+		if !r.Spec.From[fromIndex].TargetRef.SectionName.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.SectionName.IsNull() {
+			*sectionName = r.Spec.From[fromIndex].TargetRef.SectionName.ValueString()
 		} else {
 			sectionName = nil
 		}
 		tags := make(map[string]string)
-		for tagsKey, tagsValue := range fromItem.TargetRef.Tags {
+		for tagsKey := range r.Spec.From[fromIndex].TargetRef.Tags {
 			var tagsInst string
-			tagsInst = tagsValue.ValueString()
+			tagsInst = r.Spec.From[fromIndex].TargetRef.Tags[tagsKey].ValueString()
 
 			tags[tagsKey] = tagsInst
 		}
@@ -341,30 +341,30 @@ func (r *MeshTLSResourceModel) ToSharedMeshTLSItemInput(ctx context.Context) (*s
 		})
 	}
 	rules := make([]shared.MeshTLSItemRules, 0, len(r.Spec.Rules))
-	for _, rulesItem := range r.Spec.Rules {
+	for rulesIndex := range r.Spec.Rules {
 		var default1 *shared.MeshTLSItemSpecDefault
-		if rulesItem.Default != nil {
+		if r.Spec.Rules[rulesIndex].Default != nil {
 			mode1 := new(shared.MeshTLSItemMode)
-			if !rulesItem.Default.Mode.IsUnknown() && !rulesItem.Default.Mode.IsNull() {
-				*mode1 = shared.MeshTLSItemMode(rulesItem.Default.Mode.ValueString())
+			if !r.Spec.Rules[rulesIndex].Default.Mode.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.Mode.IsNull() {
+				*mode1 = shared.MeshTLSItemMode(r.Spec.Rules[rulesIndex].Default.Mode.ValueString())
 			} else {
 				mode1 = nil
 			}
-			tlsCiphers1 := make([]shared.MeshTLSItemTLSCiphers, 0, len(rulesItem.Default.TLSCiphers))
-			for _, tlsCiphersItem1 := range rulesItem.Default.TLSCiphers {
+			tlsCiphers1 := make([]shared.MeshTLSItemTLSCiphers, 0, len(r.Spec.Rules[rulesIndex].Default.TLSCiphers))
+			for _, tlsCiphersItem1 := range r.Spec.Rules[rulesIndex].Default.TLSCiphers {
 				tlsCiphers1 = append(tlsCiphers1, shared.MeshTLSItemTLSCiphers(tlsCiphersItem1.ValueString()))
 			}
 			var tlsVersion1 *shared.MeshTLSItemTLSVersion
-			if rulesItem.Default.TLSVersion != nil {
+			if r.Spec.Rules[rulesIndex].Default.TLSVersion != nil {
 				max1 := new(shared.MeshTLSItemMax)
-				if !rulesItem.Default.TLSVersion.Max.IsUnknown() && !rulesItem.Default.TLSVersion.Max.IsNull() {
-					*max1 = shared.MeshTLSItemMax(rulesItem.Default.TLSVersion.Max.ValueString())
+				if !r.Spec.Rules[rulesIndex].Default.TLSVersion.Max.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.TLSVersion.Max.IsNull() {
+					*max1 = shared.MeshTLSItemMax(r.Spec.Rules[rulesIndex].Default.TLSVersion.Max.ValueString())
 				} else {
 					max1 = nil
 				}
 				min1 := new(shared.MeshTLSItemMin)
-				if !rulesItem.Default.TLSVersion.Min.IsUnknown() && !rulesItem.Default.TLSVersion.Min.IsNull() {
-					*min1 = shared.MeshTLSItemMin(rulesItem.Default.TLSVersion.Min.ValueString())
+				if !r.Spec.Rules[rulesIndex].Default.TLSVersion.Min.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.TLSVersion.Min.IsNull() {
+					*min1 = shared.MeshTLSItemMin(r.Spec.Rules[rulesIndex].Default.TLSVersion.Min.ValueString())
 				} else {
 					min1 = nil
 				}
@@ -387,9 +387,9 @@ func (r *MeshTLSResourceModel) ToSharedMeshTLSItemInput(ctx context.Context) (*s
 	if r.Spec.TargetRef != nil {
 		kind1 := shared.MeshTLSItemKind(r.Spec.TargetRef.Kind.ValueString())
 		labels2 := make(map[string]string)
-		for labelsKey1, labelsValue1 := range r.Spec.TargetRef.Labels {
+		for labelsKey1 := range r.Spec.TargetRef.Labels {
 			var labelsInst1 string
-			labelsInst1 = labelsValue1.ValueString()
+			labelsInst1 = r.Spec.TargetRef.Labels[labelsKey1].ValueString()
 
 			labels2[labelsKey1] = labelsInst1
 		}
@@ -422,9 +422,9 @@ func (r *MeshTLSResourceModel) ToSharedMeshTLSItemInput(ctx context.Context) (*s
 			sectionName1 = nil
 		}
 		tags1 := make(map[string]string)
-		for tagsKey1, tagsValue1 := range r.Spec.TargetRef.Tags {
+		for tagsKey1 := range r.Spec.TargetRef.Tags {
 			var tagsInst1 string
-			tagsInst1 = tagsValue1.ValueString()
+			tagsInst1 = r.Spec.TargetRef.Tags[tagsKey1].ValueString()
 
 			tags1[tagsKey1] = tagsInst1
 		}

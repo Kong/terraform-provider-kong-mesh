@@ -266,44 +266,44 @@ func (r *MeshTimeoutResourceModel) ToSharedMeshTimeoutItemInput(ctx context.Cont
 		diags.Append(r.Labels.ElementsAs(ctx, &labels, true)...)
 	}
 	from := make([]shared.MeshTimeoutItemFrom, 0, len(r.Spec.From))
-	for _, fromItem := range r.Spec.From {
+	for fromIndex := range r.Spec.From {
 		var defaultVar *shared.MeshTimeoutItemDefault
-		if fromItem.Default != nil {
+		if r.Spec.From[fromIndex].Default != nil {
 			connectionTimeout := new(string)
-			if !fromItem.Default.ConnectionTimeout.IsUnknown() && !fromItem.Default.ConnectionTimeout.IsNull() {
-				*connectionTimeout = fromItem.Default.ConnectionTimeout.ValueString()
+			if !r.Spec.From[fromIndex].Default.ConnectionTimeout.IsUnknown() && !r.Spec.From[fromIndex].Default.ConnectionTimeout.IsNull() {
+				*connectionTimeout = r.Spec.From[fromIndex].Default.ConnectionTimeout.ValueString()
 			} else {
 				connectionTimeout = nil
 			}
 			var http *shared.MeshTimeoutItemHTTP
-			if fromItem.Default.HTTP != nil {
+			if r.Spec.From[fromIndex].Default.HTTP != nil {
 				maxConnectionDuration := new(string)
-				if !fromItem.Default.HTTP.MaxConnectionDuration.IsUnknown() && !fromItem.Default.HTTP.MaxConnectionDuration.IsNull() {
-					*maxConnectionDuration = fromItem.Default.HTTP.MaxConnectionDuration.ValueString()
+				if !r.Spec.From[fromIndex].Default.HTTP.MaxConnectionDuration.IsUnknown() && !r.Spec.From[fromIndex].Default.HTTP.MaxConnectionDuration.IsNull() {
+					*maxConnectionDuration = r.Spec.From[fromIndex].Default.HTTP.MaxConnectionDuration.ValueString()
 				} else {
 					maxConnectionDuration = nil
 				}
 				maxStreamDuration := new(string)
-				if !fromItem.Default.HTTP.MaxStreamDuration.IsUnknown() && !fromItem.Default.HTTP.MaxStreamDuration.IsNull() {
-					*maxStreamDuration = fromItem.Default.HTTP.MaxStreamDuration.ValueString()
+				if !r.Spec.From[fromIndex].Default.HTTP.MaxStreamDuration.IsUnknown() && !r.Spec.From[fromIndex].Default.HTTP.MaxStreamDuration.IsNull() {
+					*maxStreamDuration = r.Spec.From[fromIndex].Default.HTTP.MaxStreamDuration.ValueString()
 				} else {
 					maxStreamDuration = nil
 				}
 				requestHeadersTimeout := new(string)
-				if !fromItem.Default.HTTP.RequestHeadersTimeout.IsUnknown() && !fromItem.Default.HTTP.RequestHeadersTimeout.IsNull() {
-					*requestHeadersTimeout = fromItem.Default.HTTP.RequestHeadersTimeout.ValueString()
+				if !r.Spec.From[fromIndex].Default.HTTP.RequestHeadersTimeout.IsUnknown() && !r.Spec.From[fromIndex].Default.HTTP.RequestHeadersTimeout.IsNull() {
+					*requestHeadersTimeout = r.Spec.From[fromIndex].Default.HTTP.RequestHeadersTimeout.ValueString()
 				} else {
 					requestHeadersTimeout = nil
 				}
 				requestTimeout := new(string)
-				if !fromItem.Default.HTTP.RequestTimeout.IsUnknown() && !fromItem.Default.HTTP.RequestTimeout.IsNull() {
-					*requestTimeout = fromItem.Default.HTTP.RequestTimeout.ValueString()
+				if !r.Spec.From[fromIndex].Default.HTTP.RequestTimeout.IsUnknown() && !r.Spec.From[fromIndex].Default.HTTP.RequestTimeout.IsNull() {
+					*requestTimeout = r.Spec.From[fromIndex].Default.HTTP.RequestTimeout.ValueString()
 				} else {
 					requestTimeout = nil
 				}
 				streamIdleTimeout := new(string)
-				if !fromItem.Default.HTTP.StreamIdleTimeout.IsUnknown() && !fromItem.Default.HTTP.StreamIdleTimeout.IsNull() {
-					*streamIdleTimeout = fromItem.Default.HTTP.StreamIdleTimeout.ValueString()
+				if !r.Spec.From[fromIndex].Default.HTTP.StreamIdleTimeout.IsUnknown() && !r.Spec.From[fromIndex].Default.HTTP.StreamIdleTimeout.IsNull() {
+					*streamIdleTimeout = r.Spec.From[fromIndex].Default.HTTP.StreamIdleTimeout.ValueString()
 				} else {
 					streamIdleTimeout = nil
 				}
@@ -316,8 +316,8 @@ func (r *MeshTimeoutResourceModel) ToSharedMeshTimeoutItemInput(ctx context.Cont
 				}
 			}
 			idleTimeout := new(string)
-			if !fromItem.Default.IdleTimeout.IsUnknown() && !fromItem.Default.IdleTimeout.IsNull() {
-				*idleTimeout = fromItem.Default.IdleTimeout.ValueString()
+			if !r.Spec.From[fromIndex].Default.IdleTimeout.IsUnknown() && !r.Spec.From[fromIndex].Default.IdleTimeout.IsNull() {
+				*idleTimeout = r.Spec.From[fromIndex].Default.IdleTimeout.ValueString()
 			} else {
 				idleTimeout = nil
 			}
@@ -327,46 +327,46 @@ func (r *MeshTimeoutResourceModel) ToSharedMeshTimeoutItemInput(ctx context.Cont
 				IdleTimeout:       idleTimeout,
 			}
 		}
-		kind := shared.MeshTimeoutItemSpecKind(fromItem.TargetRef.Kind.ValueString())
+		kind := shared.MeshTimeoutItemSpecKind(r.Spec.From[fromIndex].TargetRef.Kind.ValueString())
 		labels1 := make(map[string]string)
-		for labelsKey, labelsValue := range fromItem.TargetRef.Labels {
+		for labelsKey := range r.Spec.From[fromIndex].TargetRef.Labels {
 			var labelsInst string
-			labelsInst = labelsValue.ValueString()
+			labelsInst = r.Spec.From[fromIndex].TargetRef.Labels[labelsKey].ValueString()
 
 			labels1[labelsKey] = labelsInst
 		}
 		mesh1 := new(string)
-		if !fromItem.TargetRef.Mesh.IsUnknown() && !fromItem.TargetRef.Mesh.IsNull() {
-			*mesh1 = fromItem.TargetRef.Mesh.ValueString()
+		if !r.Spec.From[fromIndex].TargetRef.Mesh.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.Mesh.IsNull() {
+			*mesh1 = r.Spec.From[fromIndex].TargetRef.Mesh.ValueString()
 		} else {
 			mesh1 = nil
 		}
 		name1 := new(string)
-		if !fromItem.TargetRef.Name.IsUnknown() && !fromItem.TargetRef.Name.IsNull() {
-			*name1 = fromItem.TargetRef.Name.ValueString()
+		if !r.Spec.From[fromIndex].TargetRef.Name.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.Name.IsNull() {
+			*name1 = r.Spec.From[fromIndex].TargetRef.Name.ValueString()
 		} else {
 			name1 = nil
 		}
 		namespace := new(string)
-		if !fromItem.TargetRef.Namespace.IsUnknown() && !fromItem.TargetRef.Namespace.IsNull() {
-			*namespace = fromItem.TargetRef.Namespace.ValueString()
+		if !r.Spec.From[fromIndex].TargetRef.Namespace.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.Namespace.IsNull() {
+			*namespace = r.Spec.From[fromIndex].TargetRef.Namespace.ValueString()
 		} else {
 			namespace = nil
 		}
-		proxyTypes := make([]shared.MeshTimeoutItemSpecProxyTypes, 0, len(fromItem.TargetRef.ProxyTypes))
-		for _, proxyTypesItem := range fromItem.TargetRef.ProxyTypes {
+		proxyTypes := make([]shared.MeshTimeoutItemSpecProxyTypes, 0, len(r.Spec.From[fromIndex].TargetRef.ProxyTypes))
+		for _, proxyTypesItem := range r.Spec.From[fromIndex].TargetRef.ProxyTypes {
 			proxyTypes = append(proxyTypes, shared.MeshTimeoutItemSpecProxyTypes(proxyTypesItem.ValueString()))
 		}
 		sectionName := new(string)
-		if !fromItem.TargetRef.SectionName.IsUnknown() && !fromItem.TargetRef.SectionName.IsNull() {
-			*sectionName = fromItem.TargetRef.SectionName.ValueString()
+		if !r.Spec.From[fromIndex].TargetRef.SectionName.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.SectionName.IsNull() {
+			*sectionName = r.Spec.From[fromIndex].TargetRef.SectionName.ValueString()
 		} else {
 			sectionName = nil
 		}
 		tags := make(map[string]string)
-		for tagsKey, tagsValue := range fromItem.TargetRef.Tags {
+		for tagsKey := range r.Spec.From[fromIndex].TargetRef.Tags {
 			var tagsInst string
-			tagsInst = tagsValue.ValueString()
+			tagsInst = r.Spec.From[fromIndex].TargetRef.Tags[tagsKey].ValueString()
 
 			tags[tagsKey] = tagsInst
 		}
@@ -386,44 +386,44 @@ func (r *MeshTimeoutResourceModel) ToSharedMeshTimeoutItemInput(ctx context.Cont
 		})
 	}
 	rules := make([]shared.MeshTimeoutItemRules, 0, len(r.Spec.Rules))
-	for _, rulesItem := range r.Spec.Rules {
+	for rulesIndex := range r.Spec.Rules {
 		var default1 *shared.MeshTimeoutItemSpecDefault
-		if rulesItem.Default != nil {
+		if r.Spec.Rules[rulesIndex].Default != nil {
 			connectionTimeout1 := new(string)
-			if !rulesItem.Default.ConnectionTimeout.IsUnknown() && !rulesItem.Default.ConnectionTimeout.IsNull() {
-				*connectionTimeout1 = rulesItem.Default.ConnectionTimeout.ValueString()
+			if !r.Spec.Rules[rulesIndex].Default.ConnectionTimeout.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.ConnectionTimeout.IsNull() {
+				*connectionTimeout1 = r.Spec.Rules[rulesIndex].Default.ConnectionTimeout.ValueString()
 			} else {
 				connectionTimeout1 = nil
 			}
 			var http1 *shared.MeshTimeoutItemSpecHTTP
-			if rulesItem.Default.HTTP != nil {
+			if r.Spec.Rules[rulesIndex].Default.HTTP != nil {
 				maxConnectionDuration1 := new(string)
-				if !rulesItem.Default.HTTP.MaxConnectionDuration.IsUnknown() && !rulesItem.Default.HTTP.MaxConnectionDuration.IsNull() {
-					*maxConnectionDuration1 = rulesItem.Default.HTTP.MaxConnectionDuration.ValueString()
+				if !r.Spec.Rules[rulesIndex].Default.HTTP.MaxConnectionDuration.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.HTTP.MaxConnectionDuration.IsNull() {
+					*maxConnectionDuration1 = r.Spec.Rules[rulesIndex].Default.HTTP.MaxConnectionDuration.ValueString()
 				} else {
 					maxConnectionDuration1 = nil
 				}
 				maxStreamDuration1 := new(string)
-				if !rulesItem.Default.HTTP.MaxStreamDuration.IsUnknown() && !rulesItem.Default.HTTP.MaxStreamDuration.IsNull() {
-					*maxStreamDuration1 = rulesItem.Default.HTTP.MaxStreamDuration.ValueString()
+				if !r.Spec.Rules[rulesIndex].Default.HTTP.MaxStreamDuration.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.HTTP.MaxStreamDuration.IsNull() {
+					*maxStreamDuration1 = r.Spec.Rules[rulesIndex].Default.HTTP.MaxStreamDuration.ValueString()
 				} else {
 					maxStreamDuration1 = nil
 				}
 				requestHeadersTimeout1 := new(string)
-				if !rulesItem.Default.HTTP.RequestHeadersTimeout.IsUnknown() && !rulesItem.Default.HTTP.RequestHeadersTimeout.IsNull() {
-					*requestHeadersTimeout1 = rulesItem.Default.HTTP.RequestHeadersTimeout.ValueString()
+				if !r.Spec.Rules[rulesIndex].Default.HTTP.RequestHeadersTimeout.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.HTTP.RequestHeadersTimeout.IsNull() {
+					*requestHeadersTimeout1 = r.Spec.Rules[rulesIndex].Default.HTTP.RequestHeadersTimeout.ValueString()
 				} else {
 					requestHeadersTimeout1 = nil
 				}
 				requestTimeout1 := new(string)
-				if !rulesItem.Default.HTTP.RequestTimeout.IsUnknown() && !rulesItem.Default.HTTP.RequestTimeout.IsNull() {
-					*requestTimeout1 = rulesItem.Default.HTTP.RequestTimeout.ValueString()
+				if !r.Spec.Rules[rulesIndex].Default.HTTP.RequestTimeout.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.HTTP.RequestTimeout.IsNull() {
+					*requestTimeout1 = r.Spec.Rules[rulesIndex].Default.HTTP.RequestTimeout.ValueString()
 				} else {
 					requestTimeout1 = nil
 				}
 				streamIdleTimeout1 := new(string)
-				if !rulesItem.Default.HTTP.StreamIdleTimeout.IsUnknown() && !rulesItem.Default.HTTP.StreamIdleTimeout.IsNull() {
-					*streamIdleTimeout1 = rulesItem.Default.HTTP.StreamIdleTimeout.ValueString()
+				if !r.Spec.Rules[rulesIndex].Default.HTTP.StreamIdleTimeout.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.HTTP.StreamIdleTimeout.IsNull() {
+					*streamIdleTimeout1 = r.Spec.Rules[rulesIndex].Default.HTTP.StreamIdleTimeout.ValueString()
 				} else {
 					streamIdleTimeout1 = nil
 				}
@@ -436,8 +436,8 @@ func (r *MeshTimeoutResourceModel) ToSharedMeshTimeoutItemInput(ctx context.Cont
 				}
 			}
 			idleTimeout1 := new(string)
-			if !rulesItem.Default.IdleTimeout.IsUnknown() && !rulesItem.Default.IdleTimeout.IsNull() {
-				*idleTimeout1 = rulesItem.Default.IdleTimeout.ValueString()
+			if !r.Spec.Rules[rulesIndex].Default.IdleTimeout.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.IdleTimeout.IsNull() {
+				*idleTimeout1 = r.Spec.Rules[rulesIndex].Default.IdleTimeout.ValueString()
 			} else {
 				idleTimeout1 = nil
 			}
@@ -455,9 +455,9 @@ func (r *MeshTimeoutResourceModel) ToSharedMeshTimeoutItemInput(ctx context.Cont
 	if r.Spec.TargetRef != nil {
 		kind1 := shared.MeshTimeoutItemKind(r.Spec.TargetRef.Kind.ValueString())
 		labels2 := make(map[string]string)
-		for labelsKey1, labelsValue1 := range r.Spec.TargetRef.Labels {
+		for labelsKey1 := range r.Spec.TargetRef.Labels {
 			var labelsInst1 string
-			labelsInst1 = labelsValue1.ValueString()
+			labelsInst1 = r.Spec.TargetRef.Labels[labelsKey1].ValueString()
 
 			labels2[labelsKey1] = labelsInst1
 		}
@@ -490,9 +490,9 @@ func (r *MeshTimeoutResourceModel) ToSharedMeshTimeoutItemInput(ctx context.Cont
 			sectionName1 = nil
 		}
 		tags1 := make(map[string]string)
-		for tagsKey1, tagsValue1 := range r.Spec.TargetRef.Tags {
+		for tagsKey1 := range r.Spec.TargetRef.Tags {
 			var tagsInst1 string
-			tagsInst1 = tagsValue1.ValueString()
+			tagsInst1 = r.Spec.TargetRef.Tags[tagsKey1].ValueString()
 
 			tags1[tagsKey1] = tagsInst1
 		}
@@ -508,44 +508,44 @@ func (r *MeshTimeoutResourceModel) ToSharedMeshTimeoutItemInput(ctx context.Cont
 		}
 	}
 	to := make([]shared.MeshTimeoutItemTo, 0, len(r.Spec.To))
-	for _, toItem := range r.Spec.To {
+	for toIndex := range r.Spec.To {
 		var default2 *shared.MeshTimeoutItemSpecToDefault
-		if toItem.Default != nil {
+		if r.Spec.To[toIndex].Default != nil {
 			connectionTimeout2 := new(string)
-			if !toItem.Default.ConnectionTimeout.IsUnknown() && !toItem.Default.ConnectionTimeout.IsNull() {
-				*connectionTimeout2 = toItem.Default.ConnectionTimeout.ValueString()
+			if !r.Spec.To[toIndex].Default.ConnectionTimeout.IsUnknown() && !r.Spec.To[toIndex].Default.ConnectionTimeout.IsNull() {
+				*connectionTimeout2 = r.Spec.To[toIndex].Default.ConnectionTimeout.ValueString()
 			} else {
 				connectionTimeout2 = nil
 			}
 			var http2 *shared.MeshTimeoutItemSpecToHTTP
-			if toItem.Default.HTTP != nil {
+			if r.Spec.To[toIndex].Default.HTTP != nil {
 				maxConnectionDuration2 := new(string)
-				if !toItem.Default.HTTP.MaxConnectionDuration.IsUnknown() && !toItem.Default.HTTP.MaxConnectionDuration.IsNull() {
-					*maxConnectionDuration2 = toItem.Default.HTTP.MaxConnectionDuration.ValueString()
+				if !r.Spec.To[toIndex].Default.HTTP.MaxConnectionDuration.IsUnknown() && !r.Spec.To[toIndex].Default.HTTP.MaxConnectionDuration.IsNull() {
+					*maxConnectionDuration2 = r.Spec.To[toIndex].Default.HTTP.MaxConnectionDuration.ValueString()
 				} else {
 					maxConnectionDuration2 = nil
 				}
 				maxStreamDuration2 := new(string)
-				if !toItem.Default.HTTP.MaxStreamDuration.IsUnknown() && !toItem.Default.HTTP.MaxStreamDuration.IsNull() {
-					*maxStreamDuration2 = toItem.Default.HTTP.MaxStreamDuration.ValueString()
+				if !r.Spec.To[toIndex].Default.HTTP.MaxStreamDuration.IsUnknown() && !r.Spec.To[toIndex].Default.HTTP.MaxStreamDuration.IsNull() {
+					*maxStreamDuration2 = r.Spec.To[toIndex].Default.HTTP.MaxStreamDuration.ValueString()
 				} else {
 					maxStreamDuration2 = nil
 				}
 				requestHeadersTimeout2 := new(string)
-				if !toItem.Default.HTTP.RequestHeadersTimeout.IsUnknown() && !toItem.Default.HTTP.RequestHeadersTimeout.IsNull() {
-					*requestHeadersTimeout2 = toItem.Default.HTTP.RequestHeadersTimeout.ValueString()
+				if !r.Spec.To[toIndex].Default.HTTP.RequestHeadersTimeout.IsUnknown() && !r.Spec.To[toIndex].Default.HTTP.RequestHeadersTimeout.IsNull() {
+					*requestHeadersTimeout2 = r.Spec.To[toIndex].Default.HTTP.RequestHeadersTimeout.ValueString()
 				} else {
 					requestHeadersTimeout2 = nil
 				}
 				requestTimeout2 := new(string)
-				if !toItem.Default.HTTP.RequestTimeout.IsUnknown() && !toItem.Default.HTTP.RequestTimeout.IsNull() {
-					*requestTimeout2 = toItem.Default.HTTP.RequestTimeout.ValueString()
+				if !r.Spec.To[toIndex].Default.HTTP.RequestTimeout.IsUnknown() && !r.Spec.To[toIndex].Default.HTTP.RequestTimeout.IsNull() {
+					*requestTimeout2 = r.Spec.To[toIndex].Default.HTTP.RequestTimeout.ValueString()
 				} else {
 					requestTimeout2 = nil
 				}
 				streamIdleTimeout2 := new(string)
-				if !toItem.Default.HTTP.StreamIdleTimeout.IsUnknown() && !toItem.Default.HTTP.StreamIdleTimeout.IsNull() {
-					*streamIdleTimeout2 = toItem.Default.HTTP.StreamIdleTimeout.ValueString()
+				if !r.Spec.To[toIndex].Default.HTTP.StreamIdleTimeout.IsUnknown() && !r.Spec.To[toIndex].Default.HTTP.StreamIdleTimeout.IsNull() {
+					*streamIdleTimeout2 = r.Spec.To[toIndex].Default.HTTP.StreamIdleTimeout.ValueString()
 				} else {
 					streamIdleTimeout2 = nil
 				}
@@ -558,8 +558,8 @@ func (r *MeshTimeoutResourceModel) ToSharedMeshTimeoutItemInput(ctx context.Cont
 				}
 			}
 			idleTimeout2 := new(string)
-			if !toItem.Default.IdleTimeout.IsUnknown() && !toItem.Default.IdleTimeout.IsNull() {
-				*idleTimeout2 = toItem.Default.IdleTimeout.ValueString()
+			if !r.Spec.To[toIndex].Default.IdleTimeout.IsUnknown() && !r.Spec.To[toIndex].Default.IdleTimeout.IsNull() {
+				*idleTimeout2 = r.Spec.To[toIndex].Default.IdleTimeout.ValueString()
 			} else {
 				idleTimeout2 = nil
 			}
@@ -569,46 +569,46 @@ func (r *MeshTimeoutResourceModel) ToSharedMeshTimeoutItemInput(ctx context.Cont
 				IdleTimeout:       idleTimeout2,
 			}
 		}
-		kind2 := shared.MeshTimeoutItemSpecToKind(toItem.TargetRef.Kind.ValueString())
+		kind2 := shared.MeshTimeoutItemSpecToKind(r.Spec.To[toIndex].TargetRef.Kind.ValueString())
 		labels3 := make(map[string]string)
-		for labelsKey2, labelsValue2 := range toItem.TargetRef.Labels {
+		for labelsKey2 := range r.Spec.To[toIndex].TargetRef.Labels {
 			var labelsInst2 string
-			labelsInst2 = labelsValue2.ValueString()
+			labelsInst2 = r.Spec.To[toIndex].TargetRef.Labels[labelsKey2].ValueString()
 
 			labels3[labelsKey2] = labelsInst2
 		}
 		mesh3 := new(string)
-		if !toItem.TargetRef.Mesh.IsUnknown() && !toItem.TargetRef.Mesh.IsNull() {
-			*mesh3 = toItem.TargetRef.Mesh.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Mesh.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Mesh.IsNull() {
+			*mesh3 = r.Spec.To[toIndex].TargetRef.Mesh.ValueString()
 		} else {
 			mesh3 = nil
 		}
 		name3 := new(string)
-		if !toItem.TargetRef.Name.IsUnknown() && !toItem.TargetRef.Name.IsNull() {
-			*name3 = toItem.TargetRef.Name.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Name.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Name.IsNull() {
+			*name3 = r.Spec.To[toIndex].TargetRef.Name.ValueString()
 		} else {
 			name3 = nil
 		}
 		namespace2 := new(string)
-		if !toItem.TargetRef.Namespace.IsUnknown() && !toItem.TargetRef.Namespace.IsNull() {
-			*namespace2 = toItem.TargetRef.Namespace.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Namespace.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Namespace.IsNull() {
+			*namespace2 = r.Spec.To[toIndex].TargetRef.Namespace.ValueString()
 		} else {
 			namespace2 = nil
 		}
-		proxyTypes2 := make([]shared.MeshTimeoutItemSpecToProxyTypes, 0, len(toItem.TargetRef.ProxyTypes))
-		for _, proxyTypesItem2 := range toItem.TargetRef.ProxyTypes {
+		proxyTypes2 := make([]shared.MeshTimeoutItemSpecToProxyTypes, 0, len(r.Spec.To[toIndex].TargetRef.ProxyTypes))
+		for _, proxyTypesItem2 := range r.Spec.To[toIndex].TargetRef.ProxyTypes {
 			proxyTypes2 = append(proxyTypes2, shared.MeshTimeoutItemSpecToProxyTypes(proxyTypesItem2.ValueString()))
 		}
 		sectionName2 := new(string)
-		if !toItem.TargetRef.SectionName.IsUnknown() && !toItem.TargetRef.SectionName.IsNull() {
-			*sectionName2 = toItem.TargetRef.SectionName.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.SectionName.IsUnknown() && !r.Spec.To[toIndex].TargetRef.SectionName.IsNull() {
+			*sectionName2 = r.Spec.To[toIndex].TargetRef.SectionName.ValueString()
 		} else {
 			sectionName2 = nil
 		}
 		tags2 := make(map[string]string)
-		for tagsKey2, tagsValue2 := range toItem.TargetRef.Tags {
+		for tagsKey2 := range r.Spec.To[toIndex].TargetRef.Tags {
 			var tagsInst2 string
-			tagsInst2 = tagsValue2.ValueString()
+			tagsInst2 = r.Spec.To[toIndex].TargetRef.Tags[tagsKey2].ValueString()
 
 			tags2[tagsKey2] = tagsInst2
 		}

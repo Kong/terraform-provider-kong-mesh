@@ -19,6 +19,7 @@ generation:
     hoistGlobalSecurity: true
   schemas:
     allOfMergeStrategy: shallowMerge
+  requestBodyFieldName: ""
   tests:
     generateTests: true
     generateNewTests: false
@@ -44,10 +45,14 @@ terraform:
   author: kong
   baseErrorName: KongMeshError
   defaultErrorName: SDKError
+  enableCustomCodeRegions: false
+  enableOperationSecurity: false
+  enableOperationServers: false
   enableTypeDeduplication: true
   environmentVariables:
     - env: SERVER_URL
       providerAttribute: server_url
+  excludeEmptyObjectSchemas: false
   imports:
     option: openapi
     paths:
@@ -56,5 +61,6 @@ terraform:
       operations: operations
       shared: shared
       webhooks: webhooks
+  includeEmptyObjects: false
   packageName: kong-mesh
   unionDeserializationStrategy: populated-fields

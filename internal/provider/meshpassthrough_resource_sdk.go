@@ -177,22 +177,22 @@ func (r *MeshPassthroughResourceModel) ToSharedMeshPassthroughItemInput(ctx cont
 	var defaultVar *shared.MeshPassthroughItemDefault
 	if r.Spec.Default != nil {
 		appendMatch := make([]shared.AppendMatch, 0, len(r.Spec.Default.AppendMatch))
-		for _, appendMatchItem := range r.Spec.Default.AppendMatch {
+		for appendMatchIndex := range r.Spec.Default.AppendMatch {
 			port := new(int)
-			if !appendMatchItem.Port.IsUnknown() && !appendMatchItem.Port.IsNull() {
-				*port = int(appendMatchItem.Port.ValueInt32())
+			if !r.Spec.Default.AppendMatch[appendMatchIndex].Port.IsUnknown() && !r.Spec.Default.AppendMatch[appendMatchIndex].Port.IsNull() {
+				*port = int(r.Spec.Default.AppendMatch[appendMatchIndex].Port.ValueInt32())
 			} else {
 				port = nil
 			}
 			protocol := new(shared.MeshPassthroughItemProtocol)
-			if !appendMatchItem.Protocol.IsUnknown() && !appendMatchItem.Protocol.IsNull() {
-				*protocol = shared.MeshPassthroughItemProtocol(appendMatchItem.Protocol.ValueString())
+			if !r.Spec.Default.AppendMatch[appendMatchIndex].Protocol.IsUnknown() && !r.Spec.Default.AppendMatch[appendMatchIndex].Protocol.IsNull() {
+				*protocol = shared.MeshPassthroughItemProtocol(r.Spec.Default.AppendMatch[appendMatchIndex].Protocol.ValueString())
 			} else {
 				protocol = nil
 			}
-			type1 := shared.MeshPassthroughItemSpecType(appendMatchItem.Type.ValueString())
+			type1 := shared.MeshPassthroughItemSpecType(r.Spec.Default.AppendMatch[appendMatchIndex].Type.ValueString())
 			var value string
-			value = appendMatchItem.Value.ValueString()
+			value = r.Spec.Default.AppendMatch[appendMatchIndex].Value.ValueString()
 
 			appendMatch = append(appendMatch, shared.AppendMatch{
 				Port:     port,
@@ -216,9 +216,9 @@ func (r *MeshPassthroughResourceModel) ToSharedMeshPassthroughItemInput(ctx cont
 	if r.Spec.TargetRef != nil {
 		kind := shared.MeshPassthroughItemKind(r.Spec.TargetRef.Kind.ValueString())
 		labels1 := make(map[string]string)
-		for labelsKey, labelsValue := range r.Spec.TargetRef.Labels {
+		for labelsKey := range r.Spec.TargetRef.Labels {
 			var labelsInst string
-			labelsInst = labelsValue.ValueString()
+			labelsInst = r.Spec.TargetRef.Labels[labelsKey].ValueString()
 
 			labels1[labelsKey] = labelsInst
 		}
@@ -251,9 +251,9 @@ func (r *MeshPassthroughResourceModel) ToSharedMeshPassthroughItemInput(ctx cont
 			sectionName = nil
 		}
 		tags := make(map[string]string)
-		for tagsKey, tagsValue := range r.Spec.TargetRef.Tags {
+		for tagsKey := range r.Spec.TargetRef.Tags {
 			var tagsInst string
-			tagsInst = tagsValue.ValueString()
+			tagsInst = r.Spec.TargetRef.Tags[tagsKey].ValueString()
 
 			tags[tagsKey] = tagsInst
 		}

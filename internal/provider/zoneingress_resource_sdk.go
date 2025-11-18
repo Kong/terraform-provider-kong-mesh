@@ -129,29 +129,29 @@ func (r *ZoneIngressResourceModel) ToSharedZoneIngressItem(ctx context.Context) 
 	var availableServices []shared.AvailableServices
 	if r.AvailableServices != nil {
 		availableServices = make([]shared.AvailableServices, 0, len(r.AvailableServices))
-		for _, availableServicesItem := range r.AvailableServices {
+		for availableServicesIndex := range r.AvailableServices {
 			externalService := new(bool)
-			if !availableServicesItem.ExternalService.IsUnknown() && !availableServicesItem.ExternalService.IsNull() {
-				*externalService = availableServicesItem.ExternalService.ValueBool()
+			if !r.AvailableServices[availableServicesIndex].ExternalService.IsUnknown() && !r.AvailableServices[availableServicesIndex].ExternalService.IsNull() {
+				*externalService = r.AvailableServices[availableServicesIndex].ExternalService.ValueBool()
 			} else {
 				externalService = nil
 			}
 			instances := new(int64)
-			if !availableServicesItem.Instances.IsUnknown() && !availableServicesItem.Instances.IsNull() {
-				*instances = availableServicesItem.Instances.ValueInt64()
+			if !r.AvailableServices[availableServicesIndex].Instances.IsUnknown() && !r.AvailableServices[availableServicesIndex].Instances.IsNull() {
+				*instances = r.AvailableServices[availableServicesIndex].Instances.ValueInt64()
 			} else {
 				instances = nil
 			}
 			mesh := new(string)
-			if !availableServicesItem.Mesh.IsUnknown() && !availableServicesItem.Mesh.IsNull() {
-				*mesh = availableServicesItem.Mesh.ValueString()
+			if !r.AvailableServices[availableServicesIndex].Mesh.IsUnknown() && !r.AvailableServices[availableServicesIndex].Mesh.IsNull() {
+				*mesh = r.AvailableServices[availableServicesIndex].Mesh.ValueString()
 			} else {
 				mesh = nil
 			}
 			tags := make(map[string]string)
-			for tagsKey, tagsValue := range availableServicesItem.Tags {
+			for tagsKey := range r.AvailableServices[availableServicesIndex].Tags {
 				var tagsInst string
-				tagsInst = tagsValue.ValueString()
+				tagsInst = r.AvailableServices[availableServicesIndex].Tags[tagsKey].ValueString()
 
 				tags[tagsKey] = tagsInst
 			}
@@ -164,9 +164,9 @@ func (r *ZoneIngressResourceModel) ToSharedZoneIngressItem(ctx context.Context) 
 		}
 	}
 	labels := make(map[string]string)
-	for labelsKey, labelsValue := range r.Labels {
+	for labelsKey := range r.Labels {
 		var labelsInst string
-		labelsInst = labelsValue.ValueString()
+		labelsInst = r.Labels[labelsKey].ValueString()
 
 		labels[labelsKey] = labelsInst
 	}
