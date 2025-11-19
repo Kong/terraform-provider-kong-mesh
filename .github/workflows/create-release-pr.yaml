@@ -143,13 +143,8 @@ jobs:
           NEW_VERSION="${{ steps.version.outputs.new }}"
           BRANCH="release/${NEW_VERSION}"
 
-          # Get the current commit SHA
-          CURRENT_SHA=$(git rev-parse HEAD)
-
-          # Stage all changes
           git add -A
 
-          # Get list of changed files
           CHANGED_FILES=$(git diff --cached --name-only)
 
           if [ -z "$CHANGED_FILES" ]; then
@@ -157,81 +152,65 @@ jobs:
             exit 0
           fi
 
-          # Get the current tree
-          CURRENT_TREE=$(gh api \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            "/repos/${{ github.repository }}/git/commits/${CURRENT_SHA}" \
-            --jq '.tree.sha')
+          # Get current commit SHA and base tree
+          CURRENT_SHA=$(git rev-parse HEAD)
+          BASE_TREE=$(gh api /repos/${{ github.repository }}/git/commits/$CURRENT_SHA --jq .tree.sha)
 
-          # Create blobs and build tree items
+          # Create blobs for changed files
           TREE_JSON=$(mktemp)
-          echo '{"base_tree":"'${CURRENT_TREE}'","tree":[' > "$TREE_JSON"
+          echo '{"base_tree":"'"$BASE_TREE"'","tree":[' > "$TREE_JSON"
           FIRST=true
 
           while IFS= read -r file; do
             if [ -f "$file" ]; then
-              echo "Processing $file"
+              # Create blob using @ syntax to avoid loading into variables
+              ENCODED_FILE=$(mktemp)
+              base64 -i "$file" > "$ENCODED_FILE"
 
-              # Create blob
-              CONTENT=$(base64 -i "$file")
-              BLOB_SHA=$(gh api \
-                --method POST \
-                -H "Accept: application/vnd.github+json" \
-                -H "X-GitHub-Api-Version: 2022-11-28" \
-                "/repos/${{ github.repository }}/git/blobs" \
-                -f "content=${CONTENT}" \
-                -f "encoding=base64" \
-                --jq '.sha')
+              BLOB_SHA=$(gh api /repos/${{ github.repository }}/git/blobs \
+                --field content=@"$ENCODED_FILE" \
+                --field encoding=base64 \
+                --jq .sha)
 
-              # Add to tree (with comma separator)
-              if [ "$FIRST" = true ]; then
-                FIRST=false
-              else
+              rm "$ENCODED_FILE"
+
+              # Add to tree JSON
+              if [ "$FIRST" = false ]; then
                 echo ',' >> "$TREE_JSON"
               fi
+              FIRST=false
 
-              echo '{"path":"'$file'","mode":"100644","type":"blob","sha":"'$BLOB_SHA'"}' >> "$TREE_JSON"
+              # Escape file path for JSON
+              FILE_ESCAPED=$(printf '%s' "$file" | jq -Rs .)
+              echo '{"path":'"$FILE_ESCAPED"',"mode":"100644","type":"blob","sha":"'"$BLOB_SHA"'"}' >> "$TREE_JSON"
             fi
           done <<< "$CHANGED_FILES"
 
           echo ']}' >> "$TREE_JSON"
 
           # Create new tree
-          NEW_TREE=$(gh api \
-            --method POST \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            "/repos/${{ github.repository }}/git/trees" \
+          NEW_TREE=$(gh api /repos/${{ github.repository }}/git/trees \
             --input "$TREE_JSON" \
-            --jq '.sha')
-
-          echo "Created tree: $NEW_TREE"
+            --jq .sha)
           rm "$TREE_JSON"
 
-          # Create commit
-          COMMIT_SHA=$(gh api \
-            --method POST \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            "/repos/${{ github.repository }}/git/commits" \
-            -f "message=chore(release): bump version to ${NEW_VERSION}" \
-            -f "tree=${NEW_TREE}" \
-            -f "parents[]=${CURRENT_SHA}" \
-            --jq '.sha')
+          # Create commit (auto-signed by GitHub)
+          COMMIT_SHA=$(gh api /repos/${{ github.repository }}/git/commits \
+            -f message="chore(release): bump version to $NEW_VERSION" \
+            -f tree="$NEW_TREE" \
+            -f parents[]="$CURRENT_SHA" \
+            --jq .sha)
 
-          echo "Created commit: $COMMIT_SHA"
+          # Create/update branch reference
+          if ! gh api /repos/${{ github.repository }}/git/refs/heads/$BRANCH \
+            -f sha="$COMMIT_SHA" \
+            -X PATCH 2>/dev/null; then
+            gh api /repos/${{ github.repository }}/git/refs \
+              -f ref="refs/heads/$BRANCH" \
+              -f sha="$COMMIT_SHA"
+          fi
 
-          # Update branch reference
-          gh api \
-            --method POST \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            "/repos/${{ github.repository }}/git/refs" \
-            -f "ref=refs/heads/${BRANCH}" \
-            -f "sha=${COMMIT_SHA}"
-
-          echo "Pushed to branch: $BRANCH"
+          echo "Created release branch $BRANCH with commit $COMMIT_SHA"
 
       - name: Collect commit authors for reviewers
         id: reviewers
