@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.6.2
+> Released on 2025/11/19
+>
+> - fix(workflows): use @ syntax for blob content to avoid arg limits
+> - fix(workflows): use base64 encoding for blob creation
+> - fix(workflows): use JSON input for blob creation to handle large files
+> - fix(workflows): use JSON file for tree creation to avoid arg limits
+> - fix(workflows): use GitHub API for blob and tree creation
+> - fix(workflows): upload tree objects before API commit creation
+> - chore(git): ignore speakeasy binary downloads
+> - fix(workflows): add debugging output to release workflow
+> - fix(workflows): resolve argument list too long error in release workflow
+> - feat(sdk): automated oas update (#101)
+> - chore(deps): bump Kong/shared-speakeasy/resource_plan_modifier from 0.0.11 to 0.0.12 (#99)
+> - chore(deps): bump speakeasy-api/speakeasy from 1.639.3 to 1.642.1 (#89)
+> - chore(deps): bump Kong/shared-speakeasy/resource_plan_modifier from 0.0.10 to 0.0.11 (#96)
+> - feat(sdk): automated oas update (#94)
+> - feat(sdk): automated oas update (#86)
+> - chore(lifecycle): ignore oss files (#92)
+> - chore(deps): bump kumahq/.github: from 75f72db to ec5a7f8 (#53)
+
+
 ## 0.6.1
 > Released on 2025/10/29
 >
