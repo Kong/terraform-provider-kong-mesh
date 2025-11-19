@@ -172,12 +172,15 @@ jobs:
             if [ -f "$file" ]; then
               echo "Processing: $file"
 
-              # Create blob for file
-              FILE_CONTENT=$(cat "$file")
+              # Create blob for file using --input to avoid arg limits
+              BLOB_PAYLOAD=$(mktemp)
+              jq -n --arg content "$(cat "$file")" '{content: $content, encoding: "utf-8"}' > "$BLOB_PAYLOAD"
+
               BLOB_SHA=$(gh api /repos/${{ github.repository }}/git/blobs \
-                -f content="$FILE_CONTENT" \
-                -f encoding=utf-8 \
+                --input "$BLOB_PAYLOAD" \
                 --jq .sha)
+
+              rm "$BLOB_PAYLOAD"
 
               echo "  Blob SHA: $BLOB_SHA"
 
