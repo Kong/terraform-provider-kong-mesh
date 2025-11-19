@@ -144,61 +144,70 @@ jobs:
           NEW_VERSION="${{ steps.version.outputs.new }}"
           BRANCH="release/${NEW_VERSION}"
 
-          echo "=== Git Status Before Add ==="
-          git status
-
           git add -A
 
-          echo "=== Git Status After Add ==="
-          git status
-
           echo "=== Changed Files ==="
-          git diff --cached --name-only
+          CHANGED_FILES=$(git diff --cached --name-only)
+          echo "$CHANGED_FILES"
 
-          if [ -z "$(git diff --cached --name-only)" ]; then
+          if [ -z "$CHANGED_FILES" ]; then
             echo "No changes to commit"
             exit 0
           fi
 
-          echo "=== Creating Tree Object ==="
-          TREE_SHA=$(git write-tree)
-          echo "Tree SHA: $TREE_SHA"
+          echo "=== Get current commit SHA ==="
+          CURRENT_SHA=$(git rev-parse HEAD)
+          echo "Current SHA: $CURRENT_SHA"
 
-          PARENT_SHA=$(git rev-parse HEAD)
-          echo "Parent SHA: $PARENT_SHA"
+          echo "=== Get base tree ==="
+          BASE_TREE=$(gh api /repos/${{ github.repository }}/git/commits/$CURRENT_SHA --jq .tree.sha)
+          echo "Base tree: $BASE_TREE"
 
-          echo "=== Checking if tree exists on remote ==="
-          # Try to fetch the tree to see if it exists
-          gh api "/repos/${{ github.repository }}/git/trees/${TREE_SHA}" || echo "Tree does not exist on remote (expected)"
+          echo "=== Create blobs for changed files ==="
+          TREE_ITEMS=""
+          while IFS= read -r file; do
+            if [ -f "$file" ]; then
+              echo "Processing: $file"
 
-          echo "=== Uploading tree and blobs to remote ==="
-          # Push objects to remote without updating refs
-          git push origin "${PARENT_SHA}:refs/tmp/release-prep-${NEW_VERSION}"
+              # Create blob for file
+              FILE_CONTENT=$(cat "$file")
+              BLOB_SHA=$(gh api /repos/${{ github.repository }}/git/blobs \
+                -f content="$FILE_CONTENT" \
+                -f encoding=utf-8 \
+                --jq .sha)
 
-          # Now the tree should exist on remote
-          echo "=== Verifying tree exists on remote ==="
-          gh api "/repos/${{ github.repository }}/git/trees/${TREE_SHA}" --jq '.sha'
+              echo "  Blob SHA: $BLOB_SHA"
 
-          echo "=== Creating commit via API ==="
-          COMMIT_SHA=$(gh api \
-            --method POST \
-            -H "Accept: application/vnd.github+json" \
-            "/repos/${{ github.repository }}/git/commits" \
-            -f "message=chore(release): bump version to ${NEW_VERSION}" \
-            -f "tree=${TREE_SHA}" \
-            -f "parents[]=${PARENT_SHA}" \
-            --jq '.sha')
+              # Add to tree items
+              TREE_ITEMS="$TREE_ITEMS -f tree[][path]=$file -f tree[][mode]=100644 -f tree[][type]=blob -f tree[][sha]=$BLOB_SHA"
+            fi
+          done <<< "$CHANGED_FILES"
 
+          echo "=== Create new tree ==="
+          NEW_TREE=$(gh api /repos/${{ github.repository }}/git/trees \
+            -f base_tree="$BASE_TREE" \
+            $TREE_ITEMS \
+            --jq .sha)
+          echo "New tree: $NEW_TREE"
+
+          echo "=== Create commit (auto-signed by GitHub) ==="
+          COMMIT_SHA=$(gh api /repos/${{ github.repository }}/git/commits \
+            -f message="chore(release): bump version to $NEW_VERSION" \
+            -f tree="$NEW_TREE" \
+            -f parents[]="$CURRENT_SHA" \
+            --jq .sha)
           echo "Commit SHA: $COMMIT_SHA"
 
-          echo "=== Updating local ref ==="
-          git update-ref HEAD "$COMMIT_SHA"
-
-          echo "=== Pushing to ${BRANCH} ==="
-          git push origin "HEAD:refs/heads/${BRANCH}"
-
-          echo "=== Cleaning up temporary ref ==="
-          git push origin ":refs/tmp/release-prep-${NEW_VERSION}" || true
+          echo "=== Create/update branch reference ==="
+          # Try to update existing ref first, if it fails, create new ref
+          if ! gh api /repos/${{ github.repository }}/git/refs/heads/$BRANCH \
+            -f sha="$COMMIT_SHA" \
+            -X PATCH 2>/dev/null; then
+            echo "Branch doesn't exist, creating new ref"
+            gh api /repos/${{ github.repository }}/git/refs \
+              -f ref="refs/heads/$BRANCH" \
+              -f sha="$COMMIT_SHA"
+          fi
 
           echo "=== Complete ==="
 
