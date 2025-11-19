@@ -3,15 +3,7 @@
 ## 0.6.2
 > Released on 2025/11/19
 >
-> - fix(workflows): resolve argument list too long error in release workflow (#103)
-> - feat(sdk): automated oas update (#101)
-> - chore(deps): bump Kong/shared-speakeasy/resource_plan_modifier from 0.0.11 to 0.0.12 (#99)
-> - chore(deps): bump speakeasy-api/speakeasy from 1.639.3 to 1.642.1 (#89)
-> - chore(deps): bump Kong/shared-speakeasy/resource_plan_modifier from 0.0.10 to 0.0.11 (#96)
-> - feat(sdk): automated oas update (#94)
-> - feat(sdk): automated oas update (#86)
-> - chore(lifecycle): ignore oss files (#92)
-> - chore(deps): bump kumahq/.github: from 75f72db to ec5a7f8 (#53)
+> - Rename ZoneIngress, ZoneEgress to MeshZoneIngress, MeshZoneEgress to follow convention.
 
 
 ## 0.6.1
