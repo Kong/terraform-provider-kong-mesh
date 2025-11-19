@@ -172,16 +172,17 @@ jobs:
             if [ -f "$file" ]; then
               echo "Processing: $file"
 
-              # Create blob using base64 encoding to handle large files
-              BLOB_PAYLOAD=$(mktemp)
-              FILE_CONTENT_B64=$(base64 -i "$file")
-              echo '{"content":"'"$FILE_CONTENT_B64"'","encoding":"base64"}' > "$BLOB_PAYLOAD"
+              # Create blob using @ syntax to avoid loading into variables
+              # Base64 encode the file to a temp file
+              ENCODED_FILE=$(mktemp)
+              base64 -i "$file" > "$ENCODED_FILE"
 
               BLOB_SHA=$(gh api /repos/${{ github.repository }}/git/blobs \
-                --input "$BLOB_PAYLOAD" \
+                --field content=@"$ENCODED_FILE" \
+                --field encoding=base64 \
                 --jq .sha)
 
-              rm "$BLOB_PAYLOAD"
+              rm "$ENCODED_FILE"
 
               echo "  Blob SHA: $BLOB_SHA"
 
