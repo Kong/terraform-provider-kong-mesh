@@ -11,7 +11,7 @@ import (
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
 )
 
-func (r *ZoneIngressResourceModel) RefreshFromSharedZoneIngressCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.ZoneIngressCreateOrUpdateSuccessResponse) diag.Diagnostics {
+func (r *MeshZoneIngressResourceModel) RefreshFromSharedZoneIngressCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.ZoneIngressCreateOrUpdateSuccessResponse) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	if resp != nil {
@@ -24,7 +24,7 @@ func (r *ZoneIngressResourceModel) RefreshFromSharedZoneIngressCreateOrUpdateSuc
 	return diags
 }
 
-func (r *ZoneIngressResourceModel) RefreshFromSharedZoneIngressItem(ctx context.Context, resp *shared.ZoneIngressItem) diag.Diagnostics {
+func (r *MeshZoneIngressResourceModel) RefreshFromSharedZoneIngressItem(ctx context.Context, resp *shared.ZoneIngressItem) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	if resp != nil {
@@ -76,7 +76,7 @@ func (r *ZoneIngressResourceModel) RefreshFromSharedZoneIngressItem(ctx context.
 	return diags
 }
 
-func (r *ZoneIngressResourceModel) ToOperationsDeleteZoneIngressRequest(ctx context.Context) (*operations.DeleteZoneIngressRequest, diag.Diagnostics) {
+func (r *MeshZoneIngressResourceModel) ToOperationsDeleteZoneIngressRequest(ctx context.Context) (*operations.DeleteZoneIngressRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var name string
@@ -89,7 +89,7 @@ func (r *ZoneIngressResourceModel) ToOperationsDeleteZoneIngressRequest(ctx cont
 	return &out, diags
 }
 
-func (r *ZoneIngressResourceModel) ToOperationsGetZoneIngressRequest(ctx context.Context) (*operations.GetZoneIngressRequest, diag.Diagnostics) {
+func (r *MeshZoneIngressResourceModel) ToOperationsGetZoneIngressRequest(ctx context.Context) (*operations.GetZoneIngressRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var name string
@@ -102,7 +102,7 @@ func (r *ZoneIngressResourceModel) ToOperationsGetZoneIngressRequest(ctx context
 	return &out, diags
 }
 
-func (r *ZoneIngressResourceModel) ToOperationsPutZoneIngressRequest(ctx context.Context) (*operations.PutZoneIngressRequest, diag.Diagnostics) {
+func (r *MeshZoneIngressResourceModel) ToOperationsPutZoneIngressRequest(ctx context.Context) (*operations.PutZoneIngressRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var name string
@@ -123,7 +123,7 @@ func (r *ZoneIngressResourceModel) ToOperationsPutZoneIngressRequest(ctx context
 	return &out, diags
 }
 
-func (r *ZoneIngressResourceModel) ToSharedZoneIngressItem(ctx context.Context) (*shared.ZoneIngressItem, diag.Diagnostics) {
+func (r *MeshZoneIngressResourceModel) ToSharedZoneIngressItem(ctx context.Context) (*shared.ZoneIngressItem, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var availableServices []shared.AvailableServices

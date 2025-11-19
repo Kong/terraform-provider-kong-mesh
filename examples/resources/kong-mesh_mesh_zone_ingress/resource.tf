@@ -1,7 +1,7 @@
-resource "kong-mesh_zone_ingress" "my_zoneingress" {
+resource "kong-mesh_mesh_zone_ingress" "my_meshzoneingress" {
   available_services = [
     {
-      external_service = true
+      external_service = false
       instances        = 10
       mesh             = "...my_mesh..."
       tags = {
@@ -16,11 +16,11 @@ resource "kong-mesh_zone_ingress" "my_zoneingress" {
   networking = {
     address = "...my_address..."
     admin = {
-      port = 0
+      port = 9
     }
     advertised_address = "...my_advertised_address..."
-    advertised_port    = 9
-    port               = 4
+    advertised_port    = 2
+    port               = 0
   }
   type = "...my_type..."
   zone = "...my_zone..."
