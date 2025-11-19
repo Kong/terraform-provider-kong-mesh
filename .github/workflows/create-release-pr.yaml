@@ -136,39 +136,42 @@ jobs:
           # Replace original file
           mv "$TEMP_FILE" CHANGELOG.md
 
-      - name: Commit and push changes via API
-        env:
-          GH_TOKEN: ${{ steps.github-app-token.outputs.token }}
+      - name: Commit and push changes
         run: |
+          set -x
           NEW_VERSION="${{ steps.version.outputs.new }}"
           BRANCH="release/${NEW_VERSION}"
 
+          echo "=== Git Status Before Add ==="
+          git status
+
           git add -A
+
+          echo "=== Git Status After Add ==="
+          git status
+
+          echo "=== Changed Files ==="
+          git diff --cached --name-only
 
           if [ -z "$(git diff --cached --name-only)" ]; then
             echo "No changes to commit"
             exit 0
           fi
 
-          # Create tree from current index using git
-          TREE_SHA=$(git write-tree)
-          PARENT_SHA=$(git rev-parse HEAD)
+          echo "=== Git Config ==="
+          git config user.name
+          git config user.email
 
-          # Create commit via GitHub API (for verified signature)
-          COMMIT_SHA=$(gh api \
-            --method POST \
-            -H "Accept: application/vnd.github+json" \
-            "/repos/${{ github.repository }}/git/commits" \
-            -f "message=chore(release): bump version to ${NEW_VERSION}" \
-            -f "tree=${TREE_SHA}" \
-            -f "parents[]=${PARENT_SHA}" \
-            --jq '.sha')
+          echo "=== Creating Commit ==="
+          git commit -m "chore(release): bump version to ${NEW_VERSION}"
 
-          echo "Created commit: $COMMIT_SHA"
+          echo "=== Commit Created ==="
+          git log -1 --pretty=full
 
-          # Update local ref and push
-          git update-ref HEAD "$COMMIT_SHA"
+          echo "=== Pushing to ${BRANCH} ==="
           git push origin "HEAD:refs/heads/${BRANCH}"
+
+          echo "=== Push Complete ==="
 
       - name: Collect commit authors for reviewers
         id: reviewers
