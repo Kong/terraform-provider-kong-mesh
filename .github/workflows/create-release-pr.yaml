@@ -140,40 +140,30 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.github-app-token.outputs.token }}
         run: |
-          set -x
           NEW_VERSION="${{ steps.version.outputs.new }}"
           BRANCH="release/${NEW_VERSION}"
 
           git add -A
 
-          echo "=== Changed Files ==="
           CHANGED_FILES=$(git diff --cached --name-only)
-          echo "$CHANGED_FILES"
 
           if [ -z "$CHANGED_FILES" ]; then
             echo "No changes to commit"
             exit 0
           fi
 
-          echo "=== Get current commit SHA ==="
+          # Get current commit SHA and base tree
           CURRENT_SHA=$(git rev-parse HEAD)
-          echo "Current SHA: $CURRENT_SHA"
-
-          echo "=== Get base tree ==="
           BASE_TREE=$(gh api /repos/${{ github.repository }}/git/commits/$CURRENT_SHA --jq .tree.sha)
-          echo "Base tree: $BASE_TREE"
 
-          echo "=== Create blobs for changed files ==="
+          # Create blobs for changed files
           TREE_JSON=$(mktemp)
           echo '{"base_tree":"'"$BASE_TREE"'","tree":[' > "$TREE_JSON"
           FIRST=true
 
           while IFS= read -r file; do
             if [ -f "$file" ]; then
-              echo "Processing: $file"
-
               # Create blob using @ syntax to avoid loading into variables
-              # Base64 encode the file to a temp file
               ENCODED_FILE=$(mktemp)
               base64 -i "$file" > "$ENCODED_FILE"
 
@@ -183,8 +173,6 @@ jobs:
                 --jq .sha)
 
               rm "$ENCODED_FILE"
-
-              echo "  Blob SHA: $BLOB_SHA"
 
               # Add to tree JSON
               if [ "$FIRST" = false ]; then
@@ -200,34 +188,29 @@ jobs:
 
           echo ']}' >> "$TREE_JSON"
 
-          echo "=== Create new tree ==="
-          cat "$TREE_JSON"
+          # Create new tree
           NEW_TREE=$(gh api /repos/${{ github.repository }}/git/trees \
             --input "$TREE_JSON" \
             --jq .sha)
-          echo "New tree: $NEW_TREE"
           rm "$TREE_JSON"
 
-          echo "=== Create commit (auto-signed by GitHub) ==="
+          # Create commit (auto-signed by GitHub)
           COMMIT_SHA=$(gh api /repos/${{ github.repository }}/git/commits \
             -f message="chore(release): bump version to $NEW_VERSION" \
             -f tree="$NEW_TREE" \
             -f parents[]="$CURRENT_SHA" \
             --jq .sha)
-          echo "Commit SHA: $COMMIT_SHA"
 
-          echo "=== Create/update branch reference ==="
-          # Try to update existing ref first, if it fails, create new ref
+          # Create/update branch reference
           if ! gh api /repos/${{ github.repository }}/git/refs/heads/$BRANCH \
             -f sha="$COMMIT_SHA" \
             -X PATCH 2>/dev/null; then
-            echo "Branch doesn't exist, creating new ref"
             gh api /repos/${{ github.repository }}/git/refs \
               -f ref="refs/heads/$BRANCH" \
               -f sha="$COMMIT_SHA"
           fi
 
-          echo "=== Complete ==="
+          echo "Created release branch $BRANCH with commit $COMMIT_SHA"
 
       - name: Collect commit authors for reviewers
         id: reviewers
