@@ -1,7 +1,7 @@
 lockVersion: 2.0.0
 id: 322c4806-8b53-493c-a05f-50d4d113c747
 management:
-  docChecksum: e56956b1d82474720c4d946511b299a9
+  docChecksum: 55081a1f35f829c8e81039cb7ea2b59a
   docVersion: 2.0.0
   speakeasyVersion: 1.642.1
   generationVersion: 2.731.4
@@ -103,12 +103,12 @@ generatedFiles:
   - examples/resources/kong-mesh_mesh_trust/import-by-string-id.tf
   - examples/resources/kong-mesh_mesh_trust/import.sh
   - examples/resources/kong-mesh_mesh_trust/resource.tf
-  - examples/resources/kong-mesh_zone_egress/import-by-string-id.tf
-  - examples/resources/kong-mesh_zone_egress/import.sh
-  - examples/resources/kong-mesh_zone_egress/resource.tf
-  - examples/resources/kong-mesh_zone_ingress/import-by-string-id.tf
-  - examples/resources/kong-mesh_zone_ingress/import.sh
-  - examples/resources/kong-mesh_zone_ingress/resource.tf
+  - examples/resources/kong-mesh_mesh_zone_egress/import-by-string-id.tf
+  - examples/resources/kong-mesh_mesh_zone_egress/import.sh
+  - examples/resources/kong-mesh_mesh_zone_egress/resource.tf
+  - examples/resources/kong-mesh_mesh_zone_ingress/import-by-string-id.tf
+  - examples/resources/kong-mesh_mesh_zone_ingress/import.sh
+  - examples/resources/kong-mesh_mesh_zone_ingress/resource.tf
   - go.mod
   - go.sum
   - internal/planmodifiers/boolplanmodifier/suppress_diff.go
@@ -177,6 +177,10 @@ generatedFiles:
   - internal/provider/meshtrafficpermission_resource_sdk.go
   - internal/provider/meshtrust_resource.go
   - internal/provider/meshtrust_resource_sdk.go
+  - internal/provider/meshzoneegress_resource.go
+  - internal/provider/meshzoneegress_resource_sdk.go
+  - internal/provider/meshzoneingress_resource.go
+  - internal/provider/meshzoneingress_resource_sdk.go
   - internal/provider/provider.go
   - internal/provider/reflect/diags.go
   - internal/provider/reflect/doc.go
@@ -466,10 +470,6 @@ generatedFiles:
   - internal/provider/types/zone_egress_item_networking.go
   - internal/provider/types/zone_ingress_item_networking.go
   - internal/provider/utils.go
-  - internal/provider/zoneegress_resource.go
-  - internal/provider/zoneegress_resource_sdk.go
-  - internal/provider/zoneingress_resource.go
-  - internal/provider/zoneingress_resource_sdk.go
   - internal/sdk/.gitattributes
   - internal/sdk/docs/models/operations/option.md
   - internal/sdk/hostnamegenerator.go
