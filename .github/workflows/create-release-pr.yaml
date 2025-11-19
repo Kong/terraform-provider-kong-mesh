@@ -172,9 +172,10 @@ jobs:
             if [ -f "$file" ]; then
               echo "Processing: $file"
 
-              # Create blob for file using --input to avoid arg limits
+              # Create blob using base64 encoding to handle large files
               BLOB_PAYLOAD=$(mktemp)
-              jq -n --arg content "$(cat "$file")" '{content: $content, encoding: "utf-8"}' > "$BLOB_PAYLOAD"
+              FILE_CONTENT_B64=$(base64 -i "$file")
+              echo '{"content":"'"$FILE_CONTENT_B64"'","encoding":"base64"}' > "$BLOB_PAYLOAD"
 
               BLOB_SHA=$(gh api /repos/${{ github.repository }}/git/blobs \
                 --input "$BLOB_PAYLOAD" \
