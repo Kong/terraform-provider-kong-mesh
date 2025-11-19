@@ -136,7 +136,9 @@ jobs:
           # Replace original file
           mv "$TEMP_FILE" CHANGELOG.md
 
-      - name: Commit and push changes
+      - name: Commit and push changes via API
+        env:
+          GH_TOKEN: ${{ steps.github-app-token.outputs.token }}
         run: |
           set -x
           NEW_VERSION="${{ steps.version.outputs.new }}"
@@ -158,20 +160,47 @@ jobs:
             exit 0
           fi
 
-          echo "=== Git Config ==="
-          git config user.name
-          git config user.email
+          echo "=== Creating Tree Object ==="
+          TREE_SHA=$(git write-tree)
+          echo "Tree SHA: $TREE_SHA"
 
-          echo "=== Creating Commit ==="
-          git commit -m "chore(release): bump version to ${NEW_VERSION}"
+          PARENT_SHA=$(git rev-parse HEAD)
+          echo "Parent SHA: $PARENT_SHA"
 
-          echo "=== Commit Created ==="
-          git log -1 --pretty=full
+          echo "=== Checking if tree exists on remote ==="
+          # Try to fetch the tree to see if it exists
+          gh api "/repos/${{ github.repository }}/git/trees/${TREE_SHA}" || echo "Tree does not exist on remote (expected)"
+
+          echo "=== Uploading tree and blobs to remote ==="
+          # Push objects to remote without updating refs
+          git push origin "${PARENT_SHA}:refs/tmp/release-prep-${NEW_VERSION}"
+
+          # Now the tree should exist on remote
+          echo "=== Verifying tree exists on remote ==="
+          gh api "/repos/${{ github.repository }}/git/trees/${TREE_SHA}" --jq '.sha'
+
+          echo "=== Creating commit via API ==="
+          COMMIT_SHA=$(gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            "/repos/${{ github.repository }}/git/commits" \
+            -f "message=chore(release): bump version to ${NEW_VERSION}" \
+            -f "tree=${TREE_SHA}" \
+            -f "parents[]=${PARENT_SHA}" \
+            --jq '.sha')
+
+          echo "Commit SHA: $COMMIT_SHA"
+
+          echo "=== Updating local ref ==="
+          git update-ref HEAD "$COMMIT_SHA"
 
           echo "=== Pushing to ${BRANCH} ==="
           git push origin "HEAD:refs/heads/${BRANCH}"
 
-          echo "=== Push Complete ==="
+          echo "=== Cleaning up temporary ref ==="
+          git push origin ":refs/tmp/release-prep-${NEW_VERSION}" || true
+
+          echo "=== Complete ==="
 
       - name: Collect commit authors for reviewers
         id: reviewers
