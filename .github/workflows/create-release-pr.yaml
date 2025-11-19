@@ -164,7 +164,10 @@ jobs:
           echo "Base tree: $BASE_TREE"
 
           echo "=== Create blobs for changed files ==="
-          TREE_ITEMS=""
+          TREE_JSON=$(mktemp)
+          echo '{"base_tree":"'"$BASE_TREE"'","tree":[' > "$TREE_JSON"
+          FIRST=true
+
           while IFS= read -r file; do
             if [ -f "$file" ]; then
               echo "Processing: $file"
@@ -178,17 +181,27 @@ jobs:
 
               echo "  Blob SHA: $BLOB_SHA"
 
-              # Add to tree items
-              TREE_ITEMS="$TREE_ITEMS -f tree[][path]=$file -f tree[][mode]=100644 -f tree[][type]=blob -f tree[][sha]=$BLOB_SHA"
+              # Add to tree JSON
+              if [ "$FIRST" = false ]; then
+                echo ',' >> "$TREE_JSON"
+              fi
+              FIRST=false
+
+              # Escape file path for JSON
+              FILE_ESCAPED=$(printf '%s' "$file" | jq -Rs .)
+              echo '{"path":'"$FILE_ESCAPED"',"mode":"100644","type":"blob","sha":"'"$BLOB_SHA"'"}' >> "$TREE_JSON"
             fi
           done <<< "$CHANGED_FILES"
 
+          echo ']}' >> "$TREE_JSON"
+
           echo "=== Create new tree ==="
+          cat "$TREE_JSON"
           NEW_TREE=$(gh api /repos/${{ github.repository }}/git/trees \
-            -f base_tree="$BASE_TREE" \
-            $TREE_ITEMS \
+            --input "$TREE_JSON" \
             --jq .sha)
           echo "New tree: $NEW_TREE"
+          rm "$TREE_JSON"
 
           echo "=== Create commit (auto-signed by GitHub) ==="
           COMMIT_SHA=$(gh api /repos/${{ github.repository }}/git/commits \
