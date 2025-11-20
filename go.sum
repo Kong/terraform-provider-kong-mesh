@@ -12,6 +12,8 @@ github.com/Kong/shared-speakeasy/hclbuilder v0.0.0-20251114115340-87f266015d09 h
 github.com/Kong/shared-speakeasy/hclbuilder v0.0.0-20251114115340-87f266015d09/go.mod h1:g7/r/ksRwKhskqr9Hga47H8PH6wjh6LcXBhFAAomIgA=
 github.com/Kong/shared-speakeasy/hclbuilder v0.0.0-20251120044947-f989804725ea h1:5bKPedPUNOL2GytBSVjKY2Be0ZIrDWzVCbNjA60jBtc=
 github.com/Kong/shared-speakeasy/hclbuilder v0.0.0-20251120044947-f989804725ea/go.mod h1:g7/r/ksRwKhskqr9Hga47H8PH6wjh6LcXBhFAAomIgA=
+github.com/Kong/shared-speakeasy/hclbuilder v0.0.0-20251120101940-29f60e708e04 h1:2jZ/dHcSH8Vi0QUREnQJ4Vqc+vnjo07VhRMFBF3LbyM=
+github.com/Kong/shared-speakeasy/hclbuilder v0.0.0-20251120101940-29f60e708e04/go.mod h1:g7/r/ksRwKhskqr9Hga47H8PH6wjh6LcXBhFAAomIgA=
 github.com/Kong/shared-speakeasy/hooks/mesh_defaults v0.0.4 h1:BIlFfdeqRP33wP5GOSwLxFPujL4C1GozoIjZMpzZXj0=
 github.com/Kong/shared-speakeasy/hooks/mesh_defaults v0.0.4/go.mod h1:Tu9kdp+k8JF7ES5gcXBi6jHyLEOr1EAAWq8ROOipWqg=
 github.com/Kong/shared-speakeasy/planmodifiers/arbitrary_json v0.0.1 h1:S3f3RAPNv274Yd8ShkGjSTXLWS55AY1SHNKfcX8sQjU=
