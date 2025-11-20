@@ -7,13 +7,11 @@ import (
 	"testing"
 
 	"github.com/Kong/shared-speakeasy/hclbuilder"
-	"github.com/Kong/shared-speakeasy/tfbuilder"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
-	resourcesshared "github.com/kong/terraform-provider-kong-mesh/tests/resources/shared"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
@@ -58,18 +56,25 @@ func TestMesh(t *testing.T) {
 
 	t.Run("should create a mesh without initial policies", func(t *testing.T) {
 		serverURL := fmt.Sprintf("http://localhost:%d", port.Int())
-		builder := hclbuilder.NewTestBuilder(hclbuilder.KongMesh)
-		builder.SetAttribute("provider.kong-mesh", "server_url", serverURL)
+		builder := hclbuilder.NewWithProvider(string(hclbuilder.KongMesh), serverURL)
 
 		meshName := "m0"
 		meshResourceName := "m0"
+
+		// Create mesh resource
+		mesh, _ := hclbuilder.FromString(fmt.Sprintf(`
+resource "kong-mesh_mesh" "%s" {
+  type  = "Mesh"
+  name  = "%s"
+}
+`, meshResourceName, meshName))
 
 		// if this grows move this to shared-speakeasy
 		resource.ParallelTest(t, resource.TestCase{
 			ProtoV6ProviderFactories: providerFactory,
 			Steps: []resource.TestStep{
 				{
-					Config: builder.AddMeshFromHCL(meshName, meshResourceName, "").Build(),
+					Config: builder.Add(mesh).Build(),
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
 							plancheck.ExpectResourceAction(builder.ResourceAddress("mesh", meshResourceName), plancheck.ResourceActionCreate),
@@ -78,7 +83,7 @@ func TestMesh(t *testing.T) {
 					ExpectNonEmptyPlan: true, // skip_creating_initial_policies was set by the hook
 				},
 				{
-					Config: builder.AddMeshFromHCL(meshName, meshResourceName, `skip_creating_initial_policies = [ "*" ]`).Build(),
+					Config: builder.Add(mesh.AddAttribute("skip_creating_initial_policies", `["*"]`)).Build(),
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
 							plancheck.ExpectResourceAction(builder.ResourceAddress("mesh", meshResourceName), plancheck.ResourceActionNoop),
@@ -133,20 +138,16 @@ func TestMesh(t *testing.T) {
 	})
 
 	t.Run("should be able to store secrets", func(t *testing.T) {
-		// This test uses tfbuilder because the shared test function hasn't been migrated to hclbuilder yet
 		meshName := "m4"
+		serverURL := fmt.Sprintf("http://localhost:%d", port.Int())
 
-		builder := tfbuilder.NewBuilder(tfbuilder.KongMesh, "http", "localhost", port.Int())
-		mesh := tfbuilder.NewMeshBuilder("default", meshName).
-			WithSpec(`skip_creating_initial_policies = [ "*" ]`)
-		skey := tfbuilder.NewPolicyBuilder("mesh_secret", "skey", "skey", "Secret").
-			WithMeshRef(builder.ResourceAddress("mesh", mesh.ResourceName) + ".name").
-			WithDependsOn(builder.ResourceAddress("mesh", mesh.ResourceName))
-		scert := tfbuilder.NewPolicyBuilder("mesh_secret", "scert", "scert", "Secret").
-			WithMeshRef(builder.ResourceAddress("mesh", mesh.ResourceName) + ".name").
-			WithDependsOn(builder.ResourceAddress("mesh", mesh.ResourceName))
-		builder.AddMesh(mesh)
-		resource.ParallelTest(t, resourcesshared.ShouldBeAbleToStoreSecrets(providerFactory, builder, scert, skey, mesh))
+		secretConfig := hclbuilder.PolicyConfig{
+			MeshRef:   meshName,
+			Provider:  hclbuilder.KongMesh,
+			ServerURL: serverURL,
+		}
+
+		resource.ParallelTest(t, hclbuilder.ShouldBeAbleToStoreSecrets(providerFactory, secretConfig))
 	})
 }
 
