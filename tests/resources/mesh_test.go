@@ -176,5 +176,5 @@ func createAnMTP(t *testing.T, url string, meshName string, mtpName string) {
 		},
 	})
 	require.NoError(t, err)
-	require.True(t, resp.StatusCode == 200 || resp.StatusCode == 201, "Expected 200 or 201, got %d", resp.StatusCode)
+	require.Equal(t, 201, resp.StatusCode)
 }
