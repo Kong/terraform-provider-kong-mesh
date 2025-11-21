@@ -56,7 +56,7 @@ func TestMesh(t *testing.T) {
 
 	t.Run("should create a mesh without initial policies", func(t *testing.T) {
 		serverURL := fmt.Sprintf("http://localhost:%d", port.Int())
-		builder := hclbuilder.NewWithProvider(string(hclbuilder.KongMesh), serverURL)
+		builder := hclbuilder.NewWithProvider(hclbuilder.KongMesh, serverURL)
 
 		meshName := "m0"
 		meshResourceName := "m0"
@@ -96,58 +96,118 @@ resource "kong-mesh_mesh" "%s" {
 
 	t.Run("create a mesh and modify fields on it", func(t *testing.T) {
 		serverURL := fmt.Sprintf("http://localhost:%d", port.Int())
-		meshConfig := hclbuilder.MeshConfig{
-			MeshName:     "m1",
-			ResourceName: "m1",
-			Provider:     hclbuilder.KongMesh,
-			ServerURL:    serverURL,
-		}
+		builder := hclbuilder.NewWithProvider(hclbuilder.KongMesh, serverURL)
 
-		resource.ParallelTest(t, hclbuilder.CreateMeshAndModifyFields(providerFactory, meshConfig))
+		meshName := "m1"
+		meshResourceName := "m1"
+
+		mesh, _ := hclbuilder.FromString(fmt.Sprintf(`
+resource "kong-mesh_mesh" "%s" {
+  type = "Mesh"
+  name = "%s"
+  skip_creating_initial_policies = ["*"]
+}
+`, meshResourceName, meshName))
+
+		resource.ParallelTest(t, hclbuilder.CreateMeshAndModifyFields(providerFactory, builder, mesh))
 	})
 
 	t.Run("create a policy and modify fields on it", func(t *testing.T) {
 		serverURL := fmt.Sprintf("http://localhost:%d", port.Int())
-		policyConfig := hclbuilder.PolicyConfig{
-			PolicyType:   "mesh_traffic_permission",
-			PolicyName:   "allow-all",
-			ResourceName: "allow_all",
-			MeshRef:      "default",
-			Provider:     hclbuilder.KongMesh,
-			ServerURL:    serverURL,
-		}
+		builder := hclbuilder.NewWithProvider(hclbuilder.KongMesh, serverURL)
 
-		resource.ParallelTest(t, hclbuilder.CreatePolicyAndModifyFields(providerFactory, policyConfig))
+		meshName := "policy-test-mesh"
+		meshResourceName := "test_mesh"
+
+		mesh, _ := hclbuilder.FromString(fmt.Sprintf(`
+resource "kong-mesh_mesh" "%s" {
+  type = "Mesh"
+  name = "%s"
+  skip_creating_initial_policies = ["*"]
+}
+`, meshResourceName, meshName))
+
+		policyResourceName := "allow_all"
+		policyName := "allow-all"
+
+		policy, _ := hclbuilder.FromString(fmt.Sprintf(`
+resource "kong-mesh_mesh_traffic_permission" "%s" {
+  type = "MeshTrafficPermission"
+  name = "%s"
+  mesh = "%s"
+}
+`, policyResourceName, policyName, meshName))
+
+		resource.ParallelTest(t, hclbuilder.CreatePolicyAndModifyFields(providerFactory, builder, mesh, policy))
 	})
 
 	t.Run("not imported resource should error out with meaningful message", func(t *testing.T) {
 		meshName := "policy-test-mesh-2"
+		meshResourceName := "test_mesh"
 		mtpName := "allow-all"
 		serverURL := fmt.Sprintf("http://localhost:%d", port.Int())
 
-		policyConfig := hclbuilder.PolicyConfig{
-			PolicyType:   "mesh_traffic_permission",
-			PolicyName:   mtpName,
-			ResourceName: "allow_all",
-			MeshRef:      meshName,
-			Provider:     hclbuilder.KongMesh,
-			ServerURL:    serverURL,
-		}
+		builder := hclbuilder.NewWithProvider(hclbuilder.KongMesh, serverURL)
 
-		resource.ParallelTest(t, hclbuilder.NotImportedResourceShouldError(providerFactory, policyConfig, func() { createAnMTP(t, "http://"+net.JoinHostPort("localhost", port.Port()), meshName, mtpName) }))
+		mesh, _ := hclbuilder.FromString(fmt.Sprintf(`
+resource "kong-mesh_mesh" "%s" {
+  type = "Mesh"
+  name = "%s"
+  skip_creating_initial_policies = ["*"]
+}
+`, meshResourceName, meshName))
+
+		policyResourceName := "allow_all"
+
+		policy, _ := hclbuilder.FromString(fmt.Sprintf(`
+resource "kong-mesh_mesh_traffic_permission" "%s" {
+  type = "MeshTrafficPermission"
+  name = "%s"
+  mesh = "%s"
+}
+`, policyResourceName, mtpName, meshName))
+
+		resource.ParallelTest(t, hclbuilder.NotImportedResourceShouldError(providerFactory, builder, mesh, policy, func() { createAnMTP(t, "http://"+net.JoinHostPort("localhost", port.Port()), meshName, mtpName) }))
 	})
 
 	t.Run("should be able to store secrets", func(t *testing.T) {
 		meshName := "m4"
+		meshResourceName := "test_mesh"
 		serverURL := fmt.Sprintf("http://localhost:%d", port.Int())
 
-		secretConfig := hclbuilder.PolicyConfig{
-			MeshRef:   meshName,
-			Provider:  hclbuilder.KongMesh,
-			ServerURL: serverURL,
-		}
+		builder := hclbuilder.NewWithProvider(hclbuilder.KongMesh, serverURL)
 
-		resource.ParallelTest(t, hclbuilder.ShouldBeAbleToStoreSecrets(providerFactory, secretConfig))
+		mesh, _ := hclbuilder.FromString(fmt.Sprintf(`
+resource "kong-mesh_mesh" "%s" {
+  type = "Mesh"
+  name = "%s"
+  skip_creating_initial_policies = ["*"]
+}
+`, meshResourceName, meshName))
+
+		scertResourceName := "scert"
+		scertName := "scert"
+
+		scert, _ := hclbuilder.FromString(fmt.Sprintf(`
+resource "kong-mesh_mesh_secret" "%s" {
+  type = "Secret"
+  name = "%s"
+  mesh = "%s"
+}
+`, scertResourceName, scertName, meshName))
+
+		skeyResourceName := "skey"
+		skeyName := "skey"
+
+		skey, _ := hclbuilder.FromString(fmt.Sprintf(`
+resource "kong-mesh_mesh_secret" "%s" {
+  type = "Secret"
+  name = "%s"
+  mesh = "%s"
+}
+`, skeyResourceName, skeyName, meshName))
+
+		resource.ParallelTest(t, hclbuilder.ShouldBeAbleToStoreSecrets(providerFactory, builder, mesh, scert, skey))
 	})
 }
 
