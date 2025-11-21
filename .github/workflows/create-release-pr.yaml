@@ -1,0 +1,285 @@
+name: Create Release PR
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: 'Release type'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+        default: patch
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  create-release-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate GitHub app token
+        id: github-app-token
+        uses: actions/create-github-app-token@67018539274d69449ef7c02e8e71183d1719ab42 # v2.1.4
+        with:
+          app-id: ${{ vars.KONG_MESH_APP_ID }}
+          private-key: ${{ secrets.KONG_MESH_APP_PRIVATE_KEY }}
+
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+          token: ${{ steps.github-app-token.outputs.token }}
+
+      - name: Set up Go
+        uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b # v5.4.0
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Install Speakeasy
+        uses: mheap/setup-go-cli@fa9b01cdd4115eac636164f0de43bf7d51c82697 # v1
+        with:
+          owner: speakeasy-api
+          repo: speakeasy
+          cli_name: speakeasy
+          package_type: zip
+
+      - name: Configure speakeasy CLI
+        run: |
+          mkdir -p ~/.speakeasy
+          echo 'speakeasy_api_key: ${{ secrets.SPEAKEASY_API_KEY }}' > ~/.speakeasy/config.yaml
+
+      - name: Install staticcheck
+        run: |
+          go install honnef.co/go/tools/cmd/staticcheck@v0.6.1
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+
+      - name: Get current version and bump
+        id: version
+        run: |
+          CURRENT_VERSION=$(yq -r '.terraform.version' gen.yaml)
+          echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+
+          # Parse semver
+          IFS='.' read -r major minor patch <<< "$CURRENT_VERSION"
+
+          # Bump based on release type
+          RELEASE_TYPE="${{ github.event.inputs.release_type }}"
+          case "$RELEASE_TYPE" in
+            major)
+              NEW_VERSION="$((major + 1)).0.0"
+              ;;
+            minor)
+              NEW_VERSION="${major}.$((minor + 1)).0"
+              ;;
+            patch)
+              NEW_VERSION="${major}.${minor}.$((patch + 1))"
+              ;;
+          esac
+
+          echo "new=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+          echo "Current version: $CURRENT_VERSION"
+          echo "Release type: $RELEASE_TYPE"
+          echo "New version: $NEW_VERSION"
+
+      - name: Create release branch
+        run: |
+          git config user.name "kong-mesh[bot]"
+          git config user.email "123109030+kong-mesh[bot]@users.noreply.github.com"
+          git checkout -b "release/${{ steps.version.outputs.new }}"
+
+      - name: Update version in gen.yaml
+        run: |
+          yq -i '.terraform.version = "${{ steps.version.outputs.new }}"' gen.yaml
+
+      - name: Run make
+        run: make
+
+      - name: Collect commits and update CHANGELOG
+        run: |
+          NEW_VERSION="${{ steps.version.outputs.new }}"
+          CURRENT_VERSION="${{ steps.version.outputs.current }}"
+          RELEASE_DATE=$(date +%Y/%m/%d)
+
+          # Get commits since last version tag, excluding merge commits and CI-related commits
+          COMMITS=$(git log --pretty=format:"- %s" "v${CURRENT_VERSION}..HEAD" \
+            | grep -v "^- Merge pull request" \
+            | grep -v "^- ci(" \
+            | grep -v "^- chore(ci):")
+
+          # Create new changelog entry
+          TEMP_FILE=$(mktemp)
+          echo "# Changelog" > "$TEMP_FILE"
+          echo "" >> "$TEMP_FILE"
+          echo "## ${NEW_VERSION}" >> "$TEMP_FILE"
+          echo "> Released on ${RELEASE_DATE}" >> "$TEMP_FILE"
+          echo ">" >> "$TEMP_FILE"
+
+          if [ -n "$COMMITS" ]; then
+            echo "$COMMITS" | while IFS= read -r line; do
+              echo "> $line" >> "$TEMP_FILE"
+            done
+          else
+            echo "> - No changes" >> "$TEMP_FILE"
+          fi
+
+          echo "" >> "$TEMP_FILE"
+
+          # Append old changelog content (skip first line with "# Changelog")
+          tail -n +2 CHANGELOG.md >> "$TEMP_FILE"
+
+          # Replace original file
+          mv "$TEMP_FILE" CHANGELOG.md
+
+      - name: Commit and push changes via API
+        env:
+          GH_TOKEN: ${{ steps.github-app-token.outputs.token }}
+        run: |
+          NEW_VERSION="${{ steps.version.outputs.new }}"
+          BRANCH="release/${NEW_VERSION}"
+
+          git add -A
+
+          CHANGED_FILES=$(git diff --cached --name-only)
+
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          # Get current commit SHA and base tree
+          CURRENT_SHA=$(git rev-parse HEAD)
+          BASE_TREE=$(gh api /repos/${{ github.repository }}/git/commits/$CURRENT_SHA --jq .tree.sha)
+
+          # Create blobs for changed files
+          TREE_JSON=$(mktemp)
+          echo '{"base_tree":"'"$BASE_TREE"'","tree":[' > "$TREE_JSON"
+          FIRST=true
+
+          while IFS= read -r file; do
+            if [ -f "$file" ]; then
+              # Create blob using @ syntax to avoid loading into variables
+              ENCODED_FILE=$(mktemp)
+              base64 -i "$file" > "$ENCODED_FILE"
+
+              BLOB_SHA=$(gh api /repos/${{ github.repository }}/git/blobs \
+                --field content=@"$ENCODED_FILE" \
+                --field encoding=base64 \
+                --jq .sha)
+
+              rm "$ENCODED_FILE"
+
+              # Add to tree JSON
+              if [ "$FIRST" = false ]; then
+                echo ',' >> "$TREE_JSON"
+              fi
+              FIRST=false
+
+              # Escape file path for JSON
+              FILE_ESCAPED=$(printf '%s' "$file" | jq -Rs .)
+              echo '{"path":'"$FILE_ESCAPED"',"mode":"100644","type":"blob","sha":"'"$BLOB_SHA"'"}' >> "$TREE_JSON"
+            fi
+          done <<< "$CHANGED_FILES"
+
+          echo ']}' >> "$TREE_JSON"
+
+          # Create new tree
+          NEW_TREE=$(gh api /repos/${{ github.repository }}/git/trees \
+            --input "$TREE_JSON" \
+            --jq .sha)
+          rm "$TREE_JSON"
+
+          # Create commit (auto-signed by GitHub)
+          COMMIT_SHA=$(gh api /repos/${{ github.repository }}/git/commits \
+            -f message="chore(release): bump version to $NEW_VERSION" \
+            -f tree="$NEW_TREE" \
+            -f parents[]="$CURRENT_SHA" \
+            --jq .sha)
+
+          # Create/update branch reference
+          if ! gh api /repos/${{ github.repository }}/git/refs/heads/$BRANCH \
+            -f sha="$COMMIT_SHA" \
+            -X PATCH 2>/dev/null; then
+            gh api /repos/${{ github.repository }}/git/refs \
+              -f ref="refs/heads/$BRANCH" \
+              -f sha="$COMMIT_SHA"
+          fi
+
+          echo "Created release branch $BRANCH with commit $COMMIT_SHA"
+
+      - name: Collect commit authors for reviewers
+        id: reviewers
+        run: |
+          CURRENT_VERSION="${{ steps.version.outputs.current }}"
+
+          # Get unique authors since last version, excluding bots and merge commits
+          AUTHORS=$(git log --pretty=format:"%an|%ae" "v${CURRENT_VERSION}..HEAD" \
+            | grep -v "Merge pull request" \
+            | grep -v "\[bot\]" \
+            | grep -v "noreply.github.com" \
+            | sort -u)
+
+          # Extract GitHub usernames from email addresses or author names
+          REVIEWERS=""
+          while IFS='|' read -r name email; do
+            # Try to extract username from GitHub email format (username@users.noreply.github.com)
+            if [[ "$email" =~ ^([0-9]+\+)?([^@]+)@users\.noreply\.github\.com$ ]]; then
+              USERNAME="${BASH_REMATCH[2]}"
+              if [ -n "$REVIEWERS" ]; then
+                REVIEWERS="${REVIEWERS},${USERNAME}"
+              else
+                REVIEWERS="${USERNAME}"
+              fi
+            # Try to extract from standard GitHub commit email
+            elif [[ "$email" =~ ^([^@]+)@.*$ ]]; then
+              USERNAME="${BASH_REMATCH[1]}"
+              # Verify it's a valid GitHub user by checking if they exist
+              if gh api "users/${USERNAME}" --silent 2>/dev/null; then
+                if [ -n "$REVIEWERS" ]; then
+                  REVIEWERS="${REVIEWERS},${USERNAME}"
+                else
+                  REVIEWERS="${USERNAME}"
+                fi
+              fi
+            fi
+          done <<< "$AUTHORS"
+
+          echo "reviewers=$REVIEWERS" >> $GITHUB_OUTPUT
+          echo "Found reviewers: $REVIEWERS"
+
+      - name: Create pull request
+        env:
+          GH_TOKEN: ${{ steps.github-app-token.outputs.token }}
+        run: |
+          REVIEWERS="${{ steps.reviewers.outputs.reviewers }}"
+
+          PR_ARGS=(
+            --title "chore(release): ${{ steps.version.outputs.new }}"
+            --body "$(cat <<'EOF'
+          ## Release ${{ steps.version.outputs.new }}
+
+          This PR bumps the version to ${{ steps.version.outputs.new }} and updates the CHANGELOG.
+
+          ### Changes included:
+          - Version bump in gen.yaml
+          - Updated CHANGELOG.md with commits since v${{ steps.version.outputs.current }}
+          - Regenerated provider code via make
+
+          Once merged to main, the release workflow will automatically create a new tag and publish the release.
+          EOF
+          )"
+            --base main
+            --head "release/${{ steps.version.outputs.new }}"
+          )
+
+          # Add reviewers if any were found
+          if [ -n "$REVIEWERS" ]; then
+            PR_ARGS+=(--reviewer "$REVIEWERS")
+          fi
+
+          gh pr create "${PR_ARGS[@]}"

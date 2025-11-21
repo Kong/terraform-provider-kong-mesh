@@ -2539,7 +2539,7 @@ paths:
   '/zoneegresses/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: ZoneEgress#get
+        terraform-resource: MeshZoneEgress#get
         terraform-datasource: null
       operationId: getZoneEgress
       summary: Returns ZoneEgress entity
@@ -2559,7 +2559,7 @@ paths:
         - ZoneEgress
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'ZoneEgress#create,update'
+        terraform-resource: 'MeshZoneEgress#create,update'
         terraform-datasource: null
       operationId: putZoneEgress
       summary: Creates or Updates ZoneEgress entity
@@ -2586,7 +2586,7 @@ paths:
         - ZoneEgress
     delete:
       x-speakeasy-entity-operation:
-        terraform-resource: ZoneEgress#delete
+        terraform-resource: MeshZoneEgress#delete
         terraform-datasource: null
       operationId: deleteZoneEgress
       summary: Deletes ZoneEgress entity
@@ -2649,7 +2649,7 @@ paths:
   '/zoneingresses/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: ZoneIngress#get
+        terraform-resource: MeshZoneIngress#get
         terraform-datasource: null
       operationId: getZoneIngress
       summary: Returns ZoneIngress entity
@@ -2669,7 +2669,7 @@ paths:
         - ZoneIngress
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'ZoneIngress#create,update'
+        terraform-resource: 'MeshZoneIngress#create,update'
         terraform-datasource: null
       operationId: putZoneIngress
       summary: Creates or Updates ZoneIngress entity
@@ -2696,7 +2696,7 @@ paths:
         - ZoneIngress
     delete:
       x-speakeasy-entity-operation:
-        terraform-resource: ZoneIngress#delete
+        terraform-resource: MeshZoneIngress#delete
         terraform-datasource: null
       operationId: deleteZoneIngress
       summary: Deletes ZoneIngress entity

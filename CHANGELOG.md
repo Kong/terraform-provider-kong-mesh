@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.2
+> Released on 2025/11/19
+>
+> - Rename ZoneIngress, ZoneEgress to MeshZoneIngress, MeshZoneEgress to follow convention.
+
+
 ## 0.6.1
 > Released on 2025/10/29
 >

@@ -11,7 +11,7 @@ import (
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
 )
 
-func (r *ZoneEgressResourceModel) RefreshFromSharedZoneEgressCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.ZoneEgressCreateOrUpdateSuccessResponse) diag.Diagnostics {
+func (r *MeshZoneEgressResourceModel) RefreshFromSharedZoneEgressCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.ZoneEgressCreateOrUpdateSuccessResponse) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	if resp != nil {
@@ -24,7 +24,7 @@ func (r *ZoneEgressResourceModel) RefreshFromSharedZoneEgressCreateOrUpdateSucce
 	return diags
 }
 
-func (r *ZoneEgressResourceModel) RefreshFromSharedZoneEgressItem(ctx context.Context, resp *shared.ZoneEgressItem) diag.Diagnostics {
+func (r *MeshZoneEgressResourceModel) RefreshFromSharedZoneEgressItem(ctx context.Context, resp *shared.ZoneEgressItem) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	if resp != nil {
@@ -55,7 +55,7 @@ func (r *ZoneEgressResourceModel) RefreshFromSharedZoneEgressItem(ctx context.Co
 	return diags
 }
 
-func (r *ZoneEgressResourceModel) ToOperationsDeleteZoneEgressRequest(ctx context.Context) (*operations.DeleteZoneEgressRequest, diag.Diagnostics) {
+func (r *MeshZoneEgressResourceModel) ToOperationsDeleteZoneEgressRequest(ctx context.Context) (*operations.DeleteZoneEgressRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var name string
@@ -68,7 +68,7 @@ func (r *ZoneEgressResourceModel) ToOperationsDeleteZoneEgressRequest(ctx contex
 	return &out, diags
 }
 
-func (r *ZoneEgressResourceModel) ToOperationsGetZoneEgressRequest(ctx context.Context) (*operations.GetZoneEgressRequest, diag.Diagnostics) {
+func (r *MeshZoneEgressResourceModel) ToOperationsGetZoneEgressRequest(ctx context.Context) (*operations.GetZoneEgressRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var name string
@@ -81,7 +81,7 @@ func (r *ZoneEgressResourceModel) ToOperationsGetZoneEgressRequest(ctx context.C
 	return &out, diags
 }
 
-func (r *ZoneEgressResourceModel) ToOperationsPutZoneEgressRequest(ctx context.Context) (*operations.PutZoneEgressRequest, diag.Diagnostics) {
+func (r *MeshZoneEgressResourceModel) ToOperationsPutZoneEgressRequest(ctx context.Context) (*operations.PutZoneEgressRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var name string
@@ -102,7 +102,7 @@ func (r *ZoneEgressResourceModel) ToOperationsPutZoneEgressRequest(ctx context.C
 	return &out, diags
 }
 
-func (r *ZoneEgressResourceModel) ToSharedZoneEgressItem(ctx context.Context) (*shared.ZoneEgressItem, diag.Diagnostics) {
+func (r *MeshZoneEgressResourceModel) ToSharedZoneEgressItem(ctx context.Context) (*shared.ZoneEgressItem, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	labels := make(map[string]string)
