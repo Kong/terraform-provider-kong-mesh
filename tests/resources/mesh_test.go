@@ -74,7 +74,7 @@ resource "kong-mesh_mesh" "%s" {
 			ProtoV6ProviderFactories: providerFactory,
 			Steps: []resource.TestStep{
 				{
-					Config: builder.Add(mesh).Build(),
+					Config: builder.Upsert(mesh).Build(),
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
 							plancheck.ExpectResourceAction(builder.ResourceAddress("mesh", meshResourceName), plancheck.ResourceActionCreate),
@@ -83,7 +83,7 @@ resource "kong-mesh_mesh" "%s" {
 					ExpectNonEmptyPlan: true, // skip_creating_initial_policies was set by the hook
 				},
 				{
-					Config: builder.Add(mesh.AddAttribute("skip_creating_initial_policies", `["*"]`)).Build(),
+					Config: builder.Upsert(mesh.AddAttribute("skip_creating_initial_policies", `["*"]`)).Build(),
 					ConfigPlanChecks: resource.ConfigPlanChecks{
 						PreApply: []plancheck.PlanCheck{
 							plancheck.ExpectResourceAction(builder.ResourceAddress("mesh", meshResourceName), plancheck.ResourceActionNoop),
