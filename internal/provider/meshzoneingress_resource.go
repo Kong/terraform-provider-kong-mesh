@@ -3,82 +3,152 @@
 package provider
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
-	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+	custom_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
+	speakeasy_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
+	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
+	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &SecretResource{}
-var _ resource.ResourceWithImportState = &SecretResource{}
+var _ resource.Resource = &MeshZoneIngressResource{}
+var _ resource.ResourceWithImportState = &MeshZoneIngressResource{}
 
-func NewSecretResource() resource.Resource {
-	return &SecretResource{}
+func NewMeshZoneIngressResource() resource.Resource {
+	return &MeshZoneIngressResource{}
 }
 
-// SecretResource defines the resource implementation.
-type SecretResource struct {
+// MeshZoneIngressResource defines the resource implementation.
+type MeshZoneIngressResource struct {
 	// Provider configured SDK client.
 	client *sdk.KongMesh
 }
 
-// SecretResourceModel describes the resource data model.
-type SecretResourceModel struct {
-	Data     types.String                  `tfsdk:"data"`
-	Labels   kumalabels.KumaLabelsMapValue `tfsdk:"labels"`
-	Mesh     types.String                  `tfsdk:"mesh"`
-	Name     types.String                  `tfsdk:"name"`
-	Type     types.String                  `tfsdk:"type"`
-	Warnings []types.String                `tfsdk:"warnings"`
+// MeshZoneIngressResourceModel describes the resource data model.
+type MeshZoneIngressResourceModel struct {
+	AvailableServices []tfTypes.AvailableServices        `tfsdk:"available_services"`
+	Labels            map[string]types.String            `tfsdk:"labels"`
+	Name              types.String                       `tfsdk:"name"`
+	Networking        *tfTypes.ZoneIngressItemNetworking `tfsdk:"networking"`
+	Type              types.String                       `tfsdk:"type"`
+	Warnings          []types.String                     `tfsdk:"warnings"`
+	Zone              types.String                       `tfsdk:"zone"`
 }
 
-func (r *SecretResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_secret"
+func (r *MeshZoneIngressResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_mesh_zone_ingress"
 }
 
-func (r *SecretResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *MeshZoneIngressResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		MarkdownDescription: "Secret Resource",
+		MarkdownDescription: "MeshZoneIngress Resource",
 		Attributes: map[string]schema.Attribute{
-			"data": schema.StringAttribute{
-				Optional:    true,
-				Description: `Value of the secret`,
+			"available_services": schema.ListNestedAttribute{
+				Optional: true,
+				PlanModifiers: []planmodifier.List{
+					custom_listplanmodifier.SupressZeroNullModifier(),
+				},
+				NestedObject: schema.NestedAttributeObject{
+					Validators: []validator.Object{
+						speakeasy_objectvalidators.NotNull(),
+					},
+					Attributes: map[string]schema.Attribute{
+						"external_service": schema.BoolAttribute{
+							Optional:    true,
+							Description: `instance of external service available from the zone`,
+						},
+						"instances": schema.Int64Attribute{
+							Optional:    true,
+							Description: `number of instances available for given tags`,
+						},
+						"mesh": schema.StringAttribute{
+							Optional:    true,
+							Description: `mesh of the instances available for given tags`,
+						},
+						"tags": schema.MapAttribute{
+							Optional:    true,
+							ElementType: types.StringType,
+							Description: `tags of the service`,
+						},
+					},
+				},
+				MarkdownDescription: `AvailableService contains tags that represent unique subset of` + "\n" +
+					`endpoints`,
 			},
 			"labels": schema.MapAttribute{
-				CustomType:  kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}},
 				Optional:    true,
 				ElementType: types.StringType,
 			},
-			"mesh": schema.StringAttribute{
-				Required:    true,
-				Description: `name of the mesh`,
-			},
 			"name": schema.StringAttribute{
 				Required:    true,
-				Description: `name of the Secret`,
+				Description: `name of the ZoneIngress`,
+			},
+			"networking": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"address": schema.StringAttribute{
+						Optional:    true,
+						Description: `Address on which inbound listener will be exposed`,
+					},
+					"admin": schema.SingleNestedAttribute{
+						Optional: true,
+						Attributes: map[string]schema.Attribute{
+							"port": schema.Int64Attribute{
+								Optional:    true,
+								Description: `Port on which Envoy Admin API server will be listening`,
+							},
+						},
+						Description: `Admin contains configuration related to Envoy Admin API`,
+					},
+					"advertised_address": schema.StringAttribute{
+						Optional: true,
+						MarkdownDescription: `AdvertisedAddress defines IP or DNS name on which ZoneIngress is` + "\n" +
+							`accessible to other Kuma clusters.`,
+					},
+					"advertised_port": schema.Int64Attribute{
+						Optional: true,
+						MarkdownDescription: `AdvertisedPort defines port on which ZoneIngress is accessible to other` + "\n" +
+							`Kuma clusters.`,
+					},
+					"port": schema.Int64Attribute{
+						Optional:    true,
+						Description: `Port of the inbound interface that will forward requests to the service.`,
+					},
+				},
+				MarkdownDescription: `Networking defines the address and port of the Ingress to listen on.` + "\n" +
+					`Additionally publicly advertised address and port could be specified.`,
 			},
 			"type": schema.StringAttribute{
 				Required: true,
 			},
 			"warnings": schema.ListAttribute{
-				Computed:    true,
+				Computed: true,
+				PlanModifiers: []planmodifier.List{
+					speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
+				},
 				ElementType: types.StringType,
 				MarkdownDescription: `warnings is a list of warning messages to return to the requesting Kuma API clients.` + "\n" +
 					`Warning messages describe a problem the client making the API request should correct or be aware of.`,
+			},
+			"zone": schema.StringAttribute{
+				Optional: true,
+				MarkdownDescription: `Zone field contains Zone name where ingress is serving, field will be` + "\n" +
+					`automatically set by Global Kuma CP`,
 			},
 		},
 	}
 }
 
-func (r *SecretResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *MeshZoneIngressResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	// Prevent panic if the provider has not been configured.
 	if req.ProviderData == nil {
 		return
@@ -98,8 +168,8 @@ func (r *SecretResource) Configure(ctx context.Context, req resource.ConfigureRe
 	r.client = client
 }
 
-func (r *SecretResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *SecretResourceModel
+func (r *MeshZoneIngressResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *MeshZoneIngressResourceModel
 	var plan types.Object
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
@@ -116,13 +186,13 @@ func (r *SecretResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
-	request, requestDiags := data.ToOperationsPutSecretRequest(ctx)
+	request, requestDiags := data.ToOperationsPutZoneIngressRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.Secret.PutSecret(ctx, *request)
+	res, err := r.client.ZoneIngress.PutZoneIngress(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -141,11 +211,11 @@ func (r *SecretResource) Create(ctx context.Context, req resource.CreateRequest,
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if !(res.SecretCreateOrUpdateSuccessResponse != nil) {
+	if !(res.ZoneIngressCreateOrUpdateSuccessResponse != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	resp.Diagnostics.Append(data.RefreshFromSharedSecretCreateOrUpdateSuccessResponse(ctx, res.SecretCreateOrUpdateSuccessResponse)...)
+	resp.Diagnostics.Append(data.RefreshFromSharedZoneIngressCreateOrUpdateSuccessResponse(ctx, res.ZoneIngressCreateOrUpdateSuccessResponse)...)
 
 	if resp.Diagnostics.HasError() {
 		return
@@ -156,13 +226,13 @@ func (r *SecretResource) Create(ctx context.Context, req resource.CreateRequest,
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	request1, request1Diags := data.ToOperationsGetSecretRequest(ctx)
+	request1, request1Diags := data.ToOperationsGetZoneIngressRequest(ctx)
 	resp.Diagnostics.Append(request1Diags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res1, err := r.client.Secret.GetSecret(ctx, *request1)
+	res1, err := r.client.ZoneIngress.GetZoneIngress(ctx, *request1)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res1 != nil && res1.RawResponse != nil {
@@ -178,11 +248,11 @@ func (r *SecretResource) Create(ctx context.Context, req resource.CreateRequest,
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res1.StatusCode), debugResponse(res1.RawResponse))
 		return
 	}
-	if !(res1.SecretItem != nil) {
+	if !(res1.ZoneIngressItem != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
 		return
 	}
-	resp.Diagnostics.Append(data.RefreshFromSharedSecretItem(ctx, res1.SecretItem)...)
+	resp.Diagnostics.Append(data.RefreshFromSharedZoneIngressItem(ctx, res1.ZoneIngressItem)...)
 
 	if resp.Diagnostics.HasError() {
 		return
@@ -198,8 +268,8 @@ func (r *SecretResource) Create(ctx context.Context, req resource.CreateRequest,
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *SecretResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *SecretResourceModel
+func (r *MeshZoneIngressResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *MeshZoneIngressResourceModel
 	var item types.Object
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &item)...)
@@ -216,13 +286,13 @@ func (r *SecretResource) Read(ctx context.Context, req resource.ReadRequest, res
 		return
 	}
 
-	request, requestDiags := data.ToOperationsGetSecretRequest(ctx)
+	request, requestDiags := data.ToOperationsGetZoneIngressRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.Secret.GetSecret(ctx, *request)
+	res, err := r.client.ZoneIngress.GetZoneIngress(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -242,11 +312,11 @@ func (r *SecretResource) Read(ctx context.Context, req resource.ReadRequest, res
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if !(res.SecretItem != nil) {
+	if !(res.ZoneIngressItem != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	resp.Diagnostics.Append(data.RefreshFromSharedSecretItem(ctx, res.SecretItem)...)
+	resp.Diagnostics.Append(data.RefreshFromSharedZoneIngressItem(ctx, res.ZoneIngressItem)...)
 
 	if resp.Diagnostics.HasError() {
 		return
@@ -256,8 +326,8 @@ func (r *SecretResource) Read(ctx context.Context, req resource.ReadRequest, res
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *SecretResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *SecretResourceModel
+func (r *MeshZoneIngressResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *MeshZoneIngressResourceModel
 	var plan types.Object
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
@@ -270,13 +340,13 @@ func (r *SecretResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 
-	request, requestDiags := data.ToOperationsPutSecretRequest(ctx)
+	request, requestDiags := data.ToOperationsPutZoneIngressRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.Secret.PutSecret(ctx, *request)
+	res, err := r.client.ZoneIngress.PutZoneIngress(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -295,11 +365,11 @@ func (r *SecretResource) Update(ctx context.Context, req resource.UpdateRequest,
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if !(res.SecretCreateOrUpdateSuccessResponse != nil) {
+	if !(res.ZoneIngressCreateOrUpdateSuccessResponse != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	resp.Diagnostics.Append(data.RefreshFromSharedSecretCreateOrUpdateSuccessResponse(ctx, res.SecretCreateOrUpdateSuccessResponse)...)
+	resp.Diagnostics.Append(data.RefreshFromSharedZoneIngressCreateOrUpdateSuccessResponse(ctx, res.ZoneIngressCreateOrUpdateSuccessResponse)...)
 
 	if resp.Diagnostics.HasError() {
 		return
@@ -310,13 +380,13 @@ func (r *SecretResource) Update(ctx context.Context, req resource.UpdateRequest,
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	request1, request1Diags := data.ToOperationsGetSecretRequest(ctx)
+	request1, request1Diags := data.ToOperationsGetZoneIngressRequest(ctx)
 	resp.Diagnostics.Append(request1Diags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res1, err := r.client.Secret.GetSecret(ctx, *request1)
+	res1, err := r.client.ZoneIngress.GetZoneIngress(ctx, *request1)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res1 != nil && res1.RawResponse != nil {
@@ -332,11 +402,11 @@ func (r *SecretResource) Update(ctx context.Context, req resource.UpdateRequest,
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res1.StatusCode), debugResponse(res1.RawResponse))
 		return
 	}
-	if !(res1.SecretItem != nil) {
+	if !(res1.ZoneIngressItem != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
 		return
 	}
-	resp.Diagnostics.Append(data.RefreshFromSharedSecretItem(ctx, res1.SecretItem)...)
+	resp.Diagnostics.Append(data.RefreshFromSharedZoneIngressItem(ctx, res1.ZoneIngressItem)...)
 
 	if resp.Diagnostics.HasError() {
 		return
@@ -352,8 +422,8 @@ func (r *SecretResource) Update(ctx context.Context, req resource.UpdateRequest,
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *SecretResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *SecretResourceModel
+func (r *MeshZoneIngressResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *MeshZoneIngressResourceModel
 	var item types.Object
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &item)...)
@@ -370,13 +440,13 @@ func (r *SecretResource) Delete(ctx context.Context, req resource.DeleteRequest,
 		return
 	}
 
-	request, requestDiags := data.ToOperationsDeleteSecretRequest(ctx)
+	request, requestDiags := data.ToOperationsDeleteZoneIngressRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.Secret.DeleteSecret(ctx, *request)
+	res, err := r.client.ZoneIngress.DeleteZoneIngress(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -395,27 +465,6 @@ func (r *SecretResource) Delete(ctx context.Context, req resource.DeleteRequest,
 
 }
 
-func (r *SecretResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	dec := json.NewDecoder(bytes.NewReader([]byte(req.ID)))
-	dec.DisallowUnknownFields()
-	var data struct {
-		Mesh string `json:"mesh"`
-		Name string `json:"name"`
-	}
-
-	if err := dec.Decode(&data); err != nil {
-		resp.Diagnostics.AddError("Invalid ID", `The import ID is not valid. It is expected to be a JSON object string with the format: '{"mesh": "...", "name": "..."}': `+err.Error())
-		return
-	}
-
-	if len(data.Mesh) == 0 {
-		resp.Diagnostics.AddError("Missing required field", `The field mesh is required but was not found in the json encoded ID. It's expected to be a value alike '""`)
-		return
-	}
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("mesh"), data.Mesh)...)
-	if len(data.Name) == 0 {
-		resp.Diagnostics.AddError("Missing required field", `The field name is required but was not found in the json encoded ID. It's expected to be a value alike '""`)
-		return
-	}
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("name"), data.Name)...)
+func (r *MeshZoneIngressResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("name"), req.ID)...)
 }

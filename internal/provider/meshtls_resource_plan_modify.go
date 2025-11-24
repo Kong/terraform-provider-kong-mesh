@@ -41,6 +41,7 @@ func (r *MeshTLSResource) ModifyPlan(
 	if mesh.IsUnknown() {
 		return
 	}
+
 	request := operations.GetMeshTLSRequest{
 		Name: name.ValueString(),
 	}

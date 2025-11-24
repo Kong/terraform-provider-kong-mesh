@@ -33,6 +33,7 @@ func (r *MeshResource) ModifyPlan(
 	if name.IsUnknown() {
 		return
 	}
+
 	request := operations.GetMeshRequest{
 		Name: name.ValueString(),
 	}

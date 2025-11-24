@@ -41,6 +41,7 @@ func (r *MeshTraceResource) ModifyPlan(
 	if mesh.IsUnknown() {
 		return
 	}
+
 	request := operations.GetMeshTraceRequest{
 		Name: name.ValueString(),
 	}

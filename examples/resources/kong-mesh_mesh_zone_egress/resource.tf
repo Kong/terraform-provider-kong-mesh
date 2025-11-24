@@ -1,4 +1,4 @@
-resource "kong-mesh_zone_egress" "my_zoneegress" {
+resource "kong-mesh_mesh_zone_egress" "my_meshzoneegress" {
   labels = {
     key = "value"
   }
@@ -6,9 +6,9 @@ resource "kong-mesh_zone_egress" "my_zoneegress" {
   networking = {
     address = "...my_address..."
     admin = {
-      port = 8
+      port = 4
     }
-    port = 9
+    port = 2
   }
   type = "...my_type..."
   zone = "...my_zone..."

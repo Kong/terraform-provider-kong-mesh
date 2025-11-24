@@ -13,9 +13,9 @@ import (
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 )
 
-var _ resource.ResourceWithModifyPlan = &MeshCircuitBreakerResource{}
+var _ resource.ResourceWithModifyPlan = &MeshZoneIngressResource{}
 
-func (r *MeshCircuitBreakerResource) ModifyPlan(
+func (r *MeshZoneIngressResource) ModifyPlan(
 	ctx context.Context,
 	req resource.ModifyPlanRequest,
 	resp *resource.ModifyPlanResponse,
@@ -29,24 +29,15 @@ func (r *MeshCircuitBreakerResource) ModifyPlan(
 		resp.Diagnostics.Append(diags...)
 		return
 	}
-	var mesh types.String
-	if diags := req.Plan.GetAttribute(ctx, path.Root("mesh"), &mesh); diags.HasError() {
-		resp.Diagnostics.Append(diags...)
-		return
-	}
 
 	if name.IsUnknown() {
 		return
 	}
-	if mesh.IsUnknown() {
-		return
-	}
 
-	request := operations.GetMeshCircuitBreakerRequest{
+	request := operations.GetZoneIngressRequest{
 		Name: name.ValueString(),
 	}
-	request.Mesh = mesh.ValueString()
-	res, err := r.client.MeshCircuitBreaker.GetMeshCircuitBreaker(ctx, request)
+	res, err := r.client.ZoneIngress.GetZoneIngress(ctx, request)
 
 	if err != nil {
 		var sdkError *sdkerrors.SDKError
@@ -71,8 +62,8 @@ func (r *MeshCircuitBreakerResource) ModifyPlan(
 
 	if res.StatusCode != http.StatusNotFound {
 		resp.Diagnostics.AddError(
-			"MeshCircuitBreaker already exists",
-			"A resource with the name "+name.String()+" already exists in the mesh "+mesh.String()+" - to be managed via Terraform it needs to be imported first",
+			"MeshZoneIngress already exists",
+			"A resource with the name "+name.String()+" already exists - to be managed via Terraform it needs to be imported first",
 		)
 	}
 }

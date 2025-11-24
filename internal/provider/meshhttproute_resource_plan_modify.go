@@ -41,6 +41,7 @@ func (r *MeshHTTPRouteResource) ModifyPlan(
 	if mesh.IsUnknown() {
 		return
 	}
+
 	request := operations.GetMeshHTTPRouteRequest{
 		Name: name.ValueString(),
 	}

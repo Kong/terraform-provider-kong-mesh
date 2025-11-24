@@ -41,6 +41,7 @@ func (r *MeshLoadBalancingStrategyResource) ModifyPlan(
 	if mesh.IsUnknown() {
 		return
 	}
+
 	request := operations.GetMeshLoadBalancingStrategyRequest{
 		Name: name.ValueString(),
 	}

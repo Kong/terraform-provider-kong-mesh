@@ -41,6 +41,7 @@ func (r *MeshExternalServiceResource) ModifyPlan(
 	if mesh.IsUnknown() {
 		return
 	}
+
 	request := operations.GetMeshExternalServiceRequest{
 		Name: name.ValueString(),
 	}

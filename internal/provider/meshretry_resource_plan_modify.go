@@ -41,6 +41,7 @@ func (r *MeshRetryResource) ModifyPlan(
 	if mesh.IsUnknown() {
 		return
 	}
+
 	request := operations.GetMeshRetryRequest{
 		Name: name.ValueString(),
 	}

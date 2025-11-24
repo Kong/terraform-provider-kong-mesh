@@ -41,6 +41,7 @@ func (r *MeshGlobalRateLimitResource) ModifyPlan(
 	if mesh.IsUnknown() {
 		return
 	}
+
 	request := operations.GetMeshGlobalRateLimitRequest{
 		Name: name.ValueString(),
 	}

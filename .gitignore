@@ -8,3 +8,4 @@ tests/e2e/local-plugins
 *.tfstate*
 .DS_Store
 .idea
+speakeasy-*
