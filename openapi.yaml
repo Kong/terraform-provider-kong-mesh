@@ -3840,6 +3840,10 @@ components:
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
           x-speakeasy-terraform-custom-type:
             imports:
               - github.com/Kong/shared-speakeasy/customtypes/kumalabels
@@ -4712,6 +4716,10 @@ components:
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
           x-speakeasy-terraform-custom-type:
             imports:
               - github.com/Kong/shared-speakeasy/customtypes/kumalabels
@@ -5853,6 +5861,10 @@ components:
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
           x-speakeasy-terraform-custom-type:
             imports:
               - github.com/Kong/shared-speakeasy/customtypes/kumalabels
@@ -6452,6 +6464,10 @@ components:
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
           x-speakeasy-terraform-custom-type:
             imports:
               - github.com/Kong/shared-speakeasy/customtypes/kumalabels
@@ -6902,6 +6918,10 @@ components:
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
           x-speakeasy-terraform-custom-type:
             imports:
               - github.com/Kong/shared-speakeasy/customtypes/kumalabels
@@ -7687,6 +7707,10 @@ components:
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
           x-speakeasy-terraform-custom-type:
             imports:
               - github.com/Kong/shared-speakeasy/customtypes/kumalabels
@@ -8437,6 +8461,10 @@ components:
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
           x-speakeasy-terraform-custom-type:
             imports:
               - github.com/Kong/shared-speakeasy/customtypes/kumalabels
@@ -8765,6 +8793,10 @@ components:
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
           x-speakeasy-terraform-custom-type:
             imports:
               - github.com/Kong/shared-speakeasy/customtypes/kumalabels
@@ -8964,6 +8996,10 @@ components:
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
           x-speakeasy-terraform-custom-type:
             imports:
               - github.com/Kong/shared-speakeasy/customtypes/kumalabels
@@ -9577,6 +9613,10 @@ components:
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
           x-speakeasy-terraform-custom-type:
             imports:
               - github.com/Kong/shared-speakeasy/customtypes/kumalabels
@@ -10287,6 +10327,10 @@ components:
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
           x-speakeasy-terraform-custom-type:
             imports:
               - github.com/Kong/shared-speakeasy/customtypes/kumalabels
@@ -10868,6 +10912,10 @@ components:
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
           x-speakeasy-terraform-custom-type:
             imports:
               - github.com/Kong/shared-speakeasy/customtypes/kumalabels
@@ -11199,6 +11247,10 @@ components:
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
           x-speakeasy-terraform-custom-type:
             imports:
               - github.com/Kong/shared-speakeasy/customtypes/kumalabels
@@ -11693,6 +11745,10 @@ components:
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
           x-speakeasy-terraform-custom-type:
             imports:
               - github.com/Kong/shared-speakeasy/customtypes/kumalabels
@@ -12040,6 +12096,10 @@ components:
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
           x-speakeasy-terraform-custom-type:
             imports:
               - github.com/Kong/shared-speakeasy/customtypes/kumalabels
@@ -12371,6 +12431,10 @@ components:
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
           x-speakeasy-terraform-custom-type:
             imports:
               - github.com/Kong/shared-speakeasy/customtypes/kumalabels
@@ -13356,6 +13420,10 @@ components:
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
           x-speakeasy-terraform-custom-type:
             imports:
               - github.com/Kong/shared-speakeasy/customtypes/kumalabels
@@ -13420,6 +13488,10 @@ components:
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
           x-speakeasy-terraform-custom-type:
             imports:
               - github.com/Kong/shared-speakeasy/customtypes/kumalabels
@@ -13717,6 +13789,10 @@ components:
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
           x-speakeasy-terraform-custom-type:
             imports:
               - github.com/Kong/shared-speakeasy/customtypes/kumalabels
@@ -14094,6 +14170,10 @@ components:
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
           x-speakeasy-terraform-custom-type:
             imports:
               - github.com/Kong/shared-speakeasy/customtypes/kumalabels
@@ -14422,6 +14502,10 @@ components:
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
           x-speakeasy-terraform-custom-type:
             imports:
               - github.com/Kong/shared-speakeasy/customtypes/kumalabels
@@ -14654,6 +14738,10 @@ components:
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
           x-speakeasy-terraform-custom-type:
             imports:
               - github.com/Kong/shared-speakeasy/customtypes/kumalabels
@@ -14919,6 +15007,10 @@ components:
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
           x-speakeasy-terraform-custom-type:
             imports:
               - github.com/Kong/shared-speakeasy/customtypes/kumalabels
@@ -15198,6 +15290,10 @@ components:
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
           x-speakeasy-terraform-custom-type:
             imports:
               - github.com/Kong/shared-speakeasy/customtypes/kumalabels
@@ -15867,6 +15963,10 @@ components:
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
           x-speakeasy-terraform-custom-type:
             imports:
               - github.com/Kong/shared-speakeasy/customtypes/kumalabels
