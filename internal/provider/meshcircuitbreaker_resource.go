@@ -79,7 +79,9 @@ func (r *MeshCircuitBreakerResource) Schema(ctx context.Context, req resource.Sc
 			},
 			"labels": schema.MapAttribute{
 				CustomType:  kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}},
+				Computed:    true,
 				Optional:    true,
+				Default:     kumalabels.EmptyKumaLabelsMapDefault{},
 				ElementType: types.StringType,
 				Description: `The labels to help identity resources`,
 			},
