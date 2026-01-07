@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.3
+> Released on 2025/12/08
+>
+> - tests(acceptance): use hcl builder instead of tfbuilder (#98)
+> - chore(deps): bump shared-speakeasy/customtypes to v0.2.5 (#106)
+> - chore(deps): bump github.com/Kong/shared-speakeasy/tfbuilder from 0.0.4 to 0.0.5 (#90)
+
+
 ## 0.6.2
 > Released on 2025/11/19
 >
