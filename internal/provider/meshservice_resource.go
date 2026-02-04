@@ -203,6 +203,15 @@ func (r *MeshServiceResource) Schema(ctx context.Context, req resource.SchemaReq
 					"selector": schema.SingleNestedAttribute{
 						Optional: true,
 						Attributes: map[string]schema.Attribute{
+							"dataplane_labels": schema.SingleNestedAttribute{
+								Optional: true,
+								Attributes: map[string]schema.Attribute{
+									"match_labels": schema.MapAttribute{
+										Optional:    true,
+										ElementType: types.StringType,
+									},
+								},
+							},
 							"dataplane_ref": schema.SingleNestedAttribute{
 								Optional: true,
 								Attributes: map[string]schema.Attribute{

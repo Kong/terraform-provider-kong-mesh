@@ -62,6 +62,17 @@ func (r *MeshTrustResourceModel) RefreshFromSharedMeshTrustItem(ctx context.Cont
 			r.Spec.Origin.Kri = types.StringPointerValue(resp.Spec.Origin.Kri)
 		}
 		r.Spec.TrustDomain = types.StringValue(resp.Spec.TrustDomain)
+		if resp.Status == nil {
+			r.Status = nil
+		} else {
+			r.Status = &tfTypes.MeshTrustItemStatus{}
+			if resp.Status.Origin == nil {
+				r.Status.Origin = nil
+			} else {
+				r.Status.Origin = &tfTypes.Origin{}
+				r.Status.Origin.Kri = types.StringPointerValue(resp.Status.Origin.Kri)
+			}
+		}
 		r.Type = types.StringValue(string(resp.Type))
 	}
 

@@ -74,6 +74,17 @@ func (r *MeshServiceResourceModel) RefreshFromSharedMeshServiceItem(ctx context.
 			r.Spec.Selector = nil
 		} else {
 			r.Spec.Selector = &tfTypes.MeshServiceItemSelector{}
+			if resp.Spec.Selector.DataplaneLabels == nil {
+				r.Spec.Selector.DataplaneLabels = nil
+			} else {
+				r.Spec.Selector.DataplaneLabels = &tfTypes.MeshExternalService{}
+				if len(resp.Spec.Selector.DataplaneLabels.MatchLabels) > 0 {
+					r.Spec.Selector.DataplaneLabels.MatchLabels = make(map[string]types.String, len(resp.Spec.Selector.DataplaneLabels.MatchLabels))
+					for key, value := range resp.Spec.Selector.DataplaneLabels.MatchLabels {
+						r.Spec.Selector.DataplaneLabels.MatchLabels[key] = types.StringValue(value)
+					}
+				}
+			}
 			if resp.Spec.Selector.DataplaneRef == nil {
 				r.Spec.Selector.DataplaneRef = nil
 			} else {
@@ -82,8 +93,8 @@ func (r *MeshServiceResourceModel) RefreshFromSharedMeshServiceItem(ctx context.
 			}
 			if len(resp.Spec.Selector.DataplaneTags) > 0 {
 				r.Spec.Selector.DataplaneTags = make(map[string]types.String, len(resp.Spec.Selector.DataplaneTags))
-				for key, value := range resp.Spec.Selector.DataplaneTags {
-					r.Spec.Selector.DataplaneTags[key] = types.StringValue(value)
+				for key1, value1 := range resp.Spec.Selector.DataplaneTags {
+					r.Spec.Selector.DataplaneTags[key1] = types.StringValue(value1)
 				}
 			}
 		}
@@ -305,6 +316,19 @@ func (r *MeshServiceResourceModel) ToSharedMeshServiceItemInput(ctx context.Cont
 	}
 	var selector *shared.MeshServiceItemSelector
 	if r.Spec.Selector != nil {
+		var dataplaneLabels *shared.DataplaneLabels
+		if r.Spec.Selector.DataplaneLabels != nil {
+			matchLabels := make(map[string]string)
+			for matchLabelsKey, matchLabelsValue := range r.Spec.Selector.DataplaneLabels.MatchLabels {
+				var matchLabelsInst string
+				matchLabelsInst = matchLabelsValue.ValueString()
+
+				matchLabels[matchLabelsKey] = matchLabelsInst
+			}
+			dataplaneLabels = &shared.DataplaneLabels{
+				MatchLabels: matchLabels,
+			}
+		}
 		var dataplaneRef *shared.DataplaneRef
 		if r.Spec.Selector.DataplaneRef != nil {
 			name2 := new(string)
@@ -325,8 +349,9 @@ func (r *MeshServiceResourceModel) ToSharedMeshServiceItemInput(ctx context.Cont
 			dataplaneTags[dataplaneTagsKey] = dataplaneTagsInst
 		}
 		selector = &shared.MeshServiceItemSelector{
-			DataplaneRef:  dataplaneRef,
-			DataplaneTags: dataplaneTags,
+			DataplaneLabels: dataplaneLabels,
+			DataplaneRef:    dataplaneRef,
+			DataplaneTags:   dataplaneTags,
 		}
 	}
 	state := new(shared.State)

@@ -20,6 +20,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	custom_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
 	speakeasy_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
+	speakeasy_objectplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/objectplanmodifier"
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
@@ -51,6 +52,7 @@ type MeshTrustResourceModel struct {
 	ModificationTime types.String                  `tfsdk:"modification_time"`
 	Name             types.String                  `tfsdk:"name"`
 	Spec             tfTypes.MeshTrustItemSpec     `tfsdk:"spec"`
+	Status           *tfTypes.MeshTrustItemStatus  `tfsdk:"status"`
 	Type             types.String                  `tfsdk:"type"`
 	Warnings         []types.String                `tfsdk:"warnings"`
 }
@@ -159,7 +161,9 @@ func (r *MeshTrustResource) Schema(ctx context.Context, req resource.SchemaReque
 								Description: `Resource identifier`,
 							},
 						},
-						Description: `Origin specifies whether the resource was created from a MeshIdentity.`,
+						MarkdownDescription: `Origin specifies whether the resource was created from a MeshIdentity.` + "\n" +
+							`` + "\n" +
+							`Deprecated: use Status.Origin instead`,
 					},
 					"trust_domain": schema.StringAttribute{
 						Required:    true,
@@ -170,6 +174,25 @@ func (r *MeshTrustResource) Schema(ctx context.Context, req resource.SchemaReque
 					},
 				},
 				Description: `Spec is the specification of the Kuma MeshTrust resource.`,
+			},
+			"status": schema.SingleNestedAttribute{
+				Computed: true,
+				PlanModifiers: []planmodifier.Object{
+					speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+				},
+				Attributes: map[string]schema.Attribute{
+					"origin": schema.SingleNestedAttribute{
+						Computed: true,
+						Attributes: map[string]schema.Attribute{
+							"kri": schema.StringAttribute{
+								Computed:    true,
+								Description: `Resource identifier`,
+							},
+						},
+						Description: `Origin specifies whether the resource was created from a MeshIdentity.`,
+					},
+				},
+				Description: `Status is the current status of the Kuma MeshTrust resource.`,
 			},
 			"type": schema.StringAttribute{
 				Required:    true,

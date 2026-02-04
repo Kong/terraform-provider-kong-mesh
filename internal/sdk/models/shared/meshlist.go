@@ -5,10 +5,10 @@ package shared
 // MeshList - List
 type MeshList struct {
 	Items []MeshItem `json:"items,omitempty"`
-	// The total number of entities
-	Total *float64 `json:"total,omitempty"`
 	// URL to the next page
 	Next *string `json:"next,omitempty"`
+	// The total number of entities
+	Total *float64 `json:"total,omitempty"`
 }
 
 func (m *MeshList) GetItems() []MeshItem {
@@ -18,16 +18,16 @@ func (m *MeshList) GetItems() []MeshItem {
 	return m.Items
 }
 
-func (m *MeshList) GetTotal() *float64 {
-	if m == nil {
-		return nil
-	}
-	return m.Total
-}
-
 func (m *MeshList) GetNext() *string {
 	if m == nil {
 		return nil
 	}
 	return m.Next
+}
+
+func (m *MeshList) GetTotal() *float64 {
+	if m == nil {
+		return nil
+	}
+	return m.Total
 }

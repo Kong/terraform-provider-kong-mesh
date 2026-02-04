@@ -673,7 +673,7 @@ func (m *MeshTrafficPermissionItemSpec) GetTargetRef() *MeshTrafficPermissionIte
 	return m.TargetRef
 }
 
-// MeshTrafficPermissionItem - Successful response
+// MeshTrafficPermissionItem - MeshTrafficPermission controls which services are allowed to communicate with each other in the mesh. It provides fine-grained access control by allowing you to define allow/deny rules based on service identity, enabling zero-trust security and supporting shadow mode for testing permission changes before enforcement.
 type MeshTrafficPermissionItem struct {
 	// the type of the resource
 	Type MeshTrafficPermissionItemType `json:"type"`
@@ -760,7 +760,7 @@ func (m *MeshTrafficPermissionItem) GetModificationTime() *time.Time {
 	return m.ModificationTime
 }
 
-// MeshTrafficPermissionItemInput - Successful response
+// MeshTrafficPermissionItemInput - MeshTrafficPermission controls which services are allowed to communicate with each other in the mesh. It provides fine-grained access control by allowing you to define allow/deny rules based on service identity, enabling zero-trust security and supporting shadow mode for testing permission changes before enforcement.
 type MeshTrafficPermissionItemInput struct {
 	// the type of the resource
 	Type MeshTrafficPermissionItemType `json:"type"`

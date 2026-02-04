@@ -255,6 +255,7 @@ func (r *MeshHealthCheckResource) Schema(ctx context.Context, req resource.Schem
 											MarkdownDescription: `Allows to configure panic threshold for Envoy cluster. If not specified,` + "\n" +
 												`the default is 50%. To disable panic mode, set to 0%.` + "\n" +
 												`Either int or decimal represented as string.` + "\n" +
+												`` + "\n" +
 												`Deprecated: the setting has been moved to MeshCircuitBreaker policy,` + "\n" +
 												`please use MeshCircuitBreaker policy instead.`,
 										},

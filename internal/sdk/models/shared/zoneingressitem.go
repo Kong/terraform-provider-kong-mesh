@@ -106,7 +106,6 @@ func (z *ZoneIngressItemNetworking) GetPort() *int64 {
 	return z.Port
 }
 
-// ZoneIngressItem - Successful response
 type ZoneIngressItem struct {
 	// AvailableService contains tags that represent unique subset of
 	// endpoints

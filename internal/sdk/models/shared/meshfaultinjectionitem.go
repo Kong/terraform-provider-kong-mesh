@@ -1857,7 +1857,7 @@ func (m *MeshFaultInjectionItemSpec) GetTo() []MeshFaultInjectionItemTo {
 	return m.To
 }
 
-// MeshFaultInjectionItem - Successful response
+// MeshFaultInjectionItem - MeshFaultInjection allows you to test the resiliency of your services by injecting faults like delays, connection aborts, and response bandwidth limits into the traffic. This is useful for chaos testing and validating that your applications handle failures gracefully.
 type MeshFaultInjectionItem struct {
 	// the type of the resource
 	Type MeshFaultInjectionItemType `json:"type"`
@@ -1944,7 +1944,7 @@ func (m *MeshFaultInjectionItem) GetModificationTime() *time.Time {
 	return m.ModificationTime
 }
 
-// MeshFaultInjectionItemInput - Successful response
+// MeshFaultInjectionItemInput - MeshFaultInjection allows you to test the resiliency of your services by injecting faults like delays, connection aborts, and response bandwidth limits into the traffic. This is useful for chaos testing and validating that your applications handle failures gracefully.
 type MeshFaultInjectionItemInput struct {
 	// the type of the resource
 	Type MeshFaultInjectionItemType `json:"type"`

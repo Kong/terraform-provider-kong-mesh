@@ -606,7 +606,11 @@ func (m *MeshTCPRouteItemSpec) GetTo() []MeshTCPRouteItemTo {
 	return m.To
 }
 
-// MeshTCPRouteItem - Successful response
+// MeshTCPRouteItem - NOTICE: This policy defines its own `GetDefault` method so that it can have the given
+// structure for deserialization but still use the generic policy merging
+// machinery.
+// //
+// MeshTCPRoute configures routing for TCP traffic between services in the mesh. It enables traffic splitting and weighted load balancing across different backend endpoints, useful for canary deployments, blue-green deployments, and gradual traffic migration for TCP-based services.
 type MeshTCPRouteItem struct {
 	// the type of the resource
 	Type MeshTCPRouteItemType `json:"type"`
@@ -693,7 +697,11 @@ func (m *MeshTCPRouteItem) GetModificationTime() *time.Time {
 	return m.ModificationTime
 }
 
-// MeshTCPRouteItemInput - Successful response
+// MeshTCPRouteItemInput - NOTICE: This policy defines its own `GetDefault` method so that it can have the given
+// structure for deserialization but still use the generic policy merging
+// machinery.
+// //
+// MeshTCPRoute configures routing for TCP traffic between services in the mesh. It enables traffic splitting and weighted load balancing across different backend endpoints, useful for canary deployments, blue-green deployments, and gradual traffic migration for TCP-based services.
 type MeshTCPRouteItemInput struct {
 	// the type of the resource
 	Type MeshTCPRouteItemType `json:"type"`

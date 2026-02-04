@@ -113,7 +113,7 @@ func (r *MeshIdentityResource) Schema(ctx context.Context, req resource.SchemaRe
 				Required: true,
 				Attributes: map[string]schema.Attribute{
 					"provider": schema.SingleNestedAttribute{
-						Required: true,
+						Optional: true,
 						Attributes: map[string]schema.Attribute{
 							"bundled": schema.SingleNestedAttribute{
 								Optional: true,

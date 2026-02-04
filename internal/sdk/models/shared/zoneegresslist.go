@@ -9,10 +9,10 @@ import (
 // ZoneEgressList - List
 type ZoneEgressList struct {
 	Items []ZoneEgressItem `json:"items"`
-	// The total number of entities
-	Total *float64 `default:"null" json:"total"`
 	// URL to the next page
 	Next *string `default:"null" json:"next"`
+	// The total number of entities
+	Total *float64 `default:"null" json:"total"`
 }
 
 func (z ZoneEgressList) MarshalJSON() ([]byte, error) {
@@ -33,16 +33,16 @@ func (z *ZoneEgressList) GetItems() []ZoneEgressItem {
 	return z.Items
 }
 
-func (z *ZoneEgressList) GetTotal() *float64 {
-	if z == nil {
-		return nil
-	}
-	return z.Total
-}
-
 func (z *ZoneEgressList) GetNext() *string {
 	if z == nil {
 		return nil
 	}
 	return z.Next
+}
+
+func (z *ZoneEgressList) GetTotal() *float64 {
+	if z == nil {
+		return nil
+	}
+	return z.Total
 }

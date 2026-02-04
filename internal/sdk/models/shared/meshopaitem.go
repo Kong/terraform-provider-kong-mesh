@@ -424,7 +424,7 @@ func (m *MeshOPAItemSpec) GetTargetRef() *MeshOPAItemTargetRef {
 	return m.TargetRef
 }
 
-// MeshOPAItem - Successful response
+// MeshOPAItem - MeshOPA
 type MeshOPAItem struct {
 	// the type of the resource
 	Type MeshOPAItemType `json:"type"`
@@ -511,7 +511,7 @@ func (m *MeshOPAItem) GetModificationTime() *time.Time {
 	return m.ModificationTime
 }
 
-// MeshOPAItemInput - Successful response
+// MeshOPAItemInput - MeshOPA
 type MeshOPAItemInput struct {
 	// the type of the resource
 	Type MeshOPAItemType `json:"type"`

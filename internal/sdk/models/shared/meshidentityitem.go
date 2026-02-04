@@ -588,14 +588,14 @@ func (s *SpiffeID) GetTrustDomain() *string {
 
 // MeshIdentityItemSpec - Spec is the specification of the Kuma MeshIdentity resource.
 type MeshIdentityItemSpec struct {
-	Provider Provider                  `json:"provider"`
+	Provider *Provider                 `json:"provider,omitempty"`
 	Selector *MeshIdentityItemSelector `json:"selector,omitempty"`
 	SpiffeID *SpiffeID                 `json:"spiffeID,omitempty"`
 }
 
-func (m *MeshIdentityItemSpec) GetProvider() Provider {
+func (m *MeshIdentityItemSpec) GetProvider() *Provider {
 	if m == nil {
-		return Provider{}
+		return nil
 	}
 	return m.Provider
 }
@@ -701,7 +701,7 @@ func (m *MeshIdentityItemStatus) GetConditions() []Conditions {
 	return m.Conditions
 }
 
-// MeshIdentityItem - Successful response
+// MeshIdentityItem - MeshIdentity manages service identity and certificate provisioning for workloads in the mesh. It configures how services obtain their identity certificates, supporting multiple providers including bundled certificates (self-signed or user-provided CA), SPIRE integration, and custom SPIFFE ID configuration for secure service-to-service authentication.
 type MeshIdentityItem struct {
 	// the type of the resource
 	Type MeshIdentityItemType `json:"type"`
@@ -797,6 +797,7 @@ func (m *MeshIdentityItem) GetStatus() *MeshIdentityItemStatus {
 	return m.Status
 }
 
+// MeshIdentityItemInput - MeshIdentity manages service identity and certificate provisioning for workloads in the mesh. It configures how services obtain their identity certificates, supporting multiple providers including bundled certificates (self-signed or user-provided CA), SPIRE integration, and custom SPIFFE ID configuration for secure service-to-service authentication.
 type MeshIdentityItemInput struct {
 	// the type of the resource
 	Type MeshIdentityItemType `json:"type"`

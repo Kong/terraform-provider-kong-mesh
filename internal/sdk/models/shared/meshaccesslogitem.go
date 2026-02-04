@@ -1703,7 +1703,7 @@ func (s *Spec) GetTo() []To {
 	return s.To
 }
 
-// MeshAccessLogItem - Successful response
+// MeshAccessLogItem - MeshAccessLog configures access logging for traffic between services in the mesh. It allows you to capture and export request/response logs to various backends (file, TCP, or OpenTelemetry) for monitoring, debugging, and auditing purposes.
 type MeshAccessLogItem struct {
 	// the type of the resource
 	Type Type `json:"type"`
@@ -1790,7 +1790,7 @@ func (m *MeshAccessLogItem) GetModificationTime() *time.Time {
 	return m.ModificationTime
 }
 
-// MeshAccessLogItemInput - Successful response
+// MeshAccessLogItemInput - MeshAccessLog configures access logging for traffic between services in the mesh. It allows you to capture and export request/response logs to various backends (file, TCP, or OpenTelemetry) for monitoring, debugging, and auditing purposes.
 type MeshAccessLogItemInput struct {
 	// the type of the resource
 	Type Type `json:"type"`

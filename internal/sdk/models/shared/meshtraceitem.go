@@ -850,7 +850,7 @@ func (m *MeshTraceItemSpec) GetTargetRef() *MeshTraceItemTargetRef {
 	return m.TargetRef
 }
 
-// MeshTraceItem - Successful response
+// MeshTraceItem - MeshTrace enables distributed tracing to track requests as they flow through multiple services in the mesh. It supports exporting trace data to backends like Zipkin, Datadog, and OpenTelemetry, with configurable sampling rates and custom tags for detailed observability and debugging of service interactions.
 type MeshTraceItem struct {
 	// the type of the resource
 	Type MeshTraceItemType `json:"type"`
@@ -937,7 +937,7 @@ func (m *MeshTraceItem) GetModificationTime() *time.Time {
 	return m.ModificationTime
 }
 
-// MeshTraceItemInput - Successful response
+// MeshTraceItemInput - MeshTrace enables distributed tracing to track requests as they flow through multiple services in the mesh. It supports exporting trace data to backends like Zipkin, Datadog, and OpenTelemetry, with configurable sampling rates and custom tags for detailed observability and debugging of service interactions.
 type MeshTraceItemInput struct {
 	// the type of the resource
 	Type MeshTraceItemType `json:"type"`

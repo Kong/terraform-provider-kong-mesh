@@ -1616,7 +1616,7 @@ func (m *MeshLoadBalancingStrategyItemSpec) GetTo() []MeshLoadBalancingStrategyI
 	return m.To
 }
 
-// MeshLoadBalancingStrategyItem - Successful response
+// MeshLoadBalancingStrategyItem - MeshLoadBalancingStrategy configures how traffic is distributed across service instances. It supports multiple load balancing algorithms (round-robin, least request, ring hash, random, maglev), locality-aware routing to prefer nearby instances, and cross-zone failover strategies for high availability.
 type MeshLoadBalancingStrategyItem struct {
 	// the type of the resource
 	Type MeshLoadBalancingStrategyItemType `json:"type"`
@@ -1703,7 +1703,7 @@ func (m *MeshLoadBalancingStrategyItem) GetModificationTime() *time.Time {
 	return m.ModificationTime
 }
 
-// MeshLoadBalancingStrategyItemInput - Successful response
+// MeshLoadBalancingStrategyItemInput - MeshLoadBalancingStrategy configures how traffic is distributed across service instances. It supports multiple load balancing algorithms (round-robin, least request, ring hash, random, maglev), locality-aware routing to prefer nearby instances, and cross-zone failover strategies for high availability.
 type MeshLoadBalancingStrategyItemInput struct {
 	// the type of the resource
 	Type MeshLoadBalancingStrategyItemType `json:"type"`

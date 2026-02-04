@@ -3,7 +3,7 @@
 package types
 
 type MeshIdentityItemSpec struct {
-	Provider Provider                  `tfsdk:"provider"`
+	Provider *Provider                 `tfsdk:"provider"`
 	Selector *MeshIdentityItemSelector `tfsdk:"selector"`
 	SpiffeID *SpiffeID                 `tfsdk:"spiffe_id"`
 }

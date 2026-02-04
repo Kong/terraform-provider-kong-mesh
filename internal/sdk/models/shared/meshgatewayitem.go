@@ -593,7 +593,6 @@ func (s *Selectors) GetMatch() map[string]string {
 	return s.Match
 }
 
-// MeshGatewayItem - Successful response
 type MeshGatewayItem struct {
 	// The desired configuration of the MeshGateway.
 	Conf   *Conf             `json:"conf,omitempty"`

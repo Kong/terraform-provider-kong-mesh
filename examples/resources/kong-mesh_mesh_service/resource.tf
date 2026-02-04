@@ -22,6 +22,11 @@ resource "kong-mesh_mesh_service" "my_meshservice" {
       }
     ]
     selector = {
+      dataplane_labels = {
+        match_labels = {
+          key = "value"
+        }
+      }
       dataplane_ref = {
         name = "...my_name..."
       }

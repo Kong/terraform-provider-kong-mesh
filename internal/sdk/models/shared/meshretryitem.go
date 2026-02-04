@@ -1068,7 +1068,7 @@ func (m *MeshRetryItemSpec) GetTo() []MeshRetryItemTo {
 	return m.To
 }
 
-// MeshRetryItem - Successful response
+// MeshRetryItem - MeshRetry configures automatic retry behavior for failed requests to improve service reliability. It supports configurable retry conditions, limits, timeouts, and backoff strategies for HTTP, gRPC, and TCP traffic, helping services recover from transient failures.
 type MeshRetryItem struct {
 	// the type of the resource
 	Type MeshRetryItemType `json:"type"`
@@ -1155,7 +1155,7 @@ func (m *MeshRetryItem) GetModificationTime() *time.Time {
 	return m.ModificationTime
 }
 
-// MeshRetryItemInput - Successful response
+// MeshRetryItemInput - MeshRetry configures automatic retry behavior for failed requests to improve service reliability. It supports configurable retry conditions, limits, timeouts, and backoff strategies for HTTP, gRPC, and TCP traffic, helping services recover from transient failures.
 type MeshRetryItemInput struct {
 	// the type of the resource
 	Type MeshRetryItemType `json:"type"`

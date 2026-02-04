@@ -40,108 +40,113 @@ func (r *MeshIdentityResourceModel) RefreshFromSharedMeshIdentityItem(ctx contex
 		r.Mesh = types.StringPointerValue(resp.Mesh)
 		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
-		if resp.Spec.Provider.Bundled == nil {
-			r.Spec.Provider.Bundled = nil
+		if resp.Spec.Provider == nil {
+			r.Spec.Provider = nil
 		} else {
-			r.Spec.Provider.Bundled = &tfTypes.Bundled{}
-			if resp.Spec.Provider.Bundled.Autogenerate == nil {
-				r.Spec.Provider.Bundled.Autogenerate = nil
+			r.Spec.Provider = &tfTypes.Provider{}
+			if resp.Spec.Provider.Bundled == nil {
+				r.Spec.Provider.Bundled = nil
 			} else {
-				r.Spec.Provider.Bundled.Autogenerate = &tfTypes.Autogenerate{}
-				r.Spec.Provider.Bundled.Autogenerate.Enabled = types.BoolPointerValue(resp.Spec.Provider.Bundled.Autogenerate.Enabled)
-			}
-			if resp.Spec.Provider.Bundled.Ca == nil {
-				r.Spec.Provider.Bundled.Ca = nil
-			} else {
-				r.Spec.Provider.Bundled.Ca = &tfTypes.Ca{}
-				if resp.Spec.Provider.Bundled.Ca.Certificate == nil {
-					r.Spec.Provider.Bundled.Ca.Certificate = nil
+				r.Spec.Provider.Bundled = &tfTypes.Bundled{}
+				if resp.Spec.Provider.Bundled.Autogenerate == nil {
+					r.Spec.Provider.Bundled.Autogenerate = nil
 				} else {
-					r.Spec.Provider.Bundled.Ca.Certificate = &tfTypes.Certificate{}
-					if resp.Spec.Provider.Bundled.Ca.Certificate.EnvVar == nil {
-						r.Spec.Provider.Bundled.Ca.Certificate.EnvVar = nil
-					} else {
-						r.Spec.Provider.Bundled.Ca.Certificate.EnvVar = &tfTypes.EnvVar{}
-						r.Spec.Provider.Bundled.Ca.Certificate.EnvVar.Name = types.StringValue(resp.Spec.Provider.Bundled.Ca.Certificate.EnvVar.Name)
-					}
-					if resp.Spec.Provider.Bundled.Ca.Certificate.File == nil {
-						r.Spec.Provider.Bundled.Ca.Certificate.File = nil
-					} else {
-						r.Spec.Provider.Bundled.Ca.Certificate.File = &tfTypes.MeshIdentityItemFile{}
-						r.Spec.Provider.Bundled.Ca.Certificate.File.Path = types.StringValue(resp.Spec.Provider.Bundled.Ca.Certificate.File.Path)
-					}
-					if resp.Spec.Provider.Bundled.Ca.Certificate.InsecureInline == nil {
-						r.Spec.Provider.Bundled.Ca.Certificate.InsecureInline = nil
-					} else {
-						r.Spec.Provider.Bundled.Ca.Certificate.InsecureInline = &tfTypes.InsecureInline{}
-						r.Spec.Provider.Bundled.Ca.Certificate.InsecureInline.Value = types.StringValue(resp.Spec.Provider.Bundled.Ca.Certificate.InsecureInline.Value)
-					}
-					if resp.Spec.Provider.Bundled.Ca.Certificate.SecretRef == nil {
-						r.Spec.Provider.Bundled.Ca.Certificate.SecretRef = nil
-					} else {
-						r.Spec.Provider.Bundled.Ca.Certificate.SecretRef = &tfTypes.SecretRef{}
-						r.Spec.Provider.Bundled.Ca.Certificate.SecretRef.Kind = types.StringValue(string(resp.Spec.Provider.Bundled.Ca.Certificate.SecretRef.Kind))
-						r.Spec.Provider.Bundled.Ca.Certificate.SecretRef.Name = types.StringValue(resp.Spec.Provider.Bundled.Ca.Certificate.SecretRef.Name)
-					}
-					r.Spec.Provider.Bundled.Ca.Certificate.Type = types.StringValue(string(resp.Spec.Provider.Bundled.Ca.Certificate.Type))
+					r.Spec.Provider.Bundled.Autogenerate = &tfTypes.Autogenerate{}
+					r.Spec.Provider.Bundled.Autogenerate.Enabled = types.BoolPointerValue(resp.Spec.Provider.Bundled.Autogenerate.Enabled)
 				}
-				if resp.Spec.Provider.Bundled.Ca.PrivateKey == nil {
-					r.Spec.Provider.Bundled.Ca.PrivateKey = nil
+				if resp.Spec.Provider.Bundled.Ca == nil {
+					r.Spec.Provider.Bundled.Ca = nil
 				} else {
-					r.Spec.Provider.Bundled.Ca.PrivateKey = &tfTypes.Certificate{}
-					if resp.Spec.Provider.Bundled.Ca.PrivateKey.EnvVar == nil {
-						r.Spec.Provider.Bundled.Ca.PrivateKey.EnvVar = nil
+					r.Spec.Provider.Bundled.Ca = &tfTypes.Ca{}
+					if resp.Spec.Provider.Bundled.Ca.Certificate == nil {
+						r.Spec.Provider.Bundled.Ca.Certificate = nil
 					} else {
-						r.Spec.Provider.Bundled.Ca.PrivateKey.EnvVar = &tfTypes.EnvVar{}
-						r.Spec.Provider.Bundled.Ca.PrivateKey.EnvVar.Name = types.StringValue(resp.Spec.Provider.Bundled.Ca.PrivateKey.EnvVar.Name)
+						r.Spec.Provider.Bundled.Ca.Certificate = &tfTypes.Certificate{}
+						if resp.Spec.Provider.Bundled.Ca.Certificate.EnvVar == nil {
+							r.Spec.Provider.Bundled.Ca.Certificate.EnvVar = nil
+						} else {
+							r.Spec.Provider.Bundled.Ca.Certificate.EnvVar = &tfTypes.EnvVar{}
+							r.Spec.Provider.Bundled.Ca.Certificate.EnvVar.Name = types.StringValue(resp.Spec.Provider.Bundled.Ca.Certificate.EnvVar.Name)
+						}
+						if resp.Spec.Provider.Bundled.Ca.Certificate.File == nil {
+							r.Spec.Provider.Bundled.Ca.Certificate.File = nil
+						} else {
+							r.Spec.Provider.Bundled.Ca.Certificate.File = &tfTypes.MeshIdentityItemFile{}
+							r.Spec.Provider.Bundled.Ca.Certificate.File.Path = types.StringValue(resp.Spec.Provider.Bundled.Ca.Certificate.File.Path)
+						}
+						if resp.Spec.Provider.Bundled.Ca.Certificate.InsecureInline == nil {
+							r.Spec.Provider.Bundled.Ca.Certificate.InsecureInline = nil
+						} else {
+							r.Spec.Provider.Bundled.Ca.Certificate.InsecureInline = &tfTypes.InsecureInline{}
+							r.Spec.Provider.Bundled.Ca.Certificate.InsecureInline.Value = types.StringValue(resp.Spec.Provider.Bundled.Ca.Certificate.InsecureInline.Value)
+						}
+						if resp.Spec.Provider.Bundled.Ca.Certificate.SecretRef == nil {
+							r.Spec.Provider.Bundled.Ca.Certificate.SecretRef = nil
+						} else {
+							r.Spec.Provider.Bundled.Ca.Certificate.SecretRef = &tfTypes.SecretRef{}
+							r.Spec.Provider.Bundled.Ca.Certificate.SecretRef.Kind = types.StringValue(string(resp.Spec.Provider.Bundled.Ca.Certificate.SecretRef.Kind))
+							r.Spec.Provider.Bundled.Ca.Certificate.SecretRef.Name = types.StringValue(resp.Spec.Provider.Bundled.Ca.Certificate.SecretRef.Name)
+						}
+						r.Spec.Provider.Bundled.Ca.Certificate.Type = types.StringValue(string(resp.Spec.Provider.Bundled.Ca.Certificate.Type))
 					}
-					if resp.Spec.Provider.Bundled.Ca.PrivateKey.File == nil {
-						r.Spec.Provider.Bundled.Ca.PrivateKey.File = nil
+					if resp.Spec.Provider.Bundled.Ca.PrivateKey == nil {
+						r.Spec.Provider.Bundled.Ca.PrivateKey = nil
 					} else {
-						r.Spec.Provider.Bundled.Ca.PrivateKey.File = &tfTypes.MeshIdentityItemFile{}
-						r.Spec.Provider.Bundled.Ca.PrivateKey.File.Path = types.StringValue(resp.Spec.Provider.Bundled.Ca.PrivateKey.File.Path)
+						r.Spec.Provider.Bundled.Ca.PrivateKey = &tfTypes.Certificate{}
+						if resp.Spec.Provider.Bundled.Ca.PrivateKey.EnvVar == nil {
+							r.Spec.Provider.Bundled.Ca.PrivateKey.EnvVar = nil
+						} else {
+							r.Spec.Provider.Bundled.Ca.PrivateKey.EnvVar = &tfTypes.EnvVar{}
+							r.Spec.Provider.Bundled.Ca.PrivateKey.EnvVar.Name = types.StringValue(resp.Spec.Provider.Bundled.Ca.PrivateKey.EnvVar.Name)
+						}
+						if resp.Spec.Provider.Bundled.Ca.PrivateKey.File == nil {
+							r.Spec.Provider.Bundled.Ca.PrivateKey.File = nil
+						} else {
+							r.Spec.Provider.Bundled.Ca.PrivateKey.File = &tfTypes.MeshIdentityItemFile{}
+							r.Spec.Provider.Bundled.Ca.PrivateKey.File.Path = types.StringValue(resp.Spec.Provider.Bundled.Ca.PrivateKey.File.Path)
+						}
+						if resp.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline == nil {
+							r.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline = nil
+						} else {
+							r.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline = &tfTypes.InsecureInline{}
+							r.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline.Value = types.StringValue(resp.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline.Value)
+						}
+						if resp.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef == nil {
+							r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef = nil
+						} else {
+							r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef = &tfTypes.SecretRef{}
+							r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef.Kind = types.StringValue(string(resp.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef.Kind))
+							r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef.Name = types.StringValue(resp.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef.Name)
+						}
+						r.Spec.Provider.Bundled.Ca.PrivateKey.Type = types.StringValue(string(resp.Spec.Provider.Bundled.Ca.PrivateKey.Type))
 					}
-					if resp.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline == nil {
-						r.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline = nil
-					} else {
-						r.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline = &tfTypes.InsecureInline{}
-						r.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline.Value = types.StringValue(resp.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline.Value)
-					}
-					if resp.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef == nil {
-						r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef = nil
-					} else {
-						r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef = &tfTypes.SecretRef{}
-						r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef.Kind = types.StringValue(string(resp.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef.Kind))
-						r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef.Name = types.StringValue(resp.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef.Name)
-					}
-					r.Spec.Provider.Bundled.Ca.PrivateKey.Type = types.StringValue(string(resp.Spec.Provider.Bundled.Ca.PrivateKey.Type))
+				}
+				if resp.Spec.Provider.Bundled.CertificateParameters == nil {
+					r.Spec.Provider.Bundled.CertificateParameters = nil
+				} else {
+					r.Spec.Provider.Bundled.CertificateParameters = &tfTypes.CertificateParameters{}
+					r.Spec.Provider.Bundled.CertificateParameters.Expiry = types.StringPointerValue(resp.Spec.Provider.Bundled.CertificateParameters.Expiry)
+				}
+				r.Spec.Provider.Bundled.InsecureAllowSelfSigned = types.BoolPointerValue(resp.Spec.Provider.Bundled.InsecureAllowSelfSigned)
+				if resp.Spec.Provider.Bundled.MeshTrustCreation != nil {
+					r.Spec.Provider.Bundled.MeshTrustCreation = types.StringValue(string(*resp.Spec.Provider.Bundled.MeshTrustCreation))
+				} else {
+					r.Spec.Provider.Bundled.MeshTrustCreation = types.StringNull()
 				}
 			}
-			if resp.Spec.Provider.Bundled.CertificateParameters == nil {
-				r.Spec.Provider.Bundled.CertificateParameters = nil
+			if resp.Spec.Provider.Spire == nil {
+				r.Spec.Provider.Spire = nil
 			} else {
-				r.Spec.Provider.Bundled.CertificateParameters = &tfTypes.CertificateParameters{}
-				r.Spec.Provider.Bundled.CertificateParameters.Expiry = types.StringPointerValue(resp.Spec.Provider.Bundled.CertificateParameters.Expiry)
+				r.Spec.Provider.Spire = &tfTypes.Spire{}
+				if resp.Spec.Provider.Spire.Agent == nil {
+					r.Spec.Provider.Spire.Agent = nil
+				} else {
+					r.Spec.Provider.Spire.Agent = &tfTypes.Agent{}
+					r.Spec.Provider.Spire.Agent.Timeout = types.StringPointerValue(resp.Spec.Provider.Spire.Agent.Timeout)
+				}
 			}
-			r.Spec.Provider.Bundled.InsecureAllowSelfSigned = types.BoolPointerValue(resp.Spec.Provider.Bundled.InsecureAllowSelfSigned)
-			if resp.Spec.Provider.Bundled.MeshTrustCreation != nil {
-				r.Spec.Provider.Bundled.MeshTrustCreation = types.StringValue(string(*resp.Spec.Provider.Bundled.MeshTrustCreation))
-			} else {
-				r.Spec.Provider.Bundled.MeshTrustCreation = types.StringNull()
-			}
+			r.Spec.Provider.Type = types.StringValue(string(resp.Spec.Provider.Type))
 		}
-		if resp.Spec.Provider.Spire == nil {
-			r.Spec.Provider.Spire = nil
-		} else {
-			r.Spec.Provider.Spire = &tfTypes.Spire{}
-			if resp.Spec.Provider.Spire.Agent == nil {
-				r.Spec.Provider.Spire.Agent = nil
-			} else {
-				r.Spec.Provider.Spire.Agent = &tfTypes.Agent{}
-				r.Spec.Provider.Spire.Agent.Timeout = types.StringPointerValue(resp.Spec.Provider.Spire.Agent.Timeout)
-			}
-		}
-		r.Spec.Provider.Type = types.StringValue(string(resp.Spec.Provider.Type))
 		if resp.Spec.Selector == nil {
 			r.Spec.Selector = nil
 		} else {
@@ -264,180 +269,183 @@ func (r *MeshIdentityResourceModel) ToSharedMeshIdentityItemInput(ctx context.Co
 	if !r.Labels.IsUnknown() && !r.Labels.IsNull() {
 		diags.Append(r.Labels.ElementsAs(ctx, &labels, true)...)
 	}
-	var bundled *shared.Bundled
-	if r.Spec.Provider.Bundled != nil {
-		var autogenerate *shared.Autogenerate
-		if r.Spec.Provider.Bundled.Autogenerate != nil {
-			enabled := new(bool)
-			if !r.Spec.Provider.Bundled.Autogenerate.Enabled.IsUnknown() && !r.Spec.Provider.Bundled.Autogenerate.Enabled.IsNull() {
-				*enabled = r.Spec.Provider.Bundled.Autogenerate.Enabled.ValueBool()
+	var provider *shared.Provider
+	if r.Spec.Provider != nil {
+		var bundled *shared.Bundled
+		if r.Spec.Provider.Bundled != nil {
+			var autogenerate *shared.Autogenerate
+			if r.Spec.Provider.Bundled.Autogenerate != nil {
+				enabled := new(bool)
+				if !r.Spec.Provider.Bundled.Autogenerate.Enabled.IsUnknown() && !r.Spec.Provider.Bundled.Autogenerate.Enabled.IsNull() {
+					*enabled = r.Spec.Provider.Bundled.Autogenerate.Enabled.ValueBool()
+				} else {
+					enabled = nil
+				}
+				autogenerate = &shared.Autogenerate{
+					Enabled: enabled,
+				}
+			}
+			var ca *shared.Ca
+			if r.Spec.Provider.Bundled.Ca != nil {
+				var certificate *shared.Certificate
+				if r.Spec.Provider.Bundled.Ca.Certificate != nil {
+					var envVar *shared.EnvVar
+					if r.Spec.Provider.Bundled.Ca.Certificate.EnvVar != nil {
+						var name1 string
+						name1 = r.Spec.Provider.Bundled.Ca.Certificate.EnvVar.Name.ValueString()
+
+						envVar = &shared.EnvVar{
+							Name: name1,
+						}
+					}
+					var file *shared.MeshIdentityItemFile
+					if r.Spec.Provider.Bundled.Ca.Certificate.File != nil {
+						var path string
+						path = r.Spec.Provider.Bundled.Ca.Certificate.File.Path.ValueString()
+
+						file = &shared.MeshIdentityItemFile{
+							Path: path,
+						}
+					}
+					var insecureInline *shared.InsecureInline
+					if r.Spec.Provider.Bundled.Ca.Certificate.InsecureInline != nil {
+						var value string
+						value = r.Spec.Provider.Bundled.Ca.Certificate.InsecureInline.Value.ValueString()
+
+						insecureInline = &shared.InsecureInline{
+							Value: value,
+						}
+					}
+					var secretRef *shared.SecretRef
+					if r.Spec.Provider.Bundled.Ca.Certificate.SecretRef != nil {
+						kind := shared.MeshIdentityItemKind(r.Spec.Provider.Bundled.Ca.Certificate.SecretRef.Kind.ValueString())
+						var name2 string
+						name2 = r.Spec.Provider.Bundled.Ca.Certificate.SecretRef.Name.ValueString()
+
+						secretRef = &shared.SecretRef{
+							Kind: kind,
+							Name: name2,
+						}
+					}
+					typeVar1 := shared.MeshIdentityItemSpecProviderBundledType(r.Spec.Provider.Bundled.Ca.Certificate.Type.ValueString())
+					certificate = &shared.Certificate{
+						EnvVar:         envVar,
+						File:           file,
+						InsecureInline: insecureInline,
+						SecretRef:      secretRef,
+						Type:           typeVar1,
+					}
+				}
+				var privateKey *shared.PrivateKey
+				if r.Spec.Provider.Bundled.Ca.PrivateKey != nil {
+					var envVar1 *shared.MeshIdentityItemEnvVar
+					if r.Spec.Provider.Bundled.Ca.PrivateKey.EnvVar != nil {
+						var name3 string
+						name3 = r.Spec.Provider.Bundled.Ca.PrivateKey.EnvVar.Name.ValueString()
+
+						envVar1 = &shared.MeshIdentityItemEnvVar{
+							Name: name3,
+						}
+					}
+					var file1 *shared.MeshIdentityItemSpecFile
+					if r.Spec.Provider.Bundled.Ca.PrivateKey.File != nil {
+						var path1 string
+						path1 = r.Spec.Provider.Bundled.Ca.PrivateKey.File.Path.ValueString()
+
+						file1 = &shared.MeshIdentityItemSpecFile{
+							Path: path1,
+						}
+					}
+					var insecureInline1 *shared.MeshIdentityItemInsecureInline
+					if r.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline != nil {
+						var value1 string
+						value1 = r.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline.Value.ValueString()
+
+						insecureInline1 = &shared.MeshIdentityItemInsecureInline{
+							Value: value1,
+						}
+					}
+					var secretRef1 *shared.MeshIdentityItemSecretRef
+					if r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef != nil {
+						kind1 := shared.MeshIdentityItemSpecKind(r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef.Kind.ValueString())
+						var name4 string
+						name4 = r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef.Name.ValueString()
+
+						secretRef1 = &shared.MeshIdentityItemSecretRef{
+							Kind: kind1,
+							Name: name4,
+						}
+					}
+					typeVar2 := shared.MeshIdentityItemSpecProviderType(r.Spec.Provider.Bundled.Ca.PrivateKey.Type.ValueString())
+					privateKey = &shared.PrivateKey{
+						EnvVar:         envVar1,
+						File:           file1,
+						InsecureInline: insecureInline1,
+						SecretRef:      secretRef1,
+						Type:           typeVar2,
+					}
+				}
+				ca = &shared.Ca{
+					Certificate: certificate,
+					PrivateKey:  privateKey,
+				}
+			}
+			var certificateParameters *shared.CertificateParameters
+			if r.Spec.Provider.Bundled.CertificateParameters != nil {
+				expiry := new(string)
+				if !r.Spec.Provider.Bundled.CertificateParameters.Expiry.IsUnknown() && !r.Spec.Provider.Bundled.CertificateParameters.Expiry.IsNull() {
+					*expiry = r.Spec.Provider.Bundled.CertificateParameters.Expiry.ValueString()
+				} else {
+					expiry = nil
+				}
+				certificateParameters = &shared.CertificateParameters{
+					Expiry: expiry,
+				}
+			}
+			insecureAllowSelfSigned := new(bool)
+			if !r.Spec.Provider.Bundled.InsecureAllowSelfSigned.IsUnknown() && !r.Spec.Provider.Bundled.InsecureAllowSelfSigned.IsNull() {
+				*insecureAllowSelfSigned = r.Spec.Provider.Bundled.InsecureAllowSelfSigned.ValueBool()
 			} else {
-				enabled = nil
+				insecureAllowSelfSigned = nil
 			}
-			autogenerate = &shared.Autogenerate{
-				Enabled: enabled,
-			}
-		}
-		var ca *shared.Ca
-		if r.Spec.Provider.Bundled.Ca != nil {
-			var certificate *shared.Certificate
-			if r.Spec.Provider.Bundled.Ca.Certificate != nil {
-				var envVar *shared.EnvVar
-				if r.Spec.Provider.Bundled.Ca.Certificate.EnvVar != nil {
-					var name1 string
-					name1 = r.Spec.Provider.Bundled.Ca.Certificate.EnvVar.Name.ValueString()
-
-					envVar = &shared.EnvVar{
-						Name: name1,
-					}
-				}
-				var file *shared.MeshIdentityItemFile
-				if r.Spec.Provider.Bundled.Ca.Certificate.File != nil {
-					var path string
-					path = r.Spec.Provider.Bundled.Ca.Certificate.File.Path.ValueString()
-
-					file = &shared.MeshIdentityItemFile{
-						Path: path,
-					}
-				}
-				var insecureInline *shared.InsecureInline
-				if r.Spec.Provider.Bundled.Ca.Certificate.InsecureInline != nil {
-					var value string
-					value = r.Spec.Provider.Bundled.Ca.Certificate.InsecureInline.Value.ValueString()
-
-					insecureInline = &shared.InsecureInline{
-						Value: value,
-					}
-				}
-				var secretRef *shared.SecretRef
-				if r.Spec.Provider.Bundled.Ca.Certificate.SecretRef != nil {
-					kind := shared.MeshIdentityItemKind(r.Spec.Provider.Bundled.Ca.Certificate.SecretRef.Kind.ValueString())
-					var name2 string
-					name2 = r.Spec.Provider.Bundled.Ca.Certificate.SecretRef.Name.ValueString()
-
-					secretRef = &shared.SecretRef{
-						Kind: kind,
-						Name: name2,
-					}
-				}
-				typeVar1 := shared.MeshIdentityItemSpecProviderBundledType(r.Spec.Provider.Bundled.Ca.Certificate.Type.ValueString())
-				certificate = &shared.Certificate{
-					EnvVar:         envVar,
-					File:           file,
-					InsecureInline: insecureInline,
-					SecretRef:      secretRef,
-					Type:           typeVar1,
-				}
-			}
-			var privateKey *shared.PrivateKey
-			if r.Spec.Provider.Bundled.Ca.PrivateKey != nil {
-				var envVar1 *shared.MeshIdentityItemEnvVar
-				if r.Spec.Provider.Bundled.Ca.PrivateKey.EnvVar != nil {
-					var name3 string
-					name3 = r.Spec.Provider.Bundled.Ca.PrivateKey.EnvVar.Name.ValueString()
-
-					envVar1 = &shared.MeshIdentityItemEnvVar{
-						Name: name3,
-					}
-				}
-				var file1 *shared.MeshIdentityItemSpecFile
-				if r.Spec.Provider.Bundled.Ca.PrivateKey.File != nil {
-					var path1 string
-					path1 = r.Spec.Provider.Bundled.Ca.PrivateKey.File.Path.ValueString()
-
-					file1 = &shared.MeshIdentityItemSpecFile{
-						Path: path1,
-					}
-				}
-				var insecureInline1 *shared.MeshIdentityItemInsecureInline
-				if r.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline != nil {
-					var value1 string
-					value1 = r.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline.Value.ValueString()
-
-					insecureInline1 = &shared.MeshIdentityItemInsecureInline{
-						Value: value1,
-					}
-				}
-				var secretRef1 *shared.MeshIdentityItemSecretRef
-				if r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef != nil {
-					kind1 := shared.MeshIdentityItemSpecKind(r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef.Kind.ValueString())
-					var name4 string
-					name4 = r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef.Name.ValueString()
-
-					secretRef1 = &shared.MeshIdentityItemSecretRef{
-						Kind: kind1,
-						Name: name4,
-					}
-				}
-				typeVar2 := shared.MeshIdentityItemSpecProviderType(r.Spec.Provider.Bundled.Ca.PrivateKey.Type.ValueString())
-				privateKey = &shared.PrivateKey{
-					EnvVar:         envVar1,
-					File:           file1,
-					InsecureInline: insecureInline1,
-					SecretRef:      secretRef1,
-					Type:           typeVar2,
-				}
-			}
-			ca = &shared.Ca{
-				Certificate: certificate,
-				PrivateKey:  privateKey,
-			}
-		}
-		var certificateParameters *shared.CertificateParameters
-		if r.Spec.Provider.Bundled.CertificateParameters != nil {
-			expiry := new(string)
-			if !r.Spec.Provider.Bundled.CertificateParameters.Expiry.IsUnknown() && !r.Spec.Provider.Bundled.CertificateParameters.Expiry.IsNull() {
-				*expiry = r.Spec.Provider.Bundled.CertificateParameters.Expiry.ValueString()
+			meshTrustCreation := new(shared.MeshTrustCreation)
+			if !r.Spec.Provider.Bundled.MeshTrustCreation.IsUnknown() && !r.Spec.Provider.Bundled.MeshTrustCreation.IsNull() {
+				*meshTrustCreation = shared.MeshTrustCreation(r.Spec.Provider.Bundled.MeshTrustCreation.ValueString())
 			} else {
-				expiry = nil
+				meshTrustCreation = nil
 			}
-			certificateParameters = &shared.CertificateParameters{
-				Expiry: expiry,
-			}
-		}
-		insecureAllowSelfSigned := new(bool)
-		if !r.Spec.Provider.Bundled.InsecureAllowSelfSigned.IsUnknown() && !r.Spec.Provider.Bundled.InsecureAllowSelfSigned.IsNull() {
-			*insecureAllowSelfSigned = r.Spec.Provider.Bundled.InsecureAllowSelfSigned.ValueBool()
-		} else {
-			insecureAllowSelfSigned = nil
-		}
-		meshTrustCreation := new(shared.MeshTrustCreation)
-		if !r.Spec.Provider.Bundled.MeshTrustCreation.IsUnknown() && !r.Spec.Provider.Bundled.MeshTrustCreation.IsNull() {
-			*meshTrustCreation = shared.MeshTrustCreation(r.Spec.Provider.Bundled.MeshTrustCreation.ValueString())
-		} else {
-			meshTrustCreation = nil
-		}
-		bundled = &shared.Bundled{
-			Autogenerate:            autogenerate,
-			Ca:                      ca,
-			CertificateParameters:   certificateParameters,
-			InsecureAllowSelfSigned: insecureAllowSelfSigned,
-			MeshTrustCreation:       meshTrustCreation,
-		}
-	}
-	var spire *shared.Spire
-	if r.Spec.Provider.Spire != nil {
-		var agent *shared.Agent
-		if r.Spec.Provider.Spire.Agent != nil {
-			timeout := new(string)
-			if !r.Spec.Provider.Spire.Agent.Timeout.IsUnknown() && !r.Spec.Provider.Spire.Agent.Timeout.IsNull() {
-				*timeout = r.Spec.Provider.Spire.Agent.Timeout.ValueString()
-			} else {
-				timeout = nil
-			}
-			agent = &shared.Agent{
-				Timeout: timeout,
+			bundled = &shared.Bundled{
+				Autogenerate:            autogenerate,
+				Ca:                      ca,
+				CertificateParameters:   certificateParameters,
+				InsecureAllowSelfSigned: insecureAllowSelfSigned,
+				MeshTrustCreation:       meshTrustCreation,
 			}
 		}
-		spire = &shared.Spire{
-			Agent: agent,
+		var spire *shared.Spire
+		if r.Spec.Provider.Spire != nil {
+			var agent *shared.Agent
+			if r.Spec.Provider.Spire.Agent != nil {
+				timeout := new(string)
+				if !r.Spec.Provider.Spire.Agent.Timeout.IsUnknown() && !r.Spec.Provider.Spire.Agent.Timeout.IsNull() {
+					*timeout = r.Spec.Provider.Spire.Agent.Timeout.ValueString()
+				} else {
+					timeout = nil
+				}
+				agent = &shared.Agent{
+					Timeout: timeout,
+				}
+			}
+			spire = &shared.Spire{
+				Agent: agent,
+			}
 		}
-	}
-	typeVar3 := shared.MeshIdentityItemSpecType(r.Spec.Provider.Type.ValueString())
-	provider := shared.Provider{
-		Bundled: bundled,
-		Spire:   spire,
-		Type:    typeVar3,
+		typeVar3 := shared.MeshIdentityItemSpecType(r.Spec.Provider.Type.ValueString())
+		provider = &shared.Provider{
+			Bundled: bundled,
+			Spire:   spire,
+			Type:    typeVar3,
+		}
 	}
 	var selector *shared.MeshIdentityItemSelector
 	if r.Spec.Selector != nil {

@@ -1265,7 +1265,7 @@ func (m *MeshRateLimitItemSpec) GetTo() []MeshRateLimitItemTo {
 	return m.To
 }
 
-// MeshRateLimitItem - Successful response
+// MeshRateLimitItem - MeshRateLimit protects services from being overwhelmed by limiting the rate of incoming requests or connections. It supports local rate limiting for both HTTP (requests per interval) and TCP (connections per interval) traffic with customizable response codes and headers for rate-limited requests.
 type MeshRateLimitItem struct {
 	// the type of the resource
 	Type MeshRateLimitItemType `json:"type"`
@@ -1352,7 +1352,7 @@ func (m *MeshRateLimitItem) GetModificationTime() *time.Time {
 	return m.ModificationTime
 }
 
-// MeshRateLimitItemInput - Successful response
+// MeshRateLimitItemInput - MeshRateLimit protects services from being overwhelmed by limiting the rate of incoming requests or connections. It supports local rate limiting for both HTTP (requests per interval) and TCP (connections per interval) traffic with customizable response codes and headers for rate-limited requests.
 type MeshRateLimitItemInput struct {
 	// the type of the resource
 	Type MeshRateLimitItemType `json:"type"`
