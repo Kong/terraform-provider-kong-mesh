@@ -3,7 +3,11 @@
 ## 0.7.0
 > Released on 2026/02/06
 >
-> - feat(sdk): automated oas update (#115)
+> - feat(resources): add new `kong-mesh_mesh_workload` resource for managing Workload resources with dataplane proxy status tracking (#115)
+> - feat(resources): add `spec.selector.dataplane_labels` attribute to MeshService for selecting dataplanes by labels (#115)
+> - feat(resources): add computed `status.conditions` to MeshMultiZoneService exposing top-level status conditions (#115)
+> - feat(resources): add computed `status.origin` to MeshTrust; `spec.origin` is now deprecated in favor of `status.origin` (#115)
+> - feat(resources): make `spec.provider` optional on MeshIdentity (experimental resource) (#115)
 
 
 ## 0.6.4
