@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.0
+> Released on 2026/02/06
+>
+> - feat(sdk): automated oas update (#115)
+
+
 ## 0.6.4
 > Released on 2026/02/06
 >

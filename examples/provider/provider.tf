@@ -2,7 +2,7 @@ terraform {
   required_providers {
     kong-mesh = {
       source  = "kong/kong-mesh"
-      version = "0.6.4"
+      version = "0.7.0"
     }
   }
 }
