@@ -2,7 +2,6 @@
 
 package shared
 
-// SecretItem - Successful response
 type SecretItem struct {
 	// Value of the secret
 	Data   *string           `json:"data,omitempty"`

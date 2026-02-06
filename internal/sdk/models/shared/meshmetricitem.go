@@ -688,7 +688,7 @@ func (m *MeshMetricItemSpec) GetTargetRef() *MeshMetricItemTargetRef {
 	return m.TargetRef
 }
 
-// MeshMetricItem - Successful response
+// MeshMetricItem - MeshMetric enables collection and export of service mesh metrics. It configures sidecar and application metrics scraping, allows customization of which metrics are published, and supports exporting to Prometheus or OpenTelemetry backends for monitoring and observability.
 type MeshMetricItem struct {
 	// the type of the resource
 	Type MeshMetricItemType `json:"type"`
@@ -775,7 +775,7 @@ func (m *MeshMetricItem) GetModificationTime() *time.Time {
 	return m.ModificationTime
 }
 
-// MeshMetricItemInput - Successful response
+// MeshMetricItemInput - MeshMetric enables collection and export of service mesh metrics. It configures sidecar and application metrics scraping, allows customization of which metrics are published, and supports exporting to Prometheus or OpenTelemetry backends for monitoring and observability.
 type MeshMetricItemInput struct {
 	// the type of the resource
 	Type MeshMetricItemType `json:"type"`

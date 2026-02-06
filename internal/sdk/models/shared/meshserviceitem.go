@@ -215,6 +215,17 @@ func (m *MeshServiceItemPorts) GetTargetPort() *TargetPort {
 	return m.TargetPort
 }
 
+type DataplaneLabels struct {
+	MatchLabels map[string]string `json:"matchLabels,omitempty"`
+}
+
+func (d *DataplaneLabels) GetMatchLabels() map[string]string {
+	if d == nil {
+		return nil
+	}
+	return d.MatchLabels
+}
+
 type DataplaneRef struct {
 	Name *string `json:"name,omitempty"`
 }
@@ -227,8 +238,16 @@ func (d *DataplaneRef) GetName() *string {
 }
 
 type MeshServiceItemSelector struct {
-	DataplaneRef  *DataplaneRef     `json:"dataplaneRef,omitempty"`
-	DataplaneTags map[string]string `json:"dataplaneTags,omitempty"`
+	DataplaneLabels *DataplaneLabels  `json:"dataplaneLabels,omitempty"`
+	DataplaneRef    *DataplaneRef     `json:"dataplaneRef,omitempty"`
+	DataplaneTags   map[string]string `json:"dataplaneTags,omitempty"`
+}
+
+func (m *MeshServiceItemSelector) GetDataplaneLabels() *DataplaneLabels {
+	if m == nil {
+		return nil
+	}
+	return m.DataplaneLabels
 }
 
 func (m *MeshServiceItemSelector) GetDataplaneRef() *DataplaneRef {
@@ -589,7 +608,7 @@ func (m *MeshServiceItemStatus) GetVips() []MeshServiceItemVips {
 	return m.Vips
 }
 
-// MeshServiceItem - Successful response
+// MeshServiceItem - MeshService represents a service in the mesh with its connectivity and health information. It defines service endpoints by selecting data plane proxies through labels or direct references, configures service ports and protocols, tracks service availability and health status, and provides automatic VIP assignment and hostname generation for service discovery.
 type MeshServiceItem struct {
 	// the type of the resource
 	Type MeshServiceItemType `json:"type"`
@@ -685,6 +704,7 @@ func (m *MeshServiceItem) GetStatus() *MeshServiceItemStatus {
 	return m.Status
 }
 
+// MeshServiceItemInput - MeshService represents a service in the mesh with its connectivity and health information. It defines service endpoints by selecting data plane proxies through labels or direct references, configures service ports and protocols, tracks service availability and health status, and provides automatic VIP assignment and hostname generation for service discovery.
 type MeshServiceItemInput struct {
 	// the type of the resource
 	Type MeshServiceItemType `json:"type"`

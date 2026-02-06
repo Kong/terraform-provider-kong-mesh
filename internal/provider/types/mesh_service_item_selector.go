@@ -7,6 +7,7 @@ import (
 )
 
 type MeshServiceItemSelector struct {
-	DataplaneRef  *DataplaneRef           `tfsdk:"dataplane_ref"`
-	DataplaneTags map[string]types.String `tfsdk:"dataplane_tags"`
+	DataplaneLabels *MeshExternalService    `tfsdk:"dataplane_labels"`
+	DataplaneRef    *DataplaneRef           `tfsdk:"dataplane_ref"`
+	DataplaneTags   map[string]types.String `tfsdk:"dataplane_tags"`
 }

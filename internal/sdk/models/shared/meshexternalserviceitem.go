@@ -812,7 +812,7 @@ func (s *Status) GetVip() *Vip {
 	return s.Vip
 }
 
-// MeshExternalServiceItem - Successful response
+// MeshExternalServiceItem - MeshExternalService represents external services (outside the mesh) that mesh services can communicate with securely. It enables mesh services to reach external APIs, databases, or third-party services by defining endpoints, ports, protocols, and optional TLS configuration for secure outbound connections with hostname-based routing support.
 type MeshExternalServiceItem struct {
 	// the type of the resource
 	Type MeshExternalServiceItemType `json:"type"`
@@ -908,6 +908,7 @@ func (m *MeshExternalServiceItem) GetStatus() *Status {
 	return m.Status
 }
 
+// MeshExternalServiceItemInput - MeshExternalService represents external services (outside the mesh) that mesh services can communicate with securely. It enables mesh services to reach external APIs, databases, or third-party services by defining endpoints, ports, protocols, and optional TLS configuration for secure outbound connections with hostname-based routing support.
 type MeshExternalServiceItemInput struct {
 	// the type of the resource
 	Type MeshExternalServiceItemType `json:"type"`

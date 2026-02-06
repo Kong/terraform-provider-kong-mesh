@@ -92,6 +92,8 @@ func (c *CaBundles) GetType() MeshTrustItemSpecType {
 }
 
 // Origin specifies whether the resource was created from a MeshIdentity.
+//
+// Deprecated: use Status.Origin instead
 type Origin struct {
 	// Resource identifier
 	Kri *string `json:"kri,omitempty"`
@@ -110,6 +112,8 @@ type MeshTrustItemSpec struct {
 	// At least one CA bundle must be specified.
 	CaBundles []CaBundles `json:"caBundles"`
 	// Origin specifies whether the resource was created from a MeshIdentity.
+	//
+	// Deprecated: use Status.Origin instead
 	Origin *Origin `json:"origin,omitempty"`
 	// TrustDomain is the trust domain associated with this resource.
 	TrustDomain string `json:"trustDomain"`
@@ -136,7 +140,33 @@ func (m *MeshTrustItemSpec) GetTrustDomain() string {
 	return m.TrustDomain
 }
 
-// MeshTrustItem - Successful response
+// MeshTrustItemOrigin - Origin specifies whether the resource was created from a MeshIdentity.
+type MeshTrustItemOrigin struct {
+	// Resource identifier
+	Kri *string `json:"kri,omitempty"`
+}
+
+func (m *MeshTrustItemOrigin) GetKri() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Kri
+}
+
+// MeshTrustItemStatus - Status is the current status of the Kuma MeshTrust resource.
+type MeshTrustItemStatus struct {
+	// Origin specifies whether the resource was created from a MeshIdentity.
+	Origin *MeshTrustItemOrigin `json:"origin,omitempty"`
+}
+
+func (m *MeshTrustItemStatus) GetOrigin() *MeshTrustItemOrigin {
+	if m == nil {
+		return nil
+	}
+	return m.Origin
+}
+
+// MeshTrustItem - MeshTrust defines trusted Certificate Authority (CA) bundles for a trust domain in the mesh. It establishes trust relationships for service-to-service mTLS authentication by specifying which CA certificates are trusted to verify service identities, supporting PEM-encoded CA bundles and enabling secure cross-service communication within the trust domain.
 type MeshTrustItem struct {
 	// the type of the resource
 	Type MeshTrustItemType `json:"type"`
@@ -154,6 +184,8 @@ type MeshTrustItem struct {
 	CreationTime *time.Time `json:"creationTime,omitempty"`
 	// Time at which the resource was updated
 	ModificationTime *time.Time `json:"modificationTime,omitempty"`
+	// Status is the current status of the Kuma MeshTrust resource.
+	Status *MeshTrustItemStatus `json:"status,omitempty"`
 }
 
 func (m MeshTrustItem) MarshalJSON() ([]byte, error) {
@@ -223,6 +255,14 @@ func (m *MeshTrustItem) GetModificationTime() *time.Time {
 	return m.ModificationTime
 }
 
+func (m *MeshTrustItem) GetStatus() *MeshTrustItemStatus {
+	if m == nil {
+		return nil
+	}
+	return m.Status
+}
+
+// MeshTrustItemInput - MeshTrust defines trusted Certificate Authority (CA) bundles for a trust domain in the mesh. It establishes trust relationships for service-to-service mTLS authentication by specifying which CA certificates are trusted to verify service identities, supporting PEM-encoded CA bundles and enabling secure cross-service communication within the trust domain.
 type MeshTrustItemInput struct {
 	// the type of the resource
 	Type MeshTrustItemType `json:"type"`

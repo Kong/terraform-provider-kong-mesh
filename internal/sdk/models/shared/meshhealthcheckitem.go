@@ -235,6 +235,7 @@ const (
 // HealthyPanicThreshold - Allows to configure panic threshold for Envoy cluster. If not specified,
 // the default is 50%. To disable panic mode, set to 0%.
 // Either int or decimal represented as string.
+//
 // Deprecated: the setting has been moved to MeshCircuitBreaker policy,
 // please use MeshCircuitBreaker policy instead.
 type HealthyPanicThreshold struct {
@@ -478,6 +479,7 @@ type MeshHealthCheckItemDefault struct {
 	// Allows to configure panic threshold for Envoy cluster. If not specified,
 	// the default is 50%. To disable panic mode, set to 0%.
 	// Either int or decimal represented as string.
+	//
 	// Deprecated: the setting has been moved to MeshCircuitBreaker policy,
 	// please use MeshCircuitBreaker policy instead.
 	HealthyPanicThreshold *HealthyPanicThreshold `json:"healthyPanicThreshold,omitempty"`
@@ -841,7 +843,7 @@ func (m *MeshHealthCheckItemSpec) GetTo() []MeshHealthCheckItemTo {
 	return m.To
 }
 
-// MeshHealthCheckItem - Successful response
+// MeshHealthCheckItem - MeshHealthCheck enables active health checking of services in the mesh. It periodically probes service endpoints using TCP, HTTP, or gRPC health checks to detect and remove unhealthy instances from the load balancing pool, improving overall service reliability.
 type MeshHealthCheckItem struct {
 	// the type of the resource
 	Type MeshHealthCheckItemType `json:"type"`
@@ -928,7 +930,7 @@ func (m *MeshHealthCheckItem) GetModificationTime() *time.Time {
 	return m.ModificationTime
 }
 
-// MeshHealthCheckItemInput - Successful response
+// MeshHealthCheckItemInput - MeshHealthCheck enables active health checking of services in the mesh. It periodically probes service endpoints using TCP, HTTP, or gRPC health checks to detect and remove unhealthy instances from the load balancing pool, improving overall service reliability.
 type MeshHealthCheckItemInput struct {
 	// the type of the resource
 	Type MeshHealthCheckItemType `json:"type"`

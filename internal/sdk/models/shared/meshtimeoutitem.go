@@ -887,7 +887,7 @@ func (m *MeshTimeoutItemSpec) GetTo() []MeshTimeoutItemTo {
 	return m.To
 }
 
-// MeshTimeoutItem - Successful response
+// MeshTimeoutItem - MeshTimeout configures timeout limits for service-to-service communication to prevent requests from hanging indefinitely. It supports connection timeouts, idle timeouts, and HTTP-specific timeouts (request, stream, headers) to ensure timely failure detection and improve service responsiveness.
 type MeshTimeoutItem struct {
 	// the type of the resource
 	Type MeshTimeoutItemType `json:"type"`
@@ -974,7 +974,7 @@ func (m *MeshTimeoutItem) GetModificationTime() *time.Time {
 	return m.ModificationTime
 }
 
-// MeshTimeoutItemInput - Successful response
+// MeshTimeoutItemInput - MeshTimeout configures timeout limits for service-to-service communication to prevent requests from hanging indefinitely. It supports connection timeouts, idle timeouts, and HTTP-specific timeouts (request, stream, headers) to ensure timely failure detection and improve service responsiveness.
 type MeshTimeoutItemInput struct {
 	// the type of the resource
 	Type MeshTimeoutItemType `json:"type"`

@@ -9,10 +9,10 @@ import (
 // SecretList - List
 type SecretList struct {
 	Items []SecretItem `json:"items"`
-	// The total number of entities
-	Total *float64 `default:"null" json:"total"`
 	// URL to the next page
 	Next *string `default:"null" json:"next"`
+	// The total number of entities
+	Total *float64 `default:"null" json:"total"`
 }
 
 func (s SecretList) MarshalJSON() ([]byte, error) {
@@ -33,16 +33,16 @@ func (s *SecretList) GetItems() []SecretItem {
 	return s.Items
 }
 
-func (s *SecretList) GetTotal() *float64 {
-	if s == nil {
-		return nil
-	}
-	return s.Total
-}
-
 func (s *SecretList) GetNext() *string {
 	if s == nil {
 		return nil
 	}
 	return s.Next
+}
+
+func (s *SecretList) GetTotal() *float64 {
+	if s == nil {
+		return nil
+	}
+	return s.Total
 }

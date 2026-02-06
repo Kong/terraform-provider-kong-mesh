@@ -4690,7 +4690,6 @@ func (t *Tracing) GetDefaultBackend() *string {
 	return t.DefaultBackend
 }
 
-// MeshItem - Successful response
 type MeshItem struct {
 	// Constraints that applies to the mesh and its entities
 	Constraints *Constraints      `json:"constraints,omitempty"`

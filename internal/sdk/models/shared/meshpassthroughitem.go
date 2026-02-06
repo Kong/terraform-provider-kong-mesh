@@ -390,7 +390,7 @@ func (m *MeshPassthroughItemSpec) GetTargetRef() *MeshPassthroughItemTargetRef {
 	return m.TargetRef
 }
 
-// MeshPassthroughItem - Successful response
+// MeshPassthroughItem - MeshPassthrough controls how traffic to external services (outside the mesh) is handled by the sidecar proxy. It allows you to configure passthrough mode to permit, deny, or selectively allow traffic to specific external destinations based on domain names, IPs, or CIDR ranges.
 type MeshPassthroughItem struct {
 	// the type of the resource
 	Type MeshPassthroughItemType `json:"type"`
@@ -477,7 +477,7 @@ func (m *MeshPassthroughItem) GetModificationTime() *time.Time {
 	return m.ModificationTime
 }
 
-// MeshPassthroughItemInput - Successful response
+// MeshPassthroughItemInput - MeshPassthrough controls how traffic to external services (outside the mesh) is handled by the sidecar proxy. It allows you to configure passthrough mode to permit, deny, or selectively allow traffic to specific external destinations based on domain names, IPs, or CIDR ranges.
 type MeshPassthroughItemInput struct {
 	// the type of the resource
 	Type MeshPassthroughItemType `json:"type"`

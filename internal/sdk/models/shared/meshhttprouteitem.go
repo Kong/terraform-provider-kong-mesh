@@ -1699,7 +1699,11 @@ func (m *MeshHTTPRouteItemSpec) GetTo() []MeshHTTPRouteItemTo {
 	return m.To
 }
 
-// MeshHTTPRouteItem - Successful response
+// MeshHTTPRouteItem - NOTICE: This policy defines its own `GetDefault` method so that it can have the given
+// structure for deserialization but still use the generic policy merging
+// machinery.
+// //
+// MeshHTTPRoute configures how HTTP requests are routed between services in the mesh. It enables advanced traffic management including path-based routing, header matching, request/response modification, redirects, URL rewrites, traffic mirroring, and weighted load balancing across service endpoints.
 type MeshHTTPRouteItem struct {
 	// the type of the resource
 	Type MeshHTTPRouteItemType `json:"type"`
@@ -1786,7 +1790,11 @@ func (m *MeshHTTPRouteItem) GetModificationTime() *time.Time {
 	return m.ModificationTime
 }
 
-// MeshHTTPRouteItemInput - Successful response
+// MeshHTTPRouteItemInput - NOTICE: This policy defines its own `GetDefault` method so that it can have the given
+// structure for deserialization but still use the generic policy merging
+// machinery.
+// //
+// MeshHTTPRoute configures how HTTP requests are routed between services in the mesh. It enables advanced traffic management including path-based routing, header matching, request/response modification, redirects, URL rewrites, traffic mirroring, and weighted load balancing across service endpoints.
 type MeshHTTPRouteItemInput struct {
 	// the type of the resource
 	Type MeshHTTPRouteItemType `json:"type"`

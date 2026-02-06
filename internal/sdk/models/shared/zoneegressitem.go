@@ -46,7 +46,6 @@ func (z *ZoneEgressItemNetworking) GetPort() *int64 {
 	return z.Port
 }
 
-// ZoneEgressItem - Successful response
 type ZoneEgressItem struct {
 	Labels map[string]string `json:"labels,omitempty"`
 	Name   string            `json:"name"`

@@ -1,7 +1,7 @@
 lockVersion: 2.0.0
 id: 322c4806-8b53-493c-a05f-50d4d113c747
 management:
-  docChecksum: b35c446429745d895b728219e56ac888
+  docChecksum: 2c25260bb71b0051fdd2f679455f6d96
   docVersion: 2.0.0
   speakeasyVersion: 1.642.1
   generationVersion: 2.731.4
@@ -103,6 +103,9 @@ generatedFiles:
   - examples/resources/kong-mesh_mesh_trust/import-by-string-id.tf
   - examples/resources/kong-mesh_mesh_trust/import.sh
   - examples/resources/kong-mesh_mesh_trust/resource.tf
+  - examples/resources/kong-mesh_mesh_workload/import-by-string-id.tf
+  - examples/resources/kong-mesh_mesh_workload/import.sh
+  - examples/resources/kong-mesh_mesh_workload/resource.tf
   - examples/resources/kong-mesh_mesh_zone_egress/import-by-string-id.tf
   - examples/resources/kong-mesh_mesh_zone_egress/import.sh
   - examples/resources/kong-mesh_mesh_zone_egress/resource.tf
@@ -177,6 +180,8 @@ generatedFiles:
   - internal/provider/meshtrafficpermission_resource_sdk.go
   - internal/provider/meshtrust_resource.go
   - internal/provider/meshtrust_resource_sdk.go
+  - internal/provider/meshworkload_resource.go
+  - internal/provider/meshworkload_resource_sdk.go
   - internal/provider/meshzoneegress_resource.go
   - internal/provider/meshzoneegress_resource_sdk.go
   - internal/provider/meshzoneingress_resource.go
@@ -403,6 +408,7 @@ generatedFiles:
   - internal/provider/types/mesh_traffic_permission_item_spec.go
   - internal/provider/types/mesh_traffic_permission_item_spec_default.go
   - internal/provider/types/mesh_trust_item_spec.go
+  - internal/provider/types/mesh_trust_item_status.go
   - internal/provider/types/metrics.go
   - internal/provider/types/mode.go
   - internal/provider/types/mtls.go
@@ -465,6 +471,8 @@ generatedFiles:
   - internal/provider/types/version.go
   - internal/provider/types/vip.go
   - internal/provider/types/virtual_host.go
+  - internal/provider/types/workload_item_dataplane_proxies.go
+  - internal/provider/types/workload_item_status.go
   - internal/provider/types/zipkin.go
   - internal/provider/types/zipkin_tracing_backend_config.go
   - internal/provider/types/zone_egress_item_networking.go
@@ -540,6 +548,7 @@ generatedFiles:
   - internal/sdk/models/operations/deletemeshtrafficpermission.go
   - internal/sdk/models/operations/deletemeshtrust.go
   - internal/sdk/models/operations/deletesecret.go
+  - internal/sdk/models/operations/deleteworkload.go
   - internal/sdk/models/operations/deletezoneegress.go
   - internal/sdk/models/operations/deletezoneingress.go
   - internal/sdk/models/operations/gethostnamegenerator.go
@@ -596,6 +605,8 @@ generatedFiles:
   - internal/sdk/models/operations/getmeshtrustlist.go
   - internal/sdk/models/operations/getsecret.go
   - internal/sdk/models/operations/getsecretlist.go
+  - internal/sdk/models/operations/getworkload.go
+  - internal/sdk/models/operations/getworkloadlist.go
   - internal/sdk/models/operations/getzoneegress.go
   - internal/sdk/models/operations/getzoneegresslist.go
   - internal/sdk/models/operations/getzoneingress.go
@@ -628,6 +639,7 @@ generatedFiles:
   - internal/sdk/models/operations/putmeshtrafficpermission.go
   - internal/sdk/models/operations/putmeshtrust.go
   - internal/sdk/models/operations/putsecret.go
+  - internal/sdk/models/operations/putworkload.go
   - internal/sdk/models/operations/putzoneegress.go
   - internal/sdk/models/operations/putzoneingress.go
   - internal/sdk/models/shared/hostnamegeneratorcreateorupdatesuccessresponse.go
@@ -741,6 +753,10 @@ generatedFiles:
   - internal/sdk/models/shared/secretitem.go
   - internal/sdk/models/shared/secretlist.go
   - internal/sdk/models/shared/security.go
+  - internal/sdk/models/shared/workloadcreateorupdatesuccessresponse.go
+  - internal/sdk/models/shared/workloaddeletesuccessresponse.go
+  - internal/sdk/models/shared/workloaditem.go
+  - internal/sdk/models/shared/workloadlist.go
   - internal/sdk/models/shared/zoneegresscreateorupdatesuccessresponse.go
   - internal/sdk/models/shared/zoneegressdeletesuccessresponse.go
   - internal/sdk/models/shared/zoneegressitem.go
@@ -757,6 +773,7 @@ generatedFiles:
   - internal/sdk/types/date.go
   - internal/sdk/types/datetime.go
   - internal/sdk/types/pointers.go
+  - internal/sdk/workload.go
   - internal/sdk/zoneegress.go
   - internal/sdk/zoneingress.go
   - internal/validators/DateValidator.go
@@ -3162,7 +3179,7 @@ examples:
           name: "<value>"
       responses:
         "200":
-          application/json: {"type": "MeshIdentity", "mesh": "default", "kri": "kri_mid_default_zone-east_kuma-system_myresource1_", "name": "<value>", "spec": {"provider": {"type": "Spire"}}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}
+          application/json: {"type": "MeshIdentity", "mesh": "default", "kri": "kri_mid_default_zone-east_kuma-system_myresource1_", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}
         "404":
           application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
   putMeshIdentity:
@@ -3172,7 +3189,7 @@ examples:
           mesh: "<value>"
           name: "<value>"
       requestBody:
-        application/json: {"type": "MeshIdentity", "mesh": "default", "name": "<value>", "spec": {"provider": {"type": "Bundled"}}}
+        application/json: {"type": "MeshIdentity", "mesh": "default", "name": "<value>", "spec": {}}
       responses:
         "200":
           application/json: {}
@@ -3358,7 +3375,7 @@ examples:
           filter: {}
       responses:
         "200":
-          application/json: {"items": null, "total": null, "next": null}
+          application/json: {"items": null, "next": null, "total": null}
   getZoneIngress:
     speakeasy-default-get-zone-ingress:
       parameters:
@@ -3407,7 +3424,7 @@ examples:
           filter: {}
       responses:
         "200":
-          application/json: {"items": null, "total": null, "next": null}
+          application/json: {"items": null, "next": null, "total": null}
   getSecret:
     speakeasy-default-get-secret:
       parameters:
@@ -3454,6 +3471,51 @@ examples:
         "200":
           application/json: {"items": null, "total": null, "next": null}
     speakeasy-default-get-secret-list:
+      parameters:
+        path:
+          mesh: "<value>"
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": null, "next": null, "total": null}
+  getWorkload:
+    speakeasy-default-get-workload:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"type": "Workload", "mesh": "default", "kri": "kri_wl_default_zone-east_kuma-demo_myresource1_", "name": "<value>", "spec": {}, "creationTime": "0001-01-01T00:00:00Z", "modificationTime": "0001-01-01T00:00:00Z"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
+  putWorkload:
+    speakeasy-default-put-workload:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      requestBody:
+        application/json: {"type": "Workload", "mesh": "default", "name": "<value>", "spec": {}}
+      responses:
+        "200":
+          application/json: {}
+  deleteWorkload:
+    speakeasy-default-delete-workload:
+      parameters:
+        path:
+          mesh: "<value>"
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
+  getWorkloadList:
+    speakeasy-default-get-workload-list:
       parameters:
         path:
           mesh: "<value>"

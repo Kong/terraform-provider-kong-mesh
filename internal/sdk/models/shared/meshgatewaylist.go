@@ -5,10 +5,10 @@ package shared
 // MeshGatewayList - List
 type MeshGatewayList struct {
 	Items []MeshGatewayItem `json:"items,omitempty"`
-	// The total number of entities
-	Total *float64 `json:"total,omitempty"`
 	// URL to the next page
 	Next *string `json:"next,omitempty"`
+	// The total number of entities
+	Total *float64 `json:"total,omitempty"`
 }
 
 func (m *MeshGatewayList) GetItems() []MeshGatewayItem {
@@ -18,16 +18,16 @@ func (m *MeshGatewayList) GetItems() []MeshGatewayItem {
 	return m.Items
 }
 
-func (m *MeshGatewayList) GetTotal() *float64 {
-	if m == nil {
-		return nil
-	}
-	return m.Total
-}
-
 func (m *MeshGatewayList) GetNext() *string {
 	if m == nil {
 		return nil
 	}
 	return m.Next
+}
+
+func (m *MeshGatewayList) GetTotal() *float64 {
+	if m == nil {
+		return nil
+	}
+	return m.Total
 }

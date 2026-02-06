@@ -77,6 +77,18 @@ func (r *MeshMultiZoneServiceResourceModel) RefreshFromSharedMeshMultiZoneServic
 
 				r.Status.Addresses = append(r.Status.Addresses, addresses)
 			}
+			r.Status.Conditions = []tfTypes.MeshExternalServiceItemConditions{}
+
+			for _, conditionsItem := range resp.Status.Conditions {
+				var conditions tfTypes.MeshExternalServiceItemConditions
+
+				conditions.Message = types.StringValue(conditionsItem.Message)
+				conditions.Reason = types.StringValue(conditionsItem.Reason)
+				conditions.Status = types.StringValue(string(conditionsItem.Status))
+				conditions.Type = types.StringValue(conditionsItem.Type)
+
+				r.Status.Conditions = append(r.Status.Conditions, conditions)
+			}
 			r.Status.HostnameGenerators = []tfTypes.HostnameGenerators{}
 
 			for _, hostnameGeneratorsItem := range resp.Status.HostnameGenerators {
@@ -84,15 +96,15 @@ func (r *MeshMultiZoneServiceResourceModel) RefreshFromSharedMeshMultiZoneServic
 
 				hostnameGenerators.Conditions = []tfTypes.MeshExternalServiceItemConditions{}
 
-				for _, conditionsItem := range hostnameGeneratorsItem.Conditions {
-					var conditions tfTypes.MeshExternalServiceItemConditions
+				for _, conditionsItem1 := range hostnameGeneratorsItem.Conditions {
+					var conditions1 tfTypes.MeshExternalServiceItemConditions
 
-					conditions.Message = types.StringValue(conditionsItem.Message)
-					conditions.Reason = types.StringValue(conditionsItem.Reason)
-					conditions.Status = types.StringValue(string(conditionsItem.Status))
-					conditions.Type = types.StringValue(conditionsItem.Type)
+					conditions1.Message = types.StringValue(conditionsItem1.Message)
+					conditions1.Reason = types.StringValue(conditionsItem1.Reason)
+					conditions1.Status = types.StringValue(string(conditionsItem1.Status))
+					conditions1.Type = types.StringValue(conditionsItem1.Type)
 
-					hostnameGenerators.Conditions = append(hostnameGenerators.Conditions, conditions)
+					hostnameGenerators.Conditions = append(hostnameGenerators.Conditions, conditions1)
 				}
 				hostnameGenerators.HostnameGeneratorRef.CoreName = types.StringValue(hostnameGeneratorsItem.HostnameGeneratorRef.CoreName)
 

@@ -820,7 +820,7 @@ func (m *MeshTLSItemSpec) GetTargetRef() *MeshTLSItemTargetRef {
 	return m.TargetRef
 }
 
-// MeshTLSItem - Successful response
+// MeshTLSItem - MeshTLS configures TLS and mutual TLS (mTLS) settings for secure communication between services in the mesh. It allows you to enforce encryption, configure TLS versions and cipher suites, and control whether mTLS is required (strict mode) or optional (permissive mode) for inbound traffic.
 type MeshTLSItem struct {
 	// the type of the resource
 	Type MeshTLSItemType `json:"type"`
@@ -907,7 +907,7 @@ func (m *MeshTLSItem) GetModificationTime() *time.Time {
 	return m.ModificationTime
 }
 
-// MeshTLSItemInput - Successful response
+// MeshTLSItemInput - MeshTLS configures TLS and mutual TLS (mTLS) settings for secure communication between services in the mesh. It allows you to enforce encryption, configure TLS versions and cipher suites, and control whether mTLS is required (strict mode) or optional (permissive mode) for inbound traffic.
 type MeshTLSItemInput struct {
 	// the type of the resource
 	Type MeshTLSItemType `json:"type"`

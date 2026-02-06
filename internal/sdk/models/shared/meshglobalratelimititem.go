@@ -1268,7 +1268,7 @@ func (m *MeshGlobalRateLimitItemSpec) GetTo() []MeshGlobalRateLimitItemTo {
 	return m.To
 }
 
-// MeshGlobalRateLimitItem - Successful response
+// MeshGlobalRateLimitItem - MeshGlobalRateLimit
 type MeshGlobalRateLimitItem struct {
 	// the type of the resource
 	Type MeshGlobalRateLimitItemType `json:"type"`
@@ -1355,7 +1355,7 @@ func (m *MeshGlobalRateLimitItem) GetModificationTime() *time.Time {
 	return m.ModificationTime
 }
 
-// MeshGlobalRateLimitItemInput - Successful response
+// MeshGlobalRateLimitItemInput - MeshGlobalRateLimit
 type MeshGlobalRateLimitItemInput struct {
 	// the type of the resource
 	Type MeshGlobalRateLimitItemType `json:"type"`

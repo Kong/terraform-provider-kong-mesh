@@ -155,7 +155,7 @@ func (h *HostnameGeneratorItemSpec) GetTemplate() string {
 	return h.Template
 }
 
-// HostnameGeneratorItem - Successful response
+// HostnameGeneratorItem - HostnameGenerator automatically generates DNS hostnames for services in the mesh based on customizable templates. It provides a consistent naming scheme for service discovery by creating predictable hostnames from service labels and metadata, supporting both MeshService, MeshExternalService, and MeshMultiZoneService resources.
 type HostnameGeneratorItem struct {
 	// the type of the resource
 	Type HostnameGeneratorItemType `json:"type"`
@@ -233,6 +233,7 @@ func (h *HostnameGeneratorItem) GetModificationTime() *time.Time {
 	return h.ModificationTime
 }
 
+// HostnameGeneratorItemInput - HostnameGenerator automatically generates DNS hostnames for services in the mesh based on customizable templates. It provides a consistent naming scheme for service discovery by creating predictable hostnames from service labels and metadata, supporting both MeshService, MeshExternalService, and MeshMultiZoneService resources.
 type HostnameGeneratorItemInput struct {
 	// the type of the resource
 	Type HostnameGeneratorItemType `json:"type"`

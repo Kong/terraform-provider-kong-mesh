@@ -2518,7 +2518,7 @@ func (m *MeshCircuitBreakerItemSpec) GetTo() []MeshCircuitBreakerItemTo {
 	return m.To
 }
 
-// MeshCircuitBreakerItem - Successful response
+// MeshCircuitBreakerItem - MeshCircuitBreaker protects services from cascading failures by limiting connections and detecting unhealthy instances. It provides connection limits to prevent overload and outlier detection to temporarily remove failing endpoints from the load balancing pool.
 type MeshCircuitBreakerItem struct {
 	// the type of the resource
 	Type MeshCircuitBreakerItemType `json:"type"`
@@ -2605,7 +2605,7 @@ func (m *MeshCircuitBreakerItem) GetModificationTime() *time.Time {
 	return m.ModificationTime
 }
 
-// MeshCircuitBreakerItemInput - Successful response
+// MeshCircuitBreakerItemInput - MeshCircuitBreaker protects services from cascading failures by limiting connections and detecting unhealthy instances. It provides connection limits to prevent overload and outlier detection to temporarily remove failing endpoints from the load balancing pool.
 type MeshCircuitBreakerItemInput struct {
 	// the type of the resource
 	Type MeshCircuitBreakerItemType `json:"type"`
