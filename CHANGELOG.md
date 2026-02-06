@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.4
+> Released on 2026/02/06
+>
+> - chore(deps): bump Kong/shared-speakeasy/resource_plan_modifier from 0.0.12 to 0.0.13 (#114)
+> - feat(sdk): automated oas update (#108)
+
+
 ## 0.6.3
 > Released on 2025/12/08
 >
