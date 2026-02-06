@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type Selectors struct {
-	Match map[string]types.String `tfsdk:"match"`
+type AccessRoleItemTags struct {
+	Name  types.String `tfsdk:"name"`
+	Value types.String `tfsdk:"value"`
 }

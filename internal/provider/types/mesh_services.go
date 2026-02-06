@@ -3,5 +3,5 @@
 package types
 
 type MeshServices struct {
-	Mode *Mode `tfsdk:"mode"`
+	Mode *Access `tfsdk:"mode"`
 }

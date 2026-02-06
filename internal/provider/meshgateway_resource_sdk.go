@@ -42,7 +42,7 @@ func (r *MeshGatewayResourceModel) RefreshFromSharedMeshGatewayItem(ctx context.
 				listeners.Hostname = types.StringPointerValue(listenersItem.Hostname)
 				listeners.Port = types.Int64PointerValue(listenersItem.Port)
 				if listenersItem.Protocol != nil {
-					listeners.Protocol = &tfTypes.Mode{}
+					listeners.Protocol = &tfTypes.Access{}
 					if listenersItem.Protocol.Str != nil {
 						listeners.Protocol.Str = types.StringPointerValue(listenersItem.Protocol.Str)
 					}
@@ -91,7 +91,7 @@ func (r *MeshGatewayResourceModel) RefreshFromSharedMeshGatewayItem(ctx context.
 						listeners.TLS.Certificates = append(listeners.TLS.Certificates, certificates)
 					}
 					if listenersItem.TLS.Mode != nil {
-						listeners.TLS.Mode = &tfTypes.Mode{}
+						listeners.TLS.Mode = &tfTypes.Access{}
 						if listenersItem.TLS.Mode.Str != nil {
 							listeners.TLS.Mode.Str = types.StringPointerValue(listenersItem.TLS.Mode.Str)
 						}
@@ -116,10 +116,10 @@ func (r *MeshGatewayResourceModel) RefreshFromSharedMeshGatewayItem(ctx context.
 		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
 		r.Mesh = types.StringValue(resp.Mesh)
 		r.Name = types.StringValue(resp.Name)
-		r.Selectors = []tfTypes.Selectors{}
+		r.Selectors = []tfTypes.Destinations{}
 
 		for _, selectorsItem := range resp.Selectors {
-			var selectors tfTypes.Selectors
+			var selectors tfTypes.Destinations
 
 			if len(selectorsItem.Match) > 0 {
 				selectors.Match = make(map[string]types.String, len(selectorsItem.Match))

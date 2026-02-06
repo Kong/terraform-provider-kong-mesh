@@ -4,7 +4,7 @@ package types
 
 type Spec struct {
 	From      []From                      `tfsdk:"from"`
-	Rules     []Rules                     `tfsdk:"rules"`
+	Rules     []MeshAccessLogItemRules    `tfsdk:"rules"`
 	TargetRef *MeshAccessLogItemTargetRef `tfsdk:"target_ref"`
 	To        []From                      `tfsdk:"to"`
 }

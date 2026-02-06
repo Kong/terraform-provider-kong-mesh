@@ -944,16 +944,16 @@ func (m *MeshAccessLogItemDefault) GetBackends() []MeshAccessLogItemBackends {
 	return m.Backends
 }
 
-type Rules struct {
+type MeshAccessLogItemRules struct {
 	// Default contains configuration of the inbound access logging
 	Default MeshAccessLogItemDefault `json:"default"`
 }
 
-func (r *Rules) GetDefault() MeshAccessLogItemDefault {
-	if r == nil {
+func (m *MeshAccessLogItemRules) GetDefault() MeshAccessLogItemDefault {
+	if m == nil {
 		return MeshAccessLogItemDefault{}
 	}
-	return r.Default
+	return m.Default
 }
 
 // Kind of the referenced resource
@@ -1666,7 +1666,7 @@ type Spec struct {
 	From []From `json:"from,omitempty"`
 	// Rules defines inbound access log configurations. Currently limited to
 	// selecting all inbound traffic, as L7 matching is not yet implemented.
-	Rules []Rules `json:"rules,omitempty"`
+	Rules []MeshAccessLogItemRules `json:"rules,omitempty"`
 	// TargetRef is a reference to the resource the policy takes an effect on.
 	// The resource could be either a real store object or virtual resource
 	// defined in-place.
@@ -1682,7 +1682,7 @@ func (s *Spec) GetFrom() []From {
 	return s.From
 }
 
-func (s *Spec) GetRules() []Rules {
+func (s *Spec) GetRules() []MeshAccessLogItemRules {
 	if s == nil {
 		return nil
 	}

@@ -4,5 +4,5 @@ package types
 
 type RequestMirror struct {
 	BackendRef BackendRefs `tfsdk:"backend_ref"`
-	Percentage *Mode       `tfsdk:"percentage"`
+	Percentage *Access     `tfsdk:"percentage"`
 }

@@ -150,10 +150,10 @@ func (r *MeshAccessLogResourceModel) RefreshFromSharedMeshAccessLogItem(ctx cont
 
 			r.Spec.From = append(r.Spec.From, from)
 		}
-		r.Spec.Rules = []tfTypes.Rules{}
+		r.Spec.Rules = []tfTypes.MeshAccessLogItemRules{}
 
 		for _, rulesItem := range resp.Spec.Rules {
-			var rules tfTypes.Rules
+			var rules tfTypes.MeshAccessLogItemRules
 
 			rules.Default.Backends = []tfTypes.MeshAccessLogItemSpecFromBackends{}
 
@@ -644,7 +644,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 			TargetRef: targetRef,
 		})
 	}
-	rules := make([]shared.Rules, 0, len(r.Spec.Rules))
+	rules := make([]shared.MeshAccessLogItemRules, 0, len(r.Spec.Rules))
 	for _, rulesItem := range r.Spec.Rules {
 		backends1 := make([]shared.MeshAccessLogItemBackends, 0, len(rulesItem.Default.Backends))
 		for _, backendsItem1 := range rulesItem.Default.Backends {
@@ -777,7 +777,7 @@ func (r *MeshAccessLogResourceModel) ToSharedMeshAccessLogItemInput(ctx context.
 		default1 := shared.MeshAccessLogItemDefault{
 			Backends: backends1,
 		}
-		rules = append(rules, shared.Rules{
+		rules = append(rules, shared.MeshAccessLogItemRules{
 			Default: default1,
 		})
 	}
