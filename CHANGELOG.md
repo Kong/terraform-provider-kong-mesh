@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.4
+> Released on 2026/02/06
+>
+> - fix(labels): resolve constant diff on `labels` attribute during planning when labels are not set by defaulting to an empty map instead of null (#108, #114)
+> - feat(resources): add MeshWorkload resource to plan modifier generator (#114)
+> - chore(deps): bump Kong/shared-speakeasy/resource_plan_modifier from 0.0.12 to 0.0.13 (#114)
+
+
 ## 0.6.3
 > Released on 2025/12/08
 >
