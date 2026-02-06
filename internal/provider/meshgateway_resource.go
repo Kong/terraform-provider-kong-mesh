@@ -45,7 +45,7 @@ type MeshGatewayResourceModel struct {
 	Labels    kumalabels.KumaLabelsMapValue `tfsdk:"labels"`
 	Mesh      types.String                  `tfsdk:"mesh"`
 	Name      types.String                  `tfsdk:"name"`
-	Selectors []tfTypes.Selectors           `tfsdk:"selectors"`
+	Selectors []tfTypes.Destinations        `tfsdk:"selectors"`
 	Tags      map[string]types.String       `tfsdk:"tags"`
 	Type      types.String                  `tfsdk:"type"`
 	Warnings  []types.String                `tfsdk:"warnings"`

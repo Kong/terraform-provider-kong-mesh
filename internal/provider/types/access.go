@@ -6,7 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type Mode struct {
+type Access struct {
 	Integer types.Int64  `queryParam:"inline" tfsdk:"integer" tfPlanOnly:"true"`
 	Str     types.String `queryParam:"inline" tfsdk:"str" tfPlanOnly:"true"`
 }

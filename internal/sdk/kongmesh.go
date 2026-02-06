@@ -85,6 +85,9 @@ type KongMesh struct {
 	Workload                  *Workload
 	MeshGlobalRateLimit       *MeshGlobalRateLimit
 	MeshOPA                   *MeshOPA
+	AccessAudit               *AccessAudit
+	AccessRole                *AccessRole
+	AccessRoleBinding         *AccessRoleBinding
 
 	sdkConfiguration config.SDKConfiguration
 	hooks            *hooks.Hooks
@@ -213,6 +216,9 @@ func New(opts ...SDKOption) *KongMesh {
 	sdk.Workload = newWorkload(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MeshGlobalRateLimit = newMeshGlobalRateLimit(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MeshOPA = newMeshOPA(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.AccessAudit = newAccessAudit(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.AccessRole = newAccessRole(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.AccessRoleBinding = newAccessRoleBinding(sdk, sdk.sdkConfiguration, sdk.hooks)
 
 	return sdk
 }

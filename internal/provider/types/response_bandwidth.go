@@ -8,5 +8,5 @@ import (
 
 type ResponseBandwidth struct {
 	Limit      types.String `tfsdk:"limit"`
-	Percentage Mode         `tfsdk:"percentage"`
+	Percentage Access       `tfsdk:"percentage"`
 }

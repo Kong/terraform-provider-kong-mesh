@@ -1,7 +1,7 @@
 lockVersion: 2.0.0
 id: 322c4806-8b53-493c-a05f-50d4d113c747
 management:
-  docChecksum: 2c25260bb71b0051fdd2f679455f6d96
+  docChecksum: 48679382eaa0837defd32f3b0c5ce1dd
   docVersion: 2.0.0
   speakeasyVersion: 1.642.1
   generationVersion: 2.731.4
@@ -22,6 +22,15 @@ generatedFiles:
   - .gitattributes
   - USAGE.md
   - examples/provider/provider.tf
+  - examples/resources/kong-mesh_access_audit/import-by-string-id.tf
+  - examples/resources/kong-mesh_access_audit/import.sh
+  - examples/resources/kong-mesh_access_audit/resource.tf
+  - examples/resources/kong-mesh_access_role/import-by-string-id.tf
+  - examples/resources/kong-mesh_access_role/import.sh
+  - examples/resources/kong-mesh_access_role/resource.tf
+  - examples/resources/kong-mesh_access_role_binding/import-by-string-id.tf
+  - examples/resources/kong-mesh_access_role_binding/import.sh
+  - examples/resources/kong-mesh_access_role_binding/resource.tf
   - examples/resources/kong-mesh_mesh/import-by-string-id.tf
   - examples/resources/kong-mesh_mesh/import.sh
   - examples/resources/kong-mesh_mesh/resource.tf
@@ -126,6 +135,12 @@ generatedFiles:
   - internal/planmodifiers/setplanmodifier/suppress_diff.go
   - internal/planmodifiers/stringplanmodifier/suppress_diff.go
   - internal/planmodifiers/utils/state_check.go
+  - internal/provider/accessaudit_resource.go
+  - internal/provider/accessaudit_resource_sdk.go
+  - internal/provider/accessrole_resource.go
+  - internal/provider/accessrole_resource_sdk.go
+  - internal/provider/accessrolebinding_resource.go
+  - internal/provider/accessrolebinding_resource_sdk.go
   - internal/provider/mesh_resource.go
   - internal/provider/mesh_resource_sdk.go
   - internal/provider/meshaccesslog_resource.go
@@ -205,11 +220,16 @@ generatedFiles:
   - internal/provider/typeconvert/datetime.go
   - internal/provider/typeconvert/int.go
   - internal/provider/types/abort.go
+  - internal/provider/types/access.go
   - internal/provider/types/access_key.go
   - internal/provider/types/access_key_data_source_file.go
   - internal/provider/types/access_key_data_source_inline.go
   - internal/provider/types/access_key_data_source_inline_string.go
   - internal/provider/types/access_key_data_source_secret.go
+  - internal/provider/types/access_role_item_from.go
+  - internal/provider/types/access_role_item_rules.go
+  - internal/provider/types/access_role_item_rules_target_ref.go
+  - internal/provider/types/access_role_item_tags.go
   - internal/provider/types/acm_certificate_authority_config.go
   - internal/provider/types/addresses.go
   - internal/provider/types/admin.go
@@ -254,8 +274,10 @@ generatedFiles:
   - internal/provider/types/dataplane_ref.go
   - internal/provider/types/default.go
   - internal/provider/types/delay.go
+  - internal/provider/types/destinations.go
   - internal/provider/types/detectors.go
   - internal/provider/types/dp_cert.go
+  - internal/provider/types/dp_token.go
   - internal/provider/types/endpoints.go
   - internal/provider/types/env_var.go
   - internal/provider/types/envoy.go
@@ -298,6 +320,7 @@ generatedFiles:
   - internal/provider/types/maglev.go
   - internal/provider/types/match.go
   - internal/provider/types/matches.go
+  - internal/provider/types/mesh_access_log_item_rules.go
   - internal/provider/types/mesh_access_log_item_spec_from_backends.go
   - internal/provider/types/mesh_access_log_item_spec_from_default.go
   - internal/provider/types/mesh_access_log_item_spec_from_open_telemetry.go
@@ -410,7 +433,6 @@ generatedFiles:
   - internal/provider/types/mesh_trust_item_spec.go
   - internal/provider/types/mesh_trust_item_status.go
   - internal/provider/types/metrics.go
-  - internal/provider/types/mode.go
   - internal/provider/types/mtls.go
   - internal/provider/types/networking.go
   - internal/provider/types/on_rate_limit.go
@@ -446,13 +468,13 @@ generatedFiles:
   - internal/provider/types/sampling.go
   - internal/provider/types/secret_ref.go
   - internal/provider/types/selector.go
-  - internal/provider/types/selectors.go
   - internal/provider/types/sidecar.go
   - internal/provider/types/spec.go
   - internal/provider/types/spiffe_id.go
   - internal/provider/types/spire.go
   - internal/provider/types/status.go
   - internal/provider/types/subject_alt_names.go
+  - internal/provider/types/subjects.go
   - internal/provider/types/success_rate.go
   - internal/provider/types/tags.go
   - internal/provider/types/tcp.go
@@ -471,6 +493,7 @@ generatedFiles:
   - internal/provider/types/version.go
   - internal/provider/types/vip.go
   - internal/provider/types/virtual_host.go
+  - internal/provider/types/when.go
   - internal/provider/types/workload_item_dataplane_proxies.go
   - internal/provider/types/workload_item_status.go
   - internal/provider/types/zipkin.go
@@ -479,6 +502,9 @@ generatedFiles:
   - internal/provider/types/zone_ingress_item_networking.go
   - internal/provider/utils.go
   - internal/sdk/.gitattributes
+  - internal/sdk/accessaudit.go
+  - internal/sdk/accessrole.go
+  - internal/sdk/accessrolebinding.go
   - internal/sdk/docs/models/operations/option.md
   - internal/sdk/hostnamegenerator.go
   - internal/sdk/internal/config/sdkconfiguration.go
@@ -521,6 +547,9 @@ generatedFiles:
   - internal/sdk/meshtrafficpermission.go
   - internal/sdk/meshtrust.go
   - internal/sdk/models/errors/sdkerror.go
+  - internal/sdk/models/operations/deleteaccessaudit.go
+  - internal/sdk/models/operations/deleteaccessrole.go
+  - internal/sdk/models/operations/deleteaccessrolebinding.go
   - internal/sdk/models/operations/deletehostnamegenerator.go
   - internal/sdk/models/operations/deletemesh.go
   - internal/sdk/models/operations/deletemeshaccesslog.go
@@ -551,6 +580,12 @@ generatedFiles:
   - internal/sdk/models/operations/deleteworkload.go
   - internal/sdk/models/operations/deletezoneegress.go
   - internal/sdk/models/operations/deletezoneingress.go
+  - internal/sdk/models/operations/getaccessaudit.go
+  - internal/sdk/models/operations/getaccessauditlist.go
+  - internal/sdk/models/operations/getaccessrole.go
+  - internal/sdk/models/operations/getaccessrolebinding.go
+  - internal/sdk/models/operations/getaccessrolebindinglist.go
+  - internal/sdk/models/operations/getaccessrolelist.go
   - internal/sdk/models/operations/gethostnamegenerator.go
   - internal/sdk/models/operations/gethostnamegeneratorlist.go
   - internal/sdk/models/operations/getmesh.go
@@ -612,6 +647,9 @@ generatedFiles:
   - internal/sdk/models/operations/getzoneingress.go
   - internal/sdk/models/operations/getzoneingresslist.go
   - internal/sdk/models/operations/options.go
+  - internal/sdk/models/operations/putaccessaudit.go
+  - internal/sdk/models/operations/putaccessrole.go
+  - internal/sdk/models/operations/putaccessrolebinding.go
   - internal/sdk/models/operations/puthostnamegenerator.go
   - internal/sdk/models/operations/putmesh.go
   - internal/sdk/models/operations/putmeshaccesslog.go
@@ -642,6 +680,18 @@ generatedFiles:
   - internal/sdk/models/operations/putworkload.go
   - internal/sdk/models/operations/putzoneegress.go
   - internal/sdk/models/operations/putzoneingress.go
+  - internal/sdk/models/shared/accessauditcreateorupdatesuccessresponse.go
+  - internal/sdk/models/shared/accessauditdeletesuccessresponse.go
+  - internal/sdk/models/shared/accessaudititem.go
+  - internal/sdk/models/shared/accessauditlist.go
+  - internal/sdk/models/shared/accessrolebindingcreateorupdatesuccessresponse.go
+  - internal/sdk/models/shared/accessrolebindingdeletesuccessresponse.go
+  - internal/sdk/models/shared/accessrolebindingitem.go
+  - internal/sdk/models/shared/accessrolebindinglist.go
+  - internal/sdk/models/shared/accessrolecreateorupdatesuccessresponse.go
+  - internal/sdk/models/shared/accessroledeletesuccessresponse.go
+  - internal/sdk/models/shared/accessroleitem.go
+  - internal/sdk/models/shared/accessrolelist.go
   - internal/sdk/models/shared/hostnamegeneratorcreateorupdatesuccessresponse.go
   - internal/sdk/models/shared/hostnamegeneratordeletesuccessresponse.go
   - internal/sdk/models/shared/hostnamegeneratoritem.go
@@ -3526,5 +3576,125 @@ examples:
       responses:
         "200":
           application/json: {"items": null, "total": null, "next": null}
+  getAccessAuditList:
+    speakeasy-default-get-access-audit-list:
+      parameters:
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": null, "next": null, "total": null}
+  deleteAccessAudit:
+    speakeasy-default-delete-access-audit:
+      parameters:
+        path:
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
+  getAccessAudit:
+    speakeasy-default-get-access-audit:
+      parameters:
+        path:
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"name": "<value>", "rules": null, "type": "<value>"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
+  putAccessAudit:
+    speakeasy-default-put-access-audit:
+      parameters:
+        path:
+          name: "<value>"
+      requestBody:
+        application/json: {"name": "<value>", "rules": null, "type": "<value>"}
+      responses:
+        "200":
+          application/json: {}
+  getAccessRoleList:
+    speakeasy-default-get-access-role-list:
+      parameters:
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": null, "next": null, "total": null}
+  deleteAccessRole:
+    speakeasy-default-delete-access-role:
+      parameters:
+        path:
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
+  getAccessRole:
+    speakeasy-default-get-access-role:
+      parameters:
+        path:
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"name": "<value>", "rules": null, "type": "<value>"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
+  putAccessRole:
+    speakeasy-default-put-access-role:
+      parameters:
+        path:
+          name: "<value>"
+      requestBody:
+        application/json: {"name": "<value>", "rules": null, "type": "<value>"}
+      responses:
+        "200":
+          application/json: {}
+  getAccessRoleBindingList:
+    speakeasy-default-get-access-role-binding-list:
+      parameters:
+        query:
+          offset: 0
+          size: 100
+          filter: {}
+      responses:
+        "200":
+          application/json: {"items": null, "next": null, "total": null}
+  deleteAccessRoleBinding:
+    speakeasy-default-delete-access-role-binding:
+      parameters:
+        path:
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
+  getAccessRoleBinding:
+    speakeasy-default-get-access-role-binding:
+      parameters:
+        path:
+          name: "<value>"
+      responses:
+        "200":
+          application/json: {"name": "<value>", "roles": null, "subjects": null, "type": "<value>"}
+        "404":
+          application/problem+json: {"status": 404, "title": "Not Found", "type": "https://httpstatuses.com/404", "instance": "kong:trace:1234567890", "detail": "Not found"}
+  putAccessRoleBinding:
+    speakeasy-default-put-access-role-binding:
+      parameters:
+        path:
+          name: "<value>"
+      requestBody:
+        application/json: {"name": "<value>", "roles": null, "subjects": null, "type": "<value>"}
+      responses:
+        "200":
+          application/json: {}
 examplesVersion: 1.0.2
 generatedTests: {}

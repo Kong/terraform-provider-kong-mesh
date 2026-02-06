@@ -2,6 +2,13 @@
 
 package types
 
+import (
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
+
 type Rules struct {
-	Default MeshAccessLogItemSpecFromDefault `tfsdk:"default"`
+	Access    []Access       `tfsdk:"access"`
+	AccessAll types.Bool     `tfsdk:"access_all"`
+	Mesh      types.String   `tfsdk:"mesh"`
+	Types     []types.String `tfsdk:"types"`
 }
