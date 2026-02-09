@@ -42,7 +42,7 @@ func (r *MeshGatewayResourceModel) RefreshFromSharedMeshGatewayItem(ctx context.
 				listeners.Hostname = types.StringPointerValue(listenersItem.Hostname)
 				listeners.Port = types.Int64PointerValue(listenersItem.Port)
 				if listenersItem.Protocol != nil {
-					listeners.Protocol = &tfTypes.Access{}
+					listeners.Protocol = &tfTypes.Mode{}
 					if listenersItem.Protocol.Str != nil {
 						listeners.Protocol.Str = types.StringPointerValue(listenersItem.Protocol.Str)
 					}
@@ -91,7 +91,7 @@ func (r *MeshGatewayResourceModel) RefreshFromSharedMeshGatewayItem(ctx context.
 						listeners.TLS.Certificates = append(listeners.TLS.Certificates, certificates)
 					}
 					if listenersItem.TLS.Mode != nil {
-						listeners.TLS.Mode = &tfTypes.Access{}
+						listeners.TLS.Mode = &tfTypes.Mode{}
 						if listenersItem.TLS.Mode.Str != nil {
 							listeners.TLS.Mode.Str = types.StringPointerValue(listenersItem.TLS.Mode.Str)
 						}

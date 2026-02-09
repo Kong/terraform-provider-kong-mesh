@@ -7,7 +7,7 @@ import (
 )
 
 type Rules struct {
-	Access    []Access       `tfsdk:"access"`
+	Access    []Mode         `tfsdk:"access"`
 	AccessAll types.Bool     `tfsdk:"access_all"`
 	Mesh      types.String   `tfsdk:"mesh"`
 	Types     []types.String `tfsdk:"types"`

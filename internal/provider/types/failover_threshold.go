@@ -3,5 +3,5 @@
 package types
 
 type FailoverThreshold struct {
-	Percentage Access `tfsdk:"percentage"`
+	Percentage Mode `tfsdk:"percentage"`
 }

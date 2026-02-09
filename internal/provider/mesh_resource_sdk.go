@@ -105,7 +105,7 @@ func (r *MeshResourceModel) RefreshFromSharedMeshItem(ctx context.Context, resp 
 		} else {
 			r.MeshServices = &tfTypes.MeshServices{}
 			if resp.MeshServices.Mode != nil {
-				r.MeshServices.Mode = &tfTypes.Access{}
+				r.MeshServices.Mode = &tfTypes.Mode{}
 				if resp.MeshServices.Mode.Str != nil {
 					r.MeshServices.Mode.Str = types.StringPointerValue(resp.MeshServices.Mode.Str)
 				}
@@ -161,7 +161,7 @@ func (r *MeshResourceModel) RefreshFromSharedMeshItem(ctx context.Context, resp 
 						} else {
 							backends1.Conf.PrometheusMetricsBackendConfig.TLS = &tfTypes.MeshServices{}
 							if backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS.Mode != nil {
-								backends1.Conf.PrometheusMetricsBackendConfig.TLS.Mode = &tfTypes.Access{}
+								backends1.Conf.PrometheusMetricsBackendConfig.TLS.Mode = &tfTypes.Mode{}
 								if backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Str != nil {
 									backends1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Str = types.StringPointerValue(backendsItem1.Conf.PrometheusMetricsBackendConfig.TLS.Mode.Str)
 								}
@@ -369,7 +369,7 @@ func (r *MeshResourceModel) RefreshFromSharedMeshItem(ctx context.Context, resp 
 											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.IamServerIDHeader = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.IamServerIDHeader)
 											backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Role = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Role)
 											if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type != nil {
-												backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type = &tfTypes.Access{}
+												backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type = &tfTypes.Mode{}
 												if backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type.Str != nil {
 													backends2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type.Str = types.StringPointerValue(backendsItem2.Conf.VaultCertificateAuthorityConfig.VaultCertificateAuthorityConfigFromCp.FromCp.Auth.VaultCertificateAuthorityConfigFromCpAuthAws.Aws.Type.Str)
 												}
@@ -501,7 +501,7 @@ func (r *MeshResourceModel) RefreshFromSharedMeshItem(ctx context.Context, resp 
 					}
 				}
 				if backendsItem2.Mode != nil {
-					backends2.Mode = &tfTypes.Access{}
+					backends2.Mode = &tfTypes.Mode{}
 					if backendsItem2.Mode.Str != nil {
 						backends2.Mode.Str = types.StringPointerValue(backendsItem2.Mode.Str)
 					}

@@ -1,4 +1,4 @@
-resource "kong-mesh_access_audit" "my_accessaudit" {
+resource "kong-mesh_mesh_access_audit" "my_meshaccessaudit" {
   labels = {
     key = "value"
   }
@@ -10,7 +10,7 @@ resource "kong-mesh_access_audit" "my_accessaudit" {
           str = "...my_str..."
         }
       ]
-      access_all = false
+      access_all = true
       mesh       = "...my_mesh..."
       types = [
         "..."

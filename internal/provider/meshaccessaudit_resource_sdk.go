@@ -11,7 +11,7 @@ import (
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
 )
 
-func (r *AccessAuditResourceModel) RefreshFromSharedAccessAuditCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.AccessAuditCreateOrUpdateSuccessResponse) diag.Diagnostics {
+func (r *MeshAccessAuditResourceModel) RefreshFromSharedAccessAuditCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.AccessAuditCreateOrUpdateSuccessResponse) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	if resp != nil {
@@ -24,7 +24,7 @@ func (r *AccessAuditResourceModel) RefreshFromSharedAccessAuditCreateOrUpdateSuc
 	return diags
 }
 
-func (r *AccessAuditResourceModel) RefreshFromSharedAccessAuditItem(ctx context.Context, resp *shared.AccessAuditItem) diag.Diagnostics {
+func (r *MeshAccessAuditResourceModel) RefreshFromSharedAccessAuditItem(ctx context.Context, resp *shared.AccessAuditItem) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	if resp != nil {
@@ -42,10 +42,10 @@ func (r *AccessAuditResourceModel) RefreshFromSharedAccessAuditItem(ctx context.
 				var rules tfTypes.Rules
 
 				if rulesItem.Access != nil {
-					rules.Access = []tfTypes.Access{}
+					rules.Access = []tfTypes.Mode{}
 
 					for _, accessItem := range rulesItem.Access {
-						var access tfTypes.Access
+						var access tfTypes.Mode
 
 						if accessItem.Str != nil {
 							access.Str = types.StringPointerValue(accessItem.Str)
@@ -75,7 +75,7 @@ func (r *AccessAuditResourceModel) RefreshFromSharedAccessAuditItem(ctx context.
 	return diags
 }
 
-func (r *AccessAuditResourceModel) ToOperationsDeleteAccessAuditRequest(ctx context.Context) (*operations.DeleteAccessAuditRequest, diag.Diagnostics) {
+func (r *MeshAccessAuditResourceModel) ToOperationsDeleteAccessAuditRequest(ctx context.Context) (*operations.DeleteAccessAuditRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var name string
@@ -88,7 +88,7 @@ func (r *AccessAuditResourceModel) ToOperationsDeleteAccessAuditRequest(ctx cont
 	return &out, diags
 }
 
-func (r *AccessAuditResourceModel) ToOperationsGetAccessAuditRequest(ctx context.Context) (*operations.GetAccessAuditRequest, diag.Diagnostics) {
+func (r *MeshAccessAuditResourceModel) ToOperationsGetAccessAuditRequest(ctx context.Context) (*operations.GetAccessAuditRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var name string
@@ -101,7 +101,7 @@ func (r *AccessAuditResourceModel) ToOperationsGetAccessAuditRequest(ctx context
 	return &out, diags
 }
 
-func (r *AccessAuditResourceModel) ToOperationsPutAccessAuditRequest(ctx context.Context) (*operations.PutAccessAuditRequest, diag.Diagnostics) {
+func (r *MeshAccessAuditResourceModel) ToOperationsPutAccessAuditRequest(ctx context.Context) (*operations.PutAccessAuditRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var name string
@@ -122,7 +122,7 @@ func (r *AccessAuditResourceModel) ToOperationsPutAccessAuditRequest(ctx context
 	return &out, diags
 }
 
-func (r *AccessAuditResourceModel) ToSharedAccessAuditItem(ctx context.Context) (*shared.AccessAuditItem, diag.Diagnostics) {
+func (r *MeshAccessAuditResourceModel) ToSharedAccessAuditItem(ctx context.Context) (*shared.AccessAuditItem, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	labels := make(map[string]string)

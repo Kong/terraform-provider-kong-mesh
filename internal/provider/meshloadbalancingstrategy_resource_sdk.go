@@ -126,7 +126,7 @@ func (r *MeshLoadBalancingStrategyResourceModel) RefreshFromSharedMeshLoadBalanc
 					} else {
 						to.Default.LoadBalancer.LeastRequest = &tfTypes.LeastRequest{}
 						if toItem.Default.LoadBalancer.LeastRequest.ActiveRequestBias != nil {
-							to.Default.LoadBalancer.LeastRequest.ActiveRequestBias = &tfTypes.Access{}
+							to.Default.LoadBalancer.LeastRequest.ActiveRequestBias = &tfTypes.Mode{}
 							if toItem.Default.LoadBalancer.LeastRequest.ActiveRequestBias.Integer != nil {
 								to.Default.LoadBalancer.LeastRequest.ActiveRequestBias.Integer = types.Int64PointerValue(toItem.Default.LoadBalancer.LeastRequest.ActiveRequestBias.Integer)
 							}

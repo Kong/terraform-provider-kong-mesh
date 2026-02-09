@@ -1,4 +1,4 @@
-resource "kong-mesh_access_role" "my_accessrole" {
+resource "kong-mesh_mesh_access_role" "my_meshaccessrole" {
   labels = {
     key = "value"
   }
