@@ -3,7 +3,7 @@
 package types
 
 type Sampling struct {
-	Client  *Access `tfsdk:"client"`
-	Overall *Access `tfsdk:"overall"`
-	Random  *Access `tfsdk:"random"`
+	Client  *Mode `tfsdk:"client"`
+	Overall *Mode `tfsdk:"overall"`
+	Random  *Mode `tfsdk:"random"`
 }

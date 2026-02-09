@@ -1,7 +1,7 @@
 lockVersion: 2.0.0
 id: 322c4806-8b53-493c-a05f-50d4d113c747
 management:
-  docChecksum: 48679382eaa0837defd32f3b0c5ce1dd
+  docChecksum: 1d1242ab3830f652ac02e04e69a92b7b
   docVersion: 2.0.0
   speakeasyVersion: 1.642.1
   generationVersion: 2.731.4
@@ -22,21 +22,21 @@ generatedFiles:
   - .gitattributes
   - USAGE.md
   - examples/provider/provider.tf
-  - examples/resources/kong-mesh_access_audit/import-by-string-id.tf
-  - examples/resources/kong-mesh_access_audit/import.sh
-  - examples/resources/kong-mesh_access_audit/resource.tf
-  - examples/resources/kong-mesh_access_role/import-by-string-id.tf
-  - examples/resources/kong-mesh_access_role/import.sh
-  - examples/resources/kong-mesh_access_role/resource.tf
-  - examples/resources/kong-mesh_access_role_binding/import-by-string-id.tf
-  - examples/resources/kong-mesh_access_role_binding/import.sh
-  - examples/resources/kong-mesh_access_role_binding/resource.tf
   - examples/resources/kong-mesh_mesh/import-by-string-id.tf
   - examples/resources/kong-mesh_mesh/import.sh
   - examples/resources/kong-mesh_mesh/resource.tf
+  - examples/resources/kong-mesh_mesh_access_audit/import-by-string-id.tf
+  - examples/resources/kong-mesh_mesh_access_audit/import.sh
+  - examples/resources/kong-mesh_mesh_access_audit/resource.tf
   - examples/resources/kong-mesh_mesh_access_log/import-by-string-id.tf
   - examples/resources/kong-mesh_mesh_access_log/import.sh
   - examples/resources/kong-mesh_mesh_access_log/resource.tf
+  - examples/resources/kong-mesh_mesh_access_role/import-by-string-id.tf
+  - examples/resources/kong-mesh_mesh_access_role/import.sh
+  - examples/resources/kong-mesh_mesh_access_role/resource.tf
+  - examples/resources/kong-mesh_mesh_access_role_binding/import-by-string-id.tf
+  - examples/resources/kong-mesh_mesh_access_role_binding/import.sh
+  - examples/resources/kong-mesh_mesh_access_role_binding/resource.tf
   - examples/resources/kong-mesh_mesh_circuit_breaker/import-by-string-id.tf
   - examples/resources/kong-mesh_mesh_circuit_breaker/import.sh
   - examples/resources/kong-mesh_mesh_circuit_breaker/resource.tf
@@ -135,16 +135,16 @@ generatedFiles:
   - internal/planmodifiers/setplanmodifier/suppress_diff.go
   - internal/planmodifiers/stringplanmodifier/suppress_diff.go
   - internal/planmodifiers/utils/state_check.go
-  - internal/provider/accessaudit_resource.go
-  - internal/provider/accessaudit_resource_sdk.go
-  - internal/provider/accessrole_resource.go
-  - internal/provider/accessrole_resource_sdk.go
-  - internal/provider/accessrolebinding_resource.go
-  - internal/provider/accessrolebinding_resource_sdk.go
   - internal/provider/mesh_resource.go
   - internal/provider/mesh_resource_sdk.go
+  - internal/provider/meshaccessaudit_resource.go
+  - internal/provider/meshaccessaudit_resource_sdk.go
   - internal/provider/meshaccesslog_resource.go
   - internal/provider/meshaccesslog_resource_sdk.go
+  - internal/provider/meshaccessrole_resource.go
+  - internal/provider/meshaccessrole_resource_sdk.go
+  - internal/provider/meshaccessrolebinding_resource.go
+  - internal/provider/meshaccessrolebinding_resource_sdk.go
   - internal/provider/meshcircuitbreaker_resource.go
   - internal/provider/meshcircuitbreaker_resource_sdk.go
   - internal/provider/meshexternalservice_resource.go
@@ -220,7 +220,6 @@ generatedFiles:
   - internal/provider/typeconvert/datetime.go
   - internal/provider/typeconvert/int.go
   - internal/provider/types/abort.go
-  - internal/provider/types/access.go
   - internal/provider/types/access_key.go
   - internal/provider/types/access_key_data_source_file.go
   - internal/provider/types/access_key_data_source_inline.go
@@ -433,6 +432,7 @@ generatedFiles:
   - internal/provider/types/mesh_trust_item_spec.go
   - internal/provider/types/mesh_trust_item_status.go
   - internal/provider/types/metrics.go
+  - internal/provider/types/mode.go
   - internal/provider/types/mtls.go
   - internal/provider/types/networking.go
   - internal/provider/types/on_rate_limit.go

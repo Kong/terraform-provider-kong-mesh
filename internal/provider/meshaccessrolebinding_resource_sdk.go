@@ -11,7 +11,7 @@ import (
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
 )
 
-func (r *AccessRoleBindingResourceModel) RefreshFromSharedAccessRoleBindingCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.AccessRoleBindingCreateOrUpdateSuccessResponse) diag.Diagnostics {
+func (r *MeshAccessRoleBindingResourceModel) RefreshFromSharedAccessRoleBindingCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.AccessRoleBindingCreateOrUpdateSuccessResponse) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	if resp != nil {
@@ -24,7 +24,7 @@ func (r *AccessRoleBindingResourceModel) RefreshFromSharedAccessRoleBindingCreat
 	return diags
 }
 
-func (r *AccessRoleBindingResourceModel) RefreshFromSharedAccessRoleBindingItem(ctx context.Context, resp *shared.AccessRoleBindingItem) diag.Diagnostics {
+func (r *MeshAccessRoleBindingResourceModel) RefreshFromSharedAccessRoleBindingItem(ctx context.Context, resp *shared.AccessRoleBindingItem) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	if resp != nil {
@@ -59,7 +59,7 @@ func (r *AccessRoleBindingResourceModel) RefreshFromSharedAccessRoleBindingItem(
 	return diags
 }
 
-func (r *AccessRoleBindingResourceModel) ToOperationsDeleteAccessRoleBindingRequest(ctx context.Context) (*operations.DeleteAccessRoleBindingRequest, diag.Diagnostics) {
+func (r *MeshAccessRoleBindingResourceModel) ToOperationsDeleteAccessRoleBindingRequest(ctx context.Context) (*operations.DeleteAccessRoleBindingRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var name string
@@ -72,7 +72,7 @@ func (r *AccessRoleBindingResourceModel) ToOperationsDeleteAccessRoleBindingRequ
 	return &out, diags
 }
 
-func (r *AccessRoleBindingResourceModel) ToOperationsGetAccessRoleBindingRequest(ctx context.Context) (*operations.GetAccessRoleBindingRequest, diag.Diagnostics) {
+func (r *MeshAccessRoleBindingResourceModel) ToOperationsGetAccessRoleBindingRequest(ctx context.Context) (*operations.GetAccessRoleBindingRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var name string
@@ -85,7 +85,7 @@ func (r *AccessRoleBindingResourceModel) ToOperationsGetAccessRoleBindingRequest
 	return &out, diags
 }
 
-func (r *AccessRoleBindingResourceModel) ToOperationsPutAccessRoleBindingRequest(ctx context.Context) (*operations.PutAccessRoleBindingRequest, diag.Diagnostics) {
+func (r *MeshAccessRoleBindingResourceModel) ToOperationsPutAccessRoleBindingRequest(ctx context.Context) (*operations.PutAccessRoleBindingRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var name string
@@ -106,7 +106,7 @@ func (r *AccessRoleBindingResourceModel) ToOperationsPutAccessRoleBindingRequest
 	return &out, diags
 }
 
-func (r *AccessRoleBindingResourceModel) ToSharedAccessRoleBindingItem(ctx context.Context) (*shared.AccessRoleBindingItem, diag.Diagnostics) {
+func (r *MeshAccessRoleBindingResourceModel) ToSharedAccessRoleBindingItem(ctx context.Context) (*shared.AccessRoleBindingItem, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	labels := make(map[string]string)

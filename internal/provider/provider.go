@@ -127,11 +127,11 @@ func (p *KongMeshProvider) Configure(ctx context.Context, req provider.Configure
 
 func (p *KongMeshProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
-		NewAccessAuditResource,
-		NewAccessRoleResource,
-		NewAccessRoleBindingResource,
 		NewMeshResource,
+		NewMeshAccessAuditResource,
 		NewMeshAccessLogResource,
+		NewMeshAccessRoleResource,
+		NewMeshAccessRoleBindingResource,
 		NewMeshCircuitBreakerResource,
 		NewMeshExternalServiceResource,
 		NewMeshFaultInjectionResource,

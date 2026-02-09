@@ -11,7 +11,7 @@ import (
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
 )
 
-func (r *AccessRoleResourceModel) RefreshFromSharedAccessRoleCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.AccessRoleCreateOrUpdateSuccessResponse) diag.Diagnostics {
+func (r *MeshAccessRoleResourceModel) RefreshFromSharedAccessRoleCreateOrUpdateSuccessResponse(ctx context.Context, resp *shared.AccessRoleCreateOrUpdateSuccessResponse) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	if resp != nil {
@@ -24,7 +24,7 @@ func (r *AccessRoleResourceModel) RefreshFromSharedAccessRoleCreateOrUpdateSucce
 	return diags
 }
 
-func (r *AccessRoleResourceModel) RefreshFromSharedAccessRoleItem(ctx context.Context, resp *shared.AccessRoleItem) diag.Diagnostics {
+func (r *MeshAccessRoleResourceModel) RefreshFromSharedAccessRoleItem(ctx context.Context, resp *shared.AccessRoleItem) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	if resp != nil {
@@ -42,10 +42,10 @@ func (r *AccessRoleResourceModel) RefreshFromSharedAccessRoleItem(ctx context.Co
 				var rules tfTypes.AccessRoleItemRules
 
 				if rulesItem.Access != nil {
-					rules.Access = []tfTypes.Access{}
+					rules.Access = []tfTypes.Mode{}
 
 					for _, accessItem := range rulesItem.Access {
-						var access tfTypes.Access
+						var access tfTypes.Mode
 
 						if accessItem.Str != nil {
 							access.Str = types.StringPointerValue(accessItem.Str)
@@ -192,7 +192,7 @@ func (r *AccessRoleResourceModel) RefreshFromSharedAccessRoleItem(ctx context.Co
 	return diags
 }
 
-func (r *AccessRoleResourceModel) ToOperationsDeleteAccessRoleRequest(ctx context.Context) (*operations.DeleteAccessRoleRequest, diag.Diagnostics) {
+func (r *MeshAccessRoleResourceModel) ToOperationsDeleteAccessRoleRequest(ctx context.Context) (*operations.DeleteAccessRoleRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var name string
@@ -205,7 +205,7 @@ func (r *AccessRoleResourceModel) ToOperationsDeleteAccessRoleRequest(ctx contex
 	return &out, diags
 }
 
-func (r *AccessRoleResourceModel) ToOperationsGetAccessRoleRequest(ctx context.Context) (*operations.GetAccessRoleRequest, diag.Diagnostics) {
+func (r *MeshAccessRoleResourceModel) ToOperationsGetAccessRoleRequest(ctx context.Context) (*operations.GetAccessRoleRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var name string
@@ -218,7 +218,7 @@ func (r *AccessRoleResourceModel) ToOperationsGetAccessRoleRequest(ctx context.C
 	return &out, diags
 }
 
-func (r *AccessRoleResourceModel) ToOperationsPutAccessRoleRequest(ctx context.Context) (*operations.PutAccessRoleRequest, diag.Diagnostics) {
+func (r *MeshAccessRoleResourceModel) ToOperationsPutAccessRoleRequest(ctx context.Context) (*operations.PutAccessRoleRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var name string
@@ -239,7 +239,7 @@ func (r *AccessRoleResourceModel) ToOperationsPutAccessRoleRequest(ctx context.C
 	return &out, diags
 }
 
-func (r *AccessRoleResourceModel) ToSharedAccessRoleItem(ctx context.Context) (*shared.AccessRoleItem, diag.Diagnostics) {
+func (r *MeshAccessRoleResourceModel) ToSharedAccessRoleItem(ctx context.Context) (*shared.AccessRoleItem, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	labels := make(map[string]string)

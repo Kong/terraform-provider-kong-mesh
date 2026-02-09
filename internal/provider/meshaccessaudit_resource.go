@@ -22,35 +22,35 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &AccessRoleResource{}
-var _ resource.ResourceWithImportState = &AccessRoleResource{}
+var _ resource.Resource = &MeshAccessAuditResource{}
+var _ resource.ResourceWithImportState = &MeshAccessAuditResource{}
 
-func NewAccessRoleResource() resource.Resource {
-	return &AccessRoleResource{}
+func NewMeshAccessAuditResource() resource.Resource {
+	return &MeshAccessAuditResource{}
 }
 
-// AccessRoleResource defines the resource implementation.
-type AccessRoleResource struct {
+// MeshAccessAuditResource defines the resource implementation.
+type MeshAccessAuditResource struct {
 	// Provider configured SDK client.
 	client *sdk.KongMesh
 }
 
-// AccessRoleResourceModel describes the resource data model.
-type AccessRoleResourceModel struct {
-	Labels   map[string]types.String       `tfsdk:"labels"`
-	Name     types.String                  `tfsdk:"name"`
-	Rules    []tfTypes.AccessRoleItemRules `tfsdk:"rules"`
-	Type     types.String                  `tfsdk:"type"`
-	Warnings []types.String                `tfsdk:"warnings"`
+// MeshAccessAuditResourceModel describes the resource data model.
+type MeshAccessAuditResourceModel struct {
+	Labels   map[string]types.String `tfsdk:"labels"`
+	Name     types.String            `tfsdk:"name"`
+	Rules    []tfTypes.Rules         `tfsdk:"rules"`
+	Type     types.String            `tfsdk:"type"`
+	Warnings []types.String          `tfsdk:"warnings"`
 }
 
-func (r *AccessRoleResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_access_role"
+func (r *MeshAccessAuditResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_mesh_access_audit"
 }
 
-func (r *AccessRoleResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *MeshAccessAuditResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		MarkdownDescription: "AccessRole Resource",
+		MarkdownDescription: "MeshAccessAudit Resource",
 		Attributes: map[string]schema.Attribute{
 			"labels": schema.MapAttribute{
 				Optional:    true,
@@ -58,7 +58,7 @@ func (r *AccessRoleResource) Schema(ctx context.Context, req resource.SchemaRequ
 			},
 			"name": schema.StringAttribute{
 				Required:    true,
-				Description: `name of the AccessRole`,
+				Description: `name of the AccessAudit`,
 			},
 			"rules": schema.ListNestedAttribute{
 				Optional: true,
@@ -101,15 +101,11 @@ func (r *AccessRoleResource) Schema(ctx context.Context, req resource.SchemaRequ
 								},
 							},
 						},
-						"mesh": schema.StringAttribute{
+						"access_all": schema.BoolAttribute{
 							Optional: true,
 						},
-						"names": schema.ListAttribute{
+						"mesh": schema.StringAttribute{
 							Optional: true,
-							PlanModifiers: []planmodifier.List{
-								custom_listplanmodifier.SupressZeroNullModifier(),
-							},
-							ElementType: types.StringType,
 						},
 						"types": schema.ListAttribute{
 							Optional: true,
@@ -117,137 +113,6 @@ func (r *AccessRoleResource) Schema(ctx context.Context, req resource.SchemaRequ
 								custom_listplanmodifier.SupressZeroNullModifier(),
 							},
 							ElementType: types.StringType,
-						},
-						"when": schema.ListNestedAttribute{
-							Optional: true,
-							PlanModifiers: []planmodifier.List{
-								custom_listplanmodifier.SupressZeroNullModifier(),
-							},
-							NestedObject: schema.NestedAttributeObject{
-								Validators: []validator.Object{
-									speakeasy_objectvalidators.NotNull(),
-								},
-								Attributes: map[string]schema.Attribute{
-									"destinations": schema.SingleNestedAttribute{
-										Optional: true,
-										Attributes: map[string]schema.Attribute{
-											"match": schema.MapAttribute{
-												Optional:    true,
-												ElementType: types.StringType,
-												Description: `Tags to match, can be used for both source and destinations`,
-											},
-										},
-									},
-									"dp_token": schema.SingleNestedAttribute{
-										Optional: true,
-										Attributes: map[string]schema.Attribute{
-											"tags": schema.ListNestedAttribute{
-												Optional: true,
-												PlanModifiers: []planmodifier.List{
-													custom_listplanmodifier.SupressZeroNullModifier(),
-												},
-												NestedObject: schema.NestedAttributeObject{
-													Validators: []validator.Object{
-														speakeasy_objectvalidators.NotNull(),
-													},
-													Attributes: map[string]schema.Attribute{
-														"name": schema.StringAttribute{
-															Optional: true,
-														},
-														"value": schema.StringAttribute{
-															Optional: true,
-														},
-													},
-												},
-											},
-										},
-									},
-									"from": schema.SingleNestedAttribute{
-										Optional: true,
-										Attributes: map[string]schema.Attribute{
-											"target_ref": schema.SingleNestedAttribute{
-												Optional: true,
-												Attributes: map[string]schema.Attribute{
-													"kind": schema.StringAttribute{
-														Optional: true,
-													},
-													"mesh": schema.StringAttribute{
-														Optional: true,
-													},
-													"name": schema.StringAttribute{
-														Optional: true,
-													},
-													"tags": schema.MapAttribute{
-														Optional:    true,
-														ElementType: types.StringType,
-													},
-												},
-											},
-										},
-									},
-									"selectors": schema.SingleNestedAttribute{
-										Optional: true,
-										Attributes: map[string]schema.Attribute{
-											"match": schema.MapAttribute{
-												Optional:    true,
-												ElementType: types.StringType,
-												Description: `Tags to match, can be used for both source and destinations`,
-											},
-										},
-									},
-									"sources": schema.SingleNestedAttribute{
-										Optional: true,
-										Attributes: map[string]schema.Attribute{
-											"match": schema.MapAttribute{
-												Optional:    true,
-												ElementType: types.StringType,
-												Description: `Tags to match, can be used for both source and destinations`,
-											},
-										},
-									},
-									"target_ref": schema.SingleNestedAttribute{
-										Optional: true,
-										Attributes: map[string]schema.Attribute{
-											"kind": schema.StringAttribute{
-												Optional: true,
-											},
-											"mesh": schema.StringAttribute{
-												Optional: true,
-											},
-											"name": schema.StringAttribute{
-												Optional: true,
-											},
-											"tags": schema.MapAttribute{
-												Optional:    true,
-												ElementType: types.StringType,
-											},
-										},
-									},
-									"to": schema.SingleNestedAttribute{
-										Optional: true,
-										Attributes: map[string]schema.Attribute{
-											"target_ref": schema.SingleNestedAttribute{
-												Optional: true,
-												Attributes: map[string]schema.Attribute{
-													"kind": schema.StringAttribute{
-														Optional: true,
-													},
-													"mesh": schema.StringAttribute{
-														Optional: true,
-													},
-													"name": schema.StringAttribute{
-														Optional: true,
-													},
-													"tags": schema.MapAttribute{
-														Optional:    true,
-														ElementType: types.StringType,
-													},
-												},
-											},
-										},
-									},
-								},
-							},
 						},
 					},
 				},
@@ -268,7 +133,7 @@ func (r *AccessRoleResource) Schema(ctx context.Context, req resource.SchemaRequ
 	}
 }
 
-func (r *AccessRoleResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *MeshAccessAuditResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	// Prevent panic if the provider has not been configured.
 	if req.ProviderData == nil {
 		return
@@ -288,8 +153,8 @@ func (r *AccessRoleResource) Configure(ctx context.Context, req resource.Configu
 	r.client = client
 }
 
-func (r *AccessRoleResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *AccessRoleResourceModel
+func (r *MeshAccessAuditResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *MeshAccessAuditResourceModel
 	var plan types.Object
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
@@ -306,13 +171,13 @@ func (r *AccessRoleResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 
-	request, requestDiags := data.ToOperationsPutAccessRoleRequest(ctx)
+	request, requestDiags := data.ToOperationsPutAccessAuditRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.AccessRole.PutAccessRole(ctx, *request)
+	res, err := r.client.AccessAudit.PutAccessAudit(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -331,11 +196,11 @@ func (r *AccessRoleResource) Create(ctx context.Context, req resource.CreateRequ
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if !(res.AccessRoleCreateOrUpdateSuccessResponse != nil) {
+	if !(res.AccessAuditCreateOrUpdateSuccessResponse != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	resp.Diagnostics.Append(data.RefreshFromSharedAccessRoleCreateOrUpdateSuccessResponse(ctx, res.AccessRoleCreateOrUpdateSuccessResponse)...)
+	resp.Diagnostics.Append(data.RefreshFromSharedAccessAuditCreateOrUpdateSuccessResponse(ctx, res.AccessAuditCreateOrUpdateSuccessResponse)...)
 
 	if resp.Diagnostics.HasError() {
 		return
@@ -346,13 +211,13 @@ func (r *AccessRoleResource) Create(ctx context.Context, req resource.CreateRequ
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	request1, request1Diags := data.ToOperationsGetAccessRoleRequest(ctx)
+	request1, request1Diags := data.ToOperationsGetAccessAuditRequest(ctx)
 	resp.Diagnostics.Append(request1Diags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res1, err := r.client.AccessRole.GetAccessRole(ctx, *request1)
+	res1, err := r.client.AccessAudit.GetAccessAudit(ctx, *request1)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res1 != nil && res1.RawResponse != nil {
@@ -368,11 +233,11 @@ func (r *AccessRoleResource) Create(ctx context.Context, req resource.CreateRequ
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res1.StatusCode), debugResponse(res1.RawResponse))
 		return
 	}
-	if !(res1.AccessRoleItem != nil) {
+	if !(res1.AccessAuditItem != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
 		return
 	}
-	resp.Diagnostics.Append(data.RefreshFromSharedAccessRoleItem(ctx, res1.AccessRoleItem)...)
+	resp.Diagnostics.Append(data.RefreshFromSharedAccessAuditItem(ctx, res1.AccessAuditItem)...)
 
 	if resp.Diagnostics.HasError() {
 		return
@@ -388,8 +253,8 @@ func (r *AccessRoleResource) Create(ctx context.Context, req resource.CreateRequ
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *AccessRoleResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *AccessRoleResourceModel
+func (r *MeshAccessAuditResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *MeshAccessAuditResourceModel
 	var item types.Object
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &item)...)
@@ -406,13 +271,13 @@ func (r *AccessRoleResource) Read(ctx context.Context, req resource.ReadRequest,
 		return
 	}
 
-	request, requestDiags := data.ToOperationsGetAccessRoleRequest(ctx)
+	request, requestDiags := data.ToOperationsGetAccessAuditRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.AccessRole.GetAccessRole(ctx, *request)
+	res, err := r.client.AccessAudit.GetAccessAudit(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -432,11 +297,11 @@ func (r *AccessRoleResource) Read(ctx context.Context, req resource.ReadRequest,
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if !(res.AccessRoleItem != nil) {
+	if !(res.AccessAuditItem != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	resp.Diagnostics.Append(data.RefreshFromSharedAccessRoleItem(ctx, res.AccessRoleItem)...)
+	resp.Diagnostics.Append(data.RefreshFromSharedAccessAuditItem(ctx, res.AccessAuditItem)...)
 
 	if resp.Diagnostics.HasError() {
 		return
@@ -446,8 +311,8 @@ func (r *AccessRoleResource) Read(ctx context.Context, req resource.ReadRequest,
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *AccessRoleResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *AccessRoleResourceModel
+func (r *MeshAccessAuditResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *MeshAccessAuditResourceModel
 	var plan types.Object
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
@@ -460,13 +325,13 @@ func (r *AccessRoleResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 
-	request, requestDiags := data.ToOperationsPutAccessRoleRequest(ctx)
+	request, requestDiags := data.ToOperationsPutAccessAuditRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.AccessRole.PutAccessRole(ctx, *request)
+	res, err := r.client.AccessAudit.PutAccessAudit(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -485,11 +350,11 @@ func (r *AccessRoleResource) Update(ctx context.Context, req resource.UpdateRequ
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if !(res.AccessRoleCreateOrUpdateSuccessResponse != nil) {
+	if !(res.AccessAuditCreateOrUpdateSuccessResponse != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	resp.Diagnostics.Append(data.RefreshFromSharedAccessRoleCreateOrUpdateSuccessResponse(ctx, res.AccessRoleCreateOrUpdateSuccessResponse)...)
+	resp.Diagnostics.Append(data.RefreshFromSharedAccessAuditCreateOrUpdateSuccessResponse(ctx, res.AccessAuditCreateOrUpdateSuccessResponse)...)
 
 	if resp.Diagnostics.HasError() {
 		return
@@ -500,13 +365,13 @@ func (r *AccessRoleResource) Update(ctx context.Context, req resource.UpdateRequ
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	request1, request1Diags := data.ToOperationsGetAccessRoleRequest(ctx)
+	request1, request1Diags := data.ToOperationsGetAccessAuditRequest(ctx)
 	resp.Diagnostics.Append(request1Diags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res1, err := r.client.AccessRole.GetAccessRole(ctx, *request1)
+	res1, err := r.client.AccessAudit.GetAccessAudit(ctx, *request1)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res1 != nil && res1.RawResponse != nil {
@@ -522,11 +387,11 @@ func (r *AccessRoleResource) Update(ctx context.Context, req resource.UpdateRequ
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res1.StatusCode), debugResponse(res1.RawResponse))
 		return
 	}
-	if !(res1.AccessRoleItem != nil) {
+	if !(res1.AccessAuditItem != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
 		return
 	}
-	resp.Diagnostics.Append(data.RefreshFromSharedAccessRoleItem(ctx, res1.AccessRoleItem)...)
+	resp.Diagnostics.Append(data.RefreshFromSharedAccessAuditItem(ctx, res1.AccessAuditItem)...)
 
 	if resp.Diagnostics.HasError() {
 		return
@@ -542,8 +407,8 @@ func (r *AccessRoleResource) Update(ctx context.Context, req resource.UpdateRequ
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *AccessRoleResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *AccessRoleResourceModel
+func (r *MeshAccessAuditResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *MeshAccessAuditResourceModel
 	var item types.Object
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &item)...)
@@ -560,13 +425,13 @@ func (r *AccessRoleResource) Delete(ctx context.Context, req resource.DeleteRequ
 		return
 	}
 
-	request, requestDiags := data.ToOperationsDeleteAccessRoleRequest(ctx)
+	request, requestDiags := data.ToOperationsDeleteAccessAuditRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.AccessRole.DeleteAccessRole(ctx, *request)
+	res, err := r.client.AccessAudit.DeleteAccessAudit(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -585,6 +450,6 @@ func (r *AccessRoleResource) Delete(ctx context.Context, req resource.DeleteRequ
 
 }
 
-func (r *AccessRoleResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+func (r *MeshAccessAuditResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("name"), req.ID)...)
 }
