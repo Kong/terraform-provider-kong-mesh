@@ -1,7 +1,7 @@
 # Changelog
 
-## 0.8.0
-> Released on 2026/02/06
+## 0.8.1
+> Released on 2026/02/09
 >
 > - feat(resources): add new `kong-mesh_access_audit` resource for managing access audit rules (#118)
 > - feat(resources): add new `kong-mesh_access_role` resource for managing RBAC access roles with fine-grained rule definitions (#118)
