@@ -29,23 +29,14 @@ func (r *MeshAccessRoleBindingResource) ModifyPlan(
 		resp.Diagnostics.Append(diags...)
 		return
 	}
-	var mesh types.String
-	if diags := req.Plan.GetAttribute(ctx, path.Root("mesh"), &mesh); diags.HasError() {
-		resp.Diagnostics.Append(diags...)
-		return
-	}
 
 	if name.IsUnknown() {
-		return
-	}
-	if mesh.IsUnknown() {
 		return
 	}
 
 	request := operations.GetAccessRoleBindingRequest{
 		Name: name.ValueString(),
 	}
-	request.Mesh = mesh.ValueString()
 	res, err := r.client.AccessRoleBinding.GetAccessRoleBinding(ctx, request)
 
 	if err != nil {
@@ -72,7 +63,7 @@ func (r *MeshAccessRoleBindingResource) ModifyPlan(
 	if res.StatusCode != http.StatusNotFound {
 		resp.Diagnostics.AddError(
 			"MeshAccessRoleBinding already exists",
-			"A resource with the name "+name.String()+" already exists in the mesh "+mesh.String()+" - to be managed via Terraform it needs to be imported first",
+			"A resource with the name "+name.String()+" already exists - to be managed via Terraform it needs to be imported first",
 		)
 	}
 }
