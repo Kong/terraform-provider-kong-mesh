@@ -2406,7 +2406,7 @@ paths:
   '/meshes/{mesh}/secrets':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: SecretList#get
+        terraform-resource: MeshSecretList#get
         terraform-datasource: null
       operationId: getSecretList
       summary: Returns a list of Secret in the mesh.
@@ -2540,7 +2540,7 @@ paths:
   /zoneegresses:
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: ZoneEgressList#get
+        terraform-resource: MeshZoneEgressList#get
         terraform-datasource: null
       operationId: getZoneEgressList
       summary: Returns a list of ZoneEgress in the mesh.
@@ -2650,7 +2650,7 @@ paths:
   /zoneingresses:
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: ZoneIngressList#get
+        terraform-resource: MeshZoneIngressList#get
         terraform-datasource: null
       operationId: getZoneIngressList
       summary: Returns a list of ZoneIngress in the mesh.
@@ -2828,7 +2828,7 @@ paths:
   /hostnamegenerators:
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: HostnameGeneratorList#get
+        terraform-resource: MeshHostnameGeneratorList#get
         terraform-datasource: null
       operationId: getHostnameGeneratorList
       summary: Returns a list of HostnameGenerator in the mesh.
@@ -3626,7 +3626,7 @@ paths:
   '/meshes/{mesh}/workloads':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: WorkloadList#get
+        terraform-resource: MeshWorkloadList#get
         terraform-datasource: null
       operationId: getWorkloadList
       summary: Returns a list of Workload in the mesh.
@@ -3942,7 +3942,7 @@ paths:
   /accessaudits:
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: AccessAuditList#get
+        terraform-resource: MeshAccessAuditList#get
         terraform-datasource: null
       operationId: getAccessAuditList
       summary: Returns a list of AccessAudit in the mesh.
@@ -3984,7 +3984,7 @@ paths:
   '/accessaudits/{name}':
     delete:
       x-speakeasy-entity-operation:
-        terraform-resource: AccessAudit#delete
+        terraform-resource: MeshAccessAudit#delete
         terraform-datasource: null
       operationId: deleteAccessAudit
       summary: Deletes AccessAudit entity
@@ -4004,7 +4004,7 @@ paths:
         - AccessAudit
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: AccessAudit#get
+        terraform-resource: MeshAccessAudit#get
         terraform-datasource: null
       operationId: getAccessAudit
       summary: Returns AccessAudit entity
@@ -4024,7 +4024,7 @@ paths:
         - AccessAudit
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'AccessAudit#create,update'
+        terraform-resource: 'MeshAccessAudit#create,update'
         terraform-datasource: null
       operationId: putAccessAudit
       summary: Creates or Updates AccessAudit entity
@@ -4052,7 +4052,7 @@ paths:
   /access-roles:
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: AccessRoleList#get
+        terraform-resource: MeshAccessRoleList#get
         terraform-datasource: null
       operationId: getAccessRoleList
       summary: Returns a list of AccessRole in the mesh.
@@ -4094,7 +4094,7 @@ paths:
   '/access-roles/{name}':
     delete:
       x-speakeasy-entity-operation:
-        terraform-resource: AccessRole#delete
+        terraform-resource: MeshAccessRole#delete
         terraform-datasource: null
       operationId: deleteAccessRole
       summary: Deletes AccessRole entity
@@ -4114,7 +4114,7 @@ paths:
         - AccessRole
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: AccessRole#get
+        terraform-resource: MeshAccessRole#get
         terraform-datasource: null
       operationId: getAccessRole
       summary: Returns AccessRole entity
@@ -4134,7 +4134,7 @@ paths:
         - AccessRole
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'AccessRole#create,update'
+        terraform-resource: 'MeshAccessRole#create,update'
         terraform-datasource: null
       operationId: putAccessRole
       summary: Creates or Updates AccessRole entity
@@ -4162,7 +4162,7 @@ paths:
   /access-role-bindings:
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: AccessRoleBindingList#get
+        terraform-resource: MeshAccessRoleBindingList#get
         terraform-datasource: null
       operationId: getAccessRoleBindingList
       summary: Returns a list of AccessRoleBinding in the mesh.
@@ -4204,7 +4204,7 @@ paths:
   '/access-role-bindings/{name}':
     delete:
       x-speakeasy-entity-operation:
-        terraform-resource: AccessRoleBinding#delete
+        terraform-resource: MeshAccessRoleBinding#delete
         terraform-datasource: null
       operationId: deleteAccessRoleBinding
       summary: Deletes AccessRoleBinding entity
@@ -4224,7 +4224,7 @@ paths:
         - AccessRoleBinding
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: AccessRoleBinding#get
+        terraform-resource: MeshAccessRoleBinding#get
         terraform-datasource: null
       operationId: getAccessRoleBinding
       summary: Returns AccessRoleBinding entity
@@ -4244,7 +4244,7 @@ paths:
         - AccessRoleBinding
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'AccessRoleBinding#create,update'
+        terraform-resource: 'MeshAccessRoleBinding#create,update'
         terraform-datasource: null
       operationId: putAccessRoleBinding
       summary: Creates or Updates AccessRoleBinding entity
