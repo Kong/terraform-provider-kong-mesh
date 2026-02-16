@@ -46,7 +46,7 @@ acceptance:
 	@TF_ACC=1 go test -count=1 -v ./tests/resources
 
 # renovate: datasource=go depName=Kong/shared-speakeasy/resource_plan_modifier packageName=github.com/Kong/shared-speakeasy/generators/resource_plan_modifier
-RESOURCE_PLAN_MODIFIER_VERSION := v0.0.15
+RESOURCE_PLAN_MODIFIER_VERSION := v0.0.16
 
 PLAN_MOD_CMD = $(if $(wildcard go.work),go run ../shared-speakeasy/generators/resource_plan_modifier,go run github.com/Kong/shared-speakeasy/generators/resource_plan_modifier@$(RESOURCE_PLAN_MODIFIER_VERSION))
 
