@@ -17,7 +17,7 @@ jobs:
       contents: write
       issues: write
       pull-requests: write
-    uses: kumahq/.github/.github/workflows/wfc_lifecycle.yml@ec5a7f83fb1f5b03707118050147a70fd115c231
+    uses: kumahq/.github/.github/workflows/wfc_lifecycle.yml@cef9faf9914617521b46996e260a95a37b994dc1
     with:
       # These files to sync are OSS things which have no place here
       filesToIgnore: "CODE_OF_CONDUCT.md,LICENSE,SECURITY.md,CODEOWNERS,GOVERNANCE.md,CONTRIBUTING.md"
