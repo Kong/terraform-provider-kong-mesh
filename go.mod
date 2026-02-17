@@ -1,6 +1,6 @@
 module github.com/kong/terraform-provider-kong-mesh
 
-go 1.24.1
+go 1.26.0
 
 require (
 	github.com/Kong/shared-speakeasy/customtypes v0.2.5
