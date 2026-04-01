@@ -9,7 +9,6 @@ speakeasy: check-speakeasy
 	speakeasy run --skip-versioning --output console --minimal
 	@go mod tidy
 	@go generate .
-	@git clean -fd docs > /dev/null
 	@git checkout -- README.md
 	@rm USAGE.md
 
