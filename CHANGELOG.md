@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.2
+> Released on 2026/04/01
+>
+> - chore(docs): generate documentation
+
 ## 0.8.1
 > Released on 2026/02/09
 >
