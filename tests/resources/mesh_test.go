@@ -55,7 +55,7 @@ func TestMesh(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("should create a mesh without initial policies", func(t *testing.T) {
-		serverURL := fmt.Sprintf("http://localhost:%d", port.Int())
+		serverURL := fmt.Sprintf("http://localhost:%d", port.Num())
 		builder := hclbuilder.NewWithProvider(hclbuilder.KongMesh, serverURL)
 
 		meshName := "m0"
@@ -95,7 +95,7 @@ resource "kong-mesh_mesh" "%s" {
 	})
 
 	t.Run("create a mesh and modify fields on it", func(t *testing.T) {
-		serverURL := fmt.Sprintf("http://localhost:%d", port.Int())
+		serverURL := fmt.Sprintf("http://localhost:%d", port.Num())
 		builder := hclbuilder.NewWithProvider(hclbuilder.KongMesh, serverURL)
 
 		meshName := "m1"
@@ -113,7 +113,7 @@ resource "kong-mesh_mesh" "%s" {
 	})
 
 	t.Run("create a policy and modify fields on it", func(t *testing.T) {
-		serverURL := fmt.Sprintf("http://localhost:%d", port.Int())
+		serverURL := fmt.Sprintf("http://localhost:%d", port.Num())
 		builder := hclbuilder.NewWithProvider(hclbuilder.KongMesh, serverURL)
 
 		meshName := "policy-test-mesh"
@@ -145,7 +145,7 @@ resource "kong-mesh_mesh_traffic_permission" "%s" {
 		meshName := "policy-test-mesh-2"
 		meshResourceName := "test_mesh"
 		mtpName := "allow-all"
-		serverURL := fmt.Sprintf("http://localhost:%d", port.Int())
+		serverURL := fmt.Sprintf("http://localhost:%d", port.Num())
 
 		builder := hclbuilder.NewWithProvider(hclbuilder.KongMesh, serverURL)
 
@@ -173,7 +173,7 @@ resource "kong-mesh_mesh_traffic_permission" "%s" {
 	t.Run("should be able to store secrets", func(t *testing.T) {
 		meshName := "m4"
 		meshResourceName := "test_mesh"
-		serverURL := fmt.Sprintf("http://localhost:%d", port.Int())
+		serverURL := fmt.Sprintf("http://localhost:%d", port.Num())
 
 		builder := hclbuilder.NewWithProvider(hclbuilder.KongMesh, serverURL)
 
