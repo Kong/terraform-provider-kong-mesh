@@ -4,5 +4,5 @@ package types
 
 type MeshCircuitBreakerItemFrom struct {
 	Default   *MeshCircuitBreakerItemDefault `tfsdk:"default"`
-	TargetRef MeshAccessLogItemTargetRef     `tfsdk:"target_ref"`
+	TargetRef *MeshAccessLogItemTargetRef    `tfsdk:"target_ref"`
 }

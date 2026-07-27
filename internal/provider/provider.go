@@ -4,8 +4,11 @@ package provider
 
 import (
 	"context"
+	"github.com/hashicorp/terraform-plugin-framework/action"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/ephemeral"
+	"github.com/hashicorp/terraform-plugin-framework/function"
+	"github.com/hashicorp/terraform-plugin-framework/list"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -17,7 +20,9 @@ import (
 )
 
 var _ provider.Provider = (*KongMeshProvider)(nil)
+var _ provider.ProviderWithActions = (*KongMeshProvider)(nil)
 var _ provider.ProviderWithEphemeralResources = (*KongMeshProvider)(nil)
+var _ provider.ProviderWithFunctions = (*KongMeshProvider)(nil)
 
 type KongMeshProvider struct {
 	// version is set to the provider version on release, "dev" when the
@@ -120,9 +125,19 @@ func (p *KongMeshProvider) Configure(ctx context.Context, req provider.Configure
 	}
 
 	client := sdk.New(opts...)
+	resp.ActionData = client
 	resp.DataSourceData = client
 	resp.EphemeralResourceData = client
+	resp.ListResourceData = client
 	resp.ResourceData = client
+}
+
+func (p *KongMeshProvider) Functions(_ context.Context) []func() function.Function {
+	return []func() function.Function{}
+}
+
+func (p *KongMeshProvider) Actions(_ context.Context) []func() action.Action {
+	return []func() action.Action{}
 }
 
 func (p *KongMeshProvider) Resources(ctx context.Context) []func() resource.Resource {
@@ -137,9 +152,9 @@ func (p *KongMeshProvider) Resources(ctx context.Context) []func() resource.Reso
 		NewMeshFaultInjectionResource,
 		NewMeshGatewayResource,
 		NewMeshGlobalRateLimitResource,
+		NewMeshHTTPRouteResource,
 		NewMeshHealthCheckResource,
 		NewMeshHostnameGeneratorResource,
-		NewMeshHTTPRouteResource,
 		NewMeshIdentityResource,
 		NewMeshLoadBalancingStrategyResource,
 		NewMeshMetricResource,
@@ -152,8 +167,8 @@ func (p *KongMeshProvider) Resources(ctx context.Context) []func() resource.Reso
 		NewMeshSecretResource,
 		NewMeshServiceResource,
 		NewMeshTCPRouteResource,
-		NewMeshTimeoutResource,
 		NewMeshTLSResource,
+		NewMeshTimeoutResource,
 		NewMeshTraceResource,
 		NewMeshTrafficPermissionResource,
 		NewMeshTrustResource,
@@ -169,6 +184,10 @@ func (p *KongMeshProvider) DataSources(ctx context.Context) []func() datasource.
 
 func (p *KongMeshProvider) EphemeralResources(ctx context.Context) []func() ephemeral.EphemeralResource {
 	return []func() ephemeral.EphemeralResource{}
+}
+
+func (p *KongMeshProvider) ListResources(ctx context.Context) []func() list.ListResource {
+	return []func() list.ListResource{}
 }
 
 func New(version string) func() provider.Provider {

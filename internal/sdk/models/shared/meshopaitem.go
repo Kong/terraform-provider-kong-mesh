@@ -128,20 +128,16 @@ const (
 func (e OnAgentFailure) ToPointer() *OnAgentFailure {
 	return &e
 }
-func (e *OnAgentFailure) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *OnAgentFailure) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Allow", "Deny":
+			return true
+		}
 	}
-	switch v {
-	case "Allow":
-		fallthrough
-	case "Deny":
-		*e = OnAgentFailure(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for OnAgentFailure: %v", v)
-	}
+	return false
 }
 
 // RequestBody configuration to apply on the request body sent to the
@@ -261,34 +257,16 @@ const (
 func (e MeshOPAItemKind) ToPointer() *MeshOPAItemKind {
 	return &e
 }
-func (e *MeshOPAItemKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshOPAItemKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshOPAItemKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshOPAItemKind: %v", v)
-	}
+	return false
 }
 
 type MeshOPAItemProxyTypes string
@@ -301,20 +279,16 @@ const (
 func (e MeshOPAItemProxyTypes) ToPointer() *MeshOPAItemProxyTypes {
 	return &e
 }
-func (e *MeshOPAItemProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshOPAItemProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshOPAItemProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshOPAItemProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshOPAItemTargetRef - TargetRef is a reference to the resource the policy takes an effect on.
@@ -449,7 +423,7 @@ func (m MeshOPAItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshOPAItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -530,7 +504,7 @@ func (m MeshOPAItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshOPAItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil

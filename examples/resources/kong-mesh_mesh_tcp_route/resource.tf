@@ -43,7 +43,7 @@ resource "kong-mesh_mesh_tcp_route" "my_meshtcproute" {
                   tags = {
                     key = "value"
                   }
-                  weight = 10
+                  weight = 1
                 }
               ]
             }

@@ -47,26 +47,16 @@ const (
 func (e Op) ToPointer() *Op {
 	return &e
 }
-func (e *Op) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *Op) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "add", "remove", "replace", "move", "copy":
+			return true
+		}
 	}
-	switch v {
-	case "add":
-		fallthrough
-	case "remove":
-		fallthrough
-	case "replace":
-		fallthrough
-	case "move":
-		fallthrough
-	case "copy":
-		*e = Op(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for Op: %v", v)
-	}
+	return false
 }
 
 // JSONPatches - JsonPatchBlock is one json patch operation block.
@@ -156,22 +146,16 @@ const (
 func (e Operation) ToPointer() *Operation {
 	return &e
 }
-func (e *Operation) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *Operation) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Add", "Remove", "Patch":
+			return true
+		}
 	}
-	switch v {
-	case "Add":
-		fallthrough
-	case "Remove":
-		fallthrough
-	case "Patch":
-		*e = Operation(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for Operation: %v", v)
-	}
+	return false
 }
 
 // Cluster is a modification of Envoy's Cluster resource.
@@ -229,26 +213,16 @@ const (
 func (e MeshProxyPatchItemOp) ToPointer() *MeshProxyPatchItemOp {
 	return &e
 }
-func (e *MeshProxyPatchItemOp) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshProxyPatchItemOp) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "add", "remove", "replace", "move", "copy":
+			return true
+		}
 	}
-	switch v {
-	case "add":
-		fallthrough
-	case "remove":
-		fallthrough
-	case "replace":
-		fallthrough
-	case "move":
-		fallthrough
-	case "copy":
-		*e = MeshProxyPatchItemOp(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshProxyPatchItemOp: %v", v)
-	}
+	return false
 }
 
 // MeshProxyPatchItemJSONPatches - JsonPatchBlock is one json patch operation block.
@@ -359,28 +333,16 @@ const (
 func (e MeshProxyPatchItemOperation) ToPointer() *MeshProxyPatchItemOperation {
 	return &e
 }
-func (e *MeshProxyPatchItemOperation) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshProxyPatchItemOperation) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Remove", "Patch", "AddFirst", "AddBefore", "AddAfter", "AddLast":
+			return true
+		}
 	}
-	switch v {
-	case "Remove":
-		fallthrough
-	case "Patch":
-		fallthrough
-	case "AddFirst":
-		fallthrough
-	case "AddBefore":
-		fallthrough
-	case "AddAfter":
-		fallthrough
-	case "AddLast":
-		*e = MeshProxyPatchItemOperation(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshProxyPatchItemOperation: %v", v)
-	}
+	return false
 }
 
 // HTTPFilter is a modification of Envoy HTTP Filter
@@ -439,26 +401,16 @@ const (
 func (e MeshProxyPatchItemSpecOp) ToPointer() *MeshProxyPatchItemSpecOp {
 	return &e
 }
-func (e *MeshProxyPatchItemSpecOp) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshProxyPatchItemSpecOp) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "add", "remove", "replace", "move", "copy":
+			return true
+		}
 	}
-	switch v {
-	case "add":
-		fallthrough
-	case "remove":
-		fallthrough
-	case "replace":
-		fallthrough
-	case "move":
-		fallthrough
-	case "copy":
-		*e = MeshProxyPatchItemSpecOp(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshProxyPatchItemSpecOp: %v", v)
-	}
+	return false
 }
 
 // MeshProxyPatchItemSpecJSONPatches - JsonPatchBlock is one json patch operation block.
@@ -557,22 +509,16 @@ const (
 func (e MeshProxyPatchItemSpecOperation) ToPointer() *MeshProxyPatchItemSpecOperation {
 	return &e
 }
-func (e *MeshProxyPatchItemSpecOperation) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshProxyPatchItemSpecOperation) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Add", "Remove", "Patch":
+			return true
+		}
 	}
-	switch v {
-	case "Add":
-		fallthrough
-	case "Remove":
-		fallthrough
-	case "Patch":
-		*e = MeshProxyPatchItemSpecOperation(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshProxyPatchItemSpecOperation: %v", v)
-	}
+	return false
 }
 
 // Listener is a modification of Envoy's Listener resource.
@@ -630,26 +576,16 @@ const (
 func (e MeshProxyPatchItemSpecDefaultOp) ToPointer() *MeshProxyPatchItemSpecDefaultOp {
 	return &e
 }
-func (e *MeshProxyPatchItemSpecDefaultOp) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshProxyPatchItemSpecDefaultOp) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "add", "remove", "replace", "move", "copy":
+			return true
+		}
 	}
-	switch v {
-	case "add":
-		fallthrough
-	case "remove":
-		fallthrough
-	case "replace":
-		fallthrough
-	case "move":
-		fallthrough
-	case "copy":
-		*e = MeshProxyPatchItemSpecDefaultOp(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshProxyPatchItemSpecDefaultOp: %v", v)
-	}
+	return false
 }
 
 // MeshProxyPatchItemSpecDefaultJSONPatches - JsonPatchBlock is one json patch operation block.
@@ -760,28 +696,16 @@ const (
 func (e MeshProxyPatchItemSpecDefaultOperation) ToPointer() *MeshProxyPatchItemSpecDefaultOperation {
 	return &e
 }
-func (e *MeshProxyPatchItemSpecDefaultOperation) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshProxyPatchItemSpecDefaultOperation) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Remove", "Patch", "AddFirst", "AddBefore", "AddAfter", "AddLast":
+			return true
+		}
 	}
-	switch v {
-	case "Remove":
-		fallthrough
-	case "Patch":
-		fallthrough
-	case "AddFirst":
-		fallthrough
-	case "AddBefore":
-		fallthrough
-	case "AddAfter":
-		fallthrough
-	case "AddLast":
-		*e = MeshProxyPatchItemSpecDefaultOperation(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshProxyPatchItemSpecDefaultOperation: %v", v)
-	}
+	return false
 }
 
 // NetworkFilter is a modification of Envoy Listener's filter.
@@ -839,26 +763,16 @@ const (
 func (e MeshProxyPatchItemSpecDefaultAppendModificationsOp) ToPointer() *MeshProxyPatchItemSpecDefaultAppendModificationsOp {
 	return &e
 }
-func (e *MeshProxyPatchItemSpecDefaultAppendModificationsOp) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshProxyPatchItemSpecDefaultAppendModificationsOp) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "add", "remove", "replace", "move", "copy":
+			return true
+		}
 	}
-	switch v {
-	case "add":
-		fallthrough
-	case "remove":
-		fallthrough
-	case "replace":
-		fallthrough
-	case "move":
-		fallthrough
-	case "copy":
-		*e = MeshProxyPatchItemSpecDefaultAppendModificationsOp(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshProxyPatchItemSpecDefaultAppendModificationsOp: %v", v)
-	}
+	return false
 }
 
 // MeshProxyPatchItemSpecDefaultAppendModificationsJSONPatches - JsonPatchBlock is one json patch operation block.
@@ -957,22 +871,16 @@ const (
 func (e MeshProxyPatchItemSpecDefaultAppendModificationsOperation) ToPointer() *MeshProxyPatchItemSpecDefaultAppendModificationsOperation {
 	return &e
 }
-func (e *MeshProxyPatchItemSpecDefaultAppendModificationsOperation) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshProxyPatchItemSpecDefaultAppendModificationsOperation) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Add", "Remove", "Patch":
+			return true
+		}
 	}
-	switch v {
-	case "Add":
-		fallthrough
-	case "Remove":
-		fallthrough
-	case "Patch":
-		*e = MeshProxyPatchItemSpecDefaultAppendModificationsOperation(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshProxyPatchItemSpecDefaultAppendModificationsOperation: %v", v)
-	}
+	return false
 }
 
 // VirtualHost is a modification of Envoy's VirtualHost
@@ -1099,34 +1007,16 @@ const (
 func (e MeshProxyPatchItemKind) ToPointer() *MeshProxyPatchItemKind {
 	return &e
 }
-func (e *MeshProxyPatchItemKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshProxyPatchItemKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshProxyPatchItemKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshProxyPatchItemKind: %v", v)
-	}
+	return false
 }
 
 type MeshProxyPatchItemProxyTypes string
@@ -1139,20 +1029,16 @@ const (
 func (e MeshProxyPatchItemProxyTypes) ToPointer() *MeshProxyPatchItemProxyTypes {
 	return &e
 }
-func (e *MeshProxyPatchItemProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshProxyPatchItemProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshProxyPatchItemProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshProxyPatchItemProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshProxyPatchItemTargetRef - TargetRef is a reference to the resource the policy takes an effect on.
@@ -1289,7 +1175,7 @@ func (m MeshProxyPatchItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshProxyPatchItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -1370,7 +1256,7 @@ func (m MeshProxyPatchItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshProxyPatchItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil

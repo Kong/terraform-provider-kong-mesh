@@ -3,5 +3,5 @@
 package types
 
 type MeshTrafficPermissionItemRules struct {
-	Default MeshTrafficPermissionItemSpecDefault `tfsdk:"default"`
+	Default *MeshTrafficPermissionItemSpecDefault `tfsdk:"default"`
 }

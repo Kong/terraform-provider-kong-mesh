@@ -13,12 +13,17 @@ generation:
     requestResponseComponentNamesFeb2024: true
     securityFeb2025: false
     sharedErrorComponentsApr2025: false
+    sharedNestedComponentsJan2026: false
+    nameOverrideFeb2026: false
   auth:
     oAuth2ClientCredentialsEnabled: false
     oAuth2PasswordEnabled: false
     hoistGlobalSecurity: true
   schemas:
     allOfMergeStrategy: shallowMerge
+  requestBodyFieldName: ""
+  versioningStrategy: automatic
+  persistentEdits: {}
   tests:
     generateTests: true
     generateNewTests: false
@@ -28,6 +33,7 @@ go:
   version: 1.24.1
 terraform:
   version: 0.8.2
+  additionalActions: []
   additionalDataSources: []
   additionalDependencies:
     github.com/Kong/shared-speakeasy/customtypes: v0.2.5
@@ -35,19 +41,28 @@ terraform:
     github.com/Kong/shared-speakeasy/hooks/mesh_defaults: v0.0.4
     github.com/Kong/shared-speakeasy/planmodifiers/arbitrary_json: v0.0.1
     github.com/Kong/shared-speakeasy/planmodifiers/suppress_zero_null: v0.0.1
-    github.com/hashicorp/terraform-plugin-testing: v1.13.3
+    github.com/hashicorp/terraform-plugin-testing: v1.15.0
   additionalEphemeralResources: []
+  additionalFunctions: []
+  additionalListResources: []
   additionalProviderAttributes:
     httpHeaders: ""
+    tlsSkipVerify: ""
   additionalResources: []
   allowUnknownFieldsInWeakUnions: false
   author: kong
   baseErrorName: KongMeshError
+  debugLogging: {}
   defaultErrorName: SDKError
+  enableCustomCodeRegions: false
+  enableOperationSecurity: false
+  enableOperationServers: false
   enableTypeDeduplication: true
   environmentVariables:
     - env: SERVER_URL
       providerAttribute: server_url
+  excludeEmptyObjectSchemas: false
+  forwardCompatibleEnumsByDefault: false
   imports:
     option: openapi
     paths:
@@ -56,5 +71,11 @@ terraform:
       operations: operations
       shared: shared
       webhooks: webhooks
+  includeEmptyObjects: false
+  inferUnionDiscriminators: false
   packageName: kong-mesh
-  unionDeserializationStrategy: populated-fields
+  preApplyUnionDiscriminators: false
+  providerTypeNameOverride: ""
+  respectRequiredFields: false
+  respectTitlesForPrimitiveUnionMembers: false
+  unionStrategy: populated-fields

@@ -40,6 +40,7 @@ func (r *MeshFaultInjectionResourceModel) RefreshFromSharedMeshFaultInjectionIte
 		r.Mesh = types.StringPointerValue(resp.Mesh)
 		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
+		r.Spec = &tfTypes.MeshFaultInjectionItemSpec{}
 		r.Spec.From = []tfTypes.MeshFaultInjectionItemFrom{}
 
 		for _, fromItem := range resp.Spec.From {
@@ -59,6 +60,9 @@ func (r *MeshFaultInjectionResourceModel) RefreshFromSharedMeshFaultInjectionIte
 					} else {
 						http.Abort = &tfTypes.Abort{}
 						http.Abort.HTTPStatus = types.Int32Value(int32(httpItem.Abort.HTTPStatus))
+						if http.Abort.Percentage == nil {
+							http.Abort.Percentage = &tfTypes.Mode{}
+						}
 						if httpItem.Abort.Percentage.Integer != nil {
 							http.Abort.Percentage.Integer = types.Int64PointerValue(httpItem.Abort.Percentage.Integer)
 						}
@@ -70,6 +74,9 @@ func (r *MeshFaultInjectionResourceModel) RefreshFromSharedMeshFaultInjectionIte
 						http.Delay = nil
 					} else {
 						http.Delay = &tfTypes.Delay{}
+						if http.Delay.Percentage == nil {
+							http.Delay.Percentage = &tfTypes.Mode{}
+						}
 						if httpItem.Delay.Percentage.Integer != nil {
 							http.Delay.Percentage.Integer = types.Int64PointerValue(httpItem.Delay.Percentage.Integer)
 						}
@@ -83,6 +90,9 @@ func (r *MeshFaultInjectionResourceModel) RefreshFromSharedMeshFaultInjectionIte
 					} else {
 						http.ResponseBandwidth = &tfTypes.ResponseBandwidth{}
 						http.ResponseBandwidth.Limit = types.StringValue(httpItem.ResponseBandwidth.Limit)
+						if http.ResponseBandwidth.Percentage == nil {
+							http.ResponseBandwidth.Percentage = &tfTypes.Mode{}
+						}
 						if httpItem.ResponseBandwidth.Percentage.Integer != nil {
 							http.ResponseBandwidth.Percentage.Integer = types.Int64PointerValue(httpItem.ResponseBandwidth.Percentage.Integer)
 						}
@@ -94,6 +104,7 @@ func (r *MeshFaultInjectionResourceModel) RefreshFromSharedMeshFaultInjectionIte
 					from.Default.HTTP = append(from.Default.HTTP, http)
 				}
 			}
+			from.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
 			from.TargetRef.Kind = types.StringValue(string(fromItem.TargetRef.Kind))
 			if len(fromItem.TargetRef.Labels) > 0 {
 				from.TargetRef.Labels = make(map[string]types.String, len(fromItem.TargetRef.Labels))
@@ -123,6 +134,7 @@ func (r *MeshFaultInjectionResourceModel) RefreshFromSharedMeshFaultInjectionIte
 		for _, rulesItem := range resp.Spec.Rules {
 			var rules tfTypes.MeshFaultInjectionItemRules
 
+			rules.Default = &tfTypes.MeshFaultInjectionItemDefault{}
 			rules.Default.HTTP = []tfTypes.HTTP{}
 
 			for _, httpItem1 := range rulesItem.Default.HTTP {
@@ -133,6 +145,9 @@ func (r *MeshFaultInjectionResourceModel) RefreshFromSharedMeshFaultInjectionIte
 				} else {
 					http1.Abort = &tfTypes.Abort{}
 					http1.Abort.HTTPStatus = types.Int32Value(int32(httpItem1.Abort.HTTPStatus))
+					if http1.Abort.Percentage == nil {
+						http1.Abort.Percentage = &tfTypes.Mode{}
+					}
 					if httpItem1.Abort.Percentage.Integer != nil {
 						http1.Abort.Percentage.Integer = types.Int64PointerValue(httpItem1.Abort.Percentage.Integer)
 					}
@@ -144,6 +159,9 @@ func (r *MeshFaultInjectionResourceModel) RefreshFromSharedMeshFaultInjectionIte
 					http1.Delay = nil
 				} else {
 					http1.Delay = &tfTypes.Delay{}
+					if http1.Delay.Percentage == nil {
+						http1.Delay.Percentage = &tfTypes.Mode{}
+					}
 					if httpItem1.Delay.Percentage.Integer != nil {
 						http1.Delay.Percentage.Integer = types.Int64PointerValue(httpItem1.Delay.Percentage.Integer)
 					}
@@ -157,6 +175,9 @@ func (r *MeshFaultInjectionResourceModel) RefreshFromSharedMeshFaultInjectionIte
 				} else {
 					http1.ResponseBandwidth = &tfTypes.ResponseBandwidth{}
 					http1.ResponseBandwidth.Limit = types.StringValue(httpItem1.ResponseBandwidth.Limit)
+					if http1.ResponseBandwidth.Percentage == nil {
+						http1.ResponseBandwidth.Percentage = &tfTypes.Mode{}
+					}
 					if httpItem1.ResponseBandwidth.Percentage.Integer != nil {
 						http1.ResponseBandwidth.Percentage.Integer = types.Int64PointerValue(httpItem1.ResponseBandwidth.Percentage.Integer)
 					}
@@ -230,6 +251,9 @@ func (r *MeshFaultInjectionResourceModel) RefreshFromSharedMeshFaultInjectionIte
 					} else {
 						http2.Abort = &tfTypes.Abort{}
 						http2.Abort.HTTPStatus = types.Int32Value(int32(httpItem2.Abort.HTTPStatus))
+						if http2.Abort.Percentage == nil {
+							http2.Abort.Percentage = &tfTypes.Mode{}
+						}
 						if httpItem2.Abort.Percentage.Integer != nil {
 							http2.Abort.Percentage.Integer = types.Int64PointerValue(httpItem2.Abort.Percentage.Integer)
 						}
@@ -241,6 +265,9 @@ func (r *MeshFaultInjectionResourceModel) RefreshFromSharedMeshFaultInjectionIte
 						http2.Delay = nil
 					} else {
 						http2.Delay = &tfTypes.Delay{}
+						if http2.Delay.Percentage == nil {
+							http2.Delay.Percentage = &tfTypes.Mode{}
+						}
 						if httpItem2.Delay.Percentage.Integer != nil {
 							http2.Delay.Percentage.Integer = types.Int64PointerValue(httpItem2.Delay.Percentage.Integer)
 						}
@@ -254,6 +281,9 @@ func (r *MeshFaultInjectionResourceModel) RefreshFromSharedMeshFaultInjectionIte
 					} else {
 						http2.ResponseBandwidth = &tfTypes.ResponseBandwidth{}
 						http2.ResponseBandwidth.Limit = types.StringValue(httpItem2.ResponseBandwidth.Limit)
+						if http2.ResponseBandwidth.Percentage == nil {
+							http2.ResponseBandwidth.Percentage = &tfTypes.Mode{}
+						}
 						if httpItem2.ResponseBandwidth.Percentage.Integer != nil {
 							http2.ResponseBandwidth.Percentage.Integer = types.Int64PointerValue(httpItem2.ResponseBandwidth.Percentage.Integer)
 						}
@@ -265,6 +295,7 @@ func (r *MeshFaultInjectionResourceModel) RefreshFromSharedMeshFaultInjectionIte
 					to.Default.HTTP = append(to.Default.HTTP, http2)
 				}
 			}
+			to.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
 			to.TargetRef.Kind = types.StringValue(string(toItem.TargetRef.Kind))
 			if len(toItem.TargetRef.Labels) > 0 {
 				to.TargetRef.Labels = make(map[string]types.String, len(toItem.TargetRef.Labels))
@@ -372,20 +403,20 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 		diags.Append(r.Labels.ElementsAs(ctx, &labels, true)...)
 	}
 	from := make([]shared.MeshFaultInjectionItemFrom, 0, len(r.Spec.From))
-	for _, fromItem := range r.Spec.From {
+	for fromIndex := range r.Spec.From {
 		var defaultVar *shared.MeshFaultInjectionItemDefault
-		if fromItem.Default != nil {
-			http := make([]shared.HTTP, 0, len(fromItem.Default.HTTP))
-			for _, httpItem := range fromItem.Default.HTTP {
+		if r.Spec.From[fromIndex].Default != nil {
+			http := make([]shared.HTTP, 0, len(r.Spec.From[fromIndex].Default.HTTP))
+			for httpIndex := range r.Spec.From[fromIndex].Default.HTTP {
 				var abort *shared.Abort
-				if httpItem.Abort != nil {
+				if r.Spec.From[fromIndex].Default.HTTP[httpIndex].Abort != nil {
 					var httpStatus int
-					httpStatus = int(httpItem.Abort.HTTPStatus.ValueInt32())
+					httpStatus = int(r.Spec.From[fromIndex].Default.HTTP[httpIndex].Abort.HTTPStatus.ValueInt32())
 
 					var percentage shared.Percentage
 					integer := new(int64)
-					if !httpItem.Abort.Percentage.Integer.IsUnknown() && !httpItem.Abort.Percentage.Integer.IsNull() {
-						*integer = httpItem.Abort.Percentage.Integer.ValueInt64()
+					if !r.Spec.From[fromIndex].Default.HTTP[httpIndex].Abort.Percentage.Integer.IsUnknown() && !r.Spec.From[fromIndex].Default.HTTP[httpIndex].Abort.Percentage.Integer.IsNull() {
+						*integer = r.Spec.From[fromIndex].Default.HTTP[httpIndex].Abort.Percentage.Integer.ValueInt64()
 					} else {
 						integer = nil
 					}
@@ -395,8 +426,8 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 						}
 					}
 					str := new(string)
-					if !httpItem.Abort.Percentage.Str.IsUnknown() && !httpItem.Abort.Percentage.Str.IsNull() {
-						*str = httpItem.Abort.Percentage.Str.ValueString()
+					if !r.Spec.From[fromIndex].Default.HTTP[httpIndex].Abort.Percentage.Str.IsUnknown() && !r.Spec.From[fromIndex].Default.HTTP[httpIndex].Abort.Percentage.Str.IsNull() {
+						*str = r.Spec.From[fromIndex].Default.HTTP[httpIndex].Abort.Percentage.Str.ValueString()
 					} else {
 						str = nil
 					}
@@ -411,11 +442,11 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 					}
 				}
 				var delay *shared.Delay
-				if httpItem.Delay != nil {
+				if r.Spec.From[fromIndex].Default.HTTP[httpIndex].Delay != nil {
 					var percentage1 shared.MeshFaultInjectionItemPercentage
 					integer1 := new(int64)
-					if !httpItem.Delay.Percentage.Integer.IsUnknown() && !httpItem.Delay.Percentage.Integer.IsNull() {
-						*integer1 = httpItem.Delay.Percentage.Integer.ValueInt64()
+					if !r.Spec.From[fromIndex].Default.HTTP[httpIndex].Delay.Percentage.Integer.IsUnknown() && !r.Spec.From[fromIndex].Default.HTTP[httpIndex].Delay.Percentage.Integer.IsNull() {
+						*integer1 = r.Spec.From[fromIndex].Default.HTTP[httpIndex].Delay.Percentage.Integer.ValueInt64()
 					} else {
 						integer1 = nil
 					}
@@ -425,8 +456,8 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 						}
 					}
 					str1 := new(string)
-					if !httpItem.Delay.Percentage.Str.IsUnknown() && !httpItem.Delay.Percentage.Str.IsNull() {
-						*str1 = httpItem.Delay.Percentage.Str.ValueString()
+					if !r.Spec.From[fromIndex].Default.HTTP[httpIndex].Delay.Percentage.Str.IsUnknown() && !r.Spec.From[fromIndex].Default.HTTP[httpIndex].Delay.Percentage.Str.IsNull() {
+						*str1 = r.Spec.From[fromIndex].Default.HTTP[httpIndex].Delay.Percentage.Str.ValueString()
 					} else {
 						str1 = nil
 					}
@@ -436,7 +467,7 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 						}
 					}
 					var value string
-					value = httpItem.Delay.Value.ValueString()
+					value = r.Spec.From[fromIndex].Default.HTTP[httpIndex].Delay.Value.ValueString()
 
 					delay = &shared.Delay{
 						Percentage: percentage1,
@@ -444,14 +475,14 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 					}
 				}
 				var responseBandwidth *shared.ResponseBandwidth
-				if httpItem.ResponseBandwidth != nil {
+				if r.Spec.From[fromIndex].Default.HTTP[httpIndex].ResponseBandwidth != nil {
 					var limit string
-					limit = httpItem.ResponseBandwidth.Limit.ValueString()
+					limit = r.Spec.From[fromIndex].Default.HTTP[httpIndex].ResponseBandwidth.Limit.ValueString()
 
 					var percentage2 shared.MeshFaultInjectionItemSpecPercentage
 					integer2 := new(int64)
-					if !httpItem.ResponseBandwidth.Percentage.Integer.IsUnknown() && !httpItem.ResponseBandwidth.Percentage.Integer.IsNull() {
-						*integer2 = httpItem.ResponseBandwidth.Percentage.Integer.ValueInt64()
+					if !r.Spec.From[fromIndex].Default.HTTP[httpIndex].ResponseBandwidth.Percentage.Integer.IsUnknown() && !r.Spec.From[fromIndex].Default.HTTP[httpIndex].ResponseBandwidth.Percentage.Integer.IsNull() {
+						*integer2 = r.Spec.From[fromIndex].Default.HTTP[httpIndex].ResponseBandwidth.Percentage.Integer.ValueInt64()
 					} else {
 						integer2 = nil
 					}
@@ -461,8 +492,8 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 						}
 					}
 					str2 := new(string)
-					if !httpItem.ResponseBandwidth.Percentage.Str.IsUnknown() && !httpItem.ResponseBandwidth.Percentage.Str.IsNull() {
-						*str2 = httpItem.ResponseBandwidth.Percentage.Str.ValueString()
+					if !r.Spec.From[fromIndex].Default.HTTP[httpIndex].ResponseBandwidth.Percentage.Str.IsUnknown() && !r.Spec.From[fromIndex].Default.HTTP[httpIndex].ResponseBandwidth.Percentage.Str.IsNull() {
+						*str2 = r.Spec.From[fromIndex].Default.HTTP[httpIndex].ResponseBandwidth.Percentage.Str.ValueString()
 					} else {
 						str2 = nil
 					}
@@ -486,46 +517,46 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 				HTTP: http,
 			}
 		}
-		kind := shared.MeshFaultInjectionItemSpecKind(fromItem.TargetRef.Kind.ValueString())
+		kind := shared.MeshFaultInjectionItemSpecKind(r.Spec.From[fromIndex].TargetRef.Kind.ValueString())
 		labels1 := make(map[string]string)
-		for labelsKey, labelsValue := range fromItem.TargetRef.Labels {
+		for labelsKey := range r.Spec.From[fromIndex].TargetRef.Labels {
 			var labelsInst string
-			labelsInst = labelsValue.ValueString()
+			labelsInst = r.Spec.From[fromIndex].TargetRef.Labels[labelsKey].ValueString()
 
 			labels1[labelsKey] = labelsInst
 		}
 		mesh1 := new(string)
-		if !fromItem.TargetRef.Mesh.IsUnknown() && !fromItem.TargetRef.Mesh.IsNull() {
-			*mesh1 = fromItem.TargetRef.Mesh.ValueString()
+		if !r.Spec.From[fromIndex].TargetRef.Mesh.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.Mesh.IsNull() {
+			*mesh1 = r.Spec.From[fromIndex].TargetRef.Mesh.ValueString()
 		} else {
 			mesh1 = nil
 		}
 		name1 := new(string)
-		if !fromItem.TargetRef.Name.IsUnknown() && !fromItem.TargetRef.Name.IsNull() {
-			*name1 = fromItem.TargetRef.Name.ValueString()
+		if !r.Spec.From[fromIndex].TargetRef.Name.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.Name.IsNull() {
+			*name1 = r.Spec.From[fromIndex].TargetRef.Name.ValueString()
 		} else {
 			name1 = nil
 		}
 		namespace := new(string)
-		if !fromItem.TargetRef.Namespace.IsUnknown() && !fromItem.TargetRef.Namespace.IsNull() {
-			*namespace = fromItem.TargetRef.Namespace.ValueString()
+		if !r.Spec.From[fromIndex].TargetRef.Namespace.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.Namespace.IsNull() {
+			*namespace = r.Spec.From[fromIndex].TargetRef.Namespace.ValueString()
 		} else {
 			namespace = nil
 		}
-		proxyTypes := make([]shared.MeshFaultInjectionItemSpecProxyTypes, 0, len(fromItem.TargetRef.ProxyTypes))
-		for _, proxyTypesItem := range fromItem.TargetRef.ProxyTypes {
+		proxyTypes := make([]shared.MeshFaultInjectionItemSpecProxyTypes, 0, len(r.Spec.From[fromIndex].TargetRef.ProxyTypes))
+		for _, proxyTypesItem := range r.Spec.From[fromIndex].TargetRef.ProxyTypes {
 			proxyTypes = append(proxyTypes, shared.MeshFaultInjectionItemSpecProxyTypes(proxyTypesItem.ValueString()))
 		}
 		sectionName := new(string)
-		if !fromItem.TargetRef.SectionName.IsUnknown() && !fromItem.TargetRef.SectionName.IsNull() {
-			*sectionName = fromItem.TargetRef.SectionName.ValueString()
+		if !r.Spec.From[fromIndex].TargetRef.SectionName.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.SectionName.IsNull() {
+			*sectionName = r.Spec.From[fromIndex].TargetRef.SectionName.ValueString()
 		} else {
 			sectionName = nil
 		}
 		tags := make(map[string]string)
-		for tagsKey, tagsValue := range fromItem.TargetRef.Tags {
+		for tagsKey := range r.Spec.From[fromIndex].TargetRef.Tags {
 			var tagsInst string
-			tagsInst = tagsValue.ValueString()
+			tagsInst = r.Spec.From[fromIndex].TargetRef.Tags[tagsKey].ValueString()
 
 			tags[tagsKey] = tagsInst
 		}
@@ -545,18 +576,18 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 		})
 	}
 	rules := make([]shared.MeshFaultInjectionItemRules, 0, len(r.Spec.Rules))
-	for _, rulesItem := range r.Spec.Rules {
-		http1 := make([]shared.MeshFaultInjectionItemHTTP, 0, len(rulesItem.Default.HTTP))
-		for _, httpItem1 := range rulesItem.Default.HTTP {
+	for rulesIndex := range r.Spec.Rules {
+		http1 := make([]shared.MeshFaultInjectionItemHTTP, 0, len(r.Spec.Rules[rulesIndex].Default.HTTP))
+		for httpIndex1 := range r.Spec.Rules[rulesIndex].Default.HTTP {
 			var abort1 *shared.MeshFaultInjectionItemAbort
-			if httpItem1.Abort != nil {
+			if r.Spec.Rules[rulesIndex].Default.HTTP[httpIndex1].Abort != nil {
 				var httpStatus1 int
-				httpStatus1 = int(httpItem1.Abort.HTTPStatus.ValueInt32())
+				httpStatus1 = int(r.Spec.Rules[rulesIndex].Default.HTTP[httpIndex1].Abort.HTTPStatus.ValueInt32())
 
 				var percentage3 shared.MeshFaultInjectionItemSpecRulesPercentage
 				integer3 := new(int64)
-				if !httpItem1.Abort.Percentage.Integer.IsUnknown() && !httpItem1.Abort.Percentage.Integer.IsNull() {
-					*integer3 = httpItem1.Abort.Percentage.Integer.ValueInt64()
+				if !r.Spec.Rules[rulesIndex].Default.HTTP[httpIndex1].Abort.Percentage.Integer.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.HTTP[httpIndex1].Abort.Percentage.Integer.IsNull() {
+					*integer3 = r.Spec.Rules[rulesIndex].Default.HTTP[httpIndex1].Abort.Percentage.Integer.ValueInt64()
 				} else {
 					integer3 = nil
 				}
@@ -566,8 +597,8 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 					}
 				}
 				str3 := new(string)
-				if !httpItem1.Abort.Percentage.Str.IsUnknown() && !httpItem1.Abort.Percentage.Str.IsNull() {
-					*str3 = httpItem1.Abort.Percentage.Str.ValueString()
+				if !r.Spec.Rules[rulesIndex].Default.HTTP[httpIndex1].Abort.Percentage.Str.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.HTTP[httpIndex1].Abort.Percentage.Str.IsNull() {
+					*str3 = r.Spec.Rules[rulesIndex].Default.HTTP[httpIndex1].Abort.Percentage.Str.ValueString()
 				} else {
 					str3 = nil
 				}
@@ -582,11 +613,11 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 				}
 			}
 			var delay1 *shared.MeshFaultInjectionItemDelay
-			if httpItem1.Delay != nil {
+			if r.Spec.Rules[rulesIndex].Default.HTTP[httpIndex1].Delay != nil {
 				var percentage4 shared.MeshFaultInjectionItemSpecRulesDefaultPercentage
 				integer4 := new(int64)
-				if !httpItem1.Delay.Percentage.Integer.IsUnknown() && !httpItem1.Delay.Percentage.Integer.IsNull() {
-					*integer4 = httpItem1.Delay.Percentage.Integer.ValueInt64()
+				if !r.Spec.Rules[rulesIndex].Default.HTTP[httpIndex1].Delay.Percentage.Integer.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.HTTP[httpIndex1].Delay.Percentage.Integer.IsNull() {
+					*integer4 = r.Spec.Rules[rulesIndex].Default.HTTP[httpIndex1].Delay.Percentage.Integer.ValueInt64()
 				} else {
 					integer4 = nil
 				}
@@ -596,8 +627,8 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 					}
 				}
 				str4 := new(string)
-				if !httpItem1.Delay.Percentage.Str.IsUnknown() && !httpItem1.Delay.Percentage.Str.IsNull() {
-					*str4 = httpItem1.Delay.Percentage.Str.ValueString()
+				if !r.Spec.Rules[rulesIndex].Default.HTTP[httpIndex1].Delay.Percentage.Str.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.HTTP[httpIndex1].Delay.Percentage.Str.IsNull() {
+					*str4 = r.Spec.Rules[rulesIndex].Default.HTTP[httpIndex1].Delay.Percentage.Str.ValueString()
 				} else {
 					str4 = nil
 				}
@@ -607,7 +638,7 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 					}
 				}
 				var value1 string
-				value1 = httpItem1.Delay.Value.ValueString()
+				value1 = r.Spec.Rules[rulesIndex].Default.HTTP[httpIndex1].Delay.Value.ValueString()
 
 				delay1 = &shared.MeshFaultInjectionItemDelay{
 					Percentage: percentage4,
@@ -615,14 +646,14 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 				}
 			}
 			var responseBandwidth1 *shared.MeshFaultInjectionItemResponseBandwidth
-			if httpItem1.ResponseBandwidth != nil {
+			if r.Spec.Rules[rulesIndex].Default.HTTP[httpIndex1].ResponseBandwidth != nil {
 				var limit1 string
-				limit1 = httpItem1.ResponseBandwidth.Limit.ValueString()
+				limit1 = r.Spec.Rules[rulesIndex].Default.HTTP[httpIndex1].ResponseBandwidth.Limit.ValueString()
 
 				var percentage5 shared.MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage
 				integer5 := new(int64)
-				if !httpItem1.ResponseBandwidth.Percentage.Integer.IsUnknown() && !httpItem1.ResponseBandwidth.Percentage.Integer.IsNull() {
-					*integer5 = httpItem1.ResponseBandwidth.Percentage.Integer.ValueInt64()
+				if !r.Spec.Rules[rulesIndex].Default.HTTP[httpIndex1].ResponseBandwidth.Percentage.Integer.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.HTTP[httpIndex1].ResponseBandwidth.Percentage.Integer.IsNull() {
+					*integer5 = r.Spec.Rules[rulesIndex].Default.HTTP[httpIndex1].ResponseBandwidth.Percentage.Integer.ValueInt64()
 				} else {
 					integer5 = nil
 				}
@@ -632,8 +663,8 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 					}
 				}
 				str5 := new(string)
-				if !httpItem1.ResponseBandwidth.Percentage.Str.IsUnknown() && !httpItem1.ResponseBandwidth.Percentage.Str.IsNull() {
-					*str5 = httpItem1.ResponseBandwidth.Percentage.Str.ValueString()
+				if !r.Spec.Rules[rulesIndex].Default.HTTP[httpIndex1].ResponseBandwidth.Percentage.Str.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.HTTP[httpIndex1].ResponseBandwidth.Percentage.Str.IsNull() {
+					*str5 = r.Spec.Rules[rulesIndex].Default.HTTP[httpIndex1].ResponseBandwidth.Percentage.Str.ValueString()
 				} else {
 					str5 = nil
 				}
@@ -656,13 +687,13 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 		default1 := shared.MeshFaultInjectionItemSpecDefault{
 			HTTP: http1,
 		}
-		matches := make([]shared.Matches, 0, len(rulesItem.Matches))
-		for _, matchesItem := range rulesItem.Matches {
+		matches := make([]shared.Matches, 0, len(r.Spec.Rules[rulesIndex].Matches))
+		for matchesIndex := range r.Spec.Rules[rulesIndex].Matches {
 			var spiffeID *shared.MeshFaultInjectionItemSpiffeID
-			if matchesItem.SpiffeID != nil {
-				typeVar1 := shared.MeshFaultInjectionItemSpecType(matchesItem.SpiffeID.Type.ValueString())
+			if r.Spec.Rules[rulesIndex].Matches[matchesIndex].SpiffeID != nil {
+				typeVar1 := shared.MeshFaultInjectionItemSpecType(r.Spec.Rules[rulesIndex].Matches[matchesIndex].SpiffeID.Type.ValueString())
 				var value2 string
-				value2 = matchesItem.SpiffeID.Value.ValueString()
+				value2 = r.Spec.Rules[rulesIndex].Matches[matchesIndex].SpiffeID.Value.ValueString()
 
 				spiffeID = &shared.MeshFaultInjectionItemSpiffeID{
 					Type:  typeVar1,
@@ -682,9 +713,9 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 	if r.Spec.TargetRef != nil {
 		kind1 := shared.MeshFaultInjectionItemKind(r.Spec.TargetRef.Kind.ValueString())
 		labels2 := make(map[string]string)
-		for labelsKey1, labelsValue1 := range r.Spec.TargetRef.Labels {
+		for labelsKey1 := range r.Spec.TargetRef.Labels {
 			var labelsInst1 string
-			labelsInst1 = labelsValue1.ValueString()
+			labelsInst1 = r.Spec.TargetRef.Labels[labelsKey1].ValueString()
 
 			labels2[labelsKey1] = labelsInst1
 		}
@@ -717,9 +748,9 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 			sectionName1 = nil
 		}
 		tags1 := make(map[string]string)
-		for tagsKey1, tagsValue1 := range r.Spec.TargetRef.Tags {
+		for tagsKey1 := range r.Spec.TargetRef.Tags {
 			var tagsInst1 string
-			tagsInst1 = tagsValue1.ValueString()
+			tagsInst1 = r.Spec.TargetRef.Tags[tagsKey1].ValueString()
 
 			tags1[tagsKey1] = tagsInst1
 		}
@@ -735,20 +766,20 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 		}
 	}
 	to := make([]shared.MeshFaultInjectionItemTo, 0, len(r.Spec.To))
-	for _, toItem := range r.Spec.To {
+	for toIndex := range r.Spec.To {
 		var default2 *shared.MeshFaultInjectionItemSpecToDefault
-		if toItem.Default != nil {
-			http2 := make([]shared.MeshFaultInjectionItemSpecHTTP, 0, len(toItem.Default.HTTP))
-			for _, httpItem2 := range toItem.Default.HTTP {
+		if r.Spec.To[toIndex].Default != nil {
+			http2 := make([]shared.MeshFaultInjectionItemSpecHTTP, 0, len(r.Spec.To[toIndex].Default.HTTP))
+			for httpIndex2 := range r.Spec.To[toIndex].Default.HTTP {
 				var abort2 *shared.MeshFaultInjectionItemSpecAbort
-				if httpItem2.Abort != nil {
+				if r.Spec.To[toIndex].Default.HTTP[httpIndex2].Abort != nil {
 					var httpStatus2 int
-					httpStatus2 = int(httpItem2.Abort.HTTPStatus.ValueInt32())
+					httpStatus2 = int(r.Spec.To[toIndex].Default.HTTP[httpIndex2].Abort.HTTPStatus.ValueInt32())
 
 					var percentage6 shared.MeshFaultInjectionItemSpecToPercentage
 					integer6 := new(int64)
-					if !httpItem2.Abort.Percentage.Integer.IsUnknown() && !httpItem2.Abort.Percentage.Integer.IsNull() {
-						*integer6 = httpItem2.Abort.Percentage.Integer.ValueInt64()
+					if !r.Spec.To[toIndex].Default.HTTP[httpIndex2].Abort.Percentage.Integer.IsUnknown() && !r.Spec.To[toIndex].Default.HTTP[httpIndex2].Abort.Percentage.Integer.IsNull() {
+						*integer6 = r.Spec.To[toIndex].Default.HTTP[httpIndex2].Abort.Percentage.Integer.ValueInt64()
 					} else {
 						integer6 = nil
 					}
@@ -758,8 +789,8 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 						}
 					}
 					str6 := new(string)
-					if !httpItem2.Abort.Percentage.Str.IsUnknown() && !httpItem2.Abort.Percentage.Str.IsNull() {
-						*str6 = httpItem2.Abort.Percentage.Str.ValueString()
+					if !r.Spec.To[toIndex].Default.HTTP[httpIndex2].Abort.Percentage.Str.IsUnknown() && !r.Spec.To[toIndex].Default.HTTP[httpIndex2].Abort.Percentage.Str.IsNull() {
+						*str6 = r.Spec.To[toIndex].Default.HTTP[httpIndex2].Abort.Percentage.Str.ValueString()
 					} else {
 						str6 = nil
 					}
@@ -774,11 +805,11 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 					}
 				}
 				var delay2 *shared.MeshFaultInjectionItemSpecDelay
-				if httpItem2.Delay != nil {
+				if r.Spec.To[toIndex].Default.HTTP[httpIndex2].Delay != nil {
 					var percentage7 shared.MeshFaultInjectionItemSpecToDefaultPercentage
 					integer7 := new(int64)
-					if !httpItem2.Delay.Percentage.Integer.IsUnknown() && !httpItem2.Delay.Percentage.Integer.IsNull() {
-						*integer7 = httpItem2.Delay.Percentage.Integer.ValueInt64()
+					if !r.Spec.To[toIndex].Default.HTTP[httpIndex2].Delay.Percentage.Integer.IsUnknown() && !r.Spec.To[toIndex].Default.HTTP[httpIndex2].Delay.Percentage.Integer.IsNull() {
+						*integer7 = r.Spec.To[toIndex].Default.HTTP[httpIndex2].Delay.Percentage.Integer.ValueInt64()
 					} else {
 						integer7 = nil
 					}
@@ -788,8 +819,8 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 						}
 					}
 					str7 := new(string)
-					if !httpItem2.Delay.Percentage.Str.IsUnknown() && !httpItem2.Delay.Percentage.Str.IsNull() {
-						*str7 = httpItem2.Delay.Percentage.Str.ValueString()
+					if !r.Spec.To[toIndex].Default.HTTP[httpIndex2].Delay.Percentage.Str.IsUnknown() && !r.Spec.To[toIndex].Default.HTTP[httpIndex2].Delay.Percentage.Str.IsNull() {
+						*str7 = r.Spec.To[toIndex].Default.HTTP[httpIndex2].Delay.Percentage.Str.ValueString()
 					} else {
 						str7 = nil
 					}
@@ -799,7 +830,7 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 						}
 					}
 					var value3 string
-					value3 = httpItem2.Delay.Value.ValueString()
+					value3 = r.Spec.To[toIndex].Default.HTTP[httpIndex2].Delay.Value.ValueString()
 
 					delay2 = &shared.MeshFaultInjectionItemSpecDelay{
 						Percentage: percentage7,
@@ -807,14 +838,14 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 					}
 				}
 				var responseBandwidth2 *shared.MeshFaultInjectionItemSpecResponseBandwidth
-				if httpItem2.ResponseBandwidth != nil {
+				if r.Spec.To[toIndex].Default.HTTP[httpIndex2].ResponseBandwidth != nil {
 					var limit2 string
-					limit2 = httpItem2.ResponseBandwidth.Limit.ValueString()
+					limit2 = r.Spec.To[toIndex].Default.HTTP[httpIndex2].ResponseBandwidth.Limit.ValueString()
 
 					var percentage8 shared.MeshFaultInjectionItemSpecToDefaultHTTPPercentage
 					integer8 := new(int64)
-					if !httpItem2.ResponseBandwidth.Percentage.Integer.IsUnknown() && !httpItem2.ResponseBandwidth.Percentage.Integer.IsNull() {
-						*integer8 = httpItem2.ResponseBandwidth.Percentage.Integer.ValueInt64()
+					if !r.Spec.To[toIndex].Default.HTTP[httpIndex2].ResponseBandwidth.Percentage.Integer.IsUnknown() && !r.Spec.To[toIndex].Default.HTTP[httpIndex2].ResponseBandwidth.Percentage.Integer.IsNull() {
+						*integer8 = r.Spec.To[toIndex].Default.HTTP[httpIndex2].ResponseBandwidth.Percentage.Integer.ValueInt64()
 					} else {
 						integer8 = nil
 					}
@@ -824,8 +855,8 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 						}
 					}
 					str8 := new(string)
-					if !httpItem2.ResponseBandwidth.Percentage.Str.IsUnknown() && !httpItem2.ResponseBandwidth.Percentage.Str.IsNull() {
-						*str8 = httpItem2.ResponseBandwidth.Percentage.Str.ValueString()
+					if !r.Spec.To[toIndex].Default.HTTP[httpIndex2].ResponseBandwidth.Percentage.Str.IsUnknown() && !r.Spec.To[toIndex].Default.HTTP[httpIndex2].ResponseBandwidth.Percentage.Str.IsNull() {
+						*str8 = r.Spec.To[toIndex].Default.HTTP[httpIndex2].ResponseBandwidth.Percentage.Str.ValueString()
 					} else {
 						str8 = nil
 					}
@@ -849,46 +880,46 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 				HTTP: http2,
 			}
 		}
-		kind2 := shared.MeshFaultInjectionItemSpecToKind(toItem.TargetRef.Kind.ValueString())
+		kind2 := shared.MeshFaultInjectionItemSpecToKind(r.Spec.To[toIndex].TargetRef.Kind.ValueString())
 		labels3 := make(map[string]string)
-		for labelsKey2, labelsValue2 := range toItem.TargetRef.Labels {
+		for labelsKey2 := range r.Spec.To[toIndex].TargetRef.Labels {
 			var labelsInst2 string
-			labelsInst2 = labelsValue2.ValueString()
+			labelsInst2 = r.Spec.To[toIndex].TargetRef.Labels[labelsKey2].ValueString()
 
 			labels3[labelsKey2] = labelsInst2
 		}
 		mesh3 := new(string)
-		if !toItem.TargetRef.Mesh.IsUnknown() && !toItem.TargetRef.Mesh.IsNull() {
-			*mesh3 = toItem.TargetRef.Mesh.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Mesh.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Mesh.IsNull() {
+			*mesh3 = r.Spec.To[toIndex].TargetRef.Mesh.ValueString()
 		} else {
 			mesh3 = nil
 		}
 		name3 := new(string)
-		if !toItem.TargetRef.Name.IsUnknown() && !toItem.TargetRef.Name.IsNull() {
-			*name3 = toItem.TargetRef.Name.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Name.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Name.IsNull() {
+			*name3 = r.Spec.To[toIndex].TargetRef.Name.ValueString()
 		} else {
 			name3 = nil
 		}
 		namespace2 := new(string)
-		if !toItem.TargetRef.Namespace.IsUnknown() && !toItem.TargetRef.Namespace.IsNull() {
-			*namespace2 = toItem.TargetRef.Namespace.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Namespace.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Namespace.IsNull() {
+			*namespace2 = r.Spec.To[toIndex].TargetRef.Namespace.ValueString()
 		} else {
 			namespace2 = nil
 		}
-		proxyTypes2 := make([]shared.MeshFaultInjectionItemSpecToProxyTypes, 0, len(toItem.TargetRef.ProxyTypes))
-		for _, proxyTypesItem2 := range toItem.TargetRef.ProxyTypes {
+		proxyTypes2 := make([]shared.MeshFaultInjectionItemSpecToProxyTypes, 0, len(r.Spec.To[toIndex].TargetRef.ProxyTypes))
+		for _, proxyTypesItem2 := range r.Spec.To[toIndex].TargetRef.ProxyTypes {
 			proxyTypes2 = append(proxyTypes2, shared.MeshFaultInjectionItemSpecToProxyTypes(proxyTypesItem2.ValueString()))
 		}
 		sectionName2 := new(string)
-		if !toItem.TargetRef.SectionName.IsUnknown() && !toItem.TargetRef.SectionName.IsNull() {
-			*sectionName2 = toItem.TargetRef.SectionName.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.SectionName.IsUnknown() && !r.Spec.To[toIndex].TargetRef.SectionName.IsNull() {
+			*sectionName2 = r.Spec.To[toIndex].TargetRef.SectionName.ValueString()
 		} else {
 			sectionName2 = nil
 		}
 		tags2 := make(map[string]string)
-		for tagsKey2, tagsValue2 := range toItem.TargetRef.Tags {
+		for tagsKey2 := range r.Spec.To[toIndex].TargetRef.Tags {
 			var tagsInst2 string
-			tagsInst2 = tagsValue2.ValueString()
+			tagsInst2 = r.Spec.To[toIndex].TargetRef.Tags[tagsKey2].ValueString()
 
 			tags2[tagsKey2] = tagsInst2
 		}

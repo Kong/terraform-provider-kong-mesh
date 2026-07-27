@@ -144,7 +144,7 @@ Optional:
 
 - `on_agent_failure` (String) OnAgentFailure either 'allow' or 'deny' (default to deny) whether
 to allow requests when the authorization agent failed.
-must be one of ["Allow", "Deny"]
+possible known values include one of ["Allow", "Deny"]
 - `request_body` (Attributes) RequestBody configuration to apply on the request body sent to the
 authorization agent (if absent, the body is not sent). (see [below for nested schema](#nestedatt--spec--default--auth_config--request_body))
 - `status_on_error` (Number) StatusOnError is the http status to return when there's a connection
@@ -170,7 +170,7 @@ sent to the agent.
 
 Required:
 
-- `kind` (String) Kind of the referenced resource. must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
 
 Optional:
 

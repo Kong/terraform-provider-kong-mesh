@@ -16,8 +16,8 @@ const (
 )
 
 type Access struct {
-	Str     *string `queryParam:"inline,name=access"`
-	Integer *int64  `queryParam:"inline,name=access"`
+	Str     *string `queryParam:"inline" union:"member"`
+	Integer *int64  `queryParam:"inline" union:"member"`
 
 	Type AccessType
 }
@@ -66,7 +66,7 @@ func (u *Access) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Access", string(data))
 	}

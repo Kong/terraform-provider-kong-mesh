@@ -3,8 +3,8 @@
 package types
 
 type AccessKey struct {
-	DataSourceFile         *AccessKeyDataSourceFile         `queryParam:"inline" tfsdk:"data_source_file" tfPlanOnly:"true"`
-	DataSourceInline       *AccessKeyDataSourceInline       `queryParam:"inline" tfsdk:"data_source_inline" tfPlanOnly:"true"`
-	DataSourceInlineString *AccessKeyDataSourceInlineString `queryParam:"inline" tfsdk:"data_source_inline_string" tfPlanOnly:"true"`
-	DataSourceSecret       *AccessKeyDataSourceSecret       `queryParam:"inline" tfsdk:"data_source_secret" tfPlanOnly:"true"`
+	DataSourceFile         *AccessKeyDataSourceFile         `queryParam:"inline" tfsdk:"data_source_file"`
+	DataSourceInline       *AccessKeyDataSourceInline       `queryParam:"inline" tfsdk:"data_source_inline"`
+	DataSourceInlineString *AccessKeyDataSourceInlineString `queryParam:"inline" tfsdk:"data_source_inline_string"`
+	DataSourceSecret       *AccessKeyDataSourceSecret       `queryParam:"inline" tfsdk:"data_source_secret"`
 }

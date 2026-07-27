@@ -135,8 +135,8 @@ const (
 )
 
 type MeshItemLoggingConf struct {
-	FileLoggingBackendConfig *FileLoggingBackendConfig `queryParam:"inline,name=conf"`
-	TCPLoggingBackendConfig  *TCPLoggingBackendConfig  `queryParam:"inline,name=conf"`
+	FileLoggingBackendConfig *FileLoggingBackendConfig `queryParam:"inline" union:"member"`
+	TCPLoggingBackendConfig  *TCPLoggingBackendConfig  `queryParam:"inline" union:"member"`
 
 	Type MeshItemLoggingConfType
 }
@@ -185,7 +185,7 @@ func (u *MeshItemLoggingConf) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshItemLoggingConf", string(data))
 	}
@@ -288,8 +288,8 @@ const (
 )
 
 type Mode struct {
-	Str     *string `queryParam:"inline,name=mode"`
-	Integer *int64  `queryParam:"inline,name=mode"`
+	Str     *string `queryParam:"inline" union:"member"`
+	Integer *int64  `queryParam:"inline" union:"member"`
 
 	Type ModeType
 }
@@ -338,7 +338,7 @@ func (u *Mode) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Mode", string(data))
 	}
@@ -488,8 +488,8 @@ const (
 // Supported values, delegated, disabled, activeMTLSBackend. Default to
 // `activeMTLSBackend`.
 type ConfMode struct {
-	Str     *string `queryParam:"inline,name=mode"`
-	Integer *int64  `queryParam:"inline,name=mode"`
+	Str     *string `queryParam:"inline" union:"member"`
+	Integer *int64  `queryParam:"inline" union:"member"`
 
 	Type ConfModeType
 }
@@ -538,7 +538,7 @@ func (u *ConfMode) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for ConfMode", string(data))
 	}
@@ -686,7 +686,7 @@ const (
 )
 
 type MeshItemConf struct {
-	PrometheusMetricsBackendConfig *PrometheusMetricsBackendConfig `queryParam:"inline,name=conf"`
+	PrometheusMetricsBackendConfig *PrometheusMetricsBackendConfig `queryParam:"inline" union:"member"`
 
 	Type MeshItemConfType
 }
@@ -718,7 +718,7 @@ func (u *MeshItemConf) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshItemConf", string(data))
 	}
@@ -902,10 +902,10 @@ const (
 )
 
 type CertManagerCertificateAuthorityConfigConfCaCert struct {
-	CertManagerCertificateAuthorityConfigCaCertDataSourceFile         *CertManagerCertificateAuthorityConfigCaCertDataSourceFile         `queryParam:"inline,name=caCert"`
-	CertManagerCertificateAuthorityConfigCaCertDataSourceInline       *CertManagerCertificateAuthorityConfigCaCertDataSourceInline       `queryParam:"inline,name=caCert"`
-	CertManagerCertificateAuthorityConfigCaCertDataSourceInlineString *CertManagerCertificateAuthorityConfigCaCertDataSourceInlineString `queryParam:"inline,name=caCert"`
-	CertManagerCertificateAuthorityConfigCaCertDataSourceSecret       *CertManagerCertificateAuthorityConfigCaCertDataSourceSecret       `queryParam:"inline,name=caCert"`
+	CertManagerCertificateAuthorityConfigCaCertDataSourceFile         *CertManagerCertificateAuthorityConfigCaCertDataSourceFile         `queryParam:"inline" union:"member"`
+	CertManagerCertificateAuthorityConfigCaCertDataSourceInline       *CertManagerCertificateAuthorityConfigCaCertDataSourceInline       `queryParam:"inline" union:"member"`
+	CertManagerCertificateAuthorityConfigCaCertDataSourceInlineString *CertManagerCertificateAuthorityConfigCaCertDataSourceInlineString `queryParam:"inline" union:"member"`
+	CertManagerCertificateAuthorityConfigCaCertDataSourceSecret       *CertManagerCertificateAuthorityConfigCaCertDataSourceSecret       `queryParam:"inline" union:"member"`
 
 	Type CertManagerCertificateAuthorityConfigConfCaCertType
 }
@@ -988,7 +988,7 @@ func (u *CertManagerCertificateAuthorityConfigConfCaCert) UnmarshalJSON(data []b
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for CertManagerCertificateAuthorityConfigConfCaCert", string(data))
 	}
@@ -1220,10 +1220,10 @@ const (
 )
 
 type AccessKey struct {
-	AccessKeyDataSourceFile         *AccessKeyDataSourceFile         `queryParam:"inline,name=accessKey"`
-	AccessKeyDataSourceInline       *AccessKeyDataSourceInline       `queryParam:"inline,name=accessKey"`
-	AccessKeyDataSourceInlineString *AccessKeyDataSourceInlineString `queryParam:"inline,name=accessKey"`
-	AccessKeyDataSourceSecret       *AccessKeyDataSourceSecret       `queryParam:"inline,name=accessKey"`
+	AccessKeyDataSourceFile         *AccessKeyDataSourceFile         `queryParam:"inline" union:"member"`
+	AccessKeyDataSourceInline       *AccessKeyDataSourceInline       `queryParam:"inline" union:"member"`
+	AccessKeyDataSourceInlineString *AccessKeyDataSourceInlineString `queryParam:"inline" union:"member"`
+	AccessKeyDataSourceSecret       *AccessKeyDataSourceSecret       `queryParam:"inline" union:"member"`
 
 	Type AccessKeyType
 }
@@ -1306,7 +1306,7 @@ func (u *AccessKey) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for AccessKey", string(data))
 	}
@@ -1454,10 +1454,10 @@ const (
 )
 
 type AccessKeySecret struct {
-	AccessKeySecretDataSourceFile         *AccessKeySecretDataSourceFile         `queryParam:"inline,name=accessKeySecret"`
-	AccessKeySecretDataSourceInline       *AccessKeySecretDataSourceInline       `queryParam:"inline,name=accessKeySecret"`
-	AccessKeySecretDataSourceInlineString *AccessKeySecretDataSourceInlineString `queryParam:"inline,name=accessKeySecret"`
-	AccessKeySecretDataSourceSecret       *AccessKeySecretDataSourceSecret       `queryParam:"inline,name=accessKeySecret"`
+	AccessKeySecretDataSourceFile         *AccessKeySecretDataSourceFile         `queryParam:"inline" union:"member"`
+	AccessKeySecretDataSourceInline       *AccessKeySecretDataSourceInline       `queryParam:"inline" union:"member"`
+	AccessKeySecretDataSourceInlineString *AccessKeySecretDataSourceInlineString `queryParam:"inline" union:"member"`
+	AccessKeySecretDataSourceSecret       *AccessKeySecretDataSourceSecret       `queryParam:"inline" union:"member"`
 
 	Type AccessKeySecretType
 }
@@ -1540,7 +1540,7 @@ func (u *AccessKeySecret) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for AccessKeySecret", string(data))
 	}
@@ -1740,10 +1740,10 @@ const (
 )
 
 type ConfCaCert struct {
-	CaCertDataSourceFile         *CaCertDataSourceFile         `queryParam:"inline,name=caCert"`
-	CaCertDataSourceInline       *CaCertDataSourceInline       `queryParam:"inline,name=caCert"`
-	CaCertDataSourceInlineString *CaCertDataSourceInlineString `queryParam:"inline,name=caCert"`
-	CaCertDataSourceSecret       *CaCertDataSourceSecret       `queryParam:"inline,name=caCert"`
+	CaCertDataSourceFile         *CaCertDataSourceFile         `queryParam:"inline" union:"member"`
+	CaCertDataSourceInline       *CaCertDataSourceInline       `queryParam:"inline" union:"member"`
+	CaCertDataSourceInlineString *CaCertDataSourceInlineString `queryParam:"inline" union:"member"`
+	CaCertDataSourceSecret       *CaCertDataSourceSecret       `queryParam:"inline" union:"member"`
 
 	Type ConfCaCertType
 }
@@ -1826,7 +1826,7 @@ func (u *ConfCaCert) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for ConfCaCert", string(data))
 	}
@@ -2020,10 +2020,10 @@ const (
 )
 
 type Token struct {
-	TokenDataSourceFile         *TokenDataSourceFile         `queryParam:"inline,name=token"`
-	TokenDataSourceInline       *TokenDataSourceInline       `queryParam:"inline,name=token"`
-	TokenDataSourceInlineString *TokenDataSourceInlineString `queryParam:"inline,name=token"`
-	TokenDataSourceSecret       *TokenDataSourceSecret       `queryParam:"inline,name=token"`
+	TokenDataSourceFile         *TokenDataSourceFile         `queryParam:"inline" union:"member"`
+	TokenDataSourceInline       *TokenDataSourceInline       `queryParam:"inline" union:"member"`
+	TokenDataSourceInlineString *TokenDataSourceInlineString `queryParam:"inline" union:"member"`
+	TokenDataSourceSecret       *TokenDataSourceSecret       `queryParam:"inline" union:"member"`
 
 	Type TokenType
 }
@@ -2106,7 +2106,7 @@ func (u *Token) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Token", string(data))
 	}
@@ -2276,10 +2276,10 @@ const (
 )
 
 type AuthClientCert struct {
-	ClientCertDataSourceFile         *ClientCertDataSourceFile         `queryParam:"inline,name=clientCert"`
-	ClientCertDataSourceInline       *ClientCertDataSourceInline       `queryParam:"inline,name=clientCert"`
-	ClientCertDataSourceInlineString *ClientCertDataSourceInlineString `queryParam:"inline,name=clientCert"`
-	ClientCertDataSourceSecret       *ClientCertDataSourceSecret       `queryParam:"inline,name=clientCert"`
+	ClientCertDataSourceFile         *ClientCertDataSourceFile         `queryParam:"inline" union:"member"`
+	ClientCertDataSourceInline       *ClientCertDataSourceInline       `queryParam:"inline" union:"member"`
+	ClientCertDataSourceInlineString *ClientCertDataSourceInlineString `queryParam:"inline" union:"member"`
+	ClientCertDataSourceSecret       *ClientCertDataSourceSecret       `queryParam:"inline" union:"member"`
 
 	Type AuthClientCertType
 }
@@ -2362,7 +2362,7 @@ func (u *AuthClientCert) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for AuthClientCert", string(data))
 	}
@@ -2510,10 +2510,10 @@ const (
 )
 
 type AuthClientKey struct {
-	ClientKeyDataSourceFile         *ClientKeyDataSourceFile         `queryParam:"inline,name=clientKey"`
-	ClientKeyDataSourceInline       *ClientKeyDataSourceInline       `queryParam:"inline,name=clientKey"`
-	ClientKeyDataSourceInlineString *ClientKeyDataSourceInlineString `queryParam:"inline,name=clientKey"`
-	ClientKeyDataSourceSecret       *ClientKeyDataSourceSecret       `queryParam:"inline,name=clientKey"`
+	ClientKeyDataSourceFile         *ClientKeyDataSourceFile         `queryParam:"inline" union:"member"`
+	ClientKeyDataSourceInline       *ClientKeyDataSourceInline       `queryParam:"inline" union:"member"`
+	ClientKeyDataSourceInlineString *ClientKeyDataSourceInlineString `queryParam:"inline" union:"member"`
+	ClientKeyDataSourceSecret       *ClientKeyDataSourceSecret       `queryParam:"inline" union:"member"`
 
 	Type AuthClientKeyType
 }
@@ -2596,7 +2596,7 @@ func (u *AuthClientKey) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for AuthClientKey", string(data))
 	}
@@ -2701,8 +2701,8 @@ const (
 )
 
 type AuthType struct {
-	Str     *string `queryParam:"inline,name=type"`
-	Integer *int64  `queryParam:"inline,name=type"`
+	Str     *string `queryParam:"inline" union:"member"`
+	Integer *int64  `queryParam:"inline" union:"member"`
 
 	Type AuthTypeType
 }
@@ -2751,7 +2751,7 @@ func (u *AuthType) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for AuthType", string(data))
 	}
@@ -2851,9 +2851,9 @@ const (
 )
 
 type VaultCertificateAuthorityConfigAuth struct {
-	VaultCertificateAuthorityConfigFromCpAuthAws   *VaultCertificateAuthorityConfigFromCpAuthAws   `queryParam:"inline,name=auth"`
-	VaultCertificateAuthorityConfigFromCpAuthTLS   *VaultCertificateAuthorityConfigFromCpAuthTLS   `queryParam:"inline,name=auth"`
-	VaultCertificateAuthorityConfigFromCpAuthToken *VaultCertificateAuthorityConfigFromCpAuthToken `queryParam:"inline,name=auth"`
+	VaultCertificateAuthorityConfigFromCpAuthAws   *VaultCertificateAuthorityConfigFromCpAuthAws   `queryParam:"inline" union:"member"`
+	VaultCertificateAuthorityConfigFromCpAuthTLS   *VaultCertificateAuthorityConfigFromCpAuthTLS   `queryParam:"inline" union:"member"`
+	VaultCertificateAuthorityConfigFromCpAuthToken *VaultCertificateAuthorityConfigFromCpAuthToken `queryParam:"inline" union:"member"`
 
 	Type VaultCertificateAuthorityConfigAuthType
 }
@@ -2919,7 +2919,7 @@ func (u *VaultCertificateAuthorityConfigAuth) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for VaultCertificateAuthorityConfigAuth", string(data))
 	}
@@ -3060,10 +3060,10 @@ const (
 )
 
 type VaultCertificateAuthorityConfigCaCert struct {
-	VaultCertificateAuthorityConfigFromCpCaCertDataSourceFile         *VaultCertificateAuthorityConfigFromCpCaCertDataSourceFile         `queryParam:"inline,name=caCert"`
-	VaultCertificateAuthorityConfigFromCpCaCertDataSourceInline       *VaultCertificateAuthorityConfigFromCpCaCertDataSourceInline       `queryParam:"inline,name=caCert"`
-	VaultCertificateAuthorityConfigFromCpCaCertDataSourceInlineString *VaultCertificateAuthorityConfigFromCpCaCertDataSourceInlineString `queryParam:"inline,name=caCert"`
-	VaultCertificateAuthorityConfigFromCpCaCertDataSourceSecret       *VaultCertificateAuthorityConfigFromCpCaCertDataSourceSecret       `queryParam:"inline,name=caCert"`
+	VaultCertificateAuthorityConfigFromCpCaCertDataSourceFile         *VaultCertificateAuthorityConfigFromCpCaCertDataSourceFile         `queryParam:"inline" union:"member"`
+	VaultCertificateAuthorityConfigFromCpCaCertDataSourceInline       *VaultCertificateAuthorityConfigFromCpCaCertDataSourceInline       `queryParam:"inline" union:"member"`
+	VaultCertificateAuthorityConfigFromCpCaCertDataSourceInlineString *VaultCertificateAuthorityConfigFromCpCaCertDataSourceInlineString `queryParam:"inline" union:"member"`
+	VaultCertificateAuthorityConfigFromCpCaCertDataSourceSecret       *VaultCertificateAuthorityConfigFromCpCaCertDataSourceSecret       `queryParam:"inline" union:"member"`
 
 	Type VaultCertificateAuthorityConfigCaCertType
 }
@@ -3146,7 +3146,7 @@ func (u *VaultCertificateAuthorityConfigCaCert) UnmarshalJSON(data []byte) error
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for VaultCertificateAuthorityConfigCaCert", string(data))
 	}
@@ -3336,7 +3336,7 @@ const (
 )
 
 type VaultCertificateAuthorityConfig struct {
-	VaultCertificateAuthorityConfigFromCp *VaultCertificateAuthorityConfigFromCp `queryParam:"inline,name=VaultCertificateAuthorityConfig"`
+	VaultCertificateAuthorityConfigFromCp *VaultCertificateAuthorityConfigFromCp `queryParam:"inline" union:"member"`
 
 	Type VaultCertificateAuthorityConfigType
 }
@@ -3368,7 +3368,7 @@ func (u *VaultCertificateAuthorityConfig) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for VaultCertificateAuthorityConfig", string(data))
 	}
@@ -3547,10 +3547,10 @@ const (
 )
 
 type Cert struct {
-	CertDataSourceFile         *CertDataSourceFile         `queryParam:"inline,name=cert"`
-	CertDataSourceInline       *CertDataSourceInline       `queryParam:"inline,name=cert"`
-	CertDataSourceInlineString *CertDataSourceInlineString `queryParam:"inline,name=cert"`
-	CertDataSourceSecret       *CertDataSourceSecret       `queryParam:"inline,name=cert"`
+	CertDataSourceFile         *CertDataSourceFile         `queryParam:"inline" union:"member"`
+	CertDataSourceInline       *CertDataSourceInline       `queryParam:"inline" union:"member"`
+	CertDataSourceInlineString *CertDataSourceInlineString `queryParam:"inline" union:"member"`
+	CertDataSourceSecret       *CertDataSourceSecret       `queryParam:"inline" union:"member"`
 
 	Type CertType
 }
@@ -3633,7 +3633,7 @@ func (u *Cert) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Cert", string(data))
 	}
@@ -3781,10 +3781,10 @@ const (
 )
 
 type Key struct {
-	KeyDataSourceFile         *KeyDataSourceFile         `queryParam:"inline,name=key"`
-	KeyDataSourceInline       *KeyDataSourceInline       `queryParam:"inline,name=key"`
-	KeyDataSourceInlineString *KeyDataSourceInlineString `queryParam:"inline,name=key"`
-	KeyDataSourceSecret       *KeyDataSourceSecret       `queryParam:"inline,name=key"`
+	KeyDataSourceFile         *KeyDataSourceFile         `queryParam:"inline" union:"member"`
+	KeyDataSourceInline       *KeyDataSourceInline       `queryParam:"inline" union:"member"`
+	KeyDataSourceInlineString *KeyDataSourceInlineString `queryParam:"inline" union:"member"`
+	KeyDataSourceSecret       *KeyDataSourceSecret       `queryParam:"inline" union:"member"`
 
 	Type KeyType
 }
@@ -3867,7 +3867,7 @@ func (u *Key) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Key", string(data))
 	}
@@ -3953,11 +3953,11 @@ const (
 )
 
 type MeshItemMtlsConf struct {
-	ProvidedCertificateAuthorityConfig    *ProvidedCertificateAuthorityConfig    `queryParam:"inline,name=conf"`
-	BuiltinCertificateAuthorityConfig     *BuiltinCertificateAuthorityConfig     `queryParam:"inline,name=conf"`
-	VaultCertificateAuthorityConfig       *VaultCertificateAuthorityConfig       `queryParam:"inline,name=conf"`
-	ACMCertificateAuthorityConfig         *ACMCertificateAuthorityConfig         `queryParam:"inline,name=conf"`
-	CertManagerCertificateAuthorityConfig *CertManagerCertificateAuthorityConfig `queryParam:"inline,name=conf"`
+	ProvidedCertificateAuthorityConfig    *ProvidedCertificateAuthorityConfig    `queryParam:"inline" union:"member"`
+	BuiltinCertificateAuthorityConfig     *BuiltinCertificateAuthorityConfig     `queryParam:"inline" union:"member"`
+	VaultCertificateAuthorityConfig       *VaultCertificateAuthorityConfig       `queryParam:"inline" union:"member"`
+	ACMCertificateAuthorityConfig         *ACMCertificateAuthorityConfig         `queryParam:"inline" union:"member"`
+	CertManagerCertificateAuthorityConfig *CertManagerCertificateAuthorityConfig `queryParam:"inline" union:"member"`
 
 	Type MeshItemMtlsConfType
 }
@@ -4057,7 +4057,7 @@ func (u *MeshItemMtlsConf) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshItemMtlsConf", string(data))
 	}
@@ -4174,8 +4174,8 @@ const (
 // MeshItemMode - Mode defines the behaviour of inbound listeners with regard to traffic
 // encryption
 type MeshItemMode struct {
-	Str     *string `queryParam:"inline,name=mode"`
-	Integer *int64  `queryParam:"inline,name=mode"`
+	Str     *string `queryParam:"inline" union:"member"`
+	Integer *int64  `queryParam:"inline" union:"member"`
 
 	Type MeshItemModeType
 }
@@ -4224,7 +4224,7 @@ func (u *MeshItemMode) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshItemMode", string(data))
 	}
@@ -4545,8 +4545,8 @@ const (
 )
 
 type MeshItemTracingConf struct {
-	DatadogTracingBackendConfig *DatadogTracingBackendConfig `queryParam:"inline,name=conf"`
-	ZipkinTracingBackendConfig  *ZipkinTracingBackendConfig  `queryParam:"inline,name=conf"`
+	DatadogTracingBackendConfig *DatadogTracingBackendConfig `queryParam:"inline" union:"member"`
+	ZipkinTracingBackendConfig  *ZipkinTracingBackendConfig  `queryParam:"inline" union:"member"`
 
 	Type MeshItemTracingConfType
 }
@@ -4595,7 +4595,7 @@ func (u *MeshItemTracingConf) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshItemTracingConf", string(data))
 	}

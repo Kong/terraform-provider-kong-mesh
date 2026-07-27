@@ -20,7 +20,6 @@ import (
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
-	"github.com/kong/terraform-provider-kong-mesh/internal/validators"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -45,7 +44,7 @@ type MeshWorkloadResourceModel struct {
 	Mesh             types.String                `tfsdk:"mesh"`
 	ModificationTime types.String                `tfsdk:"modification_time"`
 	Name             types.String                `tfsdk:"name"`
-	Spec             tfTypes.OptionsObj          `tfsdk:"spec"`
+	Spec             *tfTypes.Options            `tfsdk:"spec"`
 	Status           *tfTypes.WorkloadItemStatus `tfsdk:"status"`
 	Type             types.String                `tfsdk:"type"`
 	Warnings         []types.String              `tfsdk:"warnings"`
@@ -65,9 +64,6 @@ func (r *MeshWorkloadResource) Schema(ctx context.Context, req resource.SchemaRe
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
 				Description: `Time at which the resource was created`,
-				Validators: []validator.String{
-					validators.IsRFC3339(),
-				},
 			},
 			"kri": schema.StringAttribute{
 				Computed:    true,
@@ -88,9 +84,6 @@ func (r *MeshWorkloadResource) Schema(ctx context.Context, req resource.SchemaRe
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
 				Description: `Time at which the resource was updated`,
-				Validators: []validator.String{
-					validators.IsRFC3339(),
-				},
 			},
 			"name": schema.StringAttribute{
 				Required:    true,
@@ -108,6 +101,9 @@ func (r *MeshWorkloadResource) Schema(ctx context.Context, req resource.SchemaRe
 				Attributes: map[string]schema.Attribute{
 					"dataplane_proxies": schema.SingleNestedAttribute{
 						Computed: true,
+						PlanModifiers: []planmodifier.Object{
+							speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+						},
 						Attributes: map[string]schema.Attribute{
 							"connected": schema.Int32Attribute{
 								Computed:    true,
@@ -457,7 +453,10 @@ func (r *MeshWorkloadResource) Delete(ctx context.Context, req resource.DeleteRe
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 200 {
+	switch res.StatusCode {
+	case 200, 404:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
@@ -478,12 +477,12 @@ func (r *MeshWorkloadResource) ImportState(ctx context.Context, req resource.Imp
 	}
 
 	if len(data.Mesh) == 0 {
-		resp.Diagnostics.AddError("Missing required field", `The field mesh is required but was not found in the json encoded ID. It's expected to be a value alike '""`)
+		resp.Diagnostics.AddError("Missing required field", `The field mesh is required but was not found in the json encoded ID.`)
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("mesh"), data.Mesh)...)
 	if len(data.Name) == 0 {
-		resp.Diagnostics.AddError("Missing required field", `The field name is required but was not found in the json encoded ID. It's expected to be a value alike '""`)
+		resp.Diagnostics.AddError("Missing required field", `The field name is required but was not found in the json encoded ID.`)
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("name"), data.Name)...)

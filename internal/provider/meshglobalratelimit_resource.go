@@ -23,7 +23,6 @@ import (
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
-	"github.com/kong/terraform-provider-kong-mesh/internal/validators"
 	speakeasy_int32validators "github.com/kong/terraform-provider-kong-mesh/internal/validators/int32validators"
 	speakeasy_listvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/listvalidators"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
@@ -47,15 +46,15 @@ type MeshGlobalRateLimitResource struct {
 
 // MeshGlobalRateLimitResourceModel describes the resource data model.
 type MeshGlobalRateLimitResourceModel struct {
-	CreationTime     types.String                        `tfsdk:"creation_time"`
-	Kri              types.String                        `tfsdk:"kri"`
-	Labels           kumalabels.KumaLabelsMapValue       `tfsdk:"labels"`
-	Mesh             types.String                        `tfsdk:"mesh"`
-	ModificationTime types.String                        `tfsdk:"modification_time"`
-	Name             types.String                        `tfsdk:"name"`
-	Spec             tfTypes.MeshGlobalRateLimitItemSpec `tfsdk:"spec"`
-	Type             types.String                        `tfsdk:"type"`
-	Warnings         []types.String                      `tfsdk:"warnings"`
+	CreationTime     types.String                         `tfsdk:"creation_time"`
+	Kri              types.String                         `tfsdk:"kri"`
+	Labels           kumalabels.KumaLabelsMapValue        `tfsdk:"labels"`
+	Mesh             types.String                         `tfsdk:"mesh"`
+	ModificationTime types.String                         `tfsdk:"modification_time"`
+	Name             types.String                         `tfsdk:"name"`
+	Spec             *tfTypes.MeshGlobalRateLimitItemSpec `tfsdk:"spec"`
+	Type             types.String                         `tfsdk:"type"`
+	Warnings         []types.String                       `tfsdk:"warnings"`
 }
 
 func (r *MeshGlobalRateLimitResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -72,9 +71,6 @@ func (r *MeshGlobalRateLimitResource) Schema(ctx context.Context, req resource.S
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
 				Description: `Time at which the resource was created`,
-				Validators: []validator.String{
-					validators.IsRFC3339(),
-				},
 			},
 			"kri": schema.StringAttribute{
 				Computed:    true,
@@ -101,9 +97,6 @@ func (r *MeshGlobalRateLimitResource) Schema(ctx context.Context, req resource.S
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
 				Description: `Time at which the resource was updated`,
-				Validators: []validator.String{
-					validators.IsRFC3339(),
-				},
 			},
 			"name": schema.StringAttribute{
 				Required: true,
@@ -358,13 +351,7 @@ func (r *MeshGlobalRateLimitResource) Schema(ctx context.Context, req resource.S
 											Optional: true,
 											MarkdownDescription: `Mode defines rate limit behavior when limits are reached. Possible options: Limit and Shadow. Setting Shadow will` + "\n" +
 												`not block over the limit requests but will update metrics. This is useful for testing rate limit configuration.` + "\n" +
-												`must be one of ["Limit", "Shadow"]`,
-											Validators: []validator.String{
-												stringvalidator.OneOf(
-													"Limit",
-													"Shadow",
-												),
-											},
+												`possible known values include one of ["Limit", "Shadow"]`,
 										},
 									},
 									MarkdownDescription: `Default is a configuration specific to the group of clients referenced in` + "\n" +
@@ -375,20 +362,9 @@ func (r *MeshGlobalRateLimitResource) Schema(ctx context.Context, req resource.S
 									Attributes: map[string]schema.Attribute{
 										"kind": schema.StringAttribute{
 											Optional:    true,
-											Description: `Kind of the referenced resource. Not Null; must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
+											Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null`,
 											Validators: []validator.String{
 												speakeasy_stringvalidators.NotNull(),
-												stringvalidator.OneOf(
-													"Mesh",
-													"MeshSubset",
-													"MeshGateway",
-													"MeshService",
-													"MeshExternalService",
-													"MeshMultiZoneService",
-													"MeshServiceSubset",
-													"MeshHTTPRoute",
-													"Dataplane",
-												),
 											},
 										},
 										"labels": schema.MapAttribute{
@@ -449,20 +425,7 @@ func (r *MeshGlobalRateLimitResource) Schema(ctx context.Context, req resource.S
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
 								Required:    true,
-								Description: `Kind of the referenced resource. must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
-								Validators: []validator.String{
-									stringvalidator.OneOf(
-										"Mesh",
-										"MeshSubset",
-										"MeshGateway",
-										"MeshService",
-										"MeshExternalService",
-										"MeshMultiZoneService",
-										"MeshServiceSubset",
-										"MeshHTTPRoute",
-										"Dataplane",
-									),
-								},
+								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
 							},
 							"labels": schema.MapAttribute{
 								Optional:    true,
@@ -753,13 +716,7 @@ func (r *MeshGlobalRateLimitResource) Schema(ctx context.Context, req resource.S
 											Optional: true,
 											MarkdownDescription: `Mode defines rate limit behavior when limits are reached. Possible options: Limit and Shadow. Setting Shadow will` + "\n" +
 												`not block over the limit requests but will update metrics. This is useful for testing rate limit configuration.` + "\n" +
-												`must be one of ["Limit", "Shadow"]`,
-											Validators: []validator.String{
-												stringvalidator.OneOf(
-													"Limit",
-													"Shadow",
-												),
-											},
+												`possible known values include one of ["Limit", "Shadow"]`,
 										},
 									},
 									MarkdownDescription: `Default is a configuration specific to the group of clients referenced in` + "\n" +
@@ -770,20 +727,9 @@ func (r *MeshGlobalRateLimitResource) Schema(ctx context.Context, req resource.S
 									Attributes: map[string]schema.Attribute{
 										"kind": schema.StringAttribute{
 											Optional:    true,
-											Description: `Kind of the referenced resource. Not Null; must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
+											Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null`,
 											Validators: []validator.String{
 												speakeasy_stringvalidators.NotNull(),
-												stringvalidator.OneOf(
-													"Mesh",
-													"MeshSubset",
-													"MeshGateway",
-													"MeshService",
-													"MeshExternalService",
-													"MeshMultiZoneService",
-													"MeshServiceSubset",
-													"MeshHTTPRoute",
-													"Dataplane",
-												),
 											},
 										},
 										"labels": schema.MapAttribute{
@@ -1174,7 +1120,10 @@ func (r *MeshGlobalRateLimitResource) Delete(ctx context.Context, req resource.D
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 200 {
+	switch res.StatusCode {
+	case 200, 404:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
@@ -1195,12 +1144,12 @@ func (r *MeshGlobalRateLimitResource) ImportState(ctx context.Context, req resou
 	}
 
 	if len(data.Mesh) == 0 {
-		resp.Diagnostics.AddError("Missing required field", `The field mesh is required but was not found in the json encoded ID. It's expected to be a value alike '""`)
+		resp.Diagnostics.AddError("Missing required field", `The field mesh is required but was not found in the json encoded ID.`)
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("mesh"), data.Mesh)...)
 	if len(data.Name) == 0 {
-		resp.Diagnostics.AddError("Missing required field", `The field name is required but was not found in the json encoded ID. It's expected to be a value alike '""`)
+		resp.Diagnostics.AddError("Missing required field", `The field name is required but was not found in the json encoded ID.`)
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("name"), data.Name)...)

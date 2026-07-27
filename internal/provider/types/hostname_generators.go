@@ -4,5 +4,5 @@ package types
 
 type HostnameGenerators struct {
 	Conditions           []MeshExternalServiceItemConditions `tfsdk:"conditions"`
-	HostnameGeneratorRef HostnameGeneratorRef                `tfsdk:"hostname_generator_ref"`
+	HostnameGeneratorRef *HostnameGeneratorRef               `tfsdk:"hostname_generator_ref"`
 }

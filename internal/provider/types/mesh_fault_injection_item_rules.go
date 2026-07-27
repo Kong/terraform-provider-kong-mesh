@@ -3,6 +3,6 @@
 package types
 
 type MeshFaultInjectionItemRules struct {
-	Default MeshFaultInjectionItemDefault `tfsdk:"default"`
-	Matches []Matches                     `tfsdk:"matches"`
+	Default *MeshFaultInjectionItemDefault `tfsdk:"default"`
+	Matches []Matches                      `tfsdk:"matches"`
 }

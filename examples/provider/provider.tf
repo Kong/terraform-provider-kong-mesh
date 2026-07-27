@@ -8,5 +8,5 @@ terraform {
 }
 
 provider "kong-mesh" {
-  # Configuration options
+  server_url = "..." # Optional - can use SERVER_URL environment variable
 }

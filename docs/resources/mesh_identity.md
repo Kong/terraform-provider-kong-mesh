@@ -125,7 +125,7 @@ Optional:
 
 Required:
 
-- `type` (String) Type specifies the type of certificate provider. must be one of ["Bundled", "Spire"]
+- `type` (String) Type specifies the type of certificate provider. possible known values include one of ["Bundled", "Spire"]
 
 Optional:
 
@@ -144,7 +144,7 @@ Optional:
 - `insecure_allow_self_signed` (Boolean) InsecureAllowSelfSigned allows users to enable the use of self-signed certificates.
 - `mesh_trust_creation` (String) MeshTrustCreation defines whether a MeshTrust resource should be automatically created
 from an existing MeshIdentity. If not defined, the control plane automatically generates a MeshTrust.
-must be one of ["Enabled", "Disabled"]
+possible known values include one of ["Enabled", "Disabled"]
 
 <a id="nestedatt--spec--provider--bundled--autogenerate"></a>
 ### Nested Schema for `spec.provider.bundled.autogenerate`
@@ -167,7 +167,7 @@ Optional:
 
 Required:
 
-- `type` (String) must be one of ["File", "Secret", "EnvVar", "InsecureInline"]
+- `type` (String) possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]
 
 Optional:
 
@@ -215,7 +215,7 @@ Required:
 
 Required:
 
-- `type` (String) must be one of ["File", "Secret", "EnvVar", "InsecureInline"]
+- `type` (String) possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]
 
 Optional:
 
@@ -331,7 +331,7 @@ Producers of specific condition types may define expected values and meanings fo
 and whether the values are considered a guaranteed API.
 The value should be a CamelCase string.
 This field may not be empty.
-- `status` (String) status of the condition, one of True, False, Unknown. must be one of ["True", "False", "Unknown"]
+- `status` (String) status of the condition, one of True, False, Unknown.
 - `type` (String) type of condition in CamelCase or in foo.example.com/CamelCase.
 
 ## Import

@@ -3,7 +3,7 @@
 package types
 
 type VaultCertificateAuthorityConfigAuth struct {
-	VaultCertificateAuthorityConfigFromCpAuthAws   *VaultCertificateAuthorityConfigFromCpAuthAws   `queryParam:"inline" tfsdk:"vault_certificate_authority_config_from_cp_auth_aws" tfPlanOnly:"true"`
-	VaultCertificateAuthorityConfigFromCpAuthTLS   *VaultCertificateAuthorityConfigFromCpAuthTLS   `queryParam:"inline" tfsdk:"vault_certificate_authority_config_from_cp_auth_tls" tfPlanOnly:"true"`
-	VaultCertificateAuthorityConfigFromCpAuthToken *VaultCertificateAuthorityConfigFromCpAuthToken `queryParam:"inline" tfsdk:"vault_certificate_authority_config_from_cp_auth_token" tfPlanOnly:"true"`
+	VaultCertificateAuthorityConfigFromCpAuthAws   *VaultCertificateAuthorityConfigFromCpAuthAws   `queryParam:"inline" tfsdk:"vault_certificate_authority_config_from_cp_auth_aws"`
+	VaultCertificateAuthorityConfigFromCpAuthTLS   *VaultCertificateAuthorityConfigFromCpAuthTLS   `queryParam:"inline" tfsdk:"vault_certificate_authority_config_from_cp_auth_tls"`
+	VaultCertificateAuthorityConfigFromCpAuthToken *VaultCertificateAuthorityConfigFromCpAuthToken `queryParam:"inline" tfsdk:"vault_certificate_authority_config_from_cp_auth_token"`
 }

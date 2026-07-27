@@ -3,6 +3,6 @@
 package types
 
 type MeshItemLoggingConf struct {
-	FileLoggingBackendConfig *FileLoggingBackendConfig `queryParam:"inline" tfsdk:"file_logging_backend_config" tfPlanOnly:"true"`
-	TCPLoggingBackendConfig  *TCPLoggingBackendConfig  `queryParam:"inline" tfsdk:"tcp_logging_backend_config" tfPlanOnly:"true"`
+	FileLoggingBackendConfig *FileLoggingBackendConfig `queryParam:"inline" tfsdk:"file_logging_backend_config"`
+	TCPLoggingBackendConfig  *TCPLoggingBackendConfig  `queryParam:"inline" tfsdk:"tcp_logging_backend_config"`
 }

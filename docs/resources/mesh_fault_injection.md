@@ -298,7 +298,7 @@ Optional:
 
 Optional:
 
-- `kind` (String) Kind of the referenced resource. Not Null; must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
 - `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
 Name and Namespace can be used.
 - `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
@@ -418,7 +418,7 @@ Optional:
 
 Optional:
 
-- `type` (String) Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed. Not Null; must be one of ["Exact", "Prefix"]
+- `type` (String) Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed. possible known values include one of ["Exact", "Prefix"]; Not Null
 - `value` (String) Value is SpiffeId of a client that needs to match for the configuration to be applied. Not Null
 
 
@@ -429,7 +429,7 @@ Optional:
 
 Required:
 
-- `kind` (String) Kind of the referenced resource. must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
 
 Optional:
 
@@ -547,7 +547,7 @@ Optional:
 
 Optional:
 
-- `kind` (String) Kind of the referenced resource. Not Null; must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
 - `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
 Name and Namespace can be used.
 - `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.

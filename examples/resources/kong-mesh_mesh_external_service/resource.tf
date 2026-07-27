@@ -22,7 +22,7 @@ resource "kong-mesh_mesh_external_service" "my_meshexternalservice" {
     }
     tls = {
       allow_renegotiation = false
-      enabled             = true
+      enabled             = false
       verification = {
         ca_cert = {
           inline        = "...my_inline..."
@@ -39,7 +39,7 @@ resource "kong-mesh_mesh_external_service" "my_meshexternalservice" {
           inline_string = "...my_inline_string..."
           secret        = "...my_secret..."
         }
-        mode        = "SkipAll"
+        mode        = "Secured"
         server_name = "...my_server_name..."
         subject_alt_names = [
           {
@@ -49,8 +49,8 @@ resource "kong-mesh_mesh_external_service" "my_meshexternalservice" {
         ]
       }
       version = {
-        max = "TLS12"
-        min = "TLS10"
+        max = "TLSAuto"
+        min = "TLSAuto"
       }
     }
   }

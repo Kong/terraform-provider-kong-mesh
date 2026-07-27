@@ -28,7 +28,7 @@ resource "kong-mesh_mesh_service" "my_meshservice" {
     ]
     ports = [
       {
-        app_protocol = "...my_app_protocol..."
+        app_protocol = "tcp"
         name         = "...my_name..."
         port         = 8
         target_port = {
@@ -49,7 +49,7 @@ resource "kong-mesh_mesh_service" "my_meshservice" {
         key = "value"
       }
     }
-    state = "Available"
+    state = "Unavailable"
   }
   type = "MeshService"
 }
@@ -88,14 +88,14 @@ Optional:
 - `selector` (Attributes) (see [below for nested schema](#nestedatt--spec--selector))
 - `state` (String) State of MeshService. Available if there is at least one healthy endpoint. Otherwise, Unavailable.
 It's used for cross zone communication to check if we should send traffic to it, when MeshService is aggregated into MeshMultiZoneService.
-Default: "Unavailable"; must be one of ["Available", "Unavailable"]
+possible known values include one of ["Available", "Unavailable"]; Default: "Unavailable"
 
 <a id="nestedatt--spec--identities"></a>
 ### Nested Schema for `spec.identities`
 
 Optional:
 
-- `type` (String) Not Null; must be one of ["ServiceTag", "SpiffeID"]
+- `type` (String) possible known values include one of ["ServiceTag", "SpiffeID"]; Not Null
 - `value` (String) Not Null
 
 
@@ -205,7 +205,7 @@ Producers of specific condition types may define expected values and meanings fo
 and whether the values are considered a guaranteed API.
 The value should be a CamelCase string.
 This field may not be empty.
-- `status` (String) status of the condition, one of True, False, Unknown. must be one of ["True", "False", "Unknown"]
+- `status` (String) status of the condition, one of True, False, Unknown.
 - `type` (String) type of condition in CamelCase or in foo.example.com/CamelCase.
 
 
@@ -223,7 +223,7 @@ Read-Only:
 
 Read-Only:
 
-- `status` (String) must be one of ["Ready", "NotReady"]
+- `status` (String)
 
 
 <a id="nestedatt--status--vips"></a>

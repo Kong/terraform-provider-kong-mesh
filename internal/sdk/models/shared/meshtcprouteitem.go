@@ -51,34 +51,16 @@ const (
 func (e MeshTCPRouteItemKind) ToPointer() *MeshTCPRouteItemKind {
 	return &e
 }
-func (e *MeshTCPRouteItemKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTCPRouteItemKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshTCPRouteItemKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTCPRouteItemKind: %v", v)
-	}
+	return false
 }
 
 type MeshTCPRouteItemProxyTypes string
@@ -91,20 +73,16 @@ const (
 func (e MeshTCPRouteItemProxyTypes) ToPointer() *MeshTCPRouteItemProxyTypes {
 	return &e
 }
-func (e *MeshTCPRouteItemProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTCPRouteItemProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshTCPRouteItemProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTCPRouteItemProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshTCPRouteItemTargetRef - TargetRef is a reference to the resource the policy takes an effect on.
@@ -209,34 +187,16 @@ const (
 func (e MeshTCPRouteItemSpecToKind) ToPointer() *MeshTCPRouteItemSpecToKind {
 	return &e
 }
-func (e *MeshTCPRouteItemSpecToKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTCPRouteItemSpecToKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshTCPRouteItemSpecToKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTCPRouteItemSpecToKind: %v", v)
-	}
+	return false
 }
 
 type MeshTCPRouteItemSpecToProxyTypes string
@@ -249,20 +209,16 @@ const (
 func (e MeshTCPRouteItemSpecToProxyTypes) ToPointer() *MeshTCPRouteItemSpecToProxyTypes {
 	return &e
 }
-func (e *MeshTCPRouteItemSpecToProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTCPRouteItemSpecToProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshTCPRouteItemSpecToProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTCPRouteItemSpecToProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshTCPRouteItemBackendRefs - BackendRef defines where to forward traffic.
@@ -299,7 +255,7 @@ func (m MeshTCPRouteItemBackendRefs) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshTCPRouteItemBackendRefs) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"kind"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -419,34 +375,16 @@ const (
 func (e MeshTCPRouteItemSpecKind) ToPointer() *MeshTCPRouteItemSpecKind {
 	return &e
 }
-func (e *MeshTCPRouteItemSpecKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTCPRouteItemSpecKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshTCPRouteItemSpecKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTCPRouteItemSpecKind: %v", v)
-	}
+	return false
 }
 
 type MeshTCPRouteItemSpecProxyTypes string
@@ -459,20 +397,16 @@ const (
 func (e MeshTCPRouteItemSpecProxyTypes) ToPointer() *MeshTCPRouteItemSpecProxyTypes {
 	return &e
 }
-func (e *MeshTCPRouteItemSpecProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTCPRouteItemSpecProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshTCPRouteItemSpecProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTCPRouteItemSpecProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshTCPRouteItemSpecTargetRef - TargetRef is a reference to the resource that represents a group of
@@ -635,7 +569,7 @@ func (m MeshTCPRouteItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshTCPRouteItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -720,7 +654,7 @@ func (m MeshTCPRouteItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshTCPRouteItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil

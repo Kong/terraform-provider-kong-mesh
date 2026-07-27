@@ -2,7 +2,7 @@
 
 package sdk
 
-// Generated from OpenAPI doc version 2.0.0 and generator version 2.731.4
+// Generated from OpenAPI doc version 2.0.0 and generator version 2.924.0
 
 import (
 	"context"
@@ -95,7 +95,7 @@ type KongMesh struct {
 
 type SDKOption func(*KongMesh)
 
-// WithServerURL allows the overriding of the default server URL
+// WithServerURL allows providing an alternative server URL
 func WithServerURL(serverURL string) SDKOption {
 	return func(sdk *KongMesh) {
 		sdk.sdkConfiguration.ServerURL = serverURL
@@ -165,7 +165,7 @@ func New(opts ...SDKOption) *KongMesh {
 	sdk := &KongMesh{
 		SDKVersion: "0.8.2",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent:  "speakeasy-sdk/terraform 0.8.2 2.731.4 2.0.0 github.com/kong/terraform-provider-kong-mesh/internal/sdk",
+			UserAgent:  "speakeasy-sdk/terraform 0.8.2 2.924.0 2.0.0 github.com/kong/terraform-provider-kong-mesh/internal/sdk",
 			ServerList: ServerList,
 		},
 		hooks: hooks.New(),

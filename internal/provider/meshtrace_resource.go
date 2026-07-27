@@ -26,7 +26,6 @@ import (
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
-	"github.com/kong/terraform-provider-kong-mesh/internal/validators"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/stringvalidators"
 )
@@ -53,7 +52,7 @@ type MeshTraceResourceModel struct {
 	Mesh             types.String                  `tfsdk:"mesh"`
 	ModificationTime types.String                  `tfsdk:"modification_time"`
 	Name             types.String                  `tfsdk:"name"`
-	Spec             tfTypes.MeshTraceItemSpec     `tfsdk:"spec"`
+	Spec             *tfTypes.MeshTraceItemSpec    `tfsdk:"spec"`
 	Type             types.String                  `tfsdk:"type"`
 	Warnings         []types.String                `tfsdk:"warnings"`
 }
@@ -72,9 +71,6 @@ func (r *MeshTraceResource) Schema(ctx context.Context, req resource.SchemaReque
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
 				Description: `Time at which the resource was created`,
-				Validators: []validator.String{
-					validators.IsRFC3339(),
-				},
 			},
 			"kri": schema.StringAttribute{
 				Computed:    true,
@@ -101,9 +97,6 @@ func (r *MeshTraceResource) Schema(ctx context.Context, req resource.SchemaReque
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
 				Description: `Time at which the resource was updated`,
-				Validators: []validator.String{
-					validators.IsRFC3339(),
-				},
 			},
 			"name": schema.StringAttribute{
 				Required: true,
@@ -171,14 +164,9 @@ func (r *MeshTraceResource) Schema(ctx context.Context, req resource.SchemaReque
 										},
 										"type": schema.StringAttribute{
 											Optional:    true,
-											Description: `Not Null; must be one of ["Zipkin", "Datadog", "OpenTelemetry"]`,
+											Description: `possible known values include one of ["Zipkin", "Datadog", "OpenTelemetry"]; Not Null`,
 											Validators: []validator.String{
 												speakeasy_stringvalidators.NotNull(),
-												stringvalidator.OneOf(
-													"Zipkin",
-													"Datadog",
-													"OpenTelemetry",
-												),
 											},
 										},
 										"zipkin": schema.SingleNestedAttribute{
@@ -190,13 +178,7 @@ func (r *MeshTraceResource) Schema(ctx context.Context, req resource.SchemaReque
 													Default:  stringdefault.StaticString(`httpJson`),
 													MarkdownDescription: `Version of the API.` + "\n" +
 														`https://github.com/envoyproxy/envoy/blob/v1.22.0/api/envoy/config/trace/v3/zipkin.proto#L66` + "\n" +
-														`Default: "httpJson"; must be one of ["httpJson", "httpProto"]`,
-													Validators: []validator.String{
-														stringvalidator.OneOf(
-															"httpJson",
-															"httpProto",
-														),
-													},
+														`possible known values include one of ["httpJson", "httpProto"]; Default: "httpJson"`,
 												},
 												"shared_span_context": schema.BoolAttribute{
 													Computed: true,
@@ -380,20 +362,7 @@ func (r *MeshTraceResource) Schema(ctx context.Context, req resource.SchemaReque
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
 								Required:    true,
-								Description: `Kind of the referenced resource. must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
-								Validators: []validator.String{
-									stringvalidator.OneOf(
-										"Mesh",
-										"MeshSubset",
-										"MeshGateway",
-										"MeshService",
-										"MeshExternalService",
-										"MeshMultiZoneService",
-										"MeshServiceSubset",
-										"MeshHTTPRoute",
-										"Dataplane",
-									),
-								},
+								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
 							},
 							"labels": schema.MapAttribute{
 								Optional:    true,
@@ -776,7 +745,10 @@ func (r *MeshTraceResource) Delete(ctx context.Context, req resource.DeleteReque
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 200 {
+	switch res.StatusCode {
+	case 200, 404:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
@@ -797,12 +769,12 @@ func (r *MeshTraceResource) ImportState(ctx context.Context, req resource.Import
 	}
 
 	if len(data.Mesh) == 0 {
-		resp.Diagnostics.AddError("Missing required field", `The field mesh is required but was not found in the json encoded ID. It's expected to be a value alike '""`)
+		resp.Diagnostics.AddError("Missing required field", `The field mesh is required but was not found in the json encoded ID.`)
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("mesh"), data.Mesh)...)
 	if len(data.Name) == 0 {
-		resp.Diagnostics.AddError("Missing required field", `The field name is required but was not found in the json encoded ID. It's expected to be a value alike '""`)
+		resp.Diagnostics.AddError("Missing required field", `The field name is required but was not found in the json encoded ID.`)
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("name"), data.Name)...)

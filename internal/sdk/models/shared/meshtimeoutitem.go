@@ -145,34 +145,16 @@ const (
 func (e MeshTimeoutItemSpecKind) ToPointer() *MeshTimeoutItemSpecKind {
 	return &e
 }
-func (e *MeshTimeoutItemSpecKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTimeoutItemSpecKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshTimeoutItemSpecKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTimeoutItemSpecKind: %v", v)
-	}
+	return false
 }
 
 type MeshTimeoutItemSpecProxyTypes string
@@ -185,20 +167,16 @@ const (
 func (e MeshTimeoutItemSpecProxyTypes) ToPointer() *MeshTimeoutItemSpecProxyTypes {
 	return &e
 }
-func (e *MeshTimeoutItemSpecProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTimeoutItemSpecProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshTimeoutItemSpecProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTimeoutItemSpecProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshTimeoutItemSpecTargetRef - TargetRef is a reference to the resource that represents a group of
@@ -430,34 +408,16 @@ const (
 func (e MeshTimeoutItemKind) ToPointer() *MeshTimeoutItemKind {
 	return &e
 }
-func (e *MeshTimeoutItemKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTimeoutItemKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshTimeoutItemKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTimeoutItemKind: %v", v)
-	}
+	return false
 }
 
 type MeshTimeoutItemProxyTypes string
@@ -470,20 +430,16 @@ const (
 func (e MeshTimeoutItemProxyTypes) ToPointer() *MeshTimeoutItemProxyTypes {
 	return &e
 }
-func (e *MeshTimeoutItemProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTimeoutItemProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshTimeoutItemProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTimeoutItemProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshTimeoutItemTargetRef - TargetRef is a reference to the resource the policy takes an effect on.
@@ -682,34 +638,16 @@ const (
 func (e MeshTimeoutItemSpecToKind) ToPointer() *MeshTimeoutItemSpecToKind {
 	return &e
 }
-func (e *MeshTimeoutItemSpecToKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTimeoutItemSpecToKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshTimeoutItemSpecToKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTimeoutItemSpecToKind: %v", v)
-	}
+	return false
 }
 
 type MeshTimeoutItemSpecToProxyTypes string
@@ -722,20 +660,16 @@ const (
 func (e MeshTimeoutItemSpecToProxyTypes) ToPointer() *MeshTimeoutItemSpecToProxyTypes {
 	return &e
 }
-func (e *MeshTimeoutItemSpecToProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTimeoutItemSpecToProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshTimeoutItemSpecToProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTimeoutItemSpecToProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshTimeoutItemSpecToTargetRef - TargetRef is a reference to the resource that represents a group of
@@ -912,7 +846,7 @@ func (m MeshTimeoutItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshTimeoutItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -993,7 +927,7 @@ func (m MeshTimeoutItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshTimeoutItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil

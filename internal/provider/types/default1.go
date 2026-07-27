@@ -2,7 +2,7 @@
 
 package types
 
-type Default struct {
+type Default1 struct {
 	Applications []Applications           `tfsdk:"applications"`
 	Backends     []MeshMetricItemBackends `tfsdk:"backends"`
 	Sidecar      *Sidecar                 `tfsdk:"sidecar"`

@@ -28,7 +28,7 @@ resource "kong-mesh_mesh_tls" "my_meshtls" {
             "ECDHE-RSA-CHACHA20-POLY1305"
           ]
           tls_version = {
-            max = "TLS11"
+            max = "TLSAuto"
             min = "TLSAuto"
           }
         }
@@ -59,7 +59,7 @@ resource "kong-mesh_mesh_tls" "my_meshtls" {
           ]
           tls_version = {
             max = "TLSAuto"
-            min = "TLS10"
+            min = "TLSAuto"
           }
         }
       }
@@ -135,7 +135,7 @@ Not Null (see [below for nested schema](#nestedatt--spec--from--target_ref))
 
 Optional:
 
-- `mode` (String) Mode defines the behavior of inbound listeners with regard to traffic encryption. must be one of ["Permissive", "Strict"]
+- `mode` (String) Mode defines the behavior of inbound listeners with regard to traffic encryption. possible known values include one of ["Permissive", "Strict"]
 - `tls_ciphers` (List of String) TlsCiphers section for providing ciphers specification.
 - `tls_version` (Attributes) Version section for providing version specification. (see [below for nested schema](#nestedatt--spec--from--default--tls_version))
 
@@ -144,8 +144,8 @@ Optional:
 
 Optional:
 
-- `max` (String) Max defines maximum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`. Default: "TLSAuto"; must be one of ["TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13"]
-- `min` (String) Min defines minimum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`. Default: "TLSAuto"; must be one of ["TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13"]
+- `max` (String) Max defines maximum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`. possible known values include one of ["TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13"]; Default: "TLSAuto"
+- `min` (String) Min defines minimum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`. possible known values include one of ["TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13"]; Default: "TLSAuto"
 
 
 
@@ -154,7 +154,7 @@ Optional:
 
 Optional:
 
-- `kind` (String) Kind of the referenced resource. Not Null; must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
 - `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
 Name and Namespace can be used.
 - `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
@@ -183,7 +183,7 @@ Optional:
 
 Optional:
 
-- `mode` (String) Mode defines the behavior of inbound listeners with regard to traffic encryption. must be one of ["Permissive", "Strict"]
+- `mode` (String) Mode defines the behavior of inbound listeners with regard to traffic encryption. possible known values include one of ["Permissive", "Strict"]
 - `tls_ciphers` (List of String) TlsCiphers section for providing ciphers specification.
 - `tls_version` (Attributes) Version section for providing version specification. (see [below for nested schema](#nestedatt--spec--rules--default--tls_version))
 
@@ -192,8 +192,8 @@ Optional:
 
 Optional:
 
-- `max` (String) Max defines maximum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`. Default: "TLSAuto"; must be one of ["TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13"]
-- `min` (String) Min defines minimum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`. Default: "TLSAuto"; must be one of ["TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13"]
+- `max` (String) Max defines maximum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`. possible known values include one of ["TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13"]; Default: "TLSAuto"
+- `min` (String) Min defines minimum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`. possible known values include one of ["TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13"]; Default: "TLSAuto"
 
 
 
@@ -203,7 +203,7 @@ Optional:
 
 Required:
 
-- `kind` (String) Kind of the referenced resource. must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
 
 Optional:
 

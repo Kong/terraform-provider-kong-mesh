@@ -193,7 +193,7 @@ func (m MeshTrustItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshTrustItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -281,7 +281,7 @@ func (m MeshTrustItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshTrustItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil

@@ -62,20 +62,16 @@ const (
 func (e MeshAccessLogItemSpecFromType) ToPointer() *MeshAccessLogItemSpecFromType {
 	return &e
 }
-func (e *MeshAccessLogItemSpecFromType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemSpecFromType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
 	}
-	switch v {
-	case "Plain":
-		fallthrough
-	case "Json":
-		*e = MeshAccessLogItemSpecFromType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshAccessLogItemSpecFromType: %v", v)
-	}
+	return false
 }
 
 // Format of access logs. Placeholders available on
@@ -92,7 +88,7 @@ func (f Format) MarshalJSON() ([]byte, error) {
 }
 
 func (f *Format) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &f, "", false, []string{"type"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &f, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -232,20 +228,16 @@ const (
 func (e MeshAccessLogItemSpecFromDefaultType) ToPointer() *MeshAccessLogItemSpecFromDefaultType {
 	return &e
 }
-func (e *MeshAccessLogItemSpecFromDefaultType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemSpecFromDefaultType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
 	}
-	switch v {
-	case "Plain":
-		fallthrough
-	case "Json":
-		*e = MeshAccessLogItemSpecFromDefaultType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshAccessLogItemSpecFromDefaultType: %v", v)
-	}
+	return false
 }
 
 // MeshAccessLogItemFormat - Format of access logs. Placeholders available on
@@ -262,7 +254,7 @@ func (m MeshAccessLogItemFormat) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshAccessLogItemFormat) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -330,22 +322,16 @@ const (
 func (e MeshAccessLogItemType) ToPointer() *MeshAccessLogItemType {
 	return &e
 }
-func (e *MeshAccessLogItemType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Tcp", "File", "OpenTelemetry":
+			return true
+		}
 	}
-	switch v {
-	case "Tcp":
-		fallthrough
-	case "File":
-		fallthrough
-	case "OpenTelemetry":
-		*e = MeshAccessLogItemType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshAccessLogItemType: %v", v)
-	}
+	return false
 }
 
 type MeshAccessLogItemSpecFromBackends struct {
@@ -417,34 +403,16 @@ const (
 func (e MeshAccessLogItemKind) ToPointer() *MeshAccessLogItemKind {
 	return &e
 }
-func (e *MeshAccessLogItemKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshAccessLogItemKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshAccessLogItemKind: %v", v)
-	}
+	return false
 }
 
 type MeshAccessLogItemProxyTypes string
@@ -457,20 +425,16 @@ const (
 func (e MeshAccessLogItemProxyTypes) ToPointer() *MeshAccessLogItemProxyTypes {
 	return &e
 }
-func (e *MeshAccessLogItemProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshAccessLogItemProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshAccessLogItemProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshAccessLogItemTargetRef - TargetRef is a reference to the resource that represents a group of
@@ -608,20 +572,16 @@ const (
 func (e MeshAccessLogItemSpecRulesType) ToPointer() *MeshAccessLogItemSpecRulesType {
 	return &e
 }
-func (e *MeshAccessLogItemSpecRulesType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemSpecRulesType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
 	}
-	switch v {
-	case "Plain":
-		fallthrough
-	case "Json":
-		*e = MeshAccessLogItemSpecRulesType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshAccessLogItemSpecRulesType: %v", v)
-	}
+	return false
 }
 
 // MeshAccessLogItemSpecFormat - Format of access logs. Placeholders available on
@@ -638,7 +598,7 @@ func (m MeshAccessLogItemSpecFormat) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshAccessLogItemSpecFormat) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -778,20 +738,16 @@ const (
 func (e MeshAccessLogItemSpecRulesDefaultType) ToPointer() *MeshAccessLogItemSpecRulesDefaultType {
 	return &e
 }
-func (e *MeshAccessLogItemSpecRulesDefaultType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemSpecRulesDefaultType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
 	}
-	switch v {
-	case "Plain":
-		fallthrough
-	case "Json":
-		*e = MeshAccessLogItemSpecRulesDefaultType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshAccessLogItemSpecRulesDefaultType: %v", v)
-	}
+	return false
 }
 
 // MeshAccessLogItemSpecRulesFormat - Format of access logs. Placeholders available on
@@ -808,7 +764,7 @@ func (m MeshAccessLogItemSpecRulesFormat) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshAccessLogItemSpecRulesFormat) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -876,22 +832,16 @@ const (
 func (e MeshAccessLogItemSpecType) ToPointer() *MeshAccessLogItemSpecType {
 	return &e
 }
-func (e *MeshAccessLogItemSpecType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemSpecType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Tcp", "File", "OpenTelemetry":
+			return true
+		}
 	}
-	switch v {
-	case "Tcp":
-		fallthrough
-	case "File":
-		fallthrough
-	case "OpenTelemetry":
-		*e = MeshAccessLogItemSpecType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshAccessLogItemSpecType: %v", v)
-	}
+	return false
 }
 
 type MeshAccessLogItemBackends struct {
@@ -974,34 +924,16 @@ const (
 func (e Kind) ToPointer() *Kind {
 	return &e
 }
-func (e *Kind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *Kind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = Kind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for Kind: %v", v)
-	}
+	return false
 }
 
 type ProxyTypes string
@@ -1014,20 +946,16 @@ const (
 func (e ProxyTypes) ToPointer() *ProxyTypes {
 	return &e
 }
-func (e *ProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *ProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = ProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for ProxyTypes: %v", v)
-	}
+	return false
 }
 
 // TargetRef is a reference to the resource the policy takes an effect on.
@@ -1143,20 +1071,16 @@ const (
 func (e MeshAccessLogItemSpecToDefaultBackendsType) ToPointer() *MeshAccessLogItemSpecToDefaultBackendsType {
 	return &e
 }
-func (e *MeshAccessLogItemSpecToDefaultBackendsType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemSpecToDefaultBackendsType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
 	}
-	switch v {
-	case "Plain":
-		fallthrough
-	case "Json":
-		*e = MeshAccessLogItemSpecToDefaultBackendsType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshAccessLogItemSpecToDefaultBackendsType: %v", v)
-	}
+	return false
 }
 
 // MeshAccessLogItemSpecToFormat - Format of access logs. Placeholders available on
@@ -1173,7 +1097,7 @@ func (m MeshAccessLogItemSpecToFormat) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshAccessLogItemSpecToFormat) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -1313,20 +1237,16 @@ const (
 func (e MeshAccessLogItemSpecToDefaultType) ToPointer() *MeshAccessLogItemSpecToDefaultType {
 	return &e
 }
-func (e *MeshAccessLogItemSpecToDefaultType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemSpecToDefaultType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
 	}
-	switch v {
-	case "Plain":
-		fallthrough
-	case "Json":
-		*e = MeshAccessLogItemSpecToDefaultType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshAccessLogItemSpecToDefaultType: %v", v)
-	}
+	return false
 }
 
 // MeshAccessLogItemSpecToDefaultFormat - Format of access logs. Placeholders available on
@@ -1343,7 +1263,7 @@ func (m MeshAccessLogItemSpecToDefaultFormat) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshAccessLogItemSpecToDefaultFormat) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -1411,22 +1331,16 @@ const (
 func (e MeshAccessLogItemSpecToType) ToPointer() *MeshAccessLogItemSpecToType {
 	return &e
 }
-func (e *MeshAccessLogItemSpecToType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemSpecToType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Tcp", "File", "OpenTelemetry":
+			return true
+		}
 	}
-	switch v {
-	case "Tcp":
-		fallthrough
-	case "File":
-		fallthrough
-	case "OpenTelemetry":
-		*e = MeshAccessLogItemSpecToType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshAccessLogItemSpecToType: %v", v)
-	}
+	return false
 }
 
 type MeshAccessLogItemSpecBackends struct {
@@ -1498,34 +1412,16 @@ const (
 func (e MeshAccessLogItemSpecKind) ToPointer() *MeshAccessLogItemSpecKind {
 	return &e
 }
-func (e *MeshAccessLogItemSpecKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemSpecKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshAccessLogItemSpecKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshAccessLogItemSpecKind: %v", v)
-	}
+	return false
 }
 
 type MeshAccessLogItemSpecProxyTypes string
@@ -1538,20 +1434,16 @@ const (
 func (e MeshAccessLogItemSpecProxyTypes) ToPointer() *MeshAccessLogItemSpecProxyTypes {
 	return &e
 }
-func (e *MeshAccessLogItemSpecProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemSpecProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshAccessLogItemSpecProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshAccessLogItemSpecProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshAccessLogItemSpecTargetRef - TargetRef is a reference to the resource that represents a group of
@@ -1728,7 +1620,7 @@ func (m MeshAccessLogItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshAccessLogItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -1809,7 +1701,7 @@ func (m MeshAccessLogItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshAccessLogItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil

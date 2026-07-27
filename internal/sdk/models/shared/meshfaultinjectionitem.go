@@ -44,8 +44,8 @@ const (
 // Percentage of requests on which abort will be injected, has to be
 // either int or decimal represented as string.
 type Percentage struct {
-	Integer *int64  `queryParam:"inline,name=percentage"`
-	Str     *string `queryParam:"inline,name=percentage"`
+	Integer *int64  `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
 
 	Type PercentageType
 }
@@ -94,7 +94,7 @@ func (u *Percentage) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Percentage", string(data))
 	}
@@ -160,8 +160,8 @@ const (
 // MeshFaultInjectionItemPercentage - Percentage of requests on which delay will be injected, has to be
 // either int or decimal represented as string.
 type MeshFaultInjectionItemPercentage struct {
-	Integer *int64  `queryParam:"inline,name=percentage"`
-	Str     *string `queryParam:"inline,name=percentage"`
+	Integer *int64  `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
 
 	Type MeshFaultInjectionItemPercentageType
 }
@@ -210,7 +210,7 @@ func (u *MeshFaultInjectionItemPercentage) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshFaultInjectionItemPercentage", string(data))
 	}
@@ -274,8 +274,8 @@ const (
 // MeshFaultInjectionItemSpecPercentage - Percentage of requests on which response bandwidth limit will be
 // either int or decimal represented as string.
 type MeshFaultInjectionItemSpecPercentage struct {
-	Integer *int64  `queryParam:"inline,name=percentage"`
-	Str     *string `queryParam:"inline,name=percentage"`
+	Integer *int64  `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
 
 	Type MeshFaultInjectionItemSpecPercentageType
 }
@@ -324,7 +324,7 @@ func (u *MeshFaultInjectionItemSpecPercentage) UnmarshalJSON(data []byte) error 
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshFaultInjectionItemSpecPercentage", string(data))
 	}
@@ -446,34 +446,16 @@ const (
 func (e MeshFaultInjectionItemSpecKind) ToPointer() *MeshFaultInjectionItemSpecKind {
 	return &e
 }
-func (e *MeshFaultInjectionItemSpecKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshFaultInjectionItemSpecKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshFaultInjectionItemSpecKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshFaultInjectionItemSpecKind: %v", v)
-	}
+	return false
 }
 
 type MeshFaultInjectionItemSpecProxyTypes string
@@ -486,20 +468,16 @@ const (
 func (e MeshFaultInjectionItemSpecProxyTypes) ToPointer() *MeshFaultInjectionItemSpecProxyTypes {
 	return &e
 }
-func (e *MeshFaultInjectionItemSpecProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshFaultInjectionItemSpecProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshFaultInjectionItemSpecProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshFaultInjectionItemSpecProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshFaultInjectionItemSpecTargetRef - TargetRef is a reference to the resource that represents a group of
@@ -618,8 +596,8 @@ const (
 // MeshFaultInjectionItemSpecRulesPercentage - Percentage of requests on which abort will be injected, has to be
 // either int or decimal represented as string.
 type MeshFaultInjectionItemSpecRulesPercentage struct {
-	Integer *int64  `queryParam:"inline,name=percentage"`
-	Str     *string `queryParam:"inline,name=percentage"`
+	Integer *int64  `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
 
 	Type MeshFaultInjectionItemSpecRulesPercentageType
 }
@@ -668,7 +646,7 @@ func (u *MeshFaultInjectionItemSpecRulesPercentage) UnmarshalJSON(data []byte) e
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshFaultInjectionItemSpecRulesPercentage", string(data))
 	}
@@ -734,8 +712,8 @@ const (
 // MeshFaultInjectionItemSpecRulesDefaultPercentage - Percentage of requests on which delay will be injected, has to be
 // either int or decimal represented as string.
 type MeshFaultInjectionItemSpecRulesDefaultPercentage struct {
-	Integer *int64  `queryParam:"inline,name=percentage"`
-	Str     *string `queryParam:"inline,name=percentage"`
+	Integer *int64  `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
 
 	Type MeshFaultInjectionItemSpecRulesDefaultPercentageType
 }
@@ -784,7 +762,7 @@ func (u *MeshFaultInjectionItemSpecRulesDefaultPercentage) UnmarshalJSON(data []
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshFaultInjectionItemSpecRulesDefaultPercentage", string(data))
 	}
@@ -848,8 +826,8 @@ const (
 // MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage - Percentage of requests on which response bandwidth limit will be
 // either int or decimal represented as string.
 type MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage struct {
-	Integer *int64  `queryParam:"inline,name=percentage"`
-	Str     *string `queryParam:"inline,name=percentage"`
+	Integer *int64  `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
 
 	Type MeshFaultInjectionItemSpecRulesDefaultHTTPPercentageType
 }
@@ -898,7 +876,7 @@ func (u *MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage) UnmarshalJSON(dat
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage", string(data))
 	}
@@ -1012,20 +990,16 @@ const (
 func (e MeshFaultInjectionItemSpecType) ToPointer() *MeshFaultInjectionItemSpecType {
 	return &e
 }
-func (e *MeshFaultInjectionItemSpecType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshFaultInjectionItemSpecType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Exact", "Prefix":
+			return true
+		}
 	}
-	switch v {
-	case "Exact":
-		fallthrough
-	case "Prefix":
-		*e = MeshFaultInjectionItemSpecType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshFaultInjectionItemSpecType: %v", v)
-	}
+	return false
 }
 
 // MeshFaultInjectionItemSpiffeID - SpiffeID defines a matcher configuration for SpiffeID matching
@@ -1101,34 +1075,16 @@ const (
 func (e MeshFaultInjectionItemKind) ToPointer() *MeshFaultInjectionItemKind {
 	return &e
 }
-func (e *MeshFaultInjectionItemKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshFaultInjectionItemKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshFaultInjectionItemKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshFaultInjectionItemKind: %v", v)
-	}
+	return false
 }
 
 type MeshFaultInjectionItemProxyTypes string
@@ -1141,20 +1097,16 @@ const (
 func (e MeshFaultInjectionItemProxyTypes) ToPointer() *MeshFaultInjectionItemProxyTypes {
 	return &e
 }
-func (e *MeshFaultInjectionItemProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshFaultInjectionItemProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshFaultInjectionItemProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshFaultInjectionItemProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshFaultInjectionItemTargetRef - TargetRef is a reference to the resource the policy takes an effect on.
@@ -1251,8 +1203,8 @@ const (
 // MeshFaultInjectionItemSpecToPercentage - Percentage of requests on which abort will be injected, has to be
 // either int or decimal represented as string.
 type MeshFaultInjectionItemSpecToPercentage struct {
-	Integer *int64  `queryParam:"inline,name=percentage"`
-	Str     *string `queryParam:"inline,name=percentage"`
+	Integer *int64  `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
 
 	Type MeshFaultInjectionItemSpecToPercentageType
 }
@@ -1301,7 +1253,7 @@ func (u *MeshFaultInjectionItemSpecToPercentage) UnmarshalJSON(data []byte) erro
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshFaultInjectionItemSpecToPercentage", string(data))
 	}
@@ -1367,8 +1319,8 @@ const (
 // MeshFaultInjectionItemSpecToDefaultPercentage - Percentage of requests on which delay will be injected, has to be
 // either int or decimal represented as string.
 type MeshFaultInjectionItemSpecToDefaultPercentage struct {
-	Integer *int64  `queryParam:"inline,name=percentage"`
-	Str     *string `queryParam:"inline,name=percentage"`
+	Integer *int64  `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
 
 	Type MeshFaultInjectionItemSpecToDefaultPercentageType
 }
@@ -1417,7 +1369,7 @@ func (u *MeshFaultInjectionItemSpecToDefaultPercentage) UnmarshalJSON(data []byt
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshFaultInjectionItemSpecToDefaultPercentage", string(data))
 	}
@@ -1481,8 +1433,8 @@ const (
 // MeshFaultInjectionItemSpecToDefaultHTTPPercentage - Percentage of requests on which response bandwidth limit will be
 // either int or decimal represented as string.
 type MeshFaultInjectionItemSpecToDefaultHTTPPercentage struct {
-	Integer *int64  `queryParam:"inline,name=percentage"`
-	Str     *string `queryParam:"inline,name=percentage"`
+	Integer *int64  `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
 
 	Type MeshFaultInjectionItemSpecToDefaultHTTPPercentageType
 }
@@ -1531,7 +1483,7 @@ func (u *MeshFaultInjectionItemSpecToDefaultHTTPPercentage) UnmarshalJSON(data [
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshFaultInjectionItemSpecToDefaultHTTPPercentage", string(data))
 	}
@@ -1653,34 +1605,16 @@ const (
 func (e MeshFaultInjectionItemSpecToKind) ToPointer() *MeshFaultInjectionItemSpecToKind {
 	return &e
 }
-func (e *MeshFaultInjectionItemSpecToKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshFaultInjectionItemSpecToKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshFaultInjectionItemSpecToKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshFaultInjectionItemSpecToKind: %v", v)
-	}
+	return false
 }
 
 type MeshFaultInjectionItemSpecToProxyTypes string
@@ -1693,20 +1627,16 @@ const (
 func (e MeshFaultInjectionItemSpecToProxyTypes) ToPointer() *MeshFaultInjectionItemSpecToProxyTypes {
 	return &e
 }
-func (e *MeshFaultInjectionItemSpecToProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshFaultInjectionItemSpecToProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshFaultInjectionItemSpecToProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshFaultInjectionItemSpecToProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshFaultInjectionItemSpecToTargetRef - TargetRef is a reference to the resource that represents a group of
@@ -1882,7 +1812,7 @@ func (m MeshFaultInjectionItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshFaultInjectionItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -1963,7 +1893,7 @@ func (m MeshFaultInjectionItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshFaultInjectionItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil

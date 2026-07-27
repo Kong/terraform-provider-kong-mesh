@@ -4,5 +4,5 @@ package types
 
 type MeshLoadBalancingStrategyItemTo struct {
 	Default   *MeshLoadBalancingStrategyItemDefault `tfsdk:"default"`
-	TargetRef MeshAccessLogItemTargetRef            `tfsdk:"target_ref"`
+	TargetRef *MeshAccessLogItemTargetRef           `tfsdk:"target_ref"`
 }

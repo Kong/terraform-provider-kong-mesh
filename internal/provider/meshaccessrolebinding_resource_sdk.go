@@ -40,6 +40,8 @@ func (r *MeshAccessRoleBindingResourceModel) RefreshFromSharedAccessRoleBindingI
 			for _, v := range resp.Roles {
 				r.Roles = append(r.Roles, types.StringValue(v))
 			}
+		} else {
+			r.Roles = nil
 		}
 		if resp.Subjects != nil {
 			r.Subjects = []tfTypes.Subjects{}
@@ -52,6 +54,8 @@ func (r *MeshAccessRoleBindingResourceModel) RefreshFromSharedAccessRoleBindingI
 
 				r.Subjects = append(r.Subjects, subjects)
 			}
+		} else {
+			r.Subjects = nil
 		}
 		r.Type = types.StringValue(resp.Type)
 	}
@@ -110,9 +114,9 @@ func (r *MeshAccessRoleBindingResourceModel) ToSharedAccessRoleBindingItem(ctx c
 	var diags diag.Diagnostics
 
 	labels := make(map[string]string)
-	for labelsKey, labelsValue := range r.Labels {
+	for labelsKey := range r.Labels {
 		var labelsInst string
-		labelsInst = labelsValue.ValueString()
+		labelsInst = r.Labels[labelsKey].ValueString()
 
 		labels[labelsKey] = labelsInst
 	}
@@ -122,23 +126,23 @@ func (r *MeshAccessRoleBindingResourceModel) ToSharedAccessRoleBindingItem(ctx c
 	var roles []string
 	if r.Roles != nil {
 		roles = make([]string, 0, len(r.Roles))
-		for _, rolesItem := range r.Roles {
-			roles = append(roles, rolesItem.ValueString())
+		for rolesIndex := range r.Roles {
+			roles = append(roles, r.Roles[rolesIndex].ValueString())
 		}
 	}
 	var subjects []shared.Subjects
 	if r.Subjects != nil {
 		subjects = make([]shared.Subjects, 0, len(r.Subjects))
-		for _, subjectsItem := range r.Subjects {
+		for subjectsIndex := range r.Subjects {
 			name1 := new(string)
-			if !subjectsItem.Name.IsUnknown() && !subjectsItem.Name.IsNull() {
-				*name1 = subjectsItem.Name.ValueString()
+			if !r.Subjects[subjectsIndex].Name.IsUnknown() && !r.Subjects[subjectsIndex].Name.IsNull() {
+				*name1 = r.Subjects[subjectsIndex].Name.ValueString()
 			} else {
 				name1 = nil
 			}
 			typeVar := new(string)
-			if !subjectsItem.Type.IsUnknown() && !subjectsItem.Type.IsNull() {
-				*typeVar = subjectsItem.Type.ValueString()
+			if !r.Subjects[subjectsIndex].Type.IsUnknown() && !r.Subjects[subjectsIndex].Type.IsNull() {
+				*typeVar = r.Subjects[subjectsIndex].Type.ValueString()
 			} else {
 				typeVar = nil
 			}

@@ -3,5 +3,5 @@
 package types
 
 type VaultCertificateAuthorityConfig struct {
-	VaultCertificateAuthorityConfigFromCp *VaultCertificateAuthorityConfigFromCp `queryParam:"inline" tfsdk:"vault_certificate_authority_config_from_cp" tfPlanOnly:"true"`
+	VaultCertificateAuthorityConfigFromCp *VaultCertificateAuthorityConfigFromCp `queryParam:"inline" tfsdk:"vault_certificate_authority_config_from_cp"`
 }

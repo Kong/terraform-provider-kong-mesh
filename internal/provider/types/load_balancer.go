@@ -9,8 +9,8 @@ import (
 type LoadBalancer struct {
 	LeastRequest *LeastRequest `tfsdk:"least_request"`
 	Maglev       *Maglev       `tfsdk:"maglev"`
-	Random       *OptionsObj   `tfsdk:"random"`
+	Random       *Options      `tfsdk:"random"`
 	RingHash     *RingHash     `tfsdk:"ring_hash"`
-	RoundRobin   *OptionsObj   `tfsdk:"round_robin"`
+	RoundRobin   *Options      `tfsdk:"round_robin"`
 	Type         types.String  `tfsdk:"type"`
 }

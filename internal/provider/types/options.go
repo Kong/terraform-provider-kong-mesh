@@ -2,5 +2,5 @@
 
 package types
 
-type OptionsObj struct {
+type Options struct {
 }

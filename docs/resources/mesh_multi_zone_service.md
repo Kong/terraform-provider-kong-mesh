@@ -22,7 +22,7 @@ resource "kong-mesh_mesh_multi_zone_service" "my_meshmultizoneservice" {
   spec = {
     ports = [
       {
-        app_protocol = "...my_app_protocol..."
+        app_protocol = "tcp"
         name         = "...my_name..."
         port         = 5
       }
@@ -138,7 +138,7 @@ Producers of specific condition types may define expected values and meanings fo
 and whether the values are considered a guaranteed API.
 The value should be a CamelCase string.
 This field may not be empty.
-- `status` (String) status of the condition, one of True, False, Unknown. must be one of ["True", "False", "Unknown"]
+- `status` (String) status of the condition, one of True, False, Unknown.
 - `type` (String) type of condition in CamelCase or in foo.example.com/CamelCase.
 
 
@@ -162,7 +162,7 @@ Producers of specific condition types may define expected values and meanings fo
 and whether the values are considered a guaranteed API.
 The value should be a CamelCase string.
 This field may not be empty.
-- `status` (String) status of the condition, one of True, False, Unknown. must be one of ["True", "False", "Unknown"]
+- `status` (String) status of the condition, one of True, False, Unknown.
 - `type` (String) type of condition in CamelCase or in foo.example.com/CamelCase.
 
 

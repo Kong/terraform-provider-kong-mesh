@@ -37,7 +37,7 @@ resource "kong-mesh_mesh_external_service" "my_meshexternalservice" {
     }
     tls = {
       allow_renegotiation = false
-      enabled             = true
+      enabled             = false
       verification = {
         ca_cert = {
           inline        = "...my_inline..."
@@ -54,7 +54,7 @@ resource "kong-mesh_mesh_external_service" "my_meshexternalservice" {
           inline_string = "...my_inline_string..."
           secret        = "...my_secret..."
         }
-        mode        = "SkipAll"
+        mode        = "Secured"
         server_name = "...my_server_name..."
         subject_alt_names = [
           {
@@ -64,8 +64,8 @@ resource "kong-mesh_mesh_external_service" "my_meshexternalservice" {
         ]
       }
       version = {
-        max = "TLS12"
-        min = "TLS10"
+        max = "TLSAuto"
+        min = "TLSAuto"
       }
     }
   }
@@ -118,7 +118,7 @@ Required:
 
 Optional:
 
-- `protocol` (String) Protocol defines a protocol of the communication. Possible values: `tcp`, `grpc`, `http`, `http2`. Default: "tcp"; must be one of ["tcp", "grpc", "http", "http2"]
+- `protocol` (String) Protocol defines a protocol of the communication. Possible values: `tcp`, `grpc`, `http`, `http2`. possible known values include one of ["tcp", "grpc", "http", "http2"]; Default: "tcp"
 - `type` (String) Type of the match, only `HostnameGenerator` is available at the moment. Default: "HostnameGenerator"; must be "HostnameGenerator"
 
 
@@ -163,7 +163,7 @@ Optional:
 - `ca_cert` (Attributes) CaCert defines a certificate of CA. (see [below for nested schema](#nestedatt--spec--tls--verification--ca_cert))
 - `client_cert` (Attributes) ClientCert defines a certificate of a client. (see [below for nested schema](#nestedatt--spec--tls--verification--client_cert))
 - `client_key` (Attributes) ClientKey defines a client private key. (see [below for nested schema](#nestedatt--spec--tls--verification--client_key))
-- `mode` (String) Mode defines if proxy should skip verification, one of `SkipSAN`, `SkipCA`, `Secured`, `SkipAll`. Default `Secured`. Default: "Secured"; must be one of ["SkipSAN", "SkipCA", "Secured", "SkipAll"]
+- `mode` (String) Mode defines if proxy should skip verification, one of `SkipSAN`, `SkipCA`, `Secured`, `SkipAll`. Default `Secured`. possible known values include one of ["SkipSAN", "SkipCA", "Secured", "SkipAll"]; Default: "Secured"
 - `server_name` (String) ServerName overrides the default Server Name Indicator set by Kuma.
 - `subject_alt_names` (Attributes List) SubjectAltNames list of names to verify in the certificate. (see [below for nested schema](#nestedatt--spec--tls--verification--subject_alt_names))
 
@@ -202,7 +202,7 @@ Optional:
 
 Optional:
 
-- `type` (String) Type specifies matching type, one of `Exact`, `Prefix`. Default: `Exact`. Default: "Exact"; must be one of ["Exact", "Prefix"]
+- `type` (String) Type specifies matching type, one of `Exact`, `Prefix`. Default: `Exact`. possible known values include one of ["Exact", "Prefix"]; Default: "Exact"
 - `value` (String) Value to match. Not Null
 
 
@@ -212,8 +212,8 @@ Optional:
 
 Optional:
 
-- `max` (String) Max defines maximum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`. Default: "TLSAuto"; must be one of ["TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13"]
-- `min` (String) Min defines minimum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`. Default: "TLSAuto"; must be one of ["TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13"]
+- `max` (String) Max defines maximum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`. possible known values include one of ["TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13"]; Default: "TLSAuto"
+- `min` (String) Min defines minimum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`. possible known values include one of ["TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13"]; Default: "TLSAuto"
 
 
 
@@ -265,7 +265,7 @@ Producers of specific condition types may define expected values and meanings fo
 and whether the values are considered a guaranteed API.
 The value should be a CamelCase string.
 This field may not be empty.
-- `status` (String) status of the condition, one of True, False, Unknown. must be one of ["True", "False", "Unknown"]
+- `status` (String) status of the condition, one of True, False, Unknown.
 - `type` (String) type of condition in CamelCase or in foo.example.com/CamelCase.
 
 

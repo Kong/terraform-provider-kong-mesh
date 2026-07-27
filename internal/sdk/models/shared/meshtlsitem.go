@@ -44,20 +44,16 @@ const (
 func (e MeshTLSItemSpecMode) ToPointer() *MeshTLSItemSpecMode {
 	return &e
 }
-func (e *MeshTLSItemSpecMode) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTLSItemSpecMode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Permissive", "Strict":
+			return true
+		}
 	}
-	switch v {
-	case "Permissive":
-		fallthrough
-	case "Strict":
-		*e = MeshTLSItemSpecMode(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTLSItemSpecMode: %v", v)
-	}
+	return false
 }
 
 type TLSCiphers string
@@ -74,28 +70,16 @@ const (
 func (e TLSCiphers) ToPointer() *TLSCiphers {
 	return &e
 }
-func (e *TLSCiphers) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *TLSCiphers) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "ECDHE-ECDSA-AES128-GCM-SHA256", "ECDHE-ECDSA-AES256-GCM-SHA384", "ECDHE-ECDSA-CHACHA20-POLY1305", "ECDHE-RSA-AES128-GCM-SHA256", "ECDHE-RSA-AES256-GCM-SHA384", "ECDHE-RSA-CHACHA20-POLY1305":
+			return true
+		}
 	}
-	switch v {
-	case "ECDHE-ECDSA-AES128-GCM-SHA256":
-		fallthrough
-	case "ECDHE-ECDSA-AES256-GCM-SHA384":
-		fallthrough
-	case "ECDHE-ECDSA-CHACHA20-POLY1305":
-		fallthrough
-	case "ECDHE-RSA-AES128-GCM-SHA256":
-		fallthrough
-	case "ECDHE-RSA-AES256-GCM-SHA384":
-		fallthrough
-	case "ECDHE-RSA-CHACHA20-POLY1305":
-		*e = TLSCiphers(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for TLSCiphers: %v", v)
-	}
+	return false
 }
 
 // MeshTLSItemSpecMax - Max defines maximum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`.
@@ -112,26 +96,16 @@ const (
 func (e MeshTLSItemSpecMax) ToPointer() *MeshTLSItemSpecMax {
 	return &e
 }
-func (e *MeshTLSItemSpecMax) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTLSItemSpecMax) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13":
+			return true
+		}
 	}
-	switch v {
-	case "TLSAuto":
-		fallthrough
-	case "TLS10":
-		fallthrough
-	case "TLS11":
-		fallthrough
-	case "TLS12":
-		fallthrough
-	case "TLS13":
-		*e = MeshTLSItemSpecMax(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTLSItemSpecMax: %v", v)
-	}
+	return false
 }
 
 // MeshTLSItemSpecMin - Min defines minimum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`.
@@ -148,26 +122,16 @@ const (
 func (e MeshTLSItemSpecMin) ToPointer() *MeshTLSItemSpecMin {
 	return &e
 }
-func (e *MeshTLSItemSpecMin) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTLSItemSpecMin) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13":
+			return true
+		}
 	}
-	switch v {
-	case "TLSAuto":
-		fallthrough
-	case "TLS10":
-		fallthrough
-	case "TLS11":
-		fallthrough
-	case "TLS12":
-		fallthrough
-	case "TLS13":
-		*e = MeshTLSItemSpecMin(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTLSItemSpecMin: %v", v)
-	}
+	return false
 }
 
 // TLSVersion - Version section for providing version specification.
@@ -253,34 +217,16 @@ const (
 func (e MeshTLSItemSpecKind) ToPointer() *MeshTLSItemSpecKind {
 	return &e
 }
-func (e *MeshTLSItemSpecKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTLSItemSpecKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshTLSItemSpecKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTLSItemSpecKind: %v", v)
-	}
+	return false
 }
 
 type MeshTLSItemSpecProxyTypes string
@@ -293,20 +239,16 @@ const (
 func (e MeshTLSItemSpecProxyTypes) ToPointer() *MeshTLSItemSpecProxyTypes {
 	return &e
 }
-func (e *MeshTLSItemSpecProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTLSItemSpecProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshTLSItemSpecProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTLSItemSpecProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshTLSItemSpecTargetRef - TargetRef is a reference to the resource that represents a group of
@@ -426,20 +368,16 @@ const (
 func (e MeshTLSItemMode) ToPointer() *MeshTLSItemMode {
 	return &e
 }
-func (e *MeshTLSItemMode) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTLSItemMode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Permissive", "Strict":
+			return true
+		}
 	}
-	switch v {
-	case "Permissive":
-		fallthrough
-	case "Strict":
-		*e = MeshTLSItemMode(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTLSItemMode: %v", v)
-	}
+	return false
 }
 
 type MeshTLSItemTLSCiphers string
@@ -456,28 +394,16 @@ const (
 func (e MeshTLSItemTLSCiphers) ToPointer() *MeshTLSItemTLSCiphers {
 	return &e
 }
-func (e *MeshTLSItemTLSCiphers) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTLSItemTLSCiphers) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "ECDHE-ECDSA-AES128-GCM-SHA256", "ECDHE-ECDSA-AES256-GCM-SHA384", "ECDHE-ECDSA-CHACHA20-POLY1305", "ECDHE-RSA-AES128-GCM-SHA256", "ECDHE-RSA-AES256-GCM-SHA384", "ECDHE-RSA-CHACHA20-POLY1305":
+			return true
+		}
 	}
-	switch v {
-	case "ECDHE-ECDSA-AES128-GCM-SHA256":
-		fallthrough
-	case "ECDHE-ECDSA-AES256-GCM-SHA384":
-		fallthrough
-	case "ECDHE-ECDSA-CHACHA20-POLY1305":
-		fallthrough
-	case "ECDHE-RSA-AES128-GCM-SHA256":
-		fallthrough
-	case "ECDHE-RSA-AES256-GCM-SHA384":
-		fallthrough
-	case "ECDHE-RSA-CHACHA20-POLY1305":
-		*e = MeshTLSItemTLSCiphers(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTLSItemTLSCiphers: %v", v)
-	}
+	return false
 }
 
 // MeshTLSItemMax - Max defines maximum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`.
@@ -494,26 +420,16 @@ const (
 func (e MeshTLSItemMax) ToPointer() *MeshTLSItemMax {
 	return &e
 }
-func (e *MeshTLSItemMax) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTLSItemMax) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13":
+			return true
+		}
 	}
-	switch v {
-	case "TLSAuto":
-		fallthrough
-	case "TLS10":
-		fallthrough
-	case "TLS11":
-		fallthrough
-	case "TLS12":
-		fallthrough
-	case "TLS13":
-		*e = MeshTLSItemMax(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTLSItemMax: %v", v)
-	}
+	return false
 }
 
 // MeshTLSItemMin - Min defines minimum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`.
@@ -530,26 +446,16 @@ const (
 func (e MeshTLSItemMin) ToPointer() *MeshTLSItemMin {
 	return &e
 }
-func (e *MeshTLSItemMin) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTLSItemMin) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13":
+			return true
+		}
 	}
-	switch v {
-	case "TLSAuto":
-		fallthrough
-	case "TLS10":
-		fallthrough
-	case "TLS11":
-		fallthrough
-	case "TLS12":
-		fallthrough
-	case "TLS13":
-		*e = MeshTLSItemMin(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTLSItemMin: %v", v)
-	}
+	return false
 }
 
 // MeshTLSItemTLSVersion - Version section for providing version specification.
@@ -646,34 +552,16 @@ const (
 func (e MeshTLSItemKind) ToPointer() *MeshTLSItemKind {
 	return &e
 }
-func (e *MeshTLSItemKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTLSItemKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshTLSItemKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTLSItemKind: %v", v)
-	}
+	return false
 }
 
 type MeshTLSItemProxyTypes string
@@ -686,20 +574,16 @@ const (
 func (e MeshTLSItemProxyTypes) ToPointer() *MeshTLSItemProxyTypes {
 	return &e
 }
-func (e *MeshTLSItemProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTLSItemProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshTLSItemProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTLSItemProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshTLSItemTargetRef - TargetRef is a reference to the resource the policy takes an effect on.
@@ -845,7 +729,7 @@ func (m MeshTLSItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshTLSItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -926,7 +810,7 @@ func (m MeshTLSItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshTLSItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil

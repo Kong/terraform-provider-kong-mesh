@@ -52,34 +52,16 @@ const (
 func (e MeshLoadBalancingStrategyItemKind) ToPointer() *MeshLoadBalancingStrategyItemKind {
 	return &e
 }
-func (e *MeshLoadBalancingStrategyItemKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshLoadBalancingStrategyItemKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshLoadBalancingStrategyItemKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshLoadBalancingStrategyItemKind: %v", v)
-	}
+	return false
 }
 
 type MeshLoadBalancingStrategyItemProxyTypes string
@@ -92,20 +74,16 @@ const (
 func (e MeshLoadBalancingStrategyItemProxyTypes) ToPointer() *MeshLoadBalancingStrategyItemProxyTypes {
 	return &e
 }
-func (e *MeshLoadBalancingStrategyItemProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshLoadBalancingStrategyItemProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshLoadBalancingStrategyItemProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshLoadBalancingStrategyItemProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshLoadBalancingStrategyItemTargetRef - TargetRef is a reference to the resource the policy takes an effect on.
@@ -288,28 +266,16 @@ const (
 func (e MeshLoadBalancingStrategyItemSpecType) ToPointer() *MeshLoadBalancingStrategyItemSpecType {
 	return &e
 }
-func (e *MeshLoadBalancingStrategyItemSpecType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshLoadBalancingStrategyItemSpecType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Header", "Cookie", "Connection", "SourceIP", "QueryParameter", "FilterState":
+			return true
+		}
 	}
-	switch v {
-	case "Header":
-		fallthrough
-	case "Cookie":
-		fallthrough
-	case "Connection":
-		fallthrough
-	case "SourceIP":
-		fallthrough
-	case "QueryParameter":
-		fallthrough
-	case "FilterState":
-		*e = MeshLoadBalancingStrategyItemSpecType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshLoadBalancingStrategyItemSpecType: %v", v)
-	}
+	return false
 }
 
 type HashPolicies struct {
@@ -388,8 +354,8 @@ const (
 // value, the more forcefully it reduces the load balancing weight of endpoints that are
 // actively serving requests.
 type ActiveRequestBias struct {
-	Integer *int64  `queryParam:"inline,name=activeRequestBias"`
-	Str     *string `queryParam:"inline,name=activeRequestBias"`
+	Integer *int64  `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
 
 	Type ActiveRequestBiasType
 }
@@ -438,7 +404,7 @@ func (u *ActiveRequestBias) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for ActiveRequestBias", string(data))
 	}
@@ -594,28 +560,16 @@ const (
 func (e MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType) ToPointer() *MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType {
 	return &e
 }
-func (e *MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Header", "Cookie", "Connection", "SourceIP", "QueryParameter", "FilterState":
+			return true
+		}
 	}
-	switch v {
-	case "Header":
-		fallthrough
-	case "Cookie":
-		fallthrough
-	case "Connection":
-		fallthrough
-	case "SourceIP":
-		fallthrough
-	case "QueryParameter":
-		fallthrough
-	case "FilterState":
-		*e = MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType: %v", v)
-	}
+	return false
 }
 
 type MeshLoadBalancingStrategyItemHashPolicies struct {
@@ -731,20 +685,16 @@ const (
 func (e HashFunction) ToPointer() *HashFunction {
 	return &e
 }
-func (e *HashFunction) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *HashFunction) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "XXHash", "MurmurHash2":
+			return true
+		}
 	}
-	switch v {
-	case "XXHash":
-		fallthrough
-	case "MurmurHash2":
-		*e = HashFunction(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for HashFunction: %v", v)
-	}
+	return false
 }
 
 type MeshLoadBalancingStrategyItemSpecConnection struct {
@@ -843,28 +793,16 @@ const (
 func (e MeshLoadBalancingStrategyItemSpecToDefaultType) ToPointer() *MeshLoadBalancingStrategyItemSpecToDefaultType {
 	return &e
 }
-func (e *MeshLoadBalancingStrategyItemSpecToDefaultType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshLoadBalancingStrategyItemSpecToDefaultType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Header", "Cookie", "Connection", "SourceIP", "QueryParameter", "FilterState":
+			return true
+		}
 	}
-	switch v {
-	case "Header":
-		fallthrough
-	case "Cookie":
-		fallthrough
-	case "Connection":
-		fallthrough
-	case "SourceIP":
-		fallthrough
-	case "QueryParameter":
-		fallthrough
-	case "FilterState":
-		*e = MeshLoadBalancingStrategyItemSpecToDefaultType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshLoadBalancingStrategyItemSpecToDefaultType: %v", v)
-	}
+	return false
 }
 
 type MeshLoadBalancingStrategyItemSpecHashPolicies struct {
@@ -998,26 +936,16 @@ const (
 func (e MeshLoadBalancingStrategyItemSpecToType) ToPointer() *MeshLoadBalancingStrategyItemSpecToType {
 	return &e
 }
-func (e *MeshLoadBalancingStrategyItemSpecToType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshLoadBalancingStrategyItemSpecToType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "RoundRobin", "LeastRequest", "RingHash", "Random", "Maglev":
+			return true
+		}
 	}
-	switch v {
-	case "RoundRobin":
-		fallthrough
-	case "LeastRequest":
-		fallthrough
-	case "RingHash":
-		fallthrough
-	case "Random":
-		fallthrough
-	case "Maglev":
-		*e = MeshLoadBalancingStrategyItemSpecToType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshLoadBalancingStrategyItemSpecToType: %v", v)
-	}
+	return false
 }
 
 // LoadBalancer allows to specify load balancing algorithm.
@@ -1111,24 +1039,16 @@ const (
 func (e MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessType) ToPointer() *MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessType {
 	return &e
 }
-func (e *MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "None", "Only", "Any", "AnyExcept":
+			return true
+		}
 	}
-	switch v {
-	case "None":
-		fallthrough
-	case "Only":
-		fallthrough
-	case "Any":
-		fallthrough
-	case "AnyExcept":
-		*e = MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessType: %v", v)
-	}
+	return false
 }
 
 // MeshLoadBalancingStrategyItemSpecTo - To defines to which zones the traffic should be load balanced
@@ -1181,8 +1101,8 @@ const (
 )
 
 type MeshLoadBalancingStrategyItemPercentage struct {
-	Integer *int64  `queryParam:"inline,name=percentage"`
-	Str     *string `queryParam:"inline,name=percentage"`
+	Integer *int64  `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
 
 	Type MeshLoadBalancingStrategyItemPercentageType
 }
@@ -1231,7 +1151,7 @@ func (u *MeshLoadBalancingStrategyItemPercentage) UnmarshalJSON(data []byte) err
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshLoadBalancingStrategyItemPercentage", string(data))
 	}
@@ -1430,34 +1350,16 @@ const (
 func (e MeshLoadBalancingStrategyItemSpecKind) ToPointer() *MeshLoadBalancingStrategyItemSpecKind {
 	return &e
 }
-func (e *MeshLoadBalancingStrategyItemSpecKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshLoadBalancingStrategyItemSpecKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshLoadBalancingStrategyItemSpecKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshLoadBalancingStrategyItemSpecKind: %v", v)
-	}
+	return false
 }
 
 type MeshLoadBalancingStrategyItemSpecProxyTypes string
@@ -1470,20 +1372,16 @@ const (
 func (e MeshLoadBalancingStrategyItemSpecProxyTypes) ToPointer() *MeshLoadBalancingStrategyItemSpecProxyTypes {
 	return &e
 }
-func (e *MeshLoadBalancingStrategyItemSpecProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshLoadBalancingStrategyItemSpecProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshLoadBalancingStrategyItemSpecProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshLoadBalancingStrategyItemSpecProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshLoadBalancingStrategyItemSpecTargetRef - TargetRef is a reference to the resource that represents a group of
@@ -1641,7 +1539,7 @@ func (m MeshLoadBalancingStrategyItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshLoadBalancingStrategyItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -1722,7 +1620,7 @@ func (m MeshLoadBalancingStrategyItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshLoadBalancingStrategyItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil

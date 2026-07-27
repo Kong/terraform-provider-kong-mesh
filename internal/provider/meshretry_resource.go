@@ -24,7 +24,6 @@ import (
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
-	"github.com/kong/terraform-provider-kong-mesh/internal/validators"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/stringvalidators"
 	"regexp"
@@ -52,7 +51,7 @@ type MeshRetryResourceModel struct {
 	Mesh             types.String                  `tfsdk:"mesh"`
 	ModificationTime types.String                  `tfsdk:"modification_time"`
 	Name             types.String                  `tfsdk:"name"`
-	Spec             tfTypes.MeshRetryItemSpec     `tfsdk:"spec"`
+	Spec             *tfTypes.MeshRetryItemSpec    `tfsdk:"spec"`
 	Type             types.String                  `tfsdk:"type"`
 	Warnings         []types.String                `tfsdk:"warnings"`
 }
@@ -71,9 +70,6 @@ func (r *MeshRetryResource) Schema(ctx context.Context, req resource.SchemaReque
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
 				Description: `Time at which the resource was created`,
-				Validators: []validator.String{
-					validators.IsRFC3339(),
-				},
 			},
 			"kri": schema.StringAttribute{
 				Computed:    true,
@@ -100,9 +96,6 @@ func (r *MeshRetryResource) Schema(ctx context.Context, req resource.SchemaReque
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
 				Description: `Time at which the resource was updated`,
-				Validators: []validator.String{
-					validators.IsRFC3339(),
-				},
 			},
 			"name": schema.StringAttribute{
 				Required: true,
@@ -119,20 +112,7 @@ func (r *MeshRetryResource) Schema(ctx context.Context, req resource.SchemaReque
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
 								Required:    true,
-								Description: `Kind of the referenced resource. must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
-								Validators: []validator.String{
-									stringvalidator.OneOf(
-										"Mesh",
-										"MeshSubset",
-										"MeshGateway",
-										"MeshService",
-										"MeshExternalService",
-										"MeshMultiZoneService",
-										"MeshServiceSubset",
-										"MeshHTTPRoute",
-										"Dataplane",
-									),
-								},
+								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
 							},
 							"labels": schema.MapAttribute{
 								Optional:    true,
@@ -247,13 +227,9 @@ func (r *MeshRetryResource) Schema(ctx context.Context, req resource.SchemaReque
 																Attributes: map[string]schema.Attribute{
 																	"format": schema.StringAttribute{
 																		Optional:    true,
-																		Description: `The format of the reset header. Not Null; must be one of ["Seconds", "UnixTimestamp"]`,
+																		Description: `The format of the reset header. possible known values include one of ["Seconds", "UnixTimestamp"]; Not Null`,
 																		Validators: []validator.String{
 																			speakeasy_stringvalidators.NotNull(),
-																			stringvalidator.OneOf(
-																				"Seconds",
-																				"UnixTimestamp",
-																			),
 																		},
 																	},
 																	"name": schema.StringAttribute{
@@ -322,14 +298,9 @@ func (r *MeshRetryResource) Schema(ctx context.Context, req resource.SchemaReque
 														Attributes: map[string]schema.Attribute{
 															"predicate": schema.StringAttribute{
 																Optional:    true,
-																Description: `Type is requested predicate mode. Not Null; must be one of ["OmitPreviousHosts", "OmitHostsWithTags", "OmitPreviousPriorities"]`,
+																Description: `Type is requested predicate mode. possible known values include one of ["OmitPreviousHosts", "OmitHostsWithTags", "OmitPreviousPriorities"]; Not Null`,
 																Validators: []validator.String{
 																	speakeasy_stringvalidators.NotNull(),
-																	stringvalidator.OneOf(
-																		"OmitPreviousHosts",
-																		"OmitHostsWithTags",
-																		"OmitPreviousPriorities",
-																	),
 																},
 															},
 															"tags": schema.MapAttribute{
@@ -391,13 +362,9 @@ func (r *MeshRetryResource) Schema(ctx context.Context, req resource.SchemaReque
 																Attributes: map[string]schema.Attribute{
 																	"format": schema.StringAttribute{
 																		Optional:    true,
-																		Description: `The format of the reset header. Not Null; must be one of ["Seconds", "UnixTimestamp"]`,
+																		Description: `The format of the reset header. possible known values include one of ["Seconds", "UnixTimestamp"]; Not Null`,
 																		Validators: []validator.String{
 																			speakeasy_stringvalidators.NotNull(),
-																			stringvalidator.OneOf(
-																				"Seconds",
-																				"UnixTimestamp",
-																			),
 																		},
 																	},
 																	"name": schema.StringAttribute{
@@ -446,16 +413,7 @@ func (r *MeshRetryResource) Schema(ctx context.Context, req resource.SchemaReque
 																Computed:    true,
 																Optional:    true,
 																Default:     stringdefault.StaticString(`Exact`),
-																Description: `Type specifies how to match against the value of the header. Default: "Exact"; must be one of ["Exact", "Present", "RegularExpression", "Absent", "Prefix"]`,
-																Validators: []validator.String{
-																	stringvalidator.OneOf(
-																		"Exact",
-																		"Present",
-																		"RegularExpression",
-																		"Absent",
-																		"Prefix",
-																	),
-																},
+																Description: `Type specifies how to match against the value of the header. possible known values include one of ["Exact", "Present", "RegularExpression", "Absent", "Prefix"]; Default: "Exact"`,
 															},
 															"value": schema.StringAttribute{
 																Optional:    true,
@@ -492,16 +450,7 @@ func (r *MeshRetryResource) Schema(ctx context.Context, req resource.SchemaReque
 																Computed:    true,
 																Optional:    true,
 																Default:     stringdefault.StaticString(`Exact`),
-																Description: `Type specifies how to match against the value of the header. Default: "Exact"; must be one of ["Exact", "Present", "RegularExpression", "Absent", "Prefix"]`,
-																Validators: []validator.String{
-																	stringvalidator.OneOf(
-																		"Exact",
-																		"Present",
-																		"RegularExpression",
-																		"Absent",
-																		"Prefix",
-																	),
-																},
+																Description: `Type specifies how to match against the value of the header. possible known values include one of ["Exact", "Present", "RegularExpression", "Absent", "Prefix"]; Default: "Exact"`,
 															},
 															"value": schema.StringAttribute{
 																Optional:    true,
@@ -550,20 +499,9 @@ func (r *MeshRetryResource) Schema(ctx context.Context, req resource.SchemaReque
 									Attributes: map[string]schema.Attribute{
 										"kind": schema.StringAttribute{
 											Optional:    true,
-											Description: `Kind of the referenced resource. Not Null; must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
+											Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null`,
 											Validators: []validator.String{
 												speakeasy_stringvalidators.NotNull(),
-												stringvalidator.OneOf(
-													"Mesh",
-													"MeshSubset",
-													"MeshGateway",
-													"MeshService",
-													"MeshExternalService",
-													"MeshMultiZoneService",
-													"MeshServiceSubset",
-													"MeshHTTPRoute",
-													"Dataplane",
-												),
 											},
 										},
 										"labels": schema.MapAttribute{
@@ -954,7 +892,10 @@ func (r *MeshRetryResource) Delete(ctx context.Context, req resource.DeleteReque
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 200 {
+	switch res.StatusCode {
+	case 200, 404:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
@@ -975,12 +916,12 @@ func (r *MeshRetryResource) ImportState(ctx context.Context, req resource.Import
 	}
 
 	if len(data.Mesh) == 0 {
-		resp.Diagnostics.AddError("Missing required field", `The field mesh is required but was not found in the json encoded ID. It's expected to be a value alike '""`)
+		resp.Diagnostics.AddError("Missing required field", `The field mesh is required but was not found in the json encoded ID.`)
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("mesh"), data.Mesh)...)
 	if len(data.Name) == 0 {
-		resp.Diagnostics.AddError("Missing required field", `The field name is required but was not found in the json encoded ID. It's expected to be a value alike '""`)
+		resp.Diagnostics.AddError("Missing required field", `The field name is required but was not found in the json encoded ID.`)
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("name"), data.Name)...)

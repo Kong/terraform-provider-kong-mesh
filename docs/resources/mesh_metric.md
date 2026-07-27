@@ -25,7 +25,7 @@ resource "kong-mesh_mesh_metric" "my_meshmetric" {
         {
           address = "...my_address..."
           name    = "...my_name..."
-          path    = "...my_path..."
+          path    = "/metrics"
           port    = 8
         }
       ]
@@ -37,8 +37,8 @@ resource "kong-mesh_mesh_metric" "my_meshmetric" {
           }
           prometheus = {
             client_id = "...my_client_id..."
-            path      = "...my_path..."
-            port      = 7
+            path      = "/metrics"
+            port      = 5670
             tls = {
               mode = "Disabled"
             }
@@ -149,7 +149,7 @@ Optional:
 
 - `open_telemetry` (Attributes) OpenTelemetry backend configuration (see [below for nested schema](#nestedatt--spec--default--backends--open_telemetry))
 - `prometheus` (Attributes) Prometheus backend configuration. (see [below for nested schema](#nestedatt--spec--default--backends--prometheus))
-- `type` (String) Type of the backend that will be used to collect metrics. At the moment only Prometheus backend is available. Not Null; must be one of ["Prometheus", "OpenTelemetry"]
+- `type` (String) Type of the backend that will be used to collect metrics. At the moment only Prometheus backend is available. possible known values include one of ["Prometheus", "OpenTelemetry"]; Not Null
 
 <a id="nestedatt--spec--default--backends--open_telemetry"></a>
 ### Nested Schema for `spec.default.backends.open_telemetry`
@@ -175,7 +175,7 @@ Optional:
 
 Optional:
 
-- `mode` (String) Configuration of TLS for Prometheus listener. Default: "Disabled"; must be one of ["Disabled", "ProvidedTLS", "ActiveMTLSBackend"]
+- `mode` (String) Configuration of TLS for Prometheus listener. possible known values include one of ["Disabled", "ProvidedTLS", "ActiveMTLSBackend"]; Default: "Disabled"
 
 
 
@@ -207,7 +207,7 @@ Include takes precedence over Exclude. (see [below for nested schema](#nestedatt
 
 Optional:
 
-- `name` (String) Name of the predefined profile, one of: all, basic, none. Not Null; must be one of ["All", "Basic", "None"]
+- `name` (String) Name of the predefined profile, one of: all, basic, none. possible known values include one of ["All", "Basic", "None"]; Not Null
 
 
 <a id="nestedatt--spec--default--sidecar--profiles--exclude"></a>
@@ -216,7 +216,7 @@ Optional:
 Optional:
 
 - `match` (String) Match is the value used to match using particular Type. Not Null
-- `type` (String) Type defined the type of selector, one of: prefix, regex, exact. Not Null; must be one of ["Prefix", "Regex", "Exact", "Contains"]
+- `type` (String) Type defined the type of selector, one of: prefix, regex, exact. possible known values include one of ["Prefix", "Regex", "Exact", "Contains"]; Not Null
 
 
 <a id="nestedatt--spec--default--sidecar--profiles--include"></a>
@@ -225,7 +225,7 @@ Optional:
 Optional:
 
 - `match` (String) Match is the value used to match using particular Type. Not Null
-- `type` (String) Type defined the type of selector, one of: prefix, regex, exact. Not Null; must be one of ["Prefix", "Regex", "Exact", "Contains"]
+- `type` (String) Type defined the type of selector, one of: prefix, regex, exact. possible known values include one of ["Prefix", "Regex", "Exact", "Contains"]; Not Null
 
 
 
@@ -236,7 +236,7 @@ Optional:
 
 Required:
 
-- `kind` (String) Kind of the referenced resource. must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
 
 Optional:
 

@@ -46,7 +46,7 @@ func (e Extension) MarshalJSON() ([]byte, error) {
 }
 
 func (e *Extension) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &e, "", false, []string{"type"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &e, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -178,7 +178,7 @@ func (h HostnameGeneratorItem) MarshalJSON() ([]byte, error) {
 }
 
 func (h *HostnameGeneratorItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &h, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &h, "", false, nil); err != nil {
 		return err
 	}
 	return nil

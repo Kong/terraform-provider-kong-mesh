@@ -225,7 +225,7 @@ defined inplace. (see [below for nested schema](#nestedatt--spec--target_ref))
 
 Required:
 
-- `kind` (String) Kind of the referenced resource. must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
 
 Optional:
 
@@ -281,7 +281,7 @@ Optional:
 a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback
 to rest of the policy list”, it saves time when the terminal policy works.
 If true, and there is already a hash computed, ignore rest of the list of hash polices.
-- `type` (String) Not Null; must be one of ["Header", "Cookie", "Connection", "SourceIP", "QueryParameter", "FilterState"]
+- `type` (String) possible known values include one of ["Header", "Cookie", "Connection", "SourceIP", "QueryParameter", "FilterState"]; Not Null
 
 <a id="nestedatt--spec--to--default--hash_policies--connection"></a>
 ### Nested Schema for `spec.to.default.hash_policies.connection`
@@ -351,7 +351,7 @@ to a host by hashing some property of the request, and finding the nearest
 corresponding host clockwise around the ring. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--ring_hash))
 - `round_robin` (Attributes) RoundRobin is a load balancing algorithm that distributes requests
 across available upstream hosts in round-robin order. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--round_robin))
-- `type` (String) Not Null; must be one of ["RoundRobin", "LeastRequest", "RingHash", "Random", "Maglev"]
+- `type` (String) possible known values include one of ["RoundRobin", "LeastRequest", "RingHash", "Random", "Maglev"]; Not Null
 
 <a id="nestedatt--spec--to--default--load_balancer--least_request"></a>
 ### Nested Schema for `spec.to.default.load_balancer.least_request`
@@ -407,7 +407,7 @@ Optional:
 a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback
 to rest of the policy list”, it saves time when the terminal policy works.
 If true, and there is already a hash computed, ignore rest of the list of hash polices.
-- `type` (String) Not Null; must be one of ["Header", "Cookie", "Connection", "SourceIP", "QueryParameter", "FilterState"]
+- `type` (String) possible known values include one of ["Header", "Cookie", "Connection", "SourceIP", "QueryParameter", "FilterState"]; Not Null
 
 <a id="nestedatt--spec--to--default--load_balancer--maglev--hash_policies--connection"></a>
 ### Nested Schema for `spec.to.default.load_balancer.maglev.hash_policies.connection`
@@ -470,7 +470,7 @@ Optional:
 
 - `hash_function` (String) HashFunction is a function used to hash hosts onto the ketama ring.
 The value defaults to XX_HASH. Available values – XX_HASH, MURMUR_HASH_2.
-must be one of ["XXHash", "MurmurHash2"]
+possible known values include one of ["XXHash", "MurmurHash2"]
 - `hash_policies` (Attributes List) HashPolicies specify a list of request/connection properties that are used to calculate a hash.
 These hash policies are executed in the specified order. If a hash policy has the “terminal” attribute
 set to true, and there is already a hash generated, the hash is returned immediately,
@@ -495,7 +495,7 @@ Optional:
 a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback
 to rest of the policy list”, it saves time when the terminal policy works.
 If true, and there is already a hash computed, ignore rest of the list of hash polices.
-- `type` (String) Not Null; must be one of ["Header", "Cookie", "Connection", "SourceIP", "QueryParameter", "FilterState"]
+- `type` (String) possible known values include one of ["Header", "Cookie", "Connection", "SourceIP", "QueryParameter", "FilterState"]; Not Null
 
 <a id="nestedatt--spec--to--default--load_balancer--ring_hash--hash_policies--connection"></a>
 ### Nested Schema for `spec.to.default.load_balancer.ring_hash.hash_policies.connection`
@@ -596,7 +596,7 @@ Optional:
 
 Optional:
 
-- `type` (String) Type defines how target zones will be picked from available zones. Not Null; must be one of ["None", "Only", "Any", "AnyExcept"]
+- `type` (String) Type defines how target zones will be picked from available zones. possible known values include one of ["None", "Only", "Any", "AnyExcept"]; Not Null
 - `zones` (List of String)
 
 
@@ -648,7 +648,7 @@ Default: If you do not specify weight we will adjust them so that 90% traffic go
 
 Optional:
 
-- `kind` (String) Kind of the referenced resource. Not Null; must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
 - `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
 Name and Namespace can be used.
 - `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.

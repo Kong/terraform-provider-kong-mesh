@@ -23,7 +23,6 @@ import (
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
-	"github.com/kong/terraform-provider-kong-mesh/internal/validators"
 	speakeasy_int32validators "github.com/kong/terraform-provider-kong-mesh/internal/validators/int32validators"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/stringvalidators"
@@ -45,15 +44,15 @@ type MeshFaultInjectionResource struct {
 
 // MeshFaultInjectionResourceModel describes the resource data model.
 type MeshFaultInjectionResourceModel struct {
-	CreationTime     types.String                       `tfsdk:"creation_time"`
-	Kri              types.String                       `tfsdk:"kri"`
-	Labels           kumalabels.KumaLabelsMapValue      `tfsdk:"labels"`
-	Mesh             types.String                       `tfsdk:"mesh"`
-	ModificationTime types.String                       `tfsdk:"modification_time"`
-	Name             types.String                       `tfsdk:"name"`
-	Spec             tfTypes.MeshFaultInjectionItemSpec `tfsdk:"spec"`
-	Type             types.String                       `tfsdk:"type"`
-	Warnings         []types.String                     `tfsdk:"warnings"`
+	CreationTime     types.String                        `tfsdk:"creation_time"`
+	Kri              types.String                        `tfsdk:"kri"`
+	Labels           kumalabels.KumaLabelsMapValue       `tfsdk:"labels"`
+	Mesh             types.String                        `tfsdk:"mesh"`
+	ModificationTime types.String                        `tfsdk:"modification_time"`
+	Name             types.String                        `tfsdk:"name"`
+	Spec             *tfTypes.MeshFaultInjectionItemSpec `tfsdk:"spec"`
+	Type             types.String                        `tfsdk:"type"`
+	Warnings         []types.String                      `tfsdk:"warnings"`
 }
 
 func (r *MeshFaultInjectionResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -70,9 +69,6 @@ func (r *MeshFaultInjectionResource) Schema(ctx context.Context, req resource.Sc
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
 				Description: `Time at which the resource was created`,
-				Validators: []validator.String{
-					validators.IsRFC3339(),
-				},
 			},
 			"kri": schema.StringAttribute{
 				Computed:    true,
@@ -99,9 +95,6 @@ func (r *MeshFaultInjectionResource) Schema(ctx context.Context, req resource.Sc
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
 				Description: `Time at which the resource was updated`,
-				Validators: []validator.String{
-					validators.IsRFC3339(),
-				},
 			},
 			"name": schema.StringAttribute{
 				Required: true,
@@ -276,20 +269,9 @@ func (r *MeshFaultInjectionResource) Schema(ctx context.Context, req resource.Sc
 									Attributes: map[string]schema.Attribute{
 										"kind": schema.StringAttribute{
 											Optional:    true,
-											Description: `Kind of the referenced resource. Not Null; must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
+											Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null`,
 											Validators: []validator.String{
 												speakeasy_stringvalidators.NotNull(),
-												stringvalidator.OneOf(
-													"Mesh",
-													"MeshSubset",
-													"MeshGateway",
-													"MeshService",
-													"MeshExternalService",
-													"MeshMultiZoneService",
-													"MeshServiceSubset",
-													"MeshHTTPRoute",
-													"Dataplane",
-												),
 											},
 										},
 										"labels": schema.MapAttribute{
@@ -521,13 +503,9 @@ func (r *MeshFaultInjectionResource) Schema(ctx context.Context, req resource.Sc
 												Attributes: map[string]schema.Attribute{
 													"type": schema.StringAttribute{
 														Optional:    true,
-														Description: `Type defines how to match incoming traffic by SpiffeID. ` + "`" + `Exact` + "`" + ` or ` + "`" + `Prefix` + "`" + ` are allowed. Not Null; must be one of ["Exact", "Prefix"]`,
+														Description: `Type defines how to match incoming traffic by SpiffeID. ` + "`" + `Exact` + "`" + ` or ` + "`" + `Prefix` + "`" + ` are allowed. possible known values include one of ["Exact", "Prefix"]; Not Null`,
 														Validators: []validator.String{
 															speakeasy_stringvalidators.NotNull(),
-															stringvalidator.OneOf(
-																"Exact",
-																"Prefix",
-															),
 														},
 													},
 													"value": schema.StringAttribute{
@@ -553,20 +531,7 @@ func (r *MeshFaultInjectionResource) Schema(ctx context.Context, req resource.Sc
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
 								Required:    true,
-								Description: `Kind of the referenced resource. must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
-								Validators: []validator.String{
-									stringvalidator.OneOf(
-										"Mesh",
-										"MeshSubset",
-										"MeshGateway",
-										"MeshService",
-										"MeshExternalService",
-										"MeshMultiZoneService",
-										"MeshServiceSubset",
-										"MeshHTTPRoute",
-										"Dataplane",
-									),
-								},
+								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
 							},
 							"labels": schema.MapAttribute{
 								Optional:    true,
@@ -777,20 +742,9 @@ func (r *MeshFaultInjectionResource) Schema(ctx context.Context, req resource.Sc
 									Attributes: map[string]schema.Attribute{
 										"kind": schema.StringAttribute{
 											Optional:    true,
-											Description: `Kind of the referenced resource. Not Null; must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
+											Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null`,
 											Validators: []validator.String{
 												speakeasy_stringvalidators.NotNull(),
-												stringvalidator.OneOf(
-													"Mesh",
-													"MeshSubset",
-													"MeshGateway",
-													"MeshService",
-													"MeshExternalService",
-													"MeshMultiZoneService",
-													"MeshServiceSubset",
-													"MeshHTTPRoute",
-													"Dataplane",
-												),
 											},
 										},
 										"labels": schema.MapAttribute{
@@ -1181,7 +1135,10 @@ func (r *MeshFaultInjectionResource) Delete(ctx context.Context, req resource.De
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 200 {
+	switch res.StatusCode {
+	case 200, 404:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
@@ -1202,12 +1159,12 @@ func (r *MeshFaultInjectionResource) ImportState(ctx context.Context, req resour
 	}
 
 	if len(data.Mesh) == 0 {
-		resp.Diagnostics.AddError("Missing required field", `The field mesh is required but was not found in the json encoded ID. It's expected to be a value alike '""`)
+		resp.Diagnostics.AddError("Missing required field", `The field mesh is required but was not found in the json encoded ID.`)
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("mesh"), data.Mesh)...)
 	if len(data.Name) == 0 {
-		resp.Diagnostics.AddError("Missing required field", `The field name is required but was not found in the json encoded ID. It's expected to be a value alike '""`)
+		resp.Diagnostics.AddError("Missing required field", `The field name is required but was not found in the json encoded ID.`)
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("name"), data.Name)...)

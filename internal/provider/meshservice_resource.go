@@ -25,11 +25,9 @@ import (
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
-	"github.com/kong/terraform-provider-kong-mesh/internal/validators"
 	speakeasy_int32validators "github.com/kong/terraform-provider-kong-mesh/internal/validators/int32validators"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/stringvalidators"
-	"regexp"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -54,7 +52,7 @@ type MeshServiceResourceModel struct {
 	Mesh             types.String                   `tfsdk:"mesh"`
 	ModificationTime types.String                   `tfsdk:"modification_time"`
 	Name             types.String                   `tfsdk:"name"`
-	Spec             tfTypes.MeshServiceItemSpec    `tfsdk:"spec"`
+	Spec             *tfTypes.MeshServiceItemSpec   `tfsdk:"spec"`
 	Status           *tfTypes.MeshServiceItemStatus `tfsdk:"status"`
 	Type             types.String                   `tfsdk:"type"`
 	Warnings         []types.String                 `tfsdk:"warnings"`
@@ -74,9 +72,6 @@ func (r *MeshServiceResource) Schema(ctx context.Context, req resource.SchemaReq
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
 				Description: `Time at which the resource was created`,
-				Validators: []validator.String{
-					validators.IsRFC3339(),
-				},
 			},
 			"kri": schema.StringAttribute{
 				Computed:    true,
@@ -103,9 +98,6 @@ func (r *MeshServiceResource) Schema(ctx context.Context, req resource.SchemaReq
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
 				Description: `Time at which the resource was updated`,
-				Validators: []validator.String{
-					validators.IsRFC3339(),
-				},
 			},
 			"name": schema.StringAttribute{
 				Required: true,
@@ -130,13 +122,9 @@ func (r *MeshServiceResource) Schema(ctx context.Context, req resource.SchemaReq
 							Attributes: map[string]schema.Attribute{
 								"type": schema.StringAttribute{
 									Optional:    true,
-									Description: `Not Null; must be one of ["ServiceTag", "SpiffeID"]`,
+									Description: `possible known values include one of ["ServiceTag", "SpiffeID"]; Not Null`,
 									Validators: []validator.String{
 										speakeasy_stringvalidators.NotNull(),
-										stringvalidator.OneOf(
-											"ServiceTag",
-											"SpiffeID",
-										),
 									},
 								},
 								"value": schema.StringAttribute{
@@ -232,13 +220,7 @@ func (r *MeshServiceResource) Schema(ctx context.Context, req resource.SchemaReq
 						Default:  stringdefault.StaticString(`Unavailable`),
 						MarkdownDescription: `State of MeshService. Available if there is at least one healthy endpoint. Otherwise, Unavailable.` + "\n" +
 							`It's used for cross zone communication to check if we should send traffic to it, when MeshService is aggregated into MeshMultiZoneService.` + "\n" +
-							`Default: "Unavailable"; must be one of ["Available", "Unavailable"]`,
-						Validators: []validator.String{
-							stringvalidator.OneOf(
-								"Available",
-								"Unavailable",
-							),
-						},
+							`possible known values include one of ["Available", "Unavailable"]; Default: "Unavailable"`,
 					},
 				},
 				Description: `Spec is the specification of the Kuma MeshService resource.`,
@@ -265,6 +247,9 @@ func (r *MeshServiceResource) Schema(ctx context.Context, req resource.SchemaReq
 								},
 								"hostname_generator_ref": schema.SingleNestedAttribute{
 									Computed: true,
+									PlanModifiers: []planmodifier.Object{
+										speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+									},
 									Attributes: map[string]schema.Attribute{
 										"core_name": schema.StringAttribute{
 											Computed: true,
@@ -279,6 +264,9 @@ func (r *MeshServiceResource) Schema(ctx context.Context, req resource.SchemaReq
 					},
 					"dataplane_proxies": schema.SingleNestedAttribute{
 						Computed: true,
+						PlanModifiers: []planmodifier.Object{
+							speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+						},
 						Attributes: map[string]schema.Attribute{
 							"connected": schema.Int64Attribute{
 								Computed:    true,
@@ -321,9 +309,6 @@ func (r *MeshServiceResource) Schema(ctx context.Context, req resource.SchemaReq
 												Computed: true,
 												MarkdownDescription: `message is a human readable message indicating details about the transition.` + "\n" +
 													`This may be an empty string.`,
-												Validators: []validator.String{
-													stringvalidator.UTF8LengthAtMost(32768),
-												},
 											},
 											"reason": schema.StringAttribute{
 												Computed: true,
@@ -332,32 +317,17 @@ func (r *MeshServiceResource) Schema(ctx context.Context, req resource.SchemaReq
 													`and whether the values are considered a guaranteed API.` + "\n" +
 													`The value should be a CamelCase string.` + "\n" +
 													`This field may not be empty.`,
-												Validators: []validator.String{
-													stringvalidator.UTF8LengthBetween(1, 1024),
-													stringvalidator.RegexMatches(regexp.MustCompile(`^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$`), "must match pattern "+regexp.MustCompile(`^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$`).String()),
-												},
 											},
 											"status": schema.StringAttribute{
 												Computed: true,
 												PlanModifiers: []planmodifier.String{
 													speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 												},
-												Description: `status of the condition, one of True, False, Unknown. must be one of ["True", "False", "Unknown"]`,
-												Validators: []validator.String{
-													stringvalidator.OneOf(
-														"True",
-														"False",
-														"Unknown",
-													),
-												},
+												Description: `status of the condition, one of True, False, Unknown.`,
 											},
 											"type": schema.StringAttribute{
 												Computed:    true,
 												Description: `type of condition in CamelCase or in foo.example.com/CamelCase.`,
-												Validators: []validator.String{
-													stringvalidator.UTF8LengthAtMost(316),
-													stringvalidator.RegexMatches(regexp.MustCompile(`^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$`), "must match pattern "+regexp.MustCompile(`^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$`).String()),
-												},
 											},
 										},
 									},
@@ -376,18 +346,14 @@ func (r *MeshServiceResource) Schema(ctx context.Context, req resource.SchemaReq
 					},
 					"tls": schema.SingleNestedAttribute{
 						Computed: true,
+						PlanModifiers: []planmodifier.Object{
+							speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+						},
 						Attributes: map[string]schema.Attribute{
 							"status": schema.StringAttribute{
 								Computed: true,
 								PlanModifiers: []planmodifier.String{
 									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-								},
-								Description: `must be one of ["Ready", "NotReady"]`,
-								Validators: []validator.String{
-									stringvalidator.OneOf(
-										"Ready",
-										"NotReady",
-									),
 								},
 							},
 						},
@@ -744,7 +710,10 @@ func (r *MeshServiceResource) Delete(ctx context.Context, req resource.DeleteReq
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 200 {
+	switch res.StatusCode {
+	case 200, 404:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
@@ -765,12 +734,12 @@ func (r *MeshServiceResource) ImportState(ctx context.Context, req resource.Impo
 	}
 
 	if len(data.Mesh) == 0 {
-		resp.Diagnostics.AddError("Missing required field", `The field mesh is required but was not found in the json encoded ID. It's expected to be a value alike '""`)
+		resp.Diagnostics.AddError("Missing required field", `The field mesh is required but was not found in the json encoded ID.`)
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("mesh"), data.Mesh)...)
 	if len(data.Name) == 0 {
-		resp.Diagnostics.AddError("Missing required field", `The field name is required but was not found in the json encoded ID. It's expected to be a value alike '""`)
+		resp.Diagnostics.AddError("Missing required field", `The field name is required but was not found in the json encoded ID.`)
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("name"), data.Name)...)

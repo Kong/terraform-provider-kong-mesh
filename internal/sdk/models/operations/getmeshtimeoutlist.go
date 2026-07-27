@@ -44,7 +44,7 @@ func (g GetMeshTimeoutListRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetMeshTimeoutListRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, []string{"mesh"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
 		return err
 	}
 	return nil

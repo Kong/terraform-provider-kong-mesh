@@ -51,34 +51,16 @@ const (
 func (e MeshRetryItemKind) ToPointer() *MeshRetryItemKind {
 	return &e
 }
-func (e *MeshRetryItemKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshRetryItemKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshRetryItemKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshRetryItemKind: %v", v)
-	}
+	return false
 }
 
 type MeshRetryItemProxyTypes string
@@ -91,20 +73,16 @@ const (
 func (e MeshRetryItemProxyTypes) ToPointer() *MeshRetryItemProxyTypes {
 	return &e
 }
-func (e *MeshRetryItemProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshRetryItemProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshRetryItemProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshRetryItemProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshRetryItemTargetRef - TargetRef is a reference to the resource the policy takes an effect on.
@@ -228,20 +206,16 @@ const (
 func (e MeshRetryItemFormat) ToPointer() *MeshRetryItemFormat {
 	return &e
 }
-func (e *MeshRetryItemFormat) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshRetryItemFormat) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Seconds", "UnixTimestamp":
+			return true
+		}
 	}
-	switch v {
-	case "Seconds":
-		fallthrough
-	case "UnixTimestamp":
-		*e = MeshRetryItemFormat(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshRetryItemFormat: %v", v)
-	}
+	return false
 }
 
 type ResetHeaders struct {
@@ -305,26 +279,16 @@ const (
 func (e RetryOn) ToPointer() *RetryOn {
 	return &e
 }
-func (e *RetryOn) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *RetryOn) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Canceled", "DeadlineExceeded", "Internal", "ResourceExhausted", "Unavailable":
+			return true
+		}
 	}
-	switch v {
-	case "Canceled":
-		fallthrough
-	case "DeadlineExceeded":
-		fallthrough
-	case "Internal":
-		fallthrough
-	case "ResourceExhausted":
-		fallthrough
-	case "Unavailable":
-		*e = RetryOn(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for RetryOn: %v", v)
-	}
+	return false
 }
 
 // MeshRetryItemGrpc - GRPC defines a configuration of retries for GRPC traffic
@@ -419,22 +383,16 @@ const (
 func (e Predicate) ToPointer() *Predicate {
 	return &e
 }
-func (e *Predicate) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *Predicate) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "OmitPreviousHosts", "OmitHostsWithTags", "OmitPreviousPriorities":
+			return true
+		}
 	}
-	switch v {
-	case "OmitPreviousHosts":
-		fallthrough
-	case "OmitHostsWithTags":
-		fallthrough
-	case "OmitPreviousPriorities":
-		*e = Predicate(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for Predicate: %v", v)
-	}
+	return false
 }
 
 type HostSelection struct {
@@ -453,7 +411,7 @@ func (h HostSelection) MarshalJSON() ([]byte, error) {
 }
 
 func (h *HostSelection) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &h, "", false, []string{"predicate"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &h, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -491,20 +449,16 @@ const (
 func (e MeshRetryItemSpecFormat) ToPointer() *MeshRetryItemSpecFormat {
 	return &e
 }
-func (e *MeshRetryItemSpecFormat) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshRetryItemSpecFormat) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Seconds", "UnixTimestamp":
+			return true
+		}
 	}
-	switch v {
-	case "Seconds":
-		fallthrough
-	case "UnixTimestamp":
-		*e = MeshRetryItemSpecFormat(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshRetryItemSpecFormat: %v", v)
-	}
+	return false
 }
 
 type MeshRetryItemResetHeaders struct {
@@ -569,26 +523,16 @@ const (
 func (e MeshRetryItemSpecType) ToPointer() *MeshRetryItemSpecType {
 	return &e
 }
-func (e *MeshRetryItemSpecType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshRetryItemSpecType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Exact", "Present", "RegularExpression", "Absent", "Prefix":
+			return true
+		}
 	}
-	switch v {
-	case "Exact":
-		fallthrough
-	case "Present":
-		fallthrough
-	case "RegularExpression":
-		fallthrough
-	case "Absent":
-		fallthrough
-	case "Prefix":
-		*e = MeshRetryItemSpecType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshRetryItemSpecType: %v", v)
-	}
+	return false
 }
 
 // RetriableRequestHeaders - HeaderMatch describes how to select an HTTP route by matching HTTP request
@@ -608,7 +552,7 @@ func (r RetriableRequestHeaders) MarshalJSON() ([]byte, error) {
 }
 
 func (r *RetriableRequestHeaders) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &r, "", false, []string{"name"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &r, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -649,26 +593,16 @@ const (
 func (e MeshRetryItemSpecToType) ToPointer() *MeshRetryItemSpecToType {
 	return &e
 }
-func (e *MeshRetryItemSpecToType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshRetryItemSpecToType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Exact", "Present", "RegularExpression", "Absent", "Prefix":
+			return true
+		}
 	}
-	switch v {
-	case "Exact":
-		fallthrough
-	case "Present":
-		fallthrough
-	case "RegularExpression":
-		fallthrough
-	case "Absent":
-		fallthrough
-	case "Prefix":
-		*e = MeshRetryItemSpecToType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshRetryItemSpecToType: %v", v)
-	}
+	return false
 }
 
 // RetriableResponseHeaders - HeaderMatch describes how to select an HTTP route by matching HTTP request
@@ -688,7 +622,7 @@ func (r RetriableResponseHeaders) MarshalJSON() ([]byte, error) {
 }
 
 func (r *RetriableResponseHeaders) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &r, "", false, []string{"name"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &r, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -882,34 +816,16 @@ const (
 func (e MeshRetryItemSpecKind) ToPointer() *MeshRetryItemSpecKind {
 	return &e
 }
-func (e *MeshRetryItemSpecKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshRetryItemSpecKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshRetryItemSpecKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshRetryItemSpecKind: %v", v)
-	}
+	return false
 }
 
 type MeshRetryItemSpecProxyTypes string
@@ -922,20 +838,16 @@ const (
 func (e MeshRetryItemSpecProxyTypes) ToPointer() *MeshRetryItemSpecProxyTypes {
 	return &e
 }
-func (e *MeshRetryItemSpecProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshRetryItemSpecProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshRetryItemSpecProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshRetryItemSpecProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshRetryItemSpecTargetRef - TargetRef is a reference to the resource that represents a group of
@@ -1093,7 +1005,7 @@ func (m MeshRetryItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshRetryItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -1174,7 +1086,7 @@ func (m MeshRetryItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshRetryItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil

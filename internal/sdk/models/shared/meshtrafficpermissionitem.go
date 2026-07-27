@@ -45,22 +45,16 @@ const (
 func (e Action) ToPointer() *Action {
 	return &e
 }
-func (e *Action) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *Action) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Allow", "Deny", "AllowWithShadowDeny":
+			return true
+		}
 	}
-	switch v {
-	case "Allow":
-		fallthrough
-	case "Deny":
-		fallthrough
-	case "AllowWithShadowDeny":
-		*e = Action(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for Action: %v", v)
-	}
+	return false
 }
 
 // MeshTrafficPermissionItemDefault - Default is a configuration specific to the group of clients referenced in
@@ -95,34 +89,16 @@ const (
 func (e MeshTrafficPermissionItemSpecKind) ToPointer() *MeshTrafficPermissionItemSpecKind {
 	return &e
 }
-func (e *MeshTrafficPermissionItemSpecKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTrafficPermissionItemSpecKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshTrafficPermissionItemSpecKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTrafficPermissionItemSpecKind: %v", v)
-	}
+	return false
 }
 
 type MeshTrafficPermissionItemSpecProxyTypes string
@@ -135,20 +111,16 @@ const (
 func (e MeshTrafficPermissionItemSpecProxyTypes) ToPointer() *MeshTrafficPermissionItemSpecProxyTypes {
 	return &e
 }
-func (e *MeshTrafficPermissionItemSpecProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTrafficPermissionItemSpecProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshTrafficPermissionItemSpecProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTrafficPermissionItemSpecProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshTrafficPermissionItemSpecTargetRef - TargetRef is a reference to the resource that represents a group of
@@ -268,20 +240,16 @@ const (
 func (e MeshTrafficPermissionItemSpecType) ToPointer() *MeshTrafficPermissionItemSpecType {
 	return &e
 }
-func (e *MeshTrafficPermissionItemSpecType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTrafficPermissionItemSpecType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Exact", "Prefix":
+			return true
+		}
 	}
-	switch v {
-	case "Exact":
-		fallthrough
-	case "Prefix":
-		*e = MeshTrafficPermissionItemSpecType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTrafficPermissionItemSpecType: %v", v)
-	}
+	return false
 }
 
 // MeshTrafficPermissionItemSpiffeID - SpiffeID defines a matcher configuration for SpiffeID matching
@@ -329,20 +297,16 @@ const (
 func (e MeshTrafficPermissionItemSpecRulesType) ToPointer() *MeshTrafficPermissionItemSpecRulesType {
 	return &e
 }
-func (e *MeshTrafficPermissionItemSpecRulesType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTrafficPermissionItemSpecRulesType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Exact", "Prefix":
+			return true
+		}
 	}
-	switch v {
-	case "Exact":
-		fallthrough
-	case "Prefix":
-		*e = MeshTrafficPermissionItemSpecRulesType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTrafficPermissionItemSpecRulesType: %v", v)
-	}
+	return false
 }
 
 // MeshTrafficPermissionItemSpecSpiffeID - SpiffeID defines a matcher configuration for SpiffeID matching
@@ -390,20 +354,16 @@ const (
 func (e MeshTrafficPermissionItemSpecRulesDefaultType) ToPointer() *MeshTrafficPermissionItemSpecRulesDefaultType {
 	return &e
 }
-func (e *MeshTrafficPermissionItemSpecRulesDefaultType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTrafficPermissionItemSpecRulesDefaultType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Exact", "Prefix":
+			return true
+		}
 	}
-	switch v {
-	case "Exact":
-		fallthrough
-	case "Prefix":
-		*e = MeshTrafficPermissionItemSpecRulesDefaultType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTrafficPermissionItemSpecRulesDefaultType: %v", v)
-	}
+	return false
 }
 
 // MeshTrafficPermissionItemSpecRulesSpiffeID - SpiffeID defines a matcher configuration for SpiffeID matching
@@ -500,34 +460,16 @@ const (
 func (e MeshTrafficPermissionItemKind) ToPointer() *MeshTrafficPermissionItemKind {
 	return &e
 }
-func (e *MeshTrafficPermissionItemKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTrafficPermissionItemKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshTrafficPermissionItemKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTrafficPermissionItemKind: %v", v)
-	}
+	return false
 }
 
 type MeshTrafficPermissionItemProxyTypes string
@@ -540,20 +482,16 @@ const (
 func (e MeshTrafficPermissionItemProxyTypes) ToPointer() *MeshTrafficPermissionItemProxyTypes {
 	return &e
 }
-func (e *MeshTrafficPermissionItemProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTrafficPermissionItemProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshTrafficPermissionItemProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTrafficPermissionItemProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshTrafficPermissionItemTargetRef - TargetRef is a reference to the resource the policy takes an effect on.
@@ -698,7 +636,7 @@ func (m MeshTrafficPermissionItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshTrafficPermissionItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -779,7 +717,7 @@ func (m MeshTrafficPermissionItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshTrafficPermissionItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil

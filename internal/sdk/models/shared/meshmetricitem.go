@@ -49,7 +49,7 @@ func (a Applications) MarshalJSON() ([]byte, error) {
 }
 
 func (a *Applications) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &a, "", false, []string{"port"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -117,22 +117,16 @@ const (
 func (e MeshMetricItemMode) ToPointer() *MeshMetricItemMode {
 	return &e
 }
-func (e *MeshMetricItemMode) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshMetricItemMode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Disabled", "ProvidedTLS", "ActiveMTLSBackend":
+			return true
+		}
 	}
-	switch v {
-	case "Disabled":
-		fallthrough
-	case "ProvidedTLS":
-		fallthrough
-	case "ActiveMTLSBackend":
-		*e = MeshMetricItemMode(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshMetricItemMode: %v", v)
-	}
+	return false
 }
 
 // MeshMetricItemTLS - Configuration of TLS for prometheus listener.
@@ -221,20 +215,16 @@ const (
 func (e MeshMetricItemSpecType) ToPointer() *MeshMetricItemSpecType {
 	return &e
 }
-func (e *MeshMetricItemSpecType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshMetricItemSpecType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Prometheus", "OpenTelemetry":
+			return true
+		}
 	}
-	switch v {
-	case "Prometheus":
-		fallthrough
-	case "OpenTelemetry":
-		*e = MeshMetricItemSpecType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshMetricItemSpecType: %v", v)
-	}
+	return false
 }
 
 type MeshMetricItemBackends struct {
@@ -279,22 +269,16 @@ const (
 func (e Name) ToPointer() *Name {
 	return &e
 }
-func (e *Name) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *Name) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "All", "Basic", "None":
+			return true
+		}
 	}
-	switch v {
-	case "All":
-		fallthrough
-	case "Basic":
-		fallthrough
-	case "None":
-		*e = Name(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for Name: %v", v)
-	}
+	return false
 }
 
 type AppendProfiles struct {
@@ -322,24 +306,16 @@ const (
 func (e MeshMetricItemSpecDefaultType) ToPointer() *MeshMetricItemSpecDefaultType {
 	return &e
 }
-func (e *MeshMetricItemSpecDefaultType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshMetricItemSpecDefaultType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Prefix", "Regex", "Exact", "Contains":
+			return true
+		}
 	}
-	switch v {
-	case "Prefix":
-		fallthrough
-	case "Regex":
-		fallthrough
-	case "Exact":
-		fallthrough
-	case "Contains":
-		*e = MeshMetricItemSpecDefaultType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshMetricItemSpecDefaultType: %v", v)
-	}
+	return false
 }
 
 type Exclude struct {
@@ -376,24 +352,16 @@ const (
 func (e MeshMetricItemSpecDefaultSidecarType) ToPointer() *MeshMetricItemSpecDefaultSidecarType {
 	return &e
 }
-func (e *MeshMetricItemSpecDefaultSidecarType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshMetricItemSpecDefaultSidecarType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Prefix", "Regex", "Exact", "Contains":
+			return true
+		}
 	}
-	switch v {
-	case "Prefix":
-		fallthrough
-	case "Regex":
-		fallthrough
-	case "Exact":
-		fallthrough
-	case "Contains":
-		*e = MeshMetricItemSpecDefaultSidecarType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshMetricItemSpecDefaultSidecarType: %v", v)
-	}
+	return false
 }
 
 type Include struct {
@@ -524,34 +492,16 @@ const (
 func (e MeshMetricItemKind) ToPointer() *MeshMetricItemKind {
 	return &e
 }
-func (e *MeshMetricItemKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshMetricItemKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshMetricItemKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshMetricItemKind: %v", v)
-	}
+	return false
 }
 
 type MeshMetricItemProxyTypes string
@@ -564,20 +514,16 @@ const (
 func (e MeshMetricItemProxyTypes) ToPointer() *MeshMetricItemProxyTypes {
 	return &e
 }
-func (e *MeshMetricItemProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshMetricItemProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshMetricItemProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshMetricItemProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshMetricItemTargetRef - TargetRef is a reference to the resource the policy takes an effect on.
@@ -713,7 +659,7 @@ func (m MeshMetricItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshMetricItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -794,7 +740,7 @@ func (m MeshMetricItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshMetricItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil

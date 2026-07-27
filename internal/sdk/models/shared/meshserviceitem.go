@@ -44,20 +44,16 @@ const (
 func (e MeshServiceItemSpecType) ToPointer() *MeshServiceItemSpecType {
 	return &e
 }
-func (e *MeshServiceItemSpecType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshServiceItemSpecType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "ServiceTag", "SpiffeID":
+			return true
+		}
 	}
-	switch v {
-	case "ServiceTag":
-		fallthrough
-	case "SpiffeID":
-		*e = MeshServiceItemSpecType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshServiceItemSpecType: %v", v)
-	}
+	return false
 }
 
 type Identities struct {
@@ -87,8 +83,8 @@ const (
 )
 
 type TargetPort struct {
-	Integer *int64  `queryParam:"inline,name=targetPort"`
-	Str     *string `queryParam:"inline,name=targetPort"`
+	Integer *int64  `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
 
 	Type TargetPortType
 }
@@ -137,7 +133,7 @@ func (u *TargetPort) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for TargetPort", string(data))
 	}
@@ -181,7 +177,7 @@ func (m MeshServiceItemPorts) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshServiceItemPorts) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"port"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -276,20 +272,16 @@ const (
 func (e State) ToPointer() *State {
 	return &e
 }
-func (e *State) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *State) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Available", "Unavailable":
+			return true
+		}
 	}
-	switch v {
-	case "Available":
-		fallthrough
-	case "Unavailable":
-		*e = State(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for State: %v", v)
-	}
+	return false
 }
 
 // MeshServiceItemSpec - Spec is the specification of the Kuma MeshService resource.
@@ -422,22 +414,16 @@ const (
 func (e MeshServiceItemStatusHostnameGeneratorsStatus) ToPointer() *MeshServiceItemStatusHostnameGeneratorsStatus {
 	return &e
 }
-func (e *MeshServiceItemStatusHostnameGeneratorsStatus) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshServiceItemStatusHostnameGeneratorsStatus) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "True", "False", "Unknown":
+			return true
+		}
 	}
-	switch v {
-	case "True":
-		fallthrough
-	case "False":
-		fallthrough
-	case "Unknown":
-		*e = MeshServiceItemStatusHostnameGeneratorsStatus(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshServiceItemStatusHostnameGeneratorsStatus: %v", v)
-	}
+	return false
 }
 
 type MeshServiceItemConditions struct {
@@ -525,20 +511,16 @@ const (
 func (e MeshServiceItemStatusStatus) ToPointer() *MeshServiceItemStatusStatus {
 	return &e
 }
-func (e *MeshServiceItemStatusStatus) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshServiceItemStatusStatus) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Ready", "NotReady":
+			return true
+		}
 	}
-	switch v {
-	case "Ready":
-		fallthrough
-	case "NotReady":
-		*e = MeshServiceItemStatusStatus(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshServiceItemStatusStatus: %v", v)
-	}
+	return false
 }
 
 type MeshServiceItemTLS struct {
@@ -635,7 +617,7 @@ func (m MeshServiceItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshServiceItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -723,7 +705,7 @@ func (m MeshServiceItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshServiceItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil

@@ -18,7 +18,6 @@ import (
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
-	"github.com/kong/terraform-provider-kong-mesh/internal/validators"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -37,14 +36,14 @@ type MeshHostnameGeneratorResource struct {
 
 // MeshHostnameGeneratorResourceModel describes the resource data model.
 type MeshHostnameGeneratorResourceModel struct {
-	CreationTime     types.String                      `tfsdk:"creation_time"`
-	Kri              types.String                      `tfsdk:"kri"`
-	Labels           map[string]types.String           `tfsdk:"labels"`
-	ModificationTime types.String                      `tfsdk:"modification_time"`
-	Name             types.String                      `tfsdk:"name"`
-	Spec             tfTypes.HostnameGeneratorItemSpec `tfsdk:"spec"`
-	Type             types.String                      `tfsdk:"type"`
-	Warnings         []types.String                    `tfsdk:"warnings"`
+	CreationTime     types.String                       `tfsdk:"creation_time"`
+	Kri              types.String                       `tfsdk:"kri"`
+	Labels           map[string]types.String            `tfsdk:"labels"`
+	ModificationTime types.String                       `tfsdk:"modification_time"`
+	Name             types.String                       `tfsdk:"name"`
+	Spec             *tfTypes.HostnameGeneratorItemSpec `tfsdk:"spec"`
+	Type             types.String                       `tfsdk:"type"`
+	Warnings         []types.String                     `tfsdk:"warnings"`
 }
 
 func (r *MeshHostnameGeneratorResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -61,9 +60,6 @@ func (r *MeshHostnameGeneratorResource) Schema(ctx context.Context, req resource
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
 				Description: `Time at which the resource was created`,
-				Validators: []validator.String{
-					validators.IsRFC3339(),
-				},
 			},
 			"kri": schema.StringAttribute{
 				Computed:    true,
@@ -80,9 +76,6 @@ func (r *MeshHostnameGeneratorResource) Schema(ctx context.Context, req resource
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
 				Description: `Time at which the resource was updated`,
-				Validators: []validator.String{
-					validators.IsRFC3339(),
-				},
 			},
 			"name": schema.StringAttribute{
 				Required:    true,
@@ -476,7 +469,10 @@ func (r *MeshHostnameGeneratorResource) Delete(ctx context.Context, req resource
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 200 {
+	switch res.StatusCode {
+	case 200, 404:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}

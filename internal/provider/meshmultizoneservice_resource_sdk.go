@@ -40,6 +40,7 @@ func (r *MeshMultiZoneServiceResourceModel) RefreshFromSharedMeshMultiZoneServic
 		r.Mesh = types.StringPointerValue(resp.Mesh)
 		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
+		r.Spec = &tfTypes.MeshMultiZoneServiceItemSpec{}
 		r.Spec.Ports = []tfTypes.Ports{}
 
 		for _, portsItem := range resp.Spec.Ports {
@@ -51,6 +52,8 @@ func (r *MeshMultiZoneServiceResourceModel) RefreshFromSharedMeshMultiZoneServic
 
 			r.Spec.Ports = append(r.Spec.Ports, ports)
 		}
+		r.Spec.Selector = &tfTypes.MeshMultiZoneServiceItemSelector{}
+		r.Spec.Selector.MeshService = &tfTypes.MeshExternalService{}
 		if len(resp.Spec.Selector.MeshService.MatchLabels) > 0 {
 			r.Spec.Selector.MeshService.MatchLabels = make(map[string]types.String, len(resp.Spec.Selector.MeshService.MatchLabels))
 			for key, value := range resp.Spec.Selector.MeshService.MatchLabels {
@@ -106,6 +109,7 @@ func (r *MeshMultiZoneServiceResourceModel) RefreshFromSharedMeshMultiZoneServic
 
 					hostnameGenerators.Conditions = append(hostnameGenerators.Conditions, conditions1)
 				}
+				hostnameGenerators.HostnameGeneratorRef = &tfTypes.HostnameGeneratorRef{}
 				hostnameGenerators.HostnameGeneratorRef.CoreName = types.StringValue(hostnameGeneratorsItem.HostnameGeneratorRef.CoreName)
 
 				r.Status.HostnameGenerators = append(r.Status.HostnameGenerators, hostnameGenerators)
@@ -215,21 +219,21 @@ func (r *MeshMultiZoneServiceResourceModel) ToSharedMeshMultiZoneServiceItemInpu
 		diags.Append(r.Labels.ElementsAs(ctx, &labels, true)...)
 	}
 	ports := make([]shared.Ports, 0, len(r.Spec.Ports))
-	for _, portsItem := range r.Spec.Ports {
+	for portsIndex := range r.Spec.Ports {
 		appProtocol := new(string)
-		if !portsItem.AppProtocol.IsUnknown() && !portsItem.AppProtocol.IsNull() {
-			*appProtocol = portsItem.AppProtocol.ValueString()
+		if !r.Spec.Ports[portsIndex].AppProtocol.IsUnknown() && !r.Spec.Ports[portsIndex].AppProtocol.IsNull() {
+			*appProtocol = r.Spec.Ports[portsIndex].AppProtocol.ValueString()
 		} else {
 			appProtocol = nil
 		}
 		name1 := new(string)
-		if !portsItem.Name.IsUnknown() && !portsItem.Name.IsNull() {
-			*name1 = portsItem.Name.ValueString()
+		if !r.Spec.Ports[portsIndex].Name.IsUnknown() && !r.Spec.Ports[portsIndex].Name.IsNull() {
+			*name1 = r.Spec.Ports[portsIndex].Name.ValueString()
 		} else {
 			name1 = nil
 		}
 		var port int
-		port = int(portsItem.Port.ValueInt32())
+		port = int(r.Spec.Ports[portsIndex].Port.ValueInt32())
 
 		ports = append(ports, shared.Ports{
 			AppProtocol: appProtocol,
@@ -238,9 +242,9 @@ func (r *MeshMultiZoneServiceResourceModel) ToSharedMeshMultiZoneServiceItemInpu
 		})
 	}
 	matchLabels := make(map[string]string)
-	for matchLabelsKey, matchLabelsValue := range r.Spec.Selector.MeshService.MatchLabels {
+	for matchLabelsKey := range r.Spec.Selector.MeshService.MatchLabels {
 		var matchLabelsInst string
-		matchLabelsInst = matchLabelsValue.ValueString()
+		matchLabelsInst = r.Spec.Selector.MeshService.MatchLabels[matchLabelsKey].ValueString()
 
 		matchLabels[matchLabelsKey] = matchLabelsInst
 	}

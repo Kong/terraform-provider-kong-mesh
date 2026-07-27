@@ -89,24 +89,16 @@ const (
 func (e MeshExternalServiceItemProtocol) ToPointer() *MeshExternalServiceItemProtocol {
 	return &e
 }
-func (e *MeshExternalServiceItemProtocol) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshExternalServiceItemProtocol) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "tcp", "grpc", "http", "http2":
+			return true
+		}
 	}
-	switch v {
-	case "tcp":
-		fallthrough
-	case "grpc":
-		fallthrough
-	case "http":
-		fallthrough
-	case "http2":
-		*e = MeshExternalServiceItemProtocol(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshExternalServiceItemProtocol: %v", v)
-	}
+	return false
 }
 
 // MeshExternalServiceItemSpecType - Type of the match, only `HostnameGenerator` is available at the moment.
@@ -148,7 +140,7 @@ func (m Match) MarshalJSON() ([]byte, error) {
 }
 
 func (m *Match) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"port"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -281,24 +273,16 @@ const (
 func (e MeshExternalServiceItemMode) ToPointer() *MeshExternalServiceItemMode {
 	return &e
 }
-func (e *MeshExternalServiceItemMode) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshExternalServiceItemMode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "SkipSAN", "SkipCA", "Secured", "SkipAll":
+			return true
+		}
 	}
-	switch v {
-	case "SkipSAN":
-		fallthrough
-	case "SkipCA":
-		fallthrough
-	case "Secured":
-		fallthrough
-	case "SkipAll":
-		*e = MeshExternalServiceItemMode(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshExternalServiceItemMode: %v", v)
-	}
+	return false
 }
 
 // MeshExternalServiceItemSpecTLSType - Type specifies matching type, one of `Exact`, `Prefix`. Default: `Exact`
@@ -312,20 +296,16 @@ const (
 func (e MeshExternalServiceItemSpecTLSType) ToPointer() *MeshExternalServiceItemSpecTLSType {
 	return &e
 }
-func (e *MeshExternalServiceItemSpecTLSType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshExternalServiceItemSpecTLSType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Exact", "Prefix":
+			return true
+		}
 	}
-	switch v {
-	case "Exact":
-		fallthrough
-	case "Prefix":
-		*e = MeshExternalServiceItemSpecTLSType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshExternalServiceItemSpecTLSType: %v", v)
-	}
+	return false
 }
 
 type SubjectAltNames struct {
@@ -340,7 +320,7 @@ func (s SubjectAltNames) MarshalJSON() ([]byte, error) {
 }
 
 func (s *SubjectAltNames) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &s, "", false, []string{"value"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &s, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -443,26 +423,16 @@ const (
 func (e Max) ToPointer() *Max {
 	return &e
 }
-func (e *Max) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *Max) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13":
+			return true
+		}
 	}
-	switch v {
-	case "TLSAuto":
-		fallthrough
-	case "TLS10":
-		fallthrough
-	case "TLS11":
-		fallthrough
-	case "TLS12":
-		fallthrough
-	case "TLS13":
-		*e = Max(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for Max: %v", v)
-	}
+	return false
 }
 
 // Min defines minimum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`.
@@ -479,26 +449,16 @@ const (
 func (e Min) ToPointer() *Min {
 	return &e
 }
-func (e *Min) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *Min) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13":
+			return true
+		}
 	}
-	switch v {
-	case "TLSAuto":
-		fallthrough
-	case "TLS10":
-		fallthrough
-	case "TLS11":
-		fallthrough
-	case "TLS12":
-		fallthrough
-	case "TLS13":
-		*e = Min(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for Min: %v", v)
-	}
+	return false
 }
 
 // Version section for providing version specification.
@@ -676,22 +636,16 @@ const (
 func (e MeshExternalServiceItemStatus) ToPointer() *MeshExternalServiceItemStatus {
 	return &e
 }
-func (e *MeshExternalServiceItemStatus) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshExternalServiceItemStatus) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "True", "False", "Unknown":
+			return true
+		}
 	}
-	switch v {
-	case "True":
-		fallthrough
-	case "False":
-		fallthrough
-	case "Unknown":
-		*e = MeshExternalServiceItemStatus(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshExternalServiceItemStatus: %v", v)
-	}
+	return false
 }
 
 type MeshExternalServiceItemConditions struct {
@@ -839,7 +793,7 @@ func (m MeshExternalServiceItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshExternalServiceItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -927,7 +881,7 @@ func (m MeshExternalServiceItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshExternalServiceItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil

@@ -3,6 +3,6 @@
 package types
 
 type MeshItemTracingConf struct {
-	DatadogTracingBackendConfig *DatadogTracingBackendConfig `queryParam:"inline" tfsdk:"datadog_tracing_backend_config" tfPlanOnly:"true"`
-	ZipkinTracingBackendConfig  *ZipkinTracingBackendConfig  `queryParam:"inline" tfsdk:"zipkin_tracing_backend_config" tfPlanOnly:"true"`
+	DatadogTracingBackendConfig *DatadogTracingBackendConfig `queryParam:"inline" tfsdk:"datadog_tracing_backend_config"`
+	ZipkinTracingBackendConfig  *ZipkinTracingBackendConfig  `queryParam:"inline" tfsdk:"zipkin_tracing_backend_config"`
 }

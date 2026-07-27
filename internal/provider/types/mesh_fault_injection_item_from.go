@@ -4,5 +4,5 @@ package types
 
 type MeshFaultInjectionItemFrom struct {
 	Default   *MeshFaultInjectionItemDefault `tfsdk:"default"`
-	TargetRef MeshAccessLogItemTargetRef     `tfsdk:"target_ref"`
+	TargetRef *MeshAccessLogItemTargetRef    `tfsdk:"target_ref"`
 }

@@ -52,34 +52,16 @@ const (
 func (e MeshHTTPRouteItemKind) ToPointer() *MeshHTTPRouteItemKind {
 	return &e
 }
-func (e *MeshHTTPRouteItemKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshHTTPRouteItemKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshHTTPRouteItemKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshHTTPRouteItemKind: %v", v)
-	}
+	return false
 }
 
 type MeshHTTPRouteItemProxyTypes string
@@ -92,20 +74,16 @@ const (
 func (e MeshHTTPRouteItemProxyTypes) ToPointer() *MeshHTTPRouteItemProxyTypes {
 	return &e
 }
-func (e *MeshHTTPRouteItemProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshHTTPRouteItemProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshHTTPRouteItemProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshHTTPRouteItemProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshHTTPRouteItemTargetRef - TargetRef is a reference to the resource the policy takes an effect on.
@@ -210,34 +188,16 @@ const (
 func (e MeshHTTPRouteItemSpecToKind) ToPointer() *MeshHTTPRouteItemSpecToKind {
 	return &e
 }
-func (e *MeshHTTPRouteItemSpecToKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshHTTPRouteItemSpecToKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshHTTPRouteItemSpecToKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshHTTPRouteItemSpecToKind: %v", v)
-	}
+	return false
 }
 
 type MeshHTTPRouteItemSpecToProxyTypes string
@@ -250,20 +210,16 @@ const (
 func (e MeshHTTPRouteItemSpecToProxyTypes) ToPointer() *MeshHTTPRouteItemSpecToProxyTypes {
 	return &e
 }
-func (e *MeshHTTPRouteItemSpecToProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshHTTPRouteItemSpecToProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshHTTPRouteItemSpecToProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshHTTPRouteItemSpecToProxyTypes: %v", v)
-	}
+	return false
 }
 
 // BackendRefs - BackendRef defines where to forward traffic.
@@ -300,7 +256,7 @@ func (b BackendRefs) MarshalJSON() ([]byte, error) {
 }
 
 func (b *BackendRefs) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &b, "", false, []string{"kind"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &b, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -462,34 +418,16 @@ const (
 func (e MeshHTTPRouteItemSpecToRulesKind) ToPointer() *MeshHTTPRouteItemSpecToRulesKind {
 	return &e
 }
-func (e *MeshHTTPRouteItemSpecToRulesKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshHTTPRouteItemSpecToRulesKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshHTTPRouteItemSpecToRulesKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshHTTPRouteItemSpecToRulesKind: %v", v)
-	}
+	return false
 }
 
 type MeshHTTPRouteItemSpecToRulesProxyTypes string
@@ -502,20 +440,16 @@ const (
 func (e MeshHTTPRouteItemSpecToRulesProxyTypes) ToPointer() *MeshHTTPRouteItemSpecToRulesProxyTypes {
 	return &e
 }
-func (e *MeshHTTPRouteItemSpecToRulesProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshHTTPRouteItemSpecToRulesProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshHTTPRouteItemSpecToRulesProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshHTTPRouteItemSpecToRulesProxyTypes: %v", v)
-	}
+	return false
 }
 
 // BackendRef defines where to forward traffic.
@@ -552,7 +486,7 @@ func (b BackendRef) MarshalJSON() ([]byte, error) {
 }
 
 func (b *BackendRef) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &b, "", false, []string{"kind"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &b, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -638,8 +572,8 @@ const (
 // MeshHTTPRouteItemPercentage - Percentage of requests to mirror. If not specified, all requests
 // to the target cluster will be mirrored.
 type MeshHTTPRouteItemPercentage struct {
-	Integer *int64  `queryParam:"inline,name=percentage"`
-	Str     *string `queryParam:"inline,name=percentage"`
+	Integer *int64  `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
 
 	Type MeshHTTPRouteItemPercentageType
 }
@@ -688,7 +622,7 @@ func (u *MeshHTTPRouteItemPercentage) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshHTTPRouteItemPercentage", string(data))
 	}
@@ -751,20 +685,16 @@ const (
 func (e MeshHTTPRouteItemSpecToRulesDefaultType) ToPointer() *MeshHTTPRouteItemSpecToRulesDefaultType {
 	return &e
 }
-func (e *MeshHTTPRouteItemSpecToRulesDefaultType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshHTTPRouteItemSpecToRulesDefaultType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "ReplaceFullPath", "ReplacePrefixMatch":
+			return true
+		}
 	}
-	switch v {
-	case "ReplaceFullPath":
-		fallthrough
-	case "ReplacePrefixMatch":
-		*e = MeshHTTPRouteItemSpecToRulesDefaultType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshHTTPRouteItemSpecToRulesDefaultType: %v", v)
-	}
+	return false
 }
 
 // MeshHTTPRouteItemSpecPath - Path defines parameters used to modify the path of the incoming request.
@@ -807,20 +737,16 @@ const (
 func (e Scheme) ToPointer() *Scheme {
 	return &e
 }
-func (e *Scheme) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *Scheme) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "http", "https":
+			return true
+		}
 	}
-	switch v {
-	case "http":
-		fallthrough
-	case "https":
-		*e = Scheme(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for Scheme: %v", v)
-	}
+	return false
 }
 
 // StatusCode is the HTTP status code to be used in response.
@@ -837,26 +763,16 @@ const (
 func (e StatusCode) ToPointer() *StatusCode {
 	return &e
 }
-func (e *StatusCode) UnmarshalJSON(data []byte) error {
-	var v int64
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *StatusCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case 301, 302, 303, 307, 308:
+			return true
+		}
 	}
-	switch v {
-	case 301:
-		fallthrough
-	case 302:
-		fallthrough
-	case 303:
-		fallthrough
-	case 307:
-		fallthrough
-	case 308:
-		*e = StatusCode(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for StatusCode: %v", v)
-	}
+	return false
 }
 
 type RequestRedirect struct {
@@ -1008,26 +924,16 @@ const (
 func (e MeshHTTPRouteItemSpecType) ToPointer() *MeshHTTPRouteItemSpecType {
 	return &e
 }
-func (e *MeshHTTPRouteItemSpecType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshHTTPRouteItemSpecType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "RequestHeaderModifier", "ResponseHeaderModifier", "RequestRedirect", "URLRewrite", "RequestMirror":
+			return true
+		}
 	}
-	switch v {
-	case "RequestHeaderModifier":
-		fallthrough
-	case "ResponseHeaderModifier":
-		fallthrough
-	case "RequestRedirect":
-		fallthrough
-	case "URLRewrite":
-		fallthrough
-	case "RequestMirror":
-		*e = MeshHTTPRouteItemSpecType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshHTTPRouteItemSpecType: %v", v)
-	}
+	return false
 }
 
 type MeshHTTPRouteItemSpecToRulesDefaultFiltersType string
@@ -1040,20 +946,16 @@ const (
 func (e MeshHTTPRouteItemSpecToRulesDefaultFiltersType) ToPointer() *MeshHTTPRouteItemSpecToRulesDefaultFiltersType {
 	return &e
 }
-func (e *MeshHTTPRouteItemSpecToRulesDefaultFiltersType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshHTTPRouteItemSpecToRulesDefaultFiltersType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "ReplaceFullPath", "ReplacePrefixMatch":
+			return true
+		}
 	}
-	switch v {
-	case "ReplaceFullPath":
-		fallthrough
-	case "ReplacePrefixMatch":
-		*e = MeshHTTPRouteItemSpecToRulesDefaultFiltersType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshHTTPRouteItemSpecToRulesDefaultFiltersType: %v", v)
-	}
+	return false
 }
 
 // MeshHTTPRouteItemPath - Path defines a path rewrite.
@@ -1207,26 +1109,16 @@ const (
 func (e MeshHTTPRouteItemSpecToType) ToPointer() *MeshHTTPRouteItemSpecToType {
 	return &e
 }
-func (e *MeshHTTPRouteItemSpecToType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshHTTPRouteItemSpecToType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Exact", "Present", "RegularExpression", "Absent", "Prefix":
+			return true
+		}
 	}
-	switch v {
-	case "Exact":
-		fallthrough
-	case "Present":
-		fallthrough
-	case "RegularExpression":
-		fallthrough
-	case "Absent":
-		fallthrough
-	case "Prefix":
-		*e = MeshHTTPRouteItemSpecToType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshHTTPRouteItemSpecToType: %v", v)
-	}
+	return false
 }
 
 // Headers - HeaderMatch describes how to select an HTTP route by matching HTTP request
@@ -1246,7 +1138,7 @@ func (h Headers) MarshalJSON() ([]byte, error) {
 }
 
 func (h *Headers) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &h, "", false, []string{"name"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &h, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -1290,34 +1182,16 @@ const (
 func (e Method) ToPointer() *Method {
 	return &e
 }
-func (e *Method) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *Method) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "CONNECT", "DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT", "TRACE":
+			return true
+		}
 	}
-	switch v {
-	case "CONNECT":
-		fallthrough
-	case "DELETE":
-		fallthrough
-	case "GET":
-		fallthrough
-	case "HEAD":
-		fallthrough
-	case "OPTIONS":
-		fallthrough
-	case "PATCH":
-		fallthrough
-	case "POST":
-		fallthrough
-	case "PUT":
-		fallthrough
-	case "TRACE":
-		*e = Method(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for Method: %v", v)
-	}
+	return false
 }
 
 type MeshHTTPRouteItemSpecToRulesType string
@@ -1331,22 +1205,16 @@ const (
 func (e MeshHTTPRouteItemSpecToRulesType) ToPointer() *MeshHTTPRouteItemSpecToRulesType {
 	return &e
 }
-func (e *MeshHTTPRouteItemSpecToRulesType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshHTTPRouteItemSpecToRulesType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Exact", "PathPrefix", "RegularExpression":
+			return true
+		}
 	}
-	switch v {
-	case "Exact":
-		fallthrough
-	case "PathPrefix":
-		fallthrough
-	case "RegularExpression":
-		*e = MeshHTTPRouteItemSpecToRulesType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshHTTPRouteItemSpecToRulesType: %v", v)
-	}
+	return false
 }
 
 type Path struct {
@@ -1380,20 +1248,16 @@ const (
 func (e MeshHTTPRouteItemSpecToRulesMatchesType) ToPointer() *MeshHTTPRouteItemSpecToRulesMatchesType {
 	return &e
 }
-func (e *MeshHTTPRouteItemSpecToRulesMatchesType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshHTTPRouteItemSpecToRulesMatchesType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Exact", "RegularExpression":
+			return true
+		}
 	}
-	switch v {
-	case "Exact":
-		fallthrough
-	case "RegularExpression":
-		*e = MeshHTTPRouteItemSpecToRulesMatchesType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshHTTPRouteItemSpecToRulesMatchesType: %v", v)
-	}
+	return false
 }
 
 type QueryParams struct {
@@ -1501,34 +1365,16 @@ const (
 func (e MeshHTTPRouteItemSpecKind) ToPointer() *MeshHTTPRouteItemSpecKind {
 	return &e
 }
-func (e *MeshHTTPRouteItemSpecKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshHTTPRouteItemSpecKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshHTTPRouteItemSpecKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshHTTPRouteItemSpecKind: %v", v)
-	}
+	return false
 }
 
 type MeshHTTPRouteItemSpecProxyTypes string
@@ -1541,20 +1387,16 @@ const (
 func (e MeshHTTPRouteItemSpecProxyTypes) ToPointer() *MeshHTTPRouteItemSpecProxyTypes {
 	return &e
 }
-func (e *MeshHTTPRouteItemSpecProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshHTTPRouteItemSpecProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshHTTPRouteItemSpecProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshHTTPRouteItemSpecProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshHTTPRouteItemSpecTargetRef - TargetRef is a reference to the resource that represents a group of
@@ -1728,7 +1570,7 @@ func (m MeshHTTPRouteItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshHTTPRouteItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -1813,7 +1655,7 @@ func (m MeshHTTPRouteItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshHTTPRouteItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil

@@ -74,7 +74,7 @@ resource "kong-mesh_mesh_retry" "my_meshretry" {
                 tags = {
                   key = "value"
                 }
-                update_frequency = 6
+                update_frequency = 2
               }
             ]
             host_selection_max_attempts = 1
@@ -92,14 +92,14 @@ resource "kong-mesh_mesh_retry" "my_meshretry" {
             retriable_request_headers = [
               {
                 name  = "...my_name..."
-                type  = "RegularExpression"
+                type  = "Exact"
                 value = "...my_value..."
               }
             ]
             retriable_response_headers = [
               {
                 name  = "...my_name..."
-                type  = "RegularExpression"
+                type  = "Exact"
                 value = "...my_value..."
               }
             ]
@@ -189,7 +189,7 @@ defined inplace. (see [below for nested schema](#nestedatt--spec--target_ref))
 
 Required:
 
-- `kind` (String) Kind of the referenced resource. must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
 
 Optional:
 
@@ -273,7 +273,7 @@ If no headers match the default exponential BackOff is used instead. (see [below
 
 Optional:
 
-- `format` (String) The format of the reset header. Not Null; must be one of ["Seconds", "UnixTimestamp"]
+- `format` (String) The format of the reset header. possible known values include one of ["Seconds", "UnixTimestamp"]; Not Null
 - `name` (String) The Name of the reset header. Not Null
 
 
@@ -329,7 +329,7 @@ Default is 10 times the "BaseInterval".
 
 Optional:
 
-- `predicate` (String) Type is requested predicate mode. Not Null; must be one of ["OmitPreviousHosts", "OmitHostsWithTags", "OmitPreviousPriorities"]
+- `predicate` (String) Type is requested predicate mode. possible known values include one of ["OmitPreviousHosts", "OmitHostsWithTags", "OmitPreviousPriorities"]; Not Null
 - `tags` (Map of String) Tags is a map of metadata to match against for selecting the omitted hosts. Required if Type is
 OmitHostsWithTags
 - `update_frequency` (Number) UpdateFrequency is how often the priority load should be updated based on previously attempted priorities.
@@ -354,7 +354,7 @@ If no headers match the default exponential BackOff is used instead. (see [below
 
 Optional:
 
-- `format` (String) The format of the reset header. Not Null; must be one of ["Seconds", "UnixTimestamp"]
+- `format` (String) The format of the reset header. possible known values include one of ["Seconds", "UnixTimestamp"]; Not Null
 - `name` (String) The Name of the reset header. Not Null
 
 
@@ -367,7 +367,7 @@ Optional:
 - `name` (String) Name is the name of the HTTP Header to be matched. Name MUST be lower case
 as they will be handled with case insensitivity (See https://tools.ietf.org/html/rfc7230#section-3.2).
 Not Null
-- `type` (String) Type specifies how to match against the value of the header. Default: "Exact"; must be one of ["Exact", "Present", "RegularExpression", "Absent", "Prefix"]
+- `type` (String) Type specifies how to match against the value of the header. possible known values include one of ["Exact", "Present", "RegularExpression", "Absent", "Prefix"]; Default: "Exact"
 - `value` (String) Value is the value of HTTP Header to be matched.
 
 
@@ -379,7 +379,7 @@ Optional:
 - `name` (String) Name is the name of the HTTP Header to be matched. Name MUST be lower case
 as they will be handled with case insensitivity (See https://tools.ietf.org/html/rfc7230#section-3.2).
 Not Null
-- `type` (String) Type specifies how to match against the value of the header. Default: "Exact"; must be one of ["Exact", "Present", "RegularExpression", "Absent", "Prefix"]
+- `type` (String) Type specifies how to match against the value of the header. possible known values include one of ["Exact", "Present", "RegularExpression", "Absent", "Prefix"]; Default: "Exact"
 - `value` (String) Value is the value of HTTP Header to be matched.
 
 
@@ -399,7 +399,7 @@ which will be made before giving up
 
 Optional:
 
-- `kind` (String) Kind of the referenced resource. Not Null; must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
 - `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
 Name and Namespace can be used.
 - `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.

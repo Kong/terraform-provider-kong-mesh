@@ -23,7 +23,6 @@ import (
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
-	"github.com/kong/terraform-provider-kong-mesh/internal/validators"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/stringvalidators"
 )
@@ -50,7 +49,7 @@ type MeshTLSResourceModel struct {
 	Mesh             types.String                  `tfsdk:"mesh"`
 	ModificationTime types.String                  `tfsdk:"modification_time"`
 	Name             types.String                  `tfsdk:"name"`
-	Spec             tfTypes.MeshTLSItemSpec       `tfsdk:"spec"`
+	Spec             *tfTypes.MeshTLSItemSpec      `tfsdk:"spec"`
 	Type             types.String                  `tfsdk:"type"`
 	Warnings         []types.String                `tfsdk:"warnings"`
 }
@@ -69,9 +68,6 @@ func (r *MeshTLSResource) Schema(ctx context.Context, req resource.SchemaRequest
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
 				Description: `Time at which the resource was created`,
-				Validators: []validator.String{
-					validators.IsRFC3339(),
-				},
 			},
 			"kri": schema.StringAttribute{
 				Computed:    true,
@@ -98,9 +94,6 @@ func (r *MeshTLSResource) Schema(ctx context.Context, req resource.SchemaRequest
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
 				Description: `Time at which the resource was updated`,
-				Validators: []validator.String{
-					validators.IsRFC3339(),
-				},
 			},
 			"name": schema.StringAttribute{
 				Required: true,
@@ -128,13 +121,7 @@ func (r *MeshTLSResource) Schema(ctx context.Context, req resource.SchemaRequest
 									Attributes: map[string]schema.Attribute{
 										"mode": schema.StringAttribute{
 											Optional:    true,
-											Description: `Mode defines the behavior of inbound listeners with regard to traffic encryption. must be one of ["Permissive", "Strict"]`,
-											Validators: []validator.String{
-												stringvalidator.OneOf(
-													"Permissive",
-													"Strict",
-												),
-											},
+											Description: `Mode defines the behavior of inbound listeners with regard to traffic encryption. possible known values include one of ["Permissive", "Strict"]`,
 										},
 										"tls_ciphers": schema.ListAttribute{
 											Computed: true,
@@ -152,31 +139,13 @@ func (r *MeshTLSResource) Schema(ctx context.Context, req resource.SchemaRequest
 													Computed:    true,
 													Optional:    true,
 													Default:     stringdefault.StaticString(`TLSAuto`),
-													Description: `Max defines maximum supported version. One of ` + "`" + `TLSAuto` + "`" + `, ` + "`" + `TLS10` + "`" + `, ` + "`" + `TLS11` + "`" + `, ` + "`" + `TLS12` + "`" + `, ` + "`" + `TLS13` + "`" + `. Default: "TLSAuto"; must be one of ["TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13"]`,
-													Validators: []validator.String{
-														stringvalidator.OneOf(
-															"TLSAuto",
-															"TLS10",
-															"TLS11",
-															"TLS12",
-															"TLS13",
-														),
-													},
+													Description: `Max defines maximum supported version. One of ` + "`" + `TLSAuto` + "`" + `, ` + "`" + `TLS10` + "`" + `, ` + "`" + `TLS11` + "`" + `, ` + "`" + `TLS12` + "`" + `, ` + "`" + `TLS13` + "`" + `. possible known values include one of ["TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13"]; Default: "TLSAuto"`,
 												},
 												"min": schema.StringAttribute{
 													Computed:    true,
 													Optional:    true,
 													Default:     stringdefault.StaticString(`TLSAuto`),
-													Description: `Min defines minimum supported version. One of ` + "`" + `TLSAuto` + "`" + `, ` + "`" + `TLS10` + "`" + `, ` + "`" + `TLS11` + "`" + `, ` + "`" + `TLS12` + "`" + `, ` + "`" + `TLS13` + "`" + `. Default: "TLSAuto"; must be one of ["TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13"]`,
-													Validators: []validator.String{
-														stringvalidator.OneOf(
-															"TLSAuto",
-															"TLS10",
-															"TLS11",
-															"TLS12",
-															"TLS13",
-														),
-													},
+													Description: `Min defines minimum supported version. One of ` + "`" + `TLSAuto` + "`" + `, ` + "`" + `TLS10` + "`" + `, ` + "`" + `TLS11` + "`" + `, ` + "`" + `TLS12` + "`" + `, ` + "`" + `TLS13` + "`" + `. possible known values include one of ["TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13"]; Default: "TLSAuto"`,
 												},
 											},
 											Description: `Version section for providing version specification.`,
@@ -190,20 +159,9 @@ func (r *MeshTLSResource) Schema(ctx context.Context, req resource.SchemaRequest
 									Attributes: map[string]schema.Attribute{
 										"kind": schema.StringAttribute{
 											Optional:    true,
-											Description: `Kind of the referenced resource. Not Null; must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
+											Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null`,
 											Validators: []validator.String{
 												speakeasy_stringvalidators.NotNull(),
-												stringvalidator.OneOf(
-													"Mesh",
-													"MeshSubset",
-													"MeshGateway",
-													"MeshService",
-													"MeshExternalService",
-													"MeshMultiZoneService",
-													"MeshServiceSubset",
-													"MeshHTTPRoute",
-													"Dataplane",
-												),
 											},
 										},
 										"labels": schema.MapAttribute{
@@ -275,13 +233,7 @@ func (r *MeshTLSResource) Schema(ctx context.Context, req resource.SchemaRequest
 									Attributes: map[string]schema.Attribute{
 										"mode": schema.StringAttribute{
 											Optional:    true,
-											Description: `Mode defines the behavior of inbound listeners with regard to traffic encryption. must be one of ["Permissive", "Strict"]`,
-											Validators: []validator.String{
-												stringvalidator.OneOf(
-													"Permissive",
-													"Strict",
-												),
-											},
+											Description: `Mode defines the behavior of inbound listeners with regard to traffic encryption. possible known values include one of ["Permissive", "Strict"]`,
 										},
 										"tls_ciphers": schema.ListAttribute{
 											Computed: true,
@@ -299,31 +251,13 @@ func (r *MeshTLSResource) Schema(ctx context.Context, req resource.SchemaRequest
 													Computed:    true,
 													Optional:    true,
 													Default:     stringdefault.StaticString(`TLSAuto`),
-													Description: `Max defines maximum supported version. One of ` + "`" + `TLSAuto` + "`" + `, ` + "`" + `TLS10` + "`" + `, ` + "`" + `TLS11` + "`" + `, ` + "`" + `TLS12` + "`" + `, ` + "`" + `TLS13` + "`" + `. Default: "TLSAuto"; must be one of ["TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13"]`,
-													Validators: []validator.String{
-														stringvalidator.OneOf(
-															"TLSAuto",
-															"TLS10",
-															"TLS11",
-															"TLS12",
-															"TLS13",
-														),
-													},
+													Description: `Max defines maximum supported version. One of ` + "`" + `TLSAuto` + "`" + `, ` + "`" + `TLS10` + "`" + `, ` + "`" + `TLS11` + "`" + `, ` + "`" + `TLS12` + "`" + `, ` + "`" + `TLS13` + "`" + `. possible known values include one of ["TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13"]; Default: "TLSAuto"`,
 												},
 												"min": schema.StringAttribute{
 													Computed:    true,
 													Optional:    true,
 													Default:     stringdefault.StaticString(`TLSAuto`),
-													Description: `Min defines minimum supported version. One of ` + "`" + `TLSAuto` + "`" + `, ` + "`" + `TLS10` + "`" + `, ` + "`" + `TLS11` + "`" + `, ` + "`" + `TLS12` + "`" + `, ` + "`" + `TLS13` + "`" + `. Default: "TLSAuto"; must be one of ["TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13"]`,
-													Validators: []validator.String{
-														stringvalidator.OneOf(
-															"TLSAuto",
-															"TLS10",
-															"TLS11",
-															"TLS12",
-															"TLS13",
-														),
-													},
+													Description: `Min defines minimum supported version. One of ` + "`" + `TLSAuto` + "`" + `, ` + "`" + `TLS10` + "`" + `, ` + "`" + `TLS11` + "`" + `, ` + "`" + `TLS12` + "`" + `, ` + "`" + `TLS13` + "`" + `. possible known values include one of ["TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13"]; Default: "TLSAuto"`,
 												},
 											},
 											Description: `Version section for providing version specification.`,
@@ -341,20 +275,7 @@ func (r *MeshTLSResource) Schema(ctx context.Context, req resource.SchemaRequest
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
 								Required:    true,
-								Description: `Kind of the referenced resource. must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
-								Validators: []validator.String{
-									stringvalidator.OneOf(
-										"Mesh",
-										"MeshSubset",
-										"MeshGateway",
-										"MeshService",
-										"MeshExternalService",
-										"MeshMultiZoneService",
-										"MeshServiceSubset",
-										"MeshHTTPRoute",
-										"Dataplane",
-									),
-								},
+								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
 							},
 							"labels": schema.MapAttribute{
 								Optional:    true,
@@ -735,7 +656,10 @@ func (r *MeshTLSResource) Delete(ctx context.Context, req resource.DeleteRequest
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 200 {
+	switch res.StatusCode {
+	case 200, 404:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
@@ -756,12 +680,12 @@ func (r *MeshTLSResource) ImportState(ctx context.Context, req resource.ImportSt
 	}
 
 	if len(data.Mesh) == 0 {
-		resp.Diagnostics.AddError("Missing required field", `The field mesh is required but was not found in the json encoded ID. It's expected to be a value alike '""`)
+		resp.Diagnostics.AddError("Missing required field", `The field mesh is required but was not found in the json encoded ID.`)
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("mesh"), data.Mesh)...)
 	if len(data.Name) == 0 {
-		resp.Diagnostics.AddError("Missing required field", `The field name is required but was not found in the json encoded ID. It's expected to be a value alike '""`)
+		resp.Diagnostics.AddError("Missing required field", `The field name is required but was not found in the json encoded ID.`)
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("name"), data.Name)...)

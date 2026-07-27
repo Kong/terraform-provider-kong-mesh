@@ -7,7 +7,7 @@ import (
 )
 
 type MeshGlobalRateLimitItemDefault struct {
-	Backend Backend                     `tfsdk:"backend"`
-	HTTP    MeshGlobalRateLimitItemHTTP `tfsdk:"http"`
-	Mode    types.String                `tfsdk:"mode"`
+	Backend *Backend                     `tfsdk:"backend"`
+	HTTP    *MeshGlobalRateLimitItemHTTP `tfsdk:"http"`
+	Mode    types.String                 `tfsdk:"mode"`
 }

@@ -3,6 +3,6 @@
 package types
 
 type MeshProxyPatchItemSpec struct {
-	Default   MeshProxyPatchItemDefault   `tfsdk:"default"`
+	Default   *MeshProxyPatchItemDefault  `tfsdk:"default"`
 	TargetRef *MeshAccessLogItemTargetRef `tfsdk:"target_ref"`
 }

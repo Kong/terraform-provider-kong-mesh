@@ -48,28 +48,16 @@ const (
 func (e MeshPassthroughItemProtocol) ToPointer() *MeshPassthroughItemProtocol {
 	return &e
 }
-func (e *MeshPassthroughItemProtocol) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshPassthroughItemProtocol) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "tcp", "tls", "grpc", "http", "http2", "mysql":
+			return true
+		}
 	}
-	switch v {
-	case "tcp":
-		fallthrough
-	case "tls":
-		fallthrough
-	case "grpc":
-		fallthrough
-	case "http":
-		fallthrough
-	case "http2":
-		fallthrough
-	case "mysql":
-		*e = MeshPassthroughItemProtocol(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshPassthroughItemProtocol: %v", v)
-	}
+	return false
 }
 
 // MeshPassthroughItemSpecType - Type of the match, one of `Domain`, `IP` or `CIDR` is available.
@@ -84,22 +72,16 @@ const (
 func (e MeshPassthroughItemSpecType) ToPointer() *MeshPassthroughItemSpecType {
 	return &e
 }
-func (e *MeshPassthroughItemSpecType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshPassthroughItemSpecType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Domain", "IP", "CIDR":
+			return true
+		}
 	}
-	switch v {
-	case "Domain":
-		fallthrough
-	case "IP":
-		fallthrough
-	case "CIDR":
-		*e = MeshPassthroughItemSpecType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshPassthroughItemSpecType: %v", v)
-	}
+	return false
 }
 
 type AppendMatch struct {
@@ -118,7 +100,7 @@ func (a AppendMatch) MarshalJSON() ([]byte, error) {
 }
 
 func (a *AppendMatch) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &a, "", false, []string{"type", "value"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -166,22 +148,16 @@ const (
 func (e PassthroughMode) ToPointer() *PassthroughMode {
 	return &e
 }
-func (e *PassthroughMode) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *PassthroughMode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "All", "Matched", "None":
+			return true
+		}
 	}
-	switch v {
-	case "All":
-		fallthrough
-	case "Matched":
-		fallthrough
-	case "None":
-		*e = PassthroughMode(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for PassthroughMode: %v", v)
-	}
+	return false
 }
 
 // MeshPassthroughItemDefault - MeshPassthrough configuration.
@@ -226,34 +202,16 @@ const (
 func (e MeshPassthroughItemKind) ToPointer() *MeshPassthroughItemKind {
 	return &e
 }
-func (e *MeshPassthroughItemKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshPassthroughItemKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshPassthroughItemKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshPassthroughItemKind: %v", v)
-	}
+	return false
 }
 
 type MeshPassthroughItemProxyTypes string
@@ -266,20 +224,16 @@ const (
 func (e MeshPassthroughItemProxyTypes) ToPointer() *MeshPassthroughItemProxyTypes {
 	return &e
 }
-func (e *MeshPassthroughItemProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshPassthroughItemProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshPassthroughItemProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshPassthroughItemProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshPassthroughItemTargetRef - TargetRef is a reference to the resource the policy takes an effect on.
@@ -415,7 +369,7 @@ func (m MeshPassthroughItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshPassthroughItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -496,7 +450,7 @@ func (m MeshPassthroughItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshPassthroughItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil

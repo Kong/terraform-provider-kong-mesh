@@ -3,5 +3,5 @@
 package types
 
 type MeshItemConf struct {
-	PrometheusMetricsBackendConfig *PrometheusMetricsBackendConfig `queryParam:"inline" tfsdk:"prometheus_metrics_backend_config" tfPlanOnly:"true"`
+	PrometheusMetricsBackendConfig *PrometheusMetricsBackendConfig `queryParam:"inline" tfsdk:"prometheus_metrics_backend_config"`
 }

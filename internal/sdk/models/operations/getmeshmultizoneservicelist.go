@@ -44,7 +44,7 @@ func (g GetMeshMultiZoneServiceListRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetMeshMultiZoneServiceListRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, []string{"mesh"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
 		return err
 	}
 	return nil

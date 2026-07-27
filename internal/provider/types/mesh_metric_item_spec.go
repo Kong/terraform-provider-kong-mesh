@@ -3,6 +3,6 @@
 package types
 
 type MeshMetricItemSpec struct {
-	Default   *Default                    `tfsdk:"default"`
+	Default   *Default1                   `tfsdk:"default"`
 	TargetRef *MeshAccessLogItemTargetRef `tfsdk:"target_ref"`
 }

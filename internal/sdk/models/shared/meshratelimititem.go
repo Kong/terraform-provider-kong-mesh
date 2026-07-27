@@ -271,34 +271,16 @@ const (
 func (e MeshRateLimitItemSpecKind) ToPointer() *MeshRateLimitItemSpecKind {
 	return &e
 }
-func (e *MeshRateLimitItemSpecKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshRateLimitItemSpecKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshRateLimitItemSpecKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshRateLimitItemSpecKind: %v", v)
-	}
+	return false
 }
 
 type MeshRateLimitItemSpecProxyTypes string
@@ -311,20 +293,16 @@ const (
 func (e MeshRateLimitItemSpecProxyTypes) ToPointer() *MeshRateLimitItemSpecProxyTypes {
 	return &e
 }
-func (e *MeshRateLimitItemSpecProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshRateLimitItemSpecProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshRateLimitItemSpecProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshRateLimitItemSpecProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshRateLimitItemSpecTargetRef - TargetRef is a reference to the resource that represents a group of
@@ -682,34 +660,16 @@ const (
 func (e MeshRateLimitItemKind) ToPointer() *MeshRateLimitItemKind {
 	return &e
 }
-func (e *MeshRateLimitItemKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshRateLimitItemKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshRateLimitItemKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshRateLimitItemKind: %v", v)
-	}
+	return false
 }
 
 type MeshRateLimitItemProxyTypes string
@@ -722,20 +682,16 @@ const (
 func (e MeshRateLimitItemProxyTypes) ToPointer() *MeshRateLimitItemProxyTypes {
 	return &e
 }
-func (e *MeshRateLimitItemProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshRateLimitItemProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshRateLimitItemProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshRateLimitItemProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshRateLimitItemTargetRef - TargetRef is a reference to the resource the policy takes an effect on.
@@ -1060,34 +1016,16 @@ const (
 func (e MeshRateLimitItemSpecToKind) ToPointer() *MeshRateLimitItemSpecToKind {
 	return &e
 }
-func (e *MeshRateLimitItemSpecToKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshRateLimitItemSpecToKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshRateLimitItemSpecToKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshRateLimitItemSpecToKind: %v", v)
-	}
+	return false
 }
 
 type MeshRateLimitItemSpecToProxyTypes string
@@ -1100,20 +1038,16 @@ const (
 func (e MeshRateLimitItemSpecToProxyTypes) ToPointer() *MeshRateLimitItemSpecToProxyTypes {
 	return &e
 }
-func (e *MeshRateLimitItemSpecToProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshRateLimitItemSpecToProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshRateLimitItemSpecToProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshRateLimitItemSpecToProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshRateLimitItemSpecToTargetRef - TargetRef is a reference to the resource that represents a group of
@@ -1290,7 +1224,7 @@ func (m MeshRateLimitItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshRateLimitItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -1371,7 +1305,7 @@ func (m MeshRateLimitItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshRateLimitItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil

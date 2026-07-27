@@ -7,7 +7,7 @@ import (
 )
 
 type MeshHTTPRouteItemTo struct {
-	Hostnames []types.String             `tfsdk:"hostnames"`
-	Rules     []MeshHTTPRouteItemRules   `tfsdk:"rules"`
-	TargetRef MeshAccessLogItemTargetRef `tfsdk:"target_ref"`
+	Hostnames []types.String              `tfsdk:"hostnames"`
+	Rules     []MeshHTTPRouteItemRules    `tfsdk:"rules"`
+	TargetRef *MeshAccessLogItemTargetRef `tfsdk:"target_ref"`
 }

@@ -232,7 +232,7 @@ Optional:
 - `http` (Attributes) Not Null (see [below for nested schema](#nestedatt--spec--from--default--http))
 - `mode` (String) Mode defines rate limit behavior when limits are reached. Possible options: Limit and Shadow. Setting Shadow will
 not block over the limit requests but will update metrics. This is useful for testing rate limit configuration.
-must be one of ["Limit", "Shadow"]
+possible known values include one of ["Limit", "Shadow"]
 
 <a id="nestedatt--spec--from--default--backend"></a>
 ### Nested Schema for `spec.from.default.backend`
@@ -346,7 +346,7 @@ Not Null
 
 Optional:
 
-- `kind` (String) Kind of the referenced resource. Not Null; must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
 - `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
 Name and Namespace can be used.
 - `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
@@ -368,7 +368,7 @@ For example, you can target port from MeshService.ports[] by its name. Only traf
 
 Required:
 
-- `kind` (String) Kind of the referenced resource. must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
 
 Optional:
 
@@ -407,7 +407,7 @@ Optional:
 - `http` (Attributes) Not Null (see [below for nested schema](#nestedatt--spec--to--default--http))
 - `mode` (String) Mode defines rate limit behavior when limits are reached. Possible options: Limit and Shadow. Setting Shadow will
 not block over the limit requests but will update metrics. This is useful for testing rate limit configuration.
-must be one of ["Limit", "Shadow"]
+possible known values include one of ["Limit", "Shadow"]
 
 <a id="nestedatt--spec--to--default--backend"></a>
 ### Nested Schema for `spec.to.default.backend`
@@ -521,7 +521,7 @@ Not Null
 
 Optional:
 
-- `kind` (String) Kind of the referenced resource. Not Null; must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
 - `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
 Name and Namespace can be used.
 - `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.

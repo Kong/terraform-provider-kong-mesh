@@ -42,6 +42,7 @@ func (r *MeshExternalServiceResourceModel) RefreshFromSharedMeshExternalServiceI
 		r.Mesh = types.StringPointerValue(resp.Mesh)
 		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
+		r.Spec = &tfTypes.MeshExternalServiceItemSpec{}
 		r.Spec.Endpoints = []tfTypes.Endpoints{}
 
 		for _, endpointsItem := range resp.Spec.Endpoints {
@@ -64,6 +65,7 @@ func (r *MeshExternalServiceResourceModel) RefreshFromSharedMeshExternalServiceI
 			}
 			r.Spec.Extension.Type = types.StringValue(resp.Spec.Extension.Type)
 		}
+		r.Spec.Match = &tfTypes.Match{}
 		r.Spec.Match.Port = types.Int32Value(int32(resp.Spec.Match.Port))
 		if resp.Spec.Match.Protocol != nil {
 			r.Spec.Match.Protocol = types.StringValue(string(*resp.Spec.Match.Protocol))
@@ -183,6 +185,7 @@ func (r *MeshExternalServiceResourceModel) RefreshFromSharedMeshExternalServiceI
 
 					hostnameGenerators.Conditions = append(hostnameGenerators.Conditions, conditions)
 				}
+				hostnameGenerators.HostnameGeneratorRef = &tfTypes.HostnameGeneratorRef{}
 				hostnameGenerators.HostnameGeneratorRef.CoreName = types.StringValue(hostnameGeneratorsItem.HostnameGeneratorRef.CoreName)
 
 				r.Status.HostnameGenerators = append(r.Status.HostnameGenerators, hostnameGenerators)
@@ -277,12 +280,12 @@ func (r *MeshExternalServiceResourceModel) ToSharedMeshExternalServiceItemInput(
 		diags.Append(r.Labels.ElementsAs(ctx, &labels, true)...)
 	}
 	endpoints := make([]shared.Endpoints, 0, len(r.Spec.Endpoints))
-	for _, endpointsItem := range r.Spec.Endpoints {
+	for endpointsIndex := range r.Spec.Endpoints {
 		var address string
-		address = endpointsItem.Address.ValueString()
+		address = r.Spec.Endpoints[endpointsIndex].Address.ValueString()
 
 		var port int
-		port = int(endpointsItem.Port.ValueInt32())
+		port = int(r.Spec.Endpoints[endpointsIndex].Port.ValueInt32())
 
 		endpoints = append(endpoints, shared.Endpoints{
 			Address: address,
@@ -430,15 +433,15 @@ func (r *MeshExternalServiceResourceModel) ToSharedMeshExternalServiceItemInput(
 				serverName = nil
 			}
 			subjectAltNames := make([]shared.SubjectAltNames, 0, len(r.Spec.TLS.Verification.SubjectAltNames))
-			for _, subjectAltNamesItem := range r.Spec.TLS.Verification.SubjectAltNames {
+			for subjectAltNamesIndex := range r.Spec.TLS.Verification.SubjectAltNames {
 				type1 := new(shared.MeshExternalServiceItemSpecTLSType)
-				if !subjectAltNamesItem.Type.IsUnknown() && !subjectAltNamesItem.Type.IsNull() {
-					*type1 = shared.MeshExternalServiceItemSpecTLSType(subjectAltNamesItem.Type.ValueString())
+				if !r.Spec.TLS.Verification.SubjectAltNames[subjectAltNamesIndex].Type.IsUnknown() && !r.Spec.TLS.Verification.SubjectAltNames[subjectAltNamesIndex].Type.IsNull() {
+					*type1 = shared.MeshExternalServiceItemSpecTLSType(r.Spec.TLS.Verification.SubjectAltNames[subjectAltNamesIndex].Type.ValueString())
 				} else {
 					type1 = nil
 				}
 				var value string
-				value = subjectAltNamesItem.Value.ValueString()
+				value = r.Spec.TLS.Verification.SubjectAltNames[subjectAltNamesIndex].Value.ValueString()
 
 				subjectAltNames = append(subjectAltNames, shared.SubjectAltNames{
 					Type:  type1,

@@ -44,7 +44,7 @@ func (g GetMeshFaultInjectionListRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetMeshFaultInjectionListRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, []string{"mesh"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
 		return err
 	}
 	return nil

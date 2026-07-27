@@ -27,7 +27,6 @@ import (
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
-	"github.com/kong/terraform-provider-kong-mesh/internal/validators"
 	speakeasy_listvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/listvalidators"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/stringvalidators"
@@ -50,15 +49,15 @@ type MeshHTTPRouteResource struct {
 
 // MeshHTTPRouteResourceModel describes the resource data model.
 type MeshHTTPRouteResourceModel struct {
-	CreationTime     types.String                  `tfsdk:"creation_time"`
-	Kri              types.String                  `tfsdk:"kri"`
-	Labels           kumalabels.KumaLabelsMapValue `tfsdk:"labels"`
-	Mesh             types.String                  `tfsdk:"mesh"`
-	ModificationTime types.String                  `tfsdk:"modification_time"`
-	Name             types.String                  `tfsdk:"name"`
-	Spec             tfTypes.MeshHTTPRouteItemSpec `tfsdk:"spec"`
-	Type             types.String                  `tfsdk:"type"`
-	Warnings         []types.String                `tfsdk:"warnings"`
+	CreationTime     types.String                   `tfsdk:"creation_time"`
+	Kri              types.String                   `tfsdk:"kri"`
+	Labels           kumalabels.KumaLabelsMapValue  `tfsdk:"labels"`
+	Mesh             types.String                   `tfsdk:"mesh"`
+	ModificationTime types.String                   `tfsdk:"modification_time"`
+	Name             types.String                   `tfsdk:"name"`
+	Spec             *tfTypes.MeshHTTPRouteItemSpec `tfsdk:"spec"`
+	Type             types.String                   `tfsdk:"type"`
+	Warnings         []types.String                 `tfsdk:"warnings"`
 }
 
 func (r *MeshHTTPRouteResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -75,9 +74,6 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
 				Description: `Time at which the resource was created`,
-				Validators: []validator.String{
-					validators.IsRFC3339(),
-				},
 			},
 			"kri": schema.StringAttribute{
 				Computed:    true,
@@ -104,9 +100,6 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
 				Description: `Time at which the resource was updated`,
-				Validators: []validator.String{
-					validators.IsRFC3339(),
-				},
 			},
 			"name": schema.StringAttribute{
 				Required: true,
@@ -123,20 +116,7 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
 								Required:    true,
-								Description: `Kind of the referenced resource. must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
-								Validators: []validator.String{
-									stringvalidator.OneOf(
-										"Mesh",
-										"MeshSubset",
-										"MeshGateway",
-										"MeshService",
-										"MeshExternalService",
-										"MeshMultiZoneService",
-										"MeshServiceSubset",
-										"MeshHTTPRoute",
-										"Dataplane",
-									),
-								},
+								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
 							},
 							"labels": schema.MapAttribute{
 								Optional:    true,
@@ -234,20 +214,9 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 															Attributes: map[string]schema.Attribute{
 																"kind": schema.StringAttribute{
 																	Optional:    true,
-																	Description: `Kind of the referenced resource. Not Null; must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
+																	Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null`,
 																	Validators: []validator.String{
 																		speakeasy_stringvalidators.NotNull(),
-																		stringvalidator.OneOf(
-																			"Mesh",
-																			"MeshSubset",
-																			"MeshGateway",
-																			"MeshService",
-																			"MeshExternalService",
-																			"MeshMultiZoneService",
-																			"MeshServiceSubset",
-																			"MeshHTTPRoute",
-																			"Dataplane",
-																		),
 																	},
 																},
 																"labels": schema.MapAttribute{
@@ -300,6 +269,9 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 																	Optional:    true,
 																	Default:     int64default.StaticInt64(1),
 																	Description: `Default: 1`,
+																	Validators: []validator.Int64{
+																		int64validator.AtLeast(0),
+																	},
 																},
 															},
 														},
@@ -408,20 +380,9 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 																			Attributes: map[string]schema.Attribute{
 																				"kind": schema.StringAttribute{
 																					Optional:    true,
-																					Description: `Kind of the referenced resource. Not Null; must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
+																					Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null`,
 																					Validators: []validator.String{
 																						speakeasy_stringvalidators.NotNull(),
-																						stringvalidator.OneOf(
-																							"Mesh",
-																							"MeshSubset",
-																							"MeshGateway",
-																							"MeshService",
-																							"MeshExternalService",
-																							"MeshMultiZoneService",
-																							"MeshServiceSubset",
-																							"MeshHTTPRoute",
-																							"Dataplane",
-																						),
 																					},
 																				},
 																				"labels": schema.MapAttribute{
@@ -474,6 +435,9 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 																					Optional:    true,
 																					Default:     int64default.StaticInt64(1),
 																					Description: `Default: 1`,
+																					Validators: []validator.Int64{
+																						int64validator.AtLeast(0),
+																					},
 																				},
 																			},
 																			Description: `BackendRef defines where to forward traffic. Not Null`,
@@ -534,13 +498,9 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 																				},
 																				"type": schema.StringAttribute{
 																					Optional:    true,
-																					Description: `Not Null; must be one of ["ReplaceFullPath", "ReplacePrefixMatch"]`,
+																					Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
 																					Validators: []validator.String{
 																						speakeasy_stringvalidators.NotNull(),
-																						stringvalidator.OneOf(
-																							"ReplaceFullPath",
-																							"ReplacePrefixMatch",
-																						),
 																					},
 																				},
 																			},
@@ -559,28 +519,13 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 																		},
 																		"scheme": schema.StringAttribute{
 																			Optional:    true,
-																			Description: `must be one of ["http", "https"]`,
-																			Validators: []validator.String{
-																				stringvalidator.OneOf(
-																					"http",
-																					"https",
-																				),
-																			},
+																			Description: `possible known values include one of ["http", "https"]`,
 																		},
 																		"status_code": schema.Int64Attribute{
 																			Computed:    true,
 																			Optional:    true,
 																			Default:     int64default.StaticInt64(302),
-																			Description: `StatusCode is the HTTP status code to be used in response. Default: 302; must be one of ["301", "302", "303", "307", "308"]`,
-																			Validators: []validator.Int64{
-																				int64validator.OneOf(
-																					301,
-																					302,
-																					303,
-																					307,
-																					308,
-																				),
-																			},
+																			Description: `StatusCode is the HTTP status code to be used in response. possible known values include one of [301, 302, 303, 307, 308]; Default: 302`,
 																		},
 																	},
 																},
@@ -671,16 +616,9 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 																},
 																"type": schema.StringAttribute{
 																	Optional:    true,
-																	Description: `Not Null; must be one of ["RequestHeaderModifier", "ResponseHeaderModifier", "RequestRedirect", "URLRewrite", "RequestMirror"]`,
+																	Description: `possible known values include one of ["RequestHeaderModifier", "ResponseHeaderModifier", "RequestRedirect", "URLRewrite", "RequestMirror"]; Not Null`,
 																	Validators: []validator.String{
 																		speakeasy_stringvalidators.NotNull(),
-																		stringvalidator.OneOf(
-																			"RequestHeaderModifier",
-																			"ResponseHeaderModifier",
-																			"RequestRedirect",
-																			"URLRewrite",
-																			"RequestMirror",
-																		),
 																	},
 																},
 																"url_rewrite": schema.SingleNestedAttribute{
@@ -710,13 +648,9 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 																				},
 																				"type": schema.StringAttribute{
 																					Optional:    true,
-																					Description: `Not Null; must be one of ["ReplaceFullPath", "ReplacePrefixMatch"]`,
+																					Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
 																					Validators: []validator.String{
 																						speakeasy_stringvalidators.NotNull(),
-																						stringvalidator.OneOf(
-																							"ReplaceFullPath",
-																							"ReplacePrefixMatch",
-																						),
 																					},
 																				},
 																			},
@@ -772,16 +706,7 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 																		Computed:    true,
 																		Optional:    true,
 																		Default:     stringdefault.StaticString(`Exact`),
-																		Description: `Type specifies how to match against the value of the header. Default: "Exact"; must be one of ["Exact", "Present", "RegularExpression", "Absent", "Prefix"]`,
-																		Validators: []validator.String{
-																			stringvalidator.OneOf(
-																				"Exact",
-																				"Present",
-																				"RegularExpression",
-																				"Absent",
-																				"Prefix",
-																			),
-																		},
+																		Description: `Type specifies how to match against the value of the header. possible known values include one of ["Exact", "Present", "RegularExpression", "Absent", "Prefix"]; Default: "Exact"`,
 																	},
 																	"value": schema.StringAttribute{
 																		Optional:    true,
@@ -792,34 +717,16 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 														},
 														"method": schema.StringAttribute{
 															Optional:    true,
-															Description: `must be one of ["CONNECT", "DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT", "TRACE"]`,
-															Validators: []validator.String{
-																stringvalidator.OneOf(
-																	"CONNECT",
-																	"DELETE",
-																	"GET",
-																	"HEAD",
-																	"OPTIONS",
-																	"PATCH",
-																	"POST",
-																	"PUT",
-																	"TRACE",
-																),
-															},
+															Description: `possible known values include one of ["CONNECT", "DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT", "TRACE"]`,
 														},
 														"path": schema.SingleNestedAttribute{
 															Optional: true,
 															Attributes: map[string]schema.Attribute{
 																"type": schema.StringAttribute{
 																	Optional:    true,
-																	Description: `Not Null; must be one of ["Exact", "PathPrefix", "RegularExpression"]`,
+																	Description: `possible known values include one of ["Exact", "PathPrefix", "RegularExpression"]; Not Null`,
 																	Validators: []validator.String{
 																		speakeasy_stringvalidators.NotNull(),
-																		stringvalidator.OneOf(
-																			"Exact",
-																			"PathPrefix",
-																			"RegularExpression",
-																		),
 																	},
 																},
 																"value": schema.StringAttribute{
@@ -855,13 +762,9 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 																	},
 																	"type": schema.StringAttribute{
 																		Optional:    true,
-																		Description: `Not Null; must be one of ["Exact", "RegularExpression"]`,
+																		Description: `possible known values include one of ["Exact", "RegularExpression"]; Not Null`,
 																		Validators: []validator.String{
 																			speakeasy_stringvalidators.NotNull(),
-																			stringvalidator.OneOf(
-																				"Exact",
-																				"RegularExpression",
-																			),
 																		},
 																	},
 																	"value": schema.StringAttribute{
@@ -900,20 +803,9 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 									Attributes: map[string]schema.Attribute{
 										"kind": schema.StringAttribute{
 											Optional:    true,
-											Description: `Kind of the referenced resource. Not Null; must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
+											Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null`,
 											Validators: []validator.String{
 												speakeasy_stringvalidators.NotNull(),
-												stringvalidator.OneOf(
-													"Mesh",
-													"MeshSubset",
-													"MeshGateway",
-													"MeshService",
-													"MeshExternalService",
-													"MeshMultiZoneService",
-													"MeshServiceSubset",
-													"MeshHTTPRoute",
-													"Dataplane",
-												),
 											},
 										},
 										"labels": schema.MapAttribute{
@@ -1304,7 +1196,10 @@ func (r *MeshHTTPRouteResource) Delete(ctx context.Context, req resource.DeleteR
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 200 {
+	switch res.StatusCode {
+	case 200, 404:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
@@ -1325,12 +1220,12 @@ func (r *MeshHTTPRouteResource) ImportState(ctx context.Context, req resource.Im
 	}
 
 	if len(data.Mesh) == 0 {
-		resp.Diagnostics.AddError("Missing required field", `The field mesh is required but was not found in the json encoded ID. It's expected to be a value alike '""`)
+		resp.Diagnostics.AddError("Missing required field", `The field mesh is required but was not found in the json encoded ID.`)
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("mesh"), data.Mesh)...)
 	if len(data.Name) == 0 {
-		resp.Diagnostics.AddError("Missing required field", `The field name is required but was not found in the json encoded ID. It's expected to be a value alike '""`)
+		resp.Diagnostics.AddError("Missing required field", `The field name is required but was not found in the json encoded ID.`)
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("name"), data.Name)...)

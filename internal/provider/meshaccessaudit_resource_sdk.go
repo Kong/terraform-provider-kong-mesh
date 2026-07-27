@@ -56,6 +56,8 @@ func (r *MeshAccessAuditResourceModel) RefreshFromSharedAccessAuditItem(ctx cont
 
 						rules.Access = append(rules.Access, access)
 					}
+				} else {
+					rules.Access = nil
 				}
 				rules.AccessAll = types.BoolPointerValue(rulesItem.AccessAll)
 				rules.Mesh = types.StringPointerValue(rulesItem.Mesh)
@@ -64,10 +66,14 @@ func (r *MeshAccessAuditResourceModel) RefreshFromSharedAccessAuditItem(ctx cont
 					for _, v := range rulesItem.Types {
 						rules.Types = append(rules.Types, types.StringValue(v))
 					}
+				} else {
+					rules.Types = nil
 				}
 
 				r.Rules = append(r.Rules, rules)
 			}
+		} else {
+			r.Rules = nil
 		}
 		r.Type = types.StringValue(resp.Type)
 	}
@@ -126,9 +132,9 @@ func (r *MeshAccessAuditResourceModel) ToSharedAccessAuditItem(ctx context.Conte
 	var diags diag.Diagnostics
 
 	labels := make(map[string]string)
-	for labelsKey, labelsValue := range r.Labels {
+	for labelsKey := range r.Labels {
 		var labelsInst string
-		labelsInst = labelsValue.ValueString()
+		labelsInst = r.Labels[labelsKey].ValueString()
 
 		labels[labelsKey] = labelsInst
 	}
@@ -138,22 +144,22 @@ func (r *MeshAccessAuditResourceModel) ToSharedAccessAuditItem(ctx context.Conte
 	var rules []shared.Rules
 	if r.Rules != nil {
 		rules = make([]shared.Rules, 0, len(r.Rules))
-		for _, rulesItem := range r.Rules {
+		for rulesIndex := range r.Rules {
 			var access []shared.Access
-			if rulesItem.Access != nil {
-				access = make([]shared.Access, 0, len(rulesItem.Access))
-				for _, accessItem := range rulesItem.Access {
-					if !accessItem.Str.IsUnknown() && !accessItem.Str.IsNull() {
+			if r.Rules[rulesIndex].Access != nil {
+				access = make([]shared.Access, 0, len(r.Rules[rulesIndex].Access))
+				for accessItem := range r.Rules[rulesIndex].Access {
+					if !r.Rules[rulesIndex].Access[accessItem].Str.IsUnknown() && !r.Rules[rulesIndex].Access[accessItem].Str.IsNull() {
 						var str string
-						str = accessItem.Str.ValueString()
+						str = r.Rules[rulesIndex].Access[accessItem].Str.ValueString()
 
 						access = append(access, shared.Access{
 							Str: &str,
 						})
 					}
-					if !accessItem.Integer.IsUnknown() && !accessItem.Integer.IsNull() {
+					if !r.Rules[rulesIndex].Access[accessItem].Integer.IsUnknown() && !r.Rules[rulesIndex].Access[accessItem].Integer.IsNull() {
 						var integer int64
-						integer = accessItem.Integer.ValueInt64()
+						integer = r.Rules[rulesIndex].Access[accessItem].Integer.ValueInt64()
 
 						access = append(access, shared.Access{
 							Integer: &integer,
@@ -162,22 +168,22 @@ func (r *MeshAccessAuditResourceModel) ToSharedAccessAuditItem(ctx context.Conte
 				}
 			}
 			accessAll := new(bool)
-			if !rulesItem.AccessAll.IsUnknown() && !rulesItem.AccessAll.IsNull() {
-				*accessAll = rulesItem.AccessAll.ValueBool()
+			if !r.Rules[rulesIndex].AccessAll.IsUnknown() && !r.Rules[rulesIndex].AccessAll.IsNull() {
+				*accessAll = r.Rules[rulesIndex].AccessAll.ValueBool()
 			} else {
 				accessAll = nil
 			}
 			mesh := new(string)
-			if !rulesItem.Mesh.IsUnknown() && !rulesItem.Mesh.IsNull() {
-				*mesh = rulesItem.Mesh.ValueString()
+			if !r.Rules[rulesIndex].Mesh.IsUnknown() && !r.Rules[rulesIndex].Mesh.IsNull() {
+				*mesh = r.Rules[rulesIndex].Mesh.ValueString()
 			} else {
 				mesh = nil
 			}
 			var typesVar []string
-			if rulesItem.Types != nil {
-				typesVar = make([]string, 0, len(rulesItem.Types))
-				for _, typesItem := range rulesItem.Types {
-					typesVar = append(typesVar, typesItem.ValueString())
+			if r.Rules[rulesIndex].Types != nil {
+				typesVar = make([]string, 0, len(r.Rules[rulesIndex].Types))
+				for typesIndex := range r.Rules[rulesIndex].Types {
+					typesVar = append(typesVar, r.Rules[rulesIndex].Types[typesIndex].ValueString())
 				}
 			}
 			rules = append(rules, shared.Rules{

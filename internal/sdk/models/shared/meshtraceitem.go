@@ -52,7 +52,7 @@ func (d Datadog) MarshalJSON() ([]byte, error) {
 }
 
 func (d *Datadog) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &d, "", false, []string{"url"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &d, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -96,22 +96,16 @@ const (
 func (e MeshTraceItemSpecType) ToPointer() *MeshTraceItemSpecType {
 	return &e
 }
-func (e *MeshTraceItemSpecType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTraceItemSpecType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Zipkin", "Datadog", "OpenTelemetry":
+			return true
+		}
 	}
-	switch v {
-	case "Zipkin":
-		fallthrough
-	case "Datadog":
-		fallthrough
-	case "OpenTelemetry":
-		*e = MeshTraceItemSpecType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTraceItemSpecType: %v", v)
-	}
+	return false
 }
 
 // APIVersion - Version of the API.
@@ -126,20 +120,16 @@ const (
 func (e APIVersion) ToPointer() *APIVersion {
 	return &e
 }
-func (e *APIVersion) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *APIVersion) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "httpJson", "httpProto":
+			return true
+		}
 	}
-	switch v {
-	case "httpJson":
-		fallthrough
-	case "httpProto":
-		*e = APIVersion(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for APIVersion: %v", v)
-	}
+	return false
 }
 
 // Zipkin backend configuration.
@@ -162,7 +152,7 @@ func (z Zipkin) MarshalJSON() ([]byte, error) {
 }
 
 func (z *Zipkin) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &z, "", false, []string{"url"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &z, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -248,8 +238,8 @@ const (
 // Either int or decimal represented as string.
 // If not specified then the default value is 100.
 type Client struct {
-	Integer *int64  `queryParam:"inline,name=client"`
-	Str     *string `queryParam:"inline,name=client"`
+	Integer *int64  `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
 
 	Type ClientType
 }
@@ -298,7 +288,7 @@ func (u *Client) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Client", string(data))
 	}
@@ -347,8 +337,8 @@ const (
 // Either int or decimal represented as string.
 // If not specified then the default value is 100.
 type Overall struct {
-	Integer *int64  `queryParam:"inline,name=overall"`
-	Str     *string `queryParam:"inline,name=overall"`
+	Integer *int64  `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
 
 	Type OverallType
 }
@@ -397,7 +387,7 @@ func (u *Overall) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Overall", string(data))
 	}
@@ -442,8 +432,8 @@ const (
 // Either int or decimal represented as string.
 // If not specified then the default value is 100.
 type Random struct {
-	Integer *int64  `queryParam:"inline,name=random"`
-	Str     *string `queryParam:"inline,name=random"`
+	Integer *int64  `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
 
 	Type RandomType
 }
@@ -492,7 +482,7 @@ func (u *Random) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Random", string(data))
 	}
@@ -686,34 +676,16 @@ const (
 func (e MeshTraceItemKind) ToPointer() *MeshTraceItemKind {
 	return &e
 }
-func (e *MeshTraceItemKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTraceItemKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshTraceItemKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTraceItemKind: %v", v)
-	}
+	return false
 }
 
 type MeshTraceItemProxyTypes string
@@ -726,20 +698,16 @@ const (
 func (e MeshTraceItemProxyTypes) ToPointer() *MeshTraceItemProxyTypes {
 	return &e
 }
-func (e *MeshTraceItemProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTraceItemProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshTraceItemProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTraceItemProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshTraceItemTargetRef - TargetRef is a reference to the resource the policy takes an effect on.
@@ -875,7 +843,7 @@ func (m MeshTraceItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshTraceItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -956,7 +924,7 @@ func (m MeshTraceItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshTraceItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil

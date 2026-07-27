@@ -17,8 +17,8 @@ const (
 
 // Protocol specifies the network protocol this listener expects to receive.
 type Protocol struct {
-	Str     *string `queryParam:"inline,name=protocol"`
-	Integer *int64  `queryParam:"inline,name=protocol"`
+	Str     *string `queryParam:"inline" union:"member"`
+	Integer *int64  `queryParam:"inline" union:"member"`
 
 	Type ProtocolType
 }
@@ -67,7 +67,7 @@ func (u *Protocol) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Protocol", string(data))
 	}
@@ -213,10 +213,10 @@ const (
 )
 
 type Certificates struct {
-	DataSourceFile         *DataSourceFile         `queryParam:"inline,name=certificates"`
-	DataSourceInline       *DataSourceInline       `queryParam:"inline,name=certificates"`
-	DataSourceInlineString *DataSourceInlineString `queryParam:"inline,name=certificates"`
-	DataSourceSecret       *DataSourceSecret       `queryParam:"inline,name=certificates"`
+	DataSourceFile         *DataSourceFile         `queryParam:"inline" union:"member"`
+	DataSourceInline       *DataSourceInline       `queryParam:"inline" union:"member"`
+	DataSourceInlineString *DataSourceInlineString `queryParam:"inline" union:"member"`
+	DataSourceSecret       *DataSourceSecret       `queryParam:"inline" union:"member"`
 
 	Type CertificatesType
 }
@@ -299,7 +299,7 @@ func (u *Certificates) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Certificates", string(data))
 	}
@@ -354,8 +354,8 @@ const (
 // MeshGatewayItemMode - Mode defines the TLS behavior for the TLS session initiated
 // by the client.
 type MeshGatewayItemMode struct {
-	Str     *string `queryParam:"inline,name=mode"`
-	Integer *int64  `queryParam:"inline,name=mode"`
+	Str     *string `queryParam:"inline" union:"member"`
+	Integer *int64  `queryParam:"inline" union:"member"`
 
 	Type MeshGatewayItemModeType
 }
@@ -404,7 +404,7 @@ func (u *MeshGatewayItemMode) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshGatewayItemMode", string(data))
 	}

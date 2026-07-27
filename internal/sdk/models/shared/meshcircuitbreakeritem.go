@@ -203,8 +203,8 @@ const (
 // success_rate_standard_deviation_factor).
 // Either int or decimal represented as string.
 type StandardDeviationFactor struct {
-	Integer *int64  `queryParam:"inline,name=standardDeviationFactor"`
-	Str     *string `queryParam:"inline,name=standardDeviationFactor"`
+	Integer *int64  `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
 
 	Type StandardDeviationFactorType
 }
@@ -253,7 +253,7 @@ func (u *StandardDeviationFactor) UnmarshalJSON(data []byte) error {
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for StandardDeviationFactor", string(data))
 	}
@@ -478,8 +478,8 @@ const (
 // the default is 50%. To disable panic mode, set to 0%.
 // Either int or decimal represented as string.
 type MeshCircuitBreakerItemSpecFromHealthyPanicThreshold struct {
-	Integer *int64  `queryParam:"inline,name=healthyPanicThreshold"`
-	Str     *string `queryParam:"inline,name=healthyPanicThreshold"`
+	Integer *int64  `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
 
 	Type MeshCircuitBreakerItemSpecFromHealthyPanicThresholdType
 }
@@ -528,7 +528,7 @@ func (u *MeshCircuitBreakerItemSpecFromHealthyPanicThreshold) UnmarshalJSON(data
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshCircuitBreakerItemSpecFromHealthyPanicThreshold", string(data))
 	}
@@ -689,34 +689,16 @@ const (
 func (e MeshCircuitBreakerItemSpecKind) ToPointer() *MeshCircuitBreakerItemSpecKind {
 	return &e
 }
-func (e *MeshCircuitBreakerItemSpecKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshCircuitBreakerItemSpecKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshCircuitBreakerItemSpecKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshCircuitBreakerItemSpecKind: %v", v)
-	}
+	return false
 }
 
 type MeshCircuitBreakerItemSpecProxyTypes string
@@ -729,20 +711,16 @@ const (
 func (e MeshCircuitBreakerItemSpecProxyTypes) ToPointer() *MeshCircuitBreakerItemSpecProxyTypes {
 	return &e
 }
-func (e *MeshCircuitBreakerItemSpecProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshCircuitBreakerItemSpecProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshCircuitBreakerItemSpecProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshCircuitBreakerItemSpecProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshCircuitBreakerItemSpecTargetRef - TargetRef is a reference to the resource that represents a group of
@@ -1020,8 +998,8 @@ const (
 // success_rate_standard_deviation_factor).
 // Either int or decimal represented as string.
 type MeshCircuitBreakerItemStandardDeviationFactor struct {
-	Integer *int64  `queryParam:"inline,name=standardDeviationFactor"`
-	Str     *string `queryParam:"inline,name=standardDeviationFactor"`
+	Integer *int64  `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
 
 	Type MeshCircuitBreakerItemStandardDeviationFactorType
 }
@@ -1070,7 +1048,7 @@ func (u *MeshCircuitBreakerItemStandardDeviationFactor) UnmarshalJSON(data []byt
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshCircuitBreakerItemStandardDeviationFactor", string(data))
 	}
@@ -1295,8 +1273,8 @@ const (
 // the default is 50%. To disable panic mode, set to 0%.
 // Either int or decimal represented as string.
 type MeshCircuitBreakerItemHealthyPanicThreshold struct {
-	Integer *int64  `queryParam:"inline,name=healthyPanicThreshold"`
-	Str     *string `queryParam:"inline,name=healthyPanicThreshold"`
+	Integer *int64  `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
 
 	Type MeshCircuitBreakerItemHealthyPanicThresholdType
 }
@@ -1345,7 +1323,7 @@ func (u *MeshCircuitBreakerItemHealthyPanicThreshold) UnmarshalJSON(data []byte)
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshCircuitBreakerItemHealthyPanicThreshold", string(data))
 	}
@@ -1517,34 +1495,16 @@ const (
 func (e MeshCircuitBreakerItemKind) ToPointer() *MeshCircuitBreakerItemKind {
 	return &e
 }
-func (e *MeshCircuitBreakerItemKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshCircuitBreakerItemKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshCircuitBreakerItemKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshCircuitBreakerItemKind: %v", v)
-	}
+	return false
 }
 
 type MeshCircuitBreakerItemProxyTypes string
@@ -1557,20 +1517,16 @@ const (
 func (e MeshCircuitBreakerItemProxyTypes) ToPointer() *MeshCircuitBreakerItemProxyTypes {
 	return &e
 }
-func (e *MeshCircuitBreakerItemProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshCircuitBreakerItemProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshCircuitBreakerItemProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshCircuitBreakerItemProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshCircuitBreakerItemTargetRef - TargetRef is a reference to the resource the policy takes an effect on.
@@ -1826,8 +1782,8 @@ const (
 // success_rate_standard_deviation_factor).
 // Either int or decimal represented as string.
 type MeshCircuitBreakerItemSpecStandardDeviationFactor struct {
-	Integer *int64  `queryParam:"inline,name=standardDeviationFactor"`
-	Str     *string `queryParam:"inline,name=standardDeviationFactor"`
+	Integer *int64  `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
 
 	Type MeshCircuitBreakerItemSpecStandardDeviationFactorType
 }
@@ -1876,7 +1832,7 @@ func (u *MeshCircuitBreakerItemSpecStandardDeviationFactor) UnmarshalJSON(data [
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshCircuitBreakerItemSpecStandardDeviationFactor", string(data))
 	}
@@ -2101,8 +2057,8 @@ const (
 // the default is 50%. To disable panic mode, set to 0%.
 // Either int or decimal represented as string.
 type MeshCircuitBreakerItemSpecHealthyPanicThreshold struct {
-	Integer *int64  `queryParam:"inline,name=healthyPanicThreshold"`
-	Str     *string `queryParam:"inline,name=healthyPanicThreshold"`
+	Integer *int64  `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
 
 	Type MeshCircuitBreakerItemSpecHealthyPanicThresholdType
 }
@@ -2151,7 +2107,7 @@ func (u *MeshCircuitBreakerItemSpecHealthyPanicThreshold) UnmarshalJSON(data []b
 	}
 
 	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
+	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
 		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshCircuitBreakerItemSpecHealthyPanicThreshold", string(data))
 	}
@@ -2312,34 +2268,16 @@ const (
 func (e MeshCircuitBreakerItemSpecToKind) ToPointer() *MeshCircuitBreakerItemSpecToKind {
 	return &e
 }
-func (e *MeshCircuitBreakerItemSpecToKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshCircuitBreakerItemSpecToKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+			return true
+		}
 	}
-	switch v {
-	case "Mesh":
-		fallthrough
-	case "MeshSubset":
-		fallthrough
-	case "MeshGateway":
-		fallthrough
-	case "MeshService":
-		fallthrough
-	case "MeshExternalService":
-		fallthrough
-	case "MeshMultiZoneService":
-		fallthrough
-	case "MeshServiceSubset":
-		fallthrough
-	case "MeshHTTPRoute":
-		fallthrough
-	case "Dataplane":
-		*e = MeshCircuitBreakerItemSpecToKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshCircuitBreakerItemSpecToKind: %v", v)
-	}
+	return false
 }
 
 type MeshCircuitBreakerItemSpecToProxyTypes string
@@ -2352,20 +2290,16 @@ const (
 func (e MeshCircuitBreakerItemSpecToProxyTypes) ToPointer() *MeshCircuitBreakerItemSpecToProxyTypes {
 	return &e
 }
-func (e *MeshCircuitBreakerItemSpecToProxyTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshCircuitBreakerItemSpecToProxyTypes) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Sidecar", "Gateway":
+			return true
+		}
 	}
-	switch v {
-	case "Sidecar":
-		fallthrough
-	case "Gateway":
-		*e = MeshCircuitBreakerItemSpecToProxyTypes(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshCircuitBreakerItemSpecToProxyTypes: %v", v)
-	}
+	return false
 }
 
 // MeshCircuitBreakerItemSpecToTargetRef - TargetRef is a reference to the resource that represents a group of
@@ -2543,7 +2477,7 @@ func (m MeshCircuitBreakerItem) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshCircuitBreakerItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -2624,7 +2558,7 @@ func (m MeshCircuitBreakerItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (m *MeshCircuitBreakerItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, []string{"type", "name", "spec"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil

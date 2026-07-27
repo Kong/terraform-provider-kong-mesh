@@ -10,7 +10,7 @@ resource "kong-mesh_mesh_metric" "my_meshmetric" {
         {
           address = "...my_address..."
           name    = "...my_name..."
-          path    = "...my_path..."
+          path    = "/metrics"
           port    = 8
         }
       ]
@@ -22,8 +22,8 @@ resource "kong-mesh_mesh_metric" "my_meshmetric" {
           }
           prometheus = {
             client_id = "...my_client_id..."
-            path      = "...my_path..."
-            port      = 7
+            path      = "/metrics"
+            port      = 5670
             tls = {
               mode = "Disabled"
             }

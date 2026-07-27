@@ -23,7 +23,6 @@ import (
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
-	"github.com/kong/terraform-provider-kong-mesh/internal/validators"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/stringvalidators"
 )
@@ -44,15 +43,15 @@ type MeshPassthroughResource struct {
 
 // MeshPassthroughResourceModel describes the resource data model.
 type MeshPassthroughResourceModel struct {
-	CreationTime     types.String                    `tfsdk:"creation_time"`
-	Kri              types.String                    `tfsdk:"kri"`
-	Labels           kumalabels.KumaLabelsMapValue   `tfsdk:"labels"`
-	Mesh             types.String                    `tfsdk:"mesh"`
-	ModificationTime types.String                    `tfsdk:"modification_time"`
-	Name             types.String                    `tfsdk:"name"`
-	Spec             tfTypes.MeshPassthroughItemSpec `tfsdk:"spec"`
-	Type             types.String                    `tfsdk:"type"`
-	Warnings         []types.String                  `tfsdk:"warnings"`
+	CreationTime     types.String                     `tfsdk:"creation_time"`
+	Kri              types.String                     `tfsdk:"kri"`
+	Labels           kumalabels.KumaLabelsMapValue    `tfsdk:"labels"`
+	Mesh             types.String                     `tfsdk:"mesh"`
+	ModificationTime types.String                     `tfsdk:"modification_time"`
+	Name             types.String                     `tfsdk:"name"`
+	Spec             *tfTypes.MeshPassthroughItemSpec `tfsdk:"spec"`
+	Type             types.String                     `tfsdk:"type"`
+	Warnings         []types.String                   `tfsdk:"warnings"`
 }
 
 func (r *MeshPassthroughResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -69,9 +68,6 @@ func (r *MeshPassthroughResource) Schema(ctx context.Context, req resource.Schem
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
 				Description: `Time at which the resource was created`,
-				Validators: []validator.String{
-					validators.IsRFC3339(),
-				},
 			},
 			"kri": schema.StringAttribute{
 				Computed:    true,
@@ -98,9 +94,6 @@ func (r *MeshPassthroughResource) Schema(ctx context.Context, req resource.Schem
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
 				Description: `Time at which the resource was updated`,
-				Validators: []validator.String{
-					validators.IsRFC3339(),
-				},
 			},
 			"name": schema.StringAttribute{
 				Required: true,
@@ -134,28 +127,13 @@ func (r *MeshPassthroughResource) Schema(ctx context.Context, req resource.Schem
 											Computed:    true,
 											Optional:    true,
 											Default:     stringdefault.StaticString(`tcp`),
-											Description: `Protocol defines the communication protocol. Possible values: ` + "`" + `tcp` + "`" + `, ` + "`" + `tls` + "`" + `, ` + "`" + `grpc` + "`" + `, ` + "`" + `http` + "`" + `, ` + "`" + `http2` + "`" + `, ` + "`" + `mysql` + "`" + `. Default: "tcp"; must be one of ["tcp", "tls", "grpc", "http", "http2", "mysql"]`,
-											Validators: []validator.String{
-												stringvalidator.OneOf(
-													"tcp",
-													"tls",
-													"grpc",
-													"http",
-													"http2",
-													"mysql",
-												),
-											},
+											Description: `Protocol defines the communication protocol. Possible values: ` + "`" + `tcp` + "`" + `, ` + "`" + `tls` + "`" + `, ` + "`" + `grpc` + "`" + `, ` + "`" + `http` + "`" + `, ` + "`" + `http2` + "`" + `, ` + "`" + `mysql` + "`" + `. possible known values include one of ["tcp", "tls", "grpc", "http", "http2", "mysql"]; Default: "tcp"`,
 										},
 										"type": schema.StringAttribute{
 											Optional:    true,
-											Description: `Type of the match, one of ` + "`" + `Domain` + "`" + `, ` + "`" + `IP` + "`" + ` or ` + "`" + `CIDR` + "`" + ` is available. Not Null; must be one of ["Domain", "IP", "CIDR"]`,
+											Description: `Type of the match, one of ` + "`" + `Domain` + "`" + `, ` + "`" + `IP` + "`" + ` or ` + "`" + `CIDR` + "`" + ` is available. possible known values include one of ["Domain", "IP", "CIDR"]; Not Null`,
 											Validators: []validator.String{
 												speakeasy_stringvalidators.NotNull(),
-												stringvalidator.OneOf(
-													"Domain",
-													"IP",
-													"CIDR",
-												),
 											},
 										},
 										"value": schema.StringAttribute{
@@ -174,14 +152,7 @@ func (r *MeshPassthroughResource) Schema(ctx context.Context, req resource.Schem
 								MarkdownDescription: `Defines the passthrough behavior. Possible values: ` + "`" + `All` + "`" + `, ` + "`" + `None` + "`" + `, ` + "`" + `Matched` + "`" + `` + "\n" +
 									`When ` + "`" + `All` + "`" + ` or ` + "`" + `None` + "`" + ` ` + "`" + `appendMatch` + "`" + ` has no effect.` + "\n" +
 									`If not specified then the default value is "Matched".` + "\n" +
-									`must be one of ["All", "Matched", "None"]`,
-								Validators: []validator.String{
-									stringvalidator.OneOf(
-										"All",
-										"Matched",
-										"None",
-									),
-								},
+									`possible known values include one of ["All", "Matched", "None"]`,
 							},
 						},
 						Description: `MeshPassthrough configuration.`,
@@ -191,20 +162,7 @@ func (r *MeshPassthroughResource) Schema(ctx context.Context, req resource.Schem
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
 								Required:    true,
-								Description: `Kind of the referenced resource. must be one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
-								Validators: []validator.String{
-									stringvalidator.OneOf(
-										"Mesh",
-										"MeshSubset",
-										"MeshGateway",
-										"MeshService",
-										"MeshExternalService",
-										"MeshMultiZoneService",
-										"MeshServiceSubset",
-										"MeshHTTPRoute",
-										"Dataplane",
-									),
-								},
+								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
 							},
 							"labels": schema.MapAttribute{
 								Optional:    true,
@@ -587,7 +545,10 @@ func (r *MeshPassthroughResource) Delete(ctx context.Context, req resource.Delet
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 200 {
+	switch res.StatusCode {
+	case 200, 404:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
@@ -608,12 +569,12 @@ func (r *MeshPassthroughResource) ImportState(ctx context.Context, req resource.
 	}
 
 	if len(data.Mesh) == 0 {
-		resp.Diagnostics.AddError("Missing required field", `The field mesh is required but was not found in the json encoded ID. It's expected to be a value alike '""`)
+		resp.Diagnostics.AddError("Missing required field", `The field mesh is required but was not found in the json encoded ID.`)
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("mesh"), data.Mesh)...)
 	if len(data.Name) == 0 {
-		resp.Diagnostics.AddError("Missing required field", `The field name is required but was not found in the json encoded ID. It's expected to be a value alike '""`)
+		resp.Diagnostics.AddError("Missing required field", `The field name is required but was not found in the json encoded ID.`)
 		return
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("name"), data.Name)...)

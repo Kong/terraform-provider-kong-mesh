@@ -7,7 +7,7 @@ import (
 )
 
 type URLRewrite struct {
-	Hostname              types.String               `tfsdk:"hostname"`
 	HostToBackendHostname types.Bool                 `tfsdk:"host_to_backend_hostname"`
+	Hostname              types.String               `tfsdk:"hostname"`
 	Path                  *MeshHTTPRouteItemSpecPath `tfsdk:"path"`
 }
