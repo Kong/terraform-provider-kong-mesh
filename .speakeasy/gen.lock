@@ -6,11 +6,11 @@ management:
   speakeasyVersion: 1.791.0
   generationVersion: 2.924.0
   releaseVersion: 0.8.2
-  configChecksum: 6ac168708c863a8f1683043607fe87cb
+  configChecksum: bb659adca4054d6863231fce7ebb5466
 persistentEdits:
-  generation_id: 803ae58b-569a-426e-9faf-1e00f76833d7
-  pristine_commit_hash: 4cbe862c70a0f02cdb8fa0605a551a26390664b1
-  pristine_tree_hash: 3475418c9481ddfb943ed201ab6d8644f2bb0fcf
+  generation_id: 78d0bd1e-8ae0-47a6-b456-dbc8c14d934d
+  pristine_commit_hash: 821624c3c86461fa97d7664037f5f0b4056d38e8
+  pristine_tree_hash: c8c44f3aa764598e4b3fc70c458011e80418574f
 features:
   terraform:
     additionalDependencies: 0.1.0
@@ -434,8 +434,8 @@ trackedFiles:
     pristine_git_object: e2f51bd85e8ac34731757384603c8698acd82621
   go.mod:
     id: c47645c391ad
-    last_write_checksum: sha1:5822e1b08f39d1884d613d700484ea59a3a8c754
-    pristine_git_object: ef8a724848d3288bbc0c801c5c654d366ef17883
+    last_write_checksum: sha1:d23f0373387c12276a299ba9ec6a1229e8cf6412
+    pristine_git_object: 5851823d24b91be177a6366545816bb2c93cb968
   internal/planmodifiers/boolplanmodifier/suppress_diff.go:
     id: 3cf85b98963e
     last_write_checksum: sha1:1e37c3d378182a201759b77d68d43534a9174fe2
