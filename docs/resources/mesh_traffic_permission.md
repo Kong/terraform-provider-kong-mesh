@@ -67,12 +67,9 @@ resource "kong-mesh_mesh_traffic_permission" "my_meshtrafficpermission" {
       labels = {
         key = "value"
       }
-      mesh      = "...my_mesh..."
-      name      = "...my_name..."
-      namespace = "...my_namespace..."
-      proxy_types = [
-        "Sidecar"
-      ]
+      mesh         = "...my_mesh..."
+      name         = "...my_name..."
+      namespace    = "...my_namespace..."
       section_name = "...my_section_name..."
       tags = {
         key = "value"
@@ -231,8 +228,6 @@ Name and Namespace can be used.
 and `MeshServiceSubset`
 - `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 will be targeted.
-- `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-all data plane types are targeted by the policy.
 - `section_name` (String) SectionName is used to target specific section of resource.
 For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 - `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds

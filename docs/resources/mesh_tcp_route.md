@@ -25,12 +25,9 @@ resource "kong-mesh_mesh_tcp_route" "my_meshtcproute" {
       labels = {
         key = "value"
       }
-      mesh      = "...my_mesh..."
-      name      = "...my_name..."
-      namespace = "...my_namespace..."
-      proxy_types = [
-        "Sidecar"
-      ]
+      mesh         = "...my_mesh..."
+      name         = "...my_name..."
+      namespace    = "...my_namespace..."
       section_name = "...my_section_name..."
       tags = {
         key = "value"
@@ -47,13 +44,10 @@ resource "kong-mesh_mesh_tcp_route" "my_meshtcproute" {
                   labels = {
                     key = "value"
                   }
-                  mesh      = "...my_mesh..."
-                  name      = "...my_name..."
-                  namespace = "...my_namespace..."
-                  port      = 6
-                  proxy_types = [
-                    "Gateway"
-                  ]
+                  mesh         = "...my_mesh..."
+                  name         = "...my_name..."
+                  namespace    = "...my_namespace..."
+                  port         = 6
                   section_name = "...my_section_name..."
                   tags = {
                     key = "value"
@@ -69,12 +63,9 @@ resource "kong-mesh_mesh_tcp_route" "my_meshtcproute" {
           labels = {
             key = "value"
           }
-          mesh      = "...my_mesh..."
-          name      = "...my_name..."
-          namespace = "...my_namespace..."
-          proxy_types = [
-            "Gateway"
-          ]
+          mesh         = "...my_mesh..."
+          name         = "...my_name..."
+          namespace    = "...my_namespace..."
           section_name = "...my_section_name..."
           tags = {
             key = "value"
@@ -136,8 +127,6 @@ Name and Namespace can be used.
 and `MeshServiceSubset`
 - `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 will be targeted.
-- `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-all data plane types are targeted by the policy.
 - `section_name` (String) SectionName is used to target specific section of resource.
 For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 - `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds
@@ -186,8 +175,6 @@ and `MeshServiceSubset`
 - `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 will be targeted.
 - `port` (Number) Port is only supported when this ref refers to a real MeshService object
-- `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-all data plane types are targeted by the policy.
 - `section_name` (String) SectionName is used to target specific section of resource.
 For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 - `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds
@@ -210,8 +197,6 @@ Name and Namespace can be used.
 and `MeshServiceSubset`
 - `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 will be targeted.
-- `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-all data plane types are targeted by the policy.
 - `section_name` (String) SectionName is used to target specific section of resource.
 For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 - `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds

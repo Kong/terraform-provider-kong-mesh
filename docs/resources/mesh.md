@@ -14,24 +14,6 @@ Mesh Resource
 
 ```terraform
 resource "kong-mesh_mesh" "my_mesh" {
-  constraints = {
-    dataplane_proxy = {
-      requirements = [
-        {
-          tags = {
-            key = "value"
-          }
-        }
-      ]
-      restrictions = [
-        {
-          tags = {
-            key = "value"
-          }
-        }
-      ]
-    }
-  }
   labels = {
     key = "value"
   }
@@ -97,8 +79,7 @@ resource "kong-mesh_mesh" "my_mesh" {
   }
   name = "...my_name..."
   routing = {
-    default_forbid_mesh_external_service_access = false
-    zone_egress                                 = false
+    # ...
   }
   skip_creating_initial_policies = [
     "..."
@@ -117,7 +98,6 @@ resource "kong-mesh_mesh" "my_mesh" {
 
 ### Optional
 
-- `constraints` (Attributes) Constraints that applies to the mesh and its entities (see [below for nested schema](#nestedatt--constraints))
 - `labels` (Map of String)
 - `mtls` (Attributes) mTLS settings.
 +optional (see [below for nested schema](#nestedatt--mtls))
@@ -134,48 +114,6 @@ Default: []
 - `modification_time` (String) Time at which the resource was updated
 - `warnings` (List of String) warnings is a list of warning messages to return to the requesting Kuma API clients.
 Warning messages describe a problem the client making the API request should correct or be aware of.
-
-<a id="nestedatt--constraints"></a>
-### Nested Schema for `constraints`
-
-Optional:
-
-- `dataplane_proxy` (Attributes) DataplaneProxyMembership defines a set of requirements for data plane
-proxies to be a member of the mesh. (see [below for nested schema](#nestedatt--constraints--dataplane_proxy))
-
-<a id="nestedatt--constraints--dataplane_proxy"></a>
-### Nested Schema for `constraints.dataplane_proxy`
-
-Optional:
-
-- `requirements` (Attributes List) Requirements defines a set of requirements that data plane proxies must
-fulfill in order to join the mesh. A data plane proxy must fulfill at
-least one requirement in order to join the mesh. Empty list of allowed
-requirements means that any proxy that is not explicitly denied can join. (see [below for nested schema](#nestedatt--constraints--dataplane_proxy--requirements))
-- `restrictions` (Attributes List) Restrictions defines a set of restrictions that data plane proxies cannot
-fulfill in order to join the mesh. A data plane proxy cannot fulfill any
-requirement in order to join the mesh.
-Restrictions takes precedence over requirements. (see [below for nested schema](#nestedatt--constraints--dataplane_proxy--restrictions))
-
-<a id="nestedatt--constraints--dataplane_proxy--requirements"></a>
-### Nested Schema for `constraints.dataplane_proxy.requirements`
-
-Optional:
-
-- `tags` (Map of String) Tags defines set of required tags. You can specify '*' in value to
-require non empty value of tag
-
-
-<a id="nestedatt--constraints--dataplane_proxy--restrictions"></a>
-### Nested Schema for `constraints.dataplane_proxy.restrictions`
-
-Optional:
-
-- `tags` (Map of String) Tags defines set of required tags. You can specify '*' in value to
-require non empty value of tag
-
-
-
 
 <a id="nestedatt--mtls"></a>
 ### Nested Schema for `mtls`
@@ -887,13 +825,6 @@ Optional:
 
 <a id="nestedatt--routing"></a>
 ### Nested Schema for `routing`
-
-Optional:
-
-- `default_forbid_mesh_external_service_access` (Boolean) If true, blocks traffic to MeshExternalServices.
-Default: false
-- `zone_egress` (Boolean) Enable routing traffic to services in other zone or external services
-through ZoneEgress. Default: false
 
 ## Import
 
