@@ -4,4 +4,5 @@ package types
 
 type MeshRateLimitItemRules struct {
 	Default *MeshRateLimitItemDefault `tfsdk:"default"`
+	Matches []Matches                 `tfsdk:"matches"`
 }

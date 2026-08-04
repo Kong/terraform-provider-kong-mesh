@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	speakeasy_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
+	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
 )
@@ -32,12 +33,15 @@ type MeshZoneEgressResource struct {
 
 // MeshZoneEgressResourceModel describes the resource data model.
 type MeshZoneEgressResourceModel struct {
-	Labels     map[string]types.String           `tfsdk:"labels"`
-	Name       types.String                      `tfsdk:"name"`
-	Networking *tfTypes.ZoneEgressItemNetworking `tfsdk:"networking"`
-	Type       types.String                      `tfsdk:"type"`
-	Warnings   []types.String                    `tfsdk:"warnings"`
-	Zone       types.String                      `tfsdk:"zone"`
+	CreationTime     types.String            `tfsdk:"creation_time"`
+	Kri              types.String            `tfsdk:"kri"`
+	Labels           map[string]types.String `tfsdk:"labels"`
+	ModificationTime types.String            `tfsdk:"modification_time"`
+	Name             types.String            `tfsdk:"name"`
+	Networking       *tfTypes.Networking     `tfsdk:"networking"`
+	Type             types.String            `tfsdk:"type"`
+	Warnings         []types.String          `tfsdk:"warnings"`
+	Zone             types.String            `tfsdk:"zone"`
 }
 
 func (r *MeshZoneEgressResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -48,9 +52,27 @@ func (r *MeshZoneEgressResource) Schema(ctx context.Context, req resource.Schema
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "MeshZoneEgress Resource",
 		Attributes: map[string]schema.Attribute{
+			"creation_time": schema.StringAttribute{
+				Computed: true,
+				PlanModifiers: []planmodifier.String{
+					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+				},
+				Description: `Time at which the resource was created`,
+			},
+			"kri": schema.StringAttribute{
+				Computed:    true,
+				Description: `Kuma Resource Identifier (KRI) of the given resource`,
+			},
 			"labels": schema.MapAttribute{
 				Optional:    true,
 				ElementType: types.StringType,
+			},
+			"modification_time": schema.StringAttribute{
+				Computed: true,
+				PlanModifiers: []planmodifier.String{
+					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+				},
+				Description: `Time at which the resource was updated`,
 			},
 			"name": schema.StringAttribute{
 				Required:    true,
@@ -179,6 +201,43 @@ func (r *MeshZoneEgressResource) Create(ctx context.Context, req resource.Create
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	request1, request1Diags := data.ToOperationsGetZoneEgressRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.ZoneEgress.GetZoneEgress(ctx, *request1)
+	if err != nil {
+		resp.Diagnostics.AddError("failure to invoke API", err.Error())
+		if res1 != nil && res1.RawResponse != nil {
+			resp.Diagnostics.AddError("unexpected http request/response", debugResponse(res1.RawResponse))
+		}
+		return
+	}
+	if res1 == nil {
+		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res1))
+		return
+	}
+	if res1.StatusCode != 200 {
+		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res1.StatusCode), debugResponse(res1.RawResponse))
+		return
+	}
+	if !(res1.ZoneEgressItem != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
+		return
+	}
+	resp.Diagnostics.Append(data.RefreshFromSharedZoneEgressItem(ctx, res1.ZoneEgressItem)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -286,6 +345,43 @@ func (r *MeshZoneEgressResource) Update(ctx context.Context, req resource.Update
 		return
 	}
 	resp.Diagnostics.Append(data.RefreshFromSharedZoneEgressCreateOrUpdateSuccessResponse(ctx, res.ZoneEgressCreateOrUpdateSuccessResponse)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	request1, request1Diags := data.ToOperationsGetZoneEgressRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.ZoneEgress.GetZoneEgress(ctx, *request1)
+	if err != nil {
+		resp.Diagnostics.AddError("failure to invoke API", err.Error())
+		if res1 != nil && res1.RawResponse != nil {
+			resp.Diagnostics.AddError("unexpected http request/response", debugResponse(res1.RawResponse))
+		}
+		return
+	}
+	if res1 == nil {
+		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res1))
+		return
+	}
+	if res1.StatusCode != 200 {
+		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res1.StatusCode), debugResponse(res1.RawResponse))
+		return
+	}
+	if !(res1.ZoneEgressItem != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
+		return
+	}
+	resp.Diagnostics.Append(data.RefreshFromSharedZoneEgressItem(ctx, res1.ZoneEgressItem)...)
 
 	if resp.Diagnostics.HasError() {
 		return

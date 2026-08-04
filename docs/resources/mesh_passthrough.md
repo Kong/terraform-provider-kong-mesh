@@ -32,7 +32,7 @@ resource "kong-mesh_mesh_passthrough" "my_meshpassthrough" {
       passthrough_mode = "Matched"
     }
     target_ref = {
-      kind = "MeshMultiZoneService"
+      kind = "MeshServiceSubset"
       labels = {
         key = "value"
       }
@@ -112,15 +112,15 @@ Optional:
 
 Required:
 
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
 
 Optional:
 
 - `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
 Name and Namespace can be used.
 - `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`,
-`MeshServiceSubset` and `MeshGatewayRoute`
+- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`
+and `MeshServiceSubset`
 - `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 will be targeted.
 - `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,

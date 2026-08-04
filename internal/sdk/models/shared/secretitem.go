@@ -2,13 +2,40 @@
 
 package shared
 
+import (
+	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/utils"
+	"time"
+)
+
 type SecretItem struct {
+	// Time at which the resource was created
+	CreationTime *time.Time `json:"creationTime,omitempty"`
 	// Value of the secret
 	Data   *string           `json:"data,omitempty"`
 	Labels map[string]string `json:"labels,omitempty"`
 	Mesh   string            `json:"mesh"`
-	Name   string            `json:"name"`
-	Type   string            `json:"type"`
+	// Time at which the resource was updated
+	ModificationTime *time.Time `json:"modificationTime,omitempty"`
+	Name             string     `json:"name"`
+	Type             string     `json:"type"`
+}
+
+func (s SecretItem) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(s, "", false)
+}
+
+func (s *SecretItem) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &s, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *SecretItem) GetCreationTime() *time.Time {
+	if s == nil {
+		return nil
+	}
+	return s.CreationTime
 }
 
 func (s *SecretItem) GetData() *string {
@@ -30,6 +57,13 @@ func (s *SecretItem) GetMesh() string {
 		return ""
 	}
 	return s.Mesh
+}
+
+func (s *SecretItem) GetModificationTime() *time.Time {
+	if s == nil {
+		return nil
+	}
+	return s.ModificationTime
 }
 
 func (s *SecretItem) GetName() string {

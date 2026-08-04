@@ -105,353 +105,6 @@ func (r *MeshCircuitBreakerResource) Schema(ctx context.Context, req resource.Sc
 			"spec": schema.SingleNestedAttribute{
 				Required: true,
 				Attributes: map[string]schema.Attribute{
-					"from": schema.ListNestedAttribute{
-						Computed: true,
-						Optional: true,
-						PlanModifiers: []planmodifier.List{
-							custom_listplanmodifier.SupressZeroNullModifier(),
-						},
-						NestedObject: schema.NestedAttributeObject{
-							Validators: []validator.Object{
-								speakeasy_objectvalidators.NotNull(),
-							},
-							Attributes: map[string]schema.Attribute{
-								"default": schema.SingleNestedAttribute{
-									Optional: true,
-									Attributes: map[string]schema.Attribute{
-										"connection_limits": schema.SingleNestedAttribute{
-											Optional: true,
-											Attributes: map[string]schema.Attribute{
-												"max_connection_pools": schema.Int32Attribute{
-													Optional: true,
-													MarkdownDescription: `The maximum number of connection pools per cluster that are concurrently` + "\n" +
-														`supported at once. Set this for clusters which create a large number of` + "\n" +
-														`connection pools.`,
-												},
-												"max_connections": schema.Int32Attribute{
-													Optional: true,
-													MarkdownDescription: `The maximum number of connections allowed to be made to the upstream` + "\n" +
-														`cluster.`,
-												},
-												"max_pending_requests": schema.Int32Attribute{
-													Optional: true,
-													MarkdownDescription: `The maximum number of pending requests that are allowed to the upstream` + "\n" +
-														`cluster. This limit is applied as a connection limit for non-HTTP` + "\n" +
-														`traffic.`,
-												},
-												"max_requests": schema.Int32Attribute{
-													Optional: true,
-													MarkdownDescription: `The maximum number of parallel requests that are allowed to be made` + "\n" +
-														`to the upstream cluster. This limit does not apply to non-HTTP traffic.`,
-												},
-												"max_retries": schema.Int32Attribute{
-													Optional: true,
-													MarkdownDescription: `The maximum number of parallel retries that will be allowed to` + "\n" +
-														`the upstream cluster.`,
-												},
-											},
-											MarkdownDescription: `ConnectionLimits contains configuration of each circuit breaking limit,` + "\n" +
-												`which when exceeded makes the circuit breaker to become open (no traffic` + "\n" +
-												`is allowed like no current is allowed in the circuits when physical` + "\n" +
-												`circuit breaker ir open)`,
-										},
-										"outlier_detection": schema.SingleNestedAttribute{
-											Optional: true,
-											Attributes: map[string]schema.Attribute{
-												"base_ejection_time": schema.StringAttribute{
-													Optional: true,
-													MarkdownDescription: `The base time that a host is ejected for. The real time is equal to` + "\n" +
-														`the base time multiplied by the number of times the host has been` + "\n" +
-														`ejected.`,
-												},
-												"detectors": schema.SingleNestedAttribute{
-													Optional: true,
-													Attributes: map[string]schema.Attribute{
-														"failure_percentage": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"minimum_hosts": schema.Int32Attribute{
-																	Optional: true,
-																	MarkdownDescription: `The minimum number of hosts in a cluster in order to perform failure` + "\n" +
-																		`percentage-based ejection. If the total number of hosts in the cluster is` + "\n" +
-																		`less than this value, failure percentage-based ejection will not be` + "\n" +
-																		`performed.`,
-																},
-																"request_volume": schema.Int32Attribute{
-																	Optional: true,
-																	MarkdownDescription: `The minimum number of total requests that must be collected in one` + "\n" +
-																		`interval (as defined by the interval duration above) to perform failure` + "\n" +
-																		`percentage-based ejection for this host. If the volume is lower than this` + "\n" +
-																		`setting, failure percentage-based ejection will not be performed for this` + "\n" +
-																		`host.`,
-																},
-																"threshold": schema.Int32Attribute{
-																	Optional: true,
-																	MarkdownDescription: `The failure percentage to use when determining failure percentage-based` + "\n" +
-																		`outlier detection. If the failure percentage of a given host is greater` + "\n" +
-																		`than or equal to this value, it will be ejected.`,
-																},
-															},
-															MarkdownDescription: `Failure Percentage based outlier detection functions similarly to success` + "\n" +
-																`rate detection, in that it relies on success rate data from each host in` + "\n" +
-																`a cluster. However, rather than compare those values to the mean success` + "\n" +
-																`rate of the cluster as a whole, they are compared to a flat` + "\n" +
-																`user-configured threshold. This threshold is configured via the` + "\n" +
-																`outlierDetection.failurePercentageThreshold field.` + "\n" +
-																`The other configuration fields for failure percentage based detection are` + "\n" +
-																`similar to the fields for success rate detection. As with success rate` + "\n" +
-																`detection, detection will not be performed for a host if its request` + "\n" +
-																`volume over the aggregation interval is less than the` + "\n" +
-																`outlierDetection.detectors.failurePercentage.requestVolume value.` + "\n" +
-																`Detection also will not be performed for a cluster if the number of hosts` + "\n" +
-																`with the minimum required request volume in an interval is less than the` + "\n" +
-																`outlierDetection.detectors.failurePercentage.minimumHosts value.`,
-														},
-														"gateway_failures": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"consecutive": schema.Int32Attribute{
-																	Optional: true,
-																	MarkdownDescription: `The number of consecutive gateway failures (502, 503, 504 status codes)` + "\n" +
-																		`before a consecutive gateway failure ejection occurs.`,
-																},
-															},
-															MarkdownDescription: `In the default mode (outlierDetection.splitExternalLocalOriginErrors is` + "\n" +
-																`false) this detection type takes into account a subset of 5xx errors,` + "\n" +
-																`called "gateway errors" (502, 503 or 504 status code) and local origin` + "\n" +
-																`failures, such as timeout, TCP reset etc.` + "\n" +
-																`In split mode (outlierDetection.splitExternalLocalOriginErrors is true)` + "\n" +
-																`this detection type takes into account a subset of 5xx errors, called` + "\n" +
-																`"gateway errors" (502, 503 or 504 status code) and is supported only by` + "\n" +
-																`the http router.`,
-														},
-														"local_origin_failures": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"consecutive": schema.Int32Attribute{
-																	Optional: true,
-																	MarkdownDescription: `The number of consecutive locally originated failures before ejection` + "\n" +
-																		`occurs. Parameter takes effect only when splitExternalAndLocalErrors` + "\n" +
-																		`is set to true.`,
-																},
-															},
-															MarkdownDescription: `This detection type is enabled only when` + "\n" +
-																`outlierDetection.splitExternalLocalOriginErrors is true and takes into` + "\n" +
-																`account only locally originated errors (timeout, reset, etc).` + "\n" +
-																`If Envoy repeatedly cannot connect to an upstream host or communication` + "\n" +
-																`with the upstream host is repeatedly interrupted, it will be ejected.` + "\n" +
-																`Various locally originated problems are detected: timeout, TCP reset,` + "\n" +
-																`ICMP errors, etc. This detection type is supported by http router and` + "\n" +
-																`tcp proxy.`,
-														},
-														"success_rate": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"minimum_hosts": schema.Int32Attribute{
-																	Optional: true,
-																	MarkdownDescription: `The number of hosts in a cluster that must have enough request volume to` + "\n" +
-																		`detect success rate outliers. If the number of hosts is less than this` + "\n" +
-																		`setting, outlier detection via success rate statistics is not performed` + "\n" +
-																		`for any host in the cluster.`,
-																},
-																"request_volume": schema.Int32Attribute{
-																	Optional: true,
-																	MarkdownDescription: `The minimum number of total requests that must be collected in one` + "\n" +
-																		`interval (as defined by the interval duration configured in` + "\n" +
-																		`outlierDetection section) to include this host in success rate based` + "\n" +
-																		`outlier detection. If the volume is lower than this setting, outlier` + "\n" +
-																		`detection via success rate statistics is not performed for that host.`,
-																},
-																"standard_deviation_factor": schema.SingleNestedAttribute{
-																	Optional: true,
-																	Attributes: map[string]schema.Attribute{
-																		"integer": schema.Int64Attribute{
-																			Optional: true,
-																			Validators: []validator.Int64{
-																				int64validator.ConflictsWith(path.Expressions{
-																					path.MatchRelative().AtParent().AtName("str"),
-																				}...),
-																			},
-																		},
-																		"str": schema.StringAttribute{
-																			Optional: true,
-																			Validators: []validator.String{
-																				stringvalidator.ConflictsWith(path.Expressions{
-																					path.MatchRelative().AtParent().AtName("integer"),
-																				}...),
-																			},
-																		},
-																	},
-																	MarkdownDescription: `This factor is used to determine the ejection threshold for success rate` + "\n" +
-																		`outlier ejection. The ejection threshold is the difference between` + "\n" +
-																		`the mean success rate, and the product of this factor and the standard` + "\n" +
-																		`deviation of the mean success rate: mean - (standard_deviation *` + "\n" +
-																		`success_rate_standard_deviation_factor).` + "\n" +
-																		`Either int or decimal represented as string.`,
-																},
-															},
-															MarkdownDescription: `Success Rate based outlier detection aggregates success rate data from` + "\n" +
-																`every host in a cluster. Then at given intervals ejects hosts based on` + "\n" +
-																`statistical outlier detection. Success Rate outlier detection will not be` + "\n" +
-																`calculated for a host if its request volume over the aggregation interval` + "\n" +
-																`is less than the outlierDetection.detectors.successRate.requestVolume` + "\n" +
-																`value.` + "\n" +
-																`Moreover, detection will not be performed for a cluster if the number of` + "\n" +
-																`hosts with the minimum required request volume in an interval is less` + "\n" +
-																`than the outlierDetection.detectors.successRate.minimumHosts value.` + "\n" +
-																`In the default configuration mode` + "\n" +
-																`(outlierDetection.splitExternalLocalOriginErrors is false) this detection` + "\n" +
-																`type takes into account all types of errors: locally and externally` + "\n" +
-																`originated.` + "\n" +
-																`In split mode (outlierDetection.splitExternalLocalOriginErrors is true),` + "\n" +
-																`locally originated errors and externally originated (transaction) errors` + "\n" +
-																`are counted and treated separately.`,
-														},
-														"total_failures": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"consecutive": schema.Int32Attribute{
-																	Optional: true,
-																	MarkdownDescription: `The number of consecutive server-side error responses (for HTTP traffic,` + "\n" +
-																		`5xx responses; for TCP traffic, connection failures; for Redis, failure` + "\n" +
-																		`to respond PONG; etc.) before a consecutive total failure ejection` + "\n" +
-																		`occurs.`,
-																},
-															},
-															MarkdownDescription: `In the default mode (outlierDetection.splitExternalAndLocalErrors is` + "\n" +
-																`false) this detection type takes into account all generated errors:` + "\n" +
-																`locally originated and externally originated (transaction) errors.` + "\n" +
-																`In split mode (outlierDetection.splitExternalLocalOriginErrors is true)` + "\n" +
-																`this detection type takes into account only externally originated` + "\n" +
-																`(transaction) errors, ignoring locally originated errors.` + "\n" +
-																`If an upstream host is an HTTP-server, only 5xx types of error are taken` + "\n" +
-																`into account (see Consecutive Gateway Failure for exceptions).` + "\n" +
-																`Properly formatted responses, even when they carry an operational error` + "\n" +
-																`(like index not found, access denied) are not taken into account.`,
-														},
-													},
-													Description: `Contains configuration for supported outlier detectors`,
-												},
-												"disabled": schema.BoolAttribute{
-													Optional:    true,
-													Description: `When set to true, outlierDetection configuration won't take any effect`,
-												},
-												"healthy_panic_threshold": schema.SingleNestedAttribute{
-													Optional: true,
-													Attributes: map[string]schema.Attribute{
-														"integer": schema.Int64Attribute{
-															Optional: true,
-															Validators: []validator.Int64{
-																int64validator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("str"),
-																}...),
-															},
-														},
-														"str": schema.StringAttribute{
-															Optional: true,
-															Validators: []validator.String{
-																stringvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("integer"),
-																}...),
-															},
-														},
-													},
-													MarkdownDescription: `Allows to configure panic threshold for Envoy cluster. If not specified,` + "\n" +
-														`the default is 50%. To disable panic mode, set to 0%.` + "\n" +
-														`Either int or decimal represented as string.`,
-												},
-												"interval": schema.StringAttribute{
-													Optional: true,
-													MarkdownDescription: `The time interval between ejection analysis sweeps. This can result in` + "\n" +
-														`both new ejections and hosts being returned to service.`,
-												},
-												"max_ejection_percent": schema.Int32Attribute{
-													Optional: true,
-													MarkdownDescription: `The maximum % of an upstream cluster that can be ejected due to outlier` + "\n" +
-														`detection. Defaults to 10% but will eject at least one host regardless of` + "\n" +
-														`the value.`,
-												},
-												"split_external_and_local_errors": schema.BoolAttribute{
-													Optional: true,
-													MarkdownDescription: `Determines whether to distinguish local origin failures from external` + "\n" +
-														`errors. If set to true the following configuration parameters are taken` + "\n" +
-														`into account: detectors.localOriginFailures.consecutive`,
-												},
-											},
-											MarkdownDescription: `OutlierDetection contains the configuration of the process of dynamically` + "\n" +
-												`determining whether some number of hosts in an upstream cluster are` + "\n" +
-												`performing unlike the others and removing them from the healthy load` + "\n" +
-												`balancing set. Performance might be along different axes such as` + "\n" +
-												`consecutive failures, temporal success rate, temporal latency, etc.` + "\n" +
-												`Outlier detection is a form of passive health checking.`,
-										},
-									},
-									MarkdownDescription: `Default is a configuration specific to the group of destinations` + "\n" +
-										`referenced in 'targetRef'`,
-								},
-								"target_ref": schema.SingleNestedAttribute{
-									Optional: true,
-									Attributes: map[string]schema.Attribute{
-										"kind": schema.StringAttribute{
-											Optional:    true,
-											Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null`,
-											Validators: []validator.String{
-												speakeasy_stringvalidators.NotNull(),
-											},
-										},
-										"labels": schema.MapAttribute{
-											Optional:    true,
-											ElementType: types.StringType,
-											MarkdownDescription: `Labels are used to select group of MeshServices that match labels. Either Labels or` + "\n" +
-												`Name and Namespace can be used.`,
-										},
-										"mesh": schema.StringAttribute{
-											Optional:    true,
-											Description: `Mesh is reserved for future use to identify cross mesh resources.`,
-										},
-										"name": schema.StringAttribute{
-											Optional: true,
-											MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `,` + "\n" +
-												`` + "`" + `MeshServiceSubset` + "`" + ` and ` + "`" + `MeshGatewayRoute` + "`" + ``,
-										},
-										"namespace": schema.StringAttribute{
-											Optional: true,
-											MarkdownDescription: `Namespace specifies the namespace of target resource. If empty only resources in policy namespace` + "\n" +
-												`will be targeted.`,
-										},
-										"proxy_types": schema.ListAttribute{
-											Computed: true,
-											Optional: true,
-											PlanModifiers: []planmodifier.List{
-												custom_listplanmodifier.SupressZeroNullModifier(),
-											},
-											ElementType: types.StringType,
-											MarkdownDescription: `ProxyTypes specifies the data plane types that are subject to the policy. When not specified,` + "\n" +
-												`all data plane types are targeted by the policy.`,
-										},
-										"section_name": schema.StringAttribute{
-											Optional: true,
-											MarkdownDescription: `SectionName is used to target specific section of resource.` + "\n" +
-												`For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.`,
-										},
-										"tags": schema.MapAttribute{
-											Optional:    true,
-											ElementType: types.StringType,
-											MarkdownDescription: `Tags used to select a subset of proxies by tags. Can only be used with kinds` + "\n" +
-												`` + "`" + `MeshSubset` + "`" + ` and ` + "`" + `MeshServiceSubset` + "`" + ``,
-										},
-									},
-									MarkdownDescription: `TargetRef is a reference to the resource that represents a group of` + "\n" +
-										`destinations.` + "\n" +
-										`Not Null`,
-									Validators: []validator.Object{
-										speakeasy_objectvalidators.NotNull(),
-									},
-								},
-							},
-						},
-						Description: `From list makes a match between clients and corresponding configurations`,
-					},
 					"rules": schema.ListNestedAttribute{
 						Computed: true,
 						Optional: true,
@@ -745,7 +398,7 @@ func (r *MeshCircuitBreakerResource) Schema(ctx context.Context, req resource.Sc
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
 								Required:    true,
-								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
+								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
 							},
 							"labels": schema.MapAttribute{
 								Optional:    true,
@@ -759,23 +412,13 @@ func (r *MeshCircuitBreakerResource) Schema(ctx context.Context, req resource.Sc
 							},
 							"name": schema.StringAttribute{
 								Optional: true,
-								MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `,` + "\n" +
-									`` + "`" + `MeshServiceSubset` + "`" + ` and ` + "`" + `MeshGatewayRoute` + "`" + ``,
+								MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `` + "\n" +
+									`and ` + "`" + `MeshServiceSubset` + "`" + ``,
 							},
 							"namespace": schema.StringAttribute{
 								Optional: true,
 								MarkdownDescription: `Namespace specifies the namespace of target resource. If empty only resources in policy namespace` + "\n" +
 									`will be targeted.`,
-							},
-							"proxy_types": schema.ListAttribute{
-								Computed: true,
-								Optional: true,
-								PlanModifiers: []planmodifier.List{
-									custom_listplanmodifier.SupressZeroNullModifier(),
-								},
-								ElementType: types.StringType,
-								MarkdownDescription: `ProxyTypes specifies the data plane types that are subject to the policy. When not specified,` + "\n" +
-									`all data plane types are targeted by the policy.`,
 							},
 							"section_name": schema.StringAttribute{
 								Optional: true,
@@ -1082,7 +725,7 @@ func (r *MeshCircuitBreakerResource) Schema(ctx context.Context, req resource.Sc
 									Attributes: map[string]schema.Attribute{
 										"kind": schema.StringAttribute{
 											Optional:    true,
-											Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null`,
+											Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null`,
 											Validators: []validator.String{
 												speakeasy_stringvalidators.NotNull(),
 											},
@@ -1099,23 +742,13 @@ func (r *MeshCircuitBreakerResource) Schema(ctx context.Context, req resource.Sc
 										},
 										"name": schema.StringAttribute{
 											Optional: true,
-											MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `,` + "\n" +
-												`` + "`" + `MeshServiceSubset` + "`" + ` and ` + "`" + `MeshGatewayRoute` + "`" + ``,
+											MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `` + "\n" +
+												`and ` + "`" + `MeshServiceSubset` + "`" + ``,
 										},
 										"namespace": schema.StringAttribute{
 											Optional: true,
 											MarkdownDescription: `Namespace specifies the namespace of target resource. If empty only resources in policy namespace` + "\n" +
 												`will be targeted.`,
-										},
-										"proxy_types": schema.ListAttribute{
-											Computed: true,
-											Optional: true,
-											PlanModifiers: []planmodifier.List{
-												custom_listplanmodifier.SupressZeroNullModifier(),
-											},
-											ElementType: types.StringType,
-											MarkdownDescription: `ProxyTypes specifies the data plane types that are subject to the policy. When not specified,` + "\n" +
-												`all data plane types are targeted by the policy.`,
 										},
 										"section_name": schema.StringAttribute{
 											Optional: true,

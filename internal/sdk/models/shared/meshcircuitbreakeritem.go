@@ -467,42 +467,42 @@ func (d *Detectors) GetTotalFailures() *TotalFailures {
 	return d.TotalFailures
 }
 
-type MeshCircuitBreakerItemSpecFromHealthyPanicThresholdType string
+type MeshCircuitBreakerItemSpecHealthyPanicThresholdType string
 
 const (
-	MeshCircuitBreakerItemSpecFromHealthyPanicThresholdTypeInteger MeshCircuitBreakerItemSpecFromHealthyPanicThresholdType = "integer"
-	MeshCircuitBreakerItemSpecFromHealthyPanicThresholdTypeStr     MeshCircuitBreakerItemSpecFromHealthyPanicThresholdType = "str"
+	MeshCircuitBreakerItemSpecHealthyPanicThresholdTypeInteger MeshCircuitBreakerItemSpecHealthyPanicThresholdType = "integer"
+	MeshCircuitBreakerItemSpecHealthyPanicThresholdTypeStr     MeshCircuitBreakerItemSpecHealthyPanicThresholdType = "str"
 )
 
-// MeshCircuitBreakerItemSpecFromHealthyPanicThreshold - Allows to configure panic threshold for Envoy cluster. If not specified,
+// MeshCircuitBreakerItemSpecHealthyPanicThreshold - Allows to configure panic threshold for Envoy cluster. If not specified,
 // the default is 50%. To disable panic mode, set to 0%.
 // Either int or decimal represented as string.
-type MeshCircuitBreakerItemSpecFromHealthyPanicThreshold struct {
+type MeshCircuitBreakerItemSpecHealthyPanicThreshold struct {
 	Integer *int64  `queryParam:"inline" union:"member"`
 	Str     *string `queryParam:"inline" union:"member"`
 
-	Type MeshCircuitBreakerItemSpecFromHealthyPanicThresholdType
+	Type MeshCircuitBreakerItemSpecHealthyPanicThresholdType
 }
 
-func CreateMeshCircuitBreakerItemSpecFromHealthyPanicThresholdInteger(integer int64) MeshCircuitBreakerItemSpecFromHealthyPanicThreshold {
-	typ := MeshCircuitBreakerItemSpecFromHealthyPanicThresholdTypeInteger
+func CreateMeshCircuitBreakerItemSpecHealthyPanicThresholdInteger(integer int64) MeshCircuitBreakerItemSpecHealthyPanicThreshold {
+	typ := MeshCircuitBreakerItemSpecHealthyPanicThresholdTypeInteger
 
-	return MeshCircuitBreakerItemSpecFromHealthyPanicThreshold{
+	return MeshCircuitBreakerItemSpecHealthyPanicThreshold{
 		Integer: &integer,
 		Type:    typ,
 	}
 }
 
-func CreateMeshCircuitBreakerItemSpecFromHealthyPanicThresholdStr(str string) MeshCircuitBreakerItemSpecFromHealthyPanicThreshold {
-	typ := MeshCircuitBreakerItemSpecFromHealthyPanicThresholdTypeStr
+func CreateMeshCircuitBreakerItemSpecHealthyPanicThresholdStr(str string) MeshCircuitBreakerItemSpecHealthyPanicThreshold {
+	typ := MeshCircuitBreakerItemSpecHealthyPanicThresholdTypeStr
 
-	return MeshCircuitBreakerItemSpecFromHealthyPanicThreshold{
+	return MeshCircuitBreakerItemSpecHealthyPanicThreshold{
 		Str:  &str,
 		Type: typ,
 	}
 }
 
-func (u *MeshCircuitBreakerItemSpecFromHealthyPanicThreshold) UnmarshalJSON(data []byte) error {
+func (u *MeshCircuitBreakerItemSpecHealthyPanicThreshold) UnmarshalJSON(data []byte) error {
 
 	var candidates []utils.UnionCandidate
 
@@ -510,7 +510,7 @@ func (u *MeshCircuitBreakerItemSpecFromHealthyPanicThreshold) UnmarshalJSON(data
 	var integer int64 = int64(0)
 	if err := utils.UnmarshalJSON(data, &integer, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshCircuitBreakerItemSpecFromHealthyPanicThresholdTypeInteger,
+			Type:  MeshCircuitBreakerItemSpecHealthyPanicThresholdTypeInteger,
 			Value: &integer,
 		})
 	}
@@ -518,36 +518,36 @@ func (u *MeshCircuitBreakerItemSpecFromHealthyPanicThreshold) UnmarshalJSON(data
 	var str string = ""
 	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshCircuitBreakerItemSpecFromHealthyPanicThresholdTypeStr,
+			Type:  MeshCircuitBreakerItemSpecHealthyPanicThresholdTypeStr,
 			Value: &str,
 		})
 	}
 
 	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshCircuitBreakerItemSpecFromHealthyPanicThreshold", string(data))
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshCircuitBreakerItemSpecHealthyPanicThreshold", string(data))
 	}
 
 	// Pick the best candidate using multi-stage filtering
 	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshCircuitBreakerItemSpecFromHealthyPanicThreshold", string(data))
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshCircuitBreakerItemSpecHealthyPanicThreshold", string(data))
 	}
 
 	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(MeshCircuitBreakerItemSpecFromHealthyPanicThresholdType)
+	u.Type = best.Type.(MeshCircuitBreakerItemSpecHealthyPanicThresholdType)
 	switch best.Type {
-	case MeshCircuitBreakerItemSpecFromHealthyPanicThresholdTypeInteger:
+	case MeshCircuitBreakerItemSpecHealthyPanicThresholdTypeInteger:
 		u.Integer = best.Value.(*int64)
 		return nil
-	case MeshCircuitBreakerItemSpecFromHealthyPanicThresholdTypeStr:
+	case MeshCircuitBreakerItemSpecHealthyPanicThresholdTypeStr:
 		u.Str = best.Value.(*string)
 		return nil
 	}
 
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshCircuitBreakerItemSpecFromHealthyPanicThreshold", string(data))
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshCircuitBreakerItemSpecHealthyPanicThreshold", string(data))
 }
 
-func (u MeshCircuitBreakerItemSpecFromHealthyPanicThreshold) MarshalJSON() ([]byte, error) {
+func (u MeshCircuitBreakerItemSpecHealthyPanicThreshold) MarshalJSON() ([]byte, error) {
 	if u.Integer != nil {
 		return utils.MarshalJSON(u.Integer, "", true)
 	}
@@ -556,7 +556,7 @@ func (u MeshCircuitBreakerItemSpecFromHealthyPanicThreshold) MarshalJSON() ([]by
 		return utils.MarshalJSON(u.Str, "", true)
 	}
 
-	return nil, errors.New("could not marshal union type MeshCircuitBreakerItemSpecFromHealthyPanicThreshold: all fields are null")
+	return nil, errors.New("could not marshal union type MeshCircuitBreakerItemSpecHealthyPanicThreshold: all fields are null")
 }
 
 // OutlierDetection contains the configuration of the process of dynamically
@@ -577,7 +577,7 @@ type OutlierDetection struct {
 	// Allows to configure panic threshold for Envoy cluster. If not specified,
 	// the default is 50%. To disable panic mode, set to 0%.
 	// Either int or decimal represented as string.
-	HealthyPanicThreshold *MeshCircuitBreakerItemSpecFromHealthyPanicThreshold `json:"healthyPanicThreshold,omitempty"`
+	HealthyPanicThreshold *MeshCircuitBreakerItemSpecHealthyPanicThreshold `json:"healthyPanicThreshold,omitempty"`
 	// The time interval between ejection analysis sweeps. This can result in
 	// both new ejections and hosts being returned to service.
 	Interval *string `json:"interval,omitempty"`
@@ -612,7 +612,7 @@ func (o *OutlierDetection) GetDisabled() *bool {
 	return o.Disabled
 }
 
-func (o *OutlierDetection) GetHealthyPanicThreshold() *MeshCircuitBreakerItemSpecFromHealthyPanicThreshold {
+func (o *OutlierDetection) GetHealthyPanicThreshold() *MeshCircuitBreakerItemSpecHealthyPanicThreshold {
 	if o == nil {
 		return nil
 	}
@@ -640,8 +640,7 @@ func (o *OutlierDetection) GetSplitExternalAndLocalErrors() *bool {
 	return o.SplitExternalAndLocalErrors
 }
 
-// MeshCircuitBreakerItemDefault - Default is a configuration specific to the group of destinations
-// referenced in 'targetRef'
+// MeshCircuitBreakerItemDefault - Default contains configuration of the inbound circuit breaker
 type MeshCircuitBreakerItemDefault struct {
 	// ConnectionLimits contains configuration of each circuit breaking limit,
 	// which when exceeded makes the circuit breaker to become open (no traffic
@@ -671,77 +670,64 @@ func (m *MeshCircuitBreakerItemDefault) GetOutlierDetection() *OutlierDetection 
 	return m.OutlierDetection
 }
 
-// MeshCircuitBreakerItemSpecKind - Kind of the referenced resource
-type MeshCircuitBreakerItemSpecKind string
+type MeshCircuitBreakerItemRules struct {
+	// Default contains configuration of the inbound circuit breaker
+	Default *MeshCircuitBreakerItemDefault `json:"default,omitempty"`
+}
+
+func (m *MeshCircuitBreakerItemRules) GetDefault() *MeshCircuitBreakerItemDefault {
+	if m == nil {
+		return nil
+	}
+	return m.Default
+}
+
+// MeshCircuitBreakerItemKind - Kind of the referenced resource
+type MeshCircuitBreakerItemKind string
 
 const (
-	MeshCircuitBreakerItemSpecKindMesh                 MeshCircuitBreakerItemSpecKind = "Mesh"
-	MeshCircuitBreakerItemSpecKindMeshSubset           MeshCircuitBreakerItemSpecKind = "MeshSubset"
-	MeshCircuitBreakerItemSpecKindMeshGateway          MeshCircuitBreakerItemSpecKind = "MeshGateway"
-	MeshCircuitBreakerItemSpecKindMeshService          MeshCircuitBreakerItemSpecKind = "MeshService"
-	MeshCircuitBreakerItemSpecKindMeshExternalService  MeshCircuitBreakerItemSpecKind = "MeshExternalService"
-	MeshCircuitBreakerItemSpecKindMeshMultiZoneService MeshCircuitBreakerItemSpecKind = "MeshMultiZoneService"
-	MeshCircuitBreakerItemSpecKindMeshServiceSubset    MeshCircuitBreakerItemSpecKind = "MeshServiceSubset"
-	MeshCircuitBreakerItemSpecKindMeshHTTPRoute        MeshCircuitBreakerItemSpecKind = "MeshHTTPRoute"
-	MeshCircuitBreakerItemSpecKindDataplane            MeshCircuitBreakerItemSpecKind = "Dataplane"
+	MeshCircuitBreakerItemKindMesh                 MeshCircuitBreakerItemKind = "Mesh"
+	MeshCircuitBreakerItemKindMeshSubset           MeshCircuitBreakerItemKind = "MeshSubset"
+	MeshCircuitBreakerItemKindMeshService          MeshCircuitBreakerItemKind = "MeshService"
+	MeshCircuitBreakerItemKindMeshExternalService  MeshCircuitBreakerItemKind = "MeshExternalService"
+	MeshCircuitBreakerItemKindMeshMultiZoneService MeshCircuitBreakerItemKind = "MeshMultiZoneService"
+	MeshCircuitBreakerItemKindMeshServiceSubset    MeshCircuitBreakerItemKind = "MeshServiceSubset"
+	MeshCircuitBreakerItemKindMeshHTTPRoute        MeshCircuitBreakerItemKind = "MeshHTTPRoute"
+	MeshCircuitBreakerItemKindDataplane            MeshCircuitBreakerItemKind = "Dataplane"
 )
 
-func (e MeshCircuitBreakerItemSpecKind) ToPointer() *MeshCircuitBreakerItemSpecKind {
+func (e MeshCircuitBreakerItemKind) ToPointer() *MeshCircuitBreakerItemKind {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshCircuitBreakerItemSpecKind) IsExact() bool {
+func (e *MeshCircuitBreakerItemKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
 			return true
 		}
 	}
 	return false
 }
 
-type MeshCircuitBreakerItemSpecProxyTypes string
-
-const (
-	MeshCircuitBreakerItemSpecProxyTypesSidecar MeshCircuitBreakerItemSpecProxyTypes = "Sidecar"
-	MeshCircuitBreakerItemSpecProxyTypesGateway MeshCircuitBreakerItemSpecProxyTypes = "Gateway"
-)
-
-func (e MeshCircuitBreakerItemSpecProxyTypes) ToPointer() *MeshCircuitBreakerItemSpecProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshCircuitBreakerItemSpecProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshCircuitBreakerItemSpecTargetRef - TargetRef is a reference to the resource that represents a group of
-// destinations.
-type MeshCircuitBreakerItemSpecTargetRef struct {
+// MeshCircuitBreakerItemTargetRef - TargetRef is a reference to the resource the policy takes an effect on.
+// The resource could be either a real store object or virtual resource
+// defined in place.
+type MeshCircuitBreakerItemTargetRef struct {
 	// Kind of the referenced resource
-	Kind MeshCircuitBreakerItemSpecKind `json:"kind"`
+	Kind MeshCircuitBreakerItemKind `json:"kind"`
 	// Labels are used to select group of MeshServices that match labels. Either Labels or
 	// Name and Namespace can be used.
 	Labels map[string]string `json:"labels,omitempty"`
 	// Mesh is reserved for future use to identify cross mesh resources.
 	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
+	// Name of the referenced resource. Can only be used with kinds: `MeshService`
+	// and `MeshServiceSubset`
 	Name *string `json:"name,omitempty"`
 	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 	// will be targeted.
 	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshCircuitBreakerItemSpecProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
@@ -750,83 +736,53 @@ type MeshCircuitBreakerItemSpecTargetRef struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (m *MeshCircuitBreakerItemSpecTargetRef) GetKind() MeshCircuitBreakerItemSpecKind {
+func (m *MeshCircuitBreakerItemTargetRef) GetKind() MeshCircuitBreakerItemKind {
 	if m == nil {
-		return MeshCircuitBreakerItemSpecKind("")
+		return MeshCircuitBreakerItemKind("")
 	}
 	return m.Kind
 }
 
-func (m *MeshCircuitBreakerItemSpecTargetRef) GetLabels() map[string]string {
+func (m *MeshCircuitBreakerItemTargetRef) GetLabels() map[string]string {
 	if m == nil {
 		return nil
 	}
 	return m.Labels
 }
 
-func (m *MeshCircuitBreakerItemSpecTargetRef) GetMesh() *string {
+func (m *MeshCircuitBreakerItemTargetRef) GetMesh() *string {
 	if m == nil {
 		return nil
 	}
 	return m.Mesh
 }
 
-func (m *MeshCircuitBreakerItemSpecTargetRef) GetName() *string {
+func (m *MeshCircuitBreakerItemTargetRef) GetName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.Name
 }
 
-func (m *MeshCircuitBreakerItemSpecTargetRef) GetNamespace() *string {
+func (m *MeshCircuitBreakerItemTargetRef) GetNamespace() *string {
 	if m == nil {
 		return nil
 	}
 	return m.Namespace
 }
 
-func (m *MeshCircuitBreakerItemSpecTargetRef) GetProxyTypes() []MeshCircuitBreakerItemSpecProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
-func (m *MeshCircuitBreakerItemSpecTargetRef) GetSectionName() *string {
+func (m *MeshCircuitBreakerItemTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
 }
 
-func (m *MeshCircuitBreakerItemSpecTargetRef) GetTags() map[string]string {
+func (m *MeshCircuitBreakerItemTargetRef) GetTags() map[string]string {
 	if m == nil {
 		return nil
 	}
 	return m.Tags
-}
-
-type MeshCircuitBreakerItemFrom struct {
-	// Default is a configuration specific to the group of destinations
-	// referenced in 'targetRef'
-	Default *MeshCircuitBreakerItemDefault `json:"default,omitempty"`
-	// TargetRef is a reference to the resource that represents a group of
-	// destinations.
-	TargetRef MeshCircuitBreakerItemSpecTargetRef `json:"targetRef"`
-}
-
-func (m *MeshCircuitBreakerItemFrom) GetDefault() *MeshCircuitBreakerItemDefault {
-	if m == nil {
-		return nil
-	}
-	return m.Default
-}
-
-func (m *MeshCircuitBreakerItemFrom) GetTargetRef() MeshCircuitBreakerItemSpecTargetRef {
-	if m == nil {
-		return MeshCircuitBreakerItemSpecTargetRef{}
-	}
-	return m.TargetRef
 }
 
 // MeshCircuitBreakerItemConnectionLimits - ConnectionLimits contains configuration of each circuit breaking limit,
@@ -1435,7 +1391,8 @@ func (m *MeshCircuitBreakerItemOutlierDetection) GetSplitExternalAndLocalErrors(
 	return m.SplitExternalAndLocalErrors
 }
 
-// MeshCircuitBreakerItemSpecDefault - Default contains configuration of the inbound circuit breaker
+// MeshCircuitBreakerItemSpecDefault - Default is a configuration specific to the group of destinations
+// referenced in 'targetRef'
 type MeshCircuitBreakerItemSpecDefault struct {
 	// ConnectionLimits contains configuration of each circuit breaking limit,
 	// which when exceeded makes the circuit breaker to become open (no traffic
@@ -1465,862 +1422,51 @@ func (m *MeshCircuitBreakerItemSpecDefault) GetOutlierDetection() *MeshCircuitBr
 	return m.OutlierDetection
 }
 
-type MeshCircuitBreakerItemRules struct {
-	// Default contains configuration of the inbound circuit breaker
-	Default *MeshCircuitBreakerItemSpecDefault `json:"default,omitempty"`
-}
-
-func (m *MeshCircuitBreakerItemRules) GetDefault() *MeshCircuitBreakerItemSpecDefault {
-	if m == nil {
-		return nil
-	}
-	return m.Default
-}
-
-// MeshCircuitBreakerItemKind - Kind of the referenced resource
-type MeshCircuitBreakerItemKind string
+// MeshCircuitBreakerItemSpecKind - Kind of the referenced resource
+type MeshCircuitBreakerItemSpecKind string
 
 const (
-	MeshCircuitBreakerItemKindMesh                 MeshCircuitBreakerItemKind = "Mesh"
-	MeshCircuitBreakerItemKindMeshSubset           MeshCircuitBreakerItemKind = "MeshSubset"
-	MeshCircuitBreakerItemKindMeshGateway          MeshCircuitBreakerItemKind = "MeshGateway"
-	MeshCircuitBreakerItemKindMeshService          MeshCircuitBreakerItemKind = "MeshService"
-	MeshCircuitBreakerItemKindMeshExternalService  MeshCircuitBreakerItemKind = "MeshExternalService"
-	MeshCircuitBreakerItemKindMeshMultiZoneService MeshCircuitBreakerItemKind = "MeshMultiZoneService"
-	MeshCircuitBreakerItemKindMeshServiceSubset    MeshCircuitBreakerItemKind = "MeshServiceSubset"
-	MeshCircuitBreakerItemKindMeshHTTPRoute        MeshCircuitBreakerItemKind = "MeshHTTPRoute"
-	MeshCircuitBreakerItemKindDataplane            MeshCircuitBreakerItemKind = "Dataplane"
+	MeshCircuitBreakerItemSpecKindMesh                 MeshCircuitBreakerItemSpecKind = "Mesh"
+	MeshCircuitBreakerItemSpecKindMeshSubset           MeshCircuitBreakerItemSpecKind = "MeshSubset"
+	MeshCircuitBreakerItemSpecKindMeshService          MeshCircuitBreakerItemSpecKind = "MeshService"
+	MeshCircuitBreakerItemSpecKindMeshExternalService  MeshCircuitBreakerItemSpecKind = "MeshExternalService"
+	MeshCircuitBreakerItemSpecKindMeshMultiZoneService MeshCircuitBreakerItemSpecKind = "MeshMultiZoneService"
+	MeshCircuitBreakerItemSpecKindMeshServiceSubset    MeshCircuitBreakerItemSpecKind = "MeshServiceSubset"
+	MeshCircuitBreakerItemSpecKindMeshHTTPRoute        MeshCircuitBreakerItemSpecKind = "MeshHTTPRoute"
+	MeshCircuitBreakerItemSpecKindDataplane            MeshCircuitBreakerItemSpecKind = "Dataplane"
 )
 
-func (e MeshCircuitBreakerItemKind) ToPointer() *MeshCircuitBreakerItemKind {
+func (e MeshCircuitBreakerItemSpecKind) ToPointer() *MeshCircuitBreakerItemSpecKind {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshCircuitBreakerItemKind) IsExact() bool {
+func (e *MeshCircuitBreakerItemSpecKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
 			return true
 		}
 	}
 	return false
 }
 
-type MeshCircuitBreakerItemProxyTypes string
-
-const (
-	MeshCircuitBreakerItemProxyTypesSidecar MeshCircuitBreakerItemProxyTypes = "Sidecar"
-	MeshCircuitBreakerItemProxyTypesGateway MeshCircuitBreakerItemProxyTypes = "Gateway"
-)
-
-func (e MeshCircuitBreakerItemProxyTypes) ToPointer() *MeshCircuitBreakerItemProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshCircuitBreakerItemProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshCircuitBreakerItemTargetRef - TargetRef is a reference to the resource the policy takes an effect on.
-// The resource could be either a real store object or virtual resource
-// defined in place.
-type MeshCircuitBreakerItemTargetRef struct {
-	// Kind of the referenced resource
-	Kind MeshCircuitBreakerItemKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
-	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshCircuitBreakerItemProxyTypes `json:"proxyTypes,omitempty"`
-	// SectionName is used to target specific section of resource.
-	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
-}
-
-func (m *MeshCircuitBreakerItemTargetRef) GetKind() MeshCircuitBreakerItemKind {
-	if m == nil {
-		return MeshCircuitBreakerItemKind("")
-	}
-	return m.Kind
-}
-
-func (m *MeshCircuitBreakerItemTargetRef) GetLabels() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Labels
-}
-
-func (m *MeshCircuitBreakerItemTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshCircuitBreakerItemTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshCircuitBreakerItemTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
-func (m *MeshCircuitBreakerItemTargetRef) GetProxyTypes() []MeshCircuitBreakerItemProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
-func (m *MeshCircuitBreakerItemTargetRef) GetSectionName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.SectionName
-}
-
-func (m *MeshCircuitBreakerItemTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
-}
-
-// MeshCircuitBreakerItemSpecConnectionLimits - ConnectionLimits contains configuration of each circuit breaking limit,
-// which when exceeded makes the circuit breaker to become open (no traffic
-// is allowed like no current is allowed in the circuits when physical
-// circuit breaker ir open)
-type MeshCircuitBreakerItemSpecConnectionLimits struct {
-	// The maximum number of connection pools per cluster that are concurrently
-	// supported at once. Set this for clusters which create a large number of
-	// connection pools.
-	MaxConnectionPools *int `json:"maxConnectionPools,omitempty"`
-	// The maximum number of connections allowed to be made to the upstream
-	// cluster.
-	MaxConnections *int `json:"maxConnections,omitempty"`
-	// The maximum number of pending requests that are allowed to the upstream
-	// cluster. This limit is applied as a connection limit for non-HTTP
-	// traffic.
-	MaxPendingRequests *int `json:"maxPendingRequests,omitempty"`
-	// The maximum number of parallel requests that are allowed to be made
-	// to the upstream cluster. This limit does not apply to non-HTTP traffic.
-	MaxRequests *int `json:"maxRequests,omitempty"`
-	// The maximum number of parallel retries that will be allowed to
-	// the upstream cluster.
-	MaxRetries *int `json:"maxRetries,omitempty"`
-}
-
-func (m *MeshCircuitBreakerItemSpecConnectionLimits) GetMaxConnectionPools() *int {
-	if m == nil {
-		return nil
-	}
-	return m.MaxConnectionPools
-}
-
-func (m *MeshCircuitBreakerItemSpecConnectionLimits) GetMaxConnections() *int {
-	if m == nil {
-		return nil
-	}
-	return m.MaxConnections
-}
-
-func (m *MeshCircuitBreakerItemSpecConnectionLimits) GetMaxPendingRequests() *int {
-	if m == nil {
-		return nil
-	}
-	return m.MaxPendingRequests
-}
-
-func (m *MeshCircuitBreakerItemSpecConnectionLimits) GetMaxRequests() *int {
-	if m == nil {
-		return nil
-	}
-	return m.MaxRequests
-}
-
-func (m *MeshCircuitBreakerItemSpecConnectionLimits) GetMaxRetries() *int {
-	if m == nil {
-		return nil
-	}
-	return m.MaxRetries
-}
-
-// MeshCircuitBreakerItemSpecFailurePercentage - Failure Percentage based outlier detection functions similarly to success
-// rate detection, in that it relies on success rate data from each host in
-// a cluster. However, rather than compare those values to the mean success
-// rate of the cluster as a whole, they are compared to a flat
-// user-configured threshold. This threshold is configured via the
-// outlierDetection.failurePercentageThreshold field.
-// The other configuration fields for failure percentage based detection are
-// similar to the fields for success rate detection. As with success rate
-// detection, detection will not be performed for a host if its request
-// volume over the aggregation interval is less than the
-// outlierDetection.detectors.failurePercentage.requestVolume value.
-// Detection also will not be performed for a cluster if the number of hosts
-// with the minimum required request volume in an interval is less than the
-// outlierDetection.detectors.failurePercentage.minimumHosts value.
-type MeshCircuitBreakerItemSpecFailurePercentage struct {
-	// The minimum number of hosts in a cluster in order to perform failure
-	// percentage-based ejection. If the total number of hosts in the cluster is
-	// less than this value, failure percentage-based ejection will not be
-	// performed.
-	MinimumHosts *int `json:"minimumHosts,omitempty"`
-	// The minimum number of total requests that must be collected in one
-	// interval (as defined by the interval duration above) to perform failure
-	// percentage-based ejection for this host. If the volume is lower than this
-	// setting, failure percentage-based ejection will not be performed for this
-	// host.
-	RequestVolume *int `json:"requestVolume,omitempty"`
-	// The failure percentage to use when determining failure percentage-based
-	// outlier detection. If the failure percentage of a given host is greater
-	// than or equal to this value, it will be ejected.
-	Threshold *int `json:"threshold,omitempty"`
-}
-
-func (m *MeshCircuitBreakerItemSpecFailurePercentage) GetMinimumHosts() *int {
-	if m == nil {
-		return nil
-	}
-	return m.MinimumHosts
-}
-
-func (m *MeshCircuitBreakerItemSpecFailurePercentage) GetRequestVolume() *int {
-	if m == nil {
-		return nil
-	}
-	return m.RequestVolume
-}
-
-func (m *MeshCircuitBreakerItemSpecFailurePercentage) GetThreshold() *int {
-	if m == nil {
-		return nil
-	}
-	return m.Threshold
-}
-
-// MeshCircuitBreakerItemSpecGatewayFailures - In the default mode (outlierDetection.splitExternalLocalOriginErrors is
-// false) this detection type takes into account a subset of 5xx errors,
-// called "gateway errors" (502, 503 or 504 status code) and local origin
-// failures, such as timeout, TCP reset etc.
-// In split mode (outlierDetection.splitExternalLocalOriginErrors is true)
-// this detection type takes into account a subset of 5xx errors, called
-// "gateway errors" (502, 503 or 504 status code) and is supported only by
-// the http router.
-type MeshCircuitBreakerItemSpecGatewayFailures struct {
-	// The number of consecutive gateway failures (502, 503, 504 status codes)
-	// before a consecutive gateway failure ejection occurs.
-	Consecutive *int `json:"consecutive,omitempty"`
-}
-
-func (m *MeshCircuitBreakerItemSpecGatewayFailures) GetConsecutive() *int {
-	if m == nil {
-		return nil
-	}
-	return m.Consecutive
-}
-
-// MeshCircuitBreakerItemSpecLocalOriginFailures - This detection type is enabled only when
-// outlierDetection.splitExternalLocalOriginErrors is true and takes into
-// account only locally originated errors (timeout, reset, etc).
-// If Envoy repeatedly cannot connect to an upstream host or communication
-// with the upstream host is repeatedly interrupted, it will be ejected.
-// Various locally originated problems are detected: timeout, TCP reset,
-// ICMP errors, etc. This detection type is supported by http router and
-// tcp proxy.
-type MeshCircuitBreakerItemSpecLocalOriginFailures struct {
-	// The number of consecutive locally originated failures before ejection
-	// occurs. Parameter takes effect only when splitExternalAndLocalErrors
-	// is set to true.
-	Consecutive *int `json:"consecutive,omitempty"`
-}
-
-func (m *MeshCircuitBreakerItemSpecLocalOriginFailures) GetConsecutive() *int {
-	if m == nil {
-		return nil
-	}
-	return m.Consecutive
-}
-
-type MeshCircuitBreakerItemSpecStandardDeviationFactorType string
-
-const (
-	MeshCircuitBreakerItemSpecStandardDeviationFactorTypeInteger MeshCircuitBreakerItemSpecStandardDeviationFactorType = "integer"
-	MeshCircuitBreakerItemSpecStandardDeviationFactorTypeStr     MeshCircuitBreakerItemSpecStandardDeviationFactorType = "str"
-)
-
-// MeshCircuitBreakerItemSpecStandardDeviationFactor - This factor is used to determine the ejection threshold for success rate
-// outlier ejection. The ejection threshold is the difference between
-// the mean success rate, and the product of this factor and the standard
-// deviation of the mean success rate: mean - (standard_deviation *
-// success_rate_standard_deviation_factor).
-// Either int or decimal represented as string.
-type MeshCircuitBreakerItemSpecStandardDeviationFactor struct {
-	Integer *int64  `queryParam:"inline" union:"member"`
-	Str     *string `queryParam:"inline" union:"member"`
-
-	Type MeshCircuitBreakerItemSpecStandardDeviationFactorType
-}
-
-func CreateMeshCircuitBreakerItemSpecStandardDeviationFactorInteger(integer int64) MeshCircuitBreakerItemSpecStandardDeviationFactor {
-	typ := MeshCircuitBreakerItemSpecStandardDeviationFactorTypeInteger
-
-	return MeshCircuitBreakerItemSpecStandardDeviationFactor{
-		Integer: &integer,
-		Type:    typ,
-	}
-}
-
-func CreateMeshCircuitBreakerItemSpecStandardDeviationFactorStr(str string) MeshCircuitBreakerItemSpecStandardDeviationFactor {
-	typ := MeshCircuitBreakerItemSpecStandardDeviationFactorTypeStr
-
-	return MeshCircuitBreakerItemSpecStandardDeviationFactor{
-		Str:  &str,
-		Type: typ,
-	}
-}
-
-func (u *MeshCircuitBreakerItemSpecStandardDeviationFactor) UnmarshalJSON(data []byte) error {
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var integer int64 = int64(0)
-	if err := utils.UnmarshalJSON(data, &integer, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshCircuitBreakerItemSpecStandardDeviationFactorTypeInteger,
-			Value: &integer,
-		})
-	}
-
-	var str string = ""
-	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshCircuitBreakerItemSpecStandardDeviationFactorTypeStr,
-			Value: &str,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshCircuitBreakerItemSpecStandardDeviationFactor", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshCircuitBreakerItemSpecStandardDeviationFactor", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(MeshCircuitBreakerItemSpecStandardDeviationFactorType)
-	switch best.Type {
-	case MeshCircuitBreakerItemSpecStandardDeviationFactorTypeInteger:
-		u.Integer = best.Value.(*int64)
-		return nil
-	case MeshCircuitBreakerItemSpecStandardDeviationFactorTypeStr:
-		u.Str = best.Value.(*string)
-		return nil
-	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshCircuitBreakerItemSpecStandardDeviationFactor", string(data))
-}
-
-func (u MeshCircuitBreakerItemSpecStandardDeviationFactor) MarshalJSON() ([]byte, error) {
-	if u.Integer != nil {
-		return utils.MarshalJSON(u.Integer, "", true)
-	}
-
-	if u.Str != nil {
-		return utils.MarshalJSON(u.Str, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type MeshCircuitBreakerItemSpecStandardDeviationFactor: all fields are null")
-}
-
-// MeshCircuitBreakerItemSpecSuccessRate - Success Rate based outlier detection aggregates success rate data from
-// every host in a cluster. Then at given intervals ejects hosts based on
-// statistical outlier detection. Success Rate outlier detection will not be
-// calculated for a host if its request volume over the aggregation interval
-// is less than the outlierDetection.detectors.successRate.requestVolume
-// value.
-// Moreover, detection will not be performed for a cluster if the number of
-// hosts with the minimum required request volume in an interval is less
-// than the outlierDetection.detectors.successRate.minimumHosts value.
-// In the default configuration mode
-// (outlierDetection.splitExternalLocalOriginErrors is false) this detection
-// type takes into account all types of errors: locally and externally
-// originated.
-// In split mode (outlierDetection.splitExternalLocalOriginErrors is true),
-// locally originated errors and externally originated (transaction) errors
-// are counted and treated separately.
-type MeshCircuitBreakerItemSpecSuccessRate struct {
-	// The number of hosts in a cluster that must have enough request volume to
-	// detect success rate outliers. If the number of hosts is less than this
-	// setting, outlier detection via success rate statistics is not performed
-	// for any host in the cluster.
-	MinimumHosts *int `json:"minimumHosts,omitempty"`
-	// The minimum number of total requests that must be collected in one
-	// interval (as defined by the interval duration configured in
-	// outlierDetection section) to include this host in success rate based
-	// outlier detection. If the volume is lower than this setting, outlier
-	// detection via success rate statistics is not performed for that host.
-	RequestVolume *int `json:"requestVolume,omitempty"`
-	// This factor is used to determine the ejection threshold for success rate
-	// outlier ejection. The ejection threshold is the difference between
-	// the mean success rate, and the product of this factor and the standard
-	// deviation of the mean success rate: mean - (standard_deviation *
-	// success_rate_standard_deviation_factor).
-	// Either int or decimal represented as string.
-	StandardDeviationFactor *MeshCircuitBreakerItemSpecStandardDeviationFactor `json:"standardDeviationFactor,omitempty"`
-}
-
-func (m *MeshCircuitBreakerItemSpecSuccessRate) GetMinimumHosts() *int {
-	if m == nil {
-		return nil
-	}
-	return m.MinimumHosts
-}
-
-func (m *MeshCircuitBreakerItemSpecSuccessRate) GetRequestVolume() *int {
-	if m == nil {
-		return nil
-	}
-	return m.RequestVolume
-}
-
-func (m *MeshCircuitBreakerItemSpecSuccessRate) GetStandardDeviationFactor() *MeshCircuitBreakerItemSpecStandardDeviationFactor {
-	if m == nil {
-		return nil
-	}
-	return m.StandardDeviationFactor
-}
-
-// MeshCircuitBreakerItemSpecTotalFailures - In the default mode (outlierDetection.splitExternalAndLocalErrors is
-// false) this detection type takes into account all generated errors:
-// locally originated and externally originated (transaction) errors.
-// In split mode (outlierDetection.splitExternalLocalOriginErrors is true)
-// this detection type takes into account only externally originated
-// (transaction) errors, ignoring locally originated errors.
-// If an upstream host is an HTTP-server, only 5xx types of error are taken
-// into account (see Consecutive Gateway Failure for exceptions).
-// Properly formatted responses, even when they carry an operational error
-// (like index not found, access denied) are not taken into account.
-type MeshCircuitBreakerItemSpecTotalFailures struct {
-	// The number of consecutive server-side error responses (for HTTP traffic,
-	// 5xx responses; for TCP traffic, connection failures; for Redis, failure
-	// to respond PONG; etc.) before a consecutive total failure ejection
-	// occurs.
-	Consecutive *int `json:"consecutive,omitempty"`
-}
-
-func (m *MeshCircuitBreakerItemSpecTotalFailures) GetConsecutive() *int {
-	if m == nil {
-		return nil
-	}
-	return m.Consecutive
-}
-
-// MeshCircuitBreakerItemSpecDetectors - Contains configuration for supported outlier detectors
-type MeshCircuitBreakerItemSpecDetectors struct {
-	// Failure Percentage based outlier detection functions similarly to success
-	// rate detection, in that it relies on success rate data from each host in
-	// a cluster. However, rather than compare those values to the mean success
-	// rate of the cluster as a whole, they are compared to a flat
-	// user-configured threshold. This threshold is configured via the
-	// outlierDetection.failurePercentageThreshold field.
-	// The other configuration fields for failure percentage based detection are
-	// similar to the fields for success rate detection. As with success rate
-	// detection, detection will not be performed for a host if its request
-	// volume over the aggregation interval is less than the
-	// outlierDetection.detectors.failurePercentage.requestVolume value.
-	// Detection also will not be performed for a cluster if the number of hosts
-	// with the minimum required request volume in an interval is less than the
-	// outlierDetection.detectors.failurePercentage.minimumHosts value.
-	FailurePercentage *MeshCircuitBreakerItemSpecFailurePercentage `json:"failurePercentage,omitempty"`
-	// In the default mode (outlierDetection.splitExternalLocalOriginErrors is
-	// false) this detection type takes into account a subset of 5xx errors,
-	// called "gateway errors" (502, 503 or 504 status code) and local origin
-	// failures, such as timeout, TCP reset etc.
-	// In split mode (outlierDetection.splitExternalLocalOriginErrors is true)
-	// this detection type takes into account a subset of 5xx errors, called
-	// "gateway errors" (502, 503 or 504 status code) and is supported only by
-	// the http router.
-	GatewayFailures *MeshCircuitBreakerItemSpecGatewayFailures `json:"gatewayFailures,omitempty"`
-	// This detection type is enabled only when
-	// outlierDetection.splitExternalLocalOriginErrors is true and takes into
-	// account only locally originated errors (timeout, reset, etc).
-	// If Envoy repeatedly cannot connect to an upstream host or communication
-	// with the upstream host is repeatedly interrupted, it will be ejected.
-	// Various locally originated problems are detected: timeout, TCP reset,
-	// ICMP errors, etc. This detection type is supported by http router and
-	// tcp proxy.
-	LocalOriginFailures *MeshCircuitBreakerItemSpecLocalOriginFailures `json:"localOriginFailures,omitempty"`
-	// Success Rate based outlier detection aggregates success rate data from
-	// every host in a cluster. Then at given intervals ejects hosts based on
-	// statistical outlier detection. Success Rate outlier detection will not be
-	// calculated for a host if its request volume over the aggregation interval
-	// is less than the outlierDetection.detectors.successRate.requestVolume
-	// value.
-	// Moreover, detection will not be performed for a cluster if the number of
-	// hosts with the minimum required request volume in an interval is less
-	// than the outlierDetection.detectors.successRate.minimumHosts value.
-	// In the default configuration mode
-	// (outlierDetection.splitExternalLocalOriginErrors is false) this detection
-	// type takes into account all types of errors: locally and externally
-	// originated.
-	// In split mode (outlierDetection.splitExternalLocalOriginErrors is true),
-	// locally originated errors and externally originated (transaction) errors
-	// are counted and treated separately.
-	SuccessRate *MeshCircuitBreakerItemSpecSuccessRate `json:"successRate,omitempty"`
-	// In the default mode (outlierDetection.splitExternalAndLocalErrors is
-	// false) this detection type takes into account all generated errors:
-	// locally originated and externally originated (transaction) errors.
-	// In split mode (outlierDetection.splitExternalLocalOriginErrors is true)
-	// this detection type takes into account only externally originated
-	// (transaction) errors, ignoring locally originated errors.
-	// If an upstream host is an HTTP-server, only 5xx types of error are taken
-	// into account (see Consecutive Gateway Failure for exceptions).
-	// Properly formatted responses, even when they carry an operational error
-	// (like index not found, access denied) are not taken into account.
-	TotalFailures *MeshCircuitBreakerItemSpecTotalFailures `json:"totalFailures,omitempty"`
-}
-
-func (m *MeshCircuitBreakerItemSpecDetectors) GetFailurePercentage() *MeshCircuitBreakerItemSpecFailurePercentage {
-	if m == nil {
-		return nil
-	}
-	return m.FailurePercentage
-}
-
-func (m *MeshCircuitBreakerItemSpecDetectors) GetGatewayFailures() *MeshCircuitBreakerItemSpecGatewayFailures {
-	if m == nil {
-		return nil
-	}
-	return m.GatewayFailures
-}
-
-func (m *MeshCircuitBreakerItemSpecDetectors) GetLocalOriginFailures() *MeshCircuitBreakerItemSpecLocalOriginFailures {
-	if m == nil {
-		return nil
-	}
-	return m.LocalOriginFailures
-}
-
-func (m *MeshCircuitBreakerItemSpecDetectors) GetSuccessRate() *MeshCircuitBreakerItemSpecSuccessRate {
-	if m == nil {
-		return nil
-	}
-	return m.SuccessRate
-}
-
-func (m *MeshCircuitBreakerItemSpecDetectors) GetTotalFailures() *MeshCircuitBreakerItemSpecTotalFailures {
-	if m == nil {
-		return nil
-	}
-	return m.TotalFailures
-}
-
-type MeshCircuitBreakerItemSpecHealthyPanicThresholdType string
-
-const (
-	MeshCircuitBreakerItemSpecHealthyPanicThresholdTypeInteger MeshCircuitBreakerItemSpecHealthyPanicThresholdType = "integer"
-	MeshCircuitBreakerItemSpecHealthyPanicThresholdTypeStr     MeshCircuitBreakerItemSpecHealthyPanicThresholdType = "str"
-)
-
-// MeshCircuitBreakerItemSpecHealthyPanicThreshold - Allows to configure panic threshold for Envoy cluster. If not specified,
-// the default is 50%. To disable panic mode, set to 0%.
-// Either int or decimal represented as string.
-type MeshCircuitBreakerItemSpecHealthyPanicThreshold struct {
-	Integer *int64  `queryParam:"inline" union:"member"`
-	Str     *string `queryParam:"inline" union:"member"`
-
-	Type MeshCircuitBreakerItemSpecHealthyPanicThresholdType
-}
-
-func CreateMeshCircuitBreakerItemSpecHealthyPanicThresholdInteger(integer int64) MeshCircuitBreakerItemSpecHealthyPanicThreshold {
-	typ := MeshCircuitBreakerItemSpecHealthyPanicThresholdTypeInteger
-
-	return MeshCircuitBreakerItemSpecHealthyPanicThreshold{
-		Integer: &integer,
-		Type:    typ,
-	}
-}
-
-func CreateMeshCircuitBreakerItemSpecHealthyPanicThresholdStr(str string) MeshCircuitBreakerItemSpecHealthyPanicThreshold {
-	typ := MeshCircuitBreakerItemSpecHealthyPanicThresholdTypeStr
-
-	return MeshCircuitBreakerItemSpecHealthyPanicThreshold{
-		Str:  &str,
-		Type: typ,
-	}
-}
-
-func (u *MeshCircuitBreakerItemSpecHealthyPanicThreshold) UnmarshalJSON(data []byte) error {
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var integer int64 = int64(0)
-	if err := utils.UnmarshalJSON(data, &integer, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshCircuitBreakerItemSpecHealthyPanicThresholdTypeInteger,
-			Value: &integer,
-		})
-	}
-
-	var str string = ""
-	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshCircuitBreakerItemSpecHealthyPanicThresholdTypeStr,
-			Value: &str,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshCircuitBreakerItemSpecHealthyPanicThreshold", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshCircuitBreakerItemSpecHealthyPanicThreshold", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(MeshCircuitBreakerItemSpecHealthyPanicThresholdType)
-	switch best.Type {
-	case MeshCircuitBreakerItemSpecHealthyPanicThresholdTypeInteger:
-		u.Integer = best.Value.(*int64)
-		return nil
-	case MeshCircuitBreakerItemSpecHealthyPanicThresholdTypeStr:
-		u.Str = best.Value.(*string)
-		return nil
-	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshCircuitBreakerItemSpecHealthyPanicThreshold", string(data))
-}
-
-func (u MeshCircuitBreakerItemSpecHealthyPanicThreshold) MarshalJSON() ([]byte, error) {
-	if u.Integer != nil {
-		return utils.MarshalJSON(u.Integer, "", true)
-	}
-
-	if u.Str != nil {
-		return utils.MarshalJSON(u.Str, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type MeshCircuitBreakerItemSpecHealthyPanicThreshold: all fields are null")
-}
-
-// MeshCircuitBreakerItemSpecOutlierDetection - OutlierDetection contains the configuration of the process of dynamically
-// determining whether some number of hosts in an upstream cluster are
-// performing unlike the others and removing them from the healthy load
-// balancing set. Performance might be along different axes such as
-// consecutive failures, temporal success rate, temporal latency, etc.
-// Outlier detection is a form of passive health checking.
-type MeshCircuitBreakerItemSpecOutlierDetection struct {
-	// The base time that a host is ejected for. The real time is equal to
-	// the base time multiplied by the number of times the host has been
-	// ejected.
-	BaseEjectionTime *string `json:"baseEjectionTime,omitempty"`
-	// Contains configuration for supported outlier detectors
-	Detectors *MeshCircuitBreakerItemSpecDetectors `json:"detectors,omitempty"`
-	// When set to true, outlierDetection configuration won't take any effect
-	Disabled *bool `json:"disabled,omitempty"`
-	// Allows to configure panic threshold for Envoy cluster. If not specified,
-	// the default is 50%. To disable panic mode, set to 0%.
-	// Either int or decimal represented as string.
-	HealthyPanicThreshold *MeshCircuitBreakerItemSpecHealthyPanicThreshold `json:"healthyPanicThreshold,omitempty"`
-	// The time interval between ejection analysis sweeps. This can result in
-	// both new ejections and hosts being returned to service.
-	Interval *string `json:"interval,omitempty"`
-	// The maximum % of an upstream cluster that can be ejected due to outlier
-	// detection. Defaults to 10% but will eject at least one host regardless of
-	// the value.
-	MaxEjectionPercent *int `json:"maxEjectionPercent,omitempty"`
-	// Determines whether to distinguish local origin failures from external
-	// errors. If set to true the following configuration parameters are taken
-	// into account: detectors.localOriginFailures.consecutive
-	SplitExternalAndLocalErrors *bool `json:"splitExternalAndLocalErrors,omitempty"`
-}
-
-func (m *MeshCircuitBreakerItemSpecOutlierDetection) GetBaseEjectionTime() *string {
-	if m == nil {
-		return nil
-	}
-	return m.BaseEjectionTime
-}
-
-func (m *MeshCircuitBreakerItemSpecOutlierDetection) GetDetectors() *MeshCircuitBreakerItemSpecDetectors {
-	if m == nil {
-		return nil
-	}
-	return m.Detectors
-}
-
-func (m *MeshCircuitBreakerItemSpecOutlierDetection) GetDisabled() *bool {
-	if m == nil {
-		return nil
-	}
-	return m.Disabled
-}
-
-func (m *MeshCircuitBreakerItemSpecOutlierDetection) GetHealthyPanicThreshold() *MeshCircuitBreakerItemSpecHealthyPanicThreshold {
-	if m == nil {
-		return nil
-	}
-	return m.HealthyPanicThreshold
-}
-
-func (m *MeshCircuitBreakerItemSpecOutlierDetection) GetInterval() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Interval
-}
-
-func (m *MeshCircuitBreakerItemSpecOutlierDetection) GetMaxEjectionPercent() *int {
-	if m == nil {
-		return nil
-	}
-	return m.MaxEjectionPercent
-}
-
-func (m *MeshCircuitBreakerItemSpecOutlierDetection) GetSplitExternalAndLocalErrors() *bool {
-	if m == nil {
-		return nil
-	}
-	return m.SplitExternalAndLocalErrors
-}
-
-// MeshCircuitBreakerItemSpecToDefault - Default is a configuration specific to the group of destinations
-// referenced in 'targetRef'
-type MeshCircuitBreakerItemSpecToDefault struct {
-	// ConnectionLimits contains configuration of each circuit breaking limit,
-	// which when exceeded makes the circuit breaker to become open (no traffic
-	// is allowed like no current is allowed in the circuits when physical
-	// circuit breaker ir open)
-	ConnectionLimits *MeshCircuitBreakerItemSpecConnectionLimits `json:"connectionLimits,omitempty"`
-	// OutlierDetection contains the configuration of the process of dynamically
-	// determining whether some number of hosts in an upstream cluster are
-	// performing unlike the others and removing them from the healthy load
-	// balancing set. Performance might be along different axes such as
-	// consecutive failures, temporal success rate, temporal latency, etc.
-	// Outlier detection is a form of passive health checking.
-	OutlierDetection *MeshCircuitBreakerItemSpecOutlierDetection `json:"outlierDetection,omitempty"`
-}
-
-func (m *MeshCircuitBreakerItemSpecToDefault) GetConnectionLimits() *MeshCircuitBreakerItemSpecConnectionLimits {
-	if m == nil {
-		return nil
-	}
-	return m.ConnectionLimits
-}
-
-func (m *MeshCircuitBreakerItemSpecToDefault) GetOutlierDetection() *MeshCircuitBreakerItemSpecOutlierDetection {
-	if m == nil {
-		return nil
-	}
-	return m.OutlierDetection
-}
-
-// MeshCircuitBreakerItemSpecToKind - Kind of the referenced resource
-type MeshCircuitBreakerItemSpecToKind string
-
-const (
-	MeshCircuitBreakerItemSpecToKindMesh                 MeshCircuitBreakerItemSpecToKind = "Mesh"
-	MeshCircuitBreakerItemSpecToKindMeshSubset           MeshCircuitBreakerItemSpecToKind = "MeshSubset"
-	MeshCircuitBreakerItemSpecToKindMeshGateway          MeshCircuitBreakerItemSpecToKind = "MeshGateway"
-	MeshCircuitBreakerItemSpecToKindMeshService          MeshCircuitBreakerItemSpecToKind = "MeshService"
-	MeshCircuitBreakerItemSpecToKindMeshExternalService  MeshCircuitBreakerItemSpecToKind = "MeshExternalService"
-	MeshCircuitBreakerItemSpecToKindMeshMultiZoneService MeshCircuitBreakerItemSpecToKind = "MeshMultiZoneService"
-	MeshCircuitBreakerItemSpecToKindMeshServiceSubset    MeshCircuitBreakerItemSpecToKind = "MeshServiceSubset"
-	MeshCircuitBreakerItemSpecToKindMeshHTTPRoute        MeshCircuitBreakerItemSpecToKind = "MeshHTTPRoute"
-	MeshCircuitBreakerItemSpecToKindDataplane            MeshCircuitBreakerItemSpecToKind = "Dataplane"
-)
-
-func (e MeshCircuitBreakerItemSpecToKind) ToPointer() *MeshCircuitBreakerItemSpecToKind {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshCircuitBreakerItemSpecToKind) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshCircuitBreakerItemSpecToProxyTypes string
-
-const (
-	MeshCircuitBreakerItemSpecToProxyTypesSidecar MeshCircuitBreakerItemSpecToProxyTypes = "Sidecar"
-	MeshCircuitBreakerItemSpecToProxyTypesGateway MeshCircuitBreakerItemSpecToProxyTypes = "Gateway"
-)
-
-func (e MeshCircuitBreakerItemSpecToProxyTypes) ToPointer() *MeshCircuitBreakerItemSpecToProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshCircuitBreakerItemSpecToProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshCircuitBreakerItemSpecToTargetRef - TargetRef is a reference to the resource that represents a group of
+// MeshCircuitBreakerItemSpecTargetRef - TargetRef is a reference to the resource that represents a group of
 // destinations.
-type MeshCircuitBreakerItemSpecToTargetRef struct {
+type MeshCircuitBreakerItemSpecTargetRef struct {
 	// Kind of the referenced resource
-	Kind MeshCircuitBreakerItemSpecToKind `json:"kind"`
+	Kind MeshCircuitBreakerItemSpecKind `json:"kind"`
 	// Labels are used to select group of MeshServices that match labels. Either Labels or
 	// Name and Namespace can be used.
 	Labels map[string]string `json:"labels,omitempty"`
 	// Mesh is reserved for future use to identify cross mesh resources.
 	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
+	// Name of the referenced resource. Can only be used with kinds: `MeshService`
+	// and `MeshServiceSubset`
 	Name *string `json:"name,omitempty"`
 	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 	// will be targeted.
 	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshCircuitBreakerItemSpecToProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
@@ -2329,56 +1475,49 @@ type MeshCircuitBreakerItemSpecToTargetRef struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (m *MeshCircuitBreakerItemSpecToTargetRef) GetKind() MeshCircuitBreakerItemSpecToKind {
+func (m *MeshCircuitBreakerItemSpecTargetRef) GetKind() MeshCircuitBreakerItemSpecKind {
 	if m == nil {
-		return MeshCircuitBreakerItemSpecToKind("")
+		return MeshCircuitBreakerItemSpecKind("")
 	}
 	return m.Kind
 }
 
-func (m *MeshCircuitBreakerItemSpecToTargetRef) GetLabels() map[string]string {
+func (m *MeshCircuitBreakerItemSpecTargetRef) GetLabels() map[string]string {
 	if m == nil {
 		return nil
 	}
 	return m.Labels
 }
 
-func (m *MeshCircuitBreakerItemSpecToTargetRef) GetMesh() *string {
+func (m *MeshCircuitBreakerItemSpecTargetRef) GetMesh() *string {
 	if m == nil {
 		return nil
 	}
 	return m.Mesh
 }
 
-func (m *MeshCircuitBreakerItemSpecToTargetRef) GetName() *string {
+func (m *MeshCircuitBreakerItemSpecTargetRef) GetName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.Name
 }
 
-func (m *MeshCircuitBreakerItemSpecToTargetRef) GetNamespace() *string {
+func (m *MeshCircuitBreakerItemSpecTargetRef) GetNamespace() *string {
 	if m == nil {
 		return nil
 	}
 	return m.Namespace
 }
 
-func (m *MeshCircuitBreakerItemSpecToTargetRef) GetProxyTypes() []MeshCircuitBreakerItemSpecToProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
-func (m *MeshCircuitBreakerItemSpecToTargetRef) GetSectionName() *string {
+func (m *MeshCircuitBreakerItemSpecTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
 }
 
-func (m *MeshCircuitBreakerItemSpecToTargetRef) GetTags() map[string]string {
+func (m *MeshCircuitBreakerItemSpecTargetRef) GetTags() map[string]string {
 	if m == nil {
 		return nil
 	}
@@ -2388,30 +1527,28 @@ func (m *MeshCircuitBreakerItemSpecToTargetRef) GetTags() map[string]string {
 type MeshCircuitBreakerItemTo struct {
 	// Default is a configuration specific to the group of destinations
 	// referenced in 'targetRef'
-	Default *MeshCircuitBreakerItemSpecToDefault `json:"default,omitempty"`
+	Default *MeshCircuitBreakerItemSpecDefault `json:"default,omitempty"`
 	// TargetRef is a reference to the resource that represents a group of
 	// destinations.
-	TargetRef MeshCircuitBreakerItemSpecToTargetRef `json:"targetRef"`
+	TargetRef MeshCircuitBreakerItemSpecTargetRef `json:"targetRef"`
 }
 
-func (m *MeshCircuitBreakerItemTo) GetDefault() *MeshCircuitBreakerItemSpecToDefault {
+func (m *MeshCircuitBreakerItemTo) GetDefault() *MeshCircuitBreakerItemSpecDefault {
 	if m == nil {
 		return nil
 	}
 	return m.Default
 }
 
-func (m *MeshCircuitBreakerItemTo) GetTargetRef() MeshCircuitBreakerItemSpecToTargetRef {
+func (m *MeshCircuitBreakerItemTo) GetTargetRef() MeshCircuitBreakerItemSpecTargetRef {
 	if m == nil {
-		return MeshCircuitBreakerItemSpecToTargetRef{}
+		return MeshCircuitBreakerItemSpecTargetRef{}
 	}
 	return m.TargetRef
 }
 
 // MeshCircuitBreakerItemSpec - Spec is the specification of the Kuma MeshCircuitBreaker resource.
 type MeshCircuitBreakerItemSpec struct {
-	// From list makes a match between clients and corresponding configurations
-	From []MeshCircuitBreakerItemFrom `json:"from,omitempty"`
 	// Rules defines inbound circuit breaker configurations. Currently limited to
 	// selecting all inbound traffic, as L7 matching is not yet implemented.
 	Rules []MeshCircuitBreakerItemRules `json:"rules,omitempty"`
@@ -2422,13 +1559,6 @@ type MeshCircuitBreakerItemSpec struct {
 	// To list makes a match between the consumed services and corresponding
 	// configurations
 	To []MeshCircuitBreakerItemTo `json:"to,omitempty"`
-}
-
-func (m *MeshCircuitBreakerItemSpec) GetFrom() []MeshCircuitBreakerItemFrom {
-	if m == nil {
-		return nil
-	}
-	return m.From
 }
 
 func (m *MeshCircuitBreakerItemSpec) GetRules() []MeshCircuitBreakerItemRules {

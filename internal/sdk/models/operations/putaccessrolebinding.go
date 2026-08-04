@@ -11,7 +11,7 @@ type PutAccessRoleBindingRequest struct {
 	// name of the AccessRoleBinding
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 	// Put request
-	AccessRoleBindingItem shared.AccessRoleBindingItem `request:"mediaType=application/json"`
+	AccessRoleBindingItem shared.AccessRoleBindingItemInput `request:"mediaType=application/json"`
 }
 
 func (p *PutAccessRoleBindingRequest) GetName() string {
@@ -21,9 +21,9 @@ func (p *PutAccessRoleBindingRequest) GetName() string {
 	return p.Name
 }
 
-func (p *PutAccessRoleBindingRequest) GetAccessRoleBindingItem() shared.AccessRoleBindingItem {
+func (p *PutAccessRoleBindingRequest) GetAccessRoleBindingItem() shared.AccessRoleBindingItemInput {
 	if p == nil {
-		return shared.AccessRoleBindingItem{}
+		return shared.AccessRoleBindingItemInput{}
 	}
 	return p.AccessRoleBindingItem
 }

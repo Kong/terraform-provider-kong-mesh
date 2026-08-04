@@ -44,7 +44,7 @@ func (r *MeshHTTPRouteResourceModel) RefreshFromSharedMeshHTTPRouteItem(ctx cont
 		if resp.Spec.TargetRef == nil {
 			r.Spec.TargetRef = nil
 		} else {
-			r.Spec.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
+			r.Spec.TargetRef = &tfTypes.TargetRef{}
 			r.Spec.TargetRef.Kind = types.StringValue(string(resp.Spec.TargetRef.Kind))
 			if len(resp.Spec.TargetRef.Labels) > 0 {
 				r.Spec.TargetRef.Labels = make(map[string]types.String, len(resp.Spec.TargetRef.Labels))
@@ -55,10 +55,6 @@ func (r *MeshHTTPRouteResourceModel) RefreshFromSharedMeshHTTPRouteItem(ctx cont
 			r.Spec.TargetRef.Mesh = types.StringPointerValue(resp.Spec.TargetRef.Mesh)
 			r.Spec.TargetRef.Name = types.StringPointerValue(resp.Spec.TargetRef.Name)
 			r.Spec.TargetRef.Namespace = types.StringPointerValue(resp.Spec.TargetRef.Namespace)
-			r.Spec.TargetRef.ProxyTypes = make([]types.String, 0, len(resp.Spec.TargetRef.ProxyTypes))
-			for _, v := range resp.Spec.TargetRef.ProxyTypes {
-				r.Spec.TargetRef.ProxyTypes = append(r.Spec.TargetRef.ProxyTypes, types.StringValue(string(v)))
-			}
 			r.Spec.TargetRef.SectionName = types.StringPointerValue(resp.Spec.TargetRef.SectionName)
 			if len(resp.Spec.TargetRef.Tags) > 0 {
 				r.Spec.TargetRef.Tags = make(map[string]types.String, len(resp.Spec.TargetRef.Tags))
@@ -98,10 +94,6 @@ func (r *MeshHTTPRouteResourceModel) RefreshFromSharedMeshHTTPRouteItem(ctx cont
 					backendRefs.Name = types.StringPointerValue(backendRefsItem.Name)
 					backendRefs.Namespace = types.StringPointerValue(backendRefsItem.Namespace)
 					backendRefs.Port = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(backendRefsItem.Port))
-					backendRefs.ProxyTypes = make([]types.String, 0, len(backendRefsItem.ProxyTypes))
-					for _, v := range backendRefsItem.ProxyTypes {
-						backendRefs.ProxyTypes = append(backendRefs.ProxyTypes, types.StringValue(string(v)))
-					}
 					backendRefs.SectionName = types.StringPointerValue(backendRefsItem.SectionName)
 					if len(backendRefsItem.Tags) > 0 {
 						backendRefs.Tags = make(map[string]types.String, len(backendRefsItem.Tags))
@@ -122,10 +114,10 @@ func (r *MeshHTTPRouteResourceModel) RefreshFromSharedMeshHTTPRouteItem(ctx cont
 						filters.RequestHeaderModifier = nil
 					} else {
 						filters.RequestHeaderModifier = &tfTypes.RequestHeaderModifier{}
-						filters.RequestHeaderModifier.Add = []tfTypes.MeshGlobalRateLimitItemAdd{}
+						filters.RequestHeaderModifier.Add = []tfTypes.MeshHTTPRouteItemAdd{}
 
 						for _, addItem := range filtersItem.RequestHeaderModifier.Add {
-							var add tfTypes.MeshGlobalRateLimitItemAdd
+							var add tfTypes.MeshHTTPRouteItemAdd
 
 							add.Name = types.StringValue(addItem.Name)
 							add.Value = types.StringValue(addItem.Value)
@@ -136,10 +128,10 @@ func (r *MeshHTTPRouteResourceModel) RefreshFromSharedMeshHTTPRouteItem(ctx cont
 						for _, v := range filtersItem.RequestHeaderModifier.Remove {
 							filters.RequestHeaderModifier.Remove = append(filters.RequestHeaderModifier.Remove, types.StringValue(v))
 						}
-						filters.RequestHeaderModifier.Set = []tfTypes.MeshGlobalRateLimitItemAdd{}
+						filters.RequestHeaderModifier.Set = []tfTypes.MeshHTTPRouteItemAdd{}
 
 						for _, setItem := range filtersItem.RequestHeaderModifier.Set {
-							var set tfTypes.MeshGlobalRateLimitItemAdd
+							var set tfTypes.MeshHTTPRouteItemAdd
 
 							set.Name = types.StringValue(setItem.Name)
 							set.Value = types.StringValue(setItem.Value)
@@ -163,10 +155,6 @@ func (r *MeshHTTPRouteResourceModel) RefreshFromSharedMeshHTTPRouteItem(ctx cont
 						filters.RequestMirror.BackendRef.Name = types.StringPointerValue(filtersItem.RequestMirror.BackendRef.Name)
 						filters.RequestMirror.BackendRef.Namespace = types.StringPointerValue(filtersItem.RequestMirror.BackendRef.Namespace)
 						filters.RequestMirror.BackendRef.Port = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(filtersItem.RequestMirror.BackendRef.Port))
-						filters.RequestMirror.BackendRef.ProxyTypes = make([]types.String, 0, len(filtersItem.RequestMirror.BackendRef.ProxyTypes))
-						for _, v := range filtersItem.RequestMirror.BackendRef.ProxyTypes {
-							filters.RequestMirror.BackendRef.ProxyTypes = append(filters.RequestMirror.BackendRef.ProxyTypes, types.StringValue(string(v)))
-						}
 						filters.RequestMirror.BackendRef.SectionName = types.StringPointerValue(filtersItem.RequestMirror.BackendRef.SectionName)
 						if len(filtersItem.RequestMirror.BackendRef.Tags) > 0 {
 							filters.RequestMirror.BackendRef.Tags = make(map[string]types.String, len(filtersItem.RequestMirror.BackendRef.Tags))
@@ -176,7 +164,7 @@ func (r *MeshHTTPRouteResourceModel) RefreshFromSharedMeshHTTPRouteItem(ctx cont
 						}
 						filters.RequestMirror.BackendRef.Weight = types.Int64PointerValue(filtersItem.RequestMirror.BackendRef.Weight)
 						if filtersItem.RequestMirror.Percentage != nil {
-							filters.RequestMirror.Percentage = &tfTypes.Mode{}
+							filters.RequestMirror.Percentage = &tfTypes.AuthType{}
 							if filtersItem.RequestMirror.Percentage.Integer != nil {
 								filters.RequestMirror.Percentage.Integer = types.Int64PointerValue(filtersItem.RequestMirror.Percentage.Integer)
 							}
@@ -214,10 +202,10 @@ func (r *MeshHTTPRouteResourceModel) RefreshFromSharedMeshHTTPRouteItem(ctx cont
 						filters.ResponseHeaderModifier = nil
 					} else {
 						filters.ResponseHeaderModifier = &tfTypes.RequestHeaderModifier{}
-						filters.ResponseHeaderModifier.Add = []tfTypes.MeshGlobalRateLimitItemAdd{}
+						filters.ResponseHeaderModifier.Add = []tfTypes.MeshHTTPRouteItemAdd{}
 
 						for _, addItem1 := range filtersItem.ResponseHeaderModifier.Add {
-							var add1 tfTypes.MeshGlobalRateLimitItemAdd
+							var add1 tfTypes.MeshHTTPRouteItemAdd
 
 							add1.Name = types.StringValue(addItem1.Name)
 							add1.Value = types.StringValue(addItem1.Value)
@@ -228,10 +216,10 @@ func (r *MeshHTTPRouteResourceModel) RefreshFromSharedMeshHTTPRouteItem(ctx cont
 						for _, v := range filtersItem.ResponseHeaderModifier.Remove {
 							filters.ResponseHeaderModifier.Remove = append(filters.ResponseHeaderModifier.Remove, types.StringValue(v))
 						}
-						filters.ResponseHeaderModifier.Set = []tfTypes.MeshGlobalRateLimitItemAdd{}
+						filters.ResponseHeaderModifier.Set = []tfTypes.MeshHTTPRouteItemAdd{}
 
 						for _, setItem1 := range filtersItem.ResponseHeaderModifier.Set {
-							var set1 tfTypes.MeshGlobalRateLimitItemAdd
+							var set1 tfTypes.MeshHTTPRouteItemAdd
 
 							set1.Name = types.StringValue(setItem1.Name)
 							set1.Value = types.StringValue(setItem1.Value)
@@ -286,7 +274,7 @@ func (r *MeshHTTPRouteResourceModel) RefreshFromSharedMeshHTTPRouteItem(ctx cont
 					if matchesItem.Path == nil {
 						matches.Path = nil
 					} else {
-						matches.Path = &tfTypes.MeshFaultInjectionItemSpiffeID{}
+						matches.Path = &tfTypes.Sni{}
 						matches.Path.Type = types.StringValue(string(matchesItem.Path.Type))
 						matches.Path.Value = types.StringValue(matchesItem.Path.Value)
 					}
@@ -307,7 +295,7 @@ func (r *MeshHTTPRouteResourceModel) RefreshFromSharedMeshHTTPRouteItem(ctx cont
 
 				to.Rules = append(to.Rules, rules)
 			}
-			to.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
+			to.TargetRef = &tfTypes.TargetRef{}
 			to.TargetRef.Kind = types.StringValue(string(toItem.TargetRef.Kind))
 			if len(toItem.TargetRef.Labels) > 0 {
 				to.TargetRef.Labels = make(map[string]types.String, len(toItem.TargetRef.Labels))
@@ -318,10 +306,6 @@ func (r *MeshHTTPRouteResourceModel) RefreshFromSharedMeshHTTPRouteItem(ctx cont
 			to.TargetRef.Mesh = types.StringPointerValue(toItem.TargetRef.Mesh)
 			to.TargetRef.Name = types.StringPointerValue(toItem.TargetRef.Name)
 			to.TargetRef.Namespace = types.StringPointerValue(toItem.TargetRef.Namespace)
-			to.TargetRef.ProxyTypes = make([]types.String, 0, len(toItem.TargetRef.ProxyTypes))
-			for _, v := range toItem.TargetRef.ProxyTypes {
-				to.TargetRef.ProxyTypes = append(to.TargetRef.ProxyTypes, types.StringValue(string(v)))
-			}
 			to.TargetRef.SectionName = types.StringPointerValue(toItem.TargetRef.SectionName)
 			if len(toItem.TargetRef.Tags) > 0 {
 				to.TargetRef.Tags = make(map[string]types.String, len(toItem.TargetRef.Tags))
@@ -442,10 +426,6 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.
 		} else {
 			namespace = nil
 		}
-		proxyTypes := make([]shared.MeshHTTPRouteItemProxyTypes, 0, len(r.Spec.TargetRef.ProxyTypes))
-		for _, proxyTypesItem := range r.Spec.TargetRef.ProxyTypes {
-			proxyTypes = append(proxyTypes, shared.MeshHTTPRouteItemProxyTypes(proxyTypesItem.ValueString()))
-		}
 		sectionName := new(string)
 		if !r.Spec.TargetRef.SectionName.IsUnknown() && !r.Spec.TargetRef.SectionName.IsNull() {
 			*sectionName = r.Spec.TargetRef.SectionName.ValueString()
@@ -465,7 +445,6 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.
 			Mesh:        mesh1,
 			Name:        name1,
 			Namespace:   namespace,
-			ProxyTypes:  proxyTypes,
 			SectionName: sectionName,
 			Tags:        tags,
 		}
@@ -512,10 +491,6 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.
 				} else {
 					port = nil
 				}
-				proxyTypes1 := make([]shared.MeshHTTPRouteItemSpecToProxyTypes, 0, len(r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].ProxyTypes))
-				for _, proxyTypesItem1 := range r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].ProxyTypes {
-					proxyTypes1 = append(proxyTypes1, shared.MeshHTTPRouteItemSpecToProxyTypes(proxyTypesItem1.ValueString()))
-				}
 				sectionName1 := new(string)
 				if !r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].SectionName.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].SectionName.IsNull() {
 					*sectionName1 = r.Spec.To[toIndex].Rules[rulesIndex].Default.BackendRefs[backendRefsIndex].SectionName.ValueString()
@@ -542,7 +517,6 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.
 					Name:        name2,
 					Namespace:   namespace1,
 					Port:        port,
-					ProxyTypes:  proxyTypes1,
 					SectionName: sectionName1,
 					Tags:        tags1,
 					Weight:      weight,
@@ -622,10 +596,6 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.
 					} else {
 						port1 = nil
 					}
-					proxyTypes2 := make([]shared.MeshHTTPRouteItemSpecToRulesProxyTypes, 0, len(r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.ProxyTypes))
-					for _, proxyTypesItem2 := range r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.ProxyTypes {
-						proxyTypes2 = append(proxyTypes2, shared.MeshHTTPRouteItemSpecToRulesProxyTypes(proxyTypesItem2.ValueString()))
-					}
 					sectionName2 := new(string)
 					if !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.SectionName.IsUnknown() && !r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.SectionName.IsNull() {
 						*sectionName2 = r.Spec.To[toIndex].Rules[rulesIndex].Default.Filters[filtersIndex].RequestMirror.BackendRef.SectionName.ValueString()
@@ -645,14 +615,13 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.
 					} else {
 						weight1 = nil
 					}
-					backendRef := shared.BackendRef{
+					backendRef := shared.MeshHTTPRouteItemBackendRef{
 						Kind:        kind2,
 						Labels:      labels3,
 						Mesh:        mesh3,
 						Name:        name5,
 						Namespace:   namespace2,
 						Port:        port1,
-						ProxyTypes:  proxyTypes2,
 						SectionName: sectionName2,
 						Tags:        tags2,
 						Weight:      weight1,
@@ -930,10 +899,6 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.
 		} else {
 			namespace3 = nil
 		}
-		proxyTypes3 := make([]shared.MeshHTTPRouteItemSpecProxyTypes, 0, len(r.Spec.To[toIndex].TargetRef.ProxyTypes))
-		for _, proxyTypesItem3 := range r.Spec.To[toIndex].TargetRef.ProxyTypes {
-			proxyTypes3 = append(proxyTypes3, shared.MeshHTTPRouteItemSpecProxyTypes(proxyTypesItem3.ValueString()))
-		}
 		sectionName3 := new(string)
 		if !r.Spec.To[toIndex].TargetRef.SectionName.IsUnknown() && !r.Spec.To[toIndex].TargetRef.SectionName.IsNull() {
 			*sectionName3 = r.Spec.To[toIndex].TargetRef.SectionName.ValueString()
@@ -953,7 +918,6 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.
 			Mesh:        mesh4,
 			Name:        name10,
 			Namespace:   namespace3,
-			ProxyTypes:  proxyTypes3,
 			SectionName: sectionName3,
 			Tags:        tags3,
 		}

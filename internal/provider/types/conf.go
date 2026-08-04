@@ -3,5 +3,9 @@
 package types
 
 type Conf struct {
-	Listeners []Listeners `tfsdk:"listeners"`
+	ACMCertificateAuthorityConfig         *ACMCertificateAuthorityConfig         `queryParam:"inline" tfsdk:"acm_certificate_authority_config"`
+	BuiltinCertificateAuthorityConfig     *BuiltinCertificateAuthorityConfig     `queryParam:"inline" tfsdk:"builtin_certificate_authority_config"`
+	CertManagerCertificateAuthorityConfig *CertManagerCertificateAuthorityConfig `queryParam:"inline" tfsdk:"cert_manager_certificate_authority_config"`
+	ProvidedCertificateAuthorityConfig    *ProvidedCertificateAuthorityConfig    `queryParam:"inline" tfsdk:"provided_certificate_authority_config"`
+	VaultCertificateAuthorityConfig       *VaultCertificateAuthorityConfig       `queryParam:"inline" tfsdk:"vault_certificate_authority_config"`
 }

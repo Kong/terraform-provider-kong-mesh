@@ -26,7 +26,7 @@ func (g *TestLogConsumer) Accept(l testcontainers.Log) {
 func TestMesh(t *testing.T) {
 	ctx := t.Context()
 	req := testcontainers.ContainerRequest{
-		Image:        "kong/kuma-cp:2.10.1",
+		Image:        "kong/kuma-cp:0.0.0-preview.v84ec98599",
 		ExposedPorts: []string{"5681/tcp"},
 		WaitingFor: wait.ForAll(
 			wait.ForLog("default AccessRoleBinding created"),
@@ -109,7 +109,7 @@ resource "kong-mesh_mesh" "%s" {
 }
 `, meshResourceName, meshName))
 
-		resource.ParallelTest(t, hclbuilder.CreateMeshAndModifyFields(providerFactory, builder, mesh))
+		resource.ParallelTest(t, hclbuilder.CreateMeshWithMtlsAndModifyFields(providerFactory, builder, mesh))
 	})
 
 	t.Run("create a policy and modify fields on it", func(t *testing.T) {
@@ -138,7 +138,7 @@ resource "kong-mesh_mesh_traffic_permission" "%s" {
 }
 `, policyResourceName, policyName, meshName))
 
-		resource.ParallelTest(t, hclbuilder.CreatePolicyAndModifyFields(providerFactory, builder, mesh, policy))
+		resource.ParallelTest(t, hclbuilder.CreatePolicyWithRulesAndModifyFields(providerFactory, builder, mesh, policy))
 	})
 
 	t.Run("not imported resource should error out with meaningful message", func(t *testing.T) {
@@ -167,7 +167,7 @@ resource "kong-mesh_mesh_traffic_permission" "%s" {
 }
 `, policyResourceName, mtpName, meshName))
 
-		resource.ParallelTest(t, hclbuilder.NotImportedResourceShouldError(providerFactory, builder, mesh, policy, func() { createAnMTP(t, "http://"+net.JoinHostPort("localhost", port.Port()), meshName, mtpName) }))
+		resource.ParallelTest(t, hclbuilder.NotImportedResourceWithRulesShouldError(providerFactory, builder, mesh, policy, func() { createAnMTP(t, "http://"+net.JoinHostPort("localhost", port.Port()), meshName, mtpName) }))
 	})
 
 	t.Run("should be able to store secrets", func(t *testing.T) {
@@ -217,7 +217,6 @@ func createAnMTP(t *testing.T, url string, meshName string, mtpName string) {
 		sdk.WithServerURL(url),
 	}
 	client := sdk.New(opts...)
-	action := shared.ActionAllow
 	resp, err := client.MeshTrafficPermission.PutMeshTrafficPermission(ctx, operations.PutMeshTrafficPermissionRequest{
 		Mesh: meshName,
 		Name: mtpName,
@@ -226,10 +225,18 @@ func createAnMTP(t *testing.T, url string, meshName string, mtpName string) {
 			Name: mtpName,
 			Type: shared.MeshTrafficPermissionItemTypeMeshTrafficPermission,
 			Spec: shared.MeshTrafficPermissionItemSpec{
-				From: []shared.MeshTrafficPermissionItemFrom{
+				Rules: []shared.MeshTrafficPermissionItemRules{
 					{
-						TargetRef: shared.MeshTrafficPermissionItemSpecTargetRef{Kind: shared.MeshTrafficPermissionItemSpecKindMesh},
-						Default:   &shared.MeshTrafficPermissionItemDefault{Action: &action},
+						Default: shared.MeshTrafficPermissionItemDefault{
+							Allow: []shared.Allow{
+								{
+									SpiffeID: &shared.MeshTrafficPermissionItemSpiffeID{
+										Type:  shared.MeshTrafficPermissionItemSpecRulesTypePrefix,
+										Value: "spiffe://example.org",
+									},
+								},
+							},
+						},
 					},
 				},
 			},

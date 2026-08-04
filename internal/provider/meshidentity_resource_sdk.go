@@ -4,7 +4,9 @@ package provider
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
@@ -135,6 +137,18 @@ func (r *MeshIdentityResourceModel) RefreshFromSharedMeshIdentityItem(ctx contex
 					r.Spec.Provider.Bundled.MeshTrustCreation = types.StringNull()
 				}
 			}
+			if resp.Spec.Provider.Extension == nil {
+				r.Spec.Provider.Extension = nil
+			} else {
+				r.Spec.Provider.Extension = &tfTypes.MeshIdentityItemExtension{}
+				if resp.Spec.Provider.Extension.Config == nil {
+					r.Spec.Provider.Extension.Config = jsontypes.NewNormalizedNull()
+				} else {
+					configResult, _ := json.Marshal(resp.Spec.Provider.Extension.Config)
+					r.Spec.Provider.Extension.Config = jsontypes.NewNormalizedValue(string(configResult))
+				}
+				r.Spec.Provider.Extension.Name = types.StringValue(resp.Spec.Provider.Extension.Name)
+			}
 			if resp.Spec.Provider.Spire == nil {
 				r.Spec.Provider.Spire = nil
 			} else {
@@ -174,11 +188,11 @@ func (r *MeshIdentityResourceModel) RefreshFromSharedMeshIdentityItem(ctx contex
 		if resp.Status == nil {
 			r.Status = nil
 		} else {
-			r.Status = &tfTypes.MeshIdentityItemStatus{}
-			r.Status.Conditions = []tfTypes.MeshExternalServiceItemConditions{}
+			r.Status = &tfTypes.Status{}
+			r.Status.Conditions = []tfTypes.Conditions{}
 
 			for _, conditionsItem := range resp.Status.Conditions {
-				var conditions tfTypes.MeshExternalServiceItemConditions
+				var conditions tfTypes.Conditions
 
 				conditions.Message = types.StringValue(conditionsItem.Message)
 				conditions.Reason = types.StringValue(conditionsItem.Reason)
@@ -423,6 +437,20 @@ func (r *MeshIdentityResourceModel) ToSharedMeshIdentityItemInput(ctx context.Co
 				MeshTrustCreation:       meshTrustCreation,
 			}
 		}
+		var extension *shared.MeshIdentityItemExtension
+		if r.Spec.Provider.Extension != nil {
+			var config interface{}
+			if !r.Spec.Provider.Extension.Config.IsUnknown() && !r.Spec.Provider.Extension.Config.IsNull() {
+				_ = json.Unmarshal([]byte(r.Spec.Provider.Extension.Config.ValueString()), &config)
+			}
+			var name5 string
+			name5 = r.Spec.Provider.Extension.Name.ValueString()
+
+			extension = &shared.MeshIdentityItemExtension{
+				Config: config,
+				Name:   name5,
+			}
+		}
 		var spire *shared.Spire
 		if r.Spec.Provider.Spire != nil {
 			var agent *shared.Agent
@@ -443,9 +471,10 @@ func (r *MeshIdentityResourceModel) ToSharedMeshIdentityItemInput(ctx context.Co
 		}
 		typeVar3 := shared.MeshIdentityItemSpecType(r.Spec.Provider.Type.ValueString())
 		provider = &shared.Provider{
-			Bundled: bundled,
-			Spire:   spire,
-			Type:    typeVar3,
+			Bundled:   bundled,
+			Extension: extension,
+			Spire:     spire,
+			Type:      typeVar3,
 		}
 	}
 	var selector *shared.MeshIdentityItemSelector

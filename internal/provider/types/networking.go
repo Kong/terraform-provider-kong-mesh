@@ -2,6 +2,12 @@
 
 package types
 
+import (
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
+
 type Networking struct {
-	Outbound *Outbound `tfsdk:"outbound"`
+	Address types.String `tfsdk:"address"`
+	Admin   *Admin       `tfsdk:"admin"`
+	Port    types.Int64  `tfsdk:"port"`
 }

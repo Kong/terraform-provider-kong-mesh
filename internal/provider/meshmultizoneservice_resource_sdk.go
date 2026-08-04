@@ -40,6 +40,16 @@ func (r *MeshMultiZoneServiceResourceModel) RefreshFromSharedMeshMultiZoneServic
 		r.Mesh = types.StringPointerValue(resp.Mesh)
 		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
+		r.Snis = []tfTypes.Snis{}
+
+		for _, snisItem := range resp.Snis {
+			var snis tfTypes.Snis
+
+			snis.Port = types.Int32Value(int32(snisItem.Port))
+			snis.Sni = types.StringValue(snisItem.Sni)
+
+			r.Snis = append(r.Snis, snis)
+		}
 		r.Spec = &tfTypes.MeshMultiZoneServiceItemSpec{}
 		r.Spec.Ports = []tfTypes.Ports{}
 
@@ -80,10 +90,10 @@ func (r *MeshMultiZoneServiceResourceModel) RefreshFromSharedMeshMultiZoneServic
 
 				r.Status.Addresses = append(r.Status.Addresses, addresses)
 			}
-			r.Status.Conditions = []tfTypes.MeshExternalServiceItemConditions{}
+			r.Status.Conditions = []tfTypes.Conditions{}
 
 			for _, conditionsItem := range resp.Status.Conditions {
-				var conditions tfTypes.MeshExternalServiceItemConditions
+				var conditions tfTypes.Conditions
 
 				conditions.Message = types.StringValue(conditionsItem.Message)
 				conditions.Reason = types.StringValue(conditionsItem.Reason)
@@ -97,10 +107,10 @@ func (r *MeshMultiZoneServiceResourceModel) RefreshFromSharedMeshMultiZoneServic
 			for _, hostnameGeneratorsItem := range resp.Status.HostnameGenerators {
 				var hostnameGenerators tfTypes.HostnameGenerators
 
-				hostnameGenerators.Conditions = []tfTypes.MeshExternalServiceItemConditions{}
+				hostnameGenerators.Conditions = []tfTypes.Conditions{}
 
 				for _, conditionsItem1 := range hostnameGeneratorsItem.Conditions {
-					var conditions1 tfTypes.MeshExternalServiceItemConditions
+					var conditions1 tfTypes.Conditions
 
 					conditions1.Message = types.StringValue(conditionsItem1.Message)
 					conditions1.Reason = types.StringValue(conditionsItem1.Reason)
@@ -114,10 +124,10 @@ func (r *MeshMultiZoneServiceResourceModel) RefreshFromSharedMeshMultiZoneServic
 
 				r.Status.HostnameGenerators = append(r.Status.HostnameGenerators, hostnameGenerators)
 			}
-			r.Status.MeshServices = []tfTypes.MeshMultiZoneServiceItemMeshServices{}
+			r.Status.MeshServices = []tfTypes.MeshServices{}
 
 			for _, meshServicesItem := range resp.Status.MeshServices {
-				var meshServices tfTypes.MeshMultiZoneServiceItemMeshServices
+				var meshServices tfTypes.MeshServices
 
 				meshServices.Mesh = types.StringValue(meshServicesItem.Mesh)
 				meshServices.Name = types.StringValue(meshServicesItem.Name)

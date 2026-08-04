@@ -35,63 +35,6 @@ resource "kong-mesh_mesh" "my_mesh" {
   labels = {
     key = "value"
   }
-  logging = {
-    backends = [
-      {
-        conf = {
-          file_logging_backend_config = {
-            path = "...my_path..."
-          }
-        }
-        format = "...my_format..."
-        name   = "...my_name..."
-        type   = "...my_type..."
-      }
-    ]
-    default_backend = "...my_default_backend..."
-  }
-  mesh_services = {
-    mode = {
-      str = "...my_str..."
-    }
-  }
-  metrics = {
-    backends = [
-      {
-        conf = {
-          prometheus_metrics_backend_config = {
-            aggregate = [
-              {
-                address = "...my_address..."
-                enabled = true
-                name    = "...my_name..."
-                path    = "...my_path..."
-                port    = 10
-              }
-            ]
-            envoy = {
-              filter_regex = "...my_filter_regex..."
-              used_only    = true
-            }
-            path      = "...my_path..."
-            port      = 5
-            skip_mtls = true
-            tags = {
-              key = "value"
-            }
-            tls = {
-              mode = {
-                str = "...my_str..."
-              }
-            }
-          }
-        }
-        name = "...my_name..."
-        type = "...my_type..."
-      }
-    ]
-    enabled_backend = "...my_enabled_backend..."
-  }
   mtls = {
     backends = [
       {
@@ -153,37 +96,13 @@ resource "kong-mesh_mesh" "my_mesh" {
     skip_validation = true
   }
   name = "...my_name..."
-  networking = {
-    outbound = {
-      passthrough = false
-    }
-  }
   routing = {
     default_forbid_mesh_external_service_access = false
-    locality_aware_load_balancing               = false
     zone_egress                                 = false
   }
   skip_creating_initial_policies = [
     "..."
   ]
-  tracing = {
-    backends = [
-      {
-        conf = {
-          zipkin_tracing_backend_config = {
-            api_version         = "...my_api_version..."
-            shared_span_context = false
-            trace_id128bit      = true
-            url                 = "...my_url..."
-          }
-        }
-        name     = "...my_name..."
-        sampling = 9.35
-        type     = "...my_type..."
-      }
-    ]
-    default_backend = "...my_default_backend..."
-  }
   type = "...my_type..."
 }
 ```
@@ -200,28 +119,19 @@ resource "kong-mesh_mesh" "my_mesh" {
 
 - `constraints` (Attributes) Constraints that applies to the mesh and its entities (see [below for nested schema](#nestedatt--constraints))
 - `labels` (Map of String)
-- `logging` (Attributes) Logging settings.
-+optional (see [below for nested schema](#nestedatt--logging))
-- `mesh_services` (Attributes) (see [below for nested schema](#nestedatt--mesh_services))
-- `metrics` (Attributes) Configuration for metrics collected and exposed by dataplanes.
-
-Settings defined here become defaults for every dataplane in a given Mesh.
-Additionally, it is also possible to further customize this configuration
-for each dataplane individually using Dataplane resource.
-+optional (see [below for nested schema](#nestedatt--metrics))
 - `mtls` (Attributes) mTLS settings.
 +optional (see [below for nested schema](#nestedatt--mtls))
-- `networking` (Attributes) Networking settings of the mesh (see [below for nested schema](#nestedatt--networking))
 - `routing` (Attributes) Routing settings of the mesh (see [below for nested schema](#nestedatt--routing))
 - `skip_creating_initial_policies` (List of String) List of policies to skip creating by default when the mesh is created.
 e.g. TrafficPermission, MeshRetry, etc. An '*' can be used to skip all
 policies.
 Default: []
-- `tracing` (Attributes) Tracing settings.
-+optional (see [below for nested schema](#nestedatt--tracing))
 
 ### Read-Only
 
+- `creation_time` (String) Time at which the resource was created
+- `kri` (String) Kuma Resource Identifier (KRI) of the given resource
+- `modification_time` (String) Time at which the resource was updated
 - `warnings` (List of String) warnings is a list of warning messages to return to the requesting Kuma API clients.
 Warning messages describe a problem the client making the API request should correct or be aware of.
 
@@ -263,161 +173,6 @@ Optional:
 
 - `tags` (Map of String) Tags defines set of required tags. You can specify '*' in value to
 require non empty value of tag
-
-
-
-
-<a id="nestedatt--logging"></a>
-### Nested Schema for `logging`
-
-Optional:
-
-- `backends` (Attributes List) List of available logging backends (see [below for nested schema](#nestedatt--logging--backends))
-- `default_backend` (String) Name of the default backend
-
-<a id="nestedatt--logging--backends"></a>
-### Nested Schema for `logging.backends`
-
-Optional:
-
-- `conf` (Attributes) (see [below for nested schema](#nestedatt--logging--backends--conf))
-- `format` (String) Format of access logs. Placeholders available on
-https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log
-- `name` (String) Name of the backend, can be then used in Mesh.logging.defaultBackend or in
-TrafficLogging
-- `type` (String) Type of the backend (Kuma ships with 'tcp' and 'file')
-
-<a id="nestedatt--logging--backends--conf"></a>
-### Nested Schema for `logging.backends.conf`
-
-Optional:
-
-- `file_logging_backend_config` (Attributes) FileLoggingBackendConfig defines configuration for file based access logs (see [below for nested schema](#nestedatt--logging--backends--conf--file_logging_backend_config))
-- `tcp_logging_backend_config` (Attributes) TcpLoggingBackendConfig defines configuration for TCP based access logs (see [below for nested schema](#nestedatt--logging--backends--conf--tcp_logging_backend_config))
-
-<a id="nestedatt--logging--backends--conf--file_logging_backend_config"></a>
-### Nested Schema for `logging.backends.conf.file_logging_backend_config`
-
-Optional:
-
-- `path` (String) Path to a file that logs will be written to
-
-
-<a id="nestedatt--logging--backends--conf--tcp_logging_backend_config"></a>
-### Nested Schema for `logging.backends.conf.tcp_logging_backend_config`
-
-Optional:
-
-- `address` (String) Address to TCP service that will receive logs
-
-
-
-
-
-<a id="nestedatt--mesh_services"></a>
-### Nested Schema for `mesh_services`
-
-Optional:
-
-- `mode` (Attributes) (see [below for nested schema](#nestedatt--mesh_services--mode))
-
-<a id="nestedatt--mesh_services--mode"></a>
-### Nested Schema for `mesh_services.mode`
-
-Optional:
-
-- `integer` (Number)
-- `str` (String)
-
-
-
-<a id="nestedatt--metrics"></a>
-### Nested Schema for `metrics`
-
-Optional:
-
-- `backends` (Attributes List) List of available Metrics backends (see [below for nested schema](#nestedatt--metrics--backends))
-- `enabled_backend` (String) Name of the enabled backend
-
-<a id="nestedatt--metrics--backends"></a>
-### Nested Schema for `metrics.backends`
-
-Optional:
-
-- `conf` (Attributes) (see [below for nested schema](#nestedatt--metrics--backends--conf))
-- `name` (String) Name of the backend, can be then used in Mesh.metrics.enabledBackend
-- `type` (String) Type of the backend (Kuma ships with 'prometheus')
-
-<a id="nestedatt--metrics--backends--conf"></a>
-### Nested Schema for `metrics.backends.conf`
-
-Optional:
-
-- `prometheus_metrics_backend_config` (Attributes) PrometheusMetricsBackendConfig defines configuration of Prometheus backend (see [below for nested schema](#nestedatt--metrics--backends--conf--prometheus_metrics_backend_config))
-
-<a id="nestedatt--metrics--backends--conf--prometheus_metrics_backend_config"></a>
-### Nested Schema for `metrics.backends.conf.prometheus_metrics_backend_config`
-
-Optional:
-
-- `aggregate` (Attributes List) Map with the configuration of applications which metrics are going to be
-scrapped by kuma-dp. (see [below for nested schema](#nestedatt--metrics--backends--conf--prometheus_metrics_backend_config--aggregate))
-- `envoy` (Attributes) Configuration of Envoy's metrics. (see [below for nested schema](#nestedatt--metrics--backends--conf--prometheus_metrics_backend_config--envoy))
-- `path` (String) Path on which a dataplane should expose HTTP endpoint with Prometheus
-metrics.
-- `port` (Number) Port on which a dataplane should expose HTTP endpoint with Prometheus
-metrics.
-- `skip_mtls` (Boolean) If true then endpoints for scraping metrics won't require mTLS even if mTLS
-is enabled in Mesh. If nil, then it is treated as false.
-- `tags` (Map of String) Tags associated with an application this dataplane is deployed next to,
-e.g. service=web, version=1.0.
-`service` tag is mandatory.
-- `tls` (Attributes) Configuration of TLS for prometheus listener. (see [below for nested schema](#nestedatt--metrics--backends--conf--prometheus_metrics_backend_config--tls))
-
-<a id="nestedatt--metrics--backends--conf--prometheus_metrics_backend_config--aggregate"></a>
-### Nested Schema for `metrics.backends.conf.prometheus_metrics_backend_config.aggregate`
-
-Optional:
-
-- `address` (String) Address on which a service expose HTTP endpoint with Prometheus metrics.
-- `enabled` (Boolean) If false then the application won't be scrapped. If nil, then it is treated
-as true and kuma-dp scrapes metrics from the service.
-- `name` (String) Name which identify given configuration.
-- `path` (String) Path on which a service expose HTTP endpoint with Prometheus metrics.
-- `port` (Number) Port on which a service expose HTTP endpoint with Prometheus metrics.
-
-
-<a id="nestedatt--metrics--backends--conf--prometheus_metrics_backend_config--envoy"></a>
-### Nested Schema for `metrics.backends.conf.prometheus_metrics_backend_config.envoy`
-
-Optional:
-
-- `filter_regex` (String) FilterRegex value that is going to be passed to Envoy for filtering
-Envoy metrics.
-- `used_only` (Boolean) If true then return metrics that Envoy has updated (counters incremented
-at least once, gauges changed at least once, and histograms added to at
-least once). If nil, then it is treated as false.
-
-
-<a id="nestedatt--metrics--backends--conf--prometheus_metrics_backend_config--tls"></a>
-### Nested Schema for `metrics.backends.conf.prometheus_metrics_backend_config.tls`
-
-Optional:
-
-- `mode` (Attributes) mode defines how configured is the TLS for Prometheus.
-Supported values, delegated, disabled, activeMTLSBackend. Default to
-`activeMTLSBackend`. (see [below for nested schema](#nestedatt--metrics--backends--conf--prometheus_metrics_backend_config--tls--mode))
-
-<a id="nestedatt--metrics--backends--conf--prometheus_metrics_backend_config--tls--mode"></a>
-### Nested Schema for `metrics.backends.conf.prometheus_metrics_backend_config.tls.mode`
-
-Optional:
-
-- `integer` (Number)
-- `str` (String)
-
-
-
 
 
 
@@ -1130,22 +885,6 @@ Optional:
 
 
 
-<a id="nestedatt--networking"></a>
-### Nested Schema for `networking`
-
-Optional:
-
-- `outbound` (Attributes) Outbound settings (see [below for nested schema](#nestedatt--networking--outbound))
-
-<a id="nestedatt--networking--outbound"></a>
-### Nested Schema for `networking.outbound`
-
-Optional:
-
-- `passthrough` (Boolean) Control the passthrough cluster
-
-
-
 <a id="nestedatt--routing"></a>
 ### Nested Schema for `routing`
 
@@ -1153,66 +892,8 @@ Optional:
 
 - `default_forbid_mesh_external_service_access` (Boolean) If true, blocks traffic to MeshExternalServices.
 Default: false
-- `locality_aware_load_balancing` (Boolean) Enable the Locality Aware Load Balancing
 - `zone_egress` (Boolean) Enable routing traffic to services in other zone or external services
 through ZoneEgress. Default: false
-
-
-<a id="nestedatt--tracing"></a>
-### Nested Schema for `tracing`
-
-Optional:
-
-- `backends` (Attributes List) List of available tracing backends (see [below for nested schema](#nestedatt--tracing--backends))
-- `default_backend` (String) Name of the default backend
-
-<a id="nestedatt--tracing--backends"></a>
-### Nested Schema for `tracing.backends`
-
-Optional:
-
-- `conf` (Attributes) (see [below for nested schema](#nestedatt--tracing--backends--conf))
-- `name` (String) Name of the backend, can be then used in Mesh.tracing.defaultBackend or in
-TrafficTrace
-- `sampling` (Number) Percentage of traces that will be sent to the backend (range 0.0 - 100.0).
-Empty value defaults to 100.0%
-- `type` (String) Type of the backend (Kuma ships with 'zipkin')
-
-<a id="nestedatt--tracing--backends--conf"></a>
-### Nested Schema for `tracing.backends.conf`
-
-Optional:
-
-- `datadog_tracing_backend_config` (Attributes) (see [below for nested schema](#nestedatt--tracing--backends--conf--datadog_tracing_backend_config))
-- `zipkin_tracing_backend_config` (Attributes) (see [below for nested schema](#nestedatt--tracing--backends--conf--zipkin_tracing_backend_config))
-
-<a id="nestedatt--tracing--backends--conf--datadog_tracing_backend_config"></a>
-### Nested Schema for `tracing.backends.conf.datadog_tracing_backend_config`
-
-Optional:
-
-- `address` (String) Address of datadog collector.
-- `port` (Number) Port of datadog collector
-- `split_service` (Boolean) Determines if datadog service name should be split based on traffic
-direction and destination. For example, with `splitService: true` and a
-`backend` service that communicates with a couple of databases, you would
-get service names like `backend_INBOUND`, `backend_OUTBOUND_db1`, and
-`backend_OUTBOUND_db2` in Datadog. Default: false
-
-
-<a id="nestedatt--tracing--backends--conf--zipkin_tracing_backend_config"></a>
-### Nested Schema for `tracing.backends.conf.zipkin_tracing_backend_config`
-
-Optional:
-
-- `api_version` (String) Version of the API. values: httpJson, httpJsonV1, httpProto. Default:
-httpJson see
-https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/trace/v3/trace.proto#envoy-v3-api-enum-config-trace-v3-zipkinconfig-collectorendpointversion
-- `shared_span_context` (Boolean) Determines whether client and server spans will share the same span
-context. Default: true.
-https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/trace/v3/zipkin.proto#config-trace-v3-zipkinconfig
-- `trace_id128bit` (Boolean) Generate 128bit traces. Default: false
-- `url` (String) Address of Zipkin collector.
 
 ## Import
 

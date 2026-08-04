@@ -70,29 +70,6 @@ resource "kong-mesh_mesh_load_balancing_strategy" "my_meshloadbalancingstrategy"
               choice_count = 4
             }
             maglev = {
-              hash_policies = [
-                {
-                  connection = {
-                    source_ip = false
-                  }
-                  cookie = {
-                    name = "...my_name..."
-                    path = "...my_path..."
-                    ttl  = "...my_ttl..."
-                  }
-                  filter_state = {
-                    key = "...my_key..."
-                  }
-                  header = {
-                    name = "...my_name..."
-                  }
-                  query_parameter = {
-                    name = "...my_name..."
-                  }
-                  terminal = false
-                  type     = "Connection"
-                }
-              ]
               table_size = 26413
             }
             random = {
@@ -100,29 +77,6 @@ resource "kong-mesh_mesh_load_balancing_strategy" "my_meshloadbalancingstrategy"
             }
             ring_hash = {
               hash_function = "XXHash"
-              hash_policies = [
-                {
-                  connection = {
-                    source_ip = false
-                  }
-                  cookie = {
-                    name = "...my_name..."
-                    path = "...my_path..."
-                    ttl  = "...my_ttl..."
-                  }
-                  filter_state = {
-                    key = "...my_key..."
-                  }
-                  header = {
-                    name = "...my_name..."
-                  }
-                  query_parameter = {
-                    name = "...my_name..."
-                  }
-                  terminal = false
-                  type     = "QueryParameter"
-                }
-              ]
               max_ring_size = 5614666
               min_ring_size = 623920
             }
@@ -225,15 +179,15 @@ defined inplace. (see [below for nested schema](#nestedatt--spec--target_ref))
 
 Required:
 
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
 
 Optional:
 
 - `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
 Name and Namespace can be used.
 - `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`,
-`MeshServiceSubset` and `MeshGatewayRoute`
+- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`
+and `MeshServiceSubset`
 - `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 will be targeted.
 - `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
@@ -382,81 +336,12 @@ Optional:
 
 Optional:
 
-- `hash_policies` (Attributes List) HashPolicies specify a list of request/connection properties that are used to calculate a hash.
-These hash policies are executed in the specified order. If a hash policy has the “terminal” attribute
-set to true, and there is already a hash generated, the hash is returned immediately,
-ignoring the rest of the hash policy list. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--maglev--hash_policies))
 - `table_size` (Number) The table size for Maglev hashing. Maglev aims for “minimal disruption”
 rather than an absolute guarantee. Minimal disruption means that when
 the set of upstream hosts change, a connection will likely be sent
 to the same upstream as it was before. Increasing the table size reduces
 the amount of disruption. The table size must be prime number limited to 5000011.
 If it is not specified, the default is 65537.
-
-<a id="nestedatt--spec--to--default--load_balancer--maglev--hash_policies"></a>
-### Nested Schema for `spec.to.default.load_balancer.maglev.hash_policies`
-
-Optional:
-
-- `connection` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--maglev--hash_policies--connection))
-- `cookie` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--maglev--hash_policies--cookie))
-- `filter_state` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--maglev--hash_policies--filter_state))
-- `header` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--maglev--hash_policies--header))
-- `query_parameter` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--maglev--hash_policies--query_parameter))
-- `terminal` (Boolean) Terminal is a flag that short-circuits the hash computing. This field provides
-a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback
-to rest of the policy list”, it saves time when the terminal policy works.
-If true, and there is already a hash computed, ignore rest of the list of hash polices.
-- `type` (String) possible known values include one of ["Header", "Cookie", "Connection", "SourceIP", "QueryParameter", "FilterState"]; Not Null
-
-<a id="nestedatt--spec--to--default--load_balancer--maglev--hash_policies--connection"></a>
-### Nested Schema for `spec.to.default.load_balancer.maglev.hash_policies.connection`
-
-Optional:
-
-- `source_ip` (Boolean) Hash on source IP address.
-
-
-<a id="nestedatt--spec--to--default--load_balancer--maglev--hash_policies--cookie"></a>
-### Nested Schema for `spec.to.default.load_balancer.maglev.hash_policies.cookie`
-
-Optional:
-
-- `name` (String) The name of the cookie that will be used to obtain the hash key. Not Null
-- `path` (String) The name of the path for the cookie.
-- `ttl` (String) If specified, a cookie with the TTL will be generated if the cookie is not present.
-
-
-<a id="nestedatt--spec--to--default--load_balancer--maglev--hash_policies--filter_state"></a>
-### Nested Schema for `spec.to.default.load_balancer.maglev.hash_policies.filter_state`
-
-Optional:
-
-- `key` (String) The name of the Object in the per-request filterState, which is
-an Envoy::Hashable object. If there is no data associated with the key,
-or the stored object is not Envoy::Hashable, no hash will be produced.
-Not Null
-
-
-<a id="nestedatt--spec--to--default--load_balancer--maglev--hash_policies--header"></a>
-### Nested Schema for `spec.to.default.load_balancer.maglev.hash_policies.header`
-
-Optional:
-
-- `name` (String) The name of the request header that will be used to obtain the hash key. Not Null
-
-
-<a id="nestedatt--spec--to--default--load_balancer--maglev--hash_policies--query_parameter"></a>
-### Nested Schema for `spec.to.default.load_balancer.maglev.hash_policies.query_parameter`
-
-Optional:
-
-- `name` (String) The name of the URL query parameter that will be used to obtain the hash key.
-If the parameter is not present, no hash will be produced. Query parameter names
-are case-sensitive.
-Not Null
-
-
 
 
 <a id="nestedatt--spec--to--default--load_balancer--random"></a>
@@ -471,80 +356,11 @@ Optional:
 - `hash_function` (String) HashFunction is a function used to hash hosts onto the ketama ring.
 The value defaults to XX_HASH. Available values – XX_HASH, MURMUR_HASH_2.
 possible known values include one of ["XXHash", "MurmurHash2"]
-- `hash_policies` (Attributes List) HashPolicies specify a list of request/connection properties that are used to calculate a hash.
-These hash policies are executed in the specified order. If a hash policy has the “terminal” attribute
-set to true, and there is already a hash generated, the hash is returned immediately,
-ignoring the rest of the hash policy list. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--ring_hash--hash_policies))
 - `max_ring_size` (Number) Maximum hash ring size. Defaults to 8M entries, and limited to 8M entries,
 but can be lowered to further constrain resource use.
 - `min_ring_size` (Number) Minimum hash ring size. The larger the ring is (that is,
 the more hashes there are for each provided host) the better the request distribution
 will reflect the desired weights. Defaults to 1024 entries, and limited to 8M entries.
-
-<a id="nestedatt--spec--to--default--load_balancer--ring_hash--hash_policies"></a>
-### Nested Schema for `spec.to.default.load_balancer.ring_hash.hash_policies`
-
-Optional:
-
-- `connection` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--ring_hash--hash_policies--connection))
-- `cookie` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--ring_hash--hash_policies--cookie))
-- `filter_state` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--ring_hash--hash_policies--filter_state))
-- `header` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--ring_hash--hash_policies--header))
-- `query_parameter` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--ring_hash--hash_policies--query_parameter))
-- `terminal` (Boolean) Terminal is a flag that short-circuits the hash computing. This field provides
-a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback
-to rest of the policy list”, it saves time when the terminal policy works.
-If true, and there is already a hash computed, ignore rest of the list of hash polices.
-- `type` (String) possible known values include one of ["Header", "Cookie", "Connection", "SourceIP", "QueryParameter", "FilterState"]; Not Null
-
-<a id="nestedatt--spec--to--default--load_balancer--ring_hash--hash_policies--connection"></a>
-### Nested Schema for `spec.to.default.load_balancer.ring_hash.hash_policies.connection`
-
-Optional:
-
-- `source_ip` (Boolean) Hash on source IP address.
-
-
-<a id="nestedatt--spec--to--default--load_balancer--ring_hash--hash_policies--cookie"></a>
-### Nested Schema for `spec.to.default.load_balancer.ring_hash.hash_policies.cookie`
-
-Optional:
-
-- `name` (String) The name of the cookie that will be used to obtain the hash key. Not Null
-- `path` (String) The name of the path for the cookie.
-- `ttl` (String) If specified, a cookie with the TTL will be generated if the cookie is not present.
-
-
-<a id="nestedatt--spec--to--default--load_balancer--ring_hash--hash_policies--filter_state"></a>
-### Nested Schema for `spec.to.default.load_balancer.ring_hash.hash_policies.filter_state`
-
-Optional:
-
-- `key` (String) The name of the Object in the per-request filterState, which is
-an Envoy::Hashable object. If there is no data associated with the key,
-or the stored object is not Envoy::Hashable, no hash will be produced.
-Not Null
-
-
-<a id="nestedatt--spec--to--default--load_balancer--ring_hash--hash_policies--header"></a>
-### Nested Schema for `spec.to.default.load_balancer.ring_hash.hash_policies.header`
-
-Optional:
-
-- `name` (String) The name of the request header that will be used to obtain the hash key. Not Null
-
-
-<a id="nestedatt--spec--to--default--load_balancer--ring_hash--hash_policies--query_parameter"></a>
-### Nested Schema for `spec.to.default.load_balancer.ring_hash.hash_policies.query_parameter`
-
-Optional:
-
-- `name` (String) The name of the URL query parameter that will be used to obtain the hash key.
-If the parameter is not present, no hash will be produced. Query parameter names
-are case-sensitive.
-Not Null
-
-
 
 
 <a id="nestedatt--spec--to--default--load_balancer--round_robin"></a>
@@ -648,12 +464,12 @@ Default: If you do not specify weight we will adjust them so that 90% traffic go
 
 Optional:
 
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
 - `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
 Name and Namespace can be used.
 - `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`,
-`MeshServiceSubset` and `MeshGatewayRoute`
+- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`
+and `MeshServiceSubset`
 - `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 will be targeted.
 - `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,

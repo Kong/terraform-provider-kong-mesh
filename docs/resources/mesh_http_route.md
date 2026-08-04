@@ -173,7 +173,7 @@ resource "kong-mesh_mesh_http_route" "my_meshhttproute" {
           }
         ]
         target_ref = {
-          kind = "MeshServiceSubset"
+          kind = "MeshHTTPRoute"
           labels = {
             key = "value"
           }
@@ -232,15 +232,15 @@ defined inplace. (see [below for nested schema](#nestedatt--spec--target_ref))
 
 Required:
 
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
 
 Optional:
 
 - `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
 Name and Namespace can be used.
 - `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`,
-`MeshServiceSubset` and `MeshGatewayRoute`
+- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`
+and `MeshServiceSubset`
 - `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 will be targeted.
 - `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
@@ -256,10 +256,7 @@ For example, you can target port from MeshService.ports[] by its name. Only traf
 
 Optional:
 
-- `hostnames` (List of String) Hostnames is only valid when targeting MeshGateway and limits the
-effects of the rules to requests to this hostname.
-Given hostnames must intersect with the hostname of the listeners the
-route attaches to.
+- `hostnames` (List of String) Hostnames is not currently supported and must not be set.
 - `rules` (Attributes List) Rules contains the routing rules applies to a combination of top-level
 targetRef and the targetRef in this entry.
 Not Null (see [below for nested schema](#nestedatt--spec--to--rules))
@@ -292,12 +289,12 @@ Optional:
 
 Optional:
 
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
 - `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
 Name and Namespace can be used.
 - `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`,
-`MeshServiceSubset` and `MeshGatewayRoute`
+- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`
+and `MeshServiceSubset`
 - `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 will be targeted.
 - `port` (Number) Port is only supported when this ref refers to a real MeshService object
@@ -368,12 +365,12 @@ to the target cluster will be mirrored. (see [below for nested schema](#nestedat
 
 Optional:
 
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
 - `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
 Name and Namespace can be used.
 - `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`,
-`MeshServiceSubset` and `MeshGatewayRoute`
+- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`
+and `MeshServiceSubset`
 - `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 will be targeted.
 - `port` (Number) Port is only supported when this ref refers to a real MeshService object
@@ -461,8 +458,7 @@ Optional:
 
 Optional:
 
-- `host_to_backend_hostname` (Boolean) HostToBackendHostname rewrites the hostname to the hostname of the
-upstream host. This option is only available when targeting MeshGateways.
+- `host_to_backend_hostname` (Boolean) HostToBackendHostname is not currently supported and must not be set.
 - `hostname` (String) Hostname is the value to be used to replace the host header value during forwarding.
 - `path` (Attributes) Path defines a path rewrite. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--url_rewrite--path))
 
@@ -530,12 +526,12 @@ Optional:
 
 Optional:
 
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
 - `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
 Name and Namespace can be used.
 - `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`,
-`MeshServiceSubset` and `MeshGatewayRoute`
+- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`
+and `MeshServiceSubset`
 - `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 will be targeted.
 - `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,

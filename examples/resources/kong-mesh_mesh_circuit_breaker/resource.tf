@@ -5,68 +5,6 @@ resource "kong-mesh_mesh_circuit_breaker" "my_meshcircuitbreaker" {
   mesh = "...my_mesh..."
   name = "...my_name..."
   spec = {
-    from = [
-      {
-        default = {
-          connection_limits = {
-            max_connection_pools = 9
-            max_connections      = 1
-            max_pending_requests = 3
-            max_requests         = 7
-            max_retries          = 3
-          }
-          outlier_detection = {
-            base_ejection_time = "...my_base_ejection_time..."
-            detectors = {
-              failure_percentage = {
-                minimum_hosts  = 7
-                request_volume = 5
-                threshold      = 1
-              }
-              gateway_failures = {
-                consecutive = 2
-              }
-              local_origin_failures = {
-                consecutive = 0
-              }
-              success_rate = {
-                minimum_hosts  = 9
-                request_volume = 6
-                standard_deviation_factor = {
-                  integer = 8
-                }
-              }
-              total_failures = {
-                consecutive = 7
-              }
-            }
-            disabled = false
-            healthy_panic_threshold = {
-              integer = 9
-            }
-            interval                        = "...my_interval..."
-            max_ejection_percent            = 9
-            split_external_and_local_errors = true
-          }
-        }
-        target_ref = {
-          kind = "MeshHTTPRoute"
-          labels = {
-            key = "value"
-          }
-          mesh      = "...my_mesh..."
-          name      = "...my_name..."
-          namespace = "...my_namespace..."
-          proxy_types = [
-            "Sidecar"
-          ]
-          section_name = "...my_section_name..."
-          tags = {
-            key = "value"
-          }
-        }
-      }
-    ]
     rules = [
       {
         default = {
@@ -118,12 +56,9 @@ resource "kong-mesh_mesh_circuit_breaker" "my_meshcircuitbreaker" {
       labels = {
         key = "value"
       }
-      mesh      = "...my_mesh..."
-      name      = "...my_name..."
-      namespace = "...my_namespace..."
-      proxy_types = [
-        "Gateway"
-      ]
+      mesh         = "...my_mesh..."
+      name         = "...my_name..."
+      namespace    = "...my_namespace..."
       section_name = "...my_section_name..."
       tags = {
         key = "value"
@@ -174,16 +109,13 @@ resource "kong-mesh_mesh_circuit_breaker" "my_meshcircuitbreaker" {
           }
         }
         target_ref = {
-          kind = "MeshGateway"
+          kind = "MeshService"
           labels = {
             key = "value"
           }
-          mesh      = "...my_mesh..."
-          name      = "...my_name..."
-          namespace = "...my_namespace..."
-          proxy_types = [
-            "Sidecar"
-          ]
+          mesh         = "...my_mesh..."
+          name         = "...my_name..."
+          namespace    = "...my_namespace..."
           section_name = "...my_section_name..."
           tags = {
             key = "value"

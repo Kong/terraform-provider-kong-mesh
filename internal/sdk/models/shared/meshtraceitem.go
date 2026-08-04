@@ -72,17 +72,66 @@ func (d *Datadog) GetURL() string {
 	return d.URL
 }
 
-// MeshTraceItemOpenTelemetry - OpenTelemetry backend configuration.
-type MeshTraceItemOpenTelemetry struct {
-	// Address of OpenTelemetry collector.
-	Endpoint string `json:"endpoint"`
+// MeshTraceItemSpecKind - Kind of the backend resource.
+type MeshTraceItemSpecKind string
+
+const (
+	MeshTraceItemSpecKindMeshOpenTelemetryBackend MeshTraceItemSpecKind = "MeshOpenTelemetryBackend"
+)
+
+func (e MeshTraceItemSpecKind) ToPointer() *MeshTraceItemSpecKind {
+	return &e
+}
+func (e *MeshTraceItemSpecKind) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "MeshOpenTelemetryBackend":
+		*e = MeshTraceItemSpecKind(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshTraceItemSpecKind: %v", v)
+	}
 }
 
-func (m *MeshTraceItemOpenTelemetry) GetEndpoint() string {
+// MeshTraceItemBackendRef - BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+// defines the collector endpoint.
+type MeshTraceItemBackendRef struct {
+	// Kind of the backend resource.
+	Kind MeshTraceItemSpecKind `json:"kind"`
+	// Labels to match the referenced resource. When multiple resources match,
+	// the oldest by creation time wins.
+	Labels map[string]string `json:"labels,omitempty"`
+}
+
+func (m *MeshTraceItemBackendRef) GetKind() MeshTraceItemSpecKind {
 	if m == nil {
-		return ""
+		return MeshTraceItemSpecKind("")
 	}
-	return m.Endpoint
+	return m.Kind
+}
+
+func (m *MeshTraceItemBackendRef) GetLabels() map[string]string {
+	if m == nil {
+		return nil
+	}
+	return m.Labels
+}
+
+// MeshTraceItemOpenTelemetry - OpenTelemetry backend configuration.
+type MeshTraceItemOpenTelemetry struct {
+	// BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+	// defines the collector endpoint.
+	BackendRef *MeshTraceItemBackendRef `json:"backendRef,omitempty"`
+}
+
+func (m *MeshTraceItemOpenTelemetry) GetBackendRef() *MeshTraceItemBackendRef {
+	if m == nil {
+		return nil
+	}
+	return m.BackendRef
 }
 
 type MeshTraceItemSpecType string
@@ -664,7 +713,6 @@ type MeshTraceItemKind string
 const (
 	MeshTraceItemKindMesh                 MeshTraceItemKind = "Mesh"
 	MeshTraceItemKindMeshSubset           MeshTraceItemKind = "MeshSubset"
-	MeshTraceItemKindMeshGateway          MeshTraceItemKind = "MeshGateway"
 	MeshTraceItemKindMeshService          MeshTraceItemKind = "MeshService"
 	MeshTraceItemKindMeshExternalService  MeshTraceItemKind = "MeshExternalService"
 	MeshTraceItemKindMeshMultiZoneService MeshTraceItemKind = "MeshMultiZoneService"
@@ -681,29 +729,7 @@ func (e MeshTraceItemKind) ToPointer() *MeshTraceItemKind {
 func (e *MeshTraceItemKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshTraceItemProxyTypes string
-
-const (
-	MeshTraceItemProxyTypesSidecar MeshTraceItemProxyTypes = "Sidecar"
-	MeshTraceItemProxyTypesGateway MeshTraceItemProxyTypes = "Gateway"
-)
-
-func (e MeshTraceItemProxyTypes) ToPointer() *MeshTraceItemProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshTraceItemProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
+		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
 			return true
 		}
 	}
@@ -721,15 +747,12 @@ type MeshTraceItemTargetRef struct {
 	Labels map[string]string `json:"labels,omitempty"`
 	// Mesh is reserved for future use to identify cross mesh resources.
 	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
+	// Name of the referenced resource. Can only be used with kinds: `MeshService`
+	// and `MeshServiceSubset`
 	Name *string `json:"name,omitempty"`
 	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 	// will be targeted.
 	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshTraceItemProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
@@ -773,13 +796,6 @@ func (m *MeshTraceItemTargetRef) GetNamespace() *string {
 	return m.Namespace
 }
 
-func (m *MeshTraceItemTargetRef) GetProxyTypes() []MeshTraceItemProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
 func (m *MeshTraceItemTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
@@ -818,6 +834,86 @@ func (m *MeshTraceItemSpec) GetTargetRef() *MeshTraceItemTargetRef {
 	return m.TargetRef
 }
 
+// MeshTraceItemStatusStatus - status of the condition, one of True, False, Unknown.
+type MeshTraceItemStatusStatus string
+
+const (
+	MeshTraceItemStatusStatusTrue    MeshTraceItemStatusStatus = "True"
+	MeshTraceItemStatusStatusFalse   MeshTraceItemStatusStatus = "False"
+	MeshTraceItemStatusStatusUnknown MeshTraceItemStatusStatus = "Unknown"
+)
+
+func (e MeshTraceItemStatusStatus) ToPointer() *MeshTraceItemStatusStatus {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTraceItemStatusStatus) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "True", "False", "Unknown":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshTraceItemConditions struct {
+	// message is a human readable message indicating details about the transition.
+	// This may be an empty string.
+	Message string `json:"message"`
+	// reason contains a programmatic identifier indicating the reason for the condition's last transition.
+	// Producers of specific condition types may define expected values and meanings for this field,
+	// and whether the values are considered a guaranteed API.
+	// The value should be a CamelCase string.
+	// This field may not be empty.
+	Reason string `json:"reason"`
+	// status of the condition, one of True, False, Unknown.
+	Status MeshTraceItemStatusStatus `json:"status"`
+	// type of condition in CamelCase or in foo.example.com/CamelCase.
+	Type string `json:"type"`
+}
+
+func (m *MeshTraceItemConditions) GetMessage() string {
+	if m == nil {
+		return ""
+	}
+	return m.Message
+}
+
+func (m *MeshTraceItemConditions) GetReason() string {
+	if m == nil {
+		return ""
+	}
+	return m.Reason
+}
+
+func (m *MeshTraceItemConditions) GetStatus() MeshTraceItemStatusStatus {
+	if m == nil {
+		return MeshTraceItemStatusStatus("")
+	}
+	return m.Status
+}
+
+func (m *MeshTraceItemConditions) GetType() string {
+	if m == nil {
+		return ""
+	}
+	return m.Type
+}
+
+// MeshTraceItemStatus - Status is the current status of the Kuma MeshTrace resource.
+type MeshTraceItemStatus struct {
+	Conditions []MeshTraceItemConditions `json:"conditions,omitempty"`
+}
+
+func (m *MeshTraceItemStatus) GetConditions() []MeshTraceItemConditions {
+	if m == nil {
+		return nil
+	}
+	return m.Conditions
+}
+
 // MeshTraceItem - MeshTrace enables distributed tracing to track requests as they flow through multiple services in the mesh. It supports exporting trace data to backends like Zipkin, Datadog, and OpenTelemetry, with configurable sampling rates and custom tags for detailed observability and debugging of service interactions.
 type MeshTraceItem struct {
 	// the type of the resource
@@ -836,6 +932,8 @@ type MeshTraceItem struct {
 	CreationTime *time.Time `json:"creationTime,omitempty"`
 	// Time at which the resource was updated
 	ModificationTime *time.Time `json:"modificationTime,omitempty"`
+	// Status is the current status of the Kuma MeshTrace resource.
+	Status *MeshTraceItemStatus `json:"status,omitempty"`
 }
 
 func (m MeshTraceItem) MarshalJSON() ([]byte, error) {
@@ -903,6 +1001,13 @@ func (m *MeshTraceItem) GetModificationTime() *time.Time {
 		return nil
 	}
 	return m.ModificationTime
+}
+
+func (m *MeshTraceItem) GetStatus() *MeshTraceItemStatus {
+	if m == nil {
+		return nil
+	}
+	return m.Status
 }
 
 // MeshTraceItemInput - MeshTrace enables distributed tracing to track requests as they flow through multiple services in the mesh. It supports exporting trace data to backends like Zipkin, Datadog, and OpenTelemetry, with configurable sampling rates and custom tags for detailed observability and debugging of service interactions.

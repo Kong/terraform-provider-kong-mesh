@@ -21,6 +21,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	custom_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
 	speakeasy_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
+	speakeasy_objectplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/objectplanmodifier"
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
@@ -52,6 +53,7 @@ type MeshMetricResourceModel struct {
 	ModificationTime types.String                  `tfsdk:"modification_time"`
 	Name             types.String                  `tfsdk:"name"`
 	Spec             *tfTypes.MeshMetricItemSpec   `tfsdk:"spec"`
+	Status           *tfTypes.Status               `tfsdk:"status"`
 	Type             types.String                  `tfsdk:"type"`
 	Warnings         []types.String                `tfsdk:"warnings"`
 }
@@ -144,7 +146,8 @@ func (r *MeshMetricResource) Schema(ctx context.Context, req resource.SchemaRequ
 										},
 									},
 								},
-								Description: `Applications is a list of application that Dataplane Proxy will scrape`,
+								MarkdownDescription: `Applications is a list of applications that Dataplane Proxy will scrape.` + "\n" +
+									`Ignored on zone-proxy-only Dataplanes (zone ingress/egress exist without a co-located workload).`,
 							},
 							"backends": schema.ListNestedAttribute{
 								Computed: true,
@@ -160,12 +163,28 @@ func (r *MeshMetricResource) Schema(ctx context.Context, req resource.SchemaRequ
 										"open_telemetry": schema.SingleNestedAttribute{
 											Optional: true,
 											Attributes: map[string]schema.Attribute{
-												"endpoint": schema.StringAttribute{
-													Optional:    true,
-													Description: `Endpoint for OpenTelemetry collector. Not Null`,
-													Validators: []validator.String{
-														speakeasy_stringvalidators.NotNull(),
+												"backend_ref": schema.SingleNestedAttribute{
+													Optional: true,
+													Attributes: map[string]schema.Attribute{
+														"kind": schema.StringAttribute{
+															Optional:    true,
+															Description: `Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"`,
+															Validators: []validator.String{
+																speakeasy_stringvalidators.NotNull(),
+																stringvalidator.OneOf(
+																	"MeshOpenTelemetryBackend",
+																),
+															},
+														},
+														"labels": schema.MapAttribute{
+															Optional:    true,
+															ElementType: types.StringType,
+															MarkdownDescription: `Labels to match the referenced resource. When multiple resources match,` + "\n" +
+																`the oldest by creation time wins.`,
+														},
 													},
+													MarkdownDescription: `BackendRef is a reference to a MeshOpenTelemetryBackend resource that` + "\n" +
+														`defines the collector endpoint.`,
 												},
 												"refresh_interval": schema.StringAttribute{
 													Optional:    true,
@@ -328,7 +347,7 @@ func (r *MeshMetricResource) Schema(ctx context.Context, req resource.SchemaRequ
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
 								Required:    true,
-								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
+								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
 							},
 							"labels": schema.MapAttribute{
 								Optional:    true,
@@ -342,23 +361,13 @@ func (r *MeshMetricResource) Schema(ctx context.Context, req resource.SchemaRequ
 							},
 							"name": schema.StringAttribute{
 								Optional: true,
-								MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `,` + "\n" +
-									`` + "`" + `MeshServiceSubset` + "`" + ` and ` + "`" + `MeshGatewayRoute` + "`" + ``,
+								MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `` + "\n" +
+									`and ` + "`" + `MeshServiceSubset` + "`" + ``,
 							},
 							"namespace": schema.StringAttribute{
 								Optional: true,
 								MarkdownDescription: `Namespace specifies the namespace of target resource. If empty only resources in policy namespace` + "\n" +
 									`will be targeted.`,
-							},
-							"proxy_types": schema.ListAttribute{
-								Computed: true,
-								Optional: true,
-								PlanModifiers: []planmodifier.List{
-									custom_listplanmodifier.SupressZeroNullModifier(),
-								},
-								ElementType: types.StringType,
-								MarkdownDescription: `ProxyTypes specifies the data plane types that are subject to the policy. When not specified,` + "\n" +
-									`all data plane types are targeted by the policy.`,
 							},
 							"section_name": schema.StringAttribute{
 								Optional: true,
@@ -378,6 +387,53 @@ func (r *MeshMetricResource) Schema(ctx context.Context, req resource.SchemaRequ
 					},
 				},
 				Description: `Spec is the specification of the Kuma MeshMetric resource.`,
+			},
+			"status": schema.SingleNestedAttribute{
+				Computed: true,
+				PlanModifiers: []planmodifier.Object{
+					speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+				},
+				Attributes: map[string]schema.Attribute{
+					"conditions": schema.ListNestedAttribute{
+						Computed: true,
+						PlanModifiers: []planmodifier.List{
+							custom_listplanmodifier.SupressZeroNullModifier(),
+							speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
+						},
+						NestedObject: schema.NestedAttributeObject{
+							PlanModifiers: []planmodifier.Object{
+								speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+							},
+							Attributes: map[string]schema.Attribute{
+								"message": schema.StringAttribute{
+									Computed: true,
+									MarkdownDescription: `message is a human readable message indicating details about the transition.` + "\n" +
+										`This may be an empty string.`,
+								},
+								"reason": schema.StringAttribute{
+									Computed: true,
+									MarkdownDescription: `reason contains a programmatic identifier indicating the reason for the condition's last transition.` + "\n" +
+										`Producers of specific condition types may define expected values and meanings for this field,` + "\n" +
+										`and whether the values are considered a guaranteed API.` + "\n" +
+										`The value should be a CamelCase string.` + "\n" +
+										`This field may not be empty.`,
+								},
+								"status": schema.StringAttribute{
+									Computed: true,
+									PlanModifiers: []planmodifier.String{
+										speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+									},
+									Description: `status of the condition, one of True, False, Unknown.`,
+								},
+								"type": schema.StringAttribute{
+									Computed:    true,
+									Description: `type of condition in CamelCase or in foo.example.com/CamelCase.`,
+								},
+							},
+						},
+					},
+				},
+				Description: `Status is the current status of the Kuma MeshMetric resource.`,
 			},
 			"type": schema.StringAttribute{
 				Required:    true,

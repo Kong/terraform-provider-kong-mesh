@@ -42,6 +42,16 @@ func (r *MeshExternalServiceResourceModel) RefreshFromSharedMeshExternalServiceI
 		r.Mesh = types.StringPointerValue(resp.Mesh)
 		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
+		r.Snis = []tfTypes.Snis{}
+
+		for _, snisItem := range resp.Snis {
+			var snis tfTypes.Snis
+
+			snis.Port = types.Int32Value(int32(snisItem.Port))
+			snis.Sni = types.StringValue(snisItem.Sni)
+
+			r.Snis = append(r.Snis, snis)
+		}
 		r.Spec = &tfTypes.MeshExternalServiceItemSpec{}
 		r.Spec.Endpoints = []tfTypes.Endpoints{}
 
@@ -50,6 +60,7 @@ func (r *MeshExternalServiceResourceModel) RefreshFromSharedMeshExternalServiceI
 
 			endpoints.Address = types.StringValue(endpointsItem.Address)
 			endpoints.Port = types.Int32Value(int32(endpointsItem.Port))
+			endpoints.Priority = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(endpointsItem.Priority))
 
 			r.Spec.Endpoints = append(r.Spec.Endpoints, endpoints)
 		}
@@ -151,7 +162,7 @@ func (r *MeshExternalServiceResourceModel) RefreshFromSharedMeshExternalServiceI
 		if resp.Status == nil {
 			r.Status = nil
 		} else {
-			r.Status = &tfTypes.Status{}
+			r.Status = &tfTypes.MeshExternalServiceItemStatus{}
 			r.Status.Addresses = []tfTypes.Addresses{}
 
 			for _, addressesItem := range resp.Status.Addresses {
@@ -173,10 +184,10 @@ func (r *MeshExternalServiceResourceModel) RefreshFromSharedMeshExternalServiceI
 			for _, hostnameGeneratorsItem := range resp.Status.HostnameGenerators {
 				var hostnameGenerators tfTypes.HostnameGenerators
 
-				hostnameGenerators.Conditions = []tfTypes.MeshExternalServiceItemConditions{}
+				hostnameGenerators.Conditions = []tfTypes.Conditions{}
 
 				for _, conditionsItem := range hostnameGeneratorsItem.Conditions {
-					var conditions tfTypes.MeshExternalServiceItemConditions
+					var conditions tfTypes.Conditions
 
 					conditions.Message = types.StringValue(conditionsItem.Message)
 					conditions.Reason = types.StringValue(conditionsItem.Reason)
@@ -287,9 +298,16 @@ func (r *MeshExternalServiceResourceModel) ToSharedMeshExternalServiceItemInput(
 		var port int
 		port = int(r.Spec.Endpoints[endpointsIndex].Port.ValueInt32())
 
+		priority := new(int)
+		if !r.Spec.Endpoints[endpointsIndex].Priority.IsUnknown() && !r.Spec.Endpoints[endpointsIndex].Priority.IsNull() {
+			*priority = int(r.Spec.Endpoints[endpointsIndex].Priority.ValueInt32())
+		} else {
+			priority = nil
+		}
 		endpoints = append(endpoints, shared.Endpoints{
-			Address: address,
-			Port:    port,
+			Address:  address,
+			Port:     port,
+			Priority: priority,
 		})
 	}
 	var extension *shared.MeshExternalServiceItemExtension

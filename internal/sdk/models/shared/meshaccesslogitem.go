@@ -52,19 +52,19 @@ func (j *JSON) GetValue() string {
 	return j.Value
 }
 
-type MeshAccessLogItemSpecFromType string
+type MeshAccessLogItemSpecRulesDefaultBackendsType string
 
 const (
-	MeshAccessLogItemSpecFromTypePlain MeshAccessLogItemSpecFromType = "Plain"
-	MeshAccessLogItemSpecFromTypeJSON  MeshAccessLogItemSpecFromType = "Json"
+	MeshAccessLogItemSpecRulesDefaultBackendsTypePlain MeshAccessLogItemSpecRulesDefaultBackendsType = "Plain"
+	MeshAccessLogItemSpecRulesDefaultBackendsTypeJSON  MeshAccessLogItemSpecRulesDefaultBackendsType = "Json"
 )
 
-func (e MeshAccessLogItemSpecFromType) ToPointer() *MeshAccessLogItemSpecFromType {
+func (e MeshAccessLogItemSpecRulesDefaultBackendsType) ToPointer() *MeshAccessLogItemSpecRulesDefaultBackendsType {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshAccessLogItemSpecFromType) IsExact() bool {
+func (e *MeshAccessLogItemSpecRulesDefaultBackendsType) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "Plain", "Json":
@@ -77,10 +77,10 @@ func (e *MeshAccessLogItemSpecFromType) IsExact() bool {
 // Format of access logs. Placeholders available on
 // https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
 type Format struct {
-	JSON            []JSON                        `json:"json,omitempty"`
-	OmitEmptyValues *bool                         `default:"false" json:"omitEmptyValues"`
-	Plain           *string                       `json:"plain,omitempty"`
-	Type            MeshAccessLogItemSpecFromType `json:"type"`
+	JSON            []JSON                                        `json:"json,omitempty"`
+	OmitEmptyValues *bool                                         `default:"false" json:"omitEmptyValues"`
+	Plain           *string                                       `json:"plain,omitempty"`
+	Type            MeshAccessLogItemSpecRulesDefaultBackendsType `json:"type"`
 }
 
 func (f Format) MarshalJSON() ([]byte, error) {
@@ -115,9 +115,9 @@ func (f *Format) GetPlain() *string {
 	return f.Plain
 }
 
-func (f *Format) GetType() MeshAccessLogItemSpecFromType {
+func (f *Format) GetType() MeshAccessLogItemSpecRulesDefaultBackendsType {
 	if f == nil {
-		return MeshAccessLogItemSpecFromType("")
+		return MeshAccessLogItemSpecRulesDefaultBackendsType("")
 	}
 	return f.Type
 }
@@ -146,7 +146,9 @@ func (f *File) GetPath() string {
 }
 
 type Attributes struct {
-	Key   string `json:"key"`
+	// Key is the OpenTelemetry attribute name.
+	Key string `json:"key"`
+	// Value can contain Kuma placeholders.
 	Value string `json:"value"`
 }
 
@@ -164,39 +166,89 @@ func (a *Attributes) GetValue() string {
 	return a.Value
 }
 
-// MeshAccessLogItemSpecFromOpenTelemetry - Defines an OpenTelemetry logging backend.
-type MeshAccessLogItemSpecFromOpenTelemetry struct {
-	// Attributes can contain placeholders available on
+// MeshAccessLogItemSpecRulesKind - Kind of the backend resource.
+type MeshAccessLogItemSpecRulesKind string
+
+const (
+	MeshAccessLogItemSpecRulesKindMeshOpenTelemetryBackend MeshAccessLogItemSpecRulesKind = "MeshOpenTelemetryBackend"
+)
+
+func (e MeshAccessLogItemSpecRulesKind) ToPointer() *MeshAccessLogItemSpecRulesKind {
+	return &e
+}
+func (e *MeshAccessLogItemSpecRulesKind) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "MeshOpenTelemetryBackend":
+		*e = MeshAccessLogItemSpecRulesKind(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshAccessLogItemSpecRulesKind: %v", v)
+	}
+}
+
+// MeshAccessLogItemSpecBackendRef - BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+// defines the collector endpoint.
+type MeshAccessLogItemSpecBackendRef struct {
+	// Kind of the backend resource.
+	Kind MeshAccessLogItemSpecRulesKind `json:"kind"`
+	// Labels to match the referenced resource. When multiple resources match,
+	// the oldest by creation time wins.
+	Labels map[string]string `json:"labels,omitempty"`
+}
+
+func (m *MeshAccessLogItemSpecBackendRef) GetKind() MeshAccessLogItemSpecRulesKind {
+	if m == nil {
+		return MeshAccessLogItemSpecRulesKind("")
+	}
+	return m.Kind
+}
+
+func (m *MeshAccessLogItemSpecBackendRef) GetLabels() map[string]string {
+	if m == nil {
+		return nil
+	}
+	return m.Labels
+}
+
+// MeshAccessLogItemSpecOpenTelemetry - Defines an OpenTelemetry logging backend.
+type MeshAccessLogItemSpecOpenTelemetry struct {
+	// Attributes defines custom OpenTelemetry attributes. Keys must be static
+	// OpenTelemetry attribute names. Values can contain placeholders available on
 	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
 	Attributes []Attributes `json:"attributes,omitempty"`
+	// BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+	// defines the collector endpoint.
+	BackendRef *MeshAccessLogItemSpecBackendRef `json:"backendRef,omitempty"`
 	// Body is a raw string or an OTLP any value as described at
 	// https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body
 	// It can contain placeholders available on
 	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
 	Body any `json:"body,omitempty"`
-	// Endpoint of OpenTelemetry collector. An empty port defaults to 4317.
-	Endpoint string `json:"endpoint"`
 }
 
-func (m *MeshAccessLogItemSpecFromOpenTelemetry) GetAttributes() []Attributes {
+func (m *MeshAccessLogItemSpecOpenTelemetry) GetAttributes() []Attributes {
 	if m == nil {
 		return nil
 	}
 	return m.Attributes
 }
 
-func (m *MeshAccessLogItemSpecFromOpenTelemetry) GetBody() any {
+func (m *MeshAccessLogItemSpecOpenTelemetry) GetBackendRef() *MeshAccessLogItemSpecBackendRef {
+	if m == nil {
+		return nil
+	}
+	return m.BackendRef
+}
+
+func (m *MeshAccessLogItemSpecOpenTelemetry) GetBody() any {
 	if m == nil {
 		return nil
 	}
 	return m.Body
-}
-
-func (m *MeshAccessLogItemSpecFromOpenTelemetry) GetEndpoint() string {
-	if m == nil {
-		return ""
-	}
-	return m.Endpoint
 }
 
 type MeshAccessLogItemJSON struct {
@@ -218,19 +270,19 @@ func (m *MeshAccessLogItemJSON) GetValue() string {
 	return m.Value
 }
 
-type MeshAccessLogItemSpecFromDefaultType string
+type MeshAccessLogItemSpecRulesDefaultType string
 
 const (
-	MeshAccessLogItemSpecFromDefaultTypePlain MeshAccessLogItemSpecFromDefaultType = "Plain"
-	MeshAccessLogItemSpecFromDefaultTypeJSON  MeshAccessLogItemSpecFromDefaultType = "Json"
+	MeshAccessLogItemSpecRulesDefaultTypePlain MeshAccessLogItemSpecRulesDefaultType = "Plain"
+	MeshAccessLogItemSpecRulesDefaultTypeJSON  MeshAccessLogItemSpecRulesDefaultType = "Json"
 )
 
-func (e MeshAccessLogItemSpecFromDefaultType) ToPointer() *MeshAccessLogItemSpecFromDefaultType {
+func (e MeshAccessLogItemSpecRulesDefaultType) ToPointer() *MeshAccessLogItemSpecRulesDefaultType {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshAccessLogItemSpecFromDefaultType) IsExact() bool {
+func (e *MeshAccessLogItemSpecRulesDefaultType) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "Plain", "Json":
@@ -243,10 +295,10 @@ func (e *MeshAccessLogItemSpecFromDefaultType) IsExact() bool {
 // MeshAccessLogItemFormat - Format of access logs. Placeholders available on
 // https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
 type MeshAccessLogItemFormat struct {
-	JSON            []MeshAccessLogItemJSON              `json:"json,omitempty"`
-	OmitEmptyValues *bool                                `default:"false" json:"omitEmptyValues"`
-	Plain           *string                              `json:"plain,omitempty"`
-	Type            MeshAccessLogItemSpecFromDefaultType `json:"type"`
+	JSON            []MeshAccessLogItemJSON               `json:"json,omitempty"`
+	OmitEmptyValues *bool                                 `default:"false" json:"omitEmptyValues"`
+	Plain           *string                               `json:"plain,omitempty"`
+	Type            MeshAccessLogItemSpecRulesDefaultType `json:"type"`
 }
 
 func (m MeshAccessLogItemFormat) MarshalJSON() ([]byte, error) {
@@ -281,15 +333,15 @@ func (m *MeshAccessLogItemFormat) GetPlain() *string {
 	return m.Plain
 }
 
-func (m *MeshAccessLogItemFormat) GetType() MeshAccessLogItemSpecFromDefaultType {
+func (m *MeshAccessLogItemFormat) GetType() MeshAccessLogItemSpecRulesDefaultType {
 	if m == nil {
-		return MeshAccessLogItemSpecFromDefaultType("")
+		return MeshAccessLogItemSpecRulesDefaultType("")
 	}
 	return m.Type
 }
 
-// MeshAccessLogItemSpecFromTCP - TCPBackend defines a TCP logging backend.
-type MeshAccessLogItemSpecFromTCP struct {
+// MeshAccessLogItemSpecTCP - TCPBackend defines a TCP logging backend.
+type MeshAccessLogItemSpecTCP struct {
 	// Address of the TCP logging backend
 	Address string `json:"address"`
 	// Format of access logs. Placeholders available on
@@ -297,14 +349,14 @@ type MeshAccessLogItemSpecFromTCP struct {
 	Format *MeshAccessLogItemFormat `json:"format,omitempty"`
 }
 
-func (m *MeshAccessLogItemSpecFromTCP) GetAddress() string {
+func (m *MeshAccessLogItemSpecTCP) GetAddress() string {
 	if m == nil {
 		return ""
 	}
 	return m.Address
 }
 
-func (m *MeshAccessLogItemSpecFromTCP) GetFormat() *MeshAccessLogItemFormat {
+func (m *MeshAccessLogItemSpecTCP) GetFormat() *MeshAccessLogItemFormat {
 	if m == nil {
 		return nil
 	}
@@ -334,239 +386,108 @@ func (e *MeshAccessLogItemType) IsExact() bool {
 	return false
 }
 
-type MeshAccessLogItemSpecFromBackends struct {
+type MeshAccessLogItemSpecBackends struct {
 	// FileBackend defines configuration for file based access logs
 	File *File `json:"file,omitempty"`
 	// Defines an OpenTelemetry logging backend.
-	OpenTelemetry *MeshAccessLogItemSpecFromOpenTelemetry `json:"openTelemetry,omitempty"`
+	OpenTelemetry *MeshAccessLogItemSpecOpenTelemetry `json:"openTelemetry,omitempty"`
 	// TCPBackend defines a TCP logging backend.
-	TCP  *MeshAccessLogItemSpecFromTCP `json:"tcp,omitempty"`
-	Type MeshAccessLogItemType         `json:"type"`
+	TCP  *MeshAccessLogItemSpecTCP `json:"tcp,omitempty"`
+	Type MeshAccessLogItemType     `json:"type"`
 }
 
-func (m *MeshAccessLogItemSpecFromBackends) GetFile() *File {
+func (m *MeshAccessLogItemSpecBackends) GetFile() *File {
 	if m == nil {
 		return nil
 	}
 	return m.File
 }
 
-func (m *MeshAccessLogItemSpecFromBackends) GetOpenTelemetry() *MeshAccessLogItemSpecFromOpenTelemetry {
+func (m *MeshAccessLogItemSpecBackends) GetOpenTelemetry() *MeshAccessLogItemSpecOpenTelemetry {
 	if m == nil {
 		return nil
 	}
 	return m.OpenTelemetry
 }
 
-func (m *MeshAccessLogItemSpecFromBackends) GetTCP() *MeshAccessLogItemSpecFromTCP {
+func (m *MeshAccessLogItemSpecBackends) GetTCP() *MeshAccessLogItemSpecTCP {
 	if m == nil {
 		return nil
 	}
 	return m.TCP
 }
 
-func (m *MeshAccessLogItemSpecFromBackends) GetType() MeshAccessLogItemType {
+func (m *MeshAccessLogItemSpecBackends) GetType() MeshAccessLogItemType {
 	if m == nil {
 		return MeshAccessLogItemType("")
 	}
 	return m.Type
 }
 
-// MeshAccessLogItemSpecFromDefault - Default is a configuration specific to the group of clients referenced in
-// 'targetRef'
-type MeshAccessLogItemSpecFromDefault struct {
-	Backends []MeshAccessLogItemSpecFromBackends `json:"backends,omitempty"`
+// MeshAccessLogItemSpecDefault - Default contains configuration of the inbound access logging
+type MeshAccessLogItemSpecDefault struct {
+	Backends []MeshAccessLogItemSpecBackends `json:"backends,omitempty"`
 }
 
-func (m *MeshAccessLogItemSpecFromDefault) GetBackends() []MeshAccessLogItemSpecFromBackends {
+func (m *MeshAccessLogItemSpecDefault) GetBackends() []MeshAccessLogItemSpecBackends {
 	if m == nil {
 		return nil
 	}
 	return m.Backends
 }
 
-// MeshAccessLogItemKind - Kind of the referenced resource
-type MeshAccessLogItemKind string
+// MeshAccessLogItemSpecType - Type defines how to match traffic by SNI. Only `Exact` is supported.
+type MeshAccessLogItemSpecType string
 
 const (
-	MeshAccessLogItemKindMesh                 MeshAccessLogItemKind = "Mesh"
-	MeshAccessLogItemKindMeshSubset           MeshAccessLogItemKind = "MeshSubset"
-	MeshAccessLogItemKindMeshGateway          MeshAccessLogItemKind = "MeshGateway"
-	MeshAccessLogItemKindMeshService          MeshAccessLogItemKind = "MeshService"
-	MeshAccessLogItemKindMeshExternalService  MeshAccessLogItemKind = "MeshExternalService"
-	MeshAccessLogItemKindMeshMultiZoneService MeshAccessLogItemKind = "MeshMultiZoneService"
-	MeshAccessLogItemKindMeshServiceSubset    MeshAccessLogItemKind = "MeshServiceSubset"
-	MeshAccessLogItemKindMeshHTTPRoute        MeshAccessLogItemKind = "MeshHTTPRoute"
-	MeshAccessLogItemKindDataplane            MeshAccessLogItemKind = "Dataplane"
+	MeshAccessLogItemSpecTypeExact MeshAccessLogItemSpecType = "Exact"
 )
 
-func (e MeshAccessLogItemKind) ToPointer() *MeshAccessLogItemKind {
+func (e MeshAccessLogItemSpecType) ToPointer() *MeshAccessLogItemSpecType {
 	return &e
 }
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshAccessLogItemKind) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
+func (e *MeshAccessLogItemSpecType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
 	}
-	return false
-}
-
-type MeshAccessLogItemProxyTypes string
-
-const (
-	MeshAccessLogItemProxyTypesSidecar MeshAccessLogItemProxyTypes = "Sidecar"
-	MeshAccessLogItemProxyTypesGateway MeshAccessLogItemProxyTypes = "Gateway"
-)
-
-func (e MeshAccessLogItemProxyTypes) ToPointer() *MeshAccessLogItemProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshAccessLogItemProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshAccessLogItemTargetRef - TargetRef is a reference to the resource that represents a group of
-// clients.
-type MeshAccessLogItemTargetRef struct {
-	// Kind of the referenced resource
-	Kind MeshAccessLogItemKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
-	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshAccessLogItemProxyTypes `json:"proxyTypes,omitempty"`
-	// SectionName is used to target specific section of resource.
-	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
-}
-
-func (m *MeshAccessLogItemTargetRef) GetKind() MeshAccessLogItemKind {
-	if m == nil {
-		return MeshAccessLogItemKind("")
-	}
-	return m.Kind
-}
-
-func (m *MeshAccessLogItemTargetRef) GetLabels() map[string]string {
-	if m == nil {
+	switch v {
+	case "Exact":
+		*e = MeshAccessLogItemSpecType(v)
 		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshAccessLogItemSpecType: %v", v)
 	}
-	return m.Labels
 }
 
-func (m *MeshAccessLogItemTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshAccessLogItemTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshAccessLogItemTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
-func (m *MeshAccessLogItemTargetRef) GetProxyTypes() []MeshAccessLogItemProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
-func (m *MeshAccessLogItemTargetRef) GetSectionName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.SectionName
-}
-
-func (m *MeshAccessLogItemTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
-}
-
-type From struct {
-	// Default is a configuration specific to the group of clients referenced in
-	// 'targetRef'
-	Default MeshAccessLogItemSpecFromDefault `json:"default"`
-	// TargetRef is a reference to the resource that represents a group of
-	// clients.
-	TargetRef MeshAccessLogItemTargetRef `json:"targetRef"`
-}
-
-func (f *From) GetDefault() MeshAccessLogItemSpecFromDefault {
-	if f == nil {
-		return MeshAccessLogItemSpecFromDefault{}
-	}
-	return f.Default
-}
-
-func (f *From) GetTargetRef() MeshAccessLogItemTargetRef {
-	if f == nil {
-		return MeshAccessLogItemTargetRef{}
-	}
-	return f.TargetRef
-}
-
-type MeshAccessLogItemSpecJSON struct {
-	Key   string `json:"key"`
+// Sni - SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+type Sni struct {
+	// Type defines how to match traffic by SNI. Only `Exact` is supported.
+	Type MeshAccessLogItemSpecType `json:"type"`
+	// Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied
 	Value string `json:"value"`
 }
 
-func (m *MeshAccessLogItemSpecJSON) GetKey() string {
-	if m == nil {
-		return ""
+func (s *Sni) GetType() MeshAccessLogItemSpecType {
+	if s == nil {
+		return MeshAccessLogItemSpecType("")
 	}
-	return m.Key
+	return s.Type
 }
 
-func (m *MeshAccessLogItemSpecJSON) GetValue() string {
-	if m == nil {
+func (s *Sni) GetValue() string {
+	if s == nil {
 		return ""
 	}
-	return m.Value
+	return s.Value
 }
 
+// MeshAccessLogItemSpecRulesType - Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
 type MeshAccessLogItemSpecRulesType string
 
 const (
-	MeshAccessLogItemSpecRulesTypePlain MeshAccessLogItemSpecRulesType = "Plain"
-	MeshAccessLogItemSpecRulesTypeJSON  MeshAccessLogItemSpecRulesType = "Json"
+	MeshAccessLogItemSpecRulesTypeExact  MeshAccessLogItemSpecRulesType = "Exact"
+	MeshAccessLogItemSpecRulesTypePrefix MeshAccessLogItemSpecRulesType = "Prefix"
 )
 
 func (e MeshAccessLogItemSpecRulesType) ToPointer() *MeshAccessLogItemSpecRulesType {
@@ -577,333 +498,77 @@ func (e MeshAccessLogItemSpecRulesType) ToPointer() *MeshAccessLogItemSpecRulesT
 func (e *MeshAccessLogItemSpecRulesType) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Plain", "Json":
+		case "Exact", "Prefix":
 			return true
 		}
 	}
 	return false
 }
 
-// MeshAccessLogItemSpecFormat - Format of access logs. Placeholders available on
-// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-type MeshAccessLogItemSpecFormat struct {
-	JSON            []MeshAccessLogItemSpecJSON    `json:"json,omitempty"`
-	OmitEmptyValues *bool                          `default:"false" json:"omitEmptyValues"`
-	Plain           *string                        `json:"plain,omitempty"`
-	Type            MeshAccessLogItemSpecRulesType `json:"type"`
+// MeshAccessLogItemSpiffeID - SpiffeID defines a matcher configuration for SpiffeID matching
+type MeshAccessLogItemSpiffeID struct {
+	// Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
+	Type MeshAccessLogItemSpecRulesType `json:"type"`
+	// Value is SpiffeID of a client that needs to match for the configuration to be applied
+	Value string `json:"value"`
 }
 
-func (m MeshAccessLogItemSpecFormat) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(m, "", false)
-}
-
-func (m *MeshAccessLogItemSpecFormat) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *MeshAccessLogItemSpecFormat) GetJSON() []MeshAccessLogItemSpecJSON {
-	if m == nil {
-		return nil
-	}
-	return m.JSON
-}
-
-func (m *MeshAccessLogItemSpecFormat) GetOmitEmptyValues() *bool {
-	if m == nil {
-		return nil
-	}
-	return m.OmitEmptyValues
-}
-
-func (m *MeshAccessLogItemSpecFormat) GetPlain() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Plain
-}
-
-func (m *MeshAccessLogItemSpecFormat) GetType() MeshAccessLogItemSpecRulesType {
+func (m *MeshAccessLogItemSpiffeID) GetType() MeshAccessLogItemSpecRulesType {
 	if m == nil {
 		return MeshAccessLogItemSpecRulesType("")
 	}
 	return m.Type
 }
 
-// MeshAccessLogItemFile - FileBackend defines configuration for file based access logs
-type MeshAccessLogItemFile struct {
-	// Format of access logs. Placeholders available on
-	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-	Format *MeshAccessLogItemSpecFormat `json:"format,omitempty"`
-	// Path to a file that logs will be written to
-	Path string `json:"path"`
-}
-
-func (m *MeshAccessLogItemFile) GetFormat() *MeshAccessLogItemSpecFormat {
-	if m == nil {
-		return nil
-	}
-	return m.Format
-}
-
-func (m *MeshAccessLogItemFile) GetPath() string {
-	if m == nil {
-		return ""
-	}
-	return m.Path
-}
-
-type MeshAccessLogItemAttributes struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
-}
-
-func (m *MeshAccessLogItemAttributes) GetKey() string {
-	if m == nil {
-		return ""
-	}
-	return m.Key
-}
-
-func (m *MeshAccessLogItemAttributes) GetValue() string {
+func (m *MeshAccessLogItemSpiffeID) GetValue() string {
 	if m == nil {
 		return ""
 	}
 	return m.Value
 }
 
-// MeshAccessLogItemOpenTelemetry - Defines an OpenTelemetry logging backend.
-type MeshAccessLogItemOpenTelemetry struct {
-	// Attributes can contain placeholders available on
-	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-	Attributes []MeshAccessLogItemAttributes `json:"attributes,omitempty"`
-	// Body is a raw string or an OTLP any value as described at
-	// https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body
-	// It can contain placeholders available on
-	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-	Body any `json:"body,omitempty"`
-	// Endpoint of OpenTelemetry collector. An empty port defaults to 4317.
-	Endpoint string `json:"endpoint"`
+type Matches struct {
+	// SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+	Sni *Sni `json:"sni,omitempty"`
+	// SpiffeID defines a matcher configuration for SpiffeID matching
+	SpiffeID *MeshAccessLogItemSpiffeID `json:"spiffeID,omitempty"`
 }
 
-func (m *MeshAccessLogItemOpenTelemetry) GetAttributes() []MeshAccessLogItemAttributes {
+func (m *Matches) GetSni() *Sni {
 	if m == nil {
 		return nil
 	}
-	return m.Attributes
+	return m.Sni
 }
 
-func (m *MeshAccessLogItemOpenTelemetry) GetBody() any {
+func (m *Matches) GetSpiffeID() *MeshAccessLogItemSpiffeID {
 	if m == nil {
 		return nil
 	}
-	return m.Body
-}
-
-func (m *MeshAccessLogItemOpenTelemetry) GetEndpoint() string {
-	if m == nil {
-		return ""
-	}
-	return m.Endpoint
-}
-
-type MeshAccessLogItemSpecRulesJSON struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
-}
-
-func (m *MeshAccessLogItemSpecRulesJSON) GetKey() string {
-	if m == nil {
-		return ""
-	}
-	return m.Key
-}
-
-func (m *MeshAccessLogItemSpecRulesJSON) GetValue() string {
-	if m == nil {
-		return ""
-	}
-	return m.Value
-}
-
-type MeshAccessLogItemSpecRulesDefaultType string
-
-const (
-	MeshAccessLogItemSpecRulesDefaultTypePlain MeshAccessLogItemSpecRulesDefaultType = "Plain"
-	MeshAccessLogItemSpecRulesDefaultTypeJSON  MeshAccessLogItemSpecRulesDefaultType = "Json"
-)
-
-func (e MeshAccessLogItemSpecRulesDefaultType) ToPointer() *MeshAccessLogItemSpecRulesDefaultType {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshAccessLogItemSpecRulesDefaultType) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Plain", "Json":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshAccessLogItemSpecRulesFormat - Format of access logs. Placeholders available on
-// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-type MeshAccessLogItemSpecRulesFormat struct {
-	JSON            []MeshAccessLogItemSpecRulesJSON      `json:"json,omitempty"`
-	OmitEmptyValues *bool                                 `default:"false" json:"omitEmptyValues"`
-	Plain           *string                               `json:"plain,omitempty"`
-	Type            MeshAccessLogItemSpecRulesDefaultType `json:"type"`
-}
-
-func (m MeshAccessLogItemSpecRulesFormat) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(m, "", false)
-}
-
-func (m *MeshAccessLogItemSpecRulesFormat) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *MeshAccessLogItemSpecRulesFormat) GetJSON() []MeshAccessLogItemSpecRulesJSON {
-	if m == nil {
-		return nil
-	}
-	return m.JSON
-}
-
-func (m *MeshAccessLogItemSpecRulesFormat) GetOmitEmptyValues() *bool {
-	if m == nil {
-		return nil
-	}
-	return m.OmitEmptyValues
-}
-
-func (m *MeshAccessLogItemSpecRulesFormat) GetPlain() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Plain
-}
-
-func (m *MeshAccessLogItemSpecRulesFormat) GetType() MeshAccessLogItemSpecRulesDefaultType {
-	if m == nil {
-		return MeshAccessLogItemSpecRulesDefaultType("")
-	}
-	return m.Type
-}
-
-// MeshAccessLogItemTCP - TCPBackend defines a TCP logging backend.
-type MeshAccessLogItemTCP struct {
-	// Address of the TCP logging backend
-	Address string `json:"address"`
-	// Format of access logs. Placeholders available on
-	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-	Format *MeshAccessLogItemSpecRulesFormat `json:"format,omitempty"`
-}
-
-func (m *MeshAccessLogItemTCP) GetAddress() string {
-	if m == nil {
-		return ""
-	}
-	return m.Address
-}
-
-func (m *MeshAccessLogItemTCP) GetFormat() *MeshAccessLogItemSpecRulesFormat {
-	if m == nil {
-		return nil
-	}
-	return m.Format
-}
-
-type MeshAccessLogItemSpecType string
-
-const (
-	MeshAccessLogItemSpecTypeTCP           MeshAccessLogItemSpecType = "Tcp"
-	MeshAccessLogItemSpecTypeFile          MeshAccessLogItemSpecType = "File"
-	MeshAccessLogItemSpecTypeOpenTelemetry MeshAccessLogItemSpecType = "OpenTelemetry"
-)
-
-func (e MeshAccessLogItemSpecType) ToPointer() *MeshAccessLogItemSpecType {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshAccessLogItemSpecType) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Tcp", "File", "OpenTelemetry":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshAccessLogItemBackends struct {
-	// FileBackend defines configuration for file based access logs
-	File *MeshAccessLogItemFile `json:"file,omitempty"`
-	// Defines an OpenTelemetry logging backend.
-	OpenTelemetry *MeshAccessLogItemOpenTelemetry `json:"openTelemetry,omitempty"`
-	// TCPBackend defines a TCP logging backend.
-	TCP  *MeshAccessLogItemTCP     `json:"tcp,omitempty"`
-	Type MeshAccessLogItemSpecType `json:"type"`
-}
-
-func (m *MeshAccessLogItemBackends) GetFile() *MeshAccessLogItemFile {
-	if m == nil {
-		return nil
-	}
-	return m.File
-}
-
-func (m *MeshAccessLogItemBackends) GetOpenTelemetry() *MeshAccessLogItemOpenTelemetry {
-	if m == nil {
-		return nil
-	}
-	return m.OpenTelemetry
-}
-
-func (m *MeshAccessLogItemBackends) GetTCP() *MeshAccessLogItemTCP {
-	if m == nil {
-		return nil
-	}
-	return m.TCP
-}
-
-func (m *MeshAccessLogItemBackends) GetType() MeshAccessLogItemSpecType {
-	if m == nil {
-		return MeshAccessLogItemSpecType("")
-	}
-	return m.Type
-}
-
-// MeshAccessLogItemDefault - Default contains configuration of the inbound access logging
-type MeshAccessLogItemDefault struct {
-	Backends []MeshAccessLogItemBackends `json:"backends,omitempty"`
-}
-
-func (m *MeshAccessLogItemDefault) GetBackends() []MeshAccessLogItemBackends {
-	if m == nil {
-		return nil
-	}
-	return m.Backends
+	return m.SpiffeID
 }
 
 type MeshAccessLogItemRules struct {
 	// Default contains configuration of the inbound access logging
-	Default MeshAccessLogItemDefault `json:"default"`
+	Default MeshAccessLogItemSpecDefault `json:"default"`
+	// Matches defines a list of conditions (by SpiffeID or SNI) that select the
+	// traffic this rule applies to. Rules fire independently: a connection that
+	// satisfies multiple rules is logged to every matching rule's backends.
+	Matches []Matches `json:"matches,omitempty"`
 }
 
-func (m *MeshAccessLogItemRules) GetDefault() MeshAccessLogItemDefault {
+func (m *MeshAccessLogItemRules) GetDefault() MeshAccessLogItemSpecDefault {
 	if m == nil {
-		return MeshAccessLogItemDefault{}
+		return MeshAccessLogItemSpecDefault{}
 	}
 	return m.Default
+}
+
+func (m *MeshAccessLogItemRules) GetMatches() []Matches {
+	if m == nil {
+		return nil
+	}
+	return m.Matches
 }
 
 // Kind of the referenced resource
@@ -912,7 +577,6 @@ type Kind string
 const (
 	KindMesh                 Kind = "Mesh"
 	KindMeshSubset           Kind = "MeshSubset"
-	KindMeshGateway          Kind = "MeshGateway"
 	KindMeshService          Kind = "MeshService"
 	KindMeshExternalService  Kind = "MeshExternalService"
 	KindMeshMultiZoneService Kind = "MeshMultiZoneService"
@@ -929,29 +593,7 @@ func (e Kind) ToPointer() *Kind {
 func (e *Kind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
-	}
-	return false
-}
-
-type ProxyTypes string
-
-const (
-	ProxyTypesSidecar ProxyTypes = "Sidecar"
-	ProxyTypesGateway ProxyTypes = "Gateway"
-)
-
-func (e ProxyTypes) ToPointer() *ProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *ProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
+		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
 			return true
 		}
 	}
@@ -969,15 +611,12 @@ type TargetRef struct {
 	Labels map[string]string `json:"labels,omitempty"`
 	// Mesh is reserved for future use to identify cross mesh resources.
 	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
+	// Name of the referenced resource. Can only be used with kinds: `MeshService`
+	// and `MeshServiceSubset`
 	Name *string `json:"name,omitempty"`
 	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 	// will be targeted.
 	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []ProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
@@ -1021,13 +660,6 @@ func (t *TargetRef) GetNamespace() *string {
 	return t.Namespace
 }
 
-func (t *TargetRef) GetProxyTypes() []ProxyTypes {
-	if t == nil {
-		return nil
-	}
-	return t.ProxyTypes
-}
-
 func (t *TargetRef) GetSectionName() *string {
 	if t == nil {
 		return nil
@@ -1042,19 +674,19 @@ func (t *TargetRef) GetTags() map[string]string {
 	return t.Tags
 }
 
-type MeshAccessLogItemSpecToJSON struct {
+type MeshAccessLogItemSpecJSON struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
 }
 
-func (m *MeshAccessLogItemSpecToJSON) GetKey() string {
+func (m *MeshAccessLogItemSpecJSON) GetKey() string {
 	if m == nil {
 		return ""
 	}
 	return m.Key
 }
 
-func (m *MeshAccessLogItemSpecToJSON) GetValue() string {
+func (m *MeshAccessLogItemSpecJSON) GetValue() string {
 	if m == nil {
 		return ""
 	}
@@ -1083,13 +715,231 @@ func (e *MeshAccessLogItemSpecToDefaultBackendsType) IsExact() bool {
 	return false
 }
 
-// MeshAccessLogItemSpecToFormat - Format of access logs. Placeholders available on
+// MeshAccessLogItemSpecFormat - Format of access logs. Placeholders available on
 // https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-type MeshAccessLogItemSpecToFormat struct {
-	JSON            []MeshAccessLogItemSpecToJSON              `json:"json,omitempty"`
+type MeshAccessLogItemSpecFormat struct {
+	JSON            []MeshAccessLogItemSpecJSON                `json:"json,omitempty"`
 	OmitEmptyValues *bool                                      `default:"false" json:"omitEmptyValues"`
 	Plain           *string                                    `json:"plain,omitempty"`
 	Type            MeshAccessLogItemSpecToDefaultBackendsType `json:"type"`
+}
+
+func (m MeshAccessLogItemSpecFormat) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemSpecFormat) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemSpecFormat) GetJSON() []MeshAccessLogItemSpecJSON {
+	if m == nil {
+		return nil
+	}
+	return m.JSON
+}
+
+func (m *MeshAccessLogItemSpecFormat) GetOmitEmptyValues() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.OmitEmptyValues
+}
+
+func (m *MeshAccessLogItemSpecFormat) GetPlain() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Plain
+}
+
+func (m *MeshAccessLogItemSpecFormat) GetType() MeshAccessLogItemSpecToDefaultBackendsType {
+	if m == nil {
+		return MeshAccessLogItemSpecToDefaultBackendsType("")
+	}
+	return m.Type
+}
+
+// MeshAccessLogItemFile - FileBackend defines configuration for file based access logs
+type MeshAccessLogItemFile struct {
+	// Format of access logs. Placeholders available on
+	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+	Format *MeshAccessLogItemSpecFormat `json:"format,omitempty"`
+	// Path to a file that logs will be written to
+	Path string `json:"path"`
+}
+
+func (m *MeshAccessLogItemFile) GetFormat() *MeshAccessLogItemSpecFormat {
+	if m == nil {
+		return nil
+	}
+	return m.Format
+}
+
+func (m *MeshAccessLogItemFile) GetPath() string {
+	if m == nil {
+		return ""
+	}
+	return m.Path
+}
+
+type MeshAccessLogItemAttributes struct {
+	// Key is the OpenTelemetry attribute name.
+	Key string `json:"key"`
+	// Value can contain Kuma placeholders.
+	Value string `json:"value"`
+}
+
+func (m *MeshAccessLogItemAttributes) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+func (m *MeshAccessLogItemAttributes) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// MeshAccessLogItemSpecKind - Kind of the backend resource.
+type MeshAccessLogItemSpecKind string
+
+const (
+	MeshAccessLogItemSpecKindMeshOpenTelemetryBackend MeshAccessLogItemSpecKind = "MeshOpenTelemetryBackend"
+)
+
+func (e MeshAccessLogItemSpecKind) ToPointer() *MeshAccessLogItemSpecKind {
+	return &e
+}
+func (e *MeshAccessLogItemSpecKind) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "MeshOpenTelemetryBackend":
+		*e = MeshAccessLogItemSpecKind(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshAccessLogItemSpecKind: %v", v)
+	}
+}
+
+// MeshAccessLogItemBackendRef - BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+// defines the collector endpoint.
+type MeshAccessLogItemBackendRef struct {
+	// Kind of the backend resource.
+	Kind MeshAccessLogItemSpecKind `json:"kind"`
+	// Labels to match the referenced resource. When multiple resources match,
+	// the oldest by creation time wins.
+	Labels map[string]string `json:"labels,omitempty"`
+}
+
+func (m *MeshAccessLogItemBackendRef) GetKind() MeshAccessLogItemSpecKind {
+	if m == nil {
+		return MeshAccessLogItemSpecKind("")
+	}
+	return m.Kind
+}
+
+func (m *MeshAccessLogItemBackendRef) GetLabels() map[string]string {
+	if m == nil {
+		return nil
+	}
+	return m.Labels
+}
+
+// MeshAccessLogItemOpenTelemetry - Defines an OpenTelemetry logging backend.
+type MeshAccessLogItemOpenTelemetry struct {
+	// Attributes defines custom OpenTelemetry attributes. Keys must be static
+	// OpenTelemetry attribute names. Values can contain placeholders available on
+	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+	Attributes []MeshAccessLogItemAttributes `json:"attributes,omitempty"`
+	// BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+	// defines the collector endpoint.
+	BackendRef *MeshAccessLogItemBackendRef `json:"backendRef,omitempty"`
+	// Body is a raw string or an OTLP any value as described at
+	// https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body
+	// It can contain placeholders available on
+	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+	Body any `json:"body,omitempty"`
+}
+
+func (m *MeshAccessLogItemOpenTelemetry) GetAttributes() []MeshAccessLogItemAttributes {
+	if m == nil {
+		return nil
+	}
+	return m.Attributes
+}
+
+func (m *MeshAccessLogItemOpenTelemetry) GetBackendRef() *MeshAccessLogItemBackendRef {
+	if m == nil {
+		return nil
+	}
+	return m.BackendRef
+}
+
+func (m *MeshAccessLogItemOpenTelemetry) GetBody() any {
+	if m == nil {
+		return nil
+	}
+	return m.Body
+}
+
+type MeshAccessLogItemSpecToJSON struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+func (m *MeshAccessLogItemSpecToJSON) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+func (m *MeshAccessLogItemSpecToJSON) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+type MeshAccessLogItemSpecToDefaultType string
+
+const (
+	MeshAccessLogItemSpecToDefaultTypePlain MeshAccessLogItemSpecToDefaultType = "Plain"
+	MeshAccessLogItemSpecToDefaultTypeJSON  MeshAccessLogItemSpecToDefaultType = "Json"
+)
+
+func (e MeshAccessLogItemSpecToDefaultType) ToPointer() *MeshAccessLogItemSpecToDefaultType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemSpecToDefaultType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
+	}
+	return false
+}
+
+// MeshAccessLogItemSpecToFormat - Format of access logs. Placeholders available on
+// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+type MeshAccessLogItemSpecToFormat struct {
+	JSON            []MeshAccessLogItemSpecToJSON      `json:"json,omitempty"`
+	OmitEmptyValues *bool                              `default:"false" json:"omitEmptyValues"`
+	Plain           *string                            `json:"plain,omitempty"`
+	Type            MeshAccessLogItemSpecToDefaultType `json:"type"`
 }
 
 func (m MeshAccessLogItemSpecToFormat) MarshalJSON() ([]byte, error) {
@@ -1124,196 +974,30 @@ func (m *MeshAccessLogItemSpecToFormat) GetPlain() *string {
 	return m.Plain
 }
 
-func (m *MeshAccessLogItemSpecToFormat) GetType() MeshAccessLogItemSpecToDefaultBackendsType {
-	if m == nil {
-		return MeshAccessLogItemSpecToDefaultBackendsType("")
-	}
-	return m.Type
-}
-
-// MeshAccessLogItemSpecFile - FileBackend defines configuration for file based access logs
-type MeshAccessLogItemSpecFile struct {
-	// Format of access logs. Placeholders available on
-	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-	Format *MeshAccessLogItemSpecToFormat `json:"format,omitempty"`
-	// Path to a file that logs will be written to
-	Path string `json:"path"`
-}
-
-func (m *MeshAccessLogItemSpecFile) GetFormat() *MeshAccessLogItemSpecToFormat {
-	if m == nil {
-		return nil
-	}
-	return m.Format
-}
-
-func (m *MeshAccessLogItemSpecFile) GetPath() string {
-	if m == nil {
-		return ""
-	}
-	return m.Path
-}
-
-type MeshAccessLogItemSpecAttributes struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
-}
-
-func (m *MeshAccessLogItemSpecAttributes) GetKey() string {
-	if m == nil {
-		return ""
-	}
-	return m.Key
-}
-
-func (m *MeshAccessLogItemSpecAttributes) GetValue() string {
-	if m == nil {
-		return ""
-	}
-	return m.Value
-}
-
-// MeshAccessLogItemSpecOpenTelemetry - Defines an OpenTelemetry logging backend.
-type MeshAccessLogItemSpecOpenTelemetry struct {
-	// Attributes can contain placeholders available on
-	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-	Attributes []MeshAccessLogItemSpecAttributes `json:"attributes,omitempty"`
-	// Body is a raw string or an OTLP any value as described at
-	// https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body
-	// It can contain placeholders available on
-	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-	Body any `json:"body,omitempty"`
-	// Endpoint of OpenTelemetry collector. An empty port defaults to 4317.
-	Endpoint string `json:"endpoint"`
-}
-
-func (m *MeshAccessLogItemSpecOpenTelemetry) GetAttributes() []MeshAccessLogItemSpecAttributes {
-	if m == nil {
-		return nil
-	}
-	return m.Attributes
-}
-
-func (m *MeshAccessLogItemSpecOpenTelemetry) GetBody() any {
-	if m == nil {
-		return nil
-	}
-	return m.Body
-}
-
-func (m *MeshAccessLogItemSpecOpenTelemetry) GetEndpoint() string {
-	if m == nil {
-		return ""
-	}
-	return m.Endpoint
-}
-
-type MeshAccessLogItemSpecToDefaultJSON struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
-}
-
-func (m *MeshAccessLogItemSpecToDefaultJSON) GetKey() string {
-	if m == nil {
-		return ""
-	}
-	return m.Key
-}
-
-func (m *MeshAccessLogItemSpecToDefaultJSON) GetValue() string {
-	if m == nil {
-		return ""
-	}
-	return m.Value
-}
-
-type MeshAccessLogItemSpecToDefaultType string
-
-const (
-	MeshAccessLogItemSpecToDefaultTypePlain MeshAccessLogItemSpecToDefaultType = "Plain"
-	MeshAccessLogItemSpecToDefaultTypeJSON  MeshAccessLogItemSpecToDefaultType = "Json"
-)
-
-func (e MeshAccessLogItemSpecToDefaultType) ToPointer() *MeshAccessLogItemSpecToDefaultType {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshAccessLogItemSpecToDefaultType) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Plain", "Json":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshAccessLogItemSpecToDefaultFormat - Format of access logs. Placeholders available on
-// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-type MeshAccessLogItemSpecToDefaultFormat struct {
-	JSON            []MeshAccessLogItemSpecToDefaultJSON `json:"json,omitempty"`
-	OmitEmptyValues *bool                                `default:"false" json:"omitEmptyValues"`
-	Plain           *string                              `json:"plain,omitempty"`
-	Type            MeshAccessLogItemSpecToDefaultType   `json:"type"`
-}
-
-func (m MeshAccessLogItemSpecToDefaultFormat) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(m, "", false)
-}
-
-func (m *MeshAccessLogItemSpecToDefaultFormat) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *MeshAccessLogItemSpecToDefaultFormat) GetJSON() []MeshAccessLogItemSpecToDefaultJSON {
-	if m == nil {
-		return nil
-	}
-	return m.JSON
-}
-
-func (m *MeshAccessLogItemSpecToDefaultFormat) GetOmitEmptyValues() *bool {
-	if m == nil {
-		return nil
-	}
-	return m.OmitEmptyValues
-}
-
-func (m *MeshAccessLogItemSpecToDefaultFormat) GetPlain() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Plain
-}
-
-func (m *MeshAccessLogItemSpecToDefaultFormat) GetType() MeshAccessLogItemSpecToDefaultType {
+func (m *MeshAccessLogItemSpecToFormat) GetType() MeshAccessLogItemSpecToDefaultType {
 	if m == nil {
 		return MeshAccessLogItemSpecToDefaultType("")
 	}
 	return m.Type
 }
 
-// MeshAccessLogItemSpecTCP - TCPBackend defines a TCP logging backend.
-type MeshAccessLogItemSpecTCP struct {
+// MeshAccessLogItemTCP - TCPBackend defines a TCP logging backend.
+type MeshAccessLogItemTCP struct {
 	// Address of the TCP logging backend
 	Address string `json:"address"`
 	// Format of access logs. Placeholders available on
 	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-	Format *MeshAccessLogItemSpecToDefaultFormat `json:"format,omitempty"`
+	Format *MeshAccessLogItemSpecToFormat `json:"format,omitempty"`
 }
 
-func (m *MeshAccessLogItemSpecTCP) GetAddress() string {
+func (m *MeshAccessLogItemTCP) GetAddress() string {
 	if m == nil {
 		return ""
 	}
 	return m.Address
 }
 
-func (m *MeshAccessLogItemSpecTCP) GetFormat() *MeshAccessLogItemSpecToDefaultFormat {
+func (m *MeshAccessLogItemTCP) GetFormat() *MeshAccessLogItemSpecToFormat {
 	if m == nil {
 		return nil
 	}
@@ -1343,128 +1027,102 @@ func (e *MeshAccessLogItemSpecToType) IsExact() bool {
 	return false
 }
 
-type MeshAccessLogItemSpecBackends struct {
+type MeshAccessLogItemBackends struct {
 	// FileBackend defines configuration for file based access logs
-	File *MeshAccessLogItemSpecFile `json:"file,omitempty"`
+	File *MeshAccessLogItemFile `json:"file,omitempty"`
 	// Defines an OpenTelemetry logging backend.
-	OpenTelemetry *MeshAccessLogItemSpecOpenTelemetry `json:"openTelemetry,omitempty"`
+	OpenTelemetry *MeshAccessLogItemOpenTelemetry `json:"openTelemetry,omitempty"`
 	// TCPBackend defines a TCP logging backend.
-	TCP  *MeshAccessLogItemSpecTCP   `json:"tcp,omitempty"`
+	TCP  *MeshAccessLogItemTCP       `json:"tcp,omitempty"`
 	Type MeshAccessLogItemSpecToType `json:"type"`
 }
 
-func (m *MeshAccessLogItemSpecBackends) GetFile() *MeshAccessLogItemSpecFile {
+func (m *MeshAccessLogItemBackends) GetFile() *MeshAccessLogItemFile {
 	if m == nil {
 		return nil
 	}
 	return m.File
 }
 
-func (m *MeshAccessLogItemSpecBackends) GetOpenTelemetry() *MeshAccessLogItemSpecOpenTelemetry {
+func (m *MeshAccessLogItemBackends) GetOpenTelemetry() *MeshAccessLogItemOpenTelemetry {
 	if m == nil {
 		return nil
 	}
 	return m.OpenTelemetry
 }
 
-func (m *MeshAccessLogItemSpecBackends) GetTCP() *MeshAccessLogItemSpecTCP {
+func (m *MeshAccessLogItemBackends) GetTCP() *MeshAccessLogItemTCP {
 	if m == nil {
 		return nil
 	}
 	return m.TCP
 }
 
-func (m *MeshAccessLogItemSpecBackends) GetType() MeshAccessLogItemSpecToType {
+func (m *MeshAccessLogItemBackends) GetType() MeshAccessLogItemSpecToType {
 	if m == nil {
 		return MeshAccessLogItemSpecToType("")
 	}
 	return m.Type
 }
 
-// MeshAccessLogItemSpecDefault - Default is a configuration specific to the group of destinations referenced in
+// MeshAccessLogItemDefault - Default is a configuration specific to the group of destinations referenced in
 // 'targetRef'
-type MeshAccessLogItemSpecDefault struct {
-	Backends []MeshAccessLogItemSpecBackends `json:"backends,omitempty"`
+type MeshAccessLogItemDefault struct {
+	Backends []MeshAccessLogItemBackends `json:"backends,omitempty"`
 }
 
-func (m *MeshAccessLogItemSpecDefault) GetBackends() []MeshAccessLogItemSpecBackends {
+func (m *MeshAccessLogItemDefault) GetBackends() []MeshAccessLogItemBackends {
 	if m == nil {
 		return nil
 	}
 	return m.Backends
 }
 
-// MeshAccessLogItemSpecKind - Kind of the referenced resource
-type MeshAccessLogItemSpecKind string
+// MeshAccessLogItemKind - Kind of the referenced resource
+type MeshAccessLogItemKind string
 
 const (
-	MeshAccessLogItemSpecKindMesh                 MeshAccessLogItemSpecKind = "Mesh"
-	MeshAccessLogItemSpecKindMeshSubset           MeshAccessLogItemSpecKind = "MeshSubset"
-	MeshAccessLogItemSpecKindMeshGateway          MeshAccessLogItemSpecKind = "MeshGateway"
-	MeshAccessLogItemSpecKindMeshService          MeshAccessLogItemSpecKind = "MeshService"
-	MeshAccessLogItemSpecKindMeshExternalService  MeshAccessLogItemSpecKind = "MeshExternalService"
-	MeshAccessLogItemSpecKindMeshMultiZoneService MeshAccessLogItemSpecKind = "MeshMultiZoneService"
-	MeshAccessLogItemSpecKindMeshServiceSubset    MeshAccessLogItemSpecKind = "MeshServiceSubset"
-	MeshAccessLogItemSpecKindMeshHTTPRoute        MeshAccessLogItemSpecKind = "MeshHTTPRoute"
-	MeshAccessLogItemSpecKindDataplane            MeshAccessLogItemSpecKind = "Dataplane"
+	MeshAccessLogItemKindMesh                 MeshAccessLogItemKind = "Mesh"
+	MeshAccessLogItemKindMeshSubset           MeshAccessLogItemKind = "MeshSubset"
+	MeshAccessLogItemKindMeshService          MeshAccessLogItemKind = "MeshService"
+	MeshAccessLogItemKindMeshExternalService  MeshAccessLogItemKind = "MeshExternalService"
+	MeshAccessLogItemKindMeshMultiZoneService MeshAccessLogItemKind = "MeshMultiZoneService"
+	MeshAccessLogItemKindMeshServiceSubset    MeshAccessLogItemKind = "MeshServiceSubset"
+	MeshAccessLogItemKindMeshHTTPRoute        MeshAccessLogItemKind = "MeshHTTPRoute"
+	MeshAccessLogItemKindDataplane            MeshAccessLogItemKind = "Dataplane"
 )
 
-func (e MeshAccessLogItemSpecKind) ToPointer() *MeshAccessLogItemSpecKind {
+func (e MeshAccessLogItemKind) ToPointer() *MeshAccessLogItemKind {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshAccessLogItemSpecKind) IsExact() bool {
+func (e *MeshAccessLogItemKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
 			return true
 		}
 	}
 	return false
 }
 
-type MeshAccessLogItemSpecProxyTypes string
-
-const (
-	MeshAccessLogItemSpecProxyTypesSidecar MeshAccessLogItemSpecProxyTypes = "Sidecar"
-	MeshAccessLogItemSpecProxyTypesGateway MeshAccessLogItemSpecProxyTypes = "Gateway"
-)
-
-func (e MeshAccessLogItemSpecProxyTypes) ToPointer() *MeshAccessLogItemSpecProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshAccessLogItemSpecProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshAccessLogItemSpecTargetRef - TargetRef is a reference to the resource that represents a group of
+// MeshAccessLogItemTargetRef - TargetRef is a reference to the resource that represents a group of
 // destinations.
-type MeshAccessLogItemSpecTargetRef struct {
+type MeshAccessLogItemTargetRef struct {
 	// Kind of the referenced resource
-	Kind MeshAccessLogItemSpecKind `json:"kind"`
+	Kind MeshAccessLogItemKind `json:"kind"`
 	// Labels are used to select group of MeshServices that match labels. Either Labels or
 	// Name and Namespace can be used.
 	Labels map[string]string `json:"labels,omitempty"`
 	// Mesh is reserved for future use to identify cross mesh resources.
 	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
+	// Name of the referenced resource. Can only be used with kinds: `MeshService`
+	// and `MeshServiceSubset`
 	Name *string `json:"name,omitempty"`
 	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 	// will be targeted.
 	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshAccessLogItemSpecProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
@@ -1473,56 +1131,49 @@ type MeshAccessLogItemSpecTargetRef struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (m *MeshAccessLogItemSpecTargetRef) GetKind() MeshAccessLogItemSpecKind {
+func (m *MeshAccessLogItemTargetRef) GetKind() MeshAccessLogItemKind {
 	if m == nil {
-		return MeshAccessLogItemSpecKind("")
+		return MeshAccessLogItemKind("")
 	}
 	return m.Kind
 }
 
-func (m *MeshAccessLogItemSpecTargetRef) GetLabels() map[string]string {
+func (m *MeshAccessLogItemTargetRef) GetLabels() map[string]string {
 	if m == nil {
 		return nil
 	}
 	return m.Labels
 }
 
-func (m *MeshAccessLogItemSpecTargetRef) GetMesh() *string {
+func (m *MeshAccessLogItemTargetRef) GetMesh() *string {
 	if m == nil {
 		return nil
 	}
 	return m.Mesh
 }
 
-func (m *MeshAccessLogItemSpecTargetRef) GetName() *string {
+func (m *MeshAccessLogItemTargetRef) GetName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.Name
 }
 
-func (m *MeshAccessLogItemSpecTargetRef) GetNamespace() *string {
+func (m *MeshAccessLogItemTargetRef) GetNamespace() *string {
 	if m == nil {
 		return nil
 	}
 	return m.Namespace
 }
 
-func (m *MeshAccessLogItemSpecTargetRef) GetProxyTypes() []MeshAccessLogItemSpecProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
-func (m *MeshAccessLogItemSpecTargetRef) GetSectionName() *string {
+func (m *MeshAccessLogItemTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
 }
 
-func (m *MeshAccessLogItemSpecTargetRef) GetTags() map[string]string {
+func (m *MeshAccessLogItemTargetRef) GetTags() map[string]string {
 	if m == nil {
 		return nil
 	}
@@ -1532,32 +1183,29 @@ func (m *MeshAccessLogItemSpecTargetRef) GetTags() map[string]string {
 type To struct {
 	// Default is a configuration specific to the group of destinations referenced in
 	// 'targetRef'
-	Default MeshAccessLogItemSpecDefault `json:"default"`
+	Default MeshAccessLogItemDefault `json:"default"`
 	// TargetRef is a reference to the resource that represents a group of
 	// destinations.
-	TargetRef MeshAccessLogItemSpecTargetRef `json:"targetRef"`
+	TargetRef MeshAccessLogItemTargetRef `json:"targetRef"`
 }
 
-func (t *To) GetDefault() MeshAccessLogItemSpecDefault {
+func (t *To) GetDefault() MeshAccessLogItemDefault {
 	if t == nil {
-		return MeshAccessLogItemSpecDefault{}
+		return MeshAccessLogItemDefault{}
 	}
 	return t.Default
 }
 
-func (t *To) GetTargetRef() MeshAccessLogItemSpecTargetRef {
+func (t *To) GetTargetRef() MeshAccessLogItemTargetRef {
 	if t == nil {
-		return MeshAccessLogItemSpecTargetRef{}
+		return MeshAccessLogItemTargetRef{}
 	}
 	return t.TargetRef
 }
 
 // Spec is the specification of the Kuma MeshAccessLog resource.
 type Spec struct {
-	// From list makes a match between clients and corresponding configurations
-	From []From `json:"from,omitempty"`
-	// Rules defines inbound access log configurations. Currently limited to
-	// selecting all inbound traffic, as L7 matching is not yet implemented.
+	// Rules defines inbound access log configurations.
 	Rules []MeshAccessLogItemRules `json:"rules,omitempty"`
 	// TargetRef is a reference to the resource the policy takes an effect on.
 	// The resource could be either a real store object or virtual resource
@@ -1565,13 +1213,6 @@ type Spec struct {
 	TargetRef *TargetRef `json:"targetRef,omitempty"`
 	// To list makes a match between the consumed services and corresponding configurations
 	To []To `json:"to,omitempty"`
-}
-
-func (s *Spec) GetFrom() []From {
-	if s == nil {
-		return nil
-	}
-	return s.From
 }
 
 func (s *Spec) GetRules() []MeshAccessLogItemRules {
@@ -1595,6 +1236,86 @@ func (s *Spec) GetTo() []To {
 	return s.To
 }
 
+// MeshAccessLogItemStatus - status of the condition, one of True, False, Unknown.
+type MeshAccessLogItemStatus string
+
+const (
+	MeshAccessLogItemStatusTrue    MeshAccessLogItemStatus = "True"
+	MeshAccessLogItemStatusFalse   MeshAccessLogItemStatus = "False"
+	MeshAccessLogItemStatusUnknown MeshAccessLogItemStatus = "Unknown"
+)
+
+func (e MeshAccessLogItemStatus) ToPointer() *MeshAccessLogItemStatus {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemStatus) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "True", "False", "Unknown":
+			return true
+		}
+	}
+	return false
+}
+
+type Conditions struct {
+	// message is a human readable message indicating details about the transition.
+	// This may be an empty string.
+	Message string `json:"message"`
+	// reason contains a programmatic identifier indicating the reason for the condition's last transition.
+	// Producers of specific condition types may define expected values and meanings for this field,
+	// and whether the values are considered a guaranteed API.
+	// The value should be a CamelCase string.
+	// This field may not be empty.
+	Reason string `json:"reason"`
+	// status of the condition, one of True, False, Unknown.
+	Status MeshAccessLogItemStatus `json:"status"`
+	// type of condition in CamelCase or in foo.example.com/CamelCase.
+	Type string `json:"type"`
+}
+
+func (c *Conditions) GetMessage() string {
+	if c == nil {
+		return ""
+	}
+	return c.Message
+}
+
+func (c *Conditions) GetReason() string {
+	if c == nil {
+		return ""
+	}
+	return c.Reason
+}
+
+func (c *Conditions) GetStatus() MeshAccessLogItemStatus {
+	if c == nil {
+		return MeshAccessLogItemStatus("")
+	}
+	return c.Status
+}
+
+func (c *Conditions) GetType() string {
+	if c == nil {
+		return ""
+	}
+	return c.Type
+}
+
+// Status is the current status of the Kuma MeshAccessLog resource.
+type Status struct {
+	Conditions []Conditions `json:"conditions,omitempty"`
+}
+
+func (s *Status) GetConditions() []Conditions {
+	if s == nil {
+		return nil
+	}
+	return s.Conditions
+}
+
 // MeshAccessLogItem - MeshAccessLog configures access logging for traffic between services in the mesh. It allows you to capture and export request/response logs to various backends (file, TCP, or OpenTelemetry) for monitoring, debugging, and auditing purposes.
 type MeshAccessLogItem struct {
 	// the type of the resource
@@ -1613,6 +1334,8 @@ type MeshAccessLogItem struct {
 	CreationTime *time.Time `json:"creationTime,omitempty"`
 	// Time at which the resource was updated
 	ModificationTime *time.Time `json:"modificationTime,omitempty"`
+	// Status is the current status of the Kuma MeshAccessLog resource.
+	Status *Status `json:"status,omitempty"`
 }
 
 func (m MeshAccessLogItem) MarshalJSON() ([]byte, error) {
@@ -1680,6 +1403,13 @@ func (m *MeshAccessLogItem) GetModificationTime() *time.Time {
 		return nil
 	}
 	return m.ModificationTime
+}
+
+func (m *MeshAccessLogItem) GetStatus() *Status {
+	if m == nil {
+		return nil
+	}
+	return m.Status
 }
 
 // MeshAccessLogItemInput - MeshAccessLog configures access logging for traffic between services in the mesh. It allows you to capture and export request/response logs to various backends (file, TCP, or OpenTelemetry) for monitoring, debugging, and auditing purposes.

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/utils"
+	"time"
 )
 
 type AccessRoleItemAccessType string
@@ -140,10 +141,11 @@ func (d *DpToken) GetTags() []AccessRoleItemTags {
 }
 
 type AccessRoleItemRulesTargetRef struct {
-	Kind *string           `json:"kind,omitempty"`
-	Mesh *string           `json:"mesh,omitempty"`
-	Name *string           `json:"name,omitempty"`
-	Tags map[string]string `json:"tags,omitempty"`
+	Kind   *string           `json:"kind,omitempty"`
+	Labels map[string]string `json:"labels,omitempty"`
+	Mesh   *string           `json:"mesh,omitempty"`
+	Name   *string           `json:"name,omitempty"`
+	Tags   map[string]string `json:"tags,omitempty"`
 }
 
 func (a *AccessRoleItemRulesTargetRef) GetKind() *string {
@@ -151,6 +153,13 @@ func (a *AccessRoleItemRulesTargetRef) GetKind() *string {
 		return nil
 	}
 	return a.Kind
+}
+
+func (a *AccessRoleItemRulesTargetRef) GetLabels() map[string]string {
+	if a == nil {
+		return nil
+	}
+	return a.Labels
 }
 
 func (a *AccessRoleItemRulesTargetRef) GetMesh() *string {
@@ -174,27 +183,27 @@ func (a *AccessRoleItemRulesTargetRef) GetTags() map[string]string {
 	return a.Tags
 }
 
-type AccessRoleItemFrom struct {
+type From struct {
 	TargetRef *AccessRoleItemRulesTargetRef `json:"targetRef,omitempty"`
 }
 
-func (a *AccessRoleItemFrom) GetTargetRef() *AccessRoleItemRulesTargetRef {
-	if a == nil {
+func (f *From) GetTargetRef() *AccessRoleItemRulesTargetRef {
+	if f == nil {
 		return nil
 	}
-	return a.TargetRef
+	return f.TargetRef
 }
 
-type AccessRoleItemSelectors struct {
+type Selectors struct {
 	// Tags to match, can be used for both source and destinations
 	Match map[string]string `json:"match,omitempty"`
 }
 
-func (a *AccessRoleItemSelectors) GetMatch() map[string]string {
-	if a == nil {
+func (s *Selectors) GetMatch() map[string]string {
+	if s == nil {
 		return nil
 	}
-	return a.Match
+	return s.Match
 }
 
 type Sources struct {
@@ -210,10 +219,11 @@ func (s *Sources) GetMatch() map[string]string {
 }
 
 type AccessRoleItemTargetRef struct {
-	Kind *string           `json:"kind,omitempty"`
-	Mesh *string           `json:"mesh,omitempty"`
-	Name *string           `json:"name,omitempty"`
-	Tags map[string]string `json:"tags,omitempty"`
+	Kind   *string           `json:"kind,omitempty"`
+	Labels map[string]string `json:"labels,omitempty"`
+	Mesh   *string           `json:"mesh,omitempty"`
+	Name   *string           `json:"name,omitempty"`
+	Tags   map[string]string `json:"tags,omitempty"`
 }
 
 func (a *AccessRoleItemTargetRef) GetKind() *string {
@@ -221,6 +231,13 @@ func (a *AccessRoleItemTargetRef) GetKind() *string {
 		return nil
 	}
 	return a.Kind
+}
+
+func (a *AccessRoleItemTargetRef) GetLabels() map[string]string {
+	if a == nil {
+		return nil
+	}
+	return a.Labels
 }
 
 func (a *AccessRoleItemTargetRef) GetMesh() *string {
@@ -245,10 +262,11 @@ func (a *AccessRoleItemTargetRef) GetTags() map[string]string {
 }
 
 type AccessRoleItemRulesWhenTargetRef struct {
-	Kind *string           `json:"kind,omitempty"`
-	Mesh *string           `json:"mesh,omitempty"`
-	Name *string           `json:"name,omitempty"`
-	Tags map[string]string `json:"tags,omitempty"`
+	Kind   *string           `json:"kind,omitempty"`
+	Labels map[string]string `json:"labels,omitempty"`
+	Mesh   *string           `json:"mesh,omitempty"`
+	Name   *string           `json:"name,omitempty"`
+	Tags   map[string]string `json:"tags,omitempty"`
 }
 
 func (a *AccessRoleItemRulesWhenTargetRef) GetKind() *string {
@@ -256,6 +274,13 @@ func (a *AccessRoleItemRulesWhenTargetRef) GetKind() *string {
 		return nil
 	}
 	return a.Kind
+}
+
+func (a *AccessRoleItemRulesWhenTargetRef) GetLabels() map[string]string {
+	if a == nil {
+		return nil
+	}
+	return a.Labels
 }
 
 func (a *AccessRoleItemRulesWhenTargetRef) GetMesh() *string {
@@ -293,8 +318,8 @@ func (a *AccessRoleItemTo) GetTargetRef() *AccessRoleItemRulesWhenTargetRef {
 type When struct {
 	Destinations *Destinations            `json:"destinations,omitempty"`
 	DpToken      *DpToken                 `json:"dpToken,omitempty"`
-	From         *AccessRoleItemFrom      `json:"from,omitempty"`
-	Selectors    *AccessRoleItemSelectors `json:"selectors,omitempty"`
+	From         *From                    `json:"from,omitempty"`
+	Selectors    *Selectors               `json:"selectors,omitempty"`
 	Sources      *Sources                 `json:"sources,omitempty"`
 	TargetRef    *AccessRoleItemTargetRef `json:"targetRef,omitempty"`
 	To           *AccessRoleItemTo        `json:"to,omitempty"`
@@ -314,14 +339,14 @@ func (w *When) GetDpToken() *DpToken {
 	return w.DpToken
 }
 
-func (w *When) GetFrom() *AccessRoleItemFrom {
+func (w *When) GetFrom() *From {
 	if w == nil {
 		return nil
 	}
 	return w.From
 }
 
-func (w *When) GetSelectors() *AccessRoleItemSelectors {
+func (w *When) GetSelectors() *Selectors {
 	if w == nil {
 		return nil
 	}
@@ -393,10 +418,41 @@ func (a *AccessRoleItemRules) GetWhen() []When {
 }
 
 type AccessRoleItem struct {
-	Labels map[string]string     `json:"labels,omitempty"`
-	Name   string                `json:"name"`
-	Rules  []AccessRoleItemRules `json:"rules"`
-	Type   string                `json:"type"`
+	// Time at which the resource was created
+	CreationTime *time.Time `json:"creationTime,omitempty"`
+	// Kuma Resource Identifier (KRI) of the given resource
+	Kri    *string           `json:"kri,omitempty"`
+	Labels map[string]string `json:"labels,omitempty"`
+	// Time at which the resource was updated
+	ModificationTime *time.Time            `json:"modificationTime,omitempty"`
+	Name             string                `json:"name"`
+	Rules            []AccessRoleItemRules `json:"rules"`
+	Type             string                `json:"type"`
+}
+
+func (a AccessRoleItem) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(a, "", false)
+}
+
+func (a *AccessRoleItem) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (a *AccessRoleItem) GetCreationTime() *time.Time {
+	if a == nil {
+		return nil
+	}
+	return a.CreationTime
+}
+
+func (a *AccessRoleItem) GetKri() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Kri
 }
 
 func (a *AccessRoleItem) GetLabels() map[string]string {
@@ -404,6 +460,13 @@ func (a *AccessRoleItem) GetLabels() map[string]string {
 		return nil
 	}
 	return a.Labels
+}
+
+func (a *AccessRoleItem) GetModificationTime() *time.Time {
+	if a == nil {
+		return nil
+	}
+	return a.ModificationTime
 }
 
 func (a *AccessRoleItem) GetName() string {
@@ -421,6 +484,41 @@ func (a *AccessRoleItem) GetRules() []AccessRoleItemRules {
 }
 
 func (a *AccessRoleItem) GetType() string {
+	if a == nil {
+		return ""
+	}
+	return a.Type
+}
+
+type AccessRoleItemInput struct {
+	Labels map[string]string     `json:"labels,omitempty"`
+	Name   string                `json:"name"`
+	Rules  []AccessRoleItemRules `json:"rules"`
+	Type   string                `json:"type"`
+}
+
+func (a *AccessRoleItemInput) GetLabels() map[string]string {
+	if a == nil {
+		return nil
+	}
+	return a.Labels
+}
+
+func (a *AccessRoleItemInput) GetName() string {
+	if a == nil {
+		return ""
+	}
+	return a.Name
+}
+
+func (a *AccessRoleItemInput) GetRules() []AccessRoleItemRules {
+	if a == nil {
+		return nil
+	}
+	return a.Rules
+}
+
+func (a *AccessRoleItemInput) GetType() string {
 	if a == nil {
 		return ""
 	}

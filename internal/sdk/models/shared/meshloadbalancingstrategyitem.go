@@ -40,7 +40,6 @@ type MeshLoadBalancingStrategyItemKind string
 const (
 	MeshLoadBalancingStrategyItemKindMesh                 MeshLoadBalancingStrategyItemKind = "Mesh"
 	MeshLoadBalancingStrategyItemKindMeshSubset           MeshLoadBalancingStrategyItemKind = "MeshSubset"
-	MeshLoadBalancingStrategyItemKindMeshGateway          MeshLoadBalancingStrategyItemKind = "MeshGateway"
 	MeshLoadBalancingStrategyItemKindMeshService          MeshLoadBalancingStrategyItemKind = "MeshService"
 	MeshLoadBalancingStrategyItemKindMeshExternalService  MeshLoadBalancingStrategyItemKind = "MeshExternalService"
 	MeshLoadBalancingStrategyItemKindMeshMultiZoneService MeshLoadBalancingStrategyItemKind = "MeshMultiZoneService"
@@ -57,29 +56,7 @@ func (e MeshLoadBalancingStrategyItemKind) ToPointer() *MeshLoadBalancingStrateg
 func (e *MeshLoadBalancingStrategyItemKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshLoadBalancingStrategyItemProxyTypes string
-
-const (
-	MeshLoadBalancingStrategyItemProxyTypesSidecar MeshLoadBalancingStrategyItemProxyTypes = "Sidecar"
-	MeshLoadBalancingStrategyItemProxyTypesGateway MeshLoadBalancingStrategyItemProxyTypes = "Gateway"
-)
-
-func (e MeshLoadBalancingStrategyItemProxyTypes) ToPointer() *MeshLoadBalancingStrategyItemProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshLoadBalancingStrategyItemProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
+		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
 			return true
 		}
 	}
@@ -97,15 +74,12 @@ type MeshLoadBalancingStrategyItemTargetRef struct {
 	Labels map[string]string `json:"labels,omitempty"`
 	// Mesh is reserved for future use to identify cross mesh resources.
 	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
+	// Name of the referenced resource. Can only be used with kinds: `MeshService`
+	// and `MeshServiceSubset`
 	Name *string `json:"name,omitempty"`
 	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 	// will be targeted.
 	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshLoadBalancingStrategyItemProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
@@ -147,13 +121,6 @@ func (m *MeshLoadBalancingStrategyItemTargetRef) GetNamespace() *string {
 		return nil
 	}
 	return m.Namespace
-}
-
-func (m *MeshLoadBalancingStrategyItemTargetRef) GetProxyTypes() []MeshLoadBalancingStrategyItemProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
 }
 
 func (m *MeshLoadBalancingStrategyItemTargetRef) GetSectionName() *string {
@@ -464,186 +431,10 @@ func (l *LeastRequest) GetChoiceCount() *int {
 	return l.ChoiceCount
 }
 
-type MeshLoadBalancingStrategyItemConnection struct {
-	// Hash on source IP address.
-	SourceIP *bool `json:"sourceIP,omitempty"`
-}
-
-func (m *MeshLoadBalancingStrategyItemConnection) GetSourceIP() *bool {
-	if m == nil {
-		return nil
-	}
-	return m.SourceIP
-}
-
-type MeshLoadBalancingStrategyItemCookie struct {
-	// The name of the cookie that will be used to obtain the hash key.
-	Name string `json:"name"`
-	// The name of the path for the cookie.
-	Path *string `json:"path,omitempty"`
-	// If specified, a cookie with the TTL will be generated if the cookie is not present.
-	TTL *string `json:"ttl,omitempty"`
-}
-
-func (m *MeshLoadBalancingStrategyItemCookie) GetName() string {
-	if m == nil {
-		return ""
-	}
-	return m.Name
-}
-
-func (m *MeshLoadBalancingStrategyItemCookie) GetPath() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Path
-}
-
-func (m *MeshLoadBalancingStrategyItemCookie) GetTTL() *string {
-	if m == nil {
-		return nil
-	}
-	return m.TTL
-}
-
-type MeshLoadBalancingStrategyItemFilterState struct {
-	// The name of the Object in the per-request filterState, which is
-	// an Envoy::Hashable object. If there is no data associated with the key,
-	// or the stored object is not Envoy::Hashable, no hash will be produced.
-	Key string `json:"key"`
-}
-
-func (m *MeshLoadBalancingStrategyItemFilterState) GetKey() string {
-	if m == nil {
-		return ""
-	}
-	return m.Key
-}
-
-type MeshLoadBalancingStrategyItemSpecToHeader struct {
-	// The name of the request header that will be used to obtain the hash key.
-	Name string `json:"name"`
-}
-
-func (m *MeshLoadBalancingStrategyItemSpecToHeader) GetName() string {
-	if m == nil {
-		return ""
-	}
-	return m.Name
-}
-
-type MeshLoadBalancingStrategyItemQueryParameter struct {
-	// The name of the URL query parameter that will be used to obtain the hash key.
-	// If the parameter is not present, no hash will be produced. Query parameter names
-	// are case-sensitive.
-	Name string `json:"name"`
-}
-
-func (m *MeshLoadBalancingStrategyItemQueryParameter) GetName() string {
-	if m == nil {
-		return ""
-	}
-	return m.Name
-}
-
-type MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType string
-
-const (
-	MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerTypeHeader         MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType = "Header"
-	MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerTypeCookie         MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType = "Cookie"
-	MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerTypeConnection     MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType = "Connection"
-	MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerTypeSourceIP       MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType = "SourceIP"
-	MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerTypeQueryParameter MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType = "QueryParameter"
-	MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerTypeFilterState    MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType = "FilterState"
-)
-
-func (e MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType) ToPointer() *MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Header", "Cookie", "Connection", "SourceIP", "QueryParameter", "FilterState":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshLoadBalancingStrategyItemHashPolicies struct {
-	Connection     *MeshLoadBalancingStrategyItemConnection     `json:"connection,omitempty"`
-	Cookie         *MeshLoadBalancingStrategyItemCookie         `json:"cookie,omitempty"`
-	FilterState    *MeshLoadBalancingStrategyItemFilterState    `json:"filterState,omitempty"`
-	Header         *MeshLoadBalancingStrategyItemSpecToHeader   `json:"header,omitempty"`
-	QueryParameter *MeshLoadBalancingStrategyItemQueryParameter `json:"queryParameter,omitempty"`
-	// Terminal is a flag that short-circuits the hash computing. This field provides
-	// a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback
-	// to rest of the policy list”, it saves time when the terminal policy works.
-	// If true, and there is already a hash computed, ignore rest of the list of hash polices.
-	Terminal *bool                                                      `json:"terminal,omitempty"`
-	Type     MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType `json:"type"`
-}
-
-func (m *MeshLoadBalancingStrategyItemHashPolicies) GetConnection() *MeshLoadBalancingStrategyItemConnection {
-	if m == nil {
-		return nil
-	}
-	return m.Connection
-}
-
-func (m *MeshLoadBalancingStrategyItemHashPolicies) GetCookie() *MeshLoadBalancingStrategyItemCookie {
-	if m == nil {
-		return nil
-	}
-	return m.Cookie
-}
-
-func (m *MeshLoadBalancingStrategyItemHashPolicies) GetFilterState() *MeshLoadBalancingStrategyItemFilterState {
-	if m == nil {
-		return nil
-	}
-	return m.FilterState
-}
-
-func (m *MeshLoadBalancingStrategyItemHashPolicies) GetHeader() *MeshLoadBalancingStrategyItemSpecToHeader {
-	if m == nil {
-		return nil
-	}
-	return m.Header
-}
-
-func (m *MeshLoadBalancingStrategyItemHashPolicies) GetQueryParameter() *MeshLoadBalancingStrategyItemQueryParameter {
-	if m == nil {
-		return nil
-	}
-	return m.QueryParameter
-}
-
-func (m *MeshLoadBalancingStrategyItemHashPolicies) GetTerminal() *bool {
-	if m == nil {
-		return nil
-	}
-	return m.Terminal
-}
-
-func (m *MeshLoadBalancingStrategyItemHashPolicies) GetType() MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType {
-	if m == nil {
-		return MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType("")
-	}
-	return m.Type
-}
-
 // Maglev implements consistent hashing to upstream hosts. Maglev can be used as
 // a drop in replacement for the ring hash load balancer any place in which
 // consistent hashing is desired.
 type Maglev struct {
-	// HashPolicies specify a list of request/connection properties that are used to calculate a hash.
-	// These hash policies are executed in the specified order. If a hash policy has the “terminal” attribute
-	// set to true, and there is already a hash generated, the hash is returned immediately,
-	// ignoring the rest of the hash policy list.
-	HashPolicies []MeshLoadBalancingStrategyItemHashPolicies `json:"hashPolicies,omitempty"`
 	// The table size for Maglev hashing. Maglev aims for “minimal disruption”
 	// rather than an absolute guarantee. Minimal disruption means that when
 	// the set of upstream hosts change, a connection will likely be sent
@@ -651,13 +442,6 @@ type Maglev struct {
 	// the amount of disruption. The table size must be prime number limited to 5000011.
 	// If it is not specified, the default is 65537.
 	TableSize *int `json:"tableSize,omitempty"`
-}
-
-func (m *Maglev) GetHashPolicies() []MeshLoadBalancingStrategyItemHashPolicies {
-	if m == nil {
-		return nil
-	}
-	return m.HashPolicies
 }
 
 func (m *Maglev) GetTableSize() *int {
@@ -697,177 +481,6 @@ func (e *HashFunction) IsExact() bool {
 	return false
 }
 
-type MeshLoadBalancingStrategyItemSpecConnection struct {
-	// Hash on source IP address.
-	SourceIP *bool `json:"sourceIP,omitempty"`
-}
-
-func (m *MeshLoadBalancingStrategyItemSpecConnection) GetSourceIP() *bool {
-	if m == nil {
-		return nil
-	}
-	return m.SourceIP
-}
-
-type MeshLoadBalancingStrategyItemSpecCookie struct {
-	// The name of the cookie that will be used to obtain the hash key.
-	Name string `json:"name"`
-	// The name of the path for the cookie.
-	Path *string `json:"path,omitempty"`
-	// If specified, a cookie with the TTL will be generated if the cookie is not present.
-	TTL *string `json:"ttl,omitempty"`
-}
-
-func (m *MeshLoadBalancingStrategyItemSpecCookie) GetName() string {
-	if m == nil {
-		return ""
-	}
-	return m.Name
-}
-
-func (m *MeshLoadBalancingStrategyItemSpecCookie) GetPath() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Path
-}
-
-func (m *MeshLoadBalancingStrategyItemSpecCookie) GetTTL() *string {
-	if m == nil {
-		return nil
-	}
-	return m.TTL
-}
-
-type MeshLoadBalancingStrategyItemSpecFilterState struct {
-	// The name of the Object in the per-request filterState, which is
-	// an Envoy::Hashable object. If there is no data associated with the key,
-	// or the stored object is not Envoy::Hashable, no hash will be produced.
-	Key string `json:"key"`
-}
-
-func (m *MeshLoadBalancingStrategyItemSpecFilterState) GetKey() string {
-	if m == nil {
-		return ""
-	}
-	return m.Key
-}
-
-type MeshLoadBalancingStrategyItemSpecHeader struct {
-	// The name of the request header that will be used to obtain the hash key.
-	Name string `json:"name"`
-}
-
-func (m *MeshLoadBalancingStrategyItemSpecHeader) GetName() string {
-	if m == nil {
-		return ""
-	}
-	return m.Name
-}
-
-type MeshLoadBalancingStrategyItemSpecQueryParameter struct {
-	// The name of the URL query parameter that will be used to obtain the hash key.
-	// If the parameter is not present, no hash will be produced. Query parameter names
-	// are case-sensitive.
-	Name string `json:"name"`
-}
-
-func (m *MeshLoadBalancingStrategyItemSpecQueryParameter) GetName() string {
-	if m == nil {
-		return ""
-	}
-	return m.Name
-}
-
-type MeshLoadBalancingStrategyItemSpecToDefaultType string
-
-const (
-	MeshLoadBalancingStrategyItemSpecToDefaultTypeHeader         MeshLoadBalancingStrategyItemSpecToDefaultType = "Header"
-	MeshLoadBalancingStrategyItemSpecToDefaultTypeCookie         MeshLoadBalancingStrategyItemSpecToDefaultType = "Cookie"
-	MeshLoadBalancingStrategyItemSpecToDefaultTypeConnection     MeshLoadBalancingStrategyItemSpecToDefaultType = "Connection"
-	MeshLoadBalancingStrategyItemSpecToDefaultTypeSourceIP       MeshLoadBalancingStrategyItemSpecToDefaultType = "SourceIP"
-	MeshLoadBalancingStrategyItemSpecToDefaultTypeQueryParameter MeshLoadBalancingStrategyItemSpecToDefaultType = "QueryParameter"
-	MeshLoadBalancingStrategyItemSpecToDefaultTypeFilterState    MeshLoadBalancingStrategyItemSpecToDefaultType = "FilterState"
-)
-
-func (e MeshLoadBalancingStrategyItemSpecToDefaultType) ToPointer() *MeshLoadBalancingStrategyItemSpecToDefaultType {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshLoadBalancingStrategyItemSpecToDefaultType) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Header", "Cookie", "Connection", "SourceIP", "QueryParameter", "FilterState":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshLoadBalancingStrategyItemSpecHashPolicies struct {
-	Connection     *MeshLoadBalancingStrategyItemSpecConnection     `json:"connection,omitempty"`
-	Cookie         *MeshLoadBalancingStrategyItemSpecCookie         `json:"cookie,omitempty"`
-	FilterState    *MeshLoadBalancingStrategyItemSpecFilterState    `json:"filterState,omitempty"`
-	Header         *MeshLoadBalancingStrategyItemSpecHeader         `json:"header,omitempty"`
-	QueryParameter *MeshLoadBalancingStrategyItemSpecQueryParameter `json:"queryParameter,omitempty"`
-	// Terminal is a flag that short-circuits the hash computing. This field provides
-	// a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback
-	// to rest of the policy list”, it saves time when the terminal policy works.
-	// If true, and there is already a hash computed, ignore rest of the list of hash polices.
-	Terminal *bool                                          `json:"terminal,omitempty"`
-	Type     MeshLoadBalancingStrategyItemSpecToDefaultType `json:"type"`
-}
-
-func (m *MeshLoadBalancingStrategyItemSpecHashPolicies) GetConnection() *MeshLoadBalancingStrategyItemSpecConnection {
-	if m == nil {
-		return nil
-	}
-	return m.Connection
-}
-
-func (m *MeshLoadBalancingStrategyItemSpecHashPolicies) GetCookie() *MeshLoadBalancingStrategyItemSpecCookie {
-	if m == nil {
-		return nil
-	}
-	return m.Cookie
-}
-
-func (m *MeshLoadBalancingStrategyItemSpecHashPolicies) GetFilterState() *MeshLoadBalancingStrategyItemSpecFilterState {
-	if m == nil {
-		return nil
-	}
-	return m.FilterState
-}
-
-func (m *MeshLoadBalancingStrategyItemSpecHashPolicies) GetHeader() *MeshLoadBalancingStrategyItemSpecHeader {
-	if m == nil {
-		return nil
-	}
-	return m.Header
-}
-
-func (m *MeshLoadBalancingStrategyItemSpecHashPolicies) GetQueryParameter() *MeshLoadBalancingStrategyItemSpecQueryParameter {
-	if m == nil {
-		return nil
-	}
-	return m.QueryParameter
-}
-
-func (m *MeshLoadBalancingStrategyItemSpecHashPolicies) GetTerminal() *bool {
-	if m == nil {
-		return nil
-	}
-	return m.Terminal
-}
-
-func (m *MeshLoadBalancingStrategyItemSpecHashPolicies) GetType() MeshLoadBalancingStrategyItemSpecToDefaultType {
-	if m == nil {
-		return MeshLoadBalancingStrategyItemSpecToDefaultType("")
-	}
-	return m.Type
-}
-
 // RingHash  implements consistent hashing to upstream hosts. Each host is mapped
 // onto a circle (the “ring”) by hashing its address; each request is then routed
 // to a host by hashing some property of the request, and finding the nearest
@@ -876,11 +489,6 @@ type RingHash struct {
 	// HashFunction is a function used to hash hosts onto the ketama ring.
 	// The value defaults to XX_HASH. Available values – XX_HASH, MURMUR_HASH_2.
 	HashFunction *HashFunction `json:"hashFunction,omitempty"`
-	// HashPolicies specify a list of request/connection properties that are used to calculate a hash.
-	// These hash policies are executed in the specified order. If a hash policy has the “terminal” attribute
-	// set to true, and there is already a hash generated, the hash is returned immediately,
-	// ignoring the rest of the hash policy list.
-	HashPolicies []MeshLoadBalancingStrategyItemSpecHashPolicies `json:"hashPolicies,omitempty"`
 	// Maximum hash ring size. Defaults to 8M entries, and limited to 8M entries,
 	// but can be lowered to further constrain resource use.
 	MaxRingSize *int `json:"maxRingSize,omitempty"`
@@ -895,13 +503,6 @@ func (r *RingHash) GetHashFunction() *HashFunction {
 		return nil
 	}
 	return r.HashFunction
-}
-
-func (r *RingHash) GetHashPolicies() []MeshLoadBalancingStrategyItemSpecHashPolicies {
-	if r == nil {
-		return nil
-	}
-	return r.HashPolicies
 }
 
 func (r *RingHash) GetMaxRingSize() *int {
@@ -1026,22 +627,22 @@ func (m *MeshLoadBalancingStrategyItemFrom) GetZones() []string {
 	return m.Zones
 }
 
-// MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessType - Type defines how target zones will be picked from available zones
-type MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessType string
+// MeshLoadBalancingStrategyItemSpecToDefaultType - Type defines how target zones will be picked from available zones
+type MeshLoadBalancingStrategyItemSpecToDefaultType string
 
 const (
-	MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessTypeNone      MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessType = "None"
-	MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessTypeOnly      MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessType = "Only"
-	MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessTypeAny       MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessType = "Any"
-	MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessTypeAnyExcept MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessType = "AnyExcept"
+	MeshLoadBalancingStrategyItemSpecToDefaultTypeNone      MeshLoadBalancingStrategyItemSpecToDefaultType = "None"
+	MeshLoadBalancingStrategyItemSpecToDefaultTypeOnly      MeshLoadBalancingStrategyItemSpecToDefaultType = "Only"
+	MeshLoadBalancingStrategyItemSpecToDefaultTypeAny       MeshLoadBalancingStrategyItemSpecToDefaultType = "Any"
+	MeshLoadBalancingStrategyItemSpecToDefaultTypeAnyExcept MeshLoadBalancingStrategyItemSpecToDefaultType = "AnyExcept"
 )
 
-func (e MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessType) ToPointer() *MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessType {
+func (e MeshLoadBalancingStrategyItemSpecToDefaultType) ToPointer() *MeshLoadBalancingStrategyItemSpecToDefaultType {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessType) IsExact() bool {
+func (e *MeshLoadBalancingStrategyItemSpecToDefaultType) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "None", "Only", "Any", "AnyExcept":
@@ -1054,13 +655,13 @@ func (e *MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessType) IsExac
 // MeshLoadBalancingStrategyItemSpecTo - To defines to which zones the traffic should be load balanced
 type MeshLoadBalancingStrategyItemSpecTo struct {
 	// Type defines how target zones will be picked from available zones
-	Type  MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessType `json:"type"`
-	Zones []string                                                        `json:"zones,omitempty"`
+	Type  MeshLoadBalancingStrategyItemSpecToDefaultType `json:"type"`
+	Zones []string                                       `json:"zones,omitempty"`
 }
 
-func (m *MeshLoadBalancingStrategyItemSpecTo) GetType() MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessType {
+func (m *MeshLoadBalancingStrategyItemSpecTo) GetType() MeshLoadBalancingStrategyItemSpecToDefaultType {
 	if m == nil {
-		return MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessType("")
+		return MeshLoadBalancingStrategyItemSpecToDefaultType("")
 	}
 	return m.Type
 }
@@ -1338,7 +939,6 @@ type MeshLoadBalancingStrategyItemSpecKind string
 const (
 	MeshLoadBalancingStrategyItemSpecKindMesh                 MeshLoadBalancingStrategyItemSpecKind = "Mesh"
 	MeshLoadBalancingStrategyItemSpecKindMeshSubset           MeshLoadBalancingStrategyItemSpecKind = "MeshSubset"
-	MeshLoadBalancingStrategyItemSpecKindMeshGateway          MeshLoadBalancingStrategyItemSpecKind = "MeshGateway"
 	MeshLoadBalancingStrategyItemSpecKindMeshService          MeshLoadBalancingStrategyItemSpecKind = "MeshService"
 	MeshLoadBalancingStrategyItemSpecKindMeshExternalService  MeshLoadBalancingStrategyItemSpecKind = "MeshExternalService"
 	MeshLoadBalancingStrategyItemSpecKindMeshMultiZoneService MeshLoadBalancingStrategyItemSpecKind = "MeshMultiZoneService"
@@ -1355,29 +955,7 @@ func (e MeshLoadBalancingStrategyItemSpecKind) ToPointer() *MeshLoadBalancingStr
 func (e *MeshLoadBalancingStrategyItemSpecKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshLoadBalancingStrategyItemSpecProxyTypes string
-
-const (
-	MeshLoadBalancingStrategyItemSpecProxyTypesSidecar MeshLoadBalancingStrategyItemSpecProxyTypes = "Sidecar"
-	MeshLoadBalancingStrategyItemSpecProxyTypesGateway MeshLoadBalancingStrategyItemSpecProxyTypes = "Gateway"
-)
-
-func (e MeshLoadBalancingStrategyItemSpecProxyTypes) ToPointer() *MeshLoadBalancingStrategyItemSpecProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshLoadBalancingStrategyItemSpecProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
+		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
 			return true
 		}
 	}
@@ -1394,15 +972,12 @@ type MeshLoadBalancingStrategyItemSpecTargetRef struct {
 	Labels map[string]string `json:"labels,omitempty"`
 	// Mesh is reserved for future use to identify cross mesh resources.
 	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
+	// Name of the referenced resource. Can only be used with kinds: `MeshService`
+	// and `MeshServiceSubset`
 	Name *string `json:"name,omitempty"`
 	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 	// will be targeted.
 	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshLoadBalancingStrategyItemSpecProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
@@ -1444,13 +1019,6 @@ func (m *MeshLoadBalancingStrategyItemSpecTargetRef) GetNamespace() *string {
 		return nil
 	}
 	return m.Namespace
-}
-
-func (m *MeshLoadBalancingStrategyItemSpecTargetRef) GetProxyTypes() []MeshLoadBalancingStrategyItemSpecProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
 }
 
 func (m *MeshLoadBalancingStrategyItemSpecTargetRef) GetSectionName() *string {

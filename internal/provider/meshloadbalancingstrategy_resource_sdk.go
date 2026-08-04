@@ -44,7 +44,7 @@ func (r *MeshLoadBalancingStrategyResourceModel) RefreshFromSharedMeshLoadBalanc
 		if resp.Spec.TargetRef == nil {
 			r.Spec.TargetRef = nil
 		} else {
-			r.Spec.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
+			r.Spec.TargetRef = &tfTypes.TargetRef{}
 			r.Spec.TargetRef.Kind = types.StringValue(string(resp.Spec.TargetRef.Kind))
 			if len(resp.Spec.TargetRef.Labels) > 0 {
 				r.Spec.TargetRef.Labels = make(map[string]types.String, len(resp.Spec.TargetRef.Labels))
@@ -55,10 +55,6 @@ func (r *MeshLoadBalancingStrategyResourceModel) RefreshFromSharedMeshLoadBalanc
 			r.Spec.TargetRef.Mesh = types.StringPointerValue(resp.Spec.TargetRef.Mesh)
 			r.Spec.TargetRef.Name = types.StringPointerValue(resp.Spec.TargetRef.Name)
 			r.Spec.TargetRef.Namespace = types.StringPointerValue(resp.Spec.TargetRef.Namespace)
-			r.Spec.TargetRef.ProxyTypes = make([]types.String, 0, len(resp.Spec.TargetRef.ProxyTypes))
-			for _, v := range resp.Spec.TargetRef.ProxyTypes {
-				r.Spec.TargetRef.ProxyTypes = append(r.Spec.TargetRef.ProxyTypes, types.StringValue(string(v)))
-			}
 			r.Spec.TargetRef.SectionName = types.StringPointerValue(resp.Spec.TargetRef.SectionName)
 			if len(resp.Spec.TargetRef.Tags) > 0 {
 				r.Spec.TargetRef.Tags = make(map[string]types.String, len(resp.Spec.TargetRef.Tags))
@@ -127,7 +123,7 @@ func (r *MeshLoadBalancingStrategyResourceModel) RefreshFromSharedMeshLoadBalanc
 					} else {
 						to.Default.LoadBalancer.LeastRequest = &tfTypes.LeastRequest{}
 						if toItem.Default.LoadBalancer.LeastRequest.ActiveRequestBias != nil {
-							to.Default.LoadBalancer.LeastRequest.ActiveRequestBias = &tfTypes.Mode{}
+							to.Default.LoadBalancer.LeastRequest.ActiveRequestBias = &tfTypes.AuthType{}
 							if toItem.Default.LoadBalancer.LeastRequest.ActiveRequestBias.Integer != nil {
 								to.Default.LoadBalancer.LeastRequest.ActiveRequestBias.Integer = types.Int64PointerValue(toItem.Default.LoadBalancer.LeastRequest.ActiveRequestBias.Integer)
 							}
@@ -141,54 +137,12 @@ func (r *MeshLoadBalancingStrategyResourceModel) RefreshFromSharedMeshLoadBalanc
 						to.Default.LoadBalancer.Maglev = nil
 					} else {
 						to.Default.LoadBalancer.Maglev = &tfTypes.Maglev{}
-						to.Default.LoadBalancer.Maglev.HashPolicies = []tfTypes.HashPolicies{}
-
-						for _, hashPoliciesItem1 := range toItem.Default.LoadBalancer.Maglev.HashPolicies {
-							var hashPolicies1 tfTypes.HashPolicies
-
-							if hashPoliciesItem1.Connection == nil {
-								hashPolicies1.Connection = nil
-							} else {
-								hashPolicies1.Connection = &tfTypes.Connection{}
-								hashPolicies1.Connection.SourceIP = types.BoolPointerValue(hashPoliciesItem1.Connection.SourceIP)
-							}
-							if hashPoliciesItem1.Cookie == nil {
-								hashPolicies1.Cookie = nil
-							} else {
-								hashPolicies1.Cookie = &tfTypes.Cookie{}
-								hashPolicies1.Cookie.Name = types.StringValue(hashPoliciesItem1.Cookie.Name)
-								hashPolicies1.Cookie.Path = types.StringPointerValue(hashPoliciesItem1.Cookie.Path)
-								hashPolicies1.Cookie.TTL = types.StringPointerValue(hashPoliciesItem1.Cookie.TTL)
-							}
-							if hashPoliciesItem1.FilterState == nil {
-								hashPolicies1.FilterState = nil
-							} else {
-								hashPolicies1.FilterState = &tfTypes.FilterState{}
-								hashPolicies1.FilterState.Key = types.StringValue(hashPoliciesItem1.FilterState.Key)
-							}
-							if hashPoliciesItem1.Header == nil {
-								hashPolicies1.Header = nil
-							} else {
-								hashPolicies1.Header = &tfTypes.EnvVar{}
-								hashPolicies1.Header.Name = types.StringValue(hashPoliciesItem1.Header.Name)
-							}
-							if hashPoliciesItem1.QueryParameter == nil {
-								hashPolicies1.QueryParameter = nil
-							} else {
-								hashPolicies1.QueryParameter = &tfTypes.EnvVar{}
-								hashPolicies1.QueryParameter.Name = types.StringValue(hashPoliciesItem1.QueryParameter.Name)
-							}
-							hashPolicies1.Terminal = types.BoolPointerValue(hashPoliciesItem1.Terminal)
-							hashPolicies1.Type = types.StringValue(string(hashPoliciesItem1.Type))
-
-							to.Default.LoadBalancer.Maglev.HashPolicies = append(to.Default.LoadBalancer.Maglev.HashPolicies, hashPolicies1)
-						}
 						to.Default.LoadBalancer.Maglev.TableSize = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(toItem.Default.LoadBalancer.Maglev.TableSize))
 					}
 					if toItem.Default.LoadBalancer.Random == nil {
 						to.Default.LoadBalancer.Random = nil
 					} else {
-						to.Default.LoadBalancer.Random = &tfTypes.Options{}
+						to.Default.LoadBalancer.Random = &tfTypes.Routing{}
 					}
 					if toItem.Default.LoadBalancer.RingHash == nil {
 						to.Default.LoadBalancer.RingHash = nil
@@ -199,55 +153,13 @@ func (r *MeshLoadBalancingStrategyResourceModel) RefreshFromSharedMeshLoadBalanc
 						} else {
 							to.Default.LoadBalancer.RingHash.HashFunction = types.StringNull()
 						}
-						to.Default.LoadBalancer.RingHash.HashPolicies = []tfTypes.HashPolicies{}
-
-						for _, hashPoliciesItem2 := range toItem.Default.LoadBalancer.RingHash.HashPolicies {
-							var hashPolicies2 tfTypes.HashPolicies
-
-							if hashPoliciesItem2.Connection == nil {
-								hashPolicies2.Connection = nil
-							} else {
-								hashPolicies2.Connection = &tfTypes.Connection{}
-								hashPolicies2.Connection.SourceIP = types.BoolPointerValue(hashPoliciesItem2.Connection.SourceIP)
-							}
-							if hashPoliciesItem2.Cookie == nil {
-								hashPolicies2.Cookie = nil
-							} else {
-								hashPolicies2.Cookie = &tfTypes.Cookie{}
-								hashPolicies2.Cookie.Name = types.StringValue(hashPoliciesItem2.Cookie.Name)
-								hashPolicies2.Cookie.Path = types.StringPointerValue(hashPoliciesItem2.Cookie.Path)
-								hashPolicies2.Cookie.TTL = types.StringPointerValue(hashPoliciesItem2.Cookie.TTL)
-							}
-							if hashPoliciesItem2.FilterState == nil {
-								hashPolicies2.FilterState = nil
-							} else {
-								hashPolicies2.FilterState = &tfTypes.FilterState{}
-								hashPolicies2.FilterState.Key = types.StringValue(hashPoliciesItem2.FilterState.Key)
-							}
-							if hashPoliciesItem2.Header == nil {
-								hashPolicies2.Header = nil
-							} else {
-								hashPolicies2.Header = &tfTypes.EnvVar{}
-								hashPolicies2.Header.Name = types.StringValue(hashPoliciesItem2.Header.Name)
-							}
-							if hashPoliciesItem2.QueryParameter == nil {
-								hashPolicies2.QueryParameter = nil
-							} else {
-								hashPolicies2.QueryParameter = &tfTypes.EnvVar{}
-								hashPolicies2.QueryParameter.Name = types.StringValue(hashPoliciesItem2.QueryParameter.Name)
-							}
-							hashPolicies2.Terminal = types.BoolPointerValue(hashPoliciesItem2.Terminal)
-							hashPolicies2.Type = types.StringValue(string(hashPoliciesItem2.Type))
-
-							to.Default.LoadBalancer.RingHash.HashPolicies = append(to.Default.LoadBalancer.RingHash.HashPolicies, hashPolicies2)
-						}
 						to.Default.LoadBalancer.RingHash.MaxRingSize = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(toItem.Default.LoadBalancer.RingHash.MaxRingSize))
 						to.Default.LoadBalancer.RingHash.MinRingSize = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(toItem.Default.LoadBalancer.RingHash.MinRingSize))
 					}
 					if toItem.Default.LoadBalancer.RoundRobin == nil {
 						to.Default.LoadBalancer.RoundRobin = nil
 					} else {
-						to.Default.LoadBalancer.RoundRobin = &tfTypes.Options{}
+						to.Default.LoadBalancer.RoundRobin = &tfTypes.Routing{}
 					}
 					to.Default.LoadBalancer.Type = types.StringValue(string(toItem.Default.LoadBalancer.Type))
 				}
@@ -287,7 +199,7 @@ func (r *MeshLoadBalancingStrategyResourceModel) RefreshFromSharedMeshLoadBalanc
 						} else {
 							to.Default.LocalityAwareness.CrossZone.FailoverThreshold = &tfTypes.FailoverThreshold{}
 							if to.Default.LocalityAwareness.CrossZone.FailoverThreshold.Percentage == nil {
-								to.Default.LocalityAwareness.CrossZone.FailoverThreshold.Percentage = &tfTypes.Mode{}
+								to.Default.LocalityAwareness.CrossZone.FailoverThreshold.Percentage = &tfTypes.AuthType{}
 							}
 							if toItem.Default.LocalityAwareness.CrossZone.FailoverThreshold.Percentage.Integer != nil {
 								to.Default.LocalityAwareness.CrossZone.FailoverThreshold.Percentage.Integer = types.Int64PointerValue(toItem.Default.LocalityAwareness.CrossZone.FailoverThreshold.Percentage.Integer)
@@ -315,7 +227,7 @@ func (r *MeshLoadBalancingStrategyResourceModel) RefreshFromSharedMeshLoadBalanc
 					}
 				}
 			}
-			to.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
+			to.TargetRef = &tfTypes.TargetRef{}
 			to.TargetRef.Kind = types.StringValue(string(toItem.TargetRef.Kind))
 			if len(toItem.TargetRef.Labels) > 0 {
 				to.TargetRef.Labels = make(map[string]types.String, len(toItem.TargetRef.Labels))
@@ -326,10 +238,6 @@ func (r *MeshLoadBalancingStrategyResourceModel) RefreshFromSharedMeshLoadBalanc
 			to.TargetRef.Mesh = types.StringPointerValue(toItem.TargetRef.Mesh)
 			to.TargetRef.Name = types.StringPointerValue(toItem.TargetRef.Name)
 			to.TargetRef.Namespace = types.StringPointerValue(toItem.TargetRef.Namespace)
-			to.TargetRef.ProxyTypes = make([]types.String, 0, len(toItem.TargetRef.ProxyTypes))
-			for _, v := range toItem.TargetRef.ProxyTypes {
-				to.TargetRef.ProxyTypes = append(to.TargetRef.ProxyTypes, types.StringValue(string(v)))
-			}
 			to.TargetRef.SectionName = types.StringPointerValue(toItem.TargetRef.SectionName)
 			if len(toItem.TargetRef.Tags) > 0 {
 				to.TargetRef.Tags = make(map[string]types.String, len(toItem.TargetRef.Tags))
@@ -450,10 +358,6 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 		} else {
 			namespace = nil
 		}
-		proxyTypes := make([]shared.MeshLoadBalancingStrategyItemProxyTypes, 0, len(r.Spec.TargetRef.ProxyTypes))
-		for _, proxyTypesItem := range r.Spec.TargetRef.ProxyTypes {
-			proxyTypes = append(proxyTypes, shared.MeshLoadBalancingStrategyItemProxyTypes(proxyTypesItem.ValueString()))
-		}
 		sectionName := new(string)
 		if !r.Spec.TargetRef.SectionName.IsUnknown() && !r.Spec.TargetRef.SectionName.IsNull() {
 			*sectionName = r.Spec.TargetRef.SectionName.ValueString()
@@ -473,7 +377,6 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 			Mesh:        mesh1,
 			Name:        name1,
 			Namespace:   namespace,
-			ProxyTypes:  proxyTypes,
 			SectionName: sectionName,
 			Tags:        tags,
 		}
@@ -605,87 +508,6 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 				}
 				var maglev *shared.Maglev
 				if r.Spec.To[toIndex].Default.LoadBalancer.Maglev != nil {
-					hashPolicies1 := make([]shared.MeshLoadBalancingStrategyItemHashPolicies, 0, len(r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies))
-					for hashPoliciesIndex1 := range r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies {
-						var connection1 *shared.MeshLoadBalancingStrategyItemConnection
-						if r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Connection != nil {
-							sourceIp1 := new(bool)
-							if !r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Connection.SourceIP.IsUnknown() && !r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Connection.SourceIP.IsNull() {
-								*sourceIp1 = r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Connection.SourceIP.ValueBool()
-							} else {
-								sourceIp1 = nil
-							}
-							connection1 = &shared.MeshLoadBalancingStrategyItemConnection{
-								SourceIP: sourceIp1,
-							}
-						}
-						var cookie1 *shared.MeshLoadBalancingStrategyItemCookie
-						if r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Cookie != nil {
-							var name5 string
-							name5 = r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Cookie.Name.ValueString()
-
-							path1 := new(string)
-							if !r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Cookie.Path.IsUnknown() && !r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Cookie.Path.IsNull() {
-								*path1 = r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Cookie.Path.ValueString()
-							} else {
-								path1 = nil
-							}
-							ttl1 := new(string)
-							if !r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Cookie.TTL.IsUnknown() && !r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Cookie.TTL.IsNull() {
-								*ttl1 = r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Cookie.TTL.ValueString()
-							} else {
-								ttl1 = nil
-							}
-							cookie1 = &shared.MeshLoadBalancingStrategyItemCookie{
-								Name: name5,
-								Path: path1,
-								TTL:  ttl1,
-							}
-						}
-						var filterState1 *shared.MeshLoadBalancingStrategyItemFilterState
-						if r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].FilterState != nil {
-							var key1 string
-							key1 = r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].FilterState.Key.ValueString()
-
-							filterState1 = &shared.MeshLoadBalancingStrategyItemFilterState{
-								Key: key1,
-							}
-						}
-						var header1 *shared.MeshLoadBalancingStrategyItemSpecToHeader
-						if r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Header != nil {
-							var name6 string
-							name6 = r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Header.Name.ValueString()
-
-							header1 = &shared.MeshLoadBalancingStrategyItemSpecToHeader{
-								Name: name6,
-							}
-						}
-						var queryParameter1 *shared.MeshLoadBalancingStrategyItemQueryParameter
-						if r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].QueryParameter != nil {
-							var name7 string
-							name7 = r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].QueryParameter.Name.ValueString()
-
-							queryParameter1 = &shared.MeshLoadBalancingStrategyItemQueryParameter{
-								Name: name7,
-							}
-						}
-						terminal1 := new(bool)
-						if !r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Terminal.IsUnknown() && !r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Terminal.IsNull() {
-							*terminal1 = r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Terminal.ValueBool()
-						} else {
-							terminal1 = nil
-						}
-						type2 := shared.MeshLoadBalancingStrategyItemSpecToDefaultLoadBalancerType(r.Spec.To[toIndex].Default.LoadBalancer.Maglev.HashPolicies[hashPoliciesIndex1].Type.ValueString())
-						hashPolicies1 = append(hashPolicies1, shared.MeshLoadBalancingStrategyItemHashPolicies{
-							Connection:     connection1,
-							Cookie:         cookie1,
-							FilterState:    filterState1,
-							Header:         header1,
-							QueryParameter: queryParameter1,
-							Terminal:       terminal1,
-							Type:           type2,
-						})
-					}
 					tableSize := new(int)
 					if !r.Spec.To[toIndex].Default.LoadBalancer.Maglev.TableSize.IsUnknown() && !r.Spec.To[toIndex].Default.LoadBalancer.Maglev.TableSize.IsNull() {
 						*tableSize = int(r.Spec.To[toIndex].Default.LoadBalancer.Maglev.TableSize.ValueInt32())
@@ -693,8 +515,7 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 						tableSize = nil
 					}
 					maglev = &shared.Maglev{
-						HashPolicies: hashPolicies1,
-						TableSize:    tableSize,
+						TableSize: tableSize,
 					}
 				}
 				var random *shared.MeshLoadBalancingStrategyItemRandom
@@ -708,87 +529,6 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 						*hashFunction = shared.HashFunction(r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashFunction.ValueString())
 					} else {
 						hashFunction = nil
-					}
-					hashPolicies2 := make([]shared.MeshLoadBalancingStrategyItemSpecHashPolicies, 0, len(r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies))
-					for hashPoliciesIndex2 := range r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies {
-						var connection2 *shared.MeshLoadBalancingStrategyItemSpecConnection
-						if r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Connection != nil {
-							sourceIp2 := new(bool)
-							if !r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Connection.SourceIP.IsUnknown() && !r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Connection.SourceIP.IsNull() {
-								*sourceIp2 = r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Connection.SourceIP.ValueBool()
-							} else {
-								sourceIp2 = nil
-							}
-							connection2 = &shared.MeshLoadBalancingStrategyItemSpecConnection{
-								SourceIP: sourceIp2,
-							}
-						}
-						var cookie2 *shared.MeshLoadBalancingStrategyItemSpecCookie
-						if r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Cookie != nil {
-							var name8 string
-							name8 = r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Cookie.Name.ValueString()
-
-							path2 := new(string)
-							if !r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Cookie.Path.IsUnknown() && !r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Cookie.Path.IsNull() {
-								*path2 = r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Cookie.Path.ValueString()
-							} else {
-								path2 = nil
-							}
-							ttl2 := new(string)
-							if !r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Cookie.TTL.IsUnknown() && !r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Cookie.TTL.IsNull() {
-								*ttl2 = r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Cookie.TTL.ValueString()
-							} else {
-								ttl2 = nil
-							}
-							cookie2 = &shared.MeshLoadBalancingStrategyItemSpecCookie{
-								Name: name8,
-								Path: path2,
-								TTL:  ttl2,
-							}
-						}
-						var filterState2 *shared.MeshLoadBalancingStrategyItemSpecFilterState
-						if r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].FilterState != nil {
-							var key2 string
-							key2 = r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].FilterState.Key.ValueString()
-
-							filterState2 = &shared.MeshLoadBalancingStrategyItemSpecFilterState{
-								Key: key2,
-							}
-						}
-						var header2 *shared.MeshLoadBalancingStrategyItemSpecHeader
-						if r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Header != nil {
-							var name9 string
-							name9 = r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Header.Name.ValueString()
-
-							header2 = &shared.MeshLoadBalancingStrategyItemSpecHeader{
-								Name: name9,
-							}
-						}
-						var queryParameter2 *shared.MeshLoadBalancingStrategyItemSpecQueryParameter
-						if r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].QueryParameter != nil {
-							var name10 string
-							name10 = r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].QueryParameter.Name.ValueString()
-
-							queryParameter2 = &shared.MeshLoadBalancingStrategyItemSpecQueryParameter{
-								Name: name10,
-							}
-						}
-						terminal2 := new(bool)
-						if !r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Terminal.IsUnknown() && !r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Terminal.IsNull() {
-							*terminal2 = r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Terminal.ValueBool()
-						} else {
-							terminal2 = nil
-						}
-						type3 := shared.MeshLoadBalancingStrategyItemSpecToDefaultType(r.Spec.To[toIndex].Default.LoadBalancer.RingHash.HashPolicies[hashPoliciesIndex2].Type.ValueString())
-						hashPolicies2 = append(hashPolicies2, shared.MeshLoadBalancingStrategyItemSpecHashPolicies{
-							Connection:     connection2,
-							Cookie:         cookie2,
-							FilterState:    filterState2,
-							Header:         header2,
-							QueryParameter: queryParameter2,
-							Terminal:       terminal2,
-							Type:           type3,
-						})
 					}
 					maxRingSize := new(int)
 					if !r.Spec.To[toIndex].Default.LoadBalancer.RingHash.MaxRingSize.IsUnknown() && !r.Spec.To[toIndex].Default.LoadBalancer.RingHash.MaxRingSize.IsNull() {
@@ -804,7 +544,6 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 					}
 					ringHash = &shared.RingHash{
 						HashFunction: hashFunction,
-						HashPolicies: hashPolicies2,
 						MaxRingSize:  maxRingSize,
 						MinRingSize:  minRingSize,
 					}
@@ -839,7 +578,7 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 								Zones: zones,
 							}
 						}
-						typeVar2 := shared.MeshLoadBalancingStrategyItemSpecToDefaultLocalityAwarenessType(r.Spec.To[toIndex].Default.LocalityAwareness.CrossZone.Failover[failoverIndex].To.Type.ValueString())
+						typeVar2 := shared.MeshLoadBalancingStrategyItemSpecToDefaultType(r.Spec.To[toIndex].Default.LocalityAwareness.CrossZone.Failover[failoverIndex].To.Type.ValueString())
 						zones1 := make([]string, 0, len(r.Spec.To[toIndex].Default.LocalityAwareness.CrossZone.Failover[failoverIndex].To.Zones))
 						for zonesIndex1 := range r.Spec.To[toIndex].Default.LocalityAwareness.CrossZone.Failover[failoverIndex].To.Zones {
 							zones1 = append(zones1, r.Spec.To[toIndex].Default.LocalityAwareness.CrossZone.Failover[failoverIndex].To.Zones[zonesIndex1].ValueString())
@@ -897,8 +636,8 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 				if r.Spec.To[toIndex].Default.LocalityAwareness.LocalZone != nil {
 					affinityTags := make([]shared.AffinityTags, 0, len(r.Spec.To[toIndex].Default.LocalityAwareness.LocalZone.AffinityTags))
 					for affinityTagsIndex := range r.Spec.To[toIndex].Default.LocalityAwareness.LocalZone.AffinityTags {
-						var key3 string
-						key3 = r.Spec.To[toIndex].Default.LocalityAwareness.LocalZone.AffinityTags[affinityTagsIndex].Key.ValueString()
+						var key1 string
+						key1 = r.Spec.To[toIndex].Default.LocalityAwareness.LocalZone.AffinityTags[affinityTagsIndex].Key.ValueString()
 
 						weight := new(int)
 						if !r.Spec.To[toIndex].Default.LocalityAwareness.LocalZone.AffinityTags[affinityTagsIndex].Weight.IsUnknown() && !r.Spec.To[toIndex].Default.LocalityAwareness.LocalZone.AffinityTags[affinityTagsIndex].Weight.IsNull() {
@@ -907,7 +646,7 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 							weight = nil
 						}
 						affinityTags = append(affinityTags, shared.AffinityTags{
-							Key:    key3,
+							Key:    key1,
 							Weight: weight,
 						})
 					}
@@ -941,21 +680,17 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 		} else {
 			mesh2 = nil
 		}
-		name11 := new(string)
+		name5 := new(string)
 		if !r.Spec.To[toIndex].TargetRef.Name.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Name.IsNull() {
-			*name11 = r.Spec.To[toIndex].TargetRef.Name.ValueString()
+			*name5 = r.Spec.To[toIndex].TargetRef.Name.ValueString()
 		} else {
-			name11 = nil
+			name5 = nil
 		}
 		namespace1 := new(string)
 		if !r.Spec.To[toIndex].TargetRef.Namespace.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Namespace.IsNull() {
 			*namespace1 = r.Spec.To[toIndex].TargetRef.Namespace.ValueString()
 		} else {
 			namespace1 = nil
-		}
-		proxyTypes1 := make([]shared.MeshLoadBalancingStrategyItemSpecProxyTypes, 0, len(r.Spec.To[toIndex].TargetRef.ProxyTypes))
-		for _, proxyTypesItem1 := range r.Spec.To[toIndex].TargetRef.ProxyTypes {
-			proxyTypes1 = append(proxyTypes1, shared.MeshLoadBalancingStrategyItemSpecProxyTypes(proxyTypesItem1.ValueString()))
 		}
 		sectionName1 := new(string)
 		if !r.Spec.To[toIndex].TargetRef.SectionName.IsUnknown() && !r.Spec.To[toIndex].TargetRef.SectionName.IsNull() {
@@ -974,9 +709,8 @@ func (r *MeshLoadBalancingStrategyResourceModel) ToSharedMeshLoadBalancingStrate
 			Kind:        kind1,
 			Labels:      labels2,
 			Mesh:        mesh2,
-			Name:        name11,
+			Name:        name5,
 			Namespace:   namespace1,
-			ProxyTypes:  proxyTypes1,
 			SectionName: sectionName1,
 			Tags:        tags1,
 		}

@@ -6,6 +6,7 @@ import (
 	"context"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
@@ -49,12 +50,15 @@ func (r *MeshZoneIngressResourceModel) RefreshFromSharedZoneIngressItem(ctx cont
 		} else {
 			r.AvailableServices = nil
 		}
+		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
+		r.Kri = types.StringPointerValue(resp.Kri)
 		if len(resp.Labels) > 0 {
 			r.Labels = make(map[string]types.String, len(resp.Labels))
 			for key1, value1 := range resp.Labels {
 				r.Labels[key1] = types.StringValue(value1)
 			}
 		}
+		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
 		if resp.Networking == nil {
 			r.Networking = nil
@@ -110,7 +114,7 @@ func (r *MeshZoneIngressResourceModel) ToOperationsPutZoneIngressRequest(ctx con
 	var name string
 	name = r.Name.ValueString()
 
-	zoneIngressItem, zoneIngressItemDiags := r.ToSharedZoneIngressItem(ctx)
+	zoneIngressItem, zoneIngressItemDiags := r.ToSharedZoneIngressItemInput(ctx)
 	diags.Append(zoneIngressItemDiags...)
 
 	if diags.HasError() {
@@ -125,7 +129,7 @@ func (r *MeshZoneIngressResourceModel) ToOperationsPutZoneIngressRequest(ctx con
 	return &out, diags
 }
 
-func (r *MeshZoneIngressResourceModel) ToSharedZoneIngressItem(ctx context.Context) (*shared.ZoneIngressItem, diag.Diagnostics) {
+func (r *MeshZoneIngressResourceModel) ToSharedZoneIngressItemInput(ctx context.Context) (*shared.ZoneIngressItemInput, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var availableServices []shared.AvailableServices
@@ -230,7 +234,7 @@ func (r *MeshZoneIngressResourceModel) ToSharedZoneIngressItem(ctx context.Conte
 	} else {
 		zone = nil
 	}
-	out := shared.ZoneIngressItem{
+	out := shared.ZoneIngressItemInput{
 		AvailableServices: availableServices,
 		Labels:            labels,
 		Name:              name,

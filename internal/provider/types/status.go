@@ -3,7 +3,5 @@
 package types
 
 type Status struct {
-	Addresses          []Addresses          `tfsdk:"addresses"`
-	HostnameGenerators []HostnameGenerators `tfsdk:"hostname_generators"`
-	Vip                *Vip                 `tfsdk:"vip"`
+	Conditions []Conditions `tfsdk:"conditions"`
 }
