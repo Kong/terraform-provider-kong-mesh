@@ -20,50 +20,6 @@ resource "kong-mesh_mesh_fault_injection" "my_meshfaultinjection" {
   mesh = "...my_mesh..."
   name = "...my_name..."
   spec = {
-    from = [
-      {
-        default = {
-          http = [
-            {
-              abort = {
-                http_status = 1
-                percentage = {
-                  str = "...my_str..."
-                }
-              }
-              delay = {
-                percentage = {
-                  integer = 8
-                }
-                value = "...my_value..."
-              }
-              response_bandwidth = {
-                limit = "...my_limit..."
-                percentage = {
-                  str = "...my_str..."
-                }
-              }
-            }
-          ]
-        }
-        target_ref = {
-          kind = "MeshServiceSubset"
-          labels = {
-            key = "value"
-          }
-          mesh      = "...my_mesh..."
-          name      = "...my_name..."
-          namespace = "...my_namespace..."
-          proxy_types = [
-            "Gateway"
-          ]
-          section_name = "...my_section_name..."
-          tags = {
-            key = "value"
-          }
-        }
-      }
-    ]
     rules = [
       {
         default = {
@@ -92,6 +48,10 @@ resource "kong-mesh_mesh_fault_injection" "my_meshfaultinjection" {
         }
         matches = [
           {
+            sni = {
+              type  = "Exact"
+              value = "...my_value..."
+            }
             spiffe_id = {
               type  = "Exact"
               value = "...my_value..."
@@ -105,12 +65,9 @@ resource "kong-mesh_mesh_fault_injection" "my_meshfaultinjection" {
       labels = {
         key = "value"
       }
-      mesh      = "...my_mesh..."
-      name      = "...my_name..."
-      namespace = "...my_namespace..."
-      proxy_types = [
-        "Gateway"
-      ]
+      mesh         = "...my_mesh..."
+      name         = "...my_name..."
+      namespace    = "...my_namespace..."
       section_name = "...my_section_name..."
       tags = {
         key = "value"
@@ -143,16 +100,13 @@ resource "kong-mesh_mesh_fault_injection" "my_meshfaultinjection" {
           ]
         }
         target_ref = {
-          kind = "MeshGateway"
+          kind = "MeshService"
           labels = {
             key = "value"
           }
-          mesh      = "...my_mesh..."
-          name      = "...my_name..."
-          namespace = "...my_namespace..."
-          proxy_types = [
-            "Sidecar"
-          ]
+          mesh         = "...my_mesh..."
+          name         = "...my_name..."
+          namespace    = "...my_namespace..."
           section_name = "...my_section_name..."
           tags = {
             key = "value"
@@ -192,128 +146,11 @@ Warning messages describe a problem the client making the API request should cor
 
 Optional:
 
-- `from` (Attributes List) From list makes a match between clients and corresponding configurations (see [below for nested schema](#nestedatt--spec--from))
 - `rules` (Attributes List) Rules defines inbound fault injection configuration (see [below for nested schema](#nestedatt--spec--rules))
 - `target_ref` (Attributes) TargetRef is a reference to the resource the policy takes an effect on.
 The resource could be either a real store object or virtual resource
 defined inplace. (see [below for nested schema](#nestedatt--spec--target_ref))
 - `to` (Attributes List) To list makes a match between clients and corresponding configurations (see [below for nested schema](#nestedatt--spec--to))
-
-<a id="nestedatt--spec--from"></a>
-### Nested Schema for `spec.from`
-
-Optional:
-
-- `default` (Attributes) Default is a configuration specific to the group of destinations referenced in
-'targetRef' (see [below for nested schema](#nestedatt--spec--from--default))
-- `target_ref` (Attributes) TargetRef is a reference to the resource that represents a group of
-destinations.
-Not Null (see [below for nested schema](#nestedatt--spec--from--target_ref))
-
-<a id="nestedatt--spec--from--default"></a>
-### Nested Schema for `spec.from.default`
-
-Optional:
-
-- `http` (Attributes List) Http allows to define list of Http faults between dataplanes. (see [below for nested schema](#nestedatt--spec--from--default--http))
-
-<a id="nestedatt--spec--from--default--http"></a>
-### Nested Schema for `spec.from.default.http`
-
-Optional:
-
-- `abort` (Attributes) Abort defines a configuration of not delivering requests to destination
-service and replacing the responses from destination dataplane by
-predefined status code (see [below for nested schema](#nestedatt--spec--from--default--http--abort))
-- `delay` (Attributes) Delay defines configuration of delaying a response from a destination (see [below for nested schema](#nestedatt--spec--from--default--http--delay))
-- `response_bandwidth` (Attributes) ResponseBandwidth defines a configuration to limit the speed of
-responding to the requests (see [below for nested schema](#nestedatt--spec--from--default--http--response_bandwidth))
-
-<a id="nestedatt--spec--from--default--http--abort"></a>
-### Nested Schema for `spec.from.default.http.abort`
-
-Optional:
-
-- `http_status` (Number) HTTP status code which will be returned to source side. Not Null
-- `percentage` (Attributes) Percentage of requests on which abort will be injected, has to be
-either int or decimal represented as string.
-Not Null (see [below for nested schema](#nestedatt--spec--from--default--http--abort--percentage))
-
-<a id="nestedatt--spec--from--default--http--abort--percentage"></a>
-### Nested Schema for `spec.from.default.http.abort.percentage`
-
-Optional:
-
-- `integer` (Number)
-- `str` (String)
-
-
-
-<a id="nestedatt--spec--from--default--http--delay"></a>
-### Nested Schema for `spec.from.default.http.delay`
-
-Optional:
-
-- `percentage` (Attributes) Percentage of requests on which delay will be injected, has to be
-either int or decimal represented as string.
-Not Null (see [below for nested schema](#nestedatt--spec--from--default--http--delay--percentage))
-- `value` (String) The duration during which the response will be delayed. Not Null
-
-<a id="nestedatt--spec--from--default--http--delay--percentage"></a>
-### Nested Schema for `spec.from.default.http.delay.percentage`
-
-Optional:
-
-- `integer` (Number)
-- `str` (String)
-
-
-
-<a id="nestedatt--spec--from--default--http--response_bandwidth"></a>
-### Nested Schema for `spec.from.default.http.response_bandwidth`
-
-Optional:
-
-- `limit` (String) Limit is represented by value measure in Gbps, Mbps, kbps, e.g.
-10kbps
-Not Null
-- `percentage` (Attributes) Percentage of requests on which response bandwidth limit will be
-either int or decimal represented as string.
-Not Null (see [below for nested schema](#nestedatt--spec--from--default--http--response_bandwidth--percentage))
-
-<a id="nestedatt--spec--from--default--http--response_bandwidth--percentage"></a>
-### Nested Schema for `spec.from.default.http.response_bandwidth.percentage`
-
-Optional:
-
-- `integer` (Number)
-- `str` (String)
-
-
-
-
-
-<a id="nestedatt--spec--from--target_ref"></a>
-### Nested Schema for `spec.from.target_ref`
-
-Optional:
-
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
-- `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
-Name and Namespace can be used.
-- `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`,
-`MeshServiceSubset` and `MeshGatewayRoute`
-- `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-will be targeted.
-- `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-all data plane types are targeted by the policy.
-- `section_name` (String) SectionName is used to target specific section of resource.
-For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-- `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds
-`MeshSubset` and `MeshServiceSubset`
-
-
 
 <a id="nestedatt--spec--rules"></a>
 ### Nested Schema for `spec.rules`
@@ -411,7 +248,17 @@ Optional:
 
 Optional:
 
+- `sni` (Attributes) SNI defines a matcher configuration for matching by SNI value carried on the TLS connection (see [below for nested schema](#nestedatt--spec--rules--matches--sni))
 - `spiffe_id` (Attributes) SpiffeID defines a matcher configuration for SpiffeID matching (see [below for nested schema](#nestedatt--spec--rules--matches--spiffe_id))
+
+<a id="nestedatt--spec--rules--matches--sni"></a>
+### Nested Schema for `spec.rules.matches.sni`
+
+Optional:
+
+- `type` (String) Type defines how to match traffic by SNI. Only `Exact` is supported. Not Null; must be "Exact"
+- `value` (String) Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied. Not Null
+
 
 <a id="nestedatt--spec--rules--matches--spiffe_id"></a>
 ### Nested Schema for `spec.rules.matches.spiffe_id`
@@ -419,7 +266,7 @@ Optional:
 Optional:
 
 - `type` (String) Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed. possible known values include one of ["Exact", "Prefix"]; Not Null
-- `value` (String) Value is SpiffeId of a client that needs to match for the configuration to be applied. Not Null
+- `value` (String) Value is SpiffeID of a client that needs to match for the configuration to be applied. Not Null
 
 
 
@@ -429,19 +276,17 @@ Optional:
 
 Required:
 
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
 
 Optional:
 
 - `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
 Name and Namespace can be used.
 - `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`,
-`MeshServiceSubset` and `MeshGatewayRoute`
+- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`
+and `MeshServiceSubset`
 - `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 will be targeted.
-- `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-all data plane types are targeted by the policy.
 - `section_name` (String) SectionName is used to target specific section of resource.
 For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 - `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds
@@ -547,16 +392,14 @@ Optional:
 
 Optional:
 
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
 - `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
 Name and Namespace can be used.
 - `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`,
-`MeshServiceSubset` and `MeshGatewayRoute`
+- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`
+and `MeshServiceSubset`
 - `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 will be targeted.
-- `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-all data plane types are targeted by the policy.
 - `section_name` (String) SectionName is used to target specific section of resource.
 For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 - `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds

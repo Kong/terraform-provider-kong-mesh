@@ -41,117 +41,6 @@ func (r *MeshCircuitBreakerResourceModel) RefreshFromSharedMeshCircuitBreakerIte
 		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
 		r.Spec = &tfTypes.MeshCircuitBreakerItemSpec{}
-		r.Spec.From = []tfTypes.MeshCircuitBreakerItemFrom{}
-
-		for _, fromItem := range resp.Spec.From {
-			var from tfTypes.MeshCircuitBreakerItemFrom
-
-			if fromItem.Default == nil {
-				from.Default = nil
-			} else {
-				from.Default = &tfTypes.MeshCircuitBreakerItemDefault{}
-				if fromItem.Default.ConnectionLimits == nil {
-					from.Default.ConnectionLimits = nil
-				} else {
-					from.Default.ConnectionLimits = &tfTypes.ConnectionLimits{}
-					from.Default.ConnectionLimits.MaxConnectionPools = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(fromItem.Default.ConnectionLimits.MaxConnectionPools))
-					from.Default.ConnectionLimits.MaxConnections = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(fromItem.Default.ConnectionLimits.MaxConnections))
-					from.Default.ConnectionLimits.MaxPendingRequests = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(fromItem.Default.ConnectionLimits.MaxPendingRequests))
-					from.Default.ConnectionLimits.MaxRequests = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(fromItem.Default.ConnectionLimits.MaxRequests))
-					from.Default.ConnectionLimits.MaxRetries = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(fromItem.Default.ConnectionLimits.MaxRetries))
-				}
-				if fromItem.Default.OutlierDetection == nil {
-					from.Default.OutlierDetection = nil
-				} else {
-					from.Default.OutlierDetection = &tfTypes.OutlierDetection{}
-					from.Default.OutlierDetection.BaseEjectionTime = types.StringPointerValue(fromItem.Default.OutlierDetection.BaseEjectionTime)
-					if fromItem.Default.OutlierDetection.Detectors == nil {
-						from.Default.OutlierDetection.Detectors = nil
-					} else {
-						from.Default.OutlierDetection.Detectors = &tfTypes.Detectors{}
-						if fromItem.Default.OutlierDetection.Detectors.FailurePercentage == nil {
-							from.Default.OutlierDetection.Detectors.FailurePercentage = nil
-						} else {
-							from.Default.OutlierDetection.Detectors.FailurePercentage = &tfTypes.FailurePercentage{}
-							from.Default.OutlierDetection.Detectors.FailurePercentage.MinimumHosts = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(fromItem.Default.OutlierDetection.Detectors.FailurePercentage.MinimumHosts))
-							from.Default.OutlierDetection.Detectors.FailurePercentage.RequestVolume = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(fromItem.Default.OutlierDetection.Detectors.FailurePercentage.RequestVolume))
-							from.Default.OutlierDetection.Detectors.FailurePercentage.Threshold = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(fromItem.Default.OutlierDetection.Detectors.FailurePercentage.Threshold))
-						}
-						if fromItem.Default.OutlierDetection.Detectors.GatewayFailures == nil {
-							from.Default.OutlierDetection.Detectors.GatewayFailures = nil
-						} else {
-							from.Default.OutlierDetection.Detectors.GatewayFailures = &tfTypes.GatewayFailures{}
-							from.Default.OutlierDetection.Detectors.GatewayFailures.Consecutive = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(fromItem.Default.OutlierDetection.Detectors.GatewayFailures.Consecutive))
-						}
-						if fromItem.Default.OutlierDetection.Detectors.LocalOriginFailures == nil {
-							from.Default.OutlierDetection.Detectors.LocalOriginFailures = nil
-						} else {
-							from.Default.OutlierDetection.Detectors.LocalOriginFailures = &tfTypes.GatewayFailures{}
-							from.Default.OutlierDetection.Detectors.LocalOriginFailures.Consecutive = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(fromItem.Default.OutlierDetection.Detectors.LocalOriginFailures.Consecutive))
-						}
-						if fromItem.Default.OutlierDetection.Detectors.SuccessRate == nil {
-							from.Default.OutlierDetection.Detectors.SuccessRate = nil
-						} else {
-							from.Default.OutlierDetection.Detectors.SuccessRate = &tfTypes.SuccessRate{}
-							from.Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(fromItem.Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts))
-							from.Default.OutlierDetection.Detectors.SuccessRate.RequestVolume = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(fromItem.Default.OutlierDetection.Detectors.SuccessRate.RequestVolume))
-							if fromItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor != nil {
-								from.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor = &tfTypes.Mode{}
-								if fromItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer != nil {
-									from.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer = types.Int64PointerValue(fromItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer)
-								}
-								if fromItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Str != nil {
-									from.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Str = types.StringPointerValue(fromItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Str)
-								}
-							}
-						}
-						if fromItem.Default.OutlierDetection.Detectors.TotalFailures == nil {
-							from.Default.OutlierDetection.Detectors.TotalFailures = nil
-						} else {
-							from.Default.OutlierDetection.Detectors.TotalFailures = &tfTypes.GatewayFailures{}
-							from.Default.OutlierDetection.Detectors.TotalFailures.Consecutive = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(fromItem.Default.OutlierDetection.Detectors.TotalFailures.Consecutive))
-						}
-					}
-					from.Default.OutlierDetection.Disabled = types.BoolPointerValue(fromItem.Default.OutlierDetection.Disabled)
-					if fromItem.Default.OutlierDetection.HealthyPanicThreshold != nil {
-						from.Default.OutlierDetection.HealthyPanicThreshold = &tfTypes.Mode{}
-						if fromItem.Default.OutlierDetection.HealthyPanicThreshold.Integer != nil {
-							from.Default.OutlierDetection.HealthyPanicThreshold.Integer = types.Int64PointerValue(fromItem.Default.OutlierDetection.HealthyPanicThreshold.Integer)
-						}
-						if fromItem.Default.OutlierDetection.HealthyPanicThreshold.Str != nil {
-							from.Default.OutlierDetection.HealthyPanicThreshold.Str = types.StringPointerValue(fromItem.Default.OutlierDetection.HealthyPanicThreshold.Str)
-						}
-					}
-					from.Default.OutlierDetection.Interval = types.StringPointerValue(fromItem.Default.OutlierDetection.Interval)
-					from.Default.OutlierDetection.MaxEjectionPercent = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(fromItem.Default.OutlierDetection.MaxEjectionPercent))
-					from.Default.OutlierDetection.SplitExternalAndLocalErrors = types.BoolPointerValue(fromItem.Default.OutlierDetection.SplitExternalAndLocalErrors)
-				}
-			}
-			from.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
-			from.TargetRef.Kind = types.StringValue(string(fromItem.TargetRef.Kind))
-			if len(fromItem.TargetRef.Labels) > 0 {
-				from.TargetRef.Labels = make(map[string]types.String, len(fromItem.TargetRef.Labels))
-				for key, value := range fromItem.TargetRef.Labels {
-					from.TargetRef.Labels[key] = types.StringValue(value)
-				}
-			}
-			from.TargetRef.Mesh = types.StringPointerValue(fromItem.TargetRef.Mesh)
-			from.TargetRef.Name = types.StringPointerValue(fromItem.TargetRef.Name)
-			from.TargetRef.Namespace = types.StringPointerValue(fromItem.TargetRef.Namespace)
-			from.TargetRef.ProxyTypes = make([]types.String, 0, len(fromItem.TargetRef.ProxyTypes))
-			for _, v := range fromItem.TargetRef.ProxyTypes {
-				from.TargetRef.ProxyTypes = append(from.TargetRef.ProxyTypes, types.StringValue(string(v)))
-			}
-			from.TargetRef.SectionName = types.StringPointerValue(fromItem.TargetRef.SectionName)
-			if len(fromItem.TargetRef.Tags) > 0 {
-				from.TargetRef.Tags = make(map[string]types.String, len(fromItem.TargetRef.Tags))
-				for key1, value1 := range fromItem.TargetRef.Tags {
-					from.TargetRef.Tags[key1] = types.StringValue(value1)
-				}
-			}
-
-			r.Spec.From = append(r.Spec.From, from)
-		}
 		r.Spec.Rules = []tfTypes.MeshCircuitBreakerItemRules{}
 
 		for _, rulesItem := range resp.Spec.Rules {
@@ -207,7 +96,7 @@ func (r *MeshCircuitBreakerResourceModel) RefreshFromSharedMeshCircuitBreakerIte
 							rules.Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(rulesItem.Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts))
 							rules.Default.OutlierDetection.Detectors.SuccessRate.RequestVolume = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(rulesItem.Default.OutlierDetection.Detectors.SuccessRate.RequestVolume))
 							if rulesItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor != nil {
-								rules.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor = &tfTypes.Mode{}
+								rules.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor = &tfTypes.AuthType{}
 								if rulesItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer != nil {
 									rules.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer = types.Int64PointerValue(rulesItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer)
 								}
@@ -225,7 +114,7 @@ func (r *MeshCircuitBreakerResourceModel) RefreshFromSharedMeshCircuitBreakerIte
 					}
 					rules.Default.OutlierDetection.Disabled = types.BoolPointerValue(rulesItem.Default.OutlierDetection.Disabled)
 					if rulesItem.Default.OutlierDetection.HealthyPanicThreshold != nil {
-						rules.Default.OutlierDetection.HealthyPanicThreshold = &tfTypes.Mode{}
+						rules.Default.OutlierDetection.HealthyPanicThreshold = &tfTypes.AuthType{}
 						if rulesItem.Default.OutlierDetection.HealthyPanicThreshold.Integer != nil {
 							rules.Default.OutlierDetection.HealthyPanicThreshold.Integer = types.Int64PointerValue(rulesItem.Default.OutlierDetection.HealthyPanicThreshold.Integer)
 						}
@@ -244,33 +133,29 @@ func (r *MeshCircuitBreakerResourceModel) RefreshFromSharedMeshCircuitBreakerIte
 		if resp.Spec.TargetRef == nil {
 			r.Spec.TargetRef = nil
 		} else {
-			r.Spec.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
+			r.Spec.TargetRef = &tfTypes.TargetRef{}
 			r.Spec.TargetRef.Kind = types.StringValue(string(resp.Spec.TargetRef.Kind))
 			if len(resp.Spec.TargetRef.Labels) > 0 {
 				r.Spec.TargetRef.Labels = make(map[string]types.String, len(resp.Spec.TargetRef.Labels))
-				for key2, value2 := range resp.Spec.TargetRef.Labels {
-					r.Spec.TargetRef.Labels[key2] = types.StringValue(value2)
+				for key, value := range resp.Spec.TargetRef.Labels {
+					r.Spec.TargetRef.Labels[key] = types.StringValue(value)
 				}
 			}
 			r.Spec.TargetRef.Mesh = types.StringPointerValue(resp.Spec.TargetRef.Mesh)
 			r.Spec.TargetRef.Name = types.StringPointerValue(resp.Spec.TargetRef.Name)
 			r.Spec.TargetRef.Namespace = types.StringPointerValue(resp.Spec.TargetRef.Namespace)
-			r.Spec.TargetRef.ProxyTypes = make([]types.String, 0, len(resp.Spec.TargetRef.ProxyTypes))
-			for _, v := range resp.Spec.TargetRef.ProxyTypes {
-				r.Spec.TargetRef.ProxyTypes = append(r.Spec.TargetRef.ProxyTypes, types.StringValue(string(v)))
-			}
 			r.Spec.TargetRef.SectionName = types.StringPointerValue(resp.Spec.TargetRef.SectionName)
 			if len(resp.Spec.TargetRef.Tags) > 0 {
 				r.Spec.TargetRef.Tags = make(map[string]types.String, len(resp.Spec.TargetRef.Tags))
-				for key3, value3 := range resp.Spec.TargetRef.Tags {
-					r.Spec.TargetRef.Tags[key3] = types.StringValue(value3)
+				for key1, value1 := range resp.Spec.TargetRef.Tags {
+					r.Spec.TargetRef.Tags[key1] = types.StringValue(value1)
 				}
 			}
 		}
-		r.Spec.To = []tfTypes.MeshCircuitBreakerItemFrom{}
+		r.Spec.To = []tfTypes.MeshCircuitBreakerItemTo{}
 
 		for _, toItem := range resp.Spec.To {
-			var to tfTypes.MeshCircuitBreakerItemFrom
+			var to tfTypes.MeshCircuitBreakerItemTo
 
 			if toItem.Default == nil {
 				to.Default = nil
@@ -322,7 +207,7 @@ func (r *MeshCircuitBreakerResourceModel) RefreshFromSharedMeshCircuitBreakerIte
 							to.Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(toItem.Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts))
 							to.Default.OutlierDetection.Detectors.SuccessRate.RequestVolume = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(toItem.Default.OutlierDetection.Detectors.SuccessRate.RequestVolume))
 							if toItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor != nil {
-								to.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor = &tfTypes.Mode{}
+								to.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor = &tfTypes.AuthType{}
 								if toItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer != nil {
 									to.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer = types.Int64PointerValue(toItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer)
 								}
@@ -340,7 +225,7 @@ func (r *MeshCircuitBreakerResourceModel) RefreshFromSharedMeshCircuitBreakerIte
 					}
 					to.Default.OutlierDetection.Disabled = types.BoolPointerValue(toItem.Default.OutlierDetection.Disabled)
 					if toItem.Default.OutlierDetection.HealthyPanicThreshold != nil {
-						to.Default.OutlierDetection.HealthyPanicThreshold = &tfTypes.Mode{}
+						to.Default.OutlierDetection.HealthyPanicThreshold = &tfTypes.AuthType{}
 						if toItem.Default.OutlierDetection.HealthyPanicThreshold.Integer != nil {
 							to.Default.OutlierDetection.HealthyPanicThreshold.Integer = types.Int64PointerValue(toItem.Default.OutlierDetection.HealthyPanicThreshold.Integer)
 						}
@@ -353,26 +238,22 @@ func (r *MeshCircuitBreakerResourceModel) RefreshFromSharedMeshCircuitBreakerIte
 					to.Default.OutlierDetection.SplitExternalAndLocalErrors = types.BoolPointerValue(toItem.Default.OutlierDetection.SplitExternalAndLocalErrors)
 				}
 			}
-			to.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
+			to.TargetRef = &tfTypes.TargetRef{}
 			to.TargetRef.Kind = types.StringValue(string(toItem.TargetRef.Kind))
 			if len(toItem.TargetRef.Labels) > 0 {
 				to.TargetRef.Labels = make(map[string]types.String, len(toItem.TargetRef.Labels))
-				for key4, value4 := range toItem.TargetRef.Labels {
-					to.TargetRef.Labels[key4] = types.StringValue(value4)
+				for key2, value2 := range toItem.TargetRef.Labels {
+					to.TargetRef.Labels[key2] = types.StringValue(value2)
 				}
 			}
 			to.TargetRef.Mesh = types.StringPointerValue(toItem.TargetRef.Mesh)
 			to.TargetRef.Name = types.StringPointerValue(toItem.TargetRef.Name)
 			to.TargetRef.Namespace = types.StringPointerValue(toItem.TargetRef.Namespace)
-			to.TargetRef.ProxyTypes = make([]types.String, 0, len(toItem.TargetRef.ProxyTypes))
-			for _, v := range toItem.TargetRef.ProxyTypes {
-				to.TargetRef.ProxyTypes = append(to.TargetRef.ProxyTypes, types.StringValue(string(v)))
-			}
 			to.TargetRef.SectionName = types.StringPointerValue(toItem.TargetRef.SectionName)
 			if len(toItem.TargetRef.Tags) > 0 {
 				to.TargetRef.Tags = make(map[string]types.String, len(toItem.TargetRef.Tags))
-				for key5, value5 := range toItem.TargetRef.Tags {
-					to.TargetRef.Tags[key5] = types.StringValue(value5)
+				for key3, value3 := range toItem.TargetRef.Tags {
+					to.TargetRef.Tags[key3] = types.StringValue(value3)
 				}
 			}
 
@@ -460,39 +341,39 @@ func (r *MeshCircuitBreakerResourceModel) ToSharedMeshCircuitBreakerItemInput(ct
 	if !r.Labels.IsUnknown() && !r.Labels.IsNull() {
 		diags.Append(r.Labels.ElementsAs(ctx, &labels, true)...)
 	}
-	from := make([]shared.MeshCircuitBreakerItemFrom, 0, len(r.Spec.From))
-	for fromIndex := range r.Spec.From {
+	rules := make([]shared.MeshCircuitBreakerItemRules, 0, len(r.Spec.Rules))
+	for rulesIndex := range r.Spec.Rules {
 		var defaultVar *shared.MeshCircuitBreakerItemDefault
-		if r.Spec.From[fromIndex].Default != nil {
+		if r.Spec.Rules[rulesIndex].Default != nil {
 			var connectionLimits *shared.ConnectionLimits
-			if r.Spec.From[fromIndex].Default.ConnectionLimits != nil {
+			if r.Spec.Rules[rulesIndex].Default.ConnectionLimits != nil {
 				maxConnectionPools := new(int)
-				if !r.Spec.From[fromIndex].Default.ConnectionLimits.MaxConnectionPools.IsUnknown() && !r.Spec.From[fromIndex].Default.ConnectionLimits.MaxConnectionPools.IsNull() {
-					*maxConnectionPools = int(r.Spec.From[fromIndex].Default.ConnectionLimits.MaxConnectionPools.ValueInt32())
+				if !r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxConnectionPools.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxConnectionPools.IsNull() {
+					*maxConnectionPools = int(r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxConnectionPools.ValueInt32())
 				} else {
 					maxConnectionPools = nil
 				}
 				maxConnections := new(int)
-				if !r.Spec.From[fromIndex].Default.ConnectionLimits.MaxConnections.IsUnknown() && !r.Spec.From[fromIndex].Default.ConnectionLimits.MaxConnections.IsNull() {
-					*maxConnections = int(r.Spec.From[fromIndex].Default.ConnectionLimits.MaxConnections.ValueInt32())
+				if !r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxConnections.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxConnections.IsNull() {
+					*maxConnections = int(r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxConnections.ValueInt32())
 				} else {
 					maxConnections = nil
 				}
 				maxPendingRequests := new(int)
-				if !r.Spec.From[fromIndex].Default.ConnectionLimits.MaxPendingRequests.IsUnknown() && !r.Spec.From[fromIndex].Default.ConnectionLimits.MaxPendingRequests.IsNull() {
-					*maxPendingRequests = int(r.Spec.From[fromIndex].Default.ConnectionLimits.MaxPendingRequests.ValueInt32())
+				if !r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxPendingRequests.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxPendingRequests.IsNull() {
+					*maxPendingRequests = int(r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxPendingRequests.ValueInt32())
 				} else {
 					maxPendingRequests = nil
 				}
 				maxRequests := new(int)
-				if !r.Spec.From[fromIndex].Default.ConnectionLimits.MaxRequests.IsUnknown() && !r.Spec.From[fromIndex].Default.ConnectionLimits.MaxRequests.IsNull() {
-					*maxRequests = int(r.Spec.From[fromIndex].Default.ConnectionLimits.MaxRequests.ValueInt32())
+				if !r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxRequests.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxRequests.IsNull() {
+					*maxRequests = int(r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxRequests.ValueInt32())
 				} else {
 					maxRequests = nil
 				}
 				maxRetries := new(int)
-				if !r.Spec.From[fromIndex].Default.ConnectionLimits.MaxRetries.IsUnknown() && !r.Spec.From[fromIndex].Default.ConnectionLimits.MaxRetries.IsNull() {
-					*maxRetries = int(r.Spec.From[fromIndex].Default.ConnectionLimits.MaxRetries.ValueInt32())
+				if !r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxRetries.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxRetries.IsNull() {
+					*maxRetries = int(r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxRetries.ValueInt32())
 				} else {
 					maxRetries = nil
 				}
@@ -505,32 +386,32 @@ func (r *MeshCircuitBreakerResourceModel) ToSharedMeshCircuitBreakerItemInput(ct
 				}
 			}
 			var outlierDetection *shared.OutlierDetection
-			if r.Spec.From[fromIndex].Default.OutlierDetection != nil {
+			if r.Spec.Rules[rulesIndex].Default.OutlierDetection != nil {
 				baseEjectionTime := new(string)
-				if !r.Spec.From[fromIndex].Default.OutlierDetection.BaseEjectionTime.IsUnknown() && !r.Spec.From[fromIndex].Default.OutlierDetection.BaseEjectionTime.IsNull() {
-					*baseEjectionTime = r.Spec.From[fromIndex].Default.OutlierDetection.BaseEjectionTime.ValueString()
+				if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.BaseEjectionTime.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.BaseEjectionTime.IsNull() {
+					*baseEjectionTime = r.Spec.Rules[rulesIndex].Default.OutlierDetection.BaseEjectionTime.ValueString()
 				} else {
 					baseEjectionTime = nil
 				}
 				var detectors *shared.Detectors
-				if r.Spec.From[fromIndex].Default.OutlierDetection.Detectors != nil {
+				if r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors != nil {
 					var failurePercentage *shared.FailurePercentage
-					if r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.FailurePercentage != nil {
+					if r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.FailurePercentage != nil {
 						minimumHosts := new(int)
-						if !r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.FailurePercentage.MinimumHosts.IsUnknown() && !r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.FailurePercentage.MinimumHosts.IsNull() {
-							*minimumHosts = int(r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.FailurePercentage.MinimumHosts.ValueInt32())
+						if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.FailurePercentage.MinimumHosts.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.FailurePercentage.MinimumHosts.IsNull() {
+							*minimumHosts = int(r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.FailurePercentage.MinimumHosts.ValueInt32())
 						} else {
 							minimumHosts = nil
 						}
 						requestVolume := new(int)
-						if !r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.FailurePercentage.RequestVolume.IsUnknown() && !r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.FailurePercentage.RequestVolume.IsNull() {
-							*requestVolume = int(r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.FailurePercentage.RequestVolume.ValueInt32())
+						if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.FailurePercentage.RequestVolume.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.FailurePercentage.RequestVolume.IsNull() {
+							*requestVolume = int(r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.FailurePercentage.RequestVolume.ValueInt32())
 						} else {
 							requestVolume = nil
 						}
 						threshold := new(int)
-						if !r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.FailurePercentage.Threshold.IsUnknown() && !r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.FailurePercentage.Threshold.IsNull() {
-							*threshold = int(r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.FailurePercentage.Threshold.ValueInt32())
+						if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.FailurePercentage.Threshold.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.FailurePercentage.Threshold.IsNull() {
+							*threshold = int(r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.FailurePercentage.Threshold.ValueInt32())
 						} else {
 							threshold = nil
 						}
@@ -541,10 +422,10 @@ func (r *MeshCircuitBreakerResourceModel) ToSharedMeshCircuitBreakerItemInput(ct
 						}
 					}
 					var gatewayFailures *shared.GatewayFailures
-					if r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.GatewayFailures != nil {
+					if r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.GatewayFailures != nil {
 						consecutive := new(int)
-						if !r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.GatewayFailures.Consecutive.IsUnknown() && !r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.GatewayFailures.Consecutive.IsNull() {
-							*consecutive = int(r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.GatewayFailures.Consecutive.ValueInt32())
+						if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.GatewayFailures.Consecutive.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.GatewayFailures.Consecutive.IsNull() {
+							*consecutive = int(r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.GatewayFailures.Consecutive.ValueInt32())
 						} else {
 							consecutive = nil
 						}
@@ -553,10 +434,10 @@ func (r *MeshCircuitBreakerResourceModel) ToSharedMeshCircuitBreakerItemInput(ct
 						}
 					}
 					var localOriginFailures *shared.LocalOriginFailures
-					if r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.LocalOriginFailures != nil {
+					if r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.LocalOriginFailures != nil {
 						consecutive1 := new(int)
-						if !r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.LocalOriginFailures.Consecutive.IsUnknown() && !r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.LocalOriginFailures.Consecutive.IsNull() {
-							*consecutive1 = int(r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.LocalOriginFailures.Consecutive.ValueInt32())
+						if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.LocalOriginFailures.Consecutive.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.LocalOriginFailures.Consecutive.IsNull() {
+							*consecutive1 = int(r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.LocalOriginFailures.Consecutive.ValueInt32())
 						} else {
 							consecutive1 = nil
 						}
@@ -565,24 +446,24 @@ func (r *MeshCircuitBreakerResourceModel) ToSharedMeshCircuitBreakerItemInput(ct
 						}
 					}
 					var successRate *shared.SuccessRate
-					if r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.SuccessRate != nil {
+					if r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.SuccessRate != nil {
 						minimumHosts1 := new(int)
-						if !r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts.IsUnknown() && !r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts.IsNull() {
-							*minimumHosts1 = int(r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts.ValueInt32())
+						if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts.IsNull() {
+							*minimumHosts1 = int(r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts.ValueInt32())
 						} else {
 							minimumHosts1 = nil
 						}
 						requestVolume1 := new(int)
-						if !r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.SuccessRate.RequestVolume.IsUnknown() && !r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.SuccessRate.RequestVolume.IsNull() {
-							*requestVolume1 = int(r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.SuccessRate.RequestVolume.ValueInt32())
+						if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.SuccessRate.RequestVolume.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.SuccessRate.RequestVolume.IsNull() {
+							*requestVolume1 = int(r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.SuccessRate.RequestVolume.ValueInt32())
 						} else {
 							requestVolume1 = nil
 						}
 						var standardDeviationFactor *shared.StandardDeviationFactor
-						if r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor != nil {
+						if r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor != nil {
 							integer := new(int64)
-							if !r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer.IsUnknown() && !r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer.IsNull() {
-								*integer = r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer.ValueInt64()
+							if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer.IsNull() {
+								*integer = r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer.ValueInt64()
 							} else {
 								integer = nil
 							}
@@ -592,8 +473,8 @@ func (r *MeshCircuitBreakerResourceModel) ToSharedMeshCircuitBreakerItemInput(ct
 								}
 							}
 							str := new(string)
-							if !r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Str.IsUnknown() && !r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Str.IsNull() {
-								*str = r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Str.ValueString()
+							if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Str.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Str.IsNull() {
+								*str = r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Str.ValueString()
 							} else {
 								str = nil
 							}
@@ -610,10 +491,10 @@ func (r *MeshCircuitBreakerResourceModel) ToSharedMeshCircuitBreakerItemInput(ct
 						}
 					}
 					var totalFailures *shared.TotalFailures
-					if r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.TotalFailures != nil {
+					if r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.TotalFailures != nil {
 						consecutive2 := new(int)
-						if !r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.TotalFailures.Consecutive.IsUnknown() && !r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.TotalFailures.Consecutive.IsNull() {
-							*consecutive2 = int(r.Spec.From[fromIndex].Default.OutlierDetection.Detectors.TotalFailures.Consecutive.ValueInt32())
+						if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.TotalFailures.Consecutive.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.TotalFailures.Consecutive.IsNull() {
+							*consecutive2 = int(r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.TotalFailures.Consecutive.ValueInt32())
 						} else {
 							consecutive2 = nil
 						}
@@ -630,51 +511,51 @@ func (r *MeshCircuitBreakerResourceModel) ToSharedMeshCircuitBreakerItemInput(ct
 					}
 				}
 				disabled := new(bool)
-				if !r.Spec.From[fromIndex].Default.OutlierDetection.Disabled.IsUnknown() && !r.Spec.From[fromIndex].Default.OutlierDetection.Disabled.IsNull() {
-					*disabled = r.Spec.From[fromIndex].Default.OutlierDetection.Disabled.ValueBool()
+				if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Disabled.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Disabled.IsNull() {
+					*disabled = r.Spec.Rules[rulesIndex].Default.OutlierDetection.Disabled.ValueBool()
 				} else {
 					disabled = nil
 				}
-				var healthyPanicThreshold *shared.MeshCircuitBreakerItemSpecFromHealthyPanicThreshold
-				if r.Spec.From[fromIndex].Default.OutlierDetection.HealthyPanicThreshold != nil {
+				var healthyPanicThreshold *shared.MeshCircuitBreakerItemSpecHealthyPanicThreshold
+				if r.Spec.Rules[rulesIndex].Default.OutlierDetection.HealthyPanicThreshold != nil {
 					integer1 := new(int64)
-					if !r.Spec.From[fromIndex].Default.OutlierDetection.HealthyPanicThreshold.Integer.IsUnknown() && !r.Spec.From[fromIndex].Default.OutlierDetection.HealthyPanicThreshold.Integer.IsNull() {
-						*integer1 = r.Spec.From[fromIndex].Default.OutlierDetection.HealthyPanicThreshold.Integer.ValueInt64()
+					if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.HealthyPanicThreshold.Integer.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.HealthyPanicThreshold.Integer.IsNull() {
+						*integer1 = r.Spec.Rules[rulesIndex].Default.OutlierDetection.HealthyPanicThreshold.Integer.ValueInt64()
 					} else {
 						integer1 = nil
 					}
 					if integer1 != nil {
-						healthyPanicThreshold = &shared.MeshCircuitBreakerItemSpecFromHealthyPanicThreshold{
+						healthyPanicThreshold = &shared.MeshCircuitBreakerItemSpecHealthyPanicThreshold{
 							Integer: integer1,
 						}
 					}
 					str1 := new(string)
-					if !r.Spec.From[fromIndex].Default.OutlierDetection.HealthyPanicThreshold.Str.IsUnknown() && !r.Spec.From[fromIndex].Default.OutlierDetection.HealthyPanicThreshold.Str.IsNull() {
-						*str1 = r.Spec.From[fromIndex].Default.OutlierDetection.HealthyPanicThreshold.Str.ValueString()
+					if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.HealthyPanicThreshold.Str.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.HealthyPanicThreshold.Str.IsNull() {
+						*str1 = r.Spec.Rules[rulesIndex].Default.OutlierDetection.HealthyPanicThreshold.Str.ValueString()
 					} else {
 						str1 = nil
 					}
 					if str1 != nil {
-						healthyPanicThreshold = &shared.MeshCircuitBreakerItemSpecFromHealthyPanicThreshold{
+						healthyPanicThreshold = &shared.MeshCircuitBreakerItemSpecHealthyPanicThreshold{
 							Str: str1,
 						}
 					}
 				}
 				interval := new(string)
-				if !r.Spec.From[fromIndex].Default.OutlierDetection.Interval.IsUnknown() && !r.Spec.From[fromIndex].Default.OutlierDetection.Interval.IsNull() {
-					*interval = r.Spec.From[fromIndex].Default.OutlierDetection.Interval.ValueString()
+				if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Interval.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Interval.IsNull() {
+					*interval = r.Spec.Rules[rulesIndex].Default.OutlierDetection.Interval.ValueString()
 				} else {
 					interval = nil
 				}
 				maxEjectionPercent := new(int)
-				if !r.Spec.From[fromIndex].Default.OutlierDetection.MaxEjectionPercent.IsUnknown() && !r.Spec.From[fromIndex].Default.OutlierDetection.MaxEjectionPercent.IsNull() {
-					*maxEjectionPercent = int(r.Spec.From[fromIndex].Default.OutlierDetection.MaxEjectionPercent.ValueInt32())
+				if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.MaxEjectionPercent.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.MaxEjectionPercent.IsNull() {
+					*maxEjectionPercent = int(r.Spec.Rules[rulesIndex].Default.OutlierDetection.MaxEjectionPercent.ValueInt32())
 				} else {
 					maxEjectionPercent = nil
 				}
 				splitExternalAndLocalErrors := new(bool)
-				if !r.Spec.From[fromIndex].Default.OutlierDetection.SplitExternalAndLocalErrors.IsUnknown() && !r.Spec.From[fromIndex].Default.OutlierDetection.SplitExternalAndLocalErrors.IsNull() {
-					*splitExternalAndLocalErrors = r.Spec.From[fromIndex].Default.OutlierDetection.SplitExternalAndLocalErrors.ValueBool()
+				if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.SplitExternalAndLocalErrors.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.SplitExternalAndLocalErrors.IsNull() {
+					*splitExternalAndLocalErrors = r.Spec.Rules[rulesIndex].Default.OutlierDetection.SplitExternalAndLocalErrors.ValueBool()
 				} else {
 					splitExternalAndLocalErrors = nil
 				}
@@ -693,97 +574,94 @@ func (r *MeshCircuitBreakerResourceModel) ToSharedMeshCircuitBreakerItemInput(ct
 				OutlierDetection: outlierDetection,
 			}
 		}
-		kind := shared.MeshCircuitBreakerItemSpecKind(r.Spec.From[fromIndex].TargetRef.Kind.ValueString())
+		rules = append(rules, shared.MeshCircuitBreakerItemRules{
+			Default: defaultVar,
+		})
+	}
+	var targetRef *shared.MeshCircuitBreakerItemTargetRef
+	if r.Spec.TargetRef != nil {
+		kind := shared.MeshCircuitBreakerItemKind(r.Spec.TargetRef.Kind.ValueString())
 		labels1 := make(map[string]string)
-		for labelsKey := range r.Spec.From[fromIndex].TargetRef.Labels {
+		for labelsKey := range r.Spec.TargetRef.Labels {
 			var labelsInst string
-			labelsInst = r.Spec.From[fromIndex].TargetRef.Labels[labelsKey].ValueString()
+			labelsInst = r.Spec.TargetRef.Labels[labelsKey].ValueString()
 
 			labels1[labelsKey] = labelsInst
 		}
 		mesh1 := new(string)
-		if !r.Spec.From[fromIndex].TargetRef.Mesh.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.Mesh.IsNull() {
-			*mesh1 = r.Spec.From[fromIndex].TargetRef.Mesh.ValueString()
+		if !r.Spec.TargetRef.Mesh.IsUnknown() && !r.Spec.TargetRef.Mesh.IsNull() {
+			*mesh1 = r.Spec.TargetRef.Mesh.ValueString()
 		} else {
 			mesh1 = nil
 		}
 		name1 := new(string)
-		if !r.Spec.From[fromIndex].TargetRef.Name.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.Name.IsNull() {
-			*name1 = r.Spec.From[fromIndex].TargetRef.Name.ValueString()
+		if !r.Spec.TargetRef.Name.IsUnknown() && !r.Spec.TargetRef.Name.IsNull() {
+			*name1 = r.Spec.TargetRef.Name.ValueString()
 		} else {
 			name1 = nil
 		}
 		namespace := new(string)
-		if !r.Spec.From[fromIndex].TargetRef.Namespace.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.Namespace.IsNull() {
-			*namespace = r.Spec.From[fromIndex].TargetRef.Namespace.ValueString()
+		if !r.Spec.TargetRef.Namespace.IsUnknown() && !r.Spec.TargetRef.Namespace.IsNull() {
+			*namespace = r.Spec.TargetRef.Namespace.ValueString()
 		} else {
 			namespace = nil
 		}
-		proxyTypes := make([]shared.MeshCircuitBreakerItemSpecProxyTypes, 0, len(r.Spec.From[fromIndex].TargetRef.ProxyTypes))
-		for _, proxyTypesItem := range r.Spec.From[fromIndex].TargetRef.ProxyTypes {
-			proxyTypes = append(proxyTypes, shared.MeshCircuitBreakerItemSpecProxyTypes(proxyTypesItem.ValueString()))
-		}
 		sectionName := new(string)
-		if !r.Spec.From[fromIndex].TargetRef.SectionName.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.SectionName.IsNull() {
-			*sectionName = r.Spec.From[fromIndex].TargetRef.SectionName.ValueString()
+		if !r.Spec.TargetRef.SectionName.IsUnknown() && !r.Spec.TargetRef.SectionName.IsNull() {
+			*sectionName = r.Spec.TargetRef.SectionName.ValueString()
 		} else {
 			sectionName = nil
 		}
 		tags := make(map[string]string)
-		for tagsKey := range r.Spec.From[fromIndex].TargetRef.Tags {
+		for tagsKey := range r.Spec.TargetRef.Tags {
 			var tagsInst string
-			tagsInst = r.Spec.From[fromIndex].TargetRef.Tags[tagsKey].ValueString()
+			tagsInst = r.Spec.TargetRef.Tags[tagsKey].ValueString()
 
 			tags[tagsKey] = tagsInst
 		}
-		targetRef := shared.MeshCircuitBreakerItemSpecTargetRef{
+		targetRef = &shared.MeshCircuitBreakerItemTargetRef{
 			Kind:        kind,
 			Labels:      labels1,
 			Mesh:        mesh1,
 			Name:        name1,
 			Namespace:   namespace,
-			ProxyTypes:  proxyTypes,
 			SectionName: sectionName,
 			Tags:        tags,
 		}
-		from = append(from, shared.MeshCircuitBreakerItemFrom{
-			Default:   defaultVar,
-			TargetRef: targetRef,
-		})
 	}
-	rules := make([]shared.MeshCircuitBreakerItemRules, 0, len(r.Spec.Rules))
-	for rulesIndex := range r.Spec.Rules {
+	to := make([]shared.MeshCircuitBreakerItemTo, 0, len(r.Spec.To))
+	for toIndex := range r.Spec.To {
 		var default1 *shared.MeshCircuitBreakerItemSpecDefault
-		if r.Spec.Rules[rulesIndex].Default != nil {
+		if r.Spec.To[toIndex].Default != nil {
 			var connectionLimits1 *shared.MeshCircuitBreakerItemConnectionLimits
-			if r.Spec.Rules[rulesIndex].Default.ConnectionLimits != nil {
+			if r.Spec.To[toIndex].Default.ConnectionLimits != nil {
 				maxConnectionPools1 := new(int)
-				if !r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxConnectionPools.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxConnectionPools.IsNull() {
-					*maxConnectionPools1 = int(r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxConnectionPools.ValueInt32())
+				if !r.Spec.To[toIndex].Default.ConnectionLimits.MaxConnectionPools.IsUnknown() && !r.Spec.To[toIndex].Default.ConnectionLimits.MaxConnectionPools.IsNull() {
+					*maxConnectionPools1 = int(r.Spec.To[toIndex].Default.ConnectionLimits.MaxConnectionPools.ValueInt32())
 				} else {
 					maxConnectionPools1 = nil
 				}
 				maxConnections1 := new(int)
-				if !r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxConnections.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxConnections.IsNull() {
-					*maxConnections1 = int(r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxConnections.ValueInt32())
+				if !r.Spec.To[toIndex].Default.ConnectionLimits.MaxConnections.IsUnknown() && !r.Spec.To[toIndex].Default.ConnectionLimits.MaxConnections.IsNull() {
+					*maxConnections1 = int(r.Spec.To[toIndex].Default.ConnectionLimits.MaxConnections.ValueInt32())
 				} else {
 					maxConnections1 = nil
 				}
 				maxPendingRequests1 := new(int)
-				if !r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxPendingRequests.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxPendingRequests.IsNull() {
-					*maxPendingRequests1 = int(r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxPendingRequests.ValueInt32())
+				if !r.Spec.To[toIndex].Default.ConnectionLimits.MaxPendingRequests.IsUnknown() && !r.Spec.To[toIndex].Default.ConnectionLimits.MaxPendingRequests.IsNull() {
+					*maxPendingRequests1 = int(r.Spec.To[toIndex].Default.ConnectionLimits.MaxPendingRequests.ValueInt32())
 				} else {
 					maxPendingRequests1 = nil
 				}
 				maxRequests1 := new(int)
-				if !r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxRequests.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxRequests.IsNull() {
-					*maxRequests1 = int(r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxRequests.ValueInt32())
+				if !r.Spec.To[toIndex].Default.ConnectionLimits.MaxRequests.IsUnknown() && !r.Spec.To[toIndex].Default.ConnectionLimits.MaxRequests.IsNull() {
+					*maxRequests1 = int(r.Spec.To[toIndex].Default.ConnectionLimits.MaxRequests.ValueInt32())
 				} else {
 					maxRequests1 = nil
 				}
 				maxRetries1 := new(int)
-				if !r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxRetries.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxRetries.IsNull() {
-					*maxRetries1 = int(r.Spec.Rules[rulesIndex].Default.ConnectionLimits.MaxRetries.ValueInt32())
+				if !r.Spec.To[toIndex].Default.ConnectionLimits.MaxRetries.IsUnknown() && !r.Spec.To[toIndex].Default.ConnectionLimits.MaxRetries.IsNull() {
+					*maxRetries1 = int(r.Spec.To[toIndex].Default.ConnectionLimits.MaxRetries.ValueInt32())
 				} else {
 					maxRetries1 = nil
 				}
@@ -796,32 +674,32 @@ func (r *MeshCircuitBreakerResourceModel) ToSharedMeshCircuitBreakerItemInput(ct
 				}
 			}
 			var outlierDetection1 *shared.MeshCircuitBreakerItemOutlierDetection
-			if r.Spec.Rules[rulesIndex].Default.OutlierDetection != nil {
+			if r.Spec.To[toIndex].Default.OutlierDetection != nil {
 				baseEjectionTime1 := new(string)
-				if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.BaseEjectionTime.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.BaseEjectionTime.IsNull() {
-					*baseEjectionTime1 = r.Spec.Rules[rulesIndex].Default.OutlierDetection.BaseEjectionTime.ValueString()
+				if !r.Spec.To[toIndex].Default.OutlierDetection.BaseEjectionTime.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.BaseEjectionTime.IsNull() {
+					*baseEjectionTime1 = r.Spec.To[toIndex].Default.OutlierDetection.BaseEjectionTime.ValueString()
 				} else {
 					baseEjectionTime1 = nil
 				}
 				var detectors1 *shared.MeshCircuitBreakerItemDetectors
-				if r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors != nil {
+				if r.Spec.To[toIndex].Default.OutlierDetection.Detectors != nil {
 					var failurePercentage1 *shared.MeshCircuitBreakerItemFailurePercentage
-					if r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.FailurePercentage != nil {
+					if r.Spec.To[toIndex].Default.OutlierDetection.Detectors.FailurePercentage != nil {
 						minimumHosts2 := new(int)
-						if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.FailurePercentage.MinimumHosts.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.FailurePercentage.MinimumHosts.IsNull() {
-							*minimumHosts2 = int(r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.FailurePercentage.MinimumHosts.ValueInt32())
+						if !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.FailurePercentage.MinimumHosts.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.FailurePercentage.MinimumHosts.IsNull() {
+							*minimumHosts2 = int(r.Spec.To[toIndex].Default.OutlierDetection.Detectors.FailurePercentage.MinimumHosts.ValueInt32())
 						} else {
 							minimumHosts2 = nil
 						}
 						requestVolume2 := new(int)
-						if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.FailurePercentage.RequestVolume.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.FailurePercentage.RequestVolume.IsNull() {
-							*requestVolume2 = int(r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.FailurePercentage.RequestVolume.ValueInt32())
+						if !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.FailurePercentage.RequestVolume.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.FailurePercentage.RequestVolume.IsNull() {
+							*requestVolume2 = int(r.Spec.To[toIndex].Default.OutlierDetection.Detectors.FailurePercentage.RequestVolume.ValueInt32())
 						} else {
 							requestVolume2 = nil
 						}
 						threshold1 := new(int)
-						if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.FailurePercentage.Threshold.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.FailurePercentage.Threshold.IsNull() {
-							*threshold1 = int(r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.FailurePercentage.Threshold.ValueInt32())
+						if !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.FailurePercentage.Threshold.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.FailurePercentage.Threshold.IsNull() {
+							*threshold1 = int(r.Spec.To[toIndex].Default.OutlierDetection.Detectors.FailurePercentage.Threshold.ValueInt32())
 						} else {
 							threshold1 = nil
 						}
@@ -832,10 +710,10 @@ func (r *MeshCircuitBreakerResourceModel) ToSharedMeshCircuitBreakerItemInput(ct
 						}
 					}
 					var gatewayFailures1 *shared.MeshCircuitBreakerItemGatewayFailures
-					if r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.GatewayFailures != nil {
+					if r.Spec.To[toIndex].Default.OutlierDetection.Detectors.GatewayFailures != nil {
 						consecutive3 := new(int)
-						if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.GatewayFailures.Consecutive.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.GatewayFailures.Consecutive.IsNull() {
-							*consecutive3 = int(r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.GatewayFailures.Consecutive.ValueInt32())
+						if !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.GatewayFailures.Consecutive.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.GatewayFailures.Consecutive.IsNull() {
+							*consecutive3 = int(r.Spec.To[toIndex].Default.OutlierDetection.Detectors.GatewayFailures.Consecutive.ValueInt32())
 						} else {
 							consecutive3 = nil
 						}
@@ -844,10 +722,10 @@ func (r *MeshCircuitBreakerResourceModel) ToSharedMeshCircuitBreakerItemInput(ct
 						}
 					}
 					var localOriginFailures1 *shared.MeshCircuitBreakerItemLocalOriginFailures
-					if r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.LocalOriginFailures != nil {
+					if r.Spec.To[toIndex].Default.OutlierDetection.Detectors.LocalOriginFailures != nil {
 						consecutive4 := new(int)
-						if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.LocalOriginFailures.Consecutive.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.LocalOriginFailures.Consecutive.IsNull() {
-							*consecutive4 = int(r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.LocalOriginFailures.Consecutive.ValueInt32())
+						if !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.LocalOriginFailures.Consecutive.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.LocalOriginFailures.Consecutive.IsNull() {
+							*consecutive4 = int(r.Spec.To[toIndex].Default.OutlierDetection.Detectors.LocalOriginFailures.Consecutive.ValueInt32())
 						} else {
 							consecutive4 = nil
 						}
@@ -856,24 +734,24 @@ func (r *MeshCircuitBreakerResourceModel) ToSharedMeshCircuitBreakerItemInput(ct
 						}
 					}
 					var successRate1 *shared.MeshCircuitBreakerItemSuccessRate
-					if r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.SuccessRate != nil {
+					if r.Spec.To[toIndex].Default.OutlierDetection.Detectors.SuccessRate != nil {
 						minimumHosts3 := new(int)
-						if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts.IsNull() {
-							*minimumHosts3 = int(r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts.ValueInt32())
+						if !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts.IsNull() {
+							*minimumHosts3 = int(r.Spec.To[toIndex].Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts.ValueInt32())
 						} else {
 							minimumHosts3 = nil
 						}
 						requestVolume3 := new(int)
-						if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.SuccessRate.RequestVolume.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.SuccessRate.RequestVolume.IsNull() {
-							*requestVolume3 = int(r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.SuccessRate.RequestVolume.ValueInt32())
+						if !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.SuccessRate.RequestVolume.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.SuccessRate.RequestVolume.IsNull() {
+							*requestVolume3 = int(r.Spec.To[toIndex].Default.OutlierDetection.Detectors.SuccessRate.RequestVolume.ValueInt32())
 						} else {
 							requestVolume3 = nil
 						}
 						var standardDeviationFactor1 *shared.MeshCircuitBreakerItemStandardDeviationFactor
-						if r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor != nil {
+						if r.Spec.To[toIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor != nil {
 							integer2 := new(int64)
-							if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer.IsNull() {
-								*integer2 = r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer.ValueInt64()
+							if !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer.IsNull() {
+								*integer2 = r.Spec.To[toIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer.ValueInt64()
 							} else {
 								integer2 = nil
 							}
@@ -883,8 +761,8 @@ func (r *MeshCircuitBreakerResourceModel) ToSharedMeshCircuitBreakerItemInput(ct
 								}
 							}
 							str2 := new(string)
-							if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Str.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Str.IsNull() {
-								*str2 = r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Str.ValueString()
+							if !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Str.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Str.IsNull() {
+								*str2 = r.Spec.To[toIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Str.ValueString()
 							} else {
 								str2 = nil
 							}
@@ -901,10 +779,10 @@ func (r *MeshCircuitBreakerResourceModel) ToSharedMeshCircuitBreakerItemInput(ct
 						}
 					}
 					var totalFailures1 *shared.MeshCircuitBreakerItemTotalFailures
-					if r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.TotalFailures != nil {
+					if r.Spec.To[toIndex].Default.OutlierDetection.Detectors.TotalFailures != nil {
 						consecutive5 := new(int)
-						if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.TotalFailures.Consecutive.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.TotalFailures.Consecutive.IsNull() {
-							*consecutive5 = int(r.Spec.Rules[rulesIndex].Default.OutlierDetection.Detectors.TotalFailures.Consecutive.ValueInt32())
+						if !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.TotalFailures.Consecutive.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.TotalFailures.Consecutive.IsNull() {
+							*consecutive5 = int(r.Spec.To[toIndex].Default.OutlierDetection.Detectors.TotalFailures.Consecutive.ValueInt32())
 						} else {
 							consecutive5 = nil
 						}
@@ -921,16 +799,16 @@ func (r *MeshCircuitBreakerResourceModel) ToSharedMeshCircuitBreakerItemInput(ct
 					}
 				}
 				disabled1 := new(bool)
-				if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Disabled.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Disabled.IsNull() {
-					*disabled1 = r.Spec.Rules[rulesIndex].Default.OutlierDetection.Disabled.ValueBool()
+				if !r.Spec.To[toIndex].Default.OutlierDetection.Disabled.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.Disabled.IsNull() {
+					*disabled1 = r.Spec.To[toIndex].Default.OutlierDetection.Disabled.ValueBool()
 				} else {
 					disabled1 = nil
 				}
 				var healthyPanicThreshold1 *shared.MeshCircuitBreakerItemHealthyPanicThreshold
-				if r.Spec.Rules[rulesIndex].Default.OutlierDetection.HealthyPanicThreshold != nil {
+				if r.Spec.To[toIndex].Default.OutlierDetection.HealthyPanicThreshold != nil {
 					integer3 := new(int64)
-					if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.HealthyPanicThreshold.Integer.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.HealthyPanicThreshold.Integer.IsNull() {
-						*integer3 = r.Spec.Rules[rulesIndex].Default.OutlierDetection.HealthyPanicThreshold.Integer.ValueInt64()
+					if !r.Spec.To[toIndex].Default.OutlierDetection.HealthyPanicThreshold.Integer.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.HealthyPanicThreshold.Integer.IsNull() {
+						*integer3 = r.Spec.To[toIndex].Default.OutlierDetection.HealthyPanicThreshold.Integer.ValueInt64()
 					} else {
 						integer3 = nil
 					}
@@ -940,8 +818,8 @@ func (r *MeshCircuitBreakerResourceModel) ToSharedMeshCircuitBreakerItemInput(ct
 						}
 					}
 					str3 := new(string)
-					if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.HealthyPanicThreshold.Str.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.HealthyPanicThreshold.Str.IsNull() {
-						*str3 = r.Spec.Rules[rulesIndex].Default.OutlierDetection.HealthyPanicThreshold.Str.ValueString()
+					if !r.Spec.To[toIndex].Default.OutlierDetection.HealthyPanicThreshold.Str.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.HealthyPanicThreshold.Str.IsNull() {
+						*str3 = r.Spec.To[toIndex].Default.OutlierDetection.HealthyPanicThreshold.Str.ValueString()
 					} else {
 						str3 = nil
 					}
@@ -952,20 +830,20 @@ func (r *MeshCircuitBreakerResourceModel) ToSharedMeshCircuitBreakerItemInput(ct
 					}
 				}
 				interval1 := new(string)
-				if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Interval.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.Interval.IsNull() {
-					*interval1 = r.Spec.Rules[rulesIndex].Default.OutlierDetection.Interval.ValueString()
+				if !r.Spec.To[toIndex].Default.OutlierDetection.Interval.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.Interval.IsNull() {
+					*interval1 = r.Spec.To[toIndex].Default.OutlierDetection.Interval.ValueString()
 				} else {
 					interval1 = nil
 				}
 				maxEjectionPercent1 := new(int)
-				if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.MaxEjectionPercent.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.MaxEjectionPercent.IsNull() {
-					*maxEjectionPercent1 = int(r.Spec.Rules[rulesIndex].Default.OutlierDetection.MaxEjectionPercent.ValueInt32())
+				if !r.Spec.To[toIndex].Default.OutlierDetection.MaxEjectionPercent.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.MaxEjectionPercent.IsNull() {
+					*maxEjectionPercent1 = int(r.Spec.To[toIndex].Default.OutlierDetection.MaxEjectionPercent.ValueInt32())
 				} else {
 					maxEjectionPercent1 = nil
 				}
 				splitExternalAndLocalErrors1 := new(bool)
-				if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.SplitExternalAndLocalErrors.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.SplitExternalAndLocalErrors.IsNull() {
-					*splitExternalAndLocalErrors1 = r.Spec.Rules[rulesIndex].Default.OutlierDetection.SplitExternalAndLocalErrors.ValueBool()
+				if !r.Spec.To[toIndex].Default.OutlierDetection.SplitExternalAndLocalErrors.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.SplitExternalAndLocalErrors.IsNull() {
+					*splitExternalAndLocalErrors1 = r.Spec.To[toIndex].Default.OutlierDetection.SplitExternalAndLocalErrors.ValueBool()
 				} else {
 					splitExternalAndLocalErrors1 = nil
 				}
@@ -984,361 +862,62 @@ func (r *MeshCircuitBreakerResourceModel) ToSharedMeshCircuitBreakerItemInput(ct
 				OutlierDetection: outlierDetection1,
 			}
 		}
-		rules = append(rules, shared.MeshCircuitBreakerItemRules{
-			Default: default1,
-		})
-	}
-	var targetRef1 *shared.MeshCircuitBreakerItemTargetRef
-	if r.Spec.TargetRef != nil {
-		kind1 := shared.MeshCircuitBreakerItemKind(r.Spec.TargetRef.Kind.ValueString())
+		kind1 := shared.MeshCircuitBreakerItemSpecKind(r.Spec.To[toIndex].TargetRef.Kind.ValueString())
 		labels2 := make(map[string]string)
-		for labelsKey1 := range r.Spec.TargetRef.Labels {
+		for labelsKey1 := range r.Spec.To[toIndex].TargetRef.Labels {
 			var labelsInst1 string
-			labelsInst1 = r.Spec.TargetRef.Labels[labelsKey1].ValueString()
+			labelsInst1 = r.Spec.To[toIndex].TargetRef.Labels[labelsKey1].ValueString()
 
 			labels2[labelsKey1] = labelsInst1
 		}
 		mesh2 := new(string)
-		if !r.Spec.TargetRef.Mesh.IsUnknown() && !r.Spec.TargetRef.Mesh.IsNull() {
-			*mesh2 = r.Spec.TargetRef.Mesh.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Mesh.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Mesh.IsNull() {
+			*mesh2 = r.Spec.To[toIndex].TargetRef.Mesh.ValueString()
 		} else {
 			mesh2 = nil
 		}
 		name2 := new(string)
-		if !r.Spec.TargetRef.Name.IsUnknown() && !r.Spec.TargetRef.Name.IsNull() {
-			*name2 = r.Spec.TargetRef.Name.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Name.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Name.IsNull() {
+			*name2 = r.Spec.To[toIndex].TargetRef.Name.ValueString()
 		} else {
 			name2 = nil
 		}
 		namespace1 := new(string)
-		if !r.Spec.TargetRef.Namespace.IsUnknown() && !r.Spec.TargetRef.Namespace.IsNull() {
-			*namespace1 = r.Spec.TargetRef.Namespace.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Namespace.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Namespace.IsNull() {
+			*namespace1 = r.Spec.To[toIndex].TargetRef.Namespace.ValueString()
 		} else {
 			namespace1 = nil
 		}
-		proxyTypes1 := make([]shared.MeshCircuitBreakerItemProxyTypes, 0, len(r.Spec.TargetRef.ProxyTypes))
-		for _, proxyTypesItem1 := range r.Spec.TargetRef.ProxyTypes {
-			proxyTypes1 = append(proxyTypes1, shared.MeshCircuitBreakerItemProxyTypes(proxyTypesItem1.ValueString()))
-		}
 		sectionName1 := new(string)
-		if !r.Spec.TargetRef.SectionName.IsUnknown() && !r.Spec.TargetRef.SectionName.IsNull() {
-			*sectionName1 = r.Spec.TargetRef.SectionName.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.SectionName.IsUnknown() && !r.Spec.To[toIndex].TargetRef.SectionName.IsNull() {
+			*sectionName1 = r.Spec.To[toIndex].TargetRef.SectionName.ValueString()
 		} else {
 			sectionName1 = nil
 		}
 		tags1 := make(map[string]string)
-		for tagsKey1 := range r.Spec.TargetRef.Tags {
+		for tagsKey1 := range r.Spec.To[toIndex].TargetRef.Tags {
 			var tagsInst1 string
-			tagsInst1 = r.Spec.TargetRef.Tags[tagsKey1].ValueString()
+			tagsInst1 = r.Spec.To[toIndex].TargetRef.Tags[tagsKey1].ValueString()
 
 			tags1[tagsKey1] = tagsInst1
 		}
-		targetRef1 = &shared.MeshCircuitBreakerItemTargetRef{
+		targetRef1 := shared.MeshCircuitBreakerItemSpecTargetRef{
 			Kind:        kind1,
 			Labels:      labels2,
 			Mesh:        mesh2,
 			Name:        name2,
 			Namespace:   namespace1,
-			ProxyTypes:  proxyTypes1,
 			SectionName: sectionName1,
 			Tags:        tags1,
 		}
-	}
-	to := make([]shared.MeshCircuitBreakerItemTo, 0, len(r.Spec.To))
-	for toIndex := range r.Spec.To {
-		var default2 *shared.MeshCircuitBreakerItemSpecToDefault
-		if r.Spec.To[toIndex].Default != nil {
-			var connectionLimits2 *shared.MeshCircuitBreakerItemSpecConnectionLimits
-			if r.Spec.To[toIndex].Default.ConnectionLimits != nil {
-				maxConnectionPools2 := new(int)
-				if !r.Spec.To[toIndex].Default.ConnectionLimits.MaxConnectionPools.IsUnknown() && !r.Spec.To[toIndex].Default.ConnectionLimits.MaxConnectionPools.IsNull() {
-					*maxConnectionPools2 = int(r.Spec.To[toIndex].Default.ConnectionLimits.MaxConnectionPools.ValueInt32())
-				} else {
-					maxConnectionPools2 = nil
-				}
-				maxConnections2 := new(int)
-				if !r.Spec.To[toIndex].Default.ConnectionLimits.MaxConnections.IsUnknown() && !r.Spec.To[toIndex].Default.ConnectionLimits.MaxConnections.IsNull() {
-					*maxConnections2 = int(r.Spec.To[toIndex].Default.ConnectionLimits.MaxConnections.ValueInt32())
-				} else {
-					maxConnections2 = nil
-				}
-				maxPendingRequests2 := new(int)
-				if !r.Spec.To[toIndex].Default.ConnectionLimits.MaxPendingRequests.IsUnknown() && !r.Spec.To[toIndex].Default.ConnectionLimits.MaxPendingRequests.IsNull() {
-					*maxPendingRequests2 = int(r.Spec.To[toIndex].Default.ConnectionLimits.MaxPendingRequests.ValueInt32())
-				} else {
-					maxPendingRequests2 = nil
-				}
-				maxRequests2 := new(int)
-				if !r.Spec.To[toIndex].Default.ConnectionLimits.MaxRequests.IsUnknown() && !r.Spec.To[toIndex].Default.ConnectionLimits.MaxRequests.IsNull() {
-					*maxRequests2 = int(r.Spec.To[toIndex].Default.ConnectionLimits.MaxRequests.ValueInt32())
-				} else {
-					maxRequests2 = nil
-				}
-				maxRetries2 := new(int)
-				if !r.Spec.To[toIndex].Default.ConnectionLimits.MaxRetries.IsUnknown() && !r.Spec.To[toIndex].Default.ConnectionLimits.MaxRetries.IsNull() {
-					*maxRetries2 = int(r.Spec.To[toIndex].Default.ConnectionLimits.MaxRetries.ValueInt32())
-				} else {
-					maxRetries2 = nil
-				}
-				connectionLimits2 = &shared.MeshCircuitBreakerItemSpecConnectionLimits{
-					MaxConnectionPools: maxConnectionPools2,
-					MaxConnections:     maxConnections2,
-					MaxPendingRequests: maxPendingRequests2,
-					MaxRequests:        maxRequests2,
-					MaxRetries:         maxRetries2,
-				}
-			}
-			var outlierDetection2 *shared.MeshCircuitBreakerItemSpecOutlierDetection
-			if r.Spec.To[toIndex].Default.OutlierDetection != nil {
-				baseEjectionTime2 := new(string)
-				if !r.Spec.To[toIndex].Default.OutlierDetection.BaseEjectionTime.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.BaseEjectionTime.IsNull() {
-					*baseEjectionTime2 = r.Spec.To[toIndex].Default.OutlierDetection.BaseEjectionTime.ValueString()
-				} else {
-					baseEjectionTime2 = nil
-				}
-				var detectors2 *shared.MeshCircuitBreakerItemSpecDetectors
-				if r.Spec.To[toIndex].Default.OutlierDetection.Detectors != nil {
-					var failurePercentage2 *shared.MeshCircuitBreakerItemSpecFailurePercentage
-					if r.Spec.To[toIndex].Default.OutlierDetection.Detectors.FailurePercentage != nil {
-						minimumHosts4 := new(int)
-						if !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.FailurePercentage.MinimumHosts.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.FailurePercentage.MinimumHosts.IsNull() {
-							*minimumHosts4 = int(r.Spec.To[toIndex].Default.OutlierDetection.Detectors.FailurePercentage.MinimumHosts.ValueInt32())
-						} else {
-							minimumHosts4 = nil
-						}
-						requestVolume4 := new(int)
-						if !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.FailurePercentage.RequestVolume.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.FailurePercentage.RequestVolume.IsNull() {
-							*requestVolume4 = int(r.Spec.To[toIndex].Default.OutlierDetection.Detectors.FailurePercentage.RequestVolume.ValueInt32())
-						} else {
-							requestVolume4 = nil
-						}
-						threshold2 := new(int)
-						if !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.FailurePercentage.Threshold.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.FailurePercentage.Threshold.IsNull() {
-							*threshold2 = int(r.Spec.To[toIndex].Default.OutlierDetection.Detectors.FailurePercentage.Threshold.ValueInt32())
-						} else {
-							threshold2 = nil
-						}
-						failurePercentage2 = &shared.MeshCircuitBreakerItemSpecFailurePercentage{
-							MinimumHosts:  minimumHosts4,
-							RequestVolume: requestVolume4,
-							Threshold:     threshold2,
-						}
-					}
-					var gatewayFailures2 *shared.MeshCircuitBreakerItemSpecGatewayFailures
-					if r.Spec.To[toIndex].Default.OutlierDetection.Detectors.GatewayFailures != nil {
-						consecutive6 := new(int)
-						if !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.GatewayFailures.Consecutive.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.GatewayFailures.Consecutive.IsNull() {
-							*consecutive6 = int(r.Spec.To[toIndex].Default.OutlierDetection.Detectors.GatewayFailures.Consecutive.ValueInt32())
-						} else {
-							consecutive6 = nil
-						}
-						gatewayFailures2 = &shared.MeshCircuitBreakerItemSpecGatewayFailures{
-							Consecutive: consecutive6,
-						}
-					}
-					var localOriginFailures2 *shared.MeshCircuitBreakerItemSpecLocalOriginFailures
-					if r.Spec.To[toIndex].Default.OutlierDetection.Detectors.LocalOriginFailures != nil {
-						consecutive7 := new(int)
-						if !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.LocalOriginFailures.Consecutive.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.LocalOriginFailures.Consecutive.IsNull() {
-							*consecutive7 = int(r.Spec.To[toIndex].Default.OutlierDetection.Detectors.LocalOriginFailures.Consecutive.ValueInt32())
-						} else {
-							consecutive7 = nil
-						}
-						localOriginFailures2 = &shared.MeshCircuitBreakerItemSpecLocalOriginFailures{
-							Consecutive: consecutive7,
-						}
-					}
-					var successRate2 *shared.MeshCircuitBreakerItemSpecSuccessRate
-					if r.Spec.To[toIndex].Default.OutlierDetection.Detectors.SuccessRate != nil {
-						minimumHosts5 := new(int)
-						if !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts.IsNull() {
-							*minimumHosts5 = int(r.Spec.To[toIndex].Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts.ValueInt32())
-						} else {
-							minimumHosts5 = nil
-						}
-						requestVolume5 := new(int)
-						if !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.SuccessRate.RequestVolume.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.SuccessRate.RequestVolume.IsNull() {
-							*requestVolume5 = int(r.Spec.To[toIndex].Default.OutlierDetection.Detectors.SuccessRate.RequestVolume.ValueInt32())
-						} else {
-							requestVolume5 = nil
-						}
-						var standardDeviationFactor2 *shared.MeshCircuitBreakerItemSpecStandardDeviationFactor
-						if r.Spec.To[toIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor != nil {
-							integer4 := new(int64)
-							if !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer.IsNull() {
-								*integer4 = r.Spec.To[toIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer.ValueInt64()
-							} else {
-								integer4 = nil
-							}
-							if integer4 != nil {
-								standardDeviationFactor2 = &shared.MeshCircuitBreakerItemSpecStandardDeviationFactor{
-									Integer: integer4,
-								}
-							}
-							str4 := new(string)
-							if !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Str.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Str.IsNull() {
-								*str4 = r.Spec.To[toIndex].Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Str.ValueString()
-							} else {
-								str4 = nil
-							}
-							if str4 != nil {
-								standardDeviationFactor2 = &shared.MeshCircuitBreakerItemSpecStandardDeviationFactor{
-									Str: str4,
-								}
-							}
-						}
-						successRate2 = &shared.MeshCircuitBreakerItemSpecSuccessRate{
-							MinimumHosts:            minimumHosts5,
-							RequestVolume:           requestVolume5,
-							StandardDeviationFactor: standardDeviationFactor2,
-						}
-					}
-					var totalFailures2 *shared.MeshCircuitBreakerItemSpecTotalFailures
-					if r.Spec.To[toIndex].Default.OutlierDetection.Detectors.TotalFailures != nil {
-						consecutive8 := new(int)
-						if !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.TotalFailures.Consecutive.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.Detectors.TotalFailures.Consecutive.IsNull() {
-							*consecutive8 = int(r.Spec.To[toIndex].Default.OutlierDetection.Detectors.TotalFailures.Consecutive.ValueInt32())
-						} else {
-							consecutive8 = nil
-						}
-						totalFailures2 = &shared.MeshCircuitBreakerItemSpecTotalFailures{
-							Consecutive: consecutive8,
-						}
-					}
-					detectors2 = &shared.MeshCircuitBreakerItemSpecDetectors{
-						FailurePercentage:   failurePercentage2,
-						GatewayFailures:     gatewayFailures2,
-						LocalOriginFailures: localOriginFailures2,
-						SuccessRate:         successRate2,
-						TotalFailures:       totalFailures2,
-					}
-				}
-				disabled2 := new(bool)
-				if !r.Spec.To[toIndex].Default.OutlierDetection.Disabled.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.Disabled.IsNull() {
-					*disabled2 = r.Spec.To[toIndex].Default.OutlierDetection.Disabled.ValueBool()
-				} else {
-					disabled2 = nil
-				}
-				var healthyPanicThreshold2 *shared.MeshCircuitBreakerItemSpecHealthyPanicThreshold
-				if r.Spec.To[toIndex].Default.OutlierDetection.HealthyPanicThreshold != nil {
-					integer5 := new(int64)
-					if !r.Spec.To[toIndex].Default.OutlierDetection.HealthyPanicThreshold.Integer.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.HealthyPanicThreshold.Integer.IsNull() {
-						*integer5 = r.Spec.To[toIndex].Default.OutlierDetection.HealthyPanicThreshold.Integer.ValueInt64()
-					} else {
-						integer5 = nil
-					}
-					if integer5 != nil {
-						healthyPanicThreshold2 = &shared.MeshCircuitBreakerItemSpecHealthyPanicThreshold{
-							Integer: integer5,
-						}
-					}
-					str5 := new(string)
-					if !r.Spec.To[toIndex].Default.OutlierDetection.HealthyPanicThreshold.Str.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.HealthyPanicThreshold.Str.IsNull() {
-						*str5 = r.Spec.To[toIndex].Default.OutlierDetection.HealthyPanicThreshold.Str.ValueString()
-					} else {
-						str5 = nil
-					}
-					if str5 != nil {
-						healthyPanicThreshold2 = &shared.MeshCircuitBreakerItemSpecHealthyPanicThreshold{
-							Str: str5,
-						}
-					}
-				}
-				interval2 := new(string)
-				if !r.Spec.To[toIndex].Default.OutlierDetection.Interval.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.Interval.IsNull() {
-					*interval2 = r.Spec.To[toIndex].Default.OutlierDetection.Interval.ValueString()
-				} else {
-					interval2 = nil
-				}
-				maxEjectionPercent2 := new(int)
-				if !r.Spec.To[toIndex].Default.OutlierDetection.MaxEjectionPercent.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.MaxEjectionPercent.IsNull() {
-					*maxEjectionPercent2 = int(r.Spec.To[toIndex].Default.OutlierDetection.MaxEjectionPercent.ValueInt32())
-				} else {
-					maxEjectionPercent2 = nil
-				}
-				splitExternalAndLocalErrors2 := new(bool)
-				if !r.Spec.To[toIndex].Default.OutlierDetection.SplitExternalAndLocalErrors.IsUnknown() && !r.Spec.To[toIndex].Default.OutlierDetection.SplitExternalAndLocalErrors.IsNull() {
-					*splitExternalAndLocalErrors2 = r.Spec.To[toIndex].Default.OutlierDetection.SplitExternalAndLocalErrors.ValueBool()
-				} else {
-					splitExternalAndLocalErrors2 = nil
-				}
-				outlierDetection2 = &shared.MeshCircuitBreakerItemSpecOutlierDetection{
-					BaseEjectionTime:            baseEjectionTime2,
-					Detectors:                   detectors2,
-					Disabled:                    disabled2,
-					HealthyPanicThreshold:       healthyPanicThreshold2,
-					Interval:                    interval2,
-					MaxEjectionPercent:          maxEjectionPercent2,
-					SplitExternalAndLocalErrors: splitExternalAndLocalErrors2,
-				}
-			}
-			default2 = &shared.MeshCircuitBreakerItemSpecToDefault{
-				ConnectionLimits: connectionLimits2,
-				OutlierDetection: outlierDetection2,
-			}
-		}
-		kind2 := shared.MeshCircuitBreakerItemSpecToKind(r.Spec.To[toIndex].TargetRef.Kind.ValueString())
-		labels3 := make(map[string]string)
-		for labelsKey2 := range r.Spec.To[toIndex].TargetRef.Labels {
-			var labelsInst2 string
-			labelsInst2 = r.Spec.To[toIndex].TargetRef.Labels[labelsKey2].ValueString()
-
-			labels3[labelsKey2] = labelsInst2
-		}
-		mesh3 := new(string)
-		if !r.Spec.To[toIndex].TargetRef.Mesh.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Mesh.IsNull() {
-			*mesh3 = r.Spec.To[toIndex].TargetRef.Mesh.ValueString()
-		} else {
-			mesh3 = nil
-		}
-		name3 := new(string)
-		if !r.Spec.To[toIndex].TargetRef.Name.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Name.IsNull() {
-			*name3 = r.Spec.To[toIndex].TargetRef.Name.ValueString()
-		} else {
-			name3 = nil
-		}
-		namespace2 := new(string)
-		if !r.Spec.To[toIndex].TargetRef.Namespace.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Namespace.IsNull() {
-			*namespace2 = r.Spec.To[toIndex].TargetRef.Namespace.ValueString()
-		} else {
-			namespace2 = nil
-		}
-		proxyTypes2 := make([]shared.MeshCircuitBreakerItemSpecToProxyTypes, 0, len(r.Spec.To[toIndex].TargetRef.ProxyTypes))
-		for _, proxyTypesItem2 := range r.Spec.To[toIndex].TargetRef.ProxyTypes {
-			proxyTypes2 = append(proxyTypes2, shared.MeshCircuitBreakerItemSpecToProxyTypes(proxyTypesItem2.ValueString()))
-		}
-		sectionName2 := new(string)
-		if !r.Spec.To[toIndex].TargetRef.SectionName.IsUnknown() && !r.Spec.To[toIndex].TargetRef.SectionName.IsNull() {
-			*sectionName2 = r.Spec.To[toIndex].TargetRef.SectionName.ValueString()
-		} else {
-			sectionName2 = nil
-		}
-		tags2 := make(map[string]string)
-		for tagsKey2 := range r.Spec.To[toIndex].TargetRef.Tags {
-			var tagsInst2 string
-			tagsInst2 = r.Spec.To[toIndex].TargetRef.Tags[tagsKey2].ValueString()
-
-			tags2[tagsKey2] = tagsInst2
-		}
-		targetRef2 := shared.MeshCircuitBreakerItemSpecToTargetRef{
-			Kind:        kind2,
-			Labels:      labels3,
-			Mesh:        mesh3,
-			Name:        name3,
-			Namespace:   namespace2,
-			ProxyTypes:  proxyTypes2,
-			SectionName: sectionName2,
-			Tags:        tags2,
-		}
 		to = append(to, shared.MeshCircuitBreakerItemTo{
-			Default:   default2,
-			TargetRef: targetRef2,
+			Default:   default1,
+			TargetRef: targetRef1,
 		})
 	}
 	spec := shared.MeshCircuitBreakerItemSpec{
-		From:      from,
 		Rules:     rules,
-		TargetRef: targetRef1,
+		TargetRef: targetRef,
 		To:        to,
 	}
 	out := shared.MeshCircuitBreakerItemInput{

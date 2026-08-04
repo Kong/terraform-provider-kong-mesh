@@ -7,8 +7,8 @@ import (
 )
 
 type MeshServiceItemSpec struct {
-	Identities []MeshFaultInjectionItemSpiffeID `tfsdk:"identities"`
-	Ports      []MeshServiceItemPorts           `tfsdk:"ports"`
-	Selector   *MeshServiceItemSelector         `tfsdk:"selector"`
-	State      types.String                     `tfsdk:"state"`
+	Identities []Sni                    `tfsdk:"identities"`
+	Ports      []MeshServiceItemPorts   `tfsdk:"ports"`
+	Selector   *MeshServiceItemSelector `tfsdk:"selector"`
+	State      types.String             `tfsdk:"state"`
 }

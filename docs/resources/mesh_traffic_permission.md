@@ -20,34 +20,15 @@ resource "kong-mesh_mesh_traffic_permission" "my_meshtrafficpermission" {
   mesh = "...my_mesh..."
   name = "...my_name..."
   spec = {
-    from = [
-      {
-        default = {
-          action = "Deny"
-        }
-        target_ref = {
-          kind = "MeshService"
-          labels = {
-            key = "value"
-          }
-          mesh      = "...my_mesh..."
-          name      = "...my_name..."
-          namespace = "...my_namespace..."
-          proxy_types = [
-            "Gateway"
-          ]
-          section_name = "...my_section_name..."
-          tags = {
-            key = "value"
-          }
-        }
-      }
-    ]
     rules = [
       {
         default = {
           allow = [
             {
+              sni = {
+                type  = "Exact"
+                value = "...my_value..."
+              }
               spiffe_id = {
                 type  = "Exact"
                 value = "...my_value..."
@@ -56,6 +37,10 @@ resource "kong-mesh_mesh_traffic_permission" "my_meshtrafficpermission" {
           ]
           allow_with_shadow_deny = [
             {
+              sni = {
+                type  = "Exact"
+                value = "...my_value..."
+              }
               spiffe_id = {
                 type  = "Prefix"
                 value = "...my_value..."
@@ -64,6 +49,10 @@ resource "kong-mesh_mesh_traffic_permission" "my_meshtrafficpermission" {
           ]
           deny = [
             {
+              sni = {
+                type  = "Exact"
+                value = "...my_value..."
+              }
               spiffe_id = {
                 type  = "Prefix"
                 value = "...my_value..."
@@ -78,12 +67,9 @@ resource "kong-mesh_mesh_traffic_permission" "my_meshtrafficpermission" {
       labels = {
         key = "value"
       }
-      mesh      = "...my_mesh..."
-      name      = "...my_name..."
-      namespace = "...my_namespace..."
-      proxy_types = [
-        "Sidecar"
-      ]
+      mesh         = "...my_mesh..."
+      name         = "...my_name..."
+      namespace    = "...my_namespace..."
       section_name = "...my_section_name..."
       tags = {
         key = "value"
@@ -121,52 +107,10 @@ Warning messages describe a problem the client making the API request should cor
 
 Optional:
 
-- `from` (Attributes List) From list makes a match between clients and corresponding configurations (see [below for nested schema](#nestedatt--spec--from))
 - `rules` (Attributes List) Rules defines inbound permissions configuration (see [below for nested schema](#nestedatt--spec--rules))
 - `target_ref` (Attributes) TargetRef is a reference to the resource the policy takes an effect on.
 The resource could be either a real store object or virtual resource
 defined inplace. (see [below for nested schema](#nestedatt--spec--target_ref))
-
-<a id="nestedatt--spec--from"></a>
-### Nested Schema for `spec.from`
-
-Optional:
-
-- `default` (Attributes) Default is a configuration specific to the group of clients referenced in
-'targetRef' (see [below for nested schema](#nestedatt--spec--from--default))
-- `target_ref` (Attributes) TargetRef is a reference to the resource that represents a group of
-clients.
-Not Null (see [below for nested schema](#nestedatt--spec--from--target_ref))
-
-<a id="nestedatt--spec--from--default"></a>
-### Nested Schema for `spec.from.default`
-
-Optional:
-
-- `action` (String) Action defines a behavior for the specified group of clients:. possible known values include one of ["Allow", "Deny", "AllowWithShadowDeny"]
-
-
-<a id="nestedatt--spec--from--target_ref"></a>
-### Nested Schema for `spec.from.target_ref`
-
-Optional:
-
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
-- `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
-Name and Namespace can be used.
-- `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`,
-`MeshServiceSubset` and `MeshGatewayRoute`
-- `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-will be targeted.
-- `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-all data plane types are targeted by the policy.
-- `section_name` (String) SectionName is used to target specific section of resource.
-For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-- `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds
-`MeshSubset` and `MeshServiceSubset`
-
-
 
 <a id="nestedatt--spec--rules"></a>
 ### Nested Schema for `spec.rules`
@@ -190,7 +134,17 @@ requests are denied (see [below for nested schema](#nestedatt--spec--rules--defa
 
 Optional:
 
+- `sni` (Attributes) SNI defines a matcher configuration for matching by SNI value carried on the TLS connection (see [below for nested schema](#nestedatt--spec--rules--default--allow--sni))
 - `spiffe_id` (Attributes) SpiffeID defines a matcher configuration for SpiffeID matching (see [below for nested schema](#nestedatt--spec--rules--default--allow--spiffe_id))
+
+<a id="nestedatt--spec--rules--default--allow--sni"></a>
+### Nested Schema for `spec.rules.default.allow.sni`
+
+Optional:
+
+- `type` (String) Type defines how to match traffic by SNI. Only `Exact` is supported. Not Null; must be "Exact"
+- `value` (String) Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied. Not Null
+
 
 <a id="nestedatt--spec--rules--default--allow--spiffe_id"></a>
 ### Nested Schema for `spec.rules.default.allow.spiffe_id`
@@ -198,7 +152,7 @@ Optional:
 Optional:
 
 - `type` (String) Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed. possible known values include one of ["Exact", "Prefix"]; Not Null
-- `value` (String) Value is SpiffeId of a client that needs to match for the configuration to be applied. Not Null
+- `value` (String) Value is SpiffeID of a client that needs to match for the configuration to be applied. Not Null
 
 
 
@@ -207,7 +161,17 @@ Optional:
 
 Optional:
 
+- `sni` (Attributes) SNI defines a matcher configuration for matching by SNI value carried on the TLS connection (see [below for nested schema](#nestedatt--spec--rules--default--allow_with_shadow_deny--sni))
 - `spiffe_id` (Attributes) SpiffeID defines a matcher configuration for SpiffeID matching (see [below for nested schema](#nestedatt--spec--rules--default--allow_with_shadow_deny--spiffe_id))
+
+<a id="nestedatt--spec--rules--default--allow_with_shadow_deny--sni"></a>
+### Nested Schema for `spec.rules.default.allow_with_shadow_deny.sni`
+
+Optional:
+
+- `type` (String) Type defines how to match traffic by SNI. Only `Exact` is supported. Not Null; must be "Exact"
+- `value` (String) Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied. Not Null
+
 
 <a id="nestedatt--spec--rules--default--allow_with_shadow_deny--spiffe_id"></a>
 ### Nested Schema for `spec.rules.default.allow_with_shadow_deny.spiffe_id`
@@ -215,7 +179,7 @@ Optional:
 Optional:
 
 - `type` (String) Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed. possible known values include one of ["Exact", "Prefix"]; Not Null
-- `value` (String) Value is SpiffeId of a client that needs to match for the configuration to be applied. Not Null
+- `value` (String) Value is SpiffeID of a client that needs to match for the configuration to be applied. Not Null
 
 
 
@@ -224,7 +188,17 @@ Optional:
 
 Optional:
 
+- `sni` (Attributes) SNI defines a matcher configuration for matching by SNI value carried on the TLS connection (see [below for nested schema](#nestedatt--spec--rules--default--deny--sni))
 - `spiffe_id` (Attributes) SpiffeID defines a matcher configuration for SpiffeID matching (see [below for nested schema](#nestedatt--spec--rules--default--deny--spiffe_id))
+
+<a id="nestedatt--spec--rules--default--deny--sni"></a>
+### Nested Schema for `spec.rules.default.deny.sni`
+
+Optional:
+
+- `type` (String) Type defines how to match traffic by SNI. Only `Exact` is supported. Not Null; must be "Exact"
+- `value` (String) Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied. Not Null
+
 
 <a id="nestedatt--spec--rules--default--deny--spiffe_id"></a>
 ### Nested Schema for `spec.rules.default.deny.spiffe_id`
@@ -232,7 +206,7 @@ Optional:
 Optional:
 
 - `type` (String) Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed. possible known values include one of ["Exact", "Prefix"]; Not Null
-- `value` (String) Value is SpiffeId of a client that needs to match for the configuration to be applied. Not Null
+- `value` (String) Value is SpiffeID of a client that needs to match for the configuration to be applied. Not Null
 
 
 
@@ -243,19 +217,17 @@ Optional:
 
 Required:
 
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
 
 Optional:
 
 - `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
 Name and Namespace can be used.
 - `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`,
-`MeshServiceSubset` and `MeshGatewayRoute`
+- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`
+and `MeshServiceSubset`
 - `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 will be targeted.
-- `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-all data plane types are targeted by the policy.
 - `section_name` (String) SectionName is used to target specific section of resource.
 For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 - `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds

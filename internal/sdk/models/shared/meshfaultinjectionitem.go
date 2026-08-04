@@ -414,8 +414,7 @@ func (h *HTTP) GetResponseBandwidth() *ResponseBandwidth {
 	return h.ResponseBandwidth
 }
 
-// MeshFaultInjectionItemDefault - Default is a configuration specific to the group of destinations referenced in
-// 'targetRef'
+// MeshFaultInjectionItemDefault - Default defines fault configuration
 type MeshFaultInjectionItemDefault struct {
 	// Http allows to define list of Http faults between dataplanes.
 	HTTP []HTTP `json:"http,omitempty"`
@@ -428,571 +427,66 @@ func (m *MeshFaultInjectionItemDefault) GetHTTP() []HTTP {
 	return m.HTTP
 }
 
-// MeshFaultInjectionItemSpecKind - Kind of the referenced resource
-type MeshFaultInjectionItemSpecKind string
+// MeshFaultInjectionItemSpecType - Type defines how to match traffic by SNI. Only `Exact` is supported.
+type MeshFaultInjectionItemSpecType string
 
 const (
-	MeshFaultInjectionItemSpecKindMesh                 MeshFaultInjectionItemSpecKind = "Mesh"
-	MeshFaultInjectionItemSpecKindMeshSubset           MeshFaultInjectionItemSpecKind = "MeshSubset"
-	MeshFaultInjectionItemSpecKindMeshGateway          MeshFaultInjectionItemSpecKind = "MeshGateway"
-	MeshFaultInjectionItemSpecKindMeshService          MeshFaultInjectionItemSpecKind = "MeshService"
-	MeshFaultInjectionItemSpecKindMeshExternalService  MeshFaultInjectionItemSpecKind = "MeshExternalService"
-	MeshFaultInjectionItemSpecKindMeshMultiZoneService MeshFaultInjectionItemSpecKind = "MeshMultiZoneService"
-	MeshFaultInjectionItemSpecKindMeshServiceSubset    MeshFaultInjectionItemSpecKind = "MeshServiceSubset"
-	MeshFaultInjectionItemSpecKindMeshHTTPRoute        MeshFaultInjectionItemSpecKind = "MeshHTTPRoute"
-	MeshFaultInjectionItemSpecKindDataplane            MeshFaultInjectionItemSpecKind = "Dataplane"
+	MeshFaultInjectionItemSpecTypeExact MeshFaultInjectionItemSpecType = "Exact"
 )
 
-func (e MeshFaultInjectionItemSpecKind) ToPointer() *MeshFaultInjectionItemSpecKind {
+func (e MeshFaultInjectionItemSpecType) ToPointer() *MeshFaultInjectionItemSpecType {
 	return &e
 }
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshFaultInjectionItemSpecKind) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
+func (e *MeshFaultInjectionItemSpecType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
 	}
-	return false
-}
-
-type MeshFaultInjectionItemSpecProxyTypes string
-
-const (
-	MeshFaultInjectionItemSpecProxyTypesSidecar MeshFaultInjectionItemSpecProxyTypes = "Sidecar"
-	MeshFaultInjectionItemSpecProxyTypesGateway MeshFaultInjectionItemSpecProxyTypes = "Gateway"
-)
-
-func (e MeshFaultInjectionItemSpecProxyTypes) ToPointer() *MeshFaultInjectionItemSpecProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshFaultInjectionItemSpecProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshFaultInjectionItemSpecTargetRef - TargetRef is a reference to the resource that represents a group of
-// destinations.
-type MeshFaultInjectionItemSpecTargetRef struct {
-	// Kind of the referenced resource
-	Kind MeshFaultInjectionItemSpecKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
-	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshFaultInjectionItemSpecProxyTypes `json:"proxyTypes,omitempty"`
-	// SectionName is used to target specific section of resource.
-	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
-}
-
-func (m *MeshFaultInjectionItemSpecTargetRef) GetKind() MeshFaultInjectionItemSpecKind {
-	if m == nil {
-		return MeshFaultInjectionItemSpecKind("")
-	}
-	return m.Kind
-}
-
-func (m *MeshFaultInjectionItemSpecTargetRef) GetLabels() map[string]string {
-	if m == nil {
+	switch v {
+	case "Exact":
+		*e = MeshFaultInjectionItemSpecType(v)
 		return nil
-	}
-	return m.Labels
-}
-
-func (m *MeshFaultInjectionItemSpecTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshFaultInjectionItemSpecTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshFaultInjectionItemSpecTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
-func (m *MeshFaultInjectionItemSpecTargetRef) GetProxyTypes() []MeshFaultInjectionItemSpecProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
-func (m *MeshFaultInjectionItemSpecTargetRef) GetSectionName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.SectionName
-}
-
-func (m *MeshFaultInjectionItemSpecTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
-}
-
-type MeshFaultInjectionItemFrom struct {
-	// Default is a configuration specific to the group of destinations referenced in
-	// 'targetRef'
-	Default *MeshFaultInjectionItemDefault `json:"default,omitempty"`
-	// TargetRef is a reference to the resource that represents a group of
-	// destinations.
-	TargetRef MeshFaultInjectionItemSpecTargetRef `json:"targetRef"`
-}
-
-func (m *MeshFaultInjectionItemFrom) GetDefault() *MeshFaultInjectionItemDefault {
-	if m == nil {
-		return nil
-	}
-	return m.Default
-}
-
-func (m *MeshFaultInjectionItemFrom) GetTargetRef() MeshFaultInjectionItemSpecTargetRef {
-	if m == nil {
-		return MeshFaultInjectionItemSpecTargetRef{}
-	}
-	return m.TargetRef
-}
-
-type MeshFaultInjectionItemSpecRulesPercentageType string
-
-const (
-	MeshFaultInjectionItemSpecRulesPercentageTypeInteger MeshFaultInjectionItemSpecRulesPercentageType = "integer"
-	MeshFaultInjectionItemSpecRulesPercentageTypeStr     MeshFaultInjectionItemSpecRulesPercentageType = "str"
-)
-
-// MeshFaultInjectionItemSpecRulesPercentage - Percentage of requests on which abort will be injected, has to be
-// either int or decimal represented as string.
-type MeshFaultInjectionItemSpecRulesPercentage struct {
-	Integer *int64  `queryParam:"inline" union:"member"`
-	Str     *string `queryParam:"inline" union:"member"`
-
-	Type MeshFaultInjectionItemSpecRulesPercentageType
-}
-
-func CreateMeshFaultInjectionItemSpecRulesPercentageInteger(integer int64) MeshFaultInjectionItemSpecRulesPercentage {
-	typ := MeshFaultInjectionItemSpecRulesPercentageTypeInteger
-
-	return MeshFaultInjectionItemSpecRulesPercentage{
-		Integer: &integer,
-		Type:    typ,
+	default:
+		return fmt.Errorf("invalid value for MeshFaultInjectionItemSpecType: %v", v)
 	}
 }
 
-func CreateMeshFaultInjectionItemSpecRulesPercentageStr(str string) MeshFaultInjectionItemSpecRulesPercentage {
-	typ := MeshFaultInjectionItemSpecRulesPercentageTypeStr
-
-	return MeshFaultInjectionItemSpecRulesPercentage{
-		Str:  &str,
-		Type: typ,
-	}
-}
-
-func (u *MeshFaultInjectionItemSpecRulesPercentage) UnmarshalJSON(data []byte) error {
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var integer int64 = int64(0)
-	if err := utils.UnmarshalJSON(data, &integer, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshFaultInjectionItemSpecRulesPercentageTypeInteger,
-			Value: &integer,
-		})
-	}
-
-	var str string = ""
-	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshFaultInjectionItemSpecRulesPercentageTypeStr,
-			Value: &str,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshFaultInjectionItemSpecRulesPercentage", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshFaultInjectionItemSpecRulesPercentage", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(MeshFaultInjectionItemSpecRulesPercentageType)
-	switch best.Type {
-	case MeshFaultInjectionItemSpecRulesPercentageTypeInteger:
-		u.Integer = best.Value.(*int64)
-		return nil
-	case MeshFaultInjectionItemSpecRulesPercentageTypeStr:
-		u.Str = best.Value.(*string)
-		return nil
-	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshFaultInjectionItemSpecRulesPercentage", string(data))
-}
-
-func (u MeshFaultInjectionItemSpecRulesPercentage) MarshalJSON() ([]byte, error) {
-	if u.Integer != nil {
-		return utils.MarshalJSON(u.Integer, "", true)
-	}
-
-	if u.Str != nil {
-		return utils.MarshalJSON(u.Str, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type MeshFaultInjectionItemSpecRulesPercentage: all fields are null")
-}
-
-// MeshFaultInjectionItemAbort - Abort defines a configuration of not delivering requests to destination
-// service and replacing the responses from destination dataplane by
-// predefined status code
-type MeshFaultInjectionItemAbort struct {
-	// HTTP status code which will be returned to source side
-	HTTPStatus int `json:"httpStatus"`
-	// Percentage of requests on which abort will be injected, has to be
-	// either int or decimal represented as string.
-	Percentage MeshFaultInjectionItemSpecRulesPercentage `json:"percentage"`
-}
-
-func (m *MeshFaultInjectionItemAbort) GetHTTPStatus() int {
-	if m == nil {
-		return 0
-	}
-	return m.HTTPStatus
-}
-
-func (m *MeshFaultInjectionItemAbort) GetPercentage() MeshFaultInjectionItemSpecRulesPercentage {
-	if m == nil {
-		return MeshFaultInjectionItemSpecRulesPercentage{}
-	}
-	return m.Percentage
-}
-
-type MeshFaultInjectionItemSpecRulesDefaultPercentageType string
-
-const (
-	MeshFaultInjectionItemSpecRulesDefaultPercentageTypeInteger MeshFaultInjectionItemSpecRulesDefaultPercentageType = "integer"
-	MeshFaultInjectionItemSpecRulesDefaultPercentageTypeStr     MeshFaultInjectionItemSpecRulesDefaultPercentageType = "str"
-)
-
-// MeshFaultInjectionItemSpecRulesDefaultPercentage - Percentage of requests on which delay will be injected, has to be
-// either int or decimal represented as string.
-type MeshFaultInjectionItemSpecRulesDefaultPercentage struct {
-	Integer *int64  `queryParam:"inline" union:"member"`
-	Str     *string `queryParam:"inline" union:"member"`
-
-	Type MeshFaultInjectionItemSpecRulesDefaultPercentageType
-}
-
-func CreateMeshFaultInjectionItemSpecRulesDefaultPercentageInteger(integer int64) MeshFaultInjectionItemSpecRulesDefaultPercentage {
-	typ := MeshFaultInjectionItemSpecRulesDefaultPercentageTypeInteger
-
-	return MeshFaultInjectionItemSpecRulesDefaultPercentage{
-		Integer: &integer,
-		Type:    typ,
-	}
-}
-
-func CreateMeshFaultInjectionItemSpecRulesDefaultPercentageStr(str string) MeshFaultInjectionItemSpecRulesDefaultPercentage {
-	typ := MeshFaultInjectionItemSpecRulesDefaultPercentageTypeStr
-
-	return MeshFaultInjectionItemSpecRulesDefaultPercentage{
-		Str:  &str,
-		Type: typ,
-	}
-}
-
-func (u *MeshFaultInjectionItemSpecRulesDefaultPercentage) UnmarshalJSON(data []byte) error {
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var integer int64 = int64(0)
-	if err := utils.UnmarshalJSON(data, &integer, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshFaultInjectionItemSpecRulesDefaultPercentageTypeInteger,
-			Value: &integer,
-		})
-	}
-
-	var str string = ""
-	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshFaultInjectionItemSpecRulesDefaultPercentageTypeStr,
-			Value: &str,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshFaultInjectionItemSpecRulesDefaultPercentage", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshFaultInjectionItemSpecRulesDefaultPercentage", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(MeshFaultInjectionItemSpecRulesDefaultPercentageType)
-	switch best.Type {
-	case MeshFaultInjectionItemSpecRulesDefaultPercentageTypeInteger:
-		u.Integer = best.Value.(*int64)
-		return nil
-	case MeshFaultInjectionItemSpecRulesDefaultPercentageTypeStr:
-		u.Str = best.Value.(*string)
-		return nil
-	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshFaultInjectionItemSpecRulesDefaultPercentage", string(data))
-}
-
-func (u MeshFaultInjectionItemSpecRulesDefaultPercentage) MarshalJSON() ([]byte, error) {
-	if u.Integer != nil {
-		return utils.MarshalJSON(u.Integer, "", true)
-	}
-
-	if u.Str != nil {
-		return utils.MarshalJSON(u.Str, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type MeshFaultInjectionItemSpecRulesDefaultPercentage: all fields are null")
-}
-
-// MeshFaultInjectionItemDelay - Delay defines configuration of delaying a response from a destination
-type MeshFaultInjectionItemDelay struct {
-	// Percentage of requests on which delay will be injected, has to be
-	// either int or decimal represented as string.
-	Percentage MeshFaultInjectionItemSpecRulesDefaultPercentage `json:"percentage"`
-	// The duration during which the response will be delayed
+// MeshFaultInjectionItemSni - SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+type MeshFaultInjectionItemSni struct {
+	// Type defines how to match traffic by SNI. Only `Exact` is supported.
+	Type MeshFaultInjectionItemSpecType `json:"type"`
+	// Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied
 	Value string `json:"value"`
 }
 
-func (m *MeshFaultInjectionItemDelay) GetPercentage() MeshFaultInjectionItemSpecRulesDefaultPercentage {
+func (m *MeshFaultInjectionItemSni) GetType() MeshFaultInjectionItemSpecType {
 	if m == nil {
-		return MeshFaultInjectionItemSpecRulesDefaultPercentage{}
+		return MeshFaultInjectionItemSpecType("")
 	}
-	return m.Percentage
+	return m.Type
 }
 
-func (m *MeshFaultInjectionItemDelay) GetValue() string {
+func (m *MeshFaultInjectionItemSni) GetValue() string {
 	if m == nil {
 		return ""
 	}
 	return m.Value
 }
 
-type MeshFaultInjectionItemSpecRulesDefaultHTTPPercentageType string
+// MeshFaultInjectionItemSpecRulesType - Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
+type MeshFaultInjectionItemSpecRulesType string
 
 const (
-	MeshFaultInjectionItemSpecRulesDefaultHTTPPercentageTypeInteger MeshFaultInjectionItemSpecRulesDefaultHTTPPercentageType = "integer"
-	MeshFaultInjectionItemSpecRulesDefaultHTTPPercentageTypeStr     MeshFaultInjectionItemSpecRulesDefaultHTTPPercentageType = "str"
+	MeshFaultInjectionItemSpecRulesTypeExact  MeshFaultInjectionItemSpecRulesType = "Exact"
+	MeshFaultInjectionItemSpecRulesTypePrefix MeshFaultInjectionItemSpecRulesType = "Prefix"
 )
 
-// MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage - Percentage of requests on which response bandwidth limit will be
-// either int or decimal represented as string.
-type MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage struct {
-	Integer *int64  `queryParam:"inline" union:"member"`
-	Str     *string `queryParam:"inline" union:"member"`
-
-	Type MeshFaultInjectionItemSpecRulesDefaultHTTPPercentageType
-}
-
-func CreateMeshFaultInjectionItemSpecRulesDefaultHTTPPercentageInteger(integer int64) MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage {
-	typ := MeshFaultInjectionItemSpecRulesDefaultHTTPPercentageTypeInteger
-
-	return MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage{
-		Integer: &integer,
-		Type:    typ,
-	}
-}
-
-func CreateMeshFaultInjectionItemSpecRulesDefaultHTTPPercentageStr(str string) MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage {
-	typ := MeshFaultInjectionItemSpecRulesDefaultHTTPPercentageTypeStr
-
-	return MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage{
-		Str:  &str,
-		Type: typ,
-	}
-}
-
-func (u *MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage) UnmarshalJSON(data []byte) error {
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var integer int64 = int64(0)
-	if err := utils.UnmarshalJSON(data, &integer, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshFaultInjectionItemSpecRulesDefaultHTTPPercentageTypeInteger,
-			Value: &integer,
-		})
-	}
-
-	var str string = ""
-	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshFaultInjectionItemSpecRulesDefaultHTTPPercentageTypeStr,
-			Value: &str,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(MeshFaultInjectionItemSpecRulesDefaultHTTPPercentageType)
-	switch best.Type {
-	case MeshFaultInjectionItemSpecRulesDefaultHTTPPercentageTypeInteger:
-		u.Integer = best.Value.(*int64)
-		return nil
-	case MeshFaultInjectionItemSpecRulesDefaultHTTPPercentageTypeStr:
-		u.Str = best.Value.(*string)
-		return nil
-	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage", string(data))
-}
-
-func (u MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage) MarshalJSON() ([]byte, error) {
-	if u.Integer != nil {
-		return utils.MarshalJSON(u.Integer, "", true)
-	}
-
-	if u.Str != nil {
-		return utils.MarshalJSON(u.Str, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage: all fields are null")
-}
-
-// MeshFaultInjectionItemResponseBandwidth - ResponseBandwidth defines a configuration to limit the speed of
-// responding to the requests
-type MeshFaultInjectionItemResponseBandwidth struct {
-	// Limit is represented by value measure in Gbps, Mbps, kbps, e.g.
-	// 10kbps
-	Limit string `json:"limit"`
-	// Percentage of requests on which response bandwidth limit will be
-	// either int or decimal represented as string.
-	Percentage MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage `json:"percentage"`
-}
-
-func (m *MeshFaultInjectionItemResponseBandwidth) GetLimit() string {
-	if m == nil {
-		return ""
-	}
-	return m.Limit
-}
-
-func (m *MeshFaultInjectionItemResponseBandwidth) GetPercentage() MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage {
-	if m == nil {
-		return MeshFaultInjectionItemSpecRulesDefaultHTTPPercentage{}
-	}
-	return m.Percentage
-}
-
-// MeshFaultInjectionItemHTTP - FaultInjection defines the configuration of faults between dataplanes.
-type MeshFaultInjectionItemHTTP struct {
-	// Abort defines a configuration of not delivering requests to destination
-	// service and replacing the responses from destination dataplane by
-	// predefined status code
-	Abort *MeshFaultInjectionItemAbort `json:"abort,omitempty"`
-	// Delay defines configuration of delaying a response from a destination
-	Delay *MeshFaultInjectionItemDelay `json:"delay,omitempty"`
-	// ResponseBandwidth defines a configuration to limit the speed of
-	// responding to the requests
-	ResponseBandwidth *MeshFaultInjectionItemResponseBandwidth `json:"responseBandwidth,omitempty"`
-}
-
-func (m *MeshFaultInjectionItemHTTP) GetAbort() *MeshFaultInjectionItemAbort {
-	if m == nil {
-		return nil
-	}
-	return m.Abort
-}
-
-func (m *MeshFaultInjectionItemHTTP) GetDelay() *MeshFaultInjectionItemDelay {
-	if m == nil {
-		return nil
-	}
-	return m.Delay
-}
-
-func (m *MeshFaultInjectionItemHTTP) GetResponseBandwidth() *MeshFaultInjectionItemResponseBandwidth {
-	if m == nil {
-		return nil
-	}
-	return m.ResponseBandwidth
-}
-
-// MeshFaultInjectionItemSpecDefault - Default defines fault configuration
-type MeshFaultInjectionItemSpecDefault struct {
-	// Http allows to define list of Http faults between dataplanes.
-	HTTP []MeshFaultInjectionItemHTTP `json:"http,omitempty"`
-}
-
-func (m *MeshFaultInjectionItemSpecDefault) GetHTTP() []MeshFaultInjectionItemHTTP {
-	if m == nil {
-		return nil
-	}
-	return m.HTTP
-}
-
-// MeshFaultInjectionItemSpecType - Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
-type MeshFaultInjectionItemSpecType string
-
-const (
-	MeshFaultInjectionItemSpecTypeExact  MeshFaultInjectionItemSpecType = "Exact"
-	MeshFaultInjectionItemSpecTypePrefix MeshFaultInjectionItemSpecType = "Prefix"
-)
-
-func (e MeshFaultInjectionItemSpecType) ToPointer() *MeshFaultInjectionItemSpecType {
+func (e MeshFaultInjectionItemSpecRulesType) ToPointer() *MeshFaultInjectionItemSpecRulesType {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshFaultInjectionItemSpecType) IsExact() bool {
+func (e *MeshFaultInjectionItemSpecRulesType) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "Exact", "Prefix":
@@ -1005,14 +499,14 @@ func (e *MeshFaultInjectionItemSpecType) IsExact() bool {
 // MeshFaultInjectionItemSpiffeID - SpiffeID defines a matcher configuration for SpiffeID matching
 type MeshFaultInjectionItemSpiffeID struct {
 	// Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
-	Type MeshFaultInjectionItemSpecType `json:"type"`
-	// Value is SpiffeId of a client that needs to match for the configuration to be applied
+	Type MeshFaultInjectionItemSpecRulesType `json:"type"`
+	// Value is SpiffeID of a client that needs to match for the configuration to be applied
 	Value string `json:"value"`
 }
 
-func (m *MeshFaultInjectionItemSpiffeID) GetType() MeshFaultInjectionItemSpecType {
+func (m *MeshFaultInjectionItemSpiffeID) GetType() MeshFaultInjectionItemSpecRulesType {
 	if m == nil {
-		return MeshFaultInjectionItemSpecType("")
+		return MeshFaultInjectionItemSpecRulesType("")
 	}
 	return m.Type
 }
@@ -1024,12 +518,21 @@ func (m *MeshFaultInjectionItemSpiffeID) GetValue() string {
 	return m.Value
 }
 
-type Matches struct {
+type MeshFaultInjectionItemMatches struct {
+	// SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+	Sni *MeshFaultInjectionItemSni `json:"sni,omitempty"`
 	// SpiffeID defines a matcher configuration for SpiffeID matching
 	SpiffeID *MeshFaultInjectionItemSpiffeID `json:"spiffeID,omitempty"`
 }
 
-func (m *Matches) GetSpiffeID() *MeshFaultInjectionItemSpiffeID {
+func (m *MeshFaultInjectionItemMatches) GetSni() *MeshFaultInjectionItemSni {
+	if m == nil {
+		return nil
+	}
+	return m.Sni
+}
+
+func (m *MeshFaultInjectionItemMatches) GetSpiffeID() *MeshFaultInjectionItemSpiffeID {
 	if m == nil {
 		return nil
 	}
@@ -1038,19 +541,19 @@ func (m *Matches) GetSpiffeID() *MeshFaultInjectionItemSpiffeID {
 
 type MeshFaultInjectionItemRules struct {
 	// Default defines fault configuration
-	Default MeshFaultInjectionItemSpecDefault `json:"default"`
+	Default MeshFaultInjectionItemDefault `json:"default"`
 	// Matches defines list of matches for which fault injection will be applied
-	Matches []Matches `json:"matches,omitempty"`
+	Matches []MeshFaultInjectionItemMatches `json:"matches,omitempty"`
 }
 
-func (m *MeshFaultInjectionItemRules) GetDefault() MeshFaultInjectionItemSpecDefault {
+func (m *MeshFaultInjectionItemRules) GetDefault() MeshFaultInjectionItemDefault {
 	if m == nil {
-		return MeshFaultInjectionItemSpecDefault{}
+		return MeshFaultInjectionItemDefault{}
 	}
 	return m.Default
 }
 
-func (m *MeshFaultInjectionItemRules) GetMatches() []Matches {
+func (m *MeshFaultInjectionItemRules) GetMatches() []MeshFaultInjectionItemMatches {
 	if m == nil {
 		return nil
 	}
@@ -1063,7 +566,6 @@ type MeshFaultInjectionItemKind string
 const (
 	MeshFaultInjectionItemKindMesh                 MeshFaultInjectionItemKind = "Mesh"
 	MeshFaultInjectionItemKindMeshSubset           MeshFaultInjectionItemKind = "MeshSubset"
-	MeshFaultInjectionItemKindMeshGateway          MeshFaultInjectionItemKind = "MeshGateway"
 	MeshFaultInjectionItemKindMeshService          MeshFaultInjectionItemKind = "MeshService"
 	MeshFaultInjectionItemKindMeshExternalService  MeshFaultInjectionItemKind = "MeshExternalService"
 	MeshFaultInjectionItemKindMeshMultiZoneService MeshFaultInjectionItemKind = "MeshMultiZoneService"
@@ -1080,29 +582,7 @@ func (e MeshFaultInjectionItemKind) ToPointer() *MeshFaultInjectionItemKind {
 func (e *MeshFaultInjectionItemKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshFaultInjectionItemProxyTypes string
-
-const (
-	MeshFaultInjectionItemProxyTypesSidecar MeshFaultInjectionItemProxyTypes = "Sidecar"
-	MeshFaultInjectionItemProxyTypesGateway MeshFaultInjectionItemProxyTypes = "Gateway"
-)
-
-func (e MeshFaultInjectionItemProxyTypes) ToPointer() *MeshFaultInjectionItemProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshFaultInjectionItemProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
+		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
 			return true
 		}
 	}
@@ -1120,15 +600,12 @@ type MeshFaultInjectionItemTargetRef struct {
 	Labels map[string]string `json:"labels,omitempty"`
 	// Mesh is reserved for future use to identify cross mesh resources.
 	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
+	// Name of the referenced resource. Can only be used with kinds: `MeshService`
+	// and `MeshServiceSubset`
 	Name *string `json:"name,omitempty"`
 	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 	// will be targeted.
 	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshFaultInjectionItemProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
@@ -1170,13 +647,6 @@ func (m *MeshFaultInjectionItemTargetRef) GetNamespace() *string {
 		return nil
 	}
 	return m.Namespace
-}
-
-func (m *MeshFaultInjectionItemTargetRef) GetProxyTypes() []MeshFaultInjectionItemProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
 }
 
 func (m *MeshFaultInjectionItemTargetRef) GetSectionName() *string {
@@ -1284,10 +754,10 @@ func (u MeshFaultInjectionItemSpecToPercentage) MarshalJSON() ([]byte, error) {
 	return nil, errors.New("could not marshal union type MeshFaultInjectionItemSpecToPercentage: all fields are null")
 }
 
-// MeshFaultInjectionItemSpecAbort - Abort defines a configuration of not delivering requests to destination
+// MeshFaultInjectionItemAbort - Abort defines a configuration of not delivering requests to destination
 // service and replacing the responses from destination dataplane by
 // predefined status code
-type MeshFaultInjectionItemSpecAbort struct {
+type MeshFaultInjectionItemAbort struct {
 	// HTTP status code which will be returned to source side
 	HTTPStatus int `json:"httpStatus"`
 	// Percentage of requests on which abort will be injected, has to be
@@ -1295,14 +765,14 @@ type MeshFaultInjectionItemSpecAbort struct {
 	Percentage MeshFaultInjectionItemSpecToPercentage `json:"percentage"`
 }
 
-func (m *MeshFaultInjectionItemSpecAbort) GetHTTPStatus() int {
+func (m *MeshFaultInjectionItemAbort) GetHTTPStatus() int {
 	if m == nil {
 		return 0
 	}
 	return m.HTTPStatus
 }
 
-func (m *MeshFaultInjectionItemSpecAbort) GetPercentage() MeshFaultInjectionItemSpecToPercentage {
+func (m *MeshFaultInjectionItemAbort) GetPercentage() MeshFaultInjectionItemSpecToPercentage {
 	if m == nil {
 		return MeshFaultInjectionItemSpecToPercentage{}
 	}
@@ -1400,8 +870,8 @@ func (u MeshFaultInjectionItemSpecToDefaultPercentage) MarshalJSON() ([]byte, er
 	return nil, errors.New("could not marshal union type MeshFaultInjectionItemSpecToDefaultPercentage: all fields are null")
 }
 
-// MeshFaultInjectionItemSpecDelay - Delay defines configuration of delaying a response from a destination
-type MeshFaultInjectionItemSpecDelay struct {
+// MeshFaultInjectionItemDelay - Delay defines configuration of delaying a response from a destination
+type MeshFaultInjectionItemDelay struct {
 	// Percentage of requests on which delay will be injected, has to be
 	// either int or decimal represented as string.
 	Percentage MeshFaultInjectionItemSpecToDefaultPercentage `json:"percentage"`
@@ -1409,14 +879,14 @@ type MeshFaultInjectionItemSpecDelay struct {
 	Value string `json:"value"`
 }
 
-func (m *MeshFaultInjectionItemSpecDelay) GetPercentage() MeshFaultInjectionItemSpecToDefaultPercentage {
+func (m *MeshFaultInjectionItemDelay) GetPercentage() MeshFaultInjectionItemSpecToDefaultPercentage {
 	if m == nil {
 		return MeshFaultInjectionItemSpecToDefaultPercentage{}
 	}
 	return m.Percentage
 }
 
-func (m *MeshFaultInjectionItemSpecDelay) GetValue() string {
+func (m *MeshFaultInjectionItemDelay) GetValue() string {
 	if m == nil {
 		return ""
 	}
@@ -1514,9 +984,9 @@ func (u MeshFaultInjectionItemSpecToDefaultHTTPPercentage) MarshalJSON() ([]byte
 	return nil, errors.New("could not marshal union type MeshFaultInjectionItemSpecToDefaultHTTPPercentage: all fields are null")
 }
 
-// MeshFaultInjectionItemSpecResponseBandwidth - ResponseBandwidth defines a configuration to limit the speed of
+// MeshFaultInjectionItemResponseBandwidth - ResponseBandwidth defines a configuration to limit the speed of
 // responding to the requests
-type MeshFaultInjectionItemSpecResponseBandwidth struct {
+type MeshFaultInjectionItemResponseBandwidth struct {
 	// Limit is represented by value measure in Gbps, Mbps, kbps, e.g.
 	// 10kbps
 	Limit string `json:"limit"`
@@ -1525,139 +995,113 @@ type MeshFaultInjectionItemSpecResponseBandwidth struct {
 	Percentage MeshFaultInjectionItemSpecToDefaultHTTPPercentage `json:"percentage"`
 }
 
-func (m *MeshFaultInjectionItemSpecResponseBandwidth) GetLimit() string {
+func (m *MeshFaultInjectionItemResponseBandwidth) GetLimit() string {
 	if m == nil {
 		return ""
 	}
 	return m.Limit
 }
 
-func (m *MeshFaultInjectionItemSpecResponseBandwidth) GetPercentage() MeshFaultInjectionItemSpecToDefaultHTTPPercentage {
+func (m *MeshFaultInjectionItemResponseBandwidth) GetPercentage() MeshFaultInjectionItemSpecToDefaultHTTPPercentage {
 	if m == nil {
 		return MeshFaultInjectionItemSpecToDefaultHTTPPercentage{}
 	}
 	return m.Percentage
 }
 
-// MeshFaultInjectionItemSpecHTTP - FaultInjection defines the configuration of faults between dataplanes.
-type MeshFaultInjectionItemSpecHTTP struct {
+// MeshFaultInjectionItemHTTP - FaultInjection defines the configuration of faults between dataplanes.
+type MeshFaultInjectionItemHTTP struct {
 	// Abort defines a configuration of not delivering requests to destination
 	// service and replacing the responses from destination dataplane by
 	// predefined status code
-	Abort *MeshFaultInjectionItemSpecAbort `json:"abort,omitempty"`
+	Abort *MeshFaultInjectionItemAbort `json:"abort,omitempty"`
 	// Delay defines configuration of delaying a response from a destination
-	Delay *MeshFaultInjectionItemSpecDelay `json:"delay,omitempty"`
+	Delay *MeshFaultInjectionItemDelay `json:"delay,omitempty"`
 	// ResponseBandwidth defines a configuration to limit the speed of
 	// responding to the requests
-	ResponseBandwidth *MeshFaultInjectionItemSpecResponseBandwidth `json:"responseBandwidth,omitempty"`
+	ResponseBandwidth *MeshFaultInjectionItemResponseBandwidth `json:"responseBandwidth,omitempty"`
 }
 
-func (m *MeshFaultInjectionItemSpecHTTP) GetAbort() *MeshFaultInjectionItemSpecAbort {
+func (m *MeshFaultInjectionItemHTTP) GetAbort() *MeshFaultInjectionItemAbort {
 	if m == nil {
 		return nil
 	}
 	return m.Abort
 }
 
-func (m *MeshFaultInjectionItemSpecHTTP) GetDelay() *MeshFaultInjectionItemSpecDelay {
+func (m *MeshFaultInjectionItemHTTP) GetDelay() *MeshFaultInjectionItemDelay {
 	if m == nil {
 		return nil
 	}
 	return m.Delay
 }
 
-func (m *MeshFaultInjectionItemSpecHTTP) GetResponseBandwidth() *MeshFaultInjectionItemSpecResponseBandwidth {
+func (m *MeshFaultInjectionItemHTTP) GetResponseBandwidth() *MeshFaultInjectionItemResponseBandwidth {
 	if m == nil {
 		return nil
 	}
 	return m.ResponseBandwidth
 }
 
-// MeshFaultInjectionItemSpecToDefault - Default is a configuration specific to the group of destinations referenced in
+// MeshFaultInjectionItemSpecDefault - Default is a configuration specific to the group of destinations referenced in
 // 'targetRef'
-type MeshFaultInjectionItemSpecToDefault struct {
+type MeshFaultInjectionItemSpecDefault struct {
 	// Http allows to define list of Http faults between dataplanes.
-	HTTP []MeshFaultInjectionItemSpecHTTP `json:"http,omitempty"`
+	HTTP []MeshFaultInjectionItemHTTP `json:"http,omitempty"`
 }
 
-func (m *MeshFaultInjectionItemSpecToDefault) GetHTTP() []MeshFaultInjectionItemSpecHTTP {
+func (m *MeshFaultInjectionItemSpecDefault) GetHTTP() []MeshFaultInjectionItemHTTP {
 	if m == nil {
 		return nil
 	}
 	return m.HTTP
 }
 
-// MeshFaultInjectionItemSpecToKind - Kind of the referenced resource
-type MeshFaultInjectionItemSpecToKind string
+// MeshFaultInjectionItemSpecKind - Kind of the referenced resource
+type MeshFaultInjectionItemSpecKind string
 
 const (
-	MeshFaultInjectionItemSpecToKindMesh                 MeshFaultInjectionItemSpecToKind = "Mesh"
-	MeshFaultInjectionItemSpecToKindMeshSubset           MeshFaultInjectionItemSpecToKind = "MeshSubset"
-	MeshFaultInjectionItemSpecToKindMeshGateway          MeshFaultInjectionItemSpecToKind = "MeshGateway"
-	MeshFaultInjectionItemSpecToKindMeshService          MeshFaultInjectionItemSpecToKind = "MeshService"
-	MeshFaultInjectionItemSpecToKindMeshExternalService  MeshFaultInjectionItemSpecToKind = "MeshExternalService"
-	MeshFaultInjectionItemSpecToKindMeshMultiZoneService MeshFaultInjectionItemSpecToKind = "MeshMultiZoneService"
-	MeshFaultInjectionItemSpecToKindMeshServiceSubset    MeshFaultInjectionItemSpecToKind = "MeshServiceSubset"
-	MeshFaultInjectionItemSpecToKindMeshHTTPRoute        MeshFaultInjectionItemSpecToKind = "MeshHTTPRoute"
-	MeshFaultInjectionItemSpecToKindDataplane            MeshFaultInjectionItemSpecToKind = "Dataplane"
+	MeshFaultInjectionItemSpecKindMesh                 MeshFaultInjectionItemSpecKind = "Mesh"
+	MeshFaultInjectionItemSpecKindMeshSubset           MeshFaultInjectionItemSpecKind = "MeshSubset"
+	MeshFaultInjectionItemSpecKindMeshService          MeshFaultInjectionItemSpecKind = "MeshService"
+	MeshFaultInjectionItemSpecKindMeshExternalService  MeshFaultInjectionItemSpecKind = "MeshExternalService"
+	MeshFaultInjectionItemSpecKindMeshMultiZoneService MeshFaultInjectionItemSpecKind = "MeshMultiZoneService"
+	MeshFaultInjectionItemSpecKindMeshServiceSubset    MeshFaultInjectionItemSpecKind = "MeshServiceSubset"
+	MeshFaultInjectionItemSpecKindMeshHTTPRoute        MeshFaultInjectionItemSpecKind = "MeshHTTPRoute"
+	MeshFaultInjectionItemSpecKindDataplane            MeshFaultInjectionItemSpecKind = "Dataplane"
 )
 
-func (e MeshFaultInjectionItemSpecToKind) ToPointer() *MeshFaultInjectionItemSpecToKind {
+func (e MeshFaultInjectionItemSpecKind) ToPointer() *MeshFaultInjectionItemSpecKind {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshFaultInjectionItemSpecToKind) IsExact() bool {
+func (e *MeshFaultInjectionItemSpecKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
 			return true
 		}
 	}
 	return false
 }
 
-type MeshFaultInjectionItemSpecToProxyTypes string
-
-const (
-	MeshFaultInjectionItemSpecToProxyTypesSidecar MeshFaultInjectionItemSpecToProxyTypes = "Sidecar"
-	MeshFaultInjectionItemSpecToProxyTypesGateway MeshFaultInjectionItemSpecToProxyTypes = "Gateway"
-)
-
-func (e MeshFaultInjectionItemSpecToProxyTypes) ToPointer() *MeshFaultInjectionItemSpecToProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshFaultInjectionItemSpecToProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshFaultInjectionItemSpecToTargetRef - TargetRef is a reference to the resource that represents a group of
+// MeshFaultInjectionItemSpecTargetRef - TargetRef is a reference to the resource that represents a group of
 // destinations.
-type MeshFaultInjectionItemSpecToTargetRef struct {
+type MeshFaultInjectionItemSpecTargetRef struct {
 	// Kind of the referenced resource
-	Kind MeshFaultInjectionItemSpecToKind `json:"kind"`
+	Kind MeshFaultInjectionItemSpecKind `json:"kind"`
 	// Labels are used to select group of MeshServices that match labels. Either Labels or
 	// Name and Namespace can be used.
 	Labels map[string]string `json:"labels,omitempty"`
 	// Mesh is reserved for future use to identify cross mesh resources.
 	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
+	// Name of the referenced resource. Can only be used with kinds: `MeshService`
+	// and `MeshServiceSubset`
 	Name *string `json:"name,omitempty"`
 	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 	// will be targeted.
 	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshFaultInjectionItemSpecToProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
@@ -1666,56 +1110,49 @@ type MeshFaultInjectionItemSpecToTargetRef struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (m *MeshFaultInjectionItemSpecToTargetRef) GetKind() MeshFaultInjectionItemSpecToKind {
+func (m *MeshFaultInjectionItemSpecTargetRef) GetKind() MeshFaultInjectionItemSpecKind {
 	if m == nil {
-		return MeshFaultInjectionItemSpecToKind("")
+		return MeshFaultInjectionItemSpecKind("")
 	}
 	return m.Kind
 }
 
-func (m *MeshFaultInjectionItemSpecToTargetRef) GetLabels() map[string]string {
+func (m *MeshFaultInjectionItemSpecTargetRef) GetLabels() map[string]string {
 	if m == nil {
 		return nil
 	}
 	return m.Labels
 }
 
-func (m *MeshFaultInjectionItemSpecToTargetRef) GetMesh() *string {
+func (m *MeshFaultInjectionItemSpecTargetRef) GetMesh() *string {
 	if m == nil {
 		return nil
 	}
 	return m.Mesh
 }
 
-func (m *MeshFaultInjectionItemSpecToTargetRef) GetName() *string {
+func (m *MeshFaultInjectionItemSpecTargetRef) GetName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.Name
 }
 
-func (m *MeshFaultInjectionItemSpecToTargetRef) GetNamespace() *string {
+func (m *MeshFaultInjectionItemSpecTargetRef) GetNamespace() *string {
 	if m == nil {
 		return nil
 	}
 	return m.Namespace
 }
 
-func (m *MeshFaultInjectionItemSpecToTargetRef) GetProxyTypes() []MeshFaultInjectionItemSpecToProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
-func (m *MeshFaultInjectionItemSpecToTargetRef) GetSectionName() *string {
+func (m *MeshFaultInjectionItemSpecTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
 }
 
-func (m *MeshFaultInjectionItemSpecToTargetRef) GetTags() map[string]string {
+func (m *MeshFaultInjectionItemSpecTargetRef) GetTags() map[string]string {
 	if m == nil {
 		return nil
 	}
@@ -1725,30 +1162,28 @@ func (m *MeshFaultInjectionItemSpecToTargetRef) GetTags() map[string]string {
 type MeshFaultInjectionItemTo struct {
 	// Default is a configuration specific to the group of destinations referenced in
 	// 'targetRef'
-	Default *MeshFaultInjectionItemSpecToDefault `json:"default,omitempty"`
+	Default *MeshFaultInjectionItemSpecDefault `json:"default,omitempty"`
 	// TargetRef is a reference to the resource that represents a group of
 	// destinations.
-	TargetRef MeshFaultInjectionItemSpecToTargetRef `json:"targetRef"`
+	TargetRef MeshFaultInjectionItemSpecTargetRef `json:"targetRef"`
 }
 
-func (m *MeshFaultInjectionItemTo) GetDefault() *MeshFaultInjectionItemSpecToDefault {
+func (m *MeshFaultInjectionItemTo) GetDefault() *MeshFaultInjectionItemSpecDefault {
 	if m == nil {
 		return nil
 	}
 	return m.Default
 }
 
-func (m *MeshFaultInjectionItemTo) GetTargetRef() MeshFaultInjectionItemSpecToTargetRef {
+func (m *MeshFaultInjectionItemTo) GetTargetRef() MeshFaultInjectionItemSpecTargetRef {
 	if m == nil {
-		return MeshFaultInjectionItemSpecToTargetRef{}
+		return MeshFaultInjectionItemSpecTargetRef{}
 	}
 	return m.TargetRef
 }
 
 // MeshFaultInjectionItemSpec - Spec is the specification of the Kuma MeshFaultInjection resource.
 type MeshFaultInjectionItemSpec struct {
-	// From list makes a match between clients and corresponding configurations
-	From []MeshFaultInjectionItemFrom `json:"from,omitempty"`
 	// Rules defines inbound fault injection configuration
 	Rules []MeshFaultInjectionItemRules `json:"rules,omitempty"`
 	// TargetRef is a reference to the resource the policy takes an effect on.
@@ -1757,13 +1192,6 @@ type MeshFaultInjectionItemSpec struct {
 	TargetRef *MeshFaultInjectionItemTargetRef `json:"targetRef,omitempty"`
 	// To list makes a match between clients and corresponding configurations
 	To []MeshFaultInjectionItemTo `json:"to,omitempty"`
-}
-
-func (m *MeshFaultInjectionItemSpec) GetFrom() []MeshFaultInjectionItemFrom {
-	if m == nil {
-		return nil
-	}
-	return m.From
 }
 
 func (m *MeshFaultInjectionItemSpec) GetRules() []MeshFaultInjectionItemRules {

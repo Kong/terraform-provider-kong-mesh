@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/utils"
+	"time"
 )
 
 type AccessType string
@@ -133,10 +134,41 @@ func (r *Rules) GetTypes() []string {
 }
 
 type AccessAuditItem struct {
+	// Time at which the resource was created
+	CreationTime *time.Time `json:"creationTime,omitempty"`
+	// Kuma Resource Identifier (KRI) of the given resource
+	Kri    *string           `json:"kri,omitempty"`
 	Labels map[string]string `json:"labels,omitempty"`
-	Name   string            `json:"name"`
-	Rules  []Rules           `json:"rules"`
-	Type   string            `json:"type"`
+	// Time at which the resource was updated
+	ModificationTime *time.Time `json:"modificationTime,omitempty"`
+	Name             string     `json:"name"`
+	Rules            []Rules    `json:"rules"`
+	Type             string     `json:"type"`
+}
+
+func (a AccessAuditItem) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(a, "", false)
+}
+
+func (a *AccessAuditItem) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (a *AccessAuditItem) GetCreationTime() *time.Time {
+	if a == nil {
+		return nil
+	}
+	return a.CreationTime
+}
+
+func (a *AccessAuditItem) GetKri() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Kri
 }
 
 func (a *AccessAuditItem) GetLabels() map[string]string {
@@ -144,6 +176,13 @@ func (a *AccessAuditItem) GetLabels() map[string]string {
 		return nil
 	}
 	return a.Labels
+}
+
+func (a *AccessAuditItem) GetModificationTime() *time.Time {
+	if a == nil {
+		return nil
+	}
+	return a.ModificationTime
 }
 
 func (a *AccessAuditItem) GetName() string {
@@ -161,6 +200,41 @@ func (a *AccessAuditItem) GetRules() []Rules {
 }
 
 func (a *AccessAuditItem) GetType() string {
+	if a == nil {
+		return ""
+	}
+	return a.Type
+}
+
+type AccessAuditItemInput struct {
+	Labels map[string]string `json:"labels,omitempty"`
+	Name   string            `json:"name"`
+	Rules  []Rules           `json:"rules"`
+	Type   string            `json:"type"`
+}
+
+func (a *AccessAuditItemInput) GetLabels() map[string]string {
+	if a == nil {
+		return nil
+	}
+	return a.Labels
+}
+
+func (a *AccessAuditItemInput) GetName() string {
+	if a == nil {
+		return ""
+	}
+	return a.Name
+}
+
+func (a *AccessAuditItemInput) GetRules() []Rules {
+	if a == nil {
+		return nil
+	}
+	return a.Rules
+}
+
+func (a *AccessAuditItemInput) GetType() string {
 	if a == nil {
 		return ""
 	}

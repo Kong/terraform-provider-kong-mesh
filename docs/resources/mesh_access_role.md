@@ -50,6 +50,9 @@ resource "kong-mesh_mesh_access_role" "my_meshaccessrole" {
           from = {
             target_ref = {
               kind = "...my_kind..."
+              labels = {
+                key = "value"
+              }
               mesh = "...my_mesh..."
               name = "...my_name..."
               tags = {
@@ -69,6 +72,9 @@ resource "kong-mesh_mesh_access_role" "my_meshaccessrole" {
           }
           target_ref = {
             kind = "...my_kind..."
+            labels = {
+              key = "value"
+            }
             mesh = "...my_mesh..."
             name = "...my_name..."
             tags = {
@@ -78,6 +84,9 @@ resource "kong-mesh_mesh_access_role" "my_meshaccessrole" {
           to = {
             target_ref = {
               kind = "...my_kind..."
+              labels = {
+                key = "value"
+              }
               mesh = "...my_mesh..."
               name = "...my_name..."
               tags = {
@@ -108,6 +117,9 @@ resource "kong-mesh_mesh_access_role" "my_meshaccessrole" {
 
 ### Read-Only
 
+- `creation_time` (String) Time at which the resource was created
+- `kri` (String) Kuma Resource Identifier (KRI) of the given resource
+- `modification_time` (String) Time at which the resource was updated
 - `warnings` (List of String) warnings is a list of warning messages to return to the requesting Kuma API clients.
 Warning messages describe a problem the client making the API request should correct or be aware of.
 
@@ -182,6 +194,7 @@ Optional:
 Optional:
 
 - `kind` (String)
+- `labels` (Map of String)
 - `mesh` (String)
 - `name` (String)
 - `tags` (Map of String)
@@ -210,6 +223,7 @@ Optional:
 Optional:
 
 - `kind` (String)
+- `labels` (Map of String)
 - `mesh` (String)
 - `name` (String)
 - `tags` (Map of String)
@@ -228,6 +242,7 @@ Optional:
 Optional:
 
 - `kind` (String)
+- `labels` (Map of String)
 - `mesh` (String)
 - `name` (String)
 - `tags` (Map of String)

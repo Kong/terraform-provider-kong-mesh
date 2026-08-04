@@ -7,6 +7,6 @@ import (
 )
 
 type MeshRateLimitItemTCP struct {
-	ConnectionRate *MeshGlobalRateLimitItemSpecFromRequestRate `tfsdk:"connection_rate"`
-	Disabled       types.Bool                                  `tfsdk:"disabled"`
+	ConnectionRate *RequestRate `tfsdk:"connection_rate"`
+	Disabled       types.Bool   `tfsdk:"disabled"`
 }

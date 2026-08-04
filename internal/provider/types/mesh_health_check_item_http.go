@@ -7,8 +7,8 @@ import (
 )
 
 type MeshHealthCheckItemHTTP struct {
-	Disabled            types.Bool                      `tfsdk:"disabled"`
-	ExpectedStatuses    []types.Int64                   `tfsdk:"expected_statuses"`
-	Path                types.String                    `tfsdk:"path"`
-	RequestHeadersToAdd *MeshGlobalRateLimitItemHeaders `tfsdk:"request_headers_to_add"`
+	Disabled            types.Bool           `tfsdk:"disabled"`
+	ExpectedStatuses    []types.Int64        `tfsdk:"expected_statuses"`
+	Path                types.String         `tfsdk:"path"`
+	RequestHeadersToAdd *RequestHeadersToAdd `tfsdk:"request_headers_to_add"`
 }

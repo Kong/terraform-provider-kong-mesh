@@ -6,798 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/utils"
+	"time"
 )
-
-// Requirements - Rules defines a set of rules for data plane proxies to be member of the mesh.
-type Requirements struct {
-	// Tags defines set of required tags. You can specify '*' in value to
-	// require non empty value of tag
-	Tags map[string]string `json:"tags,omitempty"`
-}
-
-func (r *Requirements) GetTags() map[string]string {
-	if r == nil {
-		return nil
-	}
-	return r.Tags
-}
-
-// Restrictions - Rules defines a set of rules for data plane proxies to be member of the mesh.
-type Restrictions struct {
-	// Tags defines set of required tags. You can specify '*' in value to
-	// require non empty value of tag
-	Tags map[string]string `json:"tags,omitempty"`
-}
-
-func (r *Restrictions) GetTags() map[string]string {
-	if r == nil {
-		return nil
-	}
-	return r.Tags
-}
-
-// DataplaneProxy - DataplaneProxyMembership defines a set of requirements for data plane
-// proxies to be a member of the mesh.
-type DataplaneProxy struct {
-	// Requirements defines a set of requirements that data plane proxies must
-	// fulfill in order to join the mesh. A data plane proxy must fulfill at
-	// least one requirement in order to join the mesh. Empty list of allowed
-	// requirements means that any proxy that is not explicitly denied can join.
-	Requirements []Requirements `json:"requirements,omitempty"`
-	// Restrictions defines a set of restrictions that data plane proxies cannot
-	// fulfill in order to join the mesh. A data plane proxy cannot fulfill any
-	// requirement in order to join the mesh.
-	// Restrictions takes precedence over requirements.
-	Restrictions []Restrictions `json:"restrictions,omitempty"`
-}
-
-func (d *DataplaneProxy) GetRequirements() []Requirements {
-	if d == nil {
-		return nil
-	}
-	return d.Requirements
-}
-
-func (d *DataplaneProxy) GetRestrictions() []Restrictions {
-	if d == nil {
-		return nil
-	}
-	return d.Restrictions
-}
-
-// Constraints that applies to the mesh and its entities
-type Constraints struct {
-	// DataplaneProxyMembership defines a set of requirements for data plane
-	// proxies to be a member of the mesh.
-	DataplaneProxy *DataplaneProxy `json:"dataplaneProxy,omitempty"`
-}
-
-func (c *Constraints) GetDataplaneProxy() *DataplaneProxy {
-	if c == nil {
-		return nil
-	}
-	return c.DataplaneProxy
-}
-
-// TCPLoggingBackendConfig - TcpLoggingBackendConfig defines configuration for TCP based access logs
-type TCPLoggingBackendConfig struct {
-	// Address to TCP service that will receive logs
-	Address *string `json:"address,omitempty"`
-}
-
-func (t TCPLoggingBackendConfig) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(t, "", false)
-}
-
-func (t *TCPLoggingBackendConfig) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &t, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (t *TCPLoggingBackendConfig) GetAddress() *string {
-	if t == nil {
-		return nil
-	}
-	return t.Address
-}
-
-// FileLoggingBackendConfig defines configuration for file based access logs
-type FileLoggingBackendConfig struct {
-	// Path to a file that logs will be written to
-	Path *string `json:"path,omitempty"`
-}
-
-func (f FileLoggingBackendConfig) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(f, "", false)
-}
-
-func (f *FileLoggingBackendConfig) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &f, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (f *FileLoggingBackendConfig) GetPath() *string {
-	if f == nil {
-		return nil
-	}
-	return f.Path
-}
-
-type MeshItemLoggingConfType string
-
-const (
-	MeshItemLoggingConfTypeFileLoggingBackendConfig MeshItemLoggingConfType = "FileLoggingBackendConfig"
-	MeshItemLoggingConfTypeTCPLoggingBackendConfig  MeshItemLoggingConfType = "TcpLoggingBackendConfig"
-)
-
-type MeshItemLoggingConf struct {
-	FileLoggingBackendConfig *FileLoggingBackendConfig `queryParam:"inline" union:"member"`
-	TCPLoggingBackendConfig  *TCPLoggingBackendConfig  `queryParam:"inline" union:"member"`
-
-	Type MeshItemLoggingConfType
-}
-
-func CreateMeshItemLoggingConfFileLoggingBackendConfig(fileLoggingBackendConfig FileLoggingBackendConfig) MeshItemLoggingConf {
-	typ := MeshItemLoggingConfTypeFileLoggingBackendConfig
-
-	return MeshItemLoggingConf{
-		FileLoggingBackendConfig: &fileLoggingBackendConfig,
-		Type:                     typ,
-	}
-}
-
-func CreateMeshItemLoggingConfTCPLoggingBackendConfig(tcpLoggingBackendConfig TCPLoggingBackendConfig) MeshItemLoggingConf {
-	typ := MeshItemLoggingConfTypeTCPLoggingBackendConfig
-
-	return MeshItemLoggingConf{
-		TCPLoggingBackendConfig: &tcpLoggingBackendConfig,
-		Type:                    typ,
-	}
-}
-
-func (u *MeshItemLoggingConf) UnmarshalJSON(data []byte) error {
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var fileLoggingBackendConfig FileLoggingBackendConfig = FileLoggingBackendConfig{}
-	if err := utils.UnmarshalJSON(data, &fileLoggingBackendConfig, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshItemLoggingConfTypeFileLoggingBackendConfig,
-			Value: &fileLoggingBackendConfig,
-		})
-	}
-
-	var tcpLoggingBackendConfig TCPLoggingBackendConfig = TCPLoggingBackendConfig{}
-	if err := utils.UnmarshalJSON(data, &tcpLoggingBackendConfig, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshItemLoggingConfTypeTCPLoggingBackendConfig,
-			Value: &tcpLoggingBackendConfig,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshItemLoggingConf", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshItemLoggingConf", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(MeshItemLoggingConfType)
-	switch best.Type {
-	case MeshItemLoggingConfTypeFileLoggingBackendConfig:
-		u.FileLoggingBackendConfig = best.Value.(*FileLoggingBackendConfig)
-		return nil
-	case MeshItemLoggingConfTypeTCPLoggingBackendConfig:
-		u.TCPLoggingBackendConfig = best.Value.(*TCPLoggingBackendConfig)
-		return nil
-	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshItemLoggingConf", string(data))
-}
-
-func (u MeshItemLoggingConf) MarshalJSON() ([]byte, error) {
-	if u.FileLoggingBackendConfig != nil {
-		return utils.MarshalJSON(u.FileLoggingBackendConfig, "", true)
-	}
-
-	if u.TCPLoggingBackendConfig != nil {
-		return utils.MarshalJSON(u.TCPLoggingBackendConfig, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type MeshItemLoggingConf: all fields are null")
-}
-
-// Backends - LoggingBackend defines logging backend available to mesh.
-type Backends struct {
-	Conf *MeshItemLoggingConf `json:"conf,omitempty"`
-	// Format of access logs. Placeholders available on
-	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log
-	Format *string `json:"format,omitempty"`
-	// Name of the backend, can be then used in Mesh.logging.defaultBackend or in
-	// TrafficLogging
-	Name *string `json:"name,omitempty"`
-	// Type of the backend (Kuma ships with 'tcp' and 'file')
-	Type *string `json:"type,omitempty"`
-}
-
-func (b *Backends) GetConf() *MeshItemLoggingConf {
-	if b == nil {
-		return nil
-	}
-	return b.Conf
-}
-
-func (b *Backends) GetFormat() *string {
-	if b == nil {
-		return nil
-	}
-	return b.Format
-}
-
-func (b *Backends) GetName() *string {
-	if b == nil {
-		return nil
-	}
-	return b.Name
-}
-
-func (b *Backends) GetType() *string {
-	if b == nil {
-		return nil
-	}
-	return b.Type
-}
-
-// Logging settings.
-// +optional
-type Logging struct {
-	// List of available logging backends
-	Backends []Backends `json:"backends,omitempty"`
-	// Name of the default backend
-	DefaultBackend *string `json:"defaultBackend,omitempty"`
-}
-
-func (l *Logging) GetBackends() []Backends {
-	if l == nil {
-		return nil
-	}
-	return l.Backends
-}
-
-func (l *Logging) GetDefaultBackend() *string {
-	if l == nil {
-		return nil
-	}
-	return l.DefaultBackend
-}
-
-type ModeType string
-
-const (
-	ModeTypeStr     ModeType = "str"
-	ModeTypeInteger ModeType = "integer"
-)
-
-type Mode struct {
-	Str     *string `queryParam:"inline" union:"member"`
-	Integer *int64  `queryParam:"inline" union:"member"`
-
-	Type ModeType
-}
-
-func CreateModeStr(str string) Mode {
-	typ := ModeTypeStr
-
-	return Mode{
-		Str:  &str,
-		Type: typ,
-	}
-}
-
-func CreateModeInteger(integer int64) Mode {
-	typ := ModeTypeInteger
-
-	return Mode{
-		Integer: &integer,
-		Type:    typ,
-	}
-}
-
-func (u *Mode) UnmarshalJSON(data []byte) error {
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var str string = ""
-	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  ModeTypeStr,
-			Value: &str,
-		})
-	}
-
-	var integer int64 = int64(0)
-	if err := utils.UnmarshalJSON(data, &integer, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  ModeTypeInteger,
-			Value: &integer,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Mode", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Mode", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(ModeType)
-	switch best.Type {
-	case ModeTypeStr:
-		u.Str = best.Value.(*string)
-		return nil
-	case ModeTypeInteger:
-		u.Integer = best.Value.(*int64)
-		return nil
-	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for Mode", string(data))
-}
-
-func (u Mode) MarshalJSON() ([]byte, error) {
-	if u.Str != nil {
-		return utils.MarshalJSON(u.Str, "", true)
-	}
-
-	if u.Integer != nil {
-		return utils.MarshalJSON(u.Integer, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type Mode: all fields are null")
-}
-
-type MeshServices struct {
-	Mode *Mode `json:"mode,omitempty"`
-}
-
-func (m *MeshServices) GetMode() *Mode {
-	if m == nil {
-		return nil
-	}
-	return m.Mode
-}
-
-// Aggregate - PrometheusAggregateMetricsConfig defines endpoints that should be scrapped by kuma-dp for prometheus metrics.
-type Aggregate struct {
-	// Address on which a service expose HTTP endpoint with Prometheus metrics.
-	Address *string `json:"address,omitempty"`
-	// If false then the application won't be scrapped. If nil, then it is treated
-	// as true and kuma-dp scrapes metrics from the service.
-	Enabled *bool `json:"enabled,omitempty"`
-	// Name which identify given configuration.
-	Name *string `json:"name,omitempty"`
-	// Path on which a service expose HTTP endpoint with Prometheus metrics.
-	Path *string `json:"path,omitempty"`
-	// Port on which a service expose HTTP endpoint with Prometheus metrics.
-	Port *int64 `json:"port,omitempty"`
-}
-
-func (a Aggregate) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(a, "", false)
-}
-
-func (a *Aggregate) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (a *Aggregate) GetAddress() *string {
-	if a == nil {
-		return nil
-	}
-	return a.Address
-}
-
-func (a *Aggregate) GetEnabled() *bool {
-	if a == nil {
-		return nil
-	}
-	return a.Enabled
-}
-
-func (a *Aggregate) GetName() *string {
-	if a == nil {
-		return nil
-	}
-	return a.Name
-}
-
-func (a *Aggregate) GetPath() *string {
-	if a == nil {
-		return nil
-	}
-	return a.Path
-}
-
-func (a *Aggregate) GetPort() *int64 {
-	if a == nil {
-		return nil
-	}
-	return a.Port
-}
-
-// Envoy - Configuration of Envoy's metrics.
-type Envoy struct {
-	// FilterRegex value that is going to be passed to Envoy for filtering
-	// Envoy metrics.
-	FilterRegex *string `json:"filterRegex,omitempty"`
-	// If true then return metrics that Envoy has updated (counters incremented
-	// at least once, gauges changed at least once, and histograms added to at
-	// least once). If nil, then it is treated as false.
-	UsedOnly *bool `json:"usedOnly,omitempty"`
-}
-
-func (e Envoy) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(e, "", false)
-}
-
-func (e *Envoy) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &e, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (e *Envoy) GetFilterRegex() *string {
-	if e == nil {
-		return nil
-	}
-	return e.FilterRegex
-}
-
-func (e *Envoy) GetUsedOnly() *bool {
-	if e == nil {
-		return nil
-	}
-	return e.UsedOnly
-}
-
-type ConfModeType string
-
-const (
-	ConfModeTypeStr     ConfModeType = "str"
-	ConfModeTypeInteger ConfModeType = "integer"
-)
-
-// ConfMode - mode defines how configured is the TLS for Prometheus.
-// Supported values, delegated, disabled, activeMTLSBackend. Default to
-// `activeMTLSBackend`.
-type ConfMode struct {
-	Str     *string `queryParam:"inline" union:"member"`
-	Integer *int64  `queryParam:"inline" union:"member"`
-
-	Type ConfModeType
-}
-
-func CreateConfModeStr(str string) ConfMode {
-	typ := ConfModeTypeStr
-
-	return ConfMode{
-		Str:  &str,
-		Type: typ,
-	}
-}
-
-func CreateConfModeInteger(integer int64) ConfMode {
-	typ := ConfModeTypeInteger
-
-	return ConfMode{
-		Integer: &integer,
-		Type:    typ,
-	}
-}
-
-func (u *ConfMode) UnmarshalJSON(data []byte) error {
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var str string = ""
-	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  ConfModeTypeStr,
-			Value: &str,
-		})
-	}
-
-	var integer int64 = int64(0)
-	if err := utils.UnmarshalJSON(data, &integer, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  ConfModeTypeInteger,
-			Value: &integer,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for ConfMode", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for ConfMode", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(ConfModeType)
-	switch best.Type {
-	case ConfModeTypeStr:
-		u.Str = best.Value.(*string)
-		return nil
-	case ConfModeTypeInteger:
-		u.Integer = best.Value.(*int64)
-		return nil
-	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for ConfMode", string(data))
-}
-
-func (u ConfMode) MarshalJSON() ([]byte, error) {
-	if u.Str != nil {
-		return utils.MarshalJSON(u.Str, "", true)
-	}
-
-	if u.Integer != nil {
-		return utils.MarshalJSON(u.Integer, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type ConfMode: all fields are null")
-}
-
-// ConfTLS - Configuration of TLS for prometheus listener.
-type ConfTLS struct {
-	// mode defines how configured is the TLS for Prometheus.
-	// Supported values, delegated, disabled, activeMTLSBackend. Default to
-	// `activeMTLSBackend`.
-	Mode *ConfMode `json:"mode,omitempty"`
-}
-
-func (c ConfTLS) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(c, "", false)
-}
-
-func (c *ConfTLS) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &c, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (c *ConfTLS) GetMode() *ConfMode {
-	if c == nil {
-		return nil
-	}
-	return c.Mode
-}
-
-// PrometheusMetricsBackendConfig defines configuration of Prometheus backend
-type PrometheusMetricsBackendConfig struct {
-	// Map with the configuration of applications which metrics are going to be
-	// scrapped by kuma-dp.
-	Aggregate []Aggregate `json:"aggregate,omitempty"`
-	// Configuration of Envoy's metrics.
-	Envoy *Envoy `json:"envoy,omitempty"`
-	// Path on which a dataplane should expose HTTP endpoint with Prometheus
-	// metrics.
-	Path *string `json:"path,omitempty"`
-	// Port on which a dataplane should expose HTTP endpoint with Prometheus
-	// metrics.
-	Port *int64 `json:"port,omitempty"`
-	// If true then endpoints for scraping metrics won't require mTLS even if mTLS
-	// is enabled in Mesh. If nil, then it is treated as false.
-	SkipMTLS *bool `json:"skipMTLS,omitempty"`
-	// Tags associated with an application this dataplane is deployed next to,
-	// e.g. service=web, version=1.0.
-	// `service` tag is mandatory.
-	Tags map[string]string `json:"tags,omitempty"`
-	// Configuration of TLS for prometheus listener.
-	TLS *ConfTLS `json:"tls,omitempty"`
-}
-
-func (p PrometheusMetricsBackendConfig) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(p, "", false)
-}
-
-func (p *PrometheusMetricsBackendConfig) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (p *PrometheusMetricsBackendConfig) GetAggregate() []Aggregate {
-	if p == nil {
-		return nil
-	}
-	return p.Aggregate
-}
-
-func (p *PrometheusMetricsBackendConfig) GetEnvoy() *Envoy {
-	if p == nil {
-		return nil
-	}
-	return p.Envoy
-}
-
-func (p *PrometheusMetricsBackendConfig) GetPath() *string {
-	if p == nil {
-		return nil
-	}
-	return p.Path
-}
-
-func (p *PrometheusMetricsBackendConfig) GetPort() *int64 {
-	if p == nil {
-		return nil
-	}
-	return p.Port
-}
-
-func (p *PrometheusMetricsBackendConfig) GetSkipMTLS() *bool {
-	if p == nil {
-		return nil
-	}
-	return p.SkipMTLS
-}
-
-func (p *PrometheusMetricsBackendConfig) GetTags() map[string]string {
-	if p == nil {
-		return nil
-	}
-	return p.Tags
-}
-
-func (p *PrometheusMetricsBackendConfig) GetTLS() *ConfTLS {
-	if p == nil {
-		return nil
-	}
-	return p.TLS
-}
-
-type MeshItemConfType string
-
-const (
-	MeshItemConfTypePrometheusMetricsBackendConfig MeshItemConfType = "PrometheusMetricsBackendConfig"
-)
-
-type MeshItemConf struct {
-	PrometheusMetricsBackendConfig *PrometheusMetricsBackendConfig `queryParam:"inline" union:"member"`
-
-	Type MeshItemConfType
-}
-
-func CreateMeshItemConfPrometheusMetricsBackendConfig(prometheusMetricsBackendConfig PrometheusMetricsBackendConfig) MeshItemConf {
-	typ := MeshItemConfTypePrometheusMetricsBackendConfig
-
-	return MeshItemConf{
-		PrometheusMetricsBackendConfig: &prometheusMetricsBackendConfig,
-		Type:                           typ,
-	}
-}
-
-func (u *MeshItemConf) UnmarshalJSON(data []byte) error {
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var prometheusMetricsBackendConfig PrometheusMetricsBackendConfig = PrometheusMetricsBackendConfig{}
-	if err := utils.UnmarshalJSON(data, &prometheusMetricsBackendConfig, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshItemConfTypePrometheusMetricsBackendConfig,
-			Value: &prometheusMetricsBackendConfig,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshItemConf", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshItemConf", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(MeshItemConfType)
-	switch best.Type {
-	case MeshItemConfTypePrometheusMetricsBackendConfig:
-		u.PrometheusMetricsBackendConfig = best.Value.(*PrometheusMetricsBackendConfig)
-		return nil
-	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshItemConf", string(data))
-}
-
-func (u MeshItemConf) MarshalJSON() ([]byte, error) {
-	if u.PrometheusMetricsBackendConfig != nil {
-		return utils.MarshalJSON(u.PrometheusMetricsBackendConfig, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type MeshItemConf: all fields are null")
-}
-
-// MeshItemBackends - MetricsBackend defines metric backends
-type MeshItemBackends struct {
-	Conf *MeshItemConf `json:"conf,omitempty"`
-	// Name of the backend, can be then used in Mesh.metrics.enabledBackend
-	Name *string `json:"name,omitempty"`
-	// Type of the backend (Kuma ships with 'prometheus')
-	Type *string `json:"type,omitempty"`
-}
-
-func (m *MeshItemBackends) GetConf() *MeshItemConf {
-	if m == nil {
-		return nil
-	}
-	return m.Conf
-}
-
-func (m *MeshItemBackends) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshItemBackends) GetType() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Type
-}
-
-// Metrics - Configuration for metrics collected and exposed by dataplanes.
-//
-// Settings defined here become defaults for every dataplane in a given Mesh.
-// Additionally, it is also possible to further customize this configuration
-// for each dataplane individually using Dataplane resource.
-// +optional
-type Metrics struct {
-	// List of available Metrics backends
-	Backends []MeshItemBackends `json:"backends,omitempty"`
-	// Name of the enabled backend
-	EnabledBackend *string `json:"enabledBackend,omitempty"`
-}
-
-func (m *Metrics) GetBackends() []MeshItemBackends {
-	if m == nil {
-		return nil
-	}
-	return m.Backends
-}
-
-func (m *Metrics) GetEnabledBackend() *string {
-	if m == nil {
-		return nil
-	}
-	return m.EnabledBackend
-}
 
 type CertManagerCertificateAuthorityConfigCaCertDataSourceSecret struct {
 	// Data source is a secret with given Secret key.
@@ -3444,150 +2654,150 @@ func (b *BuiltinCertificateAuthorityConfig) GetCaCert() *BuiltinCertificateAutho
 	return b.CaCert
 }
 
-type CertDataSourceSecret struct {
+type DataSourceSecret struct {
 	// Data source is a secret with given Secret key.
 	Secret *string `json:"secret,omitempty"`
 }
 
-func (c CertDataSourceSecret) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(c, "", false)
+func (d DataSourceSecret) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(d, "", false)
 }
 
-func (c *CertDataSourceSecret) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &c, "", false, nil); err != nil {
+func (d *DataSourceSecret) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &d, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (c *CertDataSourceSecret) GetSecret() *string {
-	if c == nil {
+func (d *DataSourceSecret) GetSecret() *string {
+	if d == nil {
 		return nil
 	}
-	return c.Secret
+	return d.Secret
 }
 
-type CertDataSourceInlineString struct {
+type DataSourceInlineString struct {
 	// Data source is inline string
 	InlineString *string `json:"inlineString,omitempty"`
 }
 
-func (c CertDataSourceInlineString) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(c, "", false)
+func (d DataSourceInlineString) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(d, "", false)
 }
 
-func (c *CertDataSourceInlineString) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &c, "", false, nil); err != nil {
+func (d *DataSourceInlineString) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &d, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (c *CertDataSourceInlineString) GetInlineString() *string {
-	if c == nil {
+func (d *DataSourceInlineString) GetInlineString() *string {
+	if d == nil {
 		return nil
 	}
-	return c.InlineString
+	return d.InlineString
 }
 
-type CertDataSourceInline struct {
+type DataSourceInline struct {
 	// Data source is inline bytes.
 	Inline *string `json:"inline,omitempty"`
 }
 
-func (c CertDataSourceInline) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(c, "", false)
+func (d DataSourceInline) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(d, "", false)
 }
 
-func (c *CertDataSourceInline) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &c, "", false, nil); err != nil {
+func (d *DataSourceInline) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &d, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (c *CertDataSourceInline) GetInline() *string {
-	if c == nil {
+func (d *DataSourceInline) GetInline() *string {
+	if d == nil {
 		return nil
 	}
-	return c.Inline
+	return d.Inline
 }
 
-type CertDataSourceFile struct {
+type DataSourceFile struct {
 	// Data source is a path to a file.
 	// Deprecated, use other sources of a data.
 	File *string `json:"file,omitempty"`
 }
 
-func (c CertDataSourceFile) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(c, "", false)
+func (d DataSourceFile) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(d, "", false)
 }
 
-func (c *CertDataSourceFile) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &c, "", false, nil); err != nil {
+func (d *DataSourceFile) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &d, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (c *CertDataSourceFile) GetFile() *string {
-	if c == nil {
+func (d *DataSourceFile) GetFile() *string {
+	if d == nil {
 		return nil
 	}
-	return c.File
+	return d.File
 }
 
 type CertType string
 
 const (
-	CertTypeCertDataSourceFile         CertType = "cert_DataSource_File"
-	CertTypeCertDataSourceInline       CertType = "cert_DataSource_Inline"
-	CertTypeCertDataSourceInlineString CertType = "cert_DataSource_InlineString"
-	CertTypeCertDataSourceSecret       CertType = "cert_DataSource_Secret"
+	CertTypeDataSourceFile         CertType = "DataSource_File"
+	CertTypeDataSourceInline       CertType = "DataSource_Inline"
+	CertTypeDataSourceInlineString CertType = "DataSource_InlineString"
+	CertTypeDataSourceSecret       CertType = "DataSource_Secret"
 )
 
 type Cert struct {
-	CertDataSourceFile         *CertDataSourceFile         `queryParam:"inline" union:"member"`
-	CertDataSourceInline       *CertDataSourceInline       `queryParam:"inline" union:"member"`
-	CertDataSourceInlineString *CertDataSourceInlineString `queryParam:"inline" union:"member"`
-	CertDataSourceSecret       *CertDataSourceSecret       `queryParam:"inline" union:"member"`
+	DataSourceFile         *DataSourceFile         `queryParam:"inline" union:"member"`
+	DataSourceInline       *DataSourceInline       `queryParam:"inline" union:"member"`
+	DataSourceInlineString *DataSourceInlineString `queryParam:"inline" union:"member"`
+	DataSourceSecret       *DataSourceSecret       `queryParam:"inline" union:"member"`
 
 	Type CertType
 }
 
-func CreateCertCertDataSourceFile(certDataSourceFile CertDataSourceFile) Cert {
-	typ := CertTypeCertDataSourceFile
+func CreateCertDataSourceFile(dataSourceFile DataSourceFile) Cert {
+	typ := CertTypeDataSourceFile
 
 	return Cert{
-		CertDataSourceFile: &certDataSourceFile,
-		Type:               typ,
+		DataSourceFile: &dataSourceFile,
+		Type:           typ,
 	}
 }
 
-func CreateCertCertDataSourceInline(certDataSourceInline CertDataSourceInline) Cert {
-	typ := CertTypeCertDataSourceInline
+func CreateCertDataSourceInline(dataSourceInline DataSourceInline) Cert {
+	typ := CertTypeDataSourceInline
 
 	return Cert{
-		CertDataSourceInline: &certDataSourceInline,
-		Type:                 typ,
+		DataSourceInline: &dataSourceInline,
+		Type:             typ,
 	}
 }
 
-func CreateCertCertDataSourceInlineString(certDataSourceInlineString CertDataSourceInlineString) Cert {
-	typ := CertTypeCertDataSourceInlineString
+func CreateCertDataSourceInlineString(dataSourceInlineString DataSourceInlineString) Cert {
+	typ := CertTypeDataSourceInlineString
 
 	return Cert{
-		CertDataSourceInlineString: &certDataSourceInlineString,
-		Type:                       typ,
+		DataSourceInlineString: &dataSourceInlineString,
+		Type:                   typ,
 	}
 }
 
-func CreateCertCertDataSourceSecret(certDataSourceSecret CertDataSourceSecret) Cert {
-	typ := CertTypeCertDataSourceSecret
+func CreateCertDataSourceSecret(dataSourceSecret DataSourceSecret) Cert {
+	typ := CertTypeDataSourceSecret
 
 	return Cert{
-		CertDataSourceSecret: &certDataSourceSecret,
-		Type:                 typ,
+		DataSourceSecret: &dataSourceSecret,
+		Type:             typ,
 	}
 }
 
@@ -3596,35 +2806,35 @@ func (u *Cert) UnmarshalJSON(data []byte) error {
 	var candidates []utils.UnionCandidate
 
 	// Collect all valid candidates
-	var certDataSourceFile CertDataSourceFile = CertDataSourceFile{}
-	if err := utils.UnmarshalJSON(data, &certDataSourceFile, "", true, nil); err == nil {
+	var dataSourceFile DataSourceFile = DataSourceFile{}
+	if err := utils.UnmarshalJSON(data, &dataSourceFile, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  CertTypeCertDataSourceFile,
-			Value: &certDataSourceFile,
+			Type:  CertTypeDataSourceFile,
+			Value: &dataSourceFile,
 		})
 	}
 
-	var certDataSourceInline CertDataSourceInline = CertDataSourceInline{}
-	if err := utils.UnmarshalJSON(data, &certDataSourceInline, "", true, nil); err == nil {
+	var dataSourceInline DataSourceInline = DataSourceInline{}
+	if err := utils.UnmarshalJSON(data, &dataSourceInline, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  CertTypeCertDataSourceInline,
-			Value: &certDataSourceInline,
+			Type:  CertTypeDataSourceInline,
+			Value: &dataSourceInline,
 		})
 	}
 
-	var certDataSourceInlineString CertDataSourceInlineString = CertDataSourceInlineString{}
-	if err := utils.UnmarshalJSON(data, &certDataSourceInlineString, "", true, nil); err == nil {
+	var dataSourceInlineString DataSourceInlineString = DataSourceInlineString{}
+	if err := utils.UnmarshalJSON(data, &dataSourceInlineString, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  CertTypeCertDataSourceInlineString,
-			Value: &certDataSourceInlineString,
+			Type:  CertTypeDataSourceInlineString,
+			Value: &dataSourceInlineString,
 		})
 	}
 
-	var certDataSourceSecret CertDataSourceSecret = CertDataSourceSecret{}
-	if err := utils.UnmarshalJSON(data, &certDataSourceSecret, "", true, nil); err == nil {
+	var dataSourceSecret DataSourceSecret = DataSourceSecret{}
+	if err := utils.UnmarshalJSON(data, &dataSourceSecret, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  CertTypeCertDataSourceSecret,
-			Value: &certDataSourceSecret,
+			Type:  CertTypeDataSourceSecret,
+			Value: &dataSourceSecret,
 		})
 	}
 
@@ -3641,17 +2851,17 @@ func (u *Cert) UnmarshalJSON(data []byte) error {
 	// Set the union type and value based on the best candidate
 	u.Type = best.Type.(CertType)
 	switch best.Type {
-	case CertTypeCertDataSourceFile:
-		u.CertDataSourceFile = best.Value.(*CertDataSourceFile)
+	case CertTypeDataSourceFile:
+		u.DataSourceFile = best.Value.(*DataSourceFile)
 		return nil
-	case CertTypeCertDataSourceInline:
-		u.CertDataSourceInline = best.Value.(*CertDataSourceInline)
+	case CertTypeDataSourceInline:
+		u.DataSourceInline = best.Value.(*DataSourceInline)
 		return nil
-	case CertTypeCertDataSourceInlineString:
-		u.CertDataSourceInlineString = best.Value.(*CertDataSourceInlineString)
+	case CertTypeDataSourceInlineString:
+		u.DataSourceInlineString = best.Value.(*DataSourceInlineString)
 		return nil
-	case CertTypeCertDataSourceSecret:
-		u.CertDataSourceSecret = best.Value.(*CertDataSourceSecret)
+	case CertTypeDataSourceSecret:
+		u.DataSourceSecret = best.Value.(*DataSourceSecret)
 		return nil
 	}
 
@@ -3659,20 +2869,20 @@ func (u *Cert) UnmarshalJSON(data []byte) error {
 }
 
 func (u Cert) MarshalJSON() ([]byte, error) {
-	if u.CertDataSourceFile != nil {
-		return utils.MarshalJSON(u.CertDataSourceFile, "", true)
+	if u.DataSourceFile != nil {
+		return utils.MarshalJSON(u.DataSourceFile, "", true)
 	}
 
-	if u.CertDataSourceInline != nil {
-		return utils.MarshalJSON(u.CertDataSourceInline, "", true)
+	if u.DataSourceInline != nil {
+		return utils.MarshalJSON(u.DataSourceInline, "", true)
 	}
 
-	if u.CertDataSourceInlineString != nil {
-		return utils.MarshalJSON(u.CertDataSourceInlineString, "", true)
+	if u.DataSourceInlineString != nil {
+		return utils.MarshalJSON(u.DataSourceInlineString, "", true)
 	}
 
-	if u.CertDataSourceSecret != nil {
-		return utils.MarshalJSON(u.CertDataSourceSecret, "", true)
+	if u.DataSourceSecret != nil {
+		return utils.MarshalJSON(u.DataSourceSecret, "", true)
 	}
 
 	return nil, errors.New("could not marshal union type Cert: all fields are null")
@@ -3942,72 +3152,72 @@ func (p *ProvidedCertificateAuthorityConfig) GetKey() *Key {
 	return p.Key
 }
 
-type MeshItemMtlsConfType string
+type ConfType string
 
 const (
-	MeshItemMtlsConfTypeProvidedCertificateAuthorityConfig    MeshItemMtlsConfType = "ProvidedCertificateAuthorityConfig"
-	MeshItemMtlsConfTypeBuiltinCertificateAuthorityConfig     MeshItemMtlsConfType = "BuiltinCertificateAuthorityConfig"
-	MeshItemMtlsConfTypeVaultCertificateAuthorityConfig       MeshItemMtlsConfType = "VaultCertificateAuthorityConfig"
-	MeshItemMtlsConfTypeACMCertificateAuthorityConfig         MeshItemMtlsConfType = "ACMCertificateAuthorityConfig"
-	MeshItemMtlsConfTypeCertManagerCertificateAuthorityConfig MeshItemMtlsConfType = "CertManagerCertificateAuthorityConfig"
+	ConfTypeProvidedCertificateAuthorityConfig    ConfType = "ProvidedCertificateAuthorityConfig"
+	ConfTypeBuiltinCertificateAuthorityConfig     ConfType = "BuiltinCertificateAuthorityConfig"
+	ConfTypeVaultCertificateAuthorityConfig       ConfType = "VaultCertificateAuthorityConfig"
+	ConfTypeACMCertificateAuthorityConfig         ConfType = "ACMCertificateAuthorityConfig"
+	ConfTypeCertManagerCertificateAuthorityConfig ConfType = "CertManagerCertificateAuthorityConfig"
 )
 
-type MeshItemMtlsConf struct {
+type Conf struct {
 	ProvidedCertificateAuthorityConfig    *ProvidedCertificateAuthorityConfig    `queryParam:"inline" union:"member"`
 	BuiltinCertificateAuthorityConfig     *BuiltinCertificateAuthorityConfig     `queryParam:"inline" union:"member"`
 	VaultCertificateAuthorityConfig       *VaultCertificateAuthorityConfig       `queryParam:"inline" union:"member"`
 	ACMCertificateAuthorityConfig         *ACMCertificateAuthorityConfig         `queryParam:"inline" union:"member"`
 	CertManagerCertificateAuthorityConfig *CertManagerCertificateAuthorityConfig `queryParam:"inline" union:"member"`
 
-	Type MeshItemMtlsConfType
+	Type ConfType
 }
 
-func CreateMeshItemMtlsConfProvidedCertificateAuthorityConfig(providedCertificateAuthorityConfig ProvidedCertificateAuthorityConfig) MeshItemMtlsConf {
-	typ := MeshItemMtlsConfTypeProvidedCertificateAuthorityConfig
+func CreateConfProvidedCertificateAuthorityConfig(providedCertificateAuthorityConfig ProvidedCertificateAuthorityConfig) Conf {
+	typ := ConfTypeProvidedCertificateAuthorityConfig
 
-	return MeshItemMtlsConf{
+	return Conf{
 		ProvidedCertificateAuthorityConfig: &providedCertificateAuthorityConfig,
 		Type:                               typ,
 	}
 }
 
-func CreateMeshItemMtlsConfBuiltinCertificateAuthorityConfig(builtinCertificateAuthorityConfig BuiltinCertificateAuthorityConfig) MeshItemMtlsConf {
-	typ := MeshItemMtlsConfTypeBuiltinCertificateAuthorityConfig
+func CreateConfBuiltinCertificateAuthorityConfig(builtinCertificateAuthorityConfig BuiltinCertificateAuthorityConfig) Conf {
+	typ := ConfTypeBuiltinCertificateAuthorityConfig
 
-	return MeshItemMtlsConf{
+	return Conf{
 		BuiltinCertificateAuthorityConfig: &builtinCertificateAuthorityConfig,
 		Type:                              typ,
 	}
 }
 
-func CreateMeshItemMtlsConfVaultCertificateAuthorityConfig(vaultCertificateAuthorityConfig VaultCertificateAuthorityConfig) MeshItemMtlsConf {
-	typ := MeshItemMtlsConfTypeVaultCertificateAuthorityConfig
+func CreateConfVaultCertificateAuthorityConfig(vaultCertificateAuthorityConfig VaultCertificateAuthorityConfig) Conf {
+	typ := ConfTypeVaultCertificateAuthorityConfig
 
-	return MeshItemMtlsConf{
+	return Conf{
 		VaultCertificateAuthorityConfig: &vaultCertificateAuthorityConfig,
 		Type:                            typ,
 	}
 }
 
-func CreateMeshItemMtlsConfACMCertificateAuthorityConfig(acmCertificateAuthorityConfig ACMCertificateAuthorityConfig) MeshItemMtlsConf {
-	typ := MeshItemMtlsConfTypeACMCertificateAuthorityConfig
+func CreateConfACMCertificateAuthorityConfig(acmCertificateAuthorityConfig ACMCertificateAuthorityConfig) Conf {
+	typ := ConfTypeACMCertificateAuthorityConfig
 
-	return MeshItemMtlsConf{
+	return Conf{
 		ACMCertificateAuthorityConfig: &acmCertificateAuthorityConfig,
 		Type:                          typ,
 	}
 }
 
-func CreateMeshItemMtlsConfCertManagerCertificateAuthorityConfig(certManagerCertificateAuthorityConfig CertManagerCertificateAuthorityConfig) MeshItemMtlsConf {
-	typ := MeshItemMtlsConfTypeCertManagerCertificateAuthorityConfig
+func CreateConfCertManagerCertificateAuthorityConfig(certManagerCertificateAuthorityConfig CertManagerCertificateAuthorityConfig) Conf {
+	typ := ConfTypeCertManagerCertificateAuthorityConfig
 
-	return MeshItemMtlsConf{
+	return Conf{
 		CertManagerCertificateAuthorityConfig: &certManagerCertificateAuthorityConfig,
 		Type:                                  typ,
 	}
 }
 
-func (u *MeshItemMtlsConf) UnmarshalJSON(data []byte) error {
+func (u *Conf) UnmarshalJSON(data []byte) error {
 
 	var candidates []utils.UnionCandidate
 
@@ -4015,7 +3225,7 @@ func (u *MeshItemMtlsConf) UnmarshalJSON(data []byte) error {
 	var providedCertificateAuthorityConfig ProvidedCertificateAuthorityConfig = ProvidedCertificateAuthorityConfig{}
 	if err := utils.UnmarshalJSON(data, &providedCertificateAuthorityConfig, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshItemMtlsConfTypeProvidedCertificateAuthorityConfig,
+			Type:  ConfTypeProvidedCertificateAuthorityConfig,
 			Value: &providedCertificateAuthorityConfig,
 		})
 	}
@@ -4023,7 +3233,7 @@ func (u *MeshItemMtlsConf) UnmarshalJSON(data []byte) error {
 	var builtinCertificateAuthorityConfig BuiltinCertificateAuthorityConfig = BuiltinCertificateAuthorityConfig{}
 	if err := utils.UnmarshalJSON(data, &builtinCertificateAuthorityConfig, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshItemMtlsConfTypeBuiltinCertificateAuthorityConfig,
+			Type:  ConfTypeBuiltinCertificateAuthorityConfig,
 			Value: &builtinCertificateAuthorityConfig,
 		})
 	}
@@ -4031,7 +3241,7 @@ func (u *MeshItemMtlsConf) UnmarshalJSON(data []byte) error {
 	var vaultCertificateAuthorityConfig VaultCertificateAuthorityConfig = VaultCertificateAuthorityConfig{}
 	if err := utils.UnmarshalJSON(data, &vaultCertificateAuthorityConfig, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshItemMtlsConfTypeVaultCertificateAuthorityConfig,
+			Type:  ConfTypeVaultCertificateAuthorityConfig,
 			Value: &vaultCertificateAuthorityConfig,
 		})
 	}
@@ -4039,7 +3249,7 @@ func (u *MeshItemMtlsConf) UnmarshalJSON(data []byte) error {
 	var acmCertificateAuthorityConfig ACMCertificateAuthorityConfig = ACMCertificateAuthorityConfig{}
 	if err := utils.UnmarshalJSON(data, &acmCertificateAuthorityConfig, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshItemMtlsConfTypeACMCertificateAuthorityConfig,
+			Type:  ConfTypeACMCertificateAuthorityConfig,
 			Value: &acmCertificateAuthorityConfig,
 		})
 	}
@@ -4047,45 +3257,45 @@ func (u *MeshItemMtlsConf) UnmarshalJSON(data []byte) error {
 	var certManagerCertificateAuthorityConfig CertManagerCertificateAuthorityConfig = CertManagerCertificateAuthorityConfig{}
 	if err := utils.UnmarshalJSON(data, &certManagerCertificateAuthorityConfig, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshItemMtlsConfTypeCertManagerCertificateAuthorityConfig,
+			Type:  ConfTypeCertManagerCertificateAuthorityConfig,
 			Value: &certManagerCertificateAuthorityConfig,
 		})
 	}
 
 	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshItemMtlsConf", string(data))
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Conf", string(data))
 	}
 
 	// Pick the best candidate using multi-stage filtering
 	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshItemMtlsConf", string(data))
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Conf", string(data))
 	}
 
 	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(MeshItemMtlsConfType)
+	u.Type = best.Type.(ConfType)
 	switch best.Type {
-	case MeshItemMtlsConfTypeProvidedCertificateAuthorityConfig:
+	case ConfTypeProvidedCertificateAuthorityConfig:
 		u.ProvidedCertificateAuthorityConfig = best.Value.(*ProvidedCertificateAuthorityConfig)
 		return nil
-	case MeshItemMtlsConfTypeBuiltinCertificateAuthorityConfig:
+	case ConfTypeBuiltinCertificateAuthorityConfig:
 		u.BuiltinCertificateAuthorityConfig = best.Value.(*BuiltinCertificateAuthorityConfig)
 		return nil
-	case MeshItemMtlsConfTypeVaultCertificateAuthorityConfig:
+	case ConfTypeVaultCertificateAuthorityConfig:
 		u.VaultCertificateAuthorityConfig = best.Value.(*VaultCertificateAuthorityConfig)
 		return nil
-	case MeshItemMtlsConfTypeACMCertificateAuthorityConfig:
+	case ConfTypeACMCertificateAuthorityConfig:
 		u.ACMCertificateAuthorityConfig = best.Value.(*ACMCertificateAuthorityConfig)
 		return nil
-	case MeshItemMtlsConfTypeCertManagerCertificateAuthorityConfig:
+	case ConfTypeCertManagerCertificateAuthorityConfig:
 		u.CertManagerCertificateAuthorityConfig = best.Value.(*CertManagerCertificateAuthorityConfig)
 		return nil
 	}
 
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshItemMtlsConf", string(data))
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for Conf", string(data))
 }
 
-func (u MeshItemMtlsConf) MarshalJSON() ([]byte, error) {
+func (u Conf) MarshalJSON() ([]byte, error) {
 	if u.ProvidedCertificateAuthorityConfig != nil {
 		return utils.MarshalJSON(u.ProvidedCertificateAuthorityConfig, "", true)
 	}
@@ -4106,7 +3316,7 @@ func (u MeshItemMtlsConf) MarshalJSON() ([]byte, error) {
 		return utils.MarshalJSON(u.CertManagerCertificateAuthorityConfig, "", true)
 	}
 
-	return nil, errors.New("could not marshal union type MeshItemMtlsConf: all fields are null")
+	return nil, errors.New("could not marshal union type Conf: all fields are null")
 }
 
 // RequestTimeout - Timeout on request to CA for DP certificate generation and retrieval
@@ -4164,41 +3374,41 @@ func (d *DpCert) GetRotation() *Rotation {
 	return d.Rotation
 }
 
-type MeshItemModeType string
+type ModeType string
 
 const (
-	MeshItemModeTypeStr     MeshItemModeType = "str"
-	MeshItemModeTypeInteger MeshItemModeType = "integer"
+	ModeTypeStr     ModeType = "str"
+	ModeTypeInteger ModeType = "integer"
 )
 
-// MeshItemMode - Mode defines the behaviour of inbound listeners with regard to traffic
+// Mode defines the behaviour of inbound listeners with regard to traffic
 // encryption
-type MeshItemMode struct {
+type Mode struct {
 	Str     *string `queryParam:"inline" union:"member"`
 	Integer *int64  `queryParam:"inline" union:"member"`
 
-	Type MeshItemModeType
+	Type ModeType
 }
 
-func CreateMeshItemModeStr(str string) MeshItemMode {
-	typ := MeshItemModeTypeStr
+func CreateModeStr(str string) Mode {
+	typ := ModeTypeStr
 
-	return MeshItemMode{
+	return Mode{
 		Str:  &str,
 		Type: typ,
 	}
 }
 
-func CreateMeshItemModeInteger(integer int64) MeshItemMode {
-	typ := MeshItemModeTypeInteger
+func CreateModeInteger(integer int64) Mode {
+	typ := ModeTypeInteger
 
-	return MeshItemMode{
+	return Mode{
 		Integer: &integer,
 		Type:    typ,
 	}
 }
 
-func (u *MeshItemMode) UnmarshalJSON(data []byte) error {
+func (u *Mode) UnmarshalJSON(data []byte) error {
 
 	var candidates []utils.UnionCandidate
 
@@ -4206,7 +3416,7 @@ func (u *MeshItemMode) UnmarshalJSON(data []byte) error {
 	var str string = ""
 	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshItemModeTypeStr,
+			Type:  ModeTypeStr,
 			Value: &str,
 		})
 	}
@@ -4214,36 +3424,36 @@ func (u *MeshItemMode) UnmarshalJSON(data []byte) error {
 	var integer int64 = int64(0)
 	if err := utils.UnmarshalJSON(data, &integer, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshItemModeTypeInteger,
+			Type:  ModeTypeInteger,
 			Value: &integer,
 		})
 	}
 
 	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshItemMode", string(data))
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Mode", string(data))
 	}
 
 	// Pick the best candidate using multi-stage filtering
 	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshItemMode", string(data))
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Mode", string(data))
 	}
 
 	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(MeshItemModeType)
+	u.Type = best.Type.(ModeType)
 	switch best.Type {
-	case MeshItemModeTypeStr:
+	case ModeTypeStr:
 		u.Str = best.Value.(*string)
 		return nil
-	case MeshItemModeTypeInteger:
+	case ModeTypeInteger:
 		u.Integer = best.Value.(*int64)
 		return nil
 	}
 
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshItemMode", string(data))
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for Mode", string(data))
 }
 
-func (u MeshItemMode) MarshalJSON() ([]byte, error) {
+func (u Mode) MarshalJSON() ([]byte, error) {
 	if u.Str != nil {
 		return utils.MarshalJSON(u.Str, "", true)
 	}
@@ -4252,7 +3462,7 @@ func (u MeshItemMode) MarshalJSON() ([]byte, error) {
 		return utils.MarshalJSON(u.Integer, "", true)
 	}
 
-	return nil, errors.New("could not marshal union type MeshItemMode: all fields are null")
+	return nil, errors.New("could not marshal union type Mode: all fields are null")
 }
 
 // MeshItemRequestTimeout - Timeout on request for to CA for root certificate chain.
@@ -4289,14 +3499,14 @@ func (r *RootChain) GetRequestTimeout() *MeshItemRequestTimeout {
 	return r.RequestTimeout
 }
 
-// MeshItemMtlsBackends - CertificateAuthorityBackend defines Certificate Authority backend
-type MeshItemMtlsBackends struct {
-	Conf *MeshItemMtlsConf `json:"conf,omitempty"`
+// Backends - CertificateAuthorityBackend defines Certificate Authority backend
+type Backends struct {
+	Conf *Conf `json:"conf,omitempty"`
 	// Dataplane certificate settings
 	DpCert *DpCert `json:"dpCert,omitempty"`
 	// Mode defines the behaviour of inbound listeners with regard to traffic
 	// encryption
-	Mode *MeshItemMode `json:"mode,omitempty"`
+	Mode *Mode `json:"mode,omitempty"`
 	// Name of the backend
 	Name      *string    `json:"name,omitempty"`
 	RootChain *RootChain `json:"rootChain,omitempty"`
@@ -4305,60 +3515,60 @@ type MeshItemMtlsBackends struct {
 	Type *string `json:"type,omitempty"`
 }
 
-func (m *MeshItemMtlsBackends) GetConf() *MeshItemMtlsConf {
-	if m == nil {
+func (b *Backends) GetConf() *Conf {
+	if b == nil {
 		return nil
 	}
-	return m.Conf
+	return b.Conf
 }
 
-func (m *MeshItemMtlsBackends) GetDpCert() *DpCert {
-	if m == nil {
+func (b *Backends) GetDpCert() *DpCert {
+	if b == nil {
 		return nil
 	}
-	return m.DpCert
+	return b.DpCert
 }
 
-func (m *MeshItemMtlsBackends) GetMode() *MeshItemMode {
-	if m == nil {
+func (b *Backends) GetMode() *Mode {
+	if b == nil {
 		return nil
 	}
-	return m.Mode
+	return b.Mode
 }
 
-func (m *MeshItemMtlsBackends) GetName() *string {
-	if m == nil {
+func (b *Backends) GetName() *string {
+	if b == nil {
 		return nil
 	}
-	return m.Name
+	return b.Name
 }
 
-func (m *MeshItemMtlsBackends) GetRootChain() *RootChain {
-	if m == nil {
+func (b *Backends) GetRootChain() *RootChain {
+	if b == nil {
 		return nil
 	}
-	return m.RootChain
+	return b.RootChain
 }
 
-func (m *MeshItemMtlsBackends) GetType() *string {
-	if m == nil {
+func (b *Backends) GetType() *string {
+	if b == nil {
 		return nil
 	}
-	return m.Type
+	return b.Type
 }
 
 // Mtls - mTLS settings.
 // +optional
 type Mtls struct {
 	// List of available Certificate Authority backends
-	Backends []MeshItemMtlsBackends `json:"backends,omitempty"`
+	Backends []Backends `json:"backends,omitempty"`
 	// Name of the enabled backend
 	EnabledBackend *string `json:"enabledBackend,omitempty"`
 	// If enabled, skips CA validation.
 	SkipValidation *bool `json:"skipValidation,omitempty"`
 }
 
-func (m *Mtls) GetBackends() []MeshItemMtlsBackends {
+func (m *Mtls) GetBackends() []Backends {
 	if m == nil {
 		return nil
 	}
@@ -4379,355 +3589,54 @@ func (m *Mtls) GetSkipValidation() *bool {
 	return m.SkipValidation
 }
 
-// Outbound settings
-type Outbound struct {
-	// Control the passthrough cluster
-	Passthrough *bool `json:"passthrough,omitempty"`
-}
-
-func (o *Outbound) GetPassthrough() *bool {
-	if o == nil {
-		return nil
-	}
-	return o.Passthrough
-}
-
-// Networking settings of the mesh
-type Networking struct {
-	// Outbound settings
-	Outbound *Outbound `json:"outbound,omitempty"`
-}
-
-func (n *Networking) GetOutbound() *Outbound {
-	if n == nil {
-		return nil
-	}
-	return n.Outbound
-}
-
 // Routing settings of the mesh
 type Routing struct {
-	// If true, blocks traffic to MeshExternalServices.
-	// Default: false
-	DefaultForbidMeshExternalServiceAccess *bool `json:"defaultForbidMeshExternalServiceAccess,omitempty"`
-	// Enable the Locality Aware Load Balancing
-	LocalityAwareLoadBalancing *bool `json:"localityAwareLoadBalancing,omitempty"`
-	// Enable routing traffic to services in other zone or external services
-	// through ZoneEgress. Default: false
-	ZoneEgress *bool `json:"zoneEgress,omitempty"`
-}
-
-func (r *Routing) GetDefaultForbidMeshExternalServiceAccess() *bool {
-	if r == nil {
-		return nil
-	}
-	return r.DefaultForbidMeshExternalServiceAccess
-}
-
-func (r *Routing) GetLocalityAwareLoadBalancing() *bool {
-	if r == nil {
-		return nil
-	}
-	return r.LocalityAwareLoadBalancing
-}
-
-func (r *Routing) GetZoneEgress() *bool {
-	if r == nil {
-		return nil
-	}
-	return r.ZoneEgress
-}
-
-type ZipkinTracingBackendConfig struct {
-	// Version of the API. values: httpJson, httpJsonV1, httpProto. Default:
-	// httpJson see
-	// https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/trace/v3/trace.proto#envoy-v3-api-enum-config-trace-v3-zipkinconfig-collectorendpointversion
-	APIVersion *string `json:"apiVersion,omitempty"`
-	// Determines whether client and server spans will share the same span
-	// context. Default: true.
-	// https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/trace/v3/zipkin.proto#config-trace-v3-zipkinconfig
-	SharedSpanContext *bool `json:"sharedSpanContext,omitempty"`
-	// Generate 128bit traces. Default: false
-	TraceId128bit *bool `json:"traceId128bit,omitempty"`
-	// Address of Zipkin collector.
-	URL *string `json:"url,omitempty"`
-}
-
-func (z ZipkinTracingBackendConfig) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(z, "", false)
-}
-
-func (z *ZipkinTracingBackendConfig) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &z, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (z *ZipkinTracingBackendConfig) GetAPIVersion() *string {
-	if z == nil {
-		return nil
-	}
-	return z.APIVersion
-}
-
-func (z *ZipkinTracingBackendConfig) GetSharedSpanContext() *bool {
-	if z == nil {
-		return nil
-	}
-	return z.SharedSpanContext
-}
-
-func (z *ZipkinTracingBackendConfig) GetTraceId128bit() *bool {
-	if z == nil {
-		return nil
-	}
-	return z.TraceId128bit
-}
-
-func (z *ZipkinTracingBackendConfig) GetURL() *string {
-	if z == nil {
-		return nil
-	}
-	return z.URL
-}
-
-type DatadogTracingBackendConfig struct {
-	// Address of datadog collector.
-	Address *string `json:"address,omitempty"`
-	// Port of datadog collector
-	Port *int64 `json:"port,omitempty"`
-	// Determines if datadog service name should be split based on traffic
-	// direction and destination. For example, with `splitService: true` and a
-	// `backend` service that communicates with a couple of databases, you would
-	// get service names like `backend_INBOUND`, `backend_OUTBOUND_db1`, and
-	// `backend_OUTBOUND_db2` in Datadog. Default: false
-	SplitService *bool `json:"splitService,omitempty"`
-}
-
-func (d DatadogTracingBackendConfig) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(d, "", false)
-}
-
-func (d *DatadogTracingBackendConfig) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &d, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (d *DatadogTracingBackendConfig) GetAddress() *string {
-	if d == nil {
-		return nil
-	}
-	return d.Address
-}
-
-func (d *DatadogTracingBackendConfig) GetPort() *int64 {
-	if d == nil {
-		return nil
-	}
-	return d.Port
-}
-
-func (d *DatadogTracingBackendConfig) GetSplitService() *bool {
-	if d == nil {
-		return nil
-	}
-	return d.SplitService
-}
-
-type MeshItemTracingConfType string
-
-const (
-	MeshItemTracingConfTypeDatadogTracingBackendConfig MeshItemTracingConfType = "DatadogTracingBackendConfig"
-	MeshItemTracingConfTypeZipkinTracingBackendConfig  MeshItemTracingConfType = "ZipkinTracingBackendConfig"
-)
-
-type MeshItemTracingConf struct {
-	DatadogTracingBackendConfig *DatadogTracingBackendConfig `queryParam:"inline" union:"member"`
-	ZipkinTracingBackendConfig  *ZipkinTracingBackendConfig  `queryParam:"inline" union:"member"`
-
-	Type MeshItemTracingConfType
-}
-
-func CreateMeshItemTracingConfDatadogTracingBackendConfig(datadogTracingBackendConfig DatadogTracingBackendConfig) MeshItemTracingConf {
-	typ := MeshItemTracingConfTypeDatadogTracingBackendConfig
-
-	return MeshItemTracingConf{
-		DatadogTracingBackendConfig: &datadogTracingBackendConfig,
-		Type:                        typ,
-	}
-}
-
-func CreateMeshItemTracingConfZipkinTracingBackendConfig(zipkinTracingBackendConfig ZipkinTracingBackendConfig) MeshItemTracingConf {
-	typ := MeshItemTracingConfTypeZipkinTracingBackendConfig
-
-	return MeshItemTracingConf{
-		ZipkinTracingBackendConfig: &zipkinTracingBackendConfig,
-		Type:                       typ,
-	}
-}
-
-func (u *MeshItemTracingConf) UnmarshalJSON(data []byte) error {
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var datadogTracingBackendConfig DatadogTracingBackendConfig = DatadogTracingBackendConfig{}
-	if err := utils.UnmarshalJSON(data, &datadogTracingBackendConfig, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshItemTracingConfTypeDatadogTracingBackendConfig,
-			Value: &datadogTracingBackendConfig,
-		})
-	}
-
-	var zipkinTracingBackendConfig ZipkinTracingBackendConfig = ZipkinTracingBackendConfig{}
-	if err := utils.UnmarshalJSON(data, &zipkinTracingBackendConfig, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshItemTracingConfTypeZipkinTracingBackendConfig,
-			Value: &zipkinTracingBackendConfig,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshItemTracingConf", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshItemTracingConf", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(MeshItemTracingConfType)
-	switch best.Type {
-	case MeshItemTracingConfTypeDatadogTracingBackendConfig:
-		u.DatadogTracingBackendConfig = best.Value.(*DatadogTracingBackendConfig)
-		return nil
-	case MeshItemTracingConfTypeZipkinTracingBackendConfig:
-		u.ZipkinTracingBackendConfig = best.Value.(*ZipkinTracingBackendConfig)
-		return nil
-	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshItemTracingConf", string(data))
-}
-
-func (u MeshItemTracingConf) MarshalJSON() ([]byte, error) {
-	if u.DatadogTracingBackendConfig != nil {
-		return utils.MarshalJSON(u.DatadogTracingBackendConfig, "", true)
-	}
-
-	if u.ZipkinTracingBackendConfig != nil {
-		return utils.MarshalJSON(u.ZipkinTracingBackendConfig, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type MeshItemTracingConf: all fields are null")
-}
-
-// MeshItemTracingBackends - TracingBackend defines tracing backend available to mesh.
-type MeshItemTracingBackends struct {
-	Conf *MeshItemTracingConf `json:"conf,omitempty"`
-	// Name of the backend, can be then used in Mesh.tracing.defaultBackend or in
-	// TrafficTrace
-	Name *string `json:"name,omitempty"`
-	// Percentage of traces that will be sent to the backend (range 0.0 - 100.0).
-	// Empty value defaults to 100.0%
-	Sampling *float64 `json:"sampling,omitempty"`
-	// Type of the backend (Kuma ships with 'zipkin')
-	Type *string `json:"type,omitempty"`
-}
-
-func (m *MeshItemTracingBackends) GetConf() *MeshItemTracingConf {
-	if m == nil {
-		return nil
-	}
-	return m.Conf
-}
-
-func (m *MeshItemTracingBackends) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshItemTracingBackends) GetSampling() *float64 {
-	if m == nil {
-		return nil
-	}
-	return m.Sampling
-}
-
-func (m *MeshItemTracingBackends) GetType() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Type
-}
-
-// Tracing settings.
-// +optional
-type Tracing struct {
-	// List of available tracing backends
-	Backends []MeshItemTracingBackends `json:"backends,omitempty"`
-	// Name of the default backend
-	DefaultBackend *string `json:"defaultBackend,omitempty"`
-}
-
-func (t *Tracing) GetBackends() []MeshItemTracingBackends {
-	if t == nil {
-		return nil
-	}
-	return t.Backends
-}
-
-func (t *Tracing) GetDefaultBackend() *string {
-	if t == nil {
-		return nil
-	}
-	return t.DefaultBackend
 }
 
 type MeshItem struct {
-	// Constraints that applies to the mesh and its entities
-	Constraints *Constraints      `json:"constraints,omitempty"`
-	Labels      map[string]string `json:"labels,omitempty"`
-	// Logging settings.
-	// +optional
-	Logging      *Logging      `json:"logging,omitempty"`
-	MeshServices *MeshServices `json:"meshServices,omitempty"`
-	// Configuration for metrics collected and exposed by dataplanes.
-	//
-	// Settings defined here become defaults for every dataplane in a given Mesh.
-	// Additionally, it is also possible to further customize this configuration
-	// for each dataplane individually using Dataplane resource.
-	// +optional
-	Metrics *Metrics `json:"metrics,omitempty"`
+	// Time at which the resource was created
+	CreationTime *time.Time `json:"creationTime,omitempty"`
+	// Kuma Resource Identifier (KRI) of the given resource
+	Kri    *string           `json:"kri,omitempty"`
+	Labels map[string]string `json:"labels,omitempty"`
+	// Time at which the resource was updated
+	ModificationTime *time.Time `json:"modificationTime,omitempty"`
 	// mTLS settings.
 	// +optional
 	Mtls *Mtls  `json:"mtls,omitempty"`
 	Name string `json:"name"`
-	// Networking settings of the mesh
-	Networking *Networking `json:"networking,omitempty"`
 	// Routing settings of the mesh
 	Routing *Routing `json:"routing,omitempty"`
 	// List of policies to skip creating by default when the mesh is created.
 	// e.g. TrafficPermission, MeshRetry, etc. An '*' can be used to skip all
 	// policies.
 	SkipCreatingInitialPolicies []string `json:"skipCreatingInitialPolicies,omitempty"`
-	// Tracing settings.
-	// +optional
-	Tracing *Tracing `json:"tracing,omitempty"`
-	Type    string   `json:"type"`
+	Type                        string   `json:"type"`
 }
 
-func (m *MeshItem) GetConstraints() *Constraints {
+func (m MeshItem) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshItem) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshItem) GetCreationTime() *time.Time {
 	if m == nil {
 		return nil
 	}
-	return m.Constraints
+	return m.CreationTime
+}
+
+func (m *MeshItem) GetKri() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Kri
 }
 
 func (m *MeshItem) GetLabels() map[string]string {
@@ -4737,25 +3646,11 @@ func (m *MeshItem) GetLabels() map[string]string {
 	return m.Labels
 }
 
-func (m *MeshItem) GetLogging() *Logging {
+func (m *MeshItem) GetModificationTime() *time.Time {
 	if m == nil {
 		return nil
 	}
-	return m.Logging
-}
-
-func (m *MeshItem) GetMeshServices() *MeshServices {
-	if m == nil {
-		return nil
-	}
-	return m.MeshServices
-}
-
-func (m *MeshItem) GetMetrics() *Metrics {
-	if m == nil {
-		return nil
-	}
-	return m.Metrics
+	return m.ModificationTime
 }
 
 func (m *MeshItem) GetMtls() *Mtls {
@@ -4772,13 +3667,6 @@ func (m *MeshItem) GetName() string {
 	return m.Name
 }
 
-func (m *MeshItem) GetNetworking() *Networking {
-	if m == nil {
-		return nil
-	}
-	return m.Networking
-}
-
 func (m *MeshItem) GetRouting() *Routing {
 	if m == nil {
 		return nil
@@ -4793,14 +3681,64 @@ func (m *MeshItem) GetSkipCreatingInitialPolicies() []string {
 	return m.SkipCreatingInitialPolicies
 }
 
-func (m *MeshItem) GetTracing() *Tracing {
+func (m *MeshItem) GetType() string {
+	if m == nil {
+		return ""
+	}
+	return m.Type
+}
+
+type MeshItemInput struct {
+	Labels map[string]string `json:"labels,omitempty"`
+	// mTLS settings.
+	// +optional
+	Mtls *Mtls  `json:"mtls,omitempty"`
+	Name string `json:"name"`
+	// Routing settings of the mesh
+	Routing *Routing `json:"routing,omitempty"`
+	// List of policies to skip creating by default when the mesh is created.
+	// e.g. TrafficPermission, MeshRetry, etc. An '*' can be used to skip all
+	// policies.
+	SkipCreatingInitialPolicies []string `json:"skipCreatingInitialPolicies,omitempty"`
+	Type                        string   `json:"type"`
+}
+
+func (m *MeshItemInput) GetLabels() map[string]string {
 	if m == nil {
 		return nil
 	}
-	return m.Tracing
+	return m.Labels
 }
 
-func (m *MeshItem) GetType() string {
+func (m *MeshItemInput) GetMtls() *Mtls {
+	if m == nil {
+		return nil
+	}
+	return m.Mtls
+}
+
+func (m *MeshItemInput) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+func (m *MeshItemInput) GetRouting() *Routing {
+	if m == nil {
+		return nil
+	}
+	return m.Routing
+}
+
+func (m *MeshItemInput) GetSkipCreatingInitialPolicies() []string {
+	if m == nil {
+		return nil
+	}
+	return m.SkipCreatingInitialPolicies
+}
+
+func (m *MeshItemInput) GetType() string {
 	if m == nil {
 		return ""
 	}

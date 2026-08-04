@@ -41,103 +41,6 @@ func (r *MeshRateLimitResourceModel) RefreshFromSharedMeshRateLimitItem(ctx cont
 		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
 		r.Spec = &tfTypes.MeshRateLimitItemSpec{}
-		r.Spec.From = []tfTypes.MeshRateLimitItemFrom{}
-
-		for _, fromItem := range resp.Spec.From {
-			var from tfTypes.MeshRateLimitItemFrom
-
-			if fromItem.Default == nil {
-				from.Default = nil
-			} else {
-				from.Default = &tfTypes.MeshRateLimitItemDefault{}
-				if fromItem.Default.Local == nil {
-					from.Default.Local = nil
-				} else {
-					from.Default.Local = &tfTypes.Local{}
-					if fromItem.Default.Local.HTTP == nil {
-						from.Default.Local.HTTP = nil
-					} else {
-						from.Default.Local.HTTP = &tfTypes.MeshRateLimitItemHTTP{}
-						from.Default.Local.HTTP.Disabled = types.BoolPointerValue(fromItem.Default.Local.HTTP.Disabled)
-						if fromItem.Default.Local.HTTP.OnRateLimit == nil {
-							from.Default.Local.HTTP.OnRateLimit = nil
-						} else {
-							from.Default.Local.HTTP.OnRateLimit = &tfTypes.OnRateLimit{}
-							if fromItem.Default.Local.HTTP.OnRateLimit.Headers == nil {
-								from.Default.Local.HTTP.OnRateLimit.Headers = nil
-							} else {
-								from.Default.Local.HTTP.OnRateLimit.Headers = &tfTypes.MeshGlobalRateLimitItemHeaders{}
-								from.Default.Local.HTTP.OnRateLimit.Headers.Add = []tfTypes.MeshGlobalRateLimitItemAdd{}
-
-								for _, addItem := range fromItem.Default.Local.HTTP.OnRateLimit.Headers.Add {
-									var add tfTypes.MeshGlobalRateLimitItemAdd
-
-									add.Name = types.StringValue(addItem.Name)
-									add.Value = types.StringValue(addItem.Value)
-
-									from.Default.Local.HTTP.OnRateLimit.Headers.Add = append(from.Default.Local.HTTP.OnRateLimit.Headers.Add, add)
-								}
-								from.Default.Local.HTTP.OnRateLimit.Headers.Set = []tfTypes.MeshGlobalRateLimitItemAdd{}
-
-								for _, setItem := range fromItem.Default.Local.HTTP.OnRateLimit.Headers.Set {
-									var set tfTypes.MeshGlobalRateLimitItemAdd
-
-									set.Name = types.StringValue(setItem.Name)
-									set.Value = types.StringValue(setItem.Value)
-
-									from.Default.Local.HTTP.OnRateLimit.Headers.Set = append(from.Default.Local.HTTP.OnRateLimit.Headers.Set, set)
-								}
-							}
-							from.Default.Local.HTTP.OnRateLimit.Status = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(fromItem.Default.Local.HTTP.OnRateLimit.Status))
-						}
-						if fromItem.Default.Local.HTTP.RequestRate == nil {
-							from.Default.Local.HTTP.RequestRate = nil
-						} else {
-							from.Default.Local.HTTP.RequestRate = &tfTypes.MeshGlobalRateLimitItemSpecFromRequestRate{}
-							from.Default.Local.HTTP.RequestRate.Interval = types.StringValue(fromItem.Default.Local.HTTP.RequestRate.Interval)
-							from.Default.Local.HTTP.RequestRate.Num = types.Int32Value(int32(fromItem.Default.Local.HTTP.RequestRate.Num))
-						}
-					}
-					if fromItem.Default.Local.TCP == nil {
-						from.Default.Local.TCP = nil
-					} else {
-						from.Default.Local.TCP = &tfTypes.MeshRateLimitItemTCP{}
-						if fromItem.Default.Local.TCP.ConnectionRate == nil {
-							from.Default.Local.TCP.ConnectionRate = nil
-						} else {
-							from.Default.Local.TCP.ConnectionRate = &tfTypes.MeshGlobalRateLimitItemSpecFromRequestRate{}
-							from.Default.Local.TCP.ConnectionRate.Interval = types.StringValue(fromItem.Default.Local.TCP.ConnectionRate.Interval)
-							from.Default.Local.TCP.ConnectionRate.Num = types.Int32Value(int32(fromItem.Default.Local.TCP.ConnectionRate.Num))
-						}
-						from.Default.Local.TCP.Disabled = types.BoolPointerValue(fromItem.Default.Local.TCP.Disabled)
-					}
-				}
-			}
-			from.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
-			from.TargetRef.Kind = types.StringValue(string(fromItem.TargetRef.Kind))
-			if len(fromItem.TargetRef.Labels) > 0 {
-				from.TargetRef.Labels = make(map[string]types.String, len(fromItem.TargetRef.Labels))
-				for key, value := range fromItem.TargetRef.Labels {
-					from.TargetRef.Labels[key] = types.StringValue(value)
-				}
-			}
-			from.TargetRef.Mesh = types.StringPointerValue(fromItem.TargetRef.Mesh)
-			from.TargetRef.Name = types.StringPointerValue(fromItem.TargetRef.Name)
-			from.TargetRef.Namespace = types.StringPointerValue(fromItem.TargetRef.Namespace)
-			from.TargetRef.ProxyTypes = make([]types.String, 0, len(fromItem.TargetRef.ProxyTypes))
-			for _, v := range fromItem.TargetRef.ProxyTypes {
-				from.TargetRef.ProxyTypes = append(from.TargetRef.ProxyTypes, types.StringValue(string(v)))
-			}
-			from.TargetRef.SectionName = types.StringPointerValue(fromItem.TargetRef.SectionName)
-			if len(fromItem.TargetRef.Tags) > 0 {
-				from.TargetRef.Tags = make(map[string]types.String, len(fromItem.TargetRef.Tags))
-				for key1, value1 := range fromItem.TargetRef.Tags {
-					from.TargetRef.Tags[key1] = types.StringValue(value1)
-				}
-			}
-
-			r.Spec.From = append(r.Spec.From, from)
-		}
 		r.Spec.Rules = []tfTypes.MeshRateLimitItemRules{}
 
 		for _, rulesItem := range resp.Spec.Rules {
@@ -163,26 +66,26 @@ func (r *MeshRateLimitResourceModel) RefreshFromSharedMeshRateLimitItem(ctx cont
 							if rulesItem.Default.Local.HTTP.OnRateLimit.Headers == nil {
 								rules.Default.Local.HTTP.OnRateLimit.Headers = nil
 							} else {
-								rules.Default.Local.HTTP.OnRateLimit.Headers = &tfTypes.MeshGlobalRateLimitItemHeaders{}
-								rules.Default.Local.HTTP.OnRateLimit.Headers.Add = []tfTypes.MeshGlobalRateLimitItemAdd{}
+								rules.Default.Local.HTTP.OnRateLimit.Headers = &tfTypes.RequestHeadersToAdd{}
+								rules.Default.Local.HTTP.OnRateLimit.Headers.Add = []tfTypes.MeshHTTPRouteItemAdd{}
 
-								for _, addItem1 := range rulesItem.Default.Local.HTTP.OnRateLimit.Headers.Add {
-									var add1 tfTypes.MeshGlobalRateLimitItemAdd
+								for _, addItem := range rulesItem.Default.Local.HTTP.OnRateLimit.Headers.Add {
+									var add tfTypes.MeshHTTPRouteItemAdd
 
-									add1.Name = types.StringValue(addItem1.Name)
-									add1.Value = types.StringValue(addItem1.Value)
+									add.Name = types.StringValue(addItem.Name)
+									add.Value = types.StringValue(addItem.Value)
 
-									rules.Default.Local.HTTP.OnRateLimit.Headers.Add = append(rules.Default.Local.HTTP.OnRateLimit.Headers.Add, add1)
+									rules.Default.Local.HTTP.OnRateLimit.Headers.Add = append(rules.Default.Local.HTTP.OnRateLimit.Headers.Add, add)
 								}
-								rules.Default.Local.HTTP.OnRateLimit.Headers.Set = []tfTypes.MeshGlobalRateLimitItemAdd{}
+								rules.Default.Local.HTTP.OnRateLimit.Headers.Set = []tfTypes.MeshHTTPRouteItemAdd{}
 
-								for _, setItem1 := range rulesItem.Default.Local.HTTP.OnRateLimit.Headers.Set {
-									var set1 tfTypes.MeshGlobalRateLimitItemAdd
+								for _, setItem := range rulesItem.Default.Local.HTTP.OnRateLimit.Headers.Set {
+									var set tfTypes.MeshHTTPRouteItemAdd
 
-									set1.Name = types.StringValue(setItem1.Name)
-									set1.Value = types.StringValue(setItem1.Value)
+									set.Name = types.StringValue(setItem.Name)
+									set.Value = types.StringValue(setItem.Value)
 
-									rules.Default.Local.HTTP.OnRateLimit.Headers.Set = append(rules.Default.Local.HTTP.OnRateLimit.Headers.Set, set1)
+									rules.Default.Local.HTTP.OnRateLimit.Headers.Set = append(rules.Default.Local.HTTP.OnRateLimit.Headers.Set, set)
 								}
 							}
 							rules.Default.Local.HTTP.OnRateLimit.Status = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(rulesItem.Default.Local.HTTP.OnRateLimit.Status))
@@ -190,7 +93,7 @@ func (r *MeshRateLimitResourceModel) RefreshFromSharedMeshRateLimitItem(ctx cont
 						if rulesItem.Default.Local.HTTP.RequestRate == nil {
 							rules.Default.Local.HTTP.RequestRate = nil
 						} else {
-							rules.Default.Local.HTTP.RequestRate = &tfTypes.MeshGlobalRateLimitItemSpecFromRequestRate{}
+							rules.Default.Local.HTTP.RequestRate = &tfTypes.RequestRate{}
 							rules.Default.Local.HTTP.RequestRate.Interval = types.StringValue(rulesItem.Default.Local.HTTP.RequestRate.Interval)
 							rules.Default.Local.HTTP.RequestRate.Num = types.Int32Value(int32(rulesItem.Default.Local.HTTP.RequestRate.Num))
 						}
@@ -202,7 +105,7 @@ func (r *MeshRateLimitResourceModel) RefreshFromSharedMeshRateLimitItem(ctx cont
 						if rulesItem.Default.Local.TCP.ConnectionRate == nil {
 							rules.Default.Local.TCP.ConnectionRate = nil
 						} else {
-							rules.Default.Local.TCP.ConnectionRate = &tfTypes.MeshGlobalRateLimitItemSpecFromRequestRate{}
+							rules.Default.Local.TCP.ConnectionRate = &tfTypes.RequestRate{}
 							rules.Default.Local.TCP.ConnectionRate.Interval = types.StringValue(rulesItem.Default.Local.TCP.ConnectionRate.Interval)
 							rules.Default.Local.TCP.ConnectionRate.Num = types.Int32Value(int32(rulesItem.Default.Local.TCP.ConnectionRate.Num))
 						}
@@ -210,39 +113,57 @@ func (r *MeshRateLimitResourceModel) RefreshFromSharedMeshRateLimitItem(ctx cont
 					}
 				}
 			}
+			rules.Matches = []tfTypes.Matches{}
+
+			for _, matchesItem := range rulesItem.Matches {
+				var matches tfTypes.Matches
+
+				if matchesItem.Sni == nil {
+					matches.Sni = nil
+				} else {
+					matches.Sni = &tfTypes.Sni{}
+					matches.Sni.Type = types.StringValue(string(matchesItem.Sni.Type))
+					matches.Sni.Value = types.StringValue(matchesItem.Sni.Value)
+				}
+				if matchesItem.SpiffeID == nil {
+					matches.SpiffeID = nil
+				} else {
+					matches.SpiffeID = &tfTypes.Sni{}
+					matches.SpiffeID.Type = types.StringValue(string(matchesItem.SpiffeID.Type))
+					matches.SpiffeID.Value = types.StringValue(matchesItem.SpiffeID.Value)
+				}
+
+				rules.Matches = append(rules.Matches, matches)
+			}
 
 			r.Spec.Rules = append(r.Spec.Rules, rules)
 		}
 		if resp.Spec.TargetRef == nil {
 			r.Spec.TargetRef = nil
 		} else {
-			r.Spec.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
+			r.Spec.TargetRef = &tfTypes.TargetRef{}
 			r.Spec.TargetRef.Kind = types.StringValue(string(resp.Spec.TargetRef.Kind))
 			if len(resp.Spec.TargetRef.Labels) > 0 {
 				r.Spec.TargetRef.Labels = make(map[string]types.String, len(resp.Spec.TargetRef.Labels))
-				for key2, value2 := range resp.Spec.TargetRef.Labels {
-					r.Spec.TargetRef.Labels[key2] = types.StringValue(value2)
+				for key, value := range resp.Spec.TargetRef.Labels {
+					r.Spec.TargetRef.Labels[key] = types.StringValue(value)
 				}
 			}
 			r.Spec.TargetRef.Mesh = types.StringPointerValue(resp.Spec.TargetRef.Mesh)
 			r.Spec.TargetRef.Name = types.StringPointerValue(resp.Spec.TargetRef.Name)
 			r.Spec.TargetRef.Namespace = types.StringPointerValue(resp.Spec.TargetRef.Namespace)
-			r.Spec.TargetRef.ProxyTypes = make([]types.String, 0, len(resp.Spec.TargetRef.ProxyTypes))
-			for _, v := range resp.Spec.TargetRef.ProxyTypes {
-				r.Spec.TargetRef.ProxyTypes = append(r.Spec.TargetRef.ProxyTypes, types.StringValue(string(v)))
-			}
 			r.Spec.TargetRef.SectionName = types.StringPointerValue(resp.Spec.TargetRef.SectionName)
 			if len(resp.Spec.TargetRef.Tags) > 0 {
 				r.Spec.TargetRef.Tags = make(map[string]types.String, len(resp.Spec.TargetRef.Tags))
-				for key3, value3 := range resp.Spec.TargetRef.Tags {
-					r.Spec.TargetRef.Tags[key3] = types.StringValue(value3)
+				for key1, value1 := range resp.Spec.TargetRef.Tags {
+					r.Spec.TargetRef.Tags[key1] = types.StringValue(value1)
 				}
 			}
 		}
-		r.Spec.To = []tfTypes.MeshRateLimitItemFrom{}
+		r.Spec.To = []tfTypes.MeshRateLimitItemTo{}
 
 		for _, toItem := range resp.Spec.To {
-			var to tfTypes.MeshRateLimitItemFrom
+			var to tfTypes.MeshRateLimitItemTo
 
 			if toItem.Default == nil {
 				to.Default = nil
@@ -264,26 +185,26 @@ func (r *MeshRateLimitResourceModel) RefreshFromSharedMeshRateLimitItem(ctx cont
 							if toItem.Default.Local.HTTP.OnRateLimit.Headers == nil {
 								to.Default.Local.HTTP.OnRateLimit.Headers = nil
 							} else {
-								to.Default.Local.HTTP.OnRateLimit.Headers = &tfTypes.MeshGlobalRateLimitItemHeaders{}
-								to.Default.Local.HTTP.OnRateLimit.Headers.Add = []tfTypes.MeshGlobalRateLimitItemAdd{}
+								to.Default.Local.HTTP.OnRateLimit.Headers = &tfTypes.RequestHeadersToAdd{}
+								to.Default.Local.HTTP.OnRateLimit.Headers.Add = []tfTypes.MeshHTTPRouteItemAdd{}
 
-								for _, addItem2 := range toItem.Default.Local.HTTP.OnRateLimit.Headers.Add {
-									var add2 tfTypes.MeshGlobalRateLimitItemAdd
+								for _, addItem1 := range toItem.Default.Local.HTTP.OnRateLimit.Headers.Add {
+									var add1 tfTypes.MeshHTTPRouteItemAdd
 
-									add2.Name = types.StringValue(addItem2.Name)
-									add2.Value = types.StringValue(addItem2.Value)
+									add1.Name = types.StringValue(addItem1.Name)
+									add1.Value = types.StringValue(addItem1.Value)
 
-									to.Default.Local.HTTP.OnRateLimit.Headers.Add = append(to.Default.Local.HTTP.OnRateLimit.Headers.Add, add2)
+									to.Default.Local.HTTP.OnRateLimit.Headers.Add = append(to.Default.Local.HTTP.OnRateLimit.Headers.Add, add1)
 								}
-								to.Default.Local.HTTP.OnRateLimit.Headers.Set = []tfTypes.MeshGlobalRateLimitItemAdd{}
+								to.Default.Local.HTTP.OnRateLimit.Headers.Set = []tfTypes.MeshHTTPRouteItemAdd{}
 
-								for _, setItem2 := range toItem.Default.Local.HTTP.OnRateLimit.Headers.Set {
-									var set2 tfTypes.MeshGlobalRateLimitItemAdd
+								for _, setItem1 := range toItem.Default.Local.HTTP.OnRateLimit.Headers.Set {
+									var set1 tfTypes.MeshHTTPRouteItemAdd
 
-									set2.Name = types.StringValue(setItem2.Name)
-									set2.Value = types.StringValue(setItem2.Value)
+									set1.Name = types.StringValue(setItem1.Name)
+									set1.Value = types.StringValue(setItem1.Value)
 
-									to.Default.Local.HTTP.OnRateLimit.Headers.Set = append(to.Default.Local.HTTP.OnRateLimit.Headers.Set, set2)
+									to.Default.Local.HTTP.OnRateLimit.Headers.Set = append(to.Default.Local.HTTP.OnRateLimit.Headers.Set, set1)
 								}
 							}
 							to.Default.Local.HTTP.OnRateLimit.Status = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(toItem.Default.Local.HTTP.OnRateLimit.Status))
@@ -291,7 +212,7 @@ func (r *MeshRateLimitResourceModel) RefreshFromSharedMeshRateLimitItem(ctx cont
 						if toItem.Default.Local.HTTP.RequestRate == nil {
 							to.Default.Local.HTTP.RequestRate = nil
 						} else {
-							to.Default.Local.HTTP.RequestRate = &tfTypes.MeshGlobalRateLimitItemSpecFromRequestRate{}
+							to.Default.Local.HTTP.RequestRate = &tfTypes.RequestRate{}
 							to.Default.Local.HTTP.RequestRate.Interval = types.StringValue(toItem.Default.Local.HTTP.RequestRate.Interval)
 							to.Default.Local.HTTP.RequestRate.Num = types.Int32Value(int32(toItem.Default.Local.HTTP.RequestRate.Num))
 						}
@@ -303,7 +224,7 @@ func (r *MeshRateLimitResourceModel) RefreshFromSharedMeshRateLimitItem(ctx cont
 						if toItem.Default.Local.TCP.ConnectionRate == nil {
 							to.Default.Local.TCP.ConnectionRate = nil
 						} else {
-							to.Default.Local.TCP.ConnectionRate = &tfTypes.MeshGlobalRateLimitItemSpecFromRequestRate{}
+							to.Default.Local.TCP.ConnectionRate = &tfTypes.RequestRate{}
 							to.Default.Local.TCP.ConnectionRate.Interval = types.StringValue(toItem.Default.Local.TCP.ConnectionRate.Interval)
 							to.Default.Local.TCP.ConnectionRate.Num = types.Int32Value(int32(toItem.Default.Local.TCP.ConnectionRate.Num))
 						}
@@ -311,26 +232,22 @@ func (r *MeshRateLimitResourceModel) RefreshFromSharedMeshRateLimitItem(ctx cont
 					}
 				}
 			}
-			to.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
+			to.TargetRef = &tfTypes.TargetRef{}
 			to.TargetRef.Kind = types.StringValue(string(toItem.TargetRef.Kind))
 			if len(toItem.TargetRef.Labels) > 0 {
 				to.TargetRef.Labels = make(map[string]types.String, len(toItem.TargetRef.Labels))
-				for key4, value4 := range toItem.TargetRef.Labels {
-					to.TargetRef.Labels[key4] = types.StringValue(value4)
+				for key2, value2 := range toItem.TargetRef.Labels {
+					to.TargetRef.Labels[key2] = types.StringValue(value2)
 				}
 			}
 			to.TargetRef.Mesh = types.StringPointerValue(toItem.TargetRef.Mesh)
 			to.TargetRef.Name = types.StringPointerValue(toItem.TargetRef.Name)
 			to.TargetRef.Namespace = types.StringPointerValue(toItem.TargetRef.Namespace)
-			to.TargetRef.ProxyTypes = make([]types.String, 0, len(toItem.TargetRef.ProxyTypes))
-			for _, v := range toItem.TargetRef.ProxyTypes {
-				to.TargetRef.ProxyTypes = append(to.TargetRef.ProxyTypes, types.StringValue(string(v)))
-			}
 			to.TargetRef.SectionName = types.StringPointerValue(toItem.TargetRef.SectionName)
 			if len(toItem.TargetRef.Tags) > 0 {
 				to.TargetRef.Tags = make(map[string]types.String, len(toItem.TargetRef.Tags))
-				for key5, value5 := range toItem.TargetRef.Tags {
-					to.TargetRef.Tags[key5] = types.StringValue(value5)
+				for key3, value3 := range toItem.TargetRef.Tags {
+					to.TargetRef.Tags[key3] = types.StringValue(value3)
 				}
 			}
 
@@ -418,44 +335,44 @@ func (r *MeshRateLimitResourceModel) ToSharedMeshRateLimitItemInput(ctx context.
 	if !r.Labels.IsUnknown() && !r.Labels.IsNull() {
 		diags.Append(r.Labels.ElementsAs(ctx, &labels, true)...)
 	}
-	from := make([]shared.MeshRateLimitItemFrom, 0, len(r.Spec.From))
-	for fromIndex := range r.Spec.From {
+	rules := make([]shared.MeshRateLimitItemRules, 0, len(r.Spec.Rules))
+	for rulesIndex := range r.Spec.Rules {
 		var defaultVar *shared.MeshRateLimitItemDefault
-		if r.Spec.From[fromIndex].Default != nil {
+		if r.Spec.Rules[rulesIndex].Default != nil {
 			var local *shared.Local
-			if r.Spec.From[fromIndex].Default.Local != nil {
+			if r.Spec.Rules[rulesIndex].Default.Local != nil {
 				var http *shared.MeshRateLimitItemHTTP
-				if r.Spec.From[fromIndex].Default.Local.HTTP != nil {
+				if r.Spec.Rules[rulesIndex].Default.Local.HTTP != nil {
 					disabled := new(bool)
-					if !r.Spec.From[fromIndex].Default.Local.HTTP.Disabled.IsUnknown() && !r.Spec.From[fromIndex].Default.Local.HTTP.Disabled.IsNull() {
-						*disabled = r.Spec.From[fromIndex].Default.Local.HTTP.Disabled.ValueBool()
+					if !r.Spec.Rules[rulesIndex].Default.Local.HTTP.Disabled.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.Local.HTTP.Disabled.IsNull() {
+						*disabled = r.Spec.Rules[rulesIndex].Default.Local.HTTP.Disabled.ValueBool()
 					} else {
 						disabled = nil
 					}
-					var onRateLimit *shared.MeshRateLimitItemSpecFromOnRateLimit
-					if r.Spec.From[fromIndex].Default.Local.HTTP.OnRateLimit != nil {
+					var onRateLimit *shared.OnRateLimit
+					if r.Spec.Rules[rulesIndex].Default.Local.HTTP.OnRateLimit != nil {
 						var headers *shared.MeshRateLimitItemHeaders
-						if r.Spec.From[fromIndex].Default.Local.HTTP.OnRateLimit.Headers != nil {
-							add := make([]shared.MeshRateLimitItemAdd, 0, len(r.Spec.From[fromIndex].Default.Local.HTTP.OnRateLimit.Headers.Add))
-							for addIndex := range r.Spec.From[fromIndex].Default.Local.HTTP.OnRateLimit.Headers.Add {
+						if r.Spec.Rules[rulesIndex].Default.Local.HTTP.OnRateLimit.Headers != nil {
+							add := make([]shared.MeshRateLimitItemAdd, 0, len(r.Spec.Rules[rulesIndex].Default.Local.HTTP.OnRateLimit.Headers.Add))
+							for addIndex := range r.Spec.Rules[rulesIndex].Default.Local.HTTP.OnRateLimit.Headers.Add {
 								var name1 string
-								name1 = r.Spec.From[fromIndex].Default.Local.HTTP.OnRateLimit.Headers.Add[addIndex].Name.ValueString()
+								name1 = r.Spec.Rules[rulesIndex].Default.Local.HTTP.OnRateLimit.Headers.Add[addIndex].Name.ValueString()
 
 								var value string
-								value = r.Spec.From[fromIndex].Default.Local.HTTP.OnRateLimit.Headers.Add[addIndex].Value.ValueString()
+								value = r.Spec.Rules[rulesIndex].Default.Local.HTTP.OnRateLimit.Headers.Add[addIndex].Value.ValueString()
 
 								add = append(add, shared.MeshRateLimitItemAdd{
 									Name:  name1,
 									Value: value,
 								})
 							}
-							set := make([]shared.MeshRateLimitItemSet, 0, len(r.Spec.From[fromIndex].Default.Local.HTTP.OnRateLimit.Headers.Set))
-							for setIndex := range r.Spec.From[fromIndex].Default.Local.HTTP.OnRateLimit.Headers.Set {
+							set := make([]shared.MeshRateLimitItemSet, 0, len(r.Spec.Rules[rulesIndex].Default.Local.HTTP.OnRateLimit.Headers.Set))
+							for setIndex := range r.Spec.Rules[rulesIndex].Default.Local.HTTP.OnRateLimit.Headers.Set {
 								var name2 string
-								name2 = r.Spec.From[fromIndex].Default.Local.HTTP.OnRateLimit.Headers.Set[setIndex].Name.ValueString()
+								name2 = r.Spec.Rules[rulesIndex].Default.Local.HTTP.OnRateLimit.Headers.Set[setIndex].Name.ValueString()
 
 								var value1 string
-								value1 = r.Spec.From[fromIndex].Default.Local.HTTP.OnRateLimit.Headers.Set[setIndex].Value.ValueString()
+								value1 = r.Spec.Rules[rulesIndex].Default.Local.HTTP.OnRateLimit.Headers.Set[setIndex].Value.ValueString()
 
 								set = append(set, shared.MeshRateLimitItemSet{
 									Name:  name2,
@@ -468,25 +385,25 @@ func (r *MeshRateLimitResourceModel) ToSharedMeshRateLimitItemInput(ctx context.
 							}
 						}
 						status := new(int)
-						if !r.Spec.From[fromIndex].Default.Local.HTTP.OnRateLimit.Status.IsUnknown() && !r.Spec.From[fromIndex].Default.Local.HTTP.OnRateLimit.Status.IsNull() {
-							*status = int(r.Spec.From[fromIndex].Default.Local.HTTP.OnRateLimit.Status.ValueInt32())
+						if !r.Spec.Rules[rulesIndex].Default.Local.HTTP.OnRateLimit.Status.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.Local.HTTP.OnRateLimit.Status.IsNull() {
+							*status = int(r.Spec.Rules[rulesIndex].Default.Local.HTTP.OnRateLimit.Status.ValueInt32())
 						} else {
 							status = nil
 						}
-						onRateLimit = &shared.MeshRateLimitItemSpecFromOnRateLimit{
+						onRateLimit = &shared.OnRateLimit{
 							Headers: headers,
 							Status:  status,
 						}
 					}
-					var requestRate *shared.MeshRateLimitItemSpecFromRequestRate
-					if r.Spec.From[fromIndex].Default.Local.HTTP.RequestRate != nil {
+					var requestRate *shared.RequestRate
+					if r.Spec.Rules[rulesIndex].Default.Local.HTTP.RequestRate != nil {
 						var interval string
-						interval = r.Spec.From[fromIndex].Default.Local.HTTP.RequestRate.Interval.ValueString()
+						interval = r.Spec.Rules[rulesIndex].Default.Local.HTTP.RequestRate.Interval.ValueString()
 
 						var num int
-						num = int(r.Spec.From[fromIndex].Default.Local.HTTP.RequestRate.Num.ValueInt32())
+						num = int(r.Spec.Rules[rulesIndex].Default.Local.HTTP.RequestRate.Num.ValueInt32())
 
-						requestRate = &shared.MeshRateLimitItemSpecFromRequestRate{
+						requestRate = &shared.RequestRate{
 							Interval: interval,
 							Num:      num,
 						}
@@ -498,14 +415,14 @@ func (r *MeshRateLimitResourceModel) ToSharedMeshRateLimitItemInput(ctx context.
 					}
 				}
 				var tcp *shared.MeshRateLimitItemTCP
-				if r.Spec.From[fromIndex].Default.Local.TCP != nil {
+				if r.Spec.Rules[rulesIndex].Default.Local.TCP != nil {
 					var connectionRate *shared.ConnectionRate
-					if r.Spec.From[fromIndex].Default.Local.TCP.ConnectionRate != nil {
+					if r.Spec.Rules[rulesIndex].Default.Local.TCP.ConnectionRate != nil {
 						var interval1 string
-						interval1 = r.Spec.From[fromIndex].Default.Local.TCP.ConnectionRate.Interval.ValueString()
+						interval1 = r.Spec.Rules[rulesIndex].Default.Local.TCP.ConnectionRate.Interval.ValueString()
 
 						var num1 int
-						num1 = int(r.Spec.From[fromIndex].Default.Local.TCP.ConnectionRate.Num.ValueInt32())
+						num1 = int(r.Spec.Rules[rulesIndex].Default.Local.TCP.ConnectionRate.Num.ValueInt32())
 
 						connectionRate = &shared.ConnectionRate{
 							Interval: interval1,
@@ -513,8 +430,8 @@ func (r *MeshRateLimitResourceModel) ToSharedMeshRateLimitItemInput(ctx context.
 						}
 					}
 					disabled1 := new(bool)
-					if !r.Spec.From[fromIndex].Default.Local.TCP.Disabled.IsUnknown() && !r.Spec.From[fromIndex].Default.Local.TCP.Disabled.IsNull() {
-						*disabled1 = r.Spec.From[fromIndex].Default.Local.TCP.Disabled.ValueBool()
+					if !r.Spec.Rules[rulesIndex].Default.Local.TCP.Disabled.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.Local.TCP.Disabled.IsNull() {
+						*disabled1 = r.Spec.Rules[rulesIndex].Default.Local.TCP.Disabled.ValueBool()
 					} else {
 						disabled1 = nil
 					}
@@ -532,106 +449,133 @@ func (r *MeshRateLimitResourceModel) ToSharedMeshRateLimitItemInput(ctx context.
 				Local: local,
 			}
 		}
-		kind := shared.MeshRateLimitItemSpecKind(r.Spec.From[fromIndex].TargetRef.Kind.ValueString())
+		matches := make([]shared.MeshRateLimitItemMatches, 0, len(r.Spec.Rules[rulesIndex].Matches))
+		for matchesIndex := range r.Spec.Rules[rulesIndex].Matches {
+			var sni *shared.MeshRateLimitItemSni
+			if r.Spec.Rules[rulesIndex].Matches[matchesIndex].Sni != nil {
+				typeVar1 := shared.MeshRateLimitItemSpecType(r.Spec.Rules[rulesIndex].Matches[matchesIndex].Sni.Type.ValueString())
+				var value2 string
+				value2 = r.Spec.Rules[rulesIndex].Matches[matchesIndex].Sni.Value.ValueString()
+
+				sni = &shared.MeshRateLimitItemSni{
+					Type:  typeVar1,
+					Value: value2,
+				}
+			}
+			var spiffeID *shared.MeshRateLimitItemSpiffeID
+			if r.Spec.Rules[rulesIndex].Matches[matchesIndex].SpiffeID != nil {
+				typeVar2 := shared.MeshRateLimitItemSpecRulesType(r.Spec.Rules[rulesIndex].Matches[matchesIndex].SpiffeID.Type.ValueString())
+				var value3 string
+				value3 = r.Spec.Rules[rulesIndex].Matches[matchesIndex].SpiffeID.Value.ValueString()
+
+				spiffeID = &shared.MeshRateLimitItemSpiffeID{
+					Type:  typeVar2,
+					Value: value3,
+				}
+			}
+			matches = append(matches, shared.MeshRateLimitItemMatches{
+				Sni:      sni,
+				SpiffeID: spiffeID,
+			})
+		}
+		rules = append(rules, shared.MeshRateLimitItemRules{
+			Default: defaultVar,
+			Matches: matches,
+		})
+	}
+	var targetRef *shared.MeshRateLimitItemTargetRef
+	if r.Spec.TargetRef != nil {
+		kind := shared.MeshRateLimitItemKind(r.Spec.TargetRef.Kind.ValueString())
 		labels1 := make(map[string]string)
-		for labelsKey := range r.Spec.From[fromIndex].TargetRef.Labels {
+		for labelsKey := range r.Spec.TargetRef.Labels {
 			var labelsInst string
-			labelsInst = r.Spec.From[fromIndex].TargetRef.Labels[labelsKey].ValueString()
+			labelsInst = r.Spec.TargetRef.Labels[labelsKey].ValueString()
 
 			labels1[labelsKey] = labelsInst
 		}
 		mesh1 := new(string)
-		if !r.Spec.From[fromIndex].TargetRef.Mesh.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.Mesh.IsNull() {
-			*mesh1 = r.Spec.From[fromIndex].TargetRef.Mesh.ValueString()
+		if !r.Spec.TargetRef.Mesh.IsUnknown() && !r.Spec.TargetRef.Mesh.IsNull() {
+			*mesh1 = r.Spec.TargetRef.Mesh.ValueString()
 		} else {
 			mesh1 = nil
 		}
 		name3 := new(string)
-		if !r.Spec.From[fromIndex].TargetRef.Name.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.Name.IsNull() {
-			*name3 = r.Spec.From[fromIndex].TargetRef.Name.ValueString()
+		if !r.Spec.TargetRef.Name.IsUnknown() && !r.Spec.TargetRef.Name.IsNull() {
+			*name3 = r.Spec.TargetRef.Name.ValueString()
 		} else {
 			name3 = nil
 		}
 		namespace := new(string)
-		if !r.Spec.From[fromIndex].TargetRef.Namespace.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.Namespace.IsNull() {
-			*namespace = r.Spec.From[fromIndex].TargetRef.Namespace.ValueString()
+		if !r.Spec.TargetRef.Namespace.IsUnknown() && !r.Spec.TargetRef.Namespace.IsNull() {
+			*namespace = r.Spec.TargetRef.Namespace.ValueString()
 		} else {
 			namespace = nil
 		}
-		proxyTypes := make([]shared.MeshRateLimitItemSpecProxyTypes, 0, len(r.Spec.From[fromIndex].TargetRef.ProxyTypes))
-		for _, proxyTypesItem := range r.Spec.From[fromIndex].TargetRef.ProxyTypes {
-			proxyTypes = append(proxyTypes, shared.MeshRateLimitItemSpecProxyTypes(proxyTypesItem.ValueString()))
-		}
 		sectionName := new(string)
-		if !r.Spec.From[fromIndex].TargetRef.SectionName.IsUnknown() && !r.Spec.From[fromIndex].TargetRef.SectionName.IsNull() {
-			*sectionName = r.Spec.From[fromIndex].TargetRef.SectionName.ValueString()
+		if !r.Spec.TargetRef.SectionName.IsUnknown() && !r.Spec.TargetRef.SectionName.IsNull() {
+			*sectionName = r.Spec.TargetRef.SectionName.ValueString()
 		} else {
 			sectionName = nil
 		}
 		tags := make(map[string]string)
-		for tagsKey := range r.Spec.From[fromIndex].TargetRef.Tags {
+		for tagsKey := range r.Spec.TargetRef.Tags {
 			var tagsInst string
-			tagsInst = r.Spec.From[fromIndex].TargetRef.Tags[tagsKey].ValueString()
+			tagsInst = r.Spec.TargetRef.Tags[tagsKey].ValueString()
 
 			tags[tagsKey] = tagsInst
 		}
-		targetRef := shared.MeshRateLimitItemSpecTargetRef{
+		targetRef = &shared.MeshRateLimitItemTargetRef{
 			Kind:        kind,
 			Labels:      labels1,
 			Mesh:        mesh1,
 			Name:        name3,
 			Namespace:   namespace,
-			ProxyTypes:  proxyTypes,
 			SectionName: sectionName,
 			Tags:        tags,
 		}
-		from = append(from, shared.MeshRateLimitItemFrom{
-			Default:   defaultVar,
-			TargetRef: targetRef,
-		})
 	}
-	rules := make([]shared.MeshRateLimitItemRules, 0, len(r.Spec.Rules))
-	for rulesIndex := range r.Spec.Rules {
+	to := make([]shared.MeshRateLimitItemTo, 0, len(r.Spec.To))
+	for toIndex := range r.Spec.To {
 		var default1 *shared.MeshRateLimitItemSpecDefault
-		if r.Spec.Rules[rulesIndex].Default != nil {
+		if r.Spec.To[toIndex].Default != nil {
 			var local1 *shared.MeshRateLimitItemLocal
-			if r.Spec.Rules[rulesIndex].Default.Local != nil {
+			if r.Spec.To[toIndex].Default.Local != nil {
 				var http1 *shared.MeshRateLimitItemSpecHTTP
-				if r.Spec.Rules[rulesIndex].Default.Local.HTTP != nil {
+				if r.Spec.To[toIndex].Default.Local.HTTP != nil {
 					disabled2 := new(bool)
-					if !r.Spec.Rules[rulesIndex].Default.Local.HTTP.Disabled.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.Local.HTTP.Disabled.IsNull() {
-						*disabled2 = r.Spec.Rules[rulesIndex].Default.Local.HTTP.Disabled.ValueBool()
+					if !r.Spec.To[toIndex].Default.Local.HTTP.Disabled.IsUnknown() && !r.Spec.To[toIndex].Default.Local.HTTP.Disabled.IsNull() {
+						*disabled2 = r.Spec.To[toIndex].Default.Local.HTTP.Disabled.ValueBool()
 					} else {
 						disabled2 = nil
 					}
 					var onRateLimit1 *shared.MeshRateLimitItemOnRateLimit
-					if r.Spec.Rules[rulesIndex].Default.Local.HTTP.OnRateLimit != nil {
+					if r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit != nil {
 						var headers1 *shared.MeshRateLimitItemSpecHeaders
-						if r.Spec.Rules[rulesIndex].Default.Local.HTTP.OnRateLimit.Headers != nil {
-							add1 := make([]shared.MeshRateLimitItemSpecAdd, 0, len(r.Spec.Rules[rulesIndex].Default.Local.HTTP.OnRateLimit.Headers.Add))
-							for addIndex1 := range r.Spec.Rules[rulesIndex].Default.Local.HTTP.OnRateLimit.Headers.Add {
+						if r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Headers != nil {
+							add1 := make([]shared.MeshRateLimitItemSpecAdd, 0, len(r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Headers.Add))
+							for addIndex1 := range r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Headers.Add {
 								var name4 string
-								name4 = r.Spec.Rules[rulesIndex].Default.Local.HTTP.OnRateLimit.Headers.Add[addIndex1].Name.ValueString()
+								name4 = r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Headers.Add[addIndex1].Name.ValueString()
 
-								var value2 string
-								value2 = r.Spec.Rules[rulesIndex].Default.Local.HTTP.OnRateLimit.Headers.Add[addIndex1].Value.ValueString()
+								var value4 string
+								value4 = r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Headers.Add[addIndex1].Value.ValueString()
 
 								add1 = append(add1, shared.MeshRateLimitItemSpecAdd{
 									Name:  name4,
-									Value: value2,
+									Value: value4,
 								})
 							}
-							set1 := make([]shared.MeshRateLimitItemSpecSet, 0, len(r.Spec.Rules[rulesIndex].Default.Local.HTTP.OnRateLimit.Headers.Set))
-							for setIndex1 := range r.Spec.Rules[rulesIndex].Default.Local.HTTP.OnRateLimit.Headers.Set {
+							set1 := make([]shared.MeshRateLimitItemSpecSet, 0, len(r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Headers.Set))
+							for setIndex1 := range r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Headers.Set {
 								var name5 string
-								name5 = r.Spec.Rules[rulesIndex].Default.Local.HTTP.OnRateLimit.Headers.Set[setIndex1].Name.ValueString()
+								name5 = r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Headers.Set[setIndex1].Name.ValueString()
 
-								var value3 string
-								value3 = r.Spec.Rules[rulesIndex].Default.Local.HTTP.OnRateLimit.Headers.Set[setIndex1].Value.ValueString()
+								var value5 string
+								value5 = r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Headers.Set[setIndex1].Value.ValueString()
 
 								set1 = append(set1, shared.MeshRateLimitItemSpecSet{
 									Name:  name5,
-									Value: value3,
+									Value: value5,
 								})
 							}
 							headers1 = &shared.MeshRateLimitItemSpecHeaders{
@@ -640,8 +584,8 @@ func (r *MeshRateLimitResourceModel) ToSharedMeshRateLimitItemInput(ctx context.
 							}
 						}
 						status1 := new(int)
-						if !r.Spec.Rules[rulesIndex].Default.Local.HTTP.OnRateLimit.Status.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.Local.HTTP.OnRateLimit.Status.IsNull() {
-							*status1 = int(r.Spec.Rules[rulesIndex].Default.Local.HTTP.OnRateLimit.Status.ValueInt32())
+						if !r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Status.IsUnknown() && !r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Status.IsNull() {
+							*status1 = int(r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Status.ValueInt32())
 						} else {
 							status1 = nil
 						}
@@ -651,12 +595,12 @@ func (r *MeshRateLimitResourceModel) ToSharedMeshRateLimitItemInput(ctx context.
 						}
 					}
 					var requestRate1 *shared.MeshRateLimitItemRequestRate
-					if r.Spec.Rules[rulesIndex].Default.Local.HTTP.RequestRate != nil {
+					if r.Spec.To[toIndex].Default.Local.HTTP.RequestRate != nil {
 						var interval2 string
-						interval2 = r.Spec.Rules[rulesIndex].Default.Local.HTTP.RequestRate.Interval.ValueString()
+						interval2 = r.Spec.To[toIndex].Default.Local.HTTP.RequestRate.Interval.ValueString()
 
 						var num2 int
-						num2 = int(r.Spec.Rules[rulesIndex].Default.Local.HTTP.RequestRate.Num.ValueInt32())
+						num2 = int(r.Spec.To[toIndex].Default.Local.HTTP.RequestRate.Num.ValueInt32())
 
 						requestRate1 = &shared.MeshRateLimitItemRequestRate{
 							Interval: interval2,
@@ -670,14 +614,14 @@ func (r *MeshRateLimitResourceModel) ToSharedMeshRateLimitItemInput(ctx context.
 					}
 				}
 				var tcp1 *shared.MeshRateLimitItemSpecTCP
-				if r.Spec.Rules[rulesIndex].Default.Local.TCP != nil {
+				if r.Spec.To[toIndex].Default.Local.TCP != nil {
 					var connectionRate1 *shared.MeshRateLimitItemConnectionRate
-					if r.Spec.Rules[rulesIndex].Default.Local.TCP.ConnectionRate != nil {
+					if r.Spec.To[toIndex].Default.Local.TCP.ConnectionRate != nil {
 						var interval3 string
-						interval3 = r.Spec.Rules[rulesIndex].Default.Local.TCP.ConnectionRate.Interval.ValueString()
+						interval3 = r.Spec.To[toIndex].Default.Local.TCP.ConnectionRate.Interval.ValueString()
 
 						var num3 int
-						num3 = int(r.Spec.Rules[rulesIndex].Default.Local.TCP.ConnectionRate.Num.ValueInt32())
+						num3 = int(r.Spec.To[toIndex].Default.Local.TCP.ConnectionRate.Num.ValueInt32())
 
 						connectionRate1 = &shared.MeshRateLimitItemConnectionRate{
 							Interval: interval3,
@@ -685,8 +629,8 @@ func (r *MeshRateLimitResourceModel) ToSharedMeshRateLimitItemInput(ctx context.
 						}
 					}
 					disabled3 := new(bool)
-					if !r.Spec.Rules[rulesIndex].Default.Local.TCP.Disabled.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.Local.TCP.Disabled.IsNull() {
-						*disabled3 = r.Spec.Rules[rulesIndex].Default.Local.TCP.Disabled.ValueBool()
+					if !r.Spec.To[toIndex].Default.Local.TCP.Disabled.IsUnknown() && !r.Spec.To[toIndex].Default.Local.TCP.Disabled.IsNull() {
+						*disabled3 = r.Spec.To[toIndex].Default.Local.TCP.Disabled.ValueBool()
 					} else {
 						disabled3 = nil
 					}
@@ -704,242 +648,62 @@ func (r *MeshRateLimitResourceModel) ToSharedMeshRateLimitItemInput(ctx context.
 				Local: local1,
 			}
 		}
-		rules = append(rules, shared.MeshRateLimitItemRules{
-			Default: default1,
-		})
-	}
-	var targetRef1 *shared.MeshRateLimitItemTargetRef
-	if r.Spec.TargetRef != nil {
-		kind1 := shared.MeshRateLimitItemKind(r.Spec.TargetRef.Kind.ValueString())
+		kind1 := shared.MeshRateLimitItemSpecKind(r.Spec.To[toIndex].TargetRef.Kind.ValueString())
 		labels2 := make(map[string]string)
-		for labelsKey1 := range r.Spec.TargetRef.Labels {
+		for labelsKey1 := range r.Spec.To[toIndex].TargetRef.Labels {
 			var labelsInst1 string
-			labelsInst1 = r.Spec.TargetRef.Labels[labelsKey1].ValueString()
+			labelsInst1 = r.Spec.To[toIndex].TargetRef.Labels[labelsKey1].ValueString()
 
 			labels2[labelsKey1] = labelsInst1
 		}
 		mesh2 := new(string)
-		if !r.Spec.TargetRef.Mesh.IsUnknown() && !r.Spec.TargetRef.Mesh.IsNull() {
-			*mesh2 = r.Spec.TargetRef.Mesh.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Mesh.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Mesh.IsNull() {
+			*mesh2 = r.Spec.To[toIndex].TargetRef.Mesh.ValueString()
 		} else {
 			mesh2 = nil
 		}
 		name6 := new(string)
-		if !r.Spec.TargetRef.Name.IsUnknown() && !r.Spec.TargetRef.Name.IsNull() {
-			*name6 = r.Spec.TargetRef.Name.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Name.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Name.IsNull() {
+			*name6 = r.Spec.To[toIndex].TargetRef.Name.ValueString()
 		} else {
 			name6 = nil
 		}
 		namespace1 := new(string)
-		if !r.Spec.TargetRef.Namespace.IsUnknown() && !r.Spec.TargetRef.Namespace.IsNull() {
-			*namespace1 = r.Spec.TargetRef.Namespace.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.Namespace.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Namespace.IsNull() {
+			*namespace1 = r.Spec.To[toIndex].TargetRef.Namespace.ValueString()
 		} else {
 			namespace1 = nil
 		}
-		proxyTypes1 := make([]shared.MeshRateLimitItemProxyTypes, 0, len(r.Spec.TargetRef.ProxyTypes))
-		for _, proxyTypesItem1 := range r.Spec.TargetRef.ProxyTypes {
-			proxyTypes1 = append(proxyTypes1, shared.MeshRateLimitItemProxyTypes(proxyTypesItem1.ValueString()))
-		}
 		sectionName1 := new(string)
-		if !r.Spec.TargetRef.SectionName.IsUnknown() && !r.Spec.TargetRef.SectionName.IsNull() {
-			*sectionName1 = r.Spec.TargetRef.SectionName.ValueString()
+		if !r.Spec.To[toIndex].TargetRef.SectionName.IsUnknown() && !r.Spec.To[toIndex].TargetRef.SectionName.IsNull() {
+			*sectionName1 = r.Spec.To[toIndex].TargetRef.SectionName.ValueString()
 		} else {
 			sectionName1 = nil
 		}
 		tags1 := make(map[string]string)
-		for tagsKey1 := range r.Spec.TargetRef.Tags {
+		for tagsKey1 := range r.Spec.To[toIndex].TargetRef.Tags {
 			var tagsInst1 string
-			tagsInst1 = r.Spec.TargetRef.Tags[tagsKey1].ValueString()
+			tagsInst1 = r.Spec.To[toIndex].TargetRef.Tags[tagsKey1].ValueString()
 
 			tags1[tagsKey1] = tagsInst1
 		}
-		targetRef1 = &shared.MeshRateLimitItemTargetRef{
+		targetRef1 := shared.MeshRateLimitItemSpecTargetRef{
 			Kind:        kind1,
 			Labels:      labels2,
 			Mesh:        mesh2,
 			Name:        name6,
 			Namespace:   namespace1,
-			ProxyTypes:  proxyTypes1,
 			SectionName: sectionName1,
 			Tags:        tags1,
 		}
-	}
-	to := make([]shared.MeshRateLimitItemTo, 0, len(r.Spec.To))
-	for toIndex := range r.Spec.To {
-		var default2 *shared.MeshRateLimitItemSpecToDefault
-		if r.Spec.To[toIndex].Default != nil {
-			var local2 *shared.MeshRateLimitItemSpecLocal
-			if r.Spec.To[toIndex].Default.Local != nil {
-				var http2 *shared.MeshRateLimitItemSpecToHTTP
-				if r.Spec.To[toIndex].Default.Local.HTTP != nil {
-					disabled4 := new(bool)
-					if !r.Spec.To[toIndex].Default.Local.HTTP.Disabled.IsUnknown() && !r.Spec.To[toIndex].Default.Local.HTTP.Disabled.IsNull() {
-						*disabled4 = r.Spec.To[toIndex].Default.Local.HTTP.Disabled.ValueBool()
-					} else {
-						disabled4 = nil
-					}
-					var onRateLimit2 *shared.MeshRateLimitItemSpecOnRateLimit
-					if r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit != nil {
-						var headers2 *shared.MeshRateLimitItemSpecToHeaders
-						if r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Headers != nil {
-							add2 := make([]shared.MeshRateLimitItemSpecToAdd, 0, len(r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Headers.Add))
-							for addIndex2 := range r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Headers.Add {
-								var name7 string
-								name7 = r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Headers.Add[addIndex2].Name.ValueString()
-
-								var value4 string
-								value4 = r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Headers.Add[addIndex2].Value.ValueString()
-
-								add2 = append(add2, shared.MeshRateLimitItemSpecToAdd{
-									Name:  name7,
-									Value: value4,
-								})
-							}
-							set2 := make([]shared.MeshRateLimitItemSpecToSet, 0, len(r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Headers.Set))
-							for setIndex2 := range r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Headers.Set {
-								var name8 string
-								name8 = r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Headers.Set[setIndex2].Name.ValueString()
-
-								var value5 string
-								value5 = r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Headers.Set[setIndex2].Value.ValueString()
-
-								set2 = append(set2, shared.MeshRateLimitItemSpecToSet{
-									Name:  name8,
-									Value: value5,
-								})
-							}
-							headers2 = &shared.MeshRateLimitItemSpecToHeaders{
-								Add: add2,
-								Set: set2,
-							}
-						}
-						status2 := new(int)
-						if !r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Status.IsUnknown() && !r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Status.IsNull() {
-							*status2 = int(r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Status.ValueInt32())
-						} else {
-							status2 = nil
-						}
-						onRateLimit2 = &shared.MeshRateLimitItemSpecOnRateLimit{
-							Headers: headers2,
-							Status:  status2,
-						}
-					}
-					var requestRate2 *shared.MeshRateLimitItemSpecRequestRate
-					if r.Spec.To[toIndex].Default.Local.HTTP.RequestRate != nil {
-						var interval4 string
-						interval4 = r.Spec.To[toIndex].Default.Local.HTTP.RequestRate.Interval.ValueString()
-
-						var num4 int
-						num4 = int(r.Spec.To[toIndex].Default.Local.HTTP.RequestRate.Num.ValueInt32())
-
-						requestRate2 = &shared.MeshRateLimitItemSpecRequestRate{
-							Interval: interval4,
-							Num:      num4,
-						}
-					}
-					http2 = &shared.MeshRateLimitItemSpecToHTTP{
-						Disabled:    disabled4,
-						OnRateLimit: onRateLimit2,
-						RequestRate: requestRate2,
-					}
-				}
-				var tcp2 *shared.MeshRateLimitItemSpecToTCP
-				if r.Spec.To[toIndex].Default.Local.TCP != nil {
-					var connectionRate2 *shared.MeshRateLimitItemSpecConnectionRate
-					if r.Spec.To[toIndex].Default.Local.TCP.ConnectionRate != nil {
-						var interval5 string
-						interval5 = r.Spec.To[toIndex].Default.Local.TCP.ConnectionRate.Interval.ValueString()
-
-						var num5 int
-						num5 = int(r.Spec.To[toIndex].Default.Local.TCP.ConnectionRate.Num.ValueInt32())
-
-						connectionRate2 = &shared.MeshRateLimitItemSpecConnectionRate{
-							Interval: interval5,
-							Num:      num5,
-						}
-					}
-					disabled5 := new(bool)
-					if !r.Spec.To[toIndex].Default.Local.TCP.Disabled.IsUnknown() && !r.Spec.To[toIndex].Default.Local.TCP.Disabled.IsNull() {
-						*disabled5 = r.Spec.To[toIndex].Default.Local.TCP.Disabled.ValueBool()
-					} else {
-						disabled5 = nil
-					}
-					tcp2 = &shared.MeshRateLimitItemSpecToTCP{
-						ConnectionRate: connectionRate2,
-						Disabled:       disabled5,
-					}
-				}
-				local2 = &shared.MeshRateLimitItemSpecLocal{
-					HTTP: http2,
-					TCP:  tcp2,
-				}
-			}
-			default2 = &shared.MeshRateLimitItemSpecToDefault{
-				Local: local2,
-			}
-		}
-		kind2 := shared.MeshRateLimitItemSpecToKind(r.Spec.To[toIndex].TargetRef.Kind.ValueString())
-		labels3 := make(map[string]string)
-		for labelsKey2 := range r.Spec.To[toIndex].TargetRef.Labels {
-			var labelsInst2 string
-			labelsInst2 = r.Spec.To[toIndex].TargetRef.Labels[labelsKey2].ValueString()
-
-			labels3[labelsKey2] = labelsInst2
-		}
-		mesh3 := new(string)
-		if !r.Spec.To[toIndex].TargetRef.Mesh.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Mesh.IsNull() {
-			*mesh3 = r.Spec.To[toIndex].TargetRef.Mesh.ValueString()
-		} else {
-			mesh3 = nil
-		}
-		name9 := new(string)
-		if !r.Spec.To[toIndex].TargetRef.Name.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Name.IsNull() {
-			*name9 = r.Spec.To[toIndex].TargetRef.Name.ValueString()
-		} else {
-			name9 = nil
-		}
-		namespace2 := new(string)
-		if !r.Spec.To[toIndex].TargetRef.Namespace.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Namespace.IsNull() {
-			*namespace2 = r.Spec.To[toIndex].TargetRef.Namespace.ValueString()
-		} else {
-			namespace2 = nil
-		}
-		proxyTypes2 := make([]shared.MeshRateLimitItemSpecToProxyTypes, 0, len(r.Spec.To[toIndex].TargetRef.ProxyTypes))
-		for _, proxyTypesItem2 := range r.Spec.To[toIndex].TargetRef.ProxyTypes {
-			proxyTypes2 = append(proxyTypes2, shared.MeshRateLimitItemSpecToProxyTypes(proxyTypesItem2.ValueString()))
-		}
-		sectionName2 := new(string)
-		if !r.Spec.To[toIndex].TargetRef.SectionName.IsUnknown() && !r.Spec.To[toIndex].TargetRef.SectionName.IsNull() {
-			*sectionName2 = r.Spec.To[toIndex].TargetRef.SectionName.ValueString()
-		} else {
-			sectionName2 = nil
-		}
-		tags2 := make(map[string]string)
-		for tagsKey2 := range r.Spec.To[toIndex].TargetRef.Tags {
-			var tagsInst2 string
-			tagsInst2 = r.Spec.To[toIndex].TargetRef.Tags[tagsKey2].ValueString()
-
-			tags2[tagsKey2] = tagsInst2
-		}
-		targetRef2 := shared.MeshRateLimitItemSpecToTargetRef{
-			Kind:        kind2,
-			Labels:      labels3,
-			Mesh:        mesh3,
-			Name:        name9,
-			Namespace:   namespace2,
-			ProxyTypes:  proxyTypes2,
-			SectionName: sectionName2,
-			Tags:        tags2,
-		}
 		to = append(to, shared.MeshRateLimitItemTo{
-			Default:   default2,
-			TargetRef: targetRef2,
+			Default:   default1,
+			TargetRef: targetRef1,
 		})
 	}
 	spec := shared.MeshRateLimitItemSpec{
-		From:      from,
 		Rules:     rules,
-		TargetRef: targetRef1,
+		TargetRef: targetRef,
 		To:        to,
 	}
 	out := shared.MeshRateLimitItemInput{

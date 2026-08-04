@@ -6,6 +6,7 @@ import (
 	"context"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
@@ -28,17 +29,20 @@ func (r *MeshZoneEgressResourceModel) RefreshFromSharedZoneEgressItem(ctx contex
 	var diags diag.Diagnostics
 
 	if resp != nil {
+		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
+		r.Kri = types.StringPointerValue(resp.Kri)
 		if len(resp.Labels) > 0 {
 			r.Labels = make(map[string]types.String, len(resp.Labels))
 			for key, value := range resp.Labels {
 				r.Labels[key] = types.StringValue(value)
 			}
 		}
+		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
 		if resp.Networking == nil {
 			r.Networking = nil
 		} else {
-			r.Networking = &tfTypes.ZoneEgressItemNetworking{}
+			r.Networking = &tfTypes.Networking{}
 			r.Networking.Address = types.StringPointerValue(resp.Networking.Address)
 			if resp.Networking.Admin == nil {
 				r.Networking.Admin = nil
@@ -87,7 +91,7 @@ func (r *MeshZoneEgressResourceModel) ToOperationsPutZoneEgressRequest(ctx conte
 	var name string
 	name = r.Name.ValueString()
 
-	zoneEgressItem, zoneEgressItemDiags := r.ToSharedZoneEgressItem(ctx)
+	zoneEgressItem, zoneEgressItemDiags := r.ToSharedZoneEgressItemInput(ctx)
 	diags.Append(zoneEgressItemDiags...)
 
 	if diags.HasError() {
@@ -102,7 +106,7 @@ func (r *MeshZoneEgressResourceModel) ToOperationsPutZoneEgressRequest(ctx conte
 	return &out, diags
 }
 
-func (r *MeshZoneEgressResourceModel) ToSharedZoneEgressItem(ctx context.Context) (*shared.ZoneEgressItem, diag.Diagnostics) {
+func (r *MeshZoneEgressResourceModel) ToSharedZoneEgressItemInput(ctx context.Context) (*shared.ZoneEgressItemInput, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	labels := make(map[string]string)
@@ -115,7 +119,7 @@ func (r *MeshZoneEgressResourceModel) ToSharedZoneEgressItem(ctx context.Context
 	var name string
 	name = r.Name.ValueString()
 
-	var networking *shared.ZoneEgressItemNetworking
+	var networking *shared.Networking
 	if r.Networking != nil {
 		address := new(string)
 		if !r.Networking.Address.IsUnknown() && !r.Networking.Address.IsNull() {
@@ -141,7 +145,7 @@ func (r *MeshZoneEgressResourceModel) ToSharedZoneEgressItem(ctx context.Context
 		} else {
 			port1 = nil
 		}
-		networking = &shared.ZoneEgressItemNetworking{
+		networking = &shared.Networking{
 			Address: address,
 			Admin:   admin,
 			Port:    port1,
@@ -156,7 +160,7 @@ func (r *MeshZoneEgressResourceModel) ToSharedZoneEgressItem(ctx context.Context
 	} else {
 		zone = nil
 	}
-	out := shared.ZoneEgressItem{
+	out := shared.ZoneEgressItemInput{
 		Labels:     labels,
 		Name:       name,
 		Networking: networking,

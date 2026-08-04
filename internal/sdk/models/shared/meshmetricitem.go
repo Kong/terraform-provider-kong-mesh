@@ -83,19 +83,68 @@ func (a *Applications) GetPort() int {
 	return a.Port
 }
 
+// MeshMetricItemSpecKind - Kind of the backend resource.
+type MeshMetricItemSpecKind string
+
+const (
+	MeshMetricItemSpecKindMeshOpenTelemetryBackend MeshMetricItemSpecKind = "MeshOpenTelemetryBackend"
+)
+
+func (e MeshMetricItemSpecKind) ToPointer() *MeshMetricItemSpecKind {
+	return &e
+}
+func (e *MeshMetricItemSpecKind) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "MeshOpenTelemetryBackend":
+		*e = MeshMetricItemSpecKind(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshMetricItemSpecKind: %v", v)
+	}
+}
+
+// BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+// defines the collector endpoint.
+type BackendRef struct {
+	// Kind of the backend resource.
+	Kind MeshMetricItemSpecKind `json:"kind"`
+	// Labels to match the referenced resource. When multiple resources match,
+	// the oldest by creation time wins.
+	Labels map[string]string `json:"labels,omitempty"`
+}
+
+func (b *BackendRef) GetKind() MeshMetricItemSpecKind {
+	if b == nil {
+		return MeshMetricItemSpecKind("")
+	}
+	return b.Kind
+}
+
+func (b *BackendRef) GetLabels() map[string]string {
+	if b == nil {
+		return nil
+	}
+	return b.Labels
+}
+
 // OpenTelemetry backend configuration
 type OpenTelemetry struct {
-	// Endpoint for OpenTelemetry collector
-	Endpoint string `json:"endpoint"`
+	// BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+	// defines the collector endpoint.
+	BackendRef *BackendRef `json:"backendRef,omitempty"`
 	// RefreshInterval defines how frequent metrics should be pushed to collector
 	RefreshInterval *string `json:"refreshInterval,omitempty"`
 }
 
-func (o *OpenTelemetry) GetEndpoint() string {
+func (o *OpenTelemetry) GetBackendRef() *BackendRef {
 	if o == nil {
-		return ""
+		return nil
 	}
-	return o.Endpoint
+	return o.BackendRef
 }
 
 func (o *OpenTelemetry) GetRefreshInterval() *string {
@@ -445,7 +494,8 @@ func (s *Sidecar) GetProfiles() *Profiles {
 
 // Default - MeshMetric configuration.
 type Default struct {
-	// Applications is a list of application that Dataplane Proxy will scrape
+	// Applications is a list of applications that Dataplane Proxy will scrape.
+	// Ignored on zone-proxy-only Dataplanes (zone ingress/egress exist without a co-located workload).
 	Applications []Applications `json:"applications,omitempty"`
 	// Backends list that will be used to collect metrics.
 	Backends []MeshMetricItemBackends `json:"backends,omitempty"`
@@ -480,7 +530,6 @@ type MeshMetricItemKind string
 const (
 	MeshMetricItemKindMesh                 MeshMetricItemKind = "Mesh"
 	MeshMetricItemKindMeshSubset           MeshMetricItemKind = "MeshSubset"
-	MeshMetricItemKindMeshGateway          MeshMetricItemKind = "MeshGateway"
 	MeshMetricItemKindMeshService          MeshMetricItemKind = "MeshService"
 	MeshMetricItemKindMeshExternalService  MeshMetricItemKind = "MeshExternalService"
 	MeshMetricItemKindMeshMultiZoneService MeshMetricItemKind = "MeshMultiZoneService"
@@ -497,29 +546,7 @@ func (e MeshMetricItemKind) ToPointer() *MeshMetricItemKind {
 func (e *MeshMetricItemKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshMetricItemProxyTypes string
-
-const (
-	MeshMetricItemProxyTypesSidecar MeshMetricItemProxyTypes = "Sidecar"
-	MeshMetricItemProxyTypesGateway MeshMetricItemProxyTypes = "Gateway"
-)
-
-func (e MeshMetricItemProxyTypes) ToPointer() *MeshMetricItemProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshMetricItemProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
+		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
 			return true
 		}
 	}
@@ -537,15 +564,12 @@ type MeshMetricItemTargetRef struct {
 	Labels map[string]string `json:"labels,omitempty"`
 	// Mesh is reserved for future use to identify cross mesh resources.
 	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
+	// Name of the referenced resource. Can only be used with kinds: `MeshService`
+	// and `MeshServiceSubset`
 	Name *string `json:"name,omitempty"`
 	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 	// will be targeted.
 	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshMetricItemProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
@@ -589,13 +613,6 @@ func (m *MeshMetricItemTargetRef) GetNamespace() *string {
 	return m.Namespace
 }
 
-func (m *MeshMetricItemTargetRef) GetProxyTypes() []MeshMetricItemProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
 func (m *MeshMetricItemTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
@@ -634,6 +651,86 @@ func (m *MeshMetricItemSpec) GetTargetRef() *MeshMetricItemTargetRef {
 	return m.TargetRef
 }
 
+// MeshMetricItemStatusStatus - status of the condition, one of True, False, Unknown.
+type MeshMetricItemStatusStatus string
+
+const (
+	MeshMetricItemStatusStatusTrue    MeshMetricItemStatusStatus = "True"
+	MeshMetricItemStatusStatusFalse   MeshMetricItemStatusStatus = "False"
+	MeshMetricItemStatusStatusUnknown MeshMetricItemStatusStatus = "Unknown"
+)
+
+func (e MeshMetricItemStatusStatus) ToPointer() *MeshMetricItemStatusStatus {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshMetricItemStatusStatus) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "True", "False", "Unknown":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshMetricItemConditions struct {
+	// message is a human readable message indicating details about the transition.
+	// This may be an empty string.
+	Message string `json:"message"`
+	// reason contains a programmatic identifier indicating the reason for the condition's last transition.
+	// Producers of specific condition types may define expected values and meanings for this field,
+	// and whether the values are considered a guaranteed API.
+	// The value should be a CamelCase string.
+	// This field may not be empty.
+	Reason string `json:"reason"`
+	// status of the condition, one of True, False, Unknown.
+	Status MeshMetricItemStatusStatus `json:"status"`
+	// type of condition in CamelCase or in foo.example.com/CamelCase.
+	Type string `json:"type"`
+}
+
+func (m *MeshMetricItemConditions) GetMessage() string {
+	if m == nil {
+		return ""
+	}
+	return m.Message
+}
+
+func (m *MeshMetricItemConditions) GetReason() string {
+	if m == nil {
+		return ""
+	}
+	return m.Reason
+}
+
+func (m *MeshMetricItemConditions) GetStatus() MeshMetricItemStatusStatus {
+	if m == nil {
+		return MeshMetricItemStatusStatus("")
+	}
+	return m.Status
+}
+
+func (m *MeshMetricItemConditions) GetType() string {
+	if m == nil {
+		return ""
+	}
+	return m.Type
+}
+
+// MeshMetricItemStatus - Status is the current status of the Kuma MeshMetric resource.
+type MeshMetricItemStatus struct {
+	Conditions []MeshMetricItemConditions `json:"conditions,omitempty"`
+}
+
+func (m *MeshMetricItemStatus) GetConditions() []MeshMetricItemConditions {
+	if m == nil {
+		return nil
+	}
+	return m.Conditions
+}
+
 // MeshMetricItem - MeshMetric enables collection and export of service mesh metrics. It configures sidecar and application metrics scraping, allows customization of which metrics are published, and supports exporting to Prometheus or OpenTelemetry backends for monitoring and observability.
 type MeshMetricItem struct {
 	// the type of the resource
@@ -652,6 +749,8 @@ type MeshMetricItem struct {
 	CreationTime *time.Time `json:"creationTime,omitempty"`
 	// Time at which the resource was updated
 	ModificationTime *time.Time `json:"modificationTime,omitempty"`
+	// Status is the current status of the Kuma MeshMetric resource.
+	Status *MeshMetricItemStatus `json:"status,omitempty"`
 }
 
 func (m MeshMetricItem) MarshalJSON() ([]byte, error) {
@@ -719,6 +818,13 @@ func (m *MeshMetricItem) GetModificationTime() *time.Time {
 		return nil
 	}
 	return m.ModificationTime
+}
+
+func (m *MeshMetricItem) GetStatus() *MeshMetricItemStatus {
+	if m == nil {
+		return nil
+	}
+	return m.Status
 }
 
 // MeshMetricItemInput - MeshMetric enables collection and export of service mesh metrics. It configures sidecar and application metrics scraping, allows customization of which metrics are published, and supports exporting to Prometheus or OpenTelemetry backends for monitoring and observability.

@@ -66,7 +66,18 @@ func (r *MeshMetricResourceModel) RefreshFromSharedMeshMetricItem(ctx context.Co
 					backends.OpenTelemetry = nil
 				} else {
 					backends.OpenTelemetry = &tfTypes.OpenTelemetry{}
-					backends.OpenTelemetry.Endpoint = types.StringValue(backendsItem.OpenTelemetry.Endpoint)
+					if backendsItem.OpenTelemetry.BackendRef == nil {
+						backends.OpenTelemetry.BackendRef = nil
+					} else {
+						backends.OpenTelemetry.BackendRef = &tfTypes.MeshAccessLogItemSpecBackendRef{}
+						backends.OpenTelemetry.BackendRef.Kind = types.StringValue(string(backendsItem.OpenTelemetry.BackendRef.Kind))
+						if len(backendsItem.OpenTelemetry.BackendRef.Labels) > 0 {
+							backends.OpenTelemetry.BackendRef.Labels = make(map[string]types.String, len(backendsItem.OpenTelemetry.BackendRef.Labels))
+							for key, value := range backendsItem.OpenTelemetry.BackendRef.Labels {
+								backends.OpenTelemetry.BackendRef.Labels[key] = types.StringValue(value)
+							}
+						}
+					}
 					backends.OpenTelemetry.RefreshInterval = types.StringPointerValue(backendsItem.OpenTelemetry.RefreshInterval)
 				}
 				if backendsItem.Prometheus == nil {
@@ -135,27 +146,40 @@ func (r *MeshMetricResourceModel) RefreshFromSharedMeshMetricItem(ctx context.Co
 		if resp.Spec.TargetRef == nil {
 			r.Spec.TargetRef = nil
 		} else {
-			r.Spec.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
+			r.Spec.TargetRef = &tfTypes.TargetRef{}
 			r.Spec.TargetRef.Kind = types.StringValue(string(resp.Spec.TargetRef.Kind))
 			if len(resp.Spec.TargetRef.Labels) > 0 {
 				r.Spec.TargetRef.Labels = make(map[string]types.String, len(resp.Spec.TargetRef.Labels))
-				for key, value := range resp.Spec.TargetRef.Labels {
-					r.Spec.TargetRef.Labels[key] = types.StringValue(value)
+				for key1, value1 := range resp.Spec.TargetRef.Labels {
+					r.Spec.TargetRef.Labels[key1] = types.StringValue(value1)
 				}
 			}
 			r.Spec.TargetRef.Mesh = types.StringPointerValue(resp.Spec.TargetRef.Mesh)
 			r.Spec.TargetRef.Name = types.StringPointerValue(resp.Spec.TargetRef.Name)
 			r.Spec.TargetRef.Namespace = types.StringPointerValue(resp.Spec.TargetRef.Namespace)
-			r.Spec.TargetRef.ProxyTypes = make([]types.String, 0, len(resp.Spec.TargetRef.ProxyTypes))
-			for _, v := range resp.Spec.TargetRef.ProxyTypes {
-				r.Spec.TargetRef.ProxyTypes = append(r.Spec.TargetRef.ProxyTypes, types.StringValue(string(v)))
-			}
 			r.Spec.TargetRef.SectionName = types.StringPointerValue(resp.Spec.TargetRef.SectionName)
 			if len(resp.Spec.TargetRef.Tags) > 0 {
 				r.Spec.TargetRef.Tags = make(map[string]types.String, len(resp.Spec.TargetRef.Tags))
-				for key1, value1 := range resp.Spec.TargetRef.Tags {
-					r.Spec.TargetRef.Tags[key1] = types.StringValue(value1)
+				for key2, value2 := range resp.Spec.TargetRef.Tags {
+					r.Spec.TargetRef.Tags[key2] = types.StringValue(value2)
 				}
+			}
+		}
+		if resp.Status == nil {
+			r.Status = nil
+		} else {
+			r.Status = &tfTypes.Status{}
+			r.Status.Conditions = []tfTypes.Conditions{}
+
+			for _, conditionsItem := range resp.Status.Conditions {
+				var conditions tfTypes.Conditions
+
+				conditions.Message = types.StringValue(conditionsItem.Message)
+				conditions.Reason = types.StringValue(conditionsItem.Reason)
+				conditions.Status = types.StringValue(string(conditionsItem.Status))
+				conditions.Type = types.StringValue(conditionsItem.Type)
+
+				r.Status.Conditions = append(r.Status.Conditions, conditions)
 			}
 		}
 		r.Type = types.StringValue(string(resp.Type))
@@ -276,9 +300,21 @@ func (r *MeshMetricResourceModel) ToSharedMeshMetricItemInput(ctx context.Contex
 		for backendsIndex := range r.Spec.Default.Backends {
 			var openTelemetry *shared.OpenTelemetry
 			if r.Spec.Default.Backends[backendsIndex].OpenTelemetry != nil {
-				var endpoint string
-				endpoint = r.Spec.Default.Backends[backendsIndex].OpenTelemetry.Endpoint.ValueString()
+				var backendRef *shared.BackendRef
+				if r.Spec.Default.Backends[backendsIndex].OpenTelemetry.BackendRef != nil {
+					kind := shared.MeshMetricItemSpecKind(r.Spec.Default.Backends[backendsIndex].OpenTelemetry.BackendRef.Kind.ValueString())
+					labels1 := make(map[string]string)
+					for labelsKey := range r.Spec.Default.Backends[backendsIndex].OpenTelemetry.BackendRef.Labels {
+						var labelsInst string
+						labelsInst = r.Spec.Default.Backends[backendsIndex].OpenTelemetry.BackendRef.Labels[labelsKey].ValueString()
 
+						labels1[labelsKey] = labelsInst
+					}
+					backendRef = &shared.BackendRef{
+						Kind:   kind,
+						Labels: labels1,
+					}
+				}
 				refreshInterval := new(string)
 				if !r.Spec.Default.Backends[backendsIndex].OpenTelemetry.RefreshInterval.IsUnknown() && !r.Spec.Default.Backends[backendsIndex].OpenTelemetry.RefreshInterval.IsNull() {
 					*refreshInterval = r.Spec.Default.Backends[backendsIndex].OpenTelemetry.RefreshInterval.ValueString()
@@ -286,7 +322,7 @@ func (r *MeshMetricResourceModel) ToSharedMeshMetricItemInput(ctx context.Contex
 					refreshInterval = nil
 				}
 				openTelemetry = &shared.OpenTelemetry{
-					Endpoint:        endpoint,
+					BackendRef:      backendRef,
 					RefreshInterval: refreshInterval,
 				}
 			}
@@ -394,13 +430,13 @@ func (r *MeshMetricResourceModel) ToSharedMeshMetricItemInput(ctx context.Contex
 	}
 	var targetRef *shared.MeshMetricItemTargetRef
 	if r.Spec.TargetRef != nil {
-		kind := shared.MeshMetricItemKind(r.Spec.TargetRef.Kind.ValueString())
-		labels1 := make(map[string]string)
-		for labelsKey := range r.Spec.TargetRef.Labels {
-			var labelsInst string
-			labelsInst = r.Spec.TargetRef.Labels[labelsKey].ValueString()
+		kind1 := shared.MeshMetricItemKind(r.Spec.TargetRef.Kind.ValueString())
+		labels2 := make(map[string]string)
+		for labelsKey1 := range r.Spec.TargetRef.Labels {
+			var labelsInst1 string
+			labelsInst1 = r.Spec.TargetRef.Labels[labelsKey1].ValueString()
 
-			labels1[labelsKey] = labelsInst
+			labels2[labelsKey1] = labelsInst1
 		}
 		mesh1 := new(string)
 		if !r.Spec.TargetRef.Mesh.IsUnknown() && !r.Spec.TargetRef.Mesh.IsNull() {
@@ -420,10 +456,6 @@ func (r *MeshMetricResourceModel) ToSharedMeshMetricItemInput(ctx context.Contex
 		} else {
 			namespace = nil
 		}
-		proxyTypes := make([]shared.MeshMetricItemProxyTypes, 0, len(r.Spec.TargetRef.ProxyTypes))
-		for _, proxyTypesItem := range r.Spec.TargetRef.ProxyTypes {
-			proxyTypes = append(proxyTypes, shared.MeshMetricItemProxyTypes(proxyTypesItem.ValueString()))
-		}
 		sectionName := new(string)
 		if !r.Spec.TargetRef.SectionName.IsUnknown() && !r.Spec.TargetRef.SectionName.IsNull() {
 			*sectionName = r.Spec.TargetRef.SectionName.ValueString()
@@ -438,12 +470,11 @@ func (r *MeshMetricResourceModel) ToSharedMeshMetricItemInput(ctx context.Contex
 			tags[tagsKey] = tagsInst
 		}
 		targetRef = &shared.MeshMetricItemTargetRef{
-			Kind:        kind,
-			Labels:      labels1,
+			Kind:        kind1,
+			Labels:      labels2,
 			Mesh:        mesh1,
 			Name:        name3,
 			Namespace:   namespace,
-			ProxyTypes:  proxyTypes,
 			SectionName: sectionName,
 			Tags:        tags,
 		}

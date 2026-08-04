@@ -10,12 +10,9 @@ resource "kong-mesh_mesh_http_route" "my_meshhttproute" {
       labels = {
         key = "value"
       }
-      mesh      = "...my_mesh..."
-      name      = "...my_name..."
-      namespace = "...my_namespace..."
-      proxy_types = [
-        "Sidecar"
-      ]
+      mesh         = "...my_mesh..."
+      name         = "...my_name..."
+      namespace    = "...my_namespace..."
       section_name = "...my_section_name..."
       tags = {
         key = "value"
@@ -35,13 +32,10 @@ resource "kong-mesh_mesh_http_route" "my_meshhttproute" {
                   labels = {
                     key = "value"
                   }
-                  mesh      = "...my_mesh..."
-                  name      = "...my_name..."
-                  namespace = "...my_namespace..."
-                  port      = 10
-                  proxy_types = [
-                    "Gateway"
-                  ]
+                  mesh         = "...my_mesh..."
+                  name         = "...my_name..."
+                  namespace    = "...my_namespace..."
+                  port         = 10
                   section_name = "...my_section_name..."
                   tags = {
                     key = "value"
@@ -74,13 +68,10 @@ resource "kong-mesh_mesh_http_route" "my_meshhttproute" {
                       labels = {
                         key = "value"
                       }
-                      mesh      = "...my_mesh..."
-                      name      = "...my_name..."
-                      namespace = "...my_namespace..."
-                      port      = 4
-                      proxy_types = [
-                        "Sidecar"
-                      ]
+                      mesh         = "...my_mesh..."
+                      name         = "...my_name..."
+                      namespace    = "...my_namespace..."
+                      port         = 4
                       section_name = "...my_section_name..."
                       tags = {
                         key = "value"
@@ -158,16 +149,13 @@ resource "kong-mesh_mesh_http_route" "my_meshhttproute" {
           }
         ]
         target_ref = {
-          kind = "MeshServiceSubset"
+          kind = "MeshHTTPRoute"
           labels = {
             key = "value"
           }
-          mesh      = "...my_mesh..."
-          name      = "...my_name..."
-          namespace = "...my_namespace..."
-          proxy_types = [
-            "Gateway"
-          ]
+          mesh         = "...my_mesh..."
+          name         = "...my_name..."
+          namespace    = "...my_namespace..."
           section_name = "...my_section_name..."
           tags = {
             key = "value"

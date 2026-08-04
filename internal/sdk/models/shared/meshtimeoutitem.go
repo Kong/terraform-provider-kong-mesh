@@ -92,8 +92,7 @@ func (m *MeshTimeoutItemHTTP) GetStreamIdleTimeout() *string {
 	return m.StreamIdleTimeout
 }
 
-// MeshTimeoutItemDefault - Default is a configuration specific to the group of clients referenced in
-// 'targetRef'
+// MeshTimeoutItemDefault - Default contains configuration of the inbound timeouts
 type MeshTimeoutItemDefault struct {
 	// ConnectionTimeout specifies the amount of time proxy will wait for an TCP connection to be established.
 	// Default value is 5 seconds. Cannot be set to 0.
@@ -127,77 +126,185 @@ func (m *MeshTimeoutItemDefault) GetIdleTimeout() *string {
 	return m.IdleTimeout
 }
 
-// MeshTimeoutItemSpecKind - Kind of the referenced resource
-type MeshTimeoutItemSpecKind string
+// MeshTimeoutItemSpecType - Type defines how to match traffic by SNI. Only `Exact` is supported.
+type MeshTimeoutItemSpecType string
 
 const (
-	MeshTimeoutItemSpecKindMesh                 MeshTimeoutItemSpecKind = "Mesh"
-	MeshTimeoutItemSpecKindMeshSubset           MeshTimeoutItemSpecKind = "MeshSubset"
-	MeshTimeoutItemSpecKindMeshGateway          MeshTimeoutItemSpecKind = "MeshGateway"
-	MeshTimeoutItemSpecKindMeshService          MeshTimeoutItemSpecKind = "MeshService"
-	MeshTimeoutItemSpecKindMeshExternalService  MeshTimeoutItemSpecKind = "MeshExternalService"
-	MeshTimeoutItemSpecKindMeshMultiZoneService MeshTimeoutItemSpecKind = "MeshMultiZoneService"
-	MeshTimeoutItemSpecKindMeshServiceSubset    MeshTimeoutItemSpecKind = "MeshServiceSubset"
-	MeshTimeoutItemSpecKindMeshHTTPRoute        MeshTimeoutItemSpecKind = "MeshHTTPRoute"
-	MeshTimeoutItemSpecKindDataplane            MeshTimeoutItemSpecKind = "Dataplane"
+	MeshTimeoutItemSpecTypeExact MeshTimeoutItemSpecType = "Exact"
 )
 
-func (e MeshTimeoutItemSpecKind) ToPointer() *MeshTimeoutItemSpecKind {
+func (e MeshTimeoutItemSpecType) ToPointer() *MeshTimeoutItemSpecType {
+	return &e
+}
+func (e *MeshTimeoutItemSpecType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "Exact":
+		*e = MeshTimeoutItemSpecType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshTimeoutItemSpecType: %v", v)
+	}
+}
+
+// MeshTimeoutItemSni - SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+type MeshTimeoutItemSni struct {
+	// Type defines how to match traffic by SNI. Only `Exact` is supported.
+	Type MeshTimeoutItemSpecType `json:"type"`
+	// Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied
+	Value string `json:"value"`
+}
+
+func (m *MeshTimeoutItemSni) GetType() MeshTimeoutItemSpecType {
+	if m == nil {
+		return MeshTimeoutItemSpecType("")
+	}
+	return m.Type
+}
+
+func (m *MeshTimeoutItemSni) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// MeshTimeoutItemSpecRulesType - Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
+type MeshTimeoutItemSpecRulesType string
+
+const (
+	MeshTimeoutItemSpecRulesTypeExact  MeshTimeoutItemSpecRulesType = "Exact"
+	MeshTimeoutItemSpecRulesTypePrefix MeshTimeoutItemSpecRulesType = "Prefix"
+)
+
+func (e MeshTimeoutItemSpecRulesType) ToPointer() *MeshTimeoutItemSpecRulesType {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshTimeoutItemSpecKind) IsExact() bool {
+func (e *MeshTimeoutItemSpecRulesType) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+		case "Exact", "Prefix":
 			return true
 		}
 	}
 	return false
 }
 
-type MeshTimeoutItemSpecProxyTypes string
+// MeshTimeoutItemSpiffeID - SpiffeID defines a matcher configuration for SpiffeID matching
+type MeshTimeoutItemSpiffeID struct {
+	// Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
+	Type MeshTimeoutItemSpecRulesType `json:"type"`
+	// Value is SpiffeID of a client that needs to match for the configuration to be applied
+	Value string `json:"value"`
+}
+
+func (m *MeshTimeoutItemSpiffeID) GetType() MeshTimeoutItemSpecRulesType {
+	if m == nil {
+		return MeshTimeoutItemSpecRulesType("")
+	}
+	return m.Type
+}
+
+func (m *MeshTimeoutItemSpiffeID) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+type MeshTimeoutItemMatches struct {
+	// SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+	Sni *MeshTimeoutItemSni `json:"sni,omitempty"`
+	// SpiffeID defines a matcher configuration for SpiffeID matching
+	SpiffeID *MeshTimeoutItemSpiffeID `json:"spiffeID,omitempty"`
+}
+
+func (m *MeshTimeoutItemMatches) GetSni() *MeshTimeoutItemSni {
+	if m == nil {
+		return nil
+	}
+	return m.Sni
+}
+
+func (m *MeshTimeoutItemMatches) GetSpiffeID() *MeshTimeoutItemSpiffeID {
+	if m == nil {
+		return nil
+	}
+	return m.SpiffeID
+}
+
+type MeshTimeoutItemRules struct {
+	// Default contains configuration of the inbound timeouts
+	Default *MeshTimeoutItemDefault `json:"default,omitempty"`
+	// Matches define predicates for selecting traffic this configuration applies to.
+	Matches []MeshTimeoutItemMatches `json:"matches,omitempty"`
+}
+
+func (m *MeshTimeoutItemRules) GetDefault() *MeshTimeoutItemDefault {
+	if m == nil {
+		return nil
+	}
+	return m.Default
+}
+
+func (m *MeshTimeoutItemRules) GetMatches() []MeshTimeoutItemMatches {
+	if m == nil {
+		return nil
+	}
+	return m.Matches
+}
+
+// MeshTimeoutItemKind - Kind of the referenced resource
+type MeshTimeoutItemKind string
 
 const (
-	MeshTimeoutItemSpecProxyTypesSidecar MeshTimeoutItemSpecProxyTypes = "Sidecar"
-	MeshTimeoutItemSpecProxyTypesGateway MeshTimeoutItemSpecProxyTypes = "Gateway"
+	MeshTimeoutItemKindMesh                 MeshTimeoutItemKind = "Mesh"
+	MeshTimeoutItemKindMeshSubset           MeshTimeoutItemKind = "MeshSubset"
+	MeshTimeoutItemKindMeshService          MeshTimeoutItemKind = "MeshService"
+	MeshTimeoutItemKindMeshExternalService  MeshTimeoutItemKind = "MeshExternalService"
+	MeshTimeoutItemKindMeshMultiZoneService MeshTimeoutItemKind = "MeshMultiZoneService"
+	MeshTimeoutItemKindMeshServiceSubset    MeshTimeoutItemKind = "MeshServiceSubset"
+	MeshTimeoutItemKindMeshHTTPRoute        MeshTimeoutItemKind = "MeshHTTPRoute"
+	MeshTimeoutItemKindDataplane            MeshTimeoutItemKind = "Dataplane"
 )
 
-func (e MeshTimeoutItemSpecProxyTypes) ToPointer() *MeshTimeoutItemSpecProxyTypes {
+func (e MeshTimeoutItemKind) ToPointer() *MeshTimeoutItemKind {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshTimeoutItemSpecProxyTypes) IsExact() bool {
+func (e *MeshTimeoutItemKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Sidecar", "Gateway":
+		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
 			return true
 		}
 	}
 	return false
 }
 
-// MeshTimeoutItemSpecTargetRef - TargetRef is a reference to the resource that represents a group of
-// clients.
-type MeshTimeoutItemSpecTargetRef struct {
+// MeshTimeoutItemTargetRef - TargetRef is a reference to the resource the policy takes an effect on.
+// The resource could be either a real store object or virtual resource
+// defined inplace.
+type MeshTimeoutItemTargetRef struct {
 	// Kind of the referenced resource
-	Kind MeshTimeoutItemSpecKind `json:"kind"`
+	Kind MeshTimeoutItemKind `json:"kind"`
 	// Labels are used to select group of MeshServices that match labels. Either Labels or
 	// Name and Namespace can be used.
 	Labels map[string]string `json:"labels,omitempty"`
 	// Mesh is reserved for future use to identify cross mesh resources.
 	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
+	// Name of the referenced resource. Can only be used with kinds: `MeshService`
+	// and `MeshServiceSubset`
 	Name *string `json:"name,omitempty"`
 	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 	// will be targeted.
 	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshTimeoutItemSpecProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
@@ -206,83 +313,53 @@ type MeshTimeoutItemSpecTargetRef struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (m *MeshTimeoutItemSpecTargetRef) GetKind() MeshTimeoutItemSpecKind {
+func (m *MeshTimeoutItemTargetRef) GetKind() MeshTimeoutItemKind {
 	if m == nil {
-		return MeshTimeoutItemSpecKind("")
+		return MeshTimeoutItemKind("")
 	}
 	return m.Kind
 }
 
-func (m *MeshTimeoutItemSpecTargetRef) GetLabels() map[string]string {
+func (m *MeshTimeoutItemTargetRef) GetLabels() map[string]string {
 	if m == nil {
 		return nil
 	}
 	return m.Labels
 }
 
-func (m *MeshTimeoutItemSpecTargetRef) GetMesh() *string {
+func (m *MeshTimeoutItemTargetRef) GetMesh() *string {
 	if m == nil {
 		return nil
 	}
 	return m.Mesh
 }
 
-func (m *MeshTimeoutItemSpecTargetRef) GetName() *string {
+func (m *MeshTimeoutItemTargetRef) GetName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.Name
 }
 
-func (m *MeshTimeoutItemSpecTargetRef) GetNamespace() *string {
+func (m *MeshTimeoutItemTargetRef) GetNamespace() *string {
 	if m == nil {
 		return nil
 	}
 	return m.Namespace
 }
 
-func (m *MeshTimeoutItemSpecTargetRef) GetProxyTypes() []MeshTimeoutItemSpecProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
-func (m *MeshTimeoutItemSpecTargetRef) GetSectionName() *string {
+func (m *MeshTimeoutItemTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
 }
 
-func (m *MeshTimeoutItemSpecTargetRef) GetTags() map[string]string {
+func (m *MeshTimeoutItemTargetRef) GetTags() map[string]string {
 	if m == nil {
 		return nil
 	}
 	return m.Tags
-}
-
-type MeshTimeoutItemFrom struct {
-	// Default is a configuration specific to the group of clients referenced in
-	// 'targetRef'
-	Default *MeshTimeoutItemDefault `json:"default,omitempty"`
-	// TargetRef is a reference to the resource that represents a group of
-	// clients.
-	TargetRef MeshTimeoutItemSpecTargetRef `json:"targetRef"`
-}
-
-func (m *MeshTimeoutItemFrom) GetDefault() *MeshTimeoutItemDefault {
-	if m == nil {
-		return nil
-	}
-	return m.Default
-}
-
-func (m *MeshTimeoutItemFrom) GetTargetRef() MeshTimeoutItemSpecTargetRef {
-	if m == nil {
-		return MeshTimeoutItemSpecTargetRef{}
-	}
-	return m.TargetRef
 }
 
 // MeshTimeoutItemSpecHTTP - Http provides configuration for HTTP specific timeouts
@@ -344,7 +421,8 @@ func (m *MeshTimeoutItemSpecHTTP) GetStreamIdleTimeout() *string {
 	return m.StreamIdleTimeout
 }
 
-// MeshTimeoutItemSpecDefault - Default contains configuration of the inbound timeouts
+// MeshTimeoutItemSpecDefault - Default is a configuration specific to the group of destinations referenced in
+// 'targetRef'
 type MeshTimeoutItemSpecDefault struct {
 	// ConnectionTimeout specifies the amount of time proxy will wait for an TCP connection to be established.
 	// Default value is 5 seconds. Cannot be set to 0.
@@ -378,319 +456,51 @@ func (m *MeshTimeoutItemSpecDefault) GetIdleTimeout() *string {
 	return m.IdleTimeout
 }
 
-type MeshTimeoutItemRules struct {
-	// Default contains configuration of the inbound timeouts
-	Default *MeshTimeoutItemSpecDefault `json:"default,omitempty"`
-}
-
-func (m *MeshTimeoutItemRules) GetDefault() *MeshTimeoutItemSpecDefault {
-	if m == nil {
-		return nil
-	}
-	return m.Default
-}
-
-// MeshTimeoutItemKind - Kind of the referenced resource
-type MeshTimeoutItemKind string
+// MeshTimeoutItemSpecKind - Kind of the referenced resource
+type MeshTimeoutItemSpecKind string
 
 const (
-	MeshTimeoutItemKindMesh                 MeshTimeoutItemKind = "Mesh"
-	MeshTimeoutItemKindMeshSubset           MeshTimeoutItemKind = "MeshSubset"
-	MeshTimeoutItemKindMeshGateway          MeshTimeoutItemKind = "MeshGateway"
-	MeshTimeoutItemKindMeshService          MeshTimeoutItemKind = "MeshService"
-	MeshTimeoutItemKindMeshExternalService  MeshTimeoutItemKind = "MeshExternalService"
-	MeshTimeoutItemKindMeshMultiZoneService MeshTimeoutItemKind = "MeshMultiZoneService"
-	MeshTimeoutItemKindMeshServiceSubset    MeshTimeoutItemKind = "MeshServiceSubset"
-	MeshTimeoutItemKindMeshHTTPRoute        MeshTimeoutItemKind = "MeshHTTPRoute"
-	MeshTimeoutItemKindDataplane            MeshTimeoutItemKind = "Dataplane"
+	MeshTimeoutItemSpecKindMesh                 MeshTimeoutItemSpecKind = "Mesh"
+	MeshTimeoutItemSpecKindMeshSubset           MeshTimeoutItemSpecKind = "MeshSubset"
+	MeshTimeoutItemSpecKindMeshService          MeshTimeoutItemSpecKind = "MeshService"
+	MeshTimeoutItemSpecKindMeshExternalService  MeshTimeoutItemSpecKind = "MeshExternalService"
+	MeshTimeoutItemSpecKindMeshMultiZoneService MeshTimeoutItemSpecKind = "MeshMultiZoneService"
+	MeshTimeoutItemSpecKindMeshServiceSubset    MeshTimeoutItemSpecKind = "MeshServiceSubset"
+	MeshTimeoutItemSpecKindMeshHTTPRoute        MeshTimeoutItemSpecKind = "MeshHTTPRoute"
+	MeshTimeoutItemSpecKindDataplane            MeshTimeoutItemSpecKind = "Dataplane"
 )
 
-func (e MeshTimeoutItemKind) ToPointer() *MeshTimeoutItemKind {
+func (e MeshTimeoutItemSpecKind) ToPointer() *MeshTimeoutItemSpecKind {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshTimeoutItemKind) IsExact() bool {
+func (e *MeshTimeoutItemSpecKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
 			return true
 		}
 	}
 	return false
 }
 
-type MeshTimeoutItemProxyTypes string
-
-const (
-	MeshTimeoutItemProxyTypesSidecar MeshTimeoutItemProxyTypes = "Sidecar"
-	MeshTimeoutItemProxyTypesGateway MeshTimeoutItemProxyTypes = "Gateway"
-)
-
-func (e MeshTimeoutItemProxyTypes) ToPointer() *MeshTimeoutItemProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshTimeoutItemProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshTimeoutItemTargetRef - TargetRef is a reference to the resource the policy takes an effect on.
-// The resource could be either a real store object or virtual resource
-// defined inplace.
-type MeshTimeoutItemTargetRef struct {
-	// Kind of the referenced resource
-	Kind MeshTimeoutItemKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
-	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshTimeoutItemProxyTypes `json:"proxyTypes,omitempty"`
-	// SectionName is used to target specific section of resource.
-	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
-}
-
-func (m *MeshTimeoutItemTargetRef) GetKind() MeshTimeoutItemKind {
-	if m == nil {
-		return MeshTimeoutItemKind("")
-	}
-	return m.Kind
-}
-
-func (m *MeshTimeoutItemTargetRef) GetLabels() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Labels
-}
-
-func (m *MeshTimeoutItemTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshTimeoutItemTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshTimeoutItemTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
-func (m *MeshTimeoutItemTargetRef) GetProxyTypes() []MeshTimeoutItemProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
-func (m *MeshTimeoutItemTargetRef) GetSectionName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.SectionName
-}
-
-func (m *MeshTimeoutItemTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
-}
-
-// MeshTimeoutItemSpecToHTTP - Http provides configuration for HTTP specific timeouts
-type MeshTimeoutItemSpecToHTTP struct {
-	// MaxConnectionDuration is the time after which a connection will be drained and/or closed,
-	// starting from when it was first established. Setting this timeout to 0 will disable it.
-	// Disabled by default.
-	MaxConnectionDuration *string `json:"maxConnectionDuration,omitempty"`
-	// MaxStreamDuration is the maximum time that a stream’s lifetime will span.
-	// Setting this timeout to 0 will disable it. Disabled by default.
-	MaxStreamDuration *string `json:"maxStreamDuration,omitempty"`
-	// RequestHeadersTimeout The amount of time that proxy will wait for the request headers to be received. The timer is
-	// activated when the first byte of the headers is received, and is disarmed when the last byte of
-	// the headers has been received. If not specified or set to 0, this timeout is disabled.
-	// Disabled by default.
-	RequestHeadersTimeout *string `json:"requestHeadersTimeout,omitempty"`
-	// RequestTimeout The amount of time that proxy will wait for the entire request to be received.
-	// The timer is activated when the request is initiated, and is disarmed when the last byte of the request is sent,
-	// OR when the response is initiated. Setting this timeout to 0 will disable it.
-	// Default is 15s.
-	RequestTimeout *string `json:"requestTimeout,omitempty"`
-	// StreamIdleTimeout is the amount of time that proxy will allow a stream to exist with no activity.
-	// Setting this timeout to 0 will disable it. Default is 30m
-	StreamIdleTimeout *string `json:"streamIdleTimeout,omitempty"`
-}
-
-func (m *MeshTimeoutItemSpecToHTTP) GetMaxConnectionDuration() *string {
-	if m == nil {
-		return nil
-	}
-	return m.MaxConnectionDuration
-}
-
-func (m *MeshTimeoutItemSpecToHTTP) GetMaxStreamDuration() *string {
-	if m == nil {
-		return nil
-	}
-	return m.MaxStreamDuration
-}
-
-func (m *MeshTimeoutItemSpecToHTTP) GetRequestHeadersTimeout() *string {
-	if m == nil {
-		return nil
-	}
-	return m.RequestHeadersTimeout
-}
-
-func (m *MeshTimeoutItemSpecToHTTP) GetRequestTimeout() *string {
-	if m == nil {
-		return nil
-	}
-	return m.RequestTimeout
-}
-
-func (m *MeshTimeoutItemSpecToHTTP) GetStreamIdleTimeout() *string {
-	if m == nil {
-		return nil
-	}
-	return m.StreamIdleTimeout
-}
-
-// MeshTimeoutItemSpecToDefault - Default is a configuration specific to the group of destinations referenced in
-// 'targetRef'
-type MeshTimeoutItemSpecToDefault struct {
-	// ConnectionTimeout specifies the amount of time proxy will wait for an TCP connection to be established.
-	// Default value is 5 seconds. Cannot be set to 0.
-	ConnectionTimeout *string `json:"connectionTimeout,omitempty"`
-	// Http provides configuration for HTTP specific timeouts
-	HTTP *MeshTimeoutItemSpecToHTTP `json:"http,omitempty"`
-	// IdleTimeout is defined as the period in which there are no bytes sent or received on connection
-	// Setting this timeout to 0 will disable it. Be cautious when disabling it because
-	// it can lead to connection leaking. Default value is 1h.
-	IdleTimeout *string `json:"idleTimeout,omitempty"`
-}
-
-func (m *MeshTimeoutItemSpecToDefault) GetConnectionTimeout() *string {
-	if m == nil {
-		return nil
-	}
-	return m.ConnectionTimeout
-}
-
-func (m *MeshTimeoutItemSpecToDefault) GetHTTP() *MeshTimeoutItemSpecToHTTP {
-	if m == nil {
-		return nil
-	}
-	return m.HTTP
-}
-
-func (m *MeshTimeoutItemSpecToDefault) GetIdleTimeout() *string {
-	if m == nil {
-		return nil
-	}
-	return m.IdleTimeout
-}
-
-// MeshTimeoutItemSpecToKind - Kind of the referenced resource
-type MeshTimeoutItemSpecToKind string
-
-const (
-	MeshTimeoutItemSpecToKindMesh                 MeshTimeoutItemSpecToKind = "Mesh"
-	MeshTimeoutItemSpecToKindMeshSubset           MeshTimeoutItemSpecToKind = "MeshSubset"
-	MeshTimeoutItemSpecToKindMeshGateway          MeshTimeoutItemSpecToKind = "MeshGateway"
-	MeshTimeoutItemSpecToKindMeshService          MeshTimeoutItemSpecToKind = "MeshService"
-	MeshTimeoutItemSpecToKindMeshExternalService  MeshTimeoutItemSpecToKind = "MeshExternalService"
-	MeshTimeoutItemSpecToKindMeshMultiZoneService MeshTimeoutItemSpecToKind = "MeshMultiZoneService"
-	MeshTimeoutItemSpecToKindMeshServiceSubset    MeshTimeoutItemSpecToKind = "MeshServiceSubset"
-	MeshTimeoutItemSpecToKindMeshHTTPRoute        MeshTimeoutItemSpecToKind = "MeshHTTPRoute"
-	MeshTimeoutItemSpecToKindDataplane            MeshTimeoutItemSpecToKind = "Dataplane"
-)
-
-func (e MeshTimeoutItemSpecToKind) ToPointer() *MeshTimeoutItemSpecToKind {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshTimeoutItemSpecToKind) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshTimeoutItemSpecToProxyTypes string
-
-const (
-	MeshTimeoutItemSpecToProxyTypesSidecar MeshTimeoutItemSpecToProxyTypes = "Sidecar"
-	MeshTimeoutItemSpecToProxyTypesGateway MeshTimeoutItemSpecToProxyTypes = "Gateway"
-)
-
-func (e MeshTimeoutItemSpecToProxyTypes) ToPointer() *MeshTimeoutItemSpecToProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshTimeoutItemSpecToProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshTimeoutItemSpecToTargetRef - TargetRef is a reference to the resource that represents a group of
+// MeshTimeoutItemSpecTargetRef - TargetRef is a reference to the resource that represents a group of
 // destinations.
-type MeshTimeoutItemSpecToTargetRef struct {
+type MeshTimeoutItemSpecTargetRef struct {
 	// Kind of the referenced resource
-	Kind MeshTimeoutItemSpecToKind `json:"kind"`
+	Kind MeshTimeoutItemSpecKind `json:"kind"`
 	// Labels are used to select group of MeshServices that match labels. Either Labels or
 	// Name and Namespace can be used.
 	Labels map[string]string `json:"labels,omitempty"`
 	// Mesh is reserved for future use to identify cross mesh resources.
 	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
+	// Name of the referenced resource. Can only be used with kinds: `MeshService`
+	// and `MeshServiceSubset`
 	Name *string `json:"name,omitempty"`
 	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 	// will be targeted.
 	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshTimeoutItemSpecToProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
@@ -699,56 +509,49 @@ type MeshTimeoutItemSpecToTargetRef struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (m *MeshTimeoutItemSpecToTargetRef) GetKind() MeshTimeoutItemSpecToKind {
+func (m *MeshTimeoutItemSpecTargetRef) GetKind() MeshTimeoutItemSpecKind {
 	if m == nil {
-		return MeshTimeoutItemSpecToKind("")
+		return MeshTimeoutItemSpecKind("")
 	}
 	return m.Kind
 }
 
-func (m *MeshTimeoutItemSpecToTargetRef) GetLabels() map[string]string {
+func (m *MeshTimeoutItemSpecTargetRef) GetLabels() map[string]string {
 	if m == nil {
 		return nil
 	}
 	return m.Labels
 }
 
-func (m *MeshTimeoutItemSpecToTargetRef) GetMesh() *string {
+func (m *MeshTimeoutItemSpecTargetRef) GetMesh() *string {
 	if m == nil {
 		return nil
 	}
 	return m.Mesh
 }
 
-func (m *MeshTimeoutItemSpecToTargetRef) GetName() *string {
+func (m *MeshTimeoutItemSpecTargetRef) GetName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.Name
 }
 
-func (m *MeshTimeoutItemSpecToTargetRef) GetNamespace() *string {
+func (m *MeshTimeoutItemSpecTargetRef) GetNamespace() *string {
 	if m == nil {
 		return nil
 	}
 	return m.Namespace
 }
 
-func (m *MeshTimeoutItemSpecToTargetRef) GetProxyTypes() []MeshTimeoutItemSpecToProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
-func (m *MeshTimeoutItemSpecToTargetRef) GetSectionName() *string {
+func (m *MeshTimeoutItemSpecTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
 }
 
-func (m *MeshTimeoutItemSpecToTargetRef) GetTags() map[string]string {
+func (m *MeshTimeoutItemSpecTargetRef) GetTags() map[string]string {
 	if m == nil {
 		return nil
 	}
@@ -758,32 +561,30 @@ func (m *MeshTimeoutItemSpecToTargetRef) GetTags() map[string]string {
 type MeshTimeoutItemTo struct {
 	// Default is a configuration specific to the group of destinations referenced in
 	// 'targetRef'
-	Default *MeshTimeoutItemSpecToDefault `json:"default,omitempty"`
+	Default *MeshTimeoutItemSpecDefault `json:"default,omitempty"`
 	// TargetRef is a reference to the resource that represents a group of
 	// destinations.
-	TargetRef MeshTimeoutItemSpecToTargetRef `json:"targetRef"`
+	TargetRef MeshTimeoutItemSpecTargetRef `json:"targetRef"`
 }
 
-func (m *MeshTimeoutItemTo) GetDefault() *MeshTimeoutItemSpecToDefault {
+func (m *MeshTimeoutItemTo) GetDefault() *MeshTimeoutItemSpecDefault {
 	if m == nil {
 		return nil
 	}
 	return m.Default
 }
 
-func (m *MeshTimeoutItemTo) GetTargetRef() MeshTimeoutItemSpecToTargetRef {
+func (m *MeshTimeoutItemTo) GetTargetRef() MeshTimeoutItemSpecTargetRef {
 	if m == nil {
-		return MeshTimeoutItemSpecToTargetRef{}
+		return MeshTimeoutItemSpecTargetRef{}
 	}
 	return m.TargetRef
 }
 
 // MeshTimeoutItemSpec - Spec is the specification of the Kuma MeshTimeout resource.
 type MeshTimeoutItemSpec struct {
-	// From list makes a match between clients and corresponding configurations
-	From []MeshTimeoutItemFrom `json:"from,omitempty"`
-	// Rules defines inbound timeout configurations. Currently limited to exactly one rule containing
-	// default timeouts that apply to all inbound traffic, as L7 matching is not yet implemented.
+	// Rules defines inbound timeout configurations. When matches are present, the rule is applied only
+	// to traffic selected by the given source and destination matchers.
 	Rules []MeshTimeoutItemRules `json:"rules,omitempty"`
 	// TargetRef is a reference to the resource the policy takes an effect on.
 	// The resource could be either a real store object or virtual resource
@@ -791,13 +592,6 @@ type MeshTimeoutItemSpec struct {
 	TargetRef *MeshTimeoutItemTargetRef `json:"targetRef,omitempty"`
 	// To list makes a match between the consumed services and corresponding configurations
 	To []MeshTimeoutItemTo `json:"to,omitempty"`
-}
-
-func (m *MeshTimeoutItemSpec) GetFrom() []MeshTimeoutItemFrom {
-	if m == nil {
-		return nil
-	}
-	return m.From
 }
 
 func (m *MeshTimeoutItemSpec) GetRules() []MeshTimeoutItemRules {

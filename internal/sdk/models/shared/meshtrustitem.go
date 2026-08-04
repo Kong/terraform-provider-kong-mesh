@@ -91,9 +91,30 @@ func (c *CaBundles) GetType() MeshTrustItemSpecType {
 	return c.Type
 }
 
+// MeshTrustItemSpec - Spec is the specification of the Kuma MeshTrust resource.
+type MeshTrustItemSpec struct {
+	// CABundles contains a list of CA bundles supported by this TrustDomain.
+	// At least one CA bundle must be specified.
+	CaBundles []CaBundles `json:"caBundles"`
+	// TrustDomain is the trust domain associated with this resource.
+	TrustDomain string `json:"trustDomain"`
+}
+
+func (m *MeshTrustItemSpec) GetCaBundles() []CaBundles {
+	if m == nil {
+		return []CaBundles{}
+	}
+	return m.CaBundles
+}
+
+func (m *MeshTrustItemSpec) GetTrustDomain() string {
+	if m == nil {
+		return ""
+	}
+	return m.TrustDomain
+}
+
 // Origin specifies whether the resource was created from a MeshIdentity.
-//
-// Deprecated: use Status.Origin instead
 type Origin struct {
 	// Resource identifier
 	Kri *string `json:"kri,omitempty"`
@@ -106,60 +127,13 @@ func (o *Origin) GetKri() *string {
 	return o.Kri
 }
 
-// MeshTrustItemSpec - Spec is the specification of the Kuma MeshTrust resource.
-type MeshTrustItemSpec struct {
-	// CABundles contains a list of CA bundles supported by this TrustDomain.
-	// At least one CA bundle must be specified.
-	CaBundles []CaBundles `json:"caBundles"`
-	// Origin specifies whether the resource was created from a MeshIdentity.
-	//
-	// Deprecated: use Status.Origin instead
-	Origin *Origin `json:"origin,omitempty"`
-	// TrustDomain is the trust domain associated with this resource.
-	TrustDomain string `json:"trustDomain"`
-}
-
-func (m *MeshTrustItemSpec) GetCaBundles() []CaBundles {
-	if m == nil {
-		return []CaBundles{}
-	}
-	return m.CaBundles
-}
-
-func (m *MeshTrustItemSpec) GetOrigin() *Origin {
-	if m == nil {
-		return nil
-	}
-	return m.Origin
-}
-
-func (m *MeshTrustItemSpec) GetTrustDomain() string {
-	if m == nil {
-		return ""
-	}
-	return m.TrustDomain
-}
-
-// MeshTrustItemOrigin - Origin specifies whether the resource was created from a MeshIdentity.
-type MeshTrustItemOrigin struct {
-	// Resource identifier
-	Kri *string `json:"kri,omitempty"`
-}
-
-func (m *MeshTrustItemOrigin) GetKri() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Kri
-}
-
 // MeshTrustItemStatus - Status is the current status of the Kuma MeshTrust resource.
 type MeshTrustItemStatus struct {
 	// Origin specifies whether the resource was created from a MeshIdentity.
-	Origin *MeshTrustItemOrigin `json:"origin,omitempty"`
+	Origin *Origin `json:"origin,omitempty"`
 }
 
-func (m *MeshTrustItemStatus) GetOrigin() *MeshTrustItemOrigin {
+func (m *MeshTrustItemStatus) GetOrigin() *Origin {
 	if m == nil {
 		return nil
 	}

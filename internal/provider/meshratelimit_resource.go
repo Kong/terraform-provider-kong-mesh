@@ -107,243 +107,6 @@ func (r *MeshRateLimitResource) Schema(ctx context.Context, req resource.SchemaR
 			"spec": schema.SingleNestedAttribute{
 				Required: true,
 				Attributes: map[string]schema.Attribute{
-					"from": schema.ListNestedAttribute{
-						Computed: true,
-						Optional: true,
-						PlanModifiers: []planmodifier.List{
-							custom_listplanmodifier.SupressZeroNullModifier(),
-						},
-						NestedObject: schema.NestedAttributeObject{
-							Validators: []validator.Object{
-								speakeasy_objectvalidators.NotNull(),
-							},
-							Attributes: map[string]schema.Attribute{
-								"default": schema.SingleNestedAttribute{
-									Optional: true,
-									Attributes: map[string]schema.Attribute{
-										"local": schema.SingleNestedAttribute{
-											Optional: true,
-											Attributes: map[string]schema.Attribute{
-												"http": schema.SingleNestedAttribute{
-													Optional: true,
-													Attributes: map[string]schema.Attribute{
-														"disabled": schema.BoolAttribute{
-															Optional:    true,
-															Description: `Define if rate limiting should be disabled.`,
-														},
-														"on_rate_limit": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"headers": schema.SingleNestedAttribute{
-																	Optional: true,
-																	Attributes: map[string]schema.Attribute{
-																		"add": schema.ListNestedAttribute{
-																			Computed: true,
-																			Optional: true,
-																			PlanModifiers: []planmodifier.List{
-																				custom_listplanmodifier.SupressZeroNullModifier(),
-																			},
-																			NestedObject: schema.NestedAttributeObject{
-																				Validators: []validator.Object{
-																					speakeasy_objectvalidators.NotNull(),
-																				},
-																				Attributes: map[string]schema.Attribute{
-																					"name": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																							stringvalidator.UTF8LengthBetween(1, 256),
-																							stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																						},
-																					},
-																					"value": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
-																					},
-																				},
-																			},
-																			Validators: []validator.List{
-																				listvalidator.SizeAtMost(16),
-																			},
-																		},
-																		"set": schema.ListNestedAttribute{
-																			Computed: true,
-																			Optional: true,
-																			PlanModifiers: []planmodifier.List{
-																				custom_listplanmodifier.SupressZeroNullModifier(),
-																			},
-																			NestedObject: schema.NestedAttributeObject{
-																				Validators: []validator.Object{
-																					speakeasy_objectvalidators.NotNull(),
-																				},
-																				Attributes: map[string]schema.Attribute{
-																					"name": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																							stringvalidator.UTF8LengthBetween(1, 256),
-																							stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																						},
-																					},
-																					"value": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
-																					},
-																				},
-																			},
-																			Validators: []validator.List{
-																				listvalidator.SizeAtMost(16),
-																			},
-																		},
-																	},
-																	Description: `The Headers to be added to the HTTP response on a rate limit event`,
-																},
-																"status": schema.Int32Attribute{
-																	Computed:    true,
-																	Optional:    true,
-																	Description: `The HTTP status code to be set on a rate limit event`,
-																},
-															},
-															Description: `Describes the actions to take on a rate limit event`,
-														},
-														"request_rate": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"interval": schema.StringAttribute{
-																	Optional:    true,
-																	Description: `The interval the number of units is accounted for. Not Null`,
-																	Validators: []validator.String{
-																		speakeasy_stringvalidators.NotNull(),
-																	},
-																},
-																"num": schema.Int32Attribute{
-																	Optional: true,
-																	MarkdownDescription: `Number of units per interval (depending on usage it can be a number of requests,` + "\n" +
-																		`or a number of connections).` + "\n" +
-																		`Not Null`,
-																	Validators: []validator.Int32{
-																		speakeasy_int32validators.NotNull(),
-																	},
-																},
-															},
-															Description: `Defines how many requests are allowed per interval.`,
-														},
-													},
-													MarkdownDescription: `LocalHTTP defines configuration of local HTTP rate limiting` + "\n" +
-														`https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/local_rate_limit_filter`,
-												},
-												"tcp": schema.SingleNestedAttribute{
-													Optional: true,
-													Attributes: map[string]schema.Attribute{
-														"connection_rate": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"interval": schema.StringAttribute{
-																	Optional:    true,
-																	Description: `The interval the number of units is accounted for. Not Null`,
-																	Validators: []validator.String{
-																		speakeasy_stringvalidators.NotNull(),
-																	},
-																},
-																"num": schema.Int32Attribute{
-																	Optional: true,
-																	MarkdownDescription: `Number of units per interval (depending on usage it can be a number of requests,` + "\n" +
-																		`or a number of connections).` + "\n" +
-																		`Not Null`,
-																	Validators: []validator.Int32{
-																		speakeasy_int32validators.NotNull(),
-																	},
-																},
-															},
-															Description: `Defines how many connections are allowed per interval.`,
-														},
-														"disabled": schema.BoolAttribute{
-															Optional: true,
-															MarkdownDescription: `Define if rate limiting should be disabled.` + "\n" +
-																`Default: false`,
-														},
-													},
-													MarkdownDescription: `LocalTCP defines confguration of local TCP rate limiting` + "\n" +
-														`https://www.envoyproxy.io/docs/envoy/latest/configuration/listeners/network_filters/local_rate_limit_filter`,
-												},
-											},
-											Description: `LocalConf defines local http or/and tcp rate limit configuration`,
-										},
-									},
-									MarkdownDescription: `Default is a configuration specific to the group of clients referenced in` + "\n" +
-										`'targetRef'`,
-								},
-								"target_ref": schema.SingleNestedAttribute{
-									Optional: true,
-									Attributes: map[string]schema.Attribute{
-										"kind": schema.StringAttribute{
-											Optional:    true,
-											Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null`,
-											Validators: []validator.String{
-												speakeasy_stringvalidators.NotNull(),
-											},
-										},
-										"labels": schema.MapAttribute{
-											Optional:    true,
-											ElementType: types.StringType,
-											MarkdownDescription: `Labels are used to select group of MeshServices that match labels. Either Labels or` + "\n" +
-												`Name and Namespace can be used.`,
-										},
-										"mesh": schema.StringAttribute{
-											Optional:    true,
-											Description: `Mesh is reserved for future use to identify cross mesh resources.`,
-										},
-										"name": schema.StringAttribute{
-											Optional: true,
-											MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `,` + "\n" +
-												`` + "`" + `MeshServiceSubset` + "`" + ` and ` + "`" + `MeshGatewayRoute` + "`" + ``,
-										},
-										"namespace": schema.StringAttribute{
-											Optional: true,
-											MarkdownDescription: `Namespace specifies the namespace of target resource. If empty only resources in policy namespace` + "\n" +
-												`will be targeted.`,
-										},
-										"proxy_types": schema.ListAttribute{
-											Computed: true,
-											Optional: true,
-											PlanModifiers: []planmodifier.List{
-												custom_listplanmodifier.SupressZeroNullModifier(),
-											},
-											ElementType: types.StringType,
-											MarkdownDescription: `ProxyTypes specifies the data plane types that are subject to the policy. When not specified,` + "\n" +
-												`all data plane types are targeted by the policy.`,
-										},
-										"section_name": schema.StringAttribute{
-											Optional: true,
-											MarkdownDescription: `SectionName is used to target specific section of resource.` + "\n" +
-												`For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.`,
-										},
-										"tags": schema.MapAttribute{
-											Optional:    true,
-											ElementType: types.StringType,
-											MarkdownDescription: `Tags used to select a subset of proxies by tags. Can only be used with kinds` + "\n" +
-												`` + "`" + `MeshSubset` + "`" + ` and ` + "`" + `MeshServiceSubset` + "`" + ``,
-										},
-									},
-									MarkdownDescription: `TargetRef is a reference to the resource that represents a group of` + "\n" +
-										`clients.` + "\n" +
-										`Not Null`,
-									Validators: []validator.Object{
-										speakeasy_objectvalidators.NotNull(),
-									},
-								},
-							},
-						},
-						Description: `From list makes a match between clients and corresponding configurations`,
-					},
 					"rules": schema.ListNestedAttribute{
 						Computed: true,
 						Optional: true,
@@ -517,17 +280,72 @@ func (r *MeshRateLimitResource) Schema(ctx context.Context, req resource.SchemaR
 									},
 									Description: `Default contains configuration of the inbound rate limits`,
 								},
+								"matches": schema.ListNestedAttribute{
+									Computed: true,
+									Optional: true,
+									PlanModifiers: []planmodifier.List{
+										custom_listplanmodifier.SupressZeroNullModifier(),
+									},
+									NestedObject: schema.NestedAttributeObject{
+										Validators: []validator.Object{
+											speakeasy_objectvalidators.NotNull(),
+										},
+										Attributes: map[string]schema.Attribute{
+											"sni": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"type": schema.StringAttribute{
+														Optional:    true,
+														Description: `Type defines how to match traffic by SNI. Only ` + "`" + `Exact` + "`" + ` is supported. Not Null; must be "Exact"`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+															stringvalidator.OneOf("Exact"),
+														},
+													},
+													"value": schema.StringAttribute{
+														Optional:    true,
+														Description: `Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied. Not Null`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+														},
+													},
+												},
+												Description: `SNI defines a matcher configuration for matching by SNI value carried on the TLS connection`,
+											},
+											"spiffe_id": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"type": schema.StringAttribute{
+														Optional:    true,
+														Description: `Type defines how to match incoming traffic by SpiffeID. ` + "`" + `Exact` + "`" + ` or ` + "`" + `Prefix` + "`" + ` are allowed. possible known values include one of ["Exact", "Prefix"]; Not Null`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+														},
+													},
+													"value": schema.StringAttribute{
+														Optional:    true,
+														Description: `Value is SpiffeID of a client that needs to match for the configuration to be applied. Not Null`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+														},
+													},
+												},
+												Description: `SpiffeID defines a matcher configuration for SpiffeID matching`,
+											},
+										},
+									},
+									Description: `Matches define additional conditions for applying this rate limit rule.`,
+								},
 							},
 						},
-						MarkdownDescription: `Rules defines inbound rate limiting configurations. Currently limited to` + "\n" +
-							`selecting all inbound traffic, as L7 matching is not yet implemented.`,
+						Description: `Rules defines inbound rate limiting configurations.`,
 					},
 					"target_ref": schema.SingleNestedAttribute{
 						Optional: true,
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
 								Required:    true,
-								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
+								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
 							},
 							"labels": schema.MapAttribute{
 								Optional:    true,
@@ -541,23 +359,13 @@ func (r *MeshRateLimitResource) Schema(ctx context.Context, req resource.SchemaR
 							},
 							"name": schema.StringAttribute{
 								Optional: true,
-								MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `,` + "\n" +
-									`` + "`" + `MeshServiceSubset` + "`" + ` and ` + "`" + `MeshGatewayRoute` + "`" + ``,
+								MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `` + "\n" +
+									`and ` + "`" + `MeshServiceSubset` + "`" + ``,
 							},
 							"namespace": schema.StringAttribute{
 								Optional: true,
 								MarkdownDescription: `Namespace specifies the namespace of target resource. If empty only resources in policy namespace` + "\n" +
 									`will be targeted.`,
-							},
-							"proxy_types": schema.ListAttribute{
-								Computed: true,
-								Optional: true,
-								PlanModifiers: []planmodifier.List{
-									custom_listplanmodifier.SupressZeroNullModifier(),
-								},
-								ElementType: types.StringType,
-								MarkdownDescription: `ProxyTypes specifies the data plane types that are subject to the policy. When not specified,` + "\n" +
-									`all data plane types are targeted by the policy.`,
 							},
 							"section_name": schema.StringAttribute{
 								Optional: true,
@@ -754,7 +562,7 @@ func (r *MeshRateLimitResource) Schema(ctx context.Context, req resource.SchemaR
 									Attributes: map[string]schema.Attribute{
 										"kind": schema.StringAttribute{
 											Optional:    true,
-											Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null`,
+											Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null`,
 											Validators: []validator.String{
 												speakeasy_stringvalidators.NotNull(),
 											},
@@ -771,23 +579,13 @@ func (r *MeshRateLimitResource) Schema(ctx context.Context, req resource.SchemaR
 										},
 										"name": schema.StringAttribute{
 											Optional: true,
-											MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `,` + "\n" +
-												`` + "`" + `MeshServiceSubset` + "`" + ` and ` + "`" + `MeshGatewayRoute` + "`" + ``,
+											MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `` + "\n" +
+												`and ` + "`" + `MeshServiceSubset` + "`" + ``,
 										},
 										"namespace": schema.StringAttribute{
 											Optional: true,
 											MarkdownDescription: `Namespace specifies the namespace of target resource. If empty only resources in policy namespace` + "\n" +
 												`will be targeted.`,
-										},
-										"proxy_types": schema.ListAttribute{
-											Computed: true,
-											Optional: true,
-											PlanModifiers: []planmodifier.List{
-												custom_listplanmodifier.SupressZeroNullModifier(),
-											},
-											ElementType: types.StringType,
-											MarkdownDescription: `ProxyTypes specifies the data plane types that are subject to the policy. When not specified,` + "\n" +
-												`all data plane types are targeted by the policy.`,
 										},
 										"section_name": schema.StringAttribute{
 											Optional: true,

@@ -5,36 +5,6 @@ resource "kong-mesh_mesh_tls" "my_meshtls" {
   mesh = "...my_mesh..."
   name = "...my_name..."
   spec = {
-    from = [
-      {
-        default = {
-          mode = "Permissive"
-          tls_ciphers = [
-            "ECDHE-RSA-CHACHA20-POLY1305"
-          ]
-          tls_version = {
-            max = "TLSAuto"
-            min = "TLSAuto"
-          }
-        }
-        target_ref = {
-          kind = "MeshService"
-          labels = {
-            key = "value"
-          }
-          mesh      = "...my_mesh..."
-          name      = "...my_name..."
-          namespace = "...my_namespace..."
-          proxy_types = [
-            "Sidecar"
-          ]
-          section_name = "...my_section_name..."
-          tags = {
-            key = "value"
-          }
-        }
-      }
-    ]
     rules = [
       {
         default = {
@@ -50,16 +20,13 @@ resource "kong-mesh_mesh_tls" "my_meshtls" {
       }
     ]
     target_ref = {
-      kind = "MeshService"
+      kind = "MeshExternalService"
       labels = {
         key = "value"
       }
-      mesh      = "...my_mesh..."
-      name      = "...my_name..."
-      namespace = "...my_namespace..."
-      proxy_types = [
-        "Gateway"
-      ]
+      mesh         = "...my_mesh..."
+      name         = "...my_name..."
+      namespace    = "...my_namespace..."
       section_name = "...my_section_name..."
       tags = {
         key = "value"

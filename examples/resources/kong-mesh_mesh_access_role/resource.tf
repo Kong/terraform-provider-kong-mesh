@@ -35,6 +35,9 @@ resource "kong-mesh_mesh_access_role" "my_meshaccessrole" {
           from = {
             target_ref = {
               kind = "...my_kind..."
+              labels = {
+                key = "value"
+              }
               mesh = "...my_mesh..."
               name = "...my_name..."
               tags = {
@@ -54,6 +57,9 @@ resource "kong-mesh_mesh_access_role" "my_meshaccessrole" {
           }
           target_ref = {
             kind = "...my_kind..."
+            labels = {
+              key = "value"
+            }
             mesh = "...my_mesh..."
             name = "...my_name..."
             tags = {
@@ -63,6 +69,9 @@ resource "kong-mesh_mesh_access_role" "my_meshaccessrole" {
           to = {
             target_ref = {
               kind = "...my_kind..."
+              labels = {
+                key = "value"
+              }
               mesh = "...my_mesh..."
               name = "...my_name..."
               tags = {

@@ -13,7 +13,12 @@ resource "kong-mesh_mesh_trace" "my_meshtrace" {
             url           = "...my_url..."
           }
           open_telemetry = {
-            endpoint = "otel-collector:4317"
+            backend_ref = {
+              kind = "MeshOpenTelemetryBackend"
+              labels = {
+                key = "value"
+              }
+            }
           }
           type = "OpenTelemetry"
           zipkin = {
@@ -51,12 +56,9 @@ resource "kong-mesh_mesh_trace" "my_meshtrace" {
       labels = {
         key = "value"
       }
-      mesh      = "...my_mesh..."
-      name      = "...my_name..."
-      namespace = "...my_namespace..."
-      proxy_types = [
-        "Gateway"
-      ]
+      mesh         = "...my_mesh..."
+      name         = "...my_name..."
+      namespace    = "...my_namespace..."
       section_name = "...my_section_name..."
       tags = {
         key = "value"

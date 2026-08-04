@@ -104,16 +104,13 @@ resource "kong-mesh_mesh_proxy_patch" "my_meshproxypatch" {
       ]
     }
     target_ref = {
-      kind = "MeshExternalService"
+      kind = "MeshMultiZoneService"
       labels = {
         key = "value"
       }
-      mesh      = "...my_mesh..."
-      name      = "...my_name..."
-      namespace = "...my_namespace..."
-      proxy_types = [
-        "Gateway"
-      ]
+      mesh         = "...my_mesh..."
+      name         = "...my_name..."
+      namespace    = "...my_namespace..."
       section_name = "...my_section_name..."
       tags = {
         key = "value"

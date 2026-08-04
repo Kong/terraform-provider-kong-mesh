@@ -40,7 +40,6 @@ type MeshHealthCheckItemKind string
 const (
 	MeshHealthCheckItemKindMesh                 MeshHealthCheckItemKind = "Mesh"
 	MeshHealthCheckItemKindMeshSubset           MeshHealthCheckItemKind = "MeshSubset"
-	MeshHealthCheckItemKindMeshGateway          MeshHealthCheckItemKind = "MeshGateway"
 	MeshHealthCheckItemKindMeshService          MeshHealthCheckItemKind = "MeshService"
 	MeshHealthCheckItemKindMeshExternalService  MeshHealthCheckItemKind = "MeshExternalService"
 	MeshHealthCheckItemKindMeshMultiZoneService MeshHealthCheckItemKind = "MeshMultiZoneService"
@@ -57,29 +56,7 @@ func (e MeshHealthCheckItemKind) ToPointer() *MeshHealthCheckItemKind {
 func (e *MeshHealthCheckItemKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshHealthCheckItemProxyTypes string
-
-const (
-	MeshHealthCheckItemProxyTypesSidecar MeshHealthCheckItemProxyTypes = "Sidecar"
-	MeshHealthCheckItemProxyTypesGateway MeshHealthCheckItemProxyTypes = "Gateway"
-)
-
-func (e MeshHealthCheckItemProxyTypes) ToPointer() *MeshHealthCheckItemProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshHealthCheckItemProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
+		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
 			return true
 		}
 	}
@@ -97,15 +74,12 @@ type MeshHealthCheckItemTargetRef struct {
 	Labels map[string]string `json:"labels,omitempty"`
 	// Mesh is reserved for future use to identify cross mesh resources.
 	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
+	// Name of the referenced resource. Can only be used with kinds: `MeshService`
+	// and `MeshServiceSubset`
 	Name *string `json:"name,omitempty"`
 	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 	// will be targeted.
 	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshHealthCheckItemProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
@@ -147,13 +121,6 @@ func (m *MeshHealthCheckItemTargetRef) GetNamespace() *string {
 		return nil
 	}
 	return m.Namespace
-}
-
-func (m *MeshHealthCheckItemTargetRef) GetProxyTypes() []MeshHealthCheckItemProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
 }
 
 func (m *MeshHealthCheckItemTargetRef) GetSectionName() *string {
@@ -623,7 +590,6 @@ type MeshHealthCheckItemSpecKind string
 const (
 	MeshHealthCheckItemSpecKindMesh                 MeshHealthCheckItemSpecKind = "Mesh"
 	MeshHealthCheckItemSpecKindMeshSubset           MeshHealthCheckItemSpecKind = "MeshSubset"
-	MeshHealthCheckItemSpecKindMeshGateway          MeshHealthCheckItemSpecKind = "MeshGateway"
 	MeshHealthCheckItemSpecKindMeshService          MeshHealthCheckItemSpecKind = "MeshService"
 	MeshHealthCheckItemSpecKindMeshExternalService  MeshHealthCheckItemSpecKind = "MeshExternalService"
 	MeshHealthCheckItemSpecKindMeshMultiZoneService MeshHealthCheckItemSpecKind = "MeshMultiZoneService"
@@ -640,29 +606,7 @@ func (e MeshHealthCheckItemSpecKind) ToPointer() *MeshHealthCheckItemSpecKind {
 func (e *MeshHealthCheckItemSpecKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshHealthCheckItemSpecProxyTypes string
-
-const (
-	MeshHealthCheckItemSpecProxyTypesSidecar MeshHealthCheckItemSpecProxyTypes = "Sidecar"
-	MeshHealthCheckItemSpecProxyTypesGateway MeshHealthCheckItemSpecProxyTypes = "Gateway"
-)
-
-func (e MeshHealthCheckItemSpecProxyTypes) ToPointer() *MeshHealthCheckItemSpecProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshHealthCheckItemSpecProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
+		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
 			return true
 		}
 	}
@@ -679,15 +623,12 @@ type MeshHealthCheckItemSpecTargetRef struct {
 	Labels map[string]string `json:"labels,omitempty"`
 	// Mesh is reserved for future use to identify cross mesh resources.
 	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
+	// Name of the referenced resource. Can only be used with kinds: `MeshService`
+	// and `MeshServiceSubset`
 	Name *string `json:"name,omitempty"`
 	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 	// will be targeted.
 	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshHealthCheckItemSpecProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
@@ -729,13 +670,6 @@ func (m *MeshHealthCheckItemSpecTargetRef) GetNamespace() *string {
 		return nil
 	}
 	return m.Namespace
-}
-
-func (m *MeshHealthCheckItemSpecTargetRef) GetProxyTypes() []MeshHealthCheckItemSpecProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
 }
 
 func (m *MeshHealthCheckItemSpecTargetRef) GetSectionName() *string {

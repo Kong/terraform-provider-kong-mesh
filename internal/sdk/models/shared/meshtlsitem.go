@@ -33,20 +33,20 @@ func (e *MeshTLSItemType) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// MeshTLSItemSpecMode - Mode defines the behavior of inbound listeners with regard to traffic encryption.
-type MeshTLSItemSpecMode string
+// MeshTLSItemMode - Mode defines the behavior of inbound listeners with regard to traffic encryption.
+type MeshTLSItemMode string
 
 const (
-	MeshTLSItemSpecModePermissive MeshTLSItemSpecMode = "Permissive"
-	MeshTLSItemSpecModeStrict     MeshTLSItemSpecMode = "Strict"
+	MeshTLSItemModePermissive MeshTLSItemMode = "Permissive"
+	MeshTLSItemModeStrict     MeshTLSItemMode = "Strict"
 )
 
-func (e MeshTLSItemSpecMode) ToPointer() *MeshTLSItemSpecMode {
+func (e MeshTLSItemMode) ToPointer() *MeshTLSItemMode {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshTLSItemSpecMode) IsExact() bool {
+func (e *MeshTLSItemMode) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "Permissive", "Strict":
@@ -73,330 +73,6 @@ func (e TLSCiphers) ToPointer() *TLSCiphers {
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
 func (e *TLSCiphers) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "ECDHE-ECDSA-AES128-GCM-SHA256", "ECDHE-ECDSA-AES256-GCM-SHA384", "ECDHE-ECDSA-CHACHA20-POLY1305", "ECDHE-RSA-AES128-GCM-SHA256", "ECDHE-RSA-AES256-GCM-SHA384", "ECDHE-RSA-CHACHA20-POLY1305":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshTLSItemSpecMax - Max defines maximum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`.
-type MeshTLSItemSpecMax string
-
-const (
-	MeshTLSItemSpecMaxTLSAuto MeshTLSItemSpecMax = "TLSAuto"
-	MeshTLSItemSpecMaxTls10   MeshTLSItemSpecMax = "TLS10"
-	MeshTLSItemSpecMaxTls11   MeshTLSItemSpecMax = "TLS11"
-	MeshTLSItemSpecMaxTls12   MeshTLSItemSpecMax = "TLS12"
-	MeshTLSItemSpecMaxTls13   MeshTLSItemSpecMax = "TLS13"
-)
-
-func (e MeshTLSItemSpecMax) ToPointer() *MeshTLSItemSpecMax {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshTLSItemSpecMax) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshTLSItemSpecMin - Min defines minimum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`.
-type MeshTLSItemSpecMin string
-
-const (
-	MeshTLSItemSpecMinTLSAuto MeshTLSItemSpecMin = "TLSAuto"
-	MeshTLSItemSpecMinTls10   MeshTLSItemSpecMin = "TLS10"
-	MeshTLSItemSpecMinTls11   MeshTLSItemSpecMin = "TLS11"
-	MeshTLSItemSpecMinTls12   MeshTLSItemSpecMin = "TLS12"
-	MeshTLSItemSpecMinTls13   MeshTLSItemSpecMin = "TLS13"
-)
-
-func (e MeshTLSItemSpecMin) ToPointer() *MeshTLSItemSpecMin {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshTLSItemSpecMin) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13":
-			return true
-		}
-	}
-	return false
-}
-
-// TLSVersion - Version section for providing version specification.
-type TLSVersion struct {
-	// Max defines maximum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`.
-	Max *MeshTLSItemSpecMax `default:"TLSAuto" json:"max"`
-	// Min defines minimum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`.
-	Min *MeshTLSItemSpecMin `default:"TLSAuto" json:"min"`
-}
-
-func (t TLSVersion) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(t, "", false)
-}
-
-func (t *TLSVersion) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &t, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (t *TLSVersion) GetMax() *MeshTLSItemSpecMax {
-	if t == nil {
-		return nil
-	}
-	return t.Max
-}
-
-func (t *TLSVersion) GetMin() *MeshTLSItemSpecMin {
-	if t == nil {
-		return nil
-	}
-	return t.Min
-}
-
-// MeshTLSItemDefault - Default is a configuration specific to the group of clients referenced in
-// 'targetRef'
-type MeshTLSItemDefault struct {
-	// Mode defines the behavior of inbound listeners with regard to traffic encryption.
-	Mode *MeshTLSItemSpecMode `json:"mode,omitempty"`
-	// TlsCiphers section for providing ciphers specification.
-	TLSCiphers []TLSCiphers `json:"tlsCiphers,omitempty"`
-	// Version section for providing version specification.
-	TLSVersion *TLSVersion `json:"tlsVersion,omitempty"`
-}
-
-func (m *MeshTLSItemDefault) GetMode() *MeshTLSItemSpecMode {
-	if m == nil {
-		return nil
-	}
-	return m.Mode
-}
-
-func (m *MeshTLSItemDefault) GetTLSCiphers() []TLSCiphers {
-	if m == nil {
-		return nil
-	}
-	return m.TLSCiphers
-}
-
-func (m *MeshTLSItemDefault) GetTLSVersion() *TLSVersion {
-	if m == nil {
-		return nil
-	}
-	return m.TLSVersion
-}
-
-// MeshTLSItemSpecKind - Kind of the referenced resource
-type MeshTLSItemSpecKind string
-
-const (
-	MeshTLSItemSpecKindMesh                 MeshTLSItemSpecKind = "Mesh"
-	MeshTLSItemSpecKindMeshSubset           MeshTLSItemSpecKind = "MeshSubset"
-	MeshTLSItemSpecKindMeshGateway          MeshTLSItemSpecKind = "MeshGateway"
-	MeshTLSItemSpecKindMeshService          MeshTLSItemSpecKind = "MeshService"
-	MeshTLSItemSpecKindMeshExternalService  MeshTLSItemSpecKind = "MeshExternalService"
-	MeshTLSItemSpecKindMeshMultiZoneService MeshTLSItemSpecKind = "MeshMultiZoneService"
-	MeshTLSItemSpecKindMeshServiceSubset    MeshTLSItemSpecKind = "MeshServiceSubset"
-	MeshTLSItemSpecKindMeshHTTPRoute        MeshTLSItemSpecKind = "MeshHTTPRoute"
-	MeshTLSItemSpecKindDataplane            MeshTLSItemSpecKind = "Dataplane"
-)
-
-func (e MeshTLSItemSpecKind) ToPointer() *MeshTLSItemSpecKind {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshTLSItemSpecKind) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshTLSItemSpecProxyTypes string
-
-const (
-	MeshTLSItemSpecProxyTypesSidecar MeshTLSItemSpecProxyTypes = "Sidecar"
-	MeshTLSItemSpecProxyTypesGateway MeshTLSItemSpecProxyTypes = "Gateway"
-)
-
-func (e MeshTLSItemSpecProxyTypes) ToPointer() *MeshTLSItemSpecProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshTLSItemSpecProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshTLSItemSpecTargetRef - TargetRef is a reference to the resource that represents a group of
-// clients.
-type MeshTLSItemSpecTargetRef struct {
-	// Kind of the referenced resource
-	Kind MeshTLSItemSpecKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
-	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshTLSItemSpecProxyTypes `json:"proxyTypes,omitempty"`
-	// SectionName is used to target specific section of resource.
-	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
-}
-
-func (m *MeshTLSItemSpecTargetRef) GetKind() MeshTLSItemSpecKind {
-	if m == nil {
-		return MeshTLSItemSpecKind("")
-	}
-	return m.Kind
-}
-
-func (m *MeshTLSItemSpecTargetRef) GetLabels() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Labels
-}
-
-func (m *MeshTLSItemSpecTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshTLSItemSpecTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshTLSItemSpecTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
-func (m *MeshTLSItemSpecTargetRef) GetProxyTypes() []MeshTLSItemSpecProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
-func (m *MeshTLSItemSpecTargetRef) GetSectionName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.SectionName
-}
-
-func (m *MeshTLSItemSpecTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
-}
-
-type MeshTLSItemFrom struct {
-	// Default is a configuration specific to the group of clients referenced in
-	// 'targetRef'
-	Default *MeshTLSItemDefault `json:"default,omitempty"`
-	// TargetRef is a reference to the resource that represents a group of
-	// clients.
-	TargetRef MeshTLSItemSpecTargetRef `json:"targetRef"`
-}
-
-func (m *MeshTLSItemFrom) GetDefault() *MeshTLSItemDefault {
-	if m == nil {
-		return nil
-	}
-	return m.Default
-}
-
-func (m *MeshTLSItemFrom) GetTargetRef() MeshTLSItemSpecTargetRef {
-	if m == nil {
-		return MeshTLSItemSpecTargetRef{}
-	}
-	return m.TargetRef
-}
-
-// MeshTLSItemMode - Mode defines the behavior of inbound listeners with regard to traffic encryption.
-type MeshTLSItemMode string
-
-const (
-	MeshTLSItemModePermissive MeshTLSItemMode = "Permissive"
-	MeshTLSItemModeStrict     MeshTLSItemMode = "Strict"
-)
-
-func (e MeshTLSItemMode) ToPointer() *MeshTLSItemMode {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshTLSItemMode) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Permissive", "Strict":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshTLSItemTLSCiphers string
-
-const (
-	MeshTLSItemTLSCiphersEcdheEcdsaAes128GcmSha256  MeshTLSItemTLSCiphers = "ECDHE-ECDSA-AES128-GCM-SHA256"
-	MeshTLSItemTLSCiphersEcdheEcdsaAes256GcmSha384  MeshTLSItemTLSCiphers = "ECDHE-ECDSA-AES256-GCM-SHA384"
-	MeshTLSItemTLSCiphersEcdheEcdsaChacha20Poly1305 MeshTLSItemTLSCiphers = "ECDHE-ECDSA-CHACHA20-POLY1305"
-	MeshTLSItemTLSCiphersEcdheRsaAes128GcmSha256    MeshTLSItemTLSCiphers = "ECDHE-RSA-AES128-GCM-SHA256"
-	MeshTLSItemTLSCiphersEcdheRsaAes256GcmSha384    MeshTLSItemTLSCiphers = "ECDHE-RSA-AES256-GCM-SHA384"
-	MeshTLSItemTLSCiphersEcdheRsaChacha20Poly1305   MeshTLSItemTLSCiphers = "ECDHE-RSA-CHACHA20-POLY1305"
-)
-
-func (e MeshTLSItemTLSCiphers) ToPointer() *MeshTLSItemTLSCiphers {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshTLSItemTLSCiphers) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "ECDHE-ECDSA-AES128-GCM-SHA256", "ECDHE-ECDSA-AES256-GCM-SHA384", "ECDHE-ECDSA-CHACHA20-POLY1305", "ECDHE-RSA-AES128-GCM-SHA256", "ECDHE-RSA-AES256-GCM-SHA384", "ECDHE-RSA-CHACHA20-POLY1305":
@@ -458,64 +134,64 @@ func (e *MeshTLSItemMin) IsExact() bool {
 	return false
 }
 
-// MeshTLSItemTLSVersion - Version section for providing version specification.
-type MeshTLSItemTLSVersion struct {
+// TLSVersion - Version section for providing version specification.
+type TLSVersion struct {
 	// Max defines maximum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`.
 	Max *MeshTLSItemMax `default:"TLSAuto" json:"max"`
 	// Min defines minimum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`.
 	Min *MeshTLSItemMin `default:"TLSAuto" json:"min"`
 }
 
-func (m MeshTLSItemTLSVersion) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(m, "", false)
+func (t TLSVersion) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(t, "", false)
 }
 
-func (m *MeshTLSItemTLSVersion) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+func (t *TLSVersion) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &t, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (m *MeshTLSItemTLSVersion) GetMax() *MeshTLSItemMax {
-	if m == nil {
+func (t *TLSVersion) GetMax() *MeshTLSItemMax {
+	if t == nil {
 		return nil
 	}
-	return m.Max
+	return t.Max
 }
 
-func (m *MeshTLSItemTLSVersion) GetMin() *MeshTLSItemMin {
-	if m == nil {
+func (t *TLSVersion) GetMin() *MeshTLSItemMin {
+	if t == nil {
 		return nil
 	}
-	return m.Min
+	return t.Min
 }
 
-// MeshTLSItemSpecDefault - Default contains configuration of the inbound tls
-type MeshTLSItemSpecDefault struct {
+// MeshTLSItemDefault - Default contains configuration of the inbound tls
+type MeshTLSItemDefault struct {
 	// Mode defines the behavior of inbound listeners with regard to traffic encryption.
 	Mode *MeshTLSItemMode `json:"mode,omitempty"`
 	// TlsCiphers section for providing ciphers specification.
-	TLSCiphers []MeshTLSItemTLSCiphers `json:"tlsCiphers,omitempty"`
+	TLSCiphers []TLSCiphers `json:"tlsCiphers,omitempty"`
 	// Version section for providing version specification.
-	TLSVersion *MeshTLSItemTLSVersion `json:"tlsVersion,omitempty"`
+	TLSVersion *TLSVersion `json:"tlsVersion,omitempty"`
 }
 
-func (m *MeshTLSItemSpecDefault) GetMode() *MeshTLSItemMode {
+func (m *MeshTLSItemDefault) GetMode() *MeshTLSItemMode {
 	if m == nil {
 		return nil
 	}
 	return m.Mode
 }
 
-func (m *MeshTLSItemSpecDefault) GetTLSCiphers() []MeshTLSItemTLSCiphers {
+func (m *MeshTLSItemDefault) GetTLSCiphers() []TLSCiphers {
 	if m == nil {
 		return nil
 	}
 	return m.TLSCiphers
 }
 
-func (m *MeshTLSItemSpecDefault) GetTLSVersion() *MeshTLSItemTLSVersion {
+func (m *MeshTLSItemDefault) GetTLSVersion() *TLSVersion {
 	if m == nil {
 		return nil
 	}
@@ -524,10 +200,10 @@ func (m *MeshTLSItemSpecDefault) GetTLSVersion() *MeshTLSItemTLSVersion {
 
 type MeshTLSItemRules struct {
 	// Default contains configuration of the inbound tls
-	Default *MeshTLSItemSpecDefault `json:"default,omitempty"`
+	Default *MeshTLSItemDefault `json:"default,omitempty"`
 }
 
-func (m *MeshTLSItemRules) GetDefault() *MeshTLSItemSpecDefault {
+func (m *MeshTLSItemRules) GetDefault() *MeshTLSItemDefault {
 	if m == nil {
 		return nil
 	}
@@ -540,7 +216,6 @@ type MeshTLSItemKind string
 const (
 	MeshTLSItemKindMesh                 MeshTLSItemKind = "Mesh"
 	MeshTLSItemKindMeshSubset           MeshTLSItemKind = "MeshSubset"
-	MeshTLSItemKindMeshGateway          MeshTLSItemKind = "MeshGateway"
 	MeshTLSItemKindMeshService          MeshTLSItemKind = "MeshService"
 	MeshTLSItemKindMeshExternalService  MeshTLSItemKind = "MeshExternalService"
 	MeshTLSItemKindMeshMultiZoneService MeshTLSItemKind = "MeshMultiZoneService"
@@ -557,29 +232,7 @@ func (e MeshTLSItemKind) ToPointer() *MeshTLSItemKind {
 func (e *MeshTLSItemKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshTLSItemProxyTypes string
-
-const (
-	MeshTLSItemProxyTypesSidecar MeshTLSItemProxyTypes = "Sidecar"
-	MeshTLSItemProxyTypesGateway MeshTLSItemProxyTypes = "Gateway"
-)
-
-func (e MeshTLSItemProxyTypes) ToPointer() *MeshTLSItemProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshTLSItemProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
+		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
 			return true
 		}
 	}
@@ -597,15 +250,12 @@ type MeshTLSItemTargetRef struct {
 	Labels map[string]string `json:"labels,omitempty"`
 	// Mesh is reserved for future use to identify cross mesh resources.
 	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
+	// Name of the referenced resource. Can only be used with kinds: `MeshService`
+	// and `MeshServiceSubset`
 	Name *string `json:"name,omitempty"`
 	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 	// will be targeted.
 	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshTLSItemProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
@@ -649,13 +299,6 @@ func (m *MeshTLSItemTargetRef) GetNamespace() *string {
 	return m.Namespace
 }
 
-func (m *MeshTLSItemTargetRef) GetProxyTypes() []MeshTLSItemProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
 func (m *MeshTLSItemTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
@@ -672,8 +315,6 @@ func (m *MeshTLSItemTargetRef) GetTags() map[string]string {
 
 // MeshTLSItemSpec - Spec is the specification of the Kuma MeshTLS resource.
 type MeshTLSItemSpec struct {
-	// From list makes a match between clients and corresponding configurations
-	From []MeshTLSItemFrom `json:"from,omitempty"`
 	// Rules defines inbound tls configurations. Currently limited to
 	// selecting all inbound traffic, as L7 matching is not yet implemented.
 	Rules []MeshTLSItemRules `json:"rules,omitempty"`
@@ -681,13 +322,6 @@ type MeshTLSItemSpec struct {
 	// The resource could be either a real store object or virtual resource
 	// defined in-place.
 	TargetRef *MeshTLSItemTargetRef `json:"targetRef,omitempty"`
-}
-
-func (m *MeshTLSItemSpec) GetFrom() []MeshTLSItemFrom {
-	if m == nil {
-		return nil
-	}
-	return m.From
 }
 
 func (m *MeshTLSItemSpec) GetRules() []MeshTLSItemRules {

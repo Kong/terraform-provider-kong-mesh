@@ -6,6 +6,7 @@ import (
 	"context"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
@@ -28,12 +29,15 @@ func (r *MeshAccessRoleResourceModel) RefreshFromSharedAccessRoleItem(ctx contex
 	var diags diag.Diagnostics
 
 	if resp != nil {
+		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
+		r.Kri = types.StringPointerValue(resp.Kri)
 		if len(resp.Labels) > 0 {
 			r.Labels = make(map[string]types.String, len(resp.Labels))
 			for key, value := range resp.Labels {
 				r.Labels[key] = types.StringValue(value)
 			}
 		}
+		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
 		if resp.Rules != nil {
 			r.Rules = []tfTypes.AccessRoleItemRules{}
@@ -42,10 +46,10 @@ func (r *MeshAccessRoleResourceModel) RefreshFromSharedAccessRoleItem(ctx contex
 				var rules tfTypes.AccessRoleItemRules
 
 				if rulesItem.Access != nil {
-					rules.Access = []tfTypes.Mode{}
+					rules.Access = []tfTypes.AuthType{}
 
 					for _, accessItem := range rulesItem.Access {
-						var access tfTypes.Mode
+						var access tfTypes.AuthType
 
 						if accessItem.Str != nil {
 							access.Str = types.StringPointerValue(accessItem.Str)
@@ -115,18 +119,24 @@ func (r *MeshAccessRoleResourceModel) RefreshFromSharedAccessRoleItem(ctx contex
 						if whenItem.From == nil {
 							when.From = nil
 						} else {
-							when.From = &tfTypes.AccessRoleItemFrom{}
+							when.From = &tfTypes.From{}
 							if whenItem.From.TargetRef == nil {
 								when.From.TargetRef = nil
 							} else {
 								when.From.TargetRef = &tfTypes.AccessRoleItemRulesTargetRef{}
 								when.From.TargetRef.Kind = types.StringPointerValue(whenItem.From.TargetRef.Kind)
+								if len(whenItem.From.TargetRef.Labels) > 0 {
+									when.From.TargetRef.Labels = make(map[string]types.String, len(whenItem.From.TargetRef.Labels))
+									for key2, value2 := range whenItem.From.TargetRef.Labels {
+										when.From.TargetRef.Labels[key2] = types.StringValue(value2)
+									}
+								}
 								when.From.TargetRef.Mesh = types.StringPointerValue(whenItem.From.TargetRef.Mesh)
 								when.From.TargetRef.Name = types.StringPointerValue(whenItem.From.TargetRef.Name)
 								if len(whenItem.From.TargetRef.Tags) > 0 {
 									when.From.TargetRef.Tags = make(map[string]types.String, len(whenItem.From.TargetRef.Tags))
-									for key2, value2 := range whenItem.From.TargetRef.Tags {
-										when.From.TargetRef.Tags[key2] = types.StringValue(value2)
+									for key3, value3 := range whenItem.From.TargetRef.Tags {
+										when.From.TargetRef.Tags[key3] = types.StringValue(value3)
 									}
 								}
 							}
@@ -137,8 +147,8 @@ func (r *MeshAccessRoleResourceModel) RefreshFromSharedAccessRoleItem(ctx contex
 							when.Selectors = &tfTypes.Destinations{}
 							if len(whenItem.Selectors.Match) > 0 {
 								when.Selectors.Match = make(map[string]types.String, len(whenItem.Selectors.Match))
-								for key3, value3 := range whenItem.Selectors.Match {
-									when.Selectors.Match[key3] = types.StringValue(value3)
+								for key4, value4 := range whenItem.Selectors.Match {
+									when.Selectors.Match[key4] = types.StringValue(value4)
 								}
 							}
 						}
@@ -148,8 +158,8 @@ func (r *MeshAccessRoleResourceModel) RefreshFromSharedAccessRoleItem(ctx contex
 							when.Sources = &tfTypes.Destinations{}
 							if len(whenItem.Sources.Match) > 0 {
 								when.Sources.Match = make(map[string]types.String, len(whenItem.Sources.Match))
-								for key4, value4 := range whenItem.Sources.Match {
-									when.Sources.Match[key4] = types.StringValue(value4)
+								for key5, value5 := range whenItem.Sources.Match {
+									when.Sources.Match[key5] = types.StringValue(value5)
 								}
 							}
 						}
@@ -158,30 +168,42 @@ func (r *MeshAccessRoleResourceModel) RefreshFromSharedAccessRoleItem(ctx contex
 						} else {
 							when.TargetRef = &tfTypes.AccessRoleItemRulesTargetRef{}
 							when.TargetRef.Kind = types.StringPointerValue(whenItem.TargetRef.Kind)
+							if len(whenItem.TargetRef.Labels) > 0 {
+								when.TargetRef.Labels = make(map[string]types.String, len(whenItem.TargetRef.Labels))
+								for key6, value6 := range whenItem.TargetRef.Labels {
+									when.TargetRef.Labels[key6] = types.StringValue(value6)
+								}
+							}
 							when.TargetRef.Mesh = types.StringPointerValue(whenItem.TargetRef.Mesh)
 							when.TargetRef.Name = types.StringPointerValue(whenItem.TargetRef.Name)
 							if len(whenItem.TargetRef.Tags) > 0 {
 								when.TargetRef.Tags = make(map[string]types.String, len(whenItem.TargetRef.Tags))
-								for key5, value5 := range whenItem.TargetRef.Tags {
-									when.TargetRef.Tags[key5] = types.StringValue(value5)
+								for key7, value7 := range whenItem.TargetRef.Tags {
+									when.TargetRef.Tags[key7] = types.StringValue(value7)
 								}
 							}
 						}
 						if whenItem.To == nil {
 							when.To = nil
 						} else {
-							when.To = &tfTypes.AccessRoleItemFrom{}
+							when.To = &tfTypes.From{}
 							if whenItem.To.TargetRef == nil {
 								when.To.TargetRef = nil
 							} else {
 								when.To.TargetRef = &tfTypes.AccessRoleItemRulesTargetRef{}
 								when.To.TargetRef.Kind = types.StringPointerValue(whenItem.To.TargetRef.Kind)
+								if len(whenItem.To.TargetRef.Labels) > 0 {
+									when.To.TargetRef.Labels = make(map[string]types.String, len(whenItem.To.TargetRef.Labels))
+									for key8, value8 := range whenItem.To.TargetRef.Labels {
+										when.To.TargetRef.Labels[key8] = types.StringValue(value8)
+									}
+								}
 								when.To.TargetRef.Mesh = types.StringPointerValue(whenItem.To.TargetRef.Mesh)
 								when.To.TargetRef.Name = types.StringPointerValue(whenItem.To.TargetRef.Name)
 								if len(whenItem.To.TargetRef.Tags) > 0 {
 									when.To.TargetRef.Tags = make(map[string]types.String, len(whenItem.To.TargetRef.Tags))
-									for key6, value6 := range whenItem.To.TargetRef.Tags {
-										when.To.TargetRef.Tags[key6] = types.StringValue(value6)
+									for key9, value9 := range whenItem.To.TargetRef.Tags {
+										when.To.TargetRef.Tags[key9] = types.StringValue(value9)
 									}
 								}
 							}
@@ -236,7 +258,7 @@ func (r *MeshAccessRoleResourceModel) ToOperationsPutAccessRoleRequest(ctx conte
 	var name string
 	name = r.Name.ValueString()
 
-	accessRoleItem, accessRoleItemDiags := r.ToSharedAccessRoleItem(ctx)
+	accessRoleItem, accessRoleItemDiags := r.ToSharedAccessRoleItemInput(ctx)
 	diags.Append(accessRoleItemDiags...)
 
 	if diags.HasError() {
@@ -251,7 +273,7 @@ func (r *MeshAccessRoleResourceModel) ToOperationsPutAccessRoleRequest(ctx conte
 	return &out, diags
 }
 
-func (r *MeshAccessRoleResourceModel) ToSharedAccessRoleItem(ctx context.Context) (*shared.AccessRoleItem, diag.Diagnostics) {
+func (r *MeshAccessRoleResourceModel) ToSharedAccessRoleItemInput(ctx context.Context) (*shared.AccessRoleItemInput, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	labels := make(map[string]string)
@@ -355,7 +377,7 @@ func (r *MeshAccessRoleResourceModel) ToSharedAccessRoleItem(ctx context.Context
 							Tags: tags,
 						}
 					}
-					var from *shared.AccessRoleItemFrom
+					var from *shared.From
 					if r.Rules[rulesIndex].When[whenIndex].From != nil {
 						var targetRef *shared.AccessRoleItemRulesTargetRef
 						if r.Rules[rulesIndex].When[whenIndex].From.TargetRef != nil {
@@ -364,6 +386,13 @@ func (r *MeshAccessRoleResourceModel) ToSharedAccessRoleItem(ctx context.Context
 								*kind = r.Rules[rulesIndex].When[whenIndex].From.TargetRef.Kind.ValueString()
 							} else {
 								kind = nil
+							}
+							labels1 := make(map[string]string)
+							for labelsKey1 := range r.Rules[rulesIndex].When[whenIndex].From.TargetRef.Labels {
+								var labelsInst1 string
+								labelsInst1 = r.Rules[rulesIndex].When[whenIndex].From.TargetRef.Labels[labelsKey1].ValueString()
+
+								labels1[labelsKey1] = labelsInst1
 							}
 							mesh1 := new(string)
 							if !r.Rules[rulesIndex].When[whenIndex].From.TargetRef.Mesh.IsUnknown() && !r.Rules[rulesIndex].When[whenIndex].From.TargetRef.Mesh.IsNull() {
@@ -385,17 +414,18 @@ func (r *MeshAccessRoleResourceModel) ToSharedAccessRoleItem(ctx context.Context
 								tags1[tagsKey] = tagsInst
 							}
 							targetRef = &shared.AccessRoleItemRulesTargetRef{
-								Kind: kind,
-								Mesh: mesh1,
-								Name: name2,
-								Tags: tags1,
+								Kind:   kind,
+								Labels: labels1,
+								Mesh:   mesh1,
+								Name:   name2,
+								Tags:   tags1,
 							}
 						}
-						from = &shared.AccessRoleItemFrom{
+						from = &shared.From{
 							TargetRef: targetRef,
 						}
 					}
-					var selectors *shared.AccessRoleItemSelectors
+					var selectors *shared.Selectors
 					if r.Rules[rulesIndex].When[whenIndex].Selectors != nil {
 						match1 := make(map[string]string)
 						for matchKey1 := range r.Rules[rulesIndex].When[whenIndex].Selectors.Match {
@@ -404,7 +434,7 @@ func (r *MeshAccessRoleResourceModel) ToSharedAccessRoleItem(ctx context.Context
 
 							match1[matchKey1] = matchInst1
 						}
-						selectors = &shared.AccessRoleItemSelectors{
+						selectors = &shared.Selectors{
 							Match: match1,
 						}
 					}
@@ -429,6 +459,13 @@ func (r *MeshAccessRoleResourceModel) ToSharedAccessRoleItem(ctx context.Context
 						} else {
 							kind1 = nil
 						}
+						labels2 := make(map[string]string)
+						for labelsKey2 := range r.Rules[rulesIndex].When[whenIndex].TargetRef.Labels {
+							var labelsInst2 string
+							labelsInst2 = r.Rules[rulesIndex].When[whenIndex].TargetRef.Labels[labelsKey2].ValueString()
+
+							labels2[labelsKey2] = labelsInst2
+						}
 						mesh2 := new(string)
 						if !r.Rules[rulesIndex].When[whenIndex].TargetRef.Mesh.IsUnknown() && !r.Rules[rulesIndex].When[whenIndex].TargetRef.Mesh.IsNull() {
 							*mesh2 = r.Rules[rulesIndex].When[whenIndex].TargetRef.Mesh.ValueString()
@@ -449,10 +486,11 @@ func (r *MeshAccessRoleResourceModel) ToSharedAccessRoleItem(ctx context.Context
 							tags2[tagsKey1] = tagsInst1
 						}
 						targetRef1 = &shared.AccessRoleItemTargetRef{
-							Kind: kind1,
-							Mesh: mesh2,
-							Name: name3,
-							Tags: tags2,
+							Kind:   kind1,
+							Labels: labels2,
+							Mesh:   mesh2,
+							Name:   name3,
+							Tags:   tags2,
 						}
 					}
 					var to *shared.AccessRoleItemTo
@@ -464,6 +502,13 @@ func (r *MeshAccessRoleResourceModel) ToSharedAccessRoleItem(ctx context.Context
 								*kind2 = r.Rules[rulesIndex].When[whenIndex].To.TargetRef.Kind.ValueString()
 							} else {
 								kind2 = nil
+							}
+							labels3 := make(map[string]string)
+							for labelsKey3 := range r.Rules[rulesIndex].When[whenIndex].To.TargetRef.Labels {
+								var labelsInst3 string
+								labelsInst3 = r.Rules[rulesIndex].When[whenIndex].To.TargetRef.Labels[labelsKey3].ValueString()
+
+								labels3[labelsKey3] = labelsInst3
 							}
 							mesh3 := new(string)
 							if !r.Rules[rulesIndex].When[whenIndex].To.TargetRef.Mesh.IsUnknown() && !r.Rules[rulesIndex].When[whenIndex].To.TargetRef.Mesh.IsNull() {
@@ -485,10 +530,11 @@ func (r *MeshAccessRoleResourceModel) ToSharedAccessRoleItem(ctx context.Context
 								tags3[tagsKey2] = tagsInst2
 							}
 							targetRef2 = &shared.AccessRoleItemRulesWhenTargetRef{
-								Kind: kind2,
-								Mesh: mesh3,
-								Name: name4,
-								Tags: tags3,
+								Kind:   kind2,
+								Labels: labels3,
+								Mesh:   mesh3,
+								Name:   name4,
+								Tags:   tags3,
 							}
 						}
 						to = &shared.AccessRoleItemTo{
@@ -518,7 +564,7 @@ func (r *MeshAccessRoleResourceModel) ToSharedAccessRoleItem(ctx context.Context
 	var typeVar string
 	typeVar = r.Type.ValueString()
 
-	out := shared.AccessRoleItem{
+	out := shared.AccessRoleItemInput{
 		Labels: labels,
 		Name:   name,
 		Rules:  rules,

@@ -3,6 +3,6 @@
 package types
 
 type MeshRetryItemSpec struct {
-	TargetRef *MeshAccessLogItemTargetRef `tfsdk:"target_ref"`
-	To        []MeshRetryItemTo           `tfsdk:"to"`
+	TargetRef *TargetRef        `tfsdk:"target_ref"`
+	To        []MeshRetryItemTo `tfsdk:"to"`
 }

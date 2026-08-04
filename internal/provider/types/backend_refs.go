@@ -13,7 +13,6 @@ type BackendRefs struct {
 	Name        types.String            `tfsdk:"name"`
 	Namespace   types.String            `tfsdk:"namespace"`
 	Port        types.Int32             `tfsdk:"port"`
-	ProxyTypes  []types.String          `tfsdk:"proxy_types"`
 	SectionName types.String            `tfsdk:"section_name"`
 	Tags        map[string]types.String `tfsdk:"tags"`
 	Weight      types.Int64             `tfsdk:"weight"`

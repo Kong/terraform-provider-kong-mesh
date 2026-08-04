@@ -56,12 +56,6 @@ func (r *MeshTrustResourceModel) RefreshFromSharedMeshTrustItem(ctx context.Cont
 
 			r.Spec.CaBundles = append(r.Spec.CaBundles, caBundles)
 		}
-		if resp.Spec.Origin == nil {
-			r.Spec.Origin = nil
-		} else {
-			r.Spec.Origin = &tfTypes.Origin{}
-			r.Spec.Origin.Kri = types.StringPointerValue(resp.Spec.Origin.Kri)
-		}
 		r.Spec.TrustDomain = types.StringValue(resp.Spec.TrustDomain)
 		if resp.Status == nil {
 			r.Status = nil
@@ -173,24 +167,11 @@ func (r *MeshTrustResourceModel) ToSharedMeshTrustItemInput(ctx context.Context)
 			Type: type1,
 		})
 	}
-	var origin *shared.Origin
-	if r.Spec.Origin != nil {
-		kri := new(string)
-		if !r.Spec.Origin.Kri.IsUnknown() && !r.Spec.Origin.Kri.IsNull() {
-			*kri = r.Spec.Origin.Kri.ValueString()
-		} else {
-			kri = nil
-		}
-		origin = &shared.Origin{
-			Kri: kri,
-		}
-	}
 	var trustDomain string
 	trustDomain = r.Spec.TrustDomain.ValueString()
 
 	spec := shared.MeshTrustItemSpec{
 		CaBundles:   caBundles,
-		Origin:      origin,
 		TrustDomain: trustDomain,
 	}
 	out := shared.MeshTrustItemInput{

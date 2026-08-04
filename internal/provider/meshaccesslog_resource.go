@@ -21,12 +21,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	custom_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
 	speakeasy_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
+	speakeasy_objectplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/objectplanmodifier"
 	custom_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/stringvalidators"
+	"regexp"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -52,6 +54,7 @@ type MeshAccessLogResourceModel struct {
 	ModificationTime types.String                  `tfsdk:"modification_time"`
 	Name             types.String                  `tfsdk:"name"`
 	Spec             *tfTypes.Spec                 `tfsdk:"spec"`
+	Status           *tfTypes.Status               `tfsdk:"status"`
 	Type             types.String                  `tfsdk:"type"`
 	Warnings         []types.String                `tfsdk:"warnings"`
 }
@@ -107,299 +110,6 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 			"spec": schema.SingleNestedAttribute{
 				Required: true,
 				Attributes: map[string]schema.Attribute{
-					"from": schema.ListNestedAttribute{
-						Computed: true,
-						Optional: true,
-						PlanModifiers: []planmodifier.List{
-							custom_listplanmodifier.SupressZeroNullModifier(),
-						},
-						NestedObject: schema.NestedAttributeObject{
-							Validators: []validator.Object{
-								speakeasy_objectvalidators.NotNull(),
-							},
-							Attributes: map[string]schema.Attribute{
-								"default": schema.SingleNestedAttribute{
-									Optional: true,
-									Attributes: map[string]schema.Attribute{
-										"backends": schema.ListNestedAttribute{
-											Computed: true,
-											Optional: true,
-											PlanModifiers: []planmodifier.List{
-												custom_listplanmodifier.SupressZeroNullModifier(),
-											},
-											NestedObject: schema.NestedAttributeObject{
-												Validators: []validator.Object{
-													speakeasy_objectvalidators.NotNull(),
-												},
-												Attributes: map[string]schema.Attribute{
-													"file": schema.SingleNestedAttribute{
-														Optional: true,
-														Attributes: map[string]schema.Attribute{
-															"format": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"json": schema.ListNestedAttribute{
-																		Computed: true,
-																		Optional: true,
-																		PlanModifiers: []planmodifier.List{
-																			custom_listplanmodifier.SupressZeroNullModifier(),
-																		},
-																		NestedObject: schema.NestedAttributeObject{
-																			Validators: []validator.Object{
-																				speakeasy_objectvalidators.NotNull(),
-																			},
-																			Attributes: map[string]schema.Attribute{
-																				"key": schema.StringAttribute{
-																					Optional:    true,
-																					Description: `Not Null`,
-																					Validators: []validator.String{
-																						speakeasy_stringvalidators.NotNull(),
-																					},
-																				},
-																				"value": schema.StringAttribute{
-																					Optional:    true,
-																					Description: `Not Null`,
-																					Validators: []validator.String{
-																						speakeasy_stringvalidators.NotNull(),
-																					},
-																				},
-																			},
-																		},
-																	},
-																	"omit_empty_values": schema.BoolAttribute{
-																		Computed:    true,
-																		Optional:    true,
-																		Default:     booldefault.StaticBool(false),
-																		Description: `Default: false`,
-																	},
-																	"plain": schema.StringAttribute{
-																		Optional: true,
-																	},
-																	"type": schema.StringAttribute{
-																		Optional:    true,
-																		Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
-																		Validators: []validator.String{
-																			speakeasy_stringvalidators.NotNull(),
-																		},
-																	},
-																},
-																MarkdownDescription: `Format of access logs. Placeholders available on` + "\n" +
-																	`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
-															},
-															"path": schema.StringAttribute{
-																Optional:    true,
-																Description: `Path to a file that logs will be written to. Not Null`,
-																Validators: []validator.String{
-																	speakeasy_stringvalidators.NotNull(),
-																	stringvalidator.UTF8LengthAtLeast(1),
-																},
-															},
-														},
-														Description: `FileBackend defines configuration for file based access logs`,
-													},
-													"open_telemetry": schema.SingleNestedAttribute{
-														Optional: true,
-														Attributes: map[string]schema.Attribute{
-															"attributes": schema.ListNestedAttribute{
-																Computed: true,
-																Optional: true,
-																PlanModifiers: []planmodifier.List{
-																	custom_listplanmodifier.SupressZeroNullModifier(),
-																},
-																NestedObject: schema.NestedAttributeObject{
-																	Validators: []validator.Object{
-																		speakeasy_objectvalidators.NotNull(),
-																	},
-																	Attributes: map[string]schema.Attribute{
-																		"key": schema.StringAttribute{
-																			Optional:    true,
-																			Description: `Not Null`,
-																			Validators: []validator.String{
-																				speakeasy_stringvalidators.NotNull(),
-																			},
-																		},
-																		"value": schema.StringAttribute{
-																			Optional:    true,
-																			Description: `Not Null`,
-																			Validators: []validator.String{
-																				speakeasy_stringvalidators.NotNull(),
-																			},
-																		},
-																	},
-																},
-																MarkdownDescription: `Attributes can contain placeholders available on` + "\n" +
-																	`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
-															},
-															"body": schema.StringAttribute{
-																CustomType: jsontypes.NormalizedType{},
-																Computed:   true,
-																Optional:   true,
-																PlanModifiers: []planmodifier.String{
-																	custom_stringplanmodifier.ArbitraryJSONModifier(),
-																},
-																MarkdownDescription: `Body is a raw string or an OTLP any value as described at` + "\n" +
-																	`https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body` + "\n" +
-																	`It can contain placeholders available on` + "\n" +
-																	`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators` + "\n" +
-																	`Parsed as JSON.`,
-															},
-															"endpoint": schema.StringAttribute{
-																Optional:    true,
-																Description: `Endpoint of OpenTelemetry collector. An empty port defaults to 4317. Not Null`,
-																Validators: []validator.String{
-																	speakeasy_stringvalidators.NotNull(),
-																	stringvalidator.UTF8LengthAtLeast(1),
-																},
-															},
-														},
-														Description: `Defines an OpenTelemetry logging backend.`,
-													},
-													"tcp": schema.SingleNestedAttribute{
-														Optional: true,
-														Attributes: map[string]schema.Attribute{
-															"address": schema.StringAttribute{
-																Optional:    true,
-																Description: `Address of the TCP logging backend. Not Null`,
-																Validators: []validator.String{
-																	speakeasy_stringvalidators.NotNull(),
-																	stringvalidator.UTF8LengthAtLeast(1),
-																},
-															},
-															"format": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"json": schema.ListNestedAttribute{
-																		Computed: true,
-																		Optional: true,
-																		PlanModifiers: []planmodifier.List{
-																			custom_listplanmodifier.SupressZeroNullModifier(),
-																		},
-																		NestedObject: schema.NestedAttributeObject{
-																			Validators: []validator.Object{
-																				speakeasy_objectvalidators.NotNull(),
-																			},
-																			Attributes: map[string]schema.Attribute{
-																				"key": schema.StringAttribute{
-																					Optional:    true,
-																					Description: `Not Null`,
-																					Validators: []validator.String{
-																						speakeasy_stringvalidators.NotNull(),
-																					},
-																				},
-																				"value": schema.StringAttribute{
-																					Optional:    true,
-																					Description: `Not Null`,
-																					Validators: []validator.String{
-																						speakeasy_stringvalidators.NotNull(),
-																					},
-																				},
-																			},
-																		},
-																	},
-																	"omit_empty_values": schema.BoolAttribute{
-																		Computed:    true,
-																		Optional:    true,
-																		Default:     booldefault.StaticBool(false),
-																		Description: `Default: false`,
-																	},
-																	"plain": schema.StringAttribute{
-																		Optional: true,
-																	},
-																	"type": schema.StringAttribute{
-																		Optional:    true,
-																		Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
-																		Validators: []validator.String{
-																			speakeasy_stringvalidators.NotNull(),
-																		},
-																	},
-																},
-																MarkdownDescription: `Format of access logs. Placeholders available on` + "\n" +
-																	`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
-															},
-														},
-														Description: `TCPBackend defines a TCP logging backend.`,
-													},
-													"type": schema.StringAttribute{
-														Optional:    true,
-														Description: `possible known values include one of ["Tcp", "File", "OpenTelemetry"]; Not Null`,
-														Validators: []validator.String{
-															speakeasy_stringvalidators.NotNull(),
-														},
-													},
-												},
-											},
-										},
-									},
-									MarkdownDescription: `Default is a configuration specific to the group of clients referenced in` + "\n" +
-										`'targetRef'` + "\n" +
-										`Not Null`,
-									Validators: []validator.Object{
-										speakeasy_objectvalidators.NotNull(),
-									},
-								},
-								"target_ref": schema.SingleNestedAttribute{
-									Optional: true,
-									Attributes: map[string]schema.Attribute{
-										"kind": schema.StringAttribute{
-											Optional:    true,
-											Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null`,
-											Validators: []validator.String{
-												speakeasy_stringvalidators.NotNull(),
-											},
-										},
-										"labels": schema.MapAttribute{
-											Optional:    true,
-											ElementType: types.StringType,
-											MarkdownDescription: `Labels are used to select group of MeshServices that match labels. Either Labels or` + "\n" +
-												`Name and Namespace can be used.`,
-										},
-										"mesh": schema.StringAttribute{
-											Optional:    true,
-											Description: `Mesh is reserved for future use to identify cross mesh resources.`,
-										},
-										"name": schema.StringAttribute{
-											Optional: true,
-											MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `,` + "\n" +
-												`` + "`" + `MeshServiceSubset` + "`" + ` and ` + "`" + `MeshGatewayRoute` + "`" + ``,
-										},
-										"namespace": schema.StringAttribute{
-											Optional: true,
-											MarkdownDescription: `Namespace specifies the namespace of target resource. If empty only resources in policy namespace` + "\n" +
-												`will be targeted.`,
-										},
-										"proxy_types": schema.ListAttribute{
-											Computed: true,
-											Optional: true,
-											PlanModifiers: []planmodifier.List{
-												custom_listplanmodifier.SupressZeroNullModifier(),
-											},
-											ElementType: types.StringType,
-											MarkdownDescription: `ProxyTypes specifies the data plane types that are subject to the policy. When not specified,` + "\n" +
-												`all data plane types are targeted by the policy.`,
-										},
-										"section_name": schema.StringAttribute{
-											Optional: true,
-											MarkdownDescription: `SectionName is used to target specific section of resource.` + "\n" +
-												`For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.`,
-										},
-										"tags": schema.MapAttribute{
-											Optional:    true,
-											ElementType: types.StringType,
-											MarkdownDescription: `Tags used to select a subset of proxies by tags. Can only be used with kinds` + "\n" +
-												`` + "`" + `MeshSubset` + "`" + ` and ` + "`" + `MeshServiceSubset` + "`" + ``,
-										},
-									},
-									MarkdownDescription: `TargetRef is a reference to the resource that represents a group of` + "\n" +
-										`clients.` + "\n" +
-										`Not Null`,
-									Validators: []validator.Object{
-										speakeasy_objectvalidators.NotNull(),
-									},
-								},
-							},
-						},
-						Description: `From list makes a match between clients and corresponding configurations`,
-					},
 					"rules": schema.ListNestedAttribute{
 						Computed: true,
 						Optional: true,
@@ -506,22 +216,47 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 																	Attributes: map[string]schema.Attribute{
 																		"key": schema.StringAttribute{
 																			Optional:    true,
-																			Description: `Not Null`,
+																			Description: `Key is the OpenTelemetry attribute name. Not Null`,
 																			Validators: []validator.String{
 																				speakeasy_stringvalidators.NotNull(),
+																				stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z]([a-z0-9]|[._][a-z0-9])*$`), "must match pattern "+regexp.MustCompile(`^[a-z]([a-z0-9]|[._][a-z0-9])*$`).String()),
 																			},
 																		},
 																		"value": schema.StringAttribute{
 																			Optional:    true,
-																			Description: `Not Null`,
+																			Description: `Value can contain Kuma placeholders. Not Null`,
 																			Validators: []validator.String{
 																				speakeasy_stringvalidators.NotNull(),
 																			},
 																		},
 																	},
 																},
-																MarkdownDescription: `Attributes can contain placeholders available on` + "\n" +
+																MarkdownDescription: `Attributes defines custom OpenTelemetry attributes. Keys must be static` + "\n" +
+																	`OpenTelemetry attribute names. Values can contain placeholders available on` + "\n" +
 																	`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
+															},
+															"backend_ref": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"kind": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"`,
+																		Validators: []validator.String{
+																			speakeasy_stringvalidators.NotNull(),
+																			stringvalidator.OneOf(
+																				"MeshOpenTelemetryBackend",
+																			),
+																		},
+																	},
+																	"labels": schema.MapAttribute{
+																		Optional:    true,
+																		ElementType: types.StringType,
+																		MarkdownDescription: `Labels to match the referenced resource. When multiple resources match,` + "\n" +
+																			`the oldest by creation time wins.`,
+																	},
+																},
+																MarkdownDescription: `BackendRef is a reference to a MeshOpenTelemetryBackend resource that` + "\n" +
+																	`defines the collector endpoint.`,
 															},
 															"body": schema.StringAttribute{
 																CustomType: jsontypes.NormalizedType{},
@@ -532,14 +267,6 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 																	`It can contain placeholders available on` + "\n" +
 																	`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators` + "\n" +
 																	`Parsed as JSON.`,
-															},
-															"endpoint": schema.StringAttribute{
-																Optional:    true,
-																Description: `Endpoint of OpenTelemetry collector. An empty port defaults to 4317. Not Null`,
-																Validators: []validator.String{
-																	speakeasy_stringvalidators.NotNull(),
-																	stringvalidator.UTF8LengthAtLeast(1),
-																},
 															},
 														},
 														Description: `Defines an OpenTelemetry logging backend.`,
@@ -625,17 +352,74 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 										speakeasy_objectvalidators.NotNull(),
 									},
 								},
+								"matches": schema.ListNestedAttribute{
+									Computed: true,
+									Optional: true,
+									PlanModifiers: []planmodifier.List{
+										custom_listplanmodifier.SupressZeroNullModifier(),
+									},
+									NestedObject: schema.NestedAttributeObject{
+										Validators: []validator.Object{
+											speakeasy_objectvalidators.NotNull(),
+										},
+										Attributes: map[string]schema.Attribute{
+											"sni": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"type": schema.StringAttribute{
+														Optional:    true,
+														Description: `Type defines how to match traffic by SNI. Only ` + "`" + `Exact` + "`" + ` is supported. Not Null; must be "Exact"`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+															stringvalidator.OneOf("Exact"),
+														},
+													},
+													"value": schema.StringAttribute{
+														Optional:    true,
+														Description: `Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied. Not Null`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+														},
+													},
+												},
+												Description: `SNI defines a matcher configuration for matching by SNI value carried on the TLS connection`,
+											},
+											"spiffe_id": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"type": schema.StringAttribute{
+														Optional:    true,
+														Description: `Type defines how to match incoming traffic by SpiffeID. ` + "`" + `Exact` + "`" + ` or ` + "`" + `Prefix` + "`" + ` are allowed. possible known values include one of ["Exact", "Prefix"]; Not Null`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+														},
+													},
+													"value": schema.StringAttribute{
+														Optional:    true,
+														Description: `Value is SpiffeID of a client that needs to match for the configuration to be applied. Not Null`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+														},
+													},
+												},
+												Description: `SpiffeID defines a matcher configuration for SpiffeID matching`,
+											},
+										},
+									},
+									MarkdownDescription: `Matches defines a list of conditions (by SpiffeID or SNI) that select the` + "\n" +
+										`traffic this rule applies to. Rules fire independently: a connection that` + "\n" +
+										`satisfies multiple rules is logged to every matching rule's backends.`,
+								},
 							},
 						},
-						MarkdownDescription: `Rules defines inbound access log configurations. Currently limited to` + "\n" +
-							`selecting all inbound traffic, as L7 matching is not yet implemented.`,
+						Description: `Rules defines inbound access log configurations.`,
 					},
 					"target_ref": schema.SingleNestedAttribute{
 						Optional: true,
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
 								Required:    true,
-								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
+								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
 							},
 							"labels": schema.MapAttribute{
 								Optional:    true,
@@ -649,23 +433,13 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 							},
 							"name": schema.StringAttribute{
 								Optional: true,
-								MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `,` + "\n" +
-									`` + "`" + `MeshServiceSubset` + "`" + ` and ` + "`" + `MeshGatewayRoute` + "`" + ``,
+								MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `` + "\n" +
+									`and ` + "`" + `MeshServiceSubset` + "`" + ``,
 							},
 							"namespace": schema.StringAttribute{
 								Optional: true,
 								MarkdownDescription: `Namespace specifies the namespace of target resource. If empty only resources in policy namespace` + "\n" +
 									`will be targeted.`,
-							},
-							"proxy_types": schema.ListAttribute{
-								Computed: true,
-								Optional: true,
-								PlanModifiers: []planmodifier.List{
-									custom_listplanmodifier.SupressZeroNullModifier(),
-								},
-								ElementType: types.StringType,
-								MarkdownDescription: `ProxyTypes specifies the data plane types that are subject to the policy. When not specified,` + "\n" +
-									`all data plane types are targeted by the policy.`,
 							},
 							"section_name": schema.StringAttribute{
 								Optional: true,
@@ -789,22 +563,47 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 																	Attributes: map[string]schema.Attribute{
 																		"key": schema.StringAttribute{
 																			Optional:    true,
-																			Description: `Not Null`,
+																			Description: `Key is the OpenTelemetry attribute name. Not Null`,
 																			Validators: []validator.String{
 																				speakeasy_stringvalidators.NotNull(),
+																				stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z]([a-z0-9]|[._][a-z0-9])*$`), "must match pattern "+regexp.MustCompile(`^[a-z]([a-z0-9]|[._][a-z0-9])*$`).String()),
 																			},
 																		},
 																		"value": schema.StringAttribute{
 																			Optional:    true,
-																			Description: `Not Null`,
+																			Description: `Value can contain Kuma placeholders. Not Null`,
 																			Validators: []validator.String{
 																				speakeasy_stringvalidators.NotNull(),
 																			},
 																		},
 																	},
 																},
-																MarkdownDescription: `Attributes can contain placeholders available on` + "\n" +
+																MarkdownDescription: `Attributes defines custom OpenTelemetry attributes. Keys must be static` + "\n" +
+																	`OpenTelemetry attribute names. Values can contain placeholders available on` + "\n" +
 																	`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
+															},
+															"backend_ref": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"kind": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"`,
+																		Validators: []validator.String{
+																			speakeasy_stringvalidators.NotNull(),
+																			stringvalidator.OneOf(
+																				"MeshOpenTelemetryBackend",
+																			),
+																		},
+																	},
+																	"labels": schema.MapAttribute{
+																		Optional:    true,
+																		ElementType: types.StringType,
+																		MarkdownDescription: `Labels to match the referenced resource. When multiple resources match,` + "\n" +
+																			`the oldest by creation time wins.`,
+																	},
+																},
+																MarkdownDescription: `BackendRef is a reference to a MeshOpenTelemetryBackend resource that` + "\n" +
+																	`defines the collector endpoint.`,
 															},
 															"body": schema.StringAttribute{
 																CustomType: jsontypes.NormalizedType{},
@@ -818,14 +617,6 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 																	`It can contain placeholders available on` + "\n" +
 																	`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators` + "\n" +
 																	`Parsed as JSON.`,
-															},
-															"endpoint": schema.StringAttribute{
-																Optional:    true,
-																Description: `Endpoint of OpenTelemetry collector. An empty port defaults to 4317. Not Null`,
-																Validators: []validator.String{
-																	speakeasy_stringvalidators.NotNull(),
-																	stringvalidator.UTF8LengthAtLeast(1),
-																},
 															},
 														},
 														Description: `Defines an OpenTelemetry logging backend.`,
@@ -918,7 +709,7 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 									Attributes: map[string]schema.Attribute{
 										"kind": schema.StringAttribute{
 											Optional:    true,
-											Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null`,
+											Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null`,
 											Validators: []validator.String{
 												speakeasy_stringvalidators.NotNull(),
 											},
@@ -935,23 +726,13 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 										},
 										"name": schema.StringAttribute{
 											Optional: true,
-											MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `,` + "\n" +
-												`` + "`" + `MeshServiceSubset` + "`" + ` and ` + "`" + `MeshGatewayRoute` + "`" + ``,
+											MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `` + "\n" +
+												`and ` + "`" + `MeshServiceSubset` + "`" + ``,
 										},
 										"namespace": schema.StringAttribute{
 											Optional: true,
 											MarkdownDescription: `Namespace specifies the namespace of target resource. If empty only resources in policy namespace` + "\n" +
 												`will be targeted.`,
-										},
-										"proxy_types": schema.ListAttribute{
-											Computed: true,
-											Optional: true,
-											PlanModifiers: []planmodifier.List{
-												custom_listplanmodifier.SupressZeroNullModifier(),
-											},
-											ElementType: types.StringType,
-											MarkdownDescription: `ProxyTypes specifies the data plane types that are subject to the policy. When not specified,` + "\n" +
-												`all data plane types are targeted by the policy.`,
 										},
 										"section_name": schema.StringAttribute{
 											Optional: true,
@@ -978,6 +759,53 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 					},
 				},
 				Description: `Spec is the specification of the Kuma MeshAccessLog resource.`,
+			},
+			"status": schema.SingleNestedAttribute{
+				Computed: true,
+				PlanModifiers: []planmodifier.Object{
+					speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+				},
+				Attributes: map[string]schema.Attribute{
+					"conditions": schema.ListNestedAttribute{
+						Computed: true,
+						PlanModifiers: []planmodifier.List{
+							custom_listplanmodifier.SupressZeroNullModifier(),
+							speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
+						},
+						NestedObject: schema.NestedAttributeObject{
+							PlanModifiers: []planmodifier.Object{
+								speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+							},
+							Attributes: map[string]schema.Attribute{
+								"message": schema.StringAttribute{
+									Computed: true,
+									MarkdownDescription: `message is a human readable message indicating details about the transition.` + "\n" +
+										`This may be an empty string.`,
+								},
+								"reason": schema.StringAttribute{
+									Computed: true,
+									MarkdownDescription: `reason contains a programmatic identifier indicating the reason for the condition's last transition.` + "\n" +
+										`Producers of specific condition types may define expected values and meanings for this field,` + "\n" +
+										`and whether the values are considered a guaranteed API.` + "\n" +
+										`The value should be a CamelCase string.` + "\n" +
+										`This field may not be empty.`,
+								},
+								"status": schema.StringAttribute{
+									Computed: true,
+									PlanModifiers: []planmodifier.String{
+										speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+									},
+									Description: `status of the condition, one of True, False, Unknown.`,
+								},
+								"type": schema.StringAttribute{
+									Computed:    true,
+									Description: `type of condition in CamelCase or in foo.example.com/CamelCase.`,
+								},
+							},
+						},
+					},
+				},
+				Description: `Status is the current status of the Kuma MeshAccessLog resource.`,
 			},
 			"type": schema.StringAttribute{
 				Required:    true,

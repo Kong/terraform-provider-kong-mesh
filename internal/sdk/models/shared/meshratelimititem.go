@@ -91,30 +91,30 @@ func (m *MeshRateLimitItemHeaders) GetSet() []MeshRateLimitItemSet {
 	return m.Set
 }
 
-// MeshRateLimitItemSpecFromOnRateLimit - Describes the actions to take on a rate limit event
-type MeshRateLimitItemSpecFromOnRateLimit struct {
+// OnRateLimit - Describes the actions to take on a rate limit event
+type OnRateLimit struct {
 	// The Headers to be added to the HTTP response on a rate limit event
 	Headers *MeshRateLimitItemHeaders `json:"headers,omitempty"`
 	// The HTTP status code to be set on a rate limit event
 	Status *int `json:"status,omitempty"`
 }
 
-func (m *MeshRateLimitItemSpecFromOnRateLimit) GetHeaders() *MeshRateLimitItemHeaders {
-	if m == nil {
+func (o *OnRateLimit) GetHeaders() *MeshRateLimitItemHeaders {
+	if o == nil {
 		return nil
 	}
-	return m.Headers
+	return o.Headers
 }
 
-func (m *MeshRateLimitItemSpecFromOnRateLimit) GetStatus() *int {
-	if m == nil {
+func (o *OnRateLimit) GetStatus() *int {
+	if o == nil {
 		return nil
 	}
-	return m.Status
+	return o.Status
 }
 
-// MeshRateLimitItemSpecFromRequestRate - Defines how many requests are allowed per interval.
-type MeshRateLimitItemSpecFromRequestRate struct {
+// RequestRate - Defines how many requests are allowed per interval.
+type RequestRate struct {
 	// The interval the number of units is accounted for.
 	Interval string `json:"interval"`
 	// Number of units per interval (depending on usage it can be a number of requests,
@@ -122,18 +122,18 @@ type MeshRateLimitItemSpecFromRequestRate struct {
 	Num int `json:"num"`
 }
 
-func (m *MeshRateLimitItemSpecFromRequestRate) GetInterval() string {
-	if m == nil {
+func (r *RequestRate) GetInterval() string {
+	if r == nil {
 		return ""
 	}
-	return m.Interval
+	return r.Interval
 }
 
-func (m *MeshRateLimitItemSpecFromRequestRate) GetNum() int {
-	if m == nil {
+func (r *RequestRate) GetNum() int {
+	if r == nil {
 		return 0
 	}
-	return m.Num
+	return r.Num
 }
 
 // MeshRateLimitItemHTTP - LocalHTTP defines configuration of local HTTP rate limiting
@@ -142,9 +142,9 @@ type MeshRateLimitItemHTTP struct {
 	// Define if rate limiting should be disabled.
 	Disabled *bool `json:"disabled,omitempty"`
 	// Describes the actions to take on a rate limit event
-	OnRateLimit *MeshRateLimitItemSpecFromOnRateLimit `json:"onRateLimit,omitempty"`
+	OnRateLimit *OnRateLimit `json:"onRateLimit,omitempty"`
 	// Defines how many requests are allowed per interval.
-	RequestRate *MeshRateLimitItemSpecFromRequestRate `json:"requestRate,omitempty"`
+	RequestRate *RequestRate `json:"requestRate,omitempty"`
 }
 
 func (m *MeshRateLimitItemHTTP) GetDisabled() *bool {
@@ -154,14 +154,14 @@ func (m *MeshRateLimitItemHTTP) GetDisabled() *bool {
 	return m.Disabled
 }
 
-func (m *MeshRateLimitItemHTTP) GetOnRateLimit() *MeshRateLimitItemSpecFromOnRateLimit {
+func (m *MeshRateLimitItemHTTP) GetOnRateLimit() *OnRateLimit {
 	if m == nil {
 		return nil
 	}
 	return m.OnRateLimit
 }
 
-func (m *MeshRateLimitItemHTTP) GetRequestRate() *MeshRateLimitItemSpecFromRequestRate {
+func (m *MeshRateLimitItemHTTP) GetRequestRate() *RequestRate {
 	if m == nil {
 		return nil
 	}
@@ -239,8 +239,7 @@ func (l *Local) GetTCP() *MeshRateLimitItemTCP {
 	return l.TCP
 }
 
-// MeshRateLimitItemDefault - Default is a configuration specific to the group of clients referenced in
-// 'targetRef'
+// MeshRateLimitItemDefault - Default contains configuration of the inbound rate limits
 type MeshRateLimitItemDefault struct {
 	// LocalConf defines local http or/and tcp rate limit configuration
 	Local *Local `json:"local,omitempty"`
@@ -253,77 +252,185 @@ func (m *MeshRateLimitItemDefault) GetLocal() *Local {
 	return m.Local
 }
 
-// MeshRateLimitItemSpecKind - Kind of the referenced resource
-type MeshRateLimitItemSpecKind string
+// MeshRateLimitItemSpecType - Type defines how to match traffic by SNI. Only `Exact` is supported.
+type MeshRateLimitItemSpecType string
 
 const (
-	MeshRateLimitItemSpecKindMesh                 MeshRateLimitItemSpecKind = "Mesh"
-	MeshRateLimitItemSpecKindMeshSubset           MeshRateLimitItemSpecKind = "MeshSubset"
-	MeshRateLimitItemSpecKindMeshGateway          MeshRateLimitItemSpecKind = "MeshGateway"
-	MeshRateLimitItemSpecKindMeshService          MeshRateLimitItemSpecKind = "MeshService"
-	MeshRateLimitItemSpecKindMeshExternalService  MeshRateLimitItemSpecKind = "MeshExternalService"
-	MeshRateLimitItemSpecKindMeshMultiZoneService MeshRateLimitItemSpecKind = "MeshMultiZoneService"
-	MeshRateLimitItemSpecKindMeshServiceSubset    MeshRateLimitItemSpecKind = "MeshServiceSubset"
-	MeshRateLimitItemSpecKindMeshHTTPRoute        MeshRateLimitItemSpecKind = "MeshHTTPRoute"
-	MeshRateLimitItemSpecKindDataplane            MeshRateLimitItemSpecKind = "Dataplane"
+	MeshRateLimitItemSpecTypeExact MeshRateLimitItemSpecType = "Exact"
 )
 
-func (e MeshRateLimitItemSpecKind) ToPointer() *MeshRateLimitItemSpecKind {
+func (e MeshRateLimitItemSpecType) ToPointer() *MeshRateLimitItemSpecType {
+	return &e
+}
+func (e *MeshRateLimitItemSpecType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "Exact":
+		*e = MeshRateLimitItemSpecType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshRateLimitItemSpecType: %v", v)
+	}
+}
+
+// MeshRateLimitItemSni - SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+type MeshRateLimitItemSni struct {
+	// Type defines how to match traffic by SNI. Only `Exact` is supported.
+	Type MeshRateLimitItemSpecType `json:"type"`
+	// Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied
+	Value string `json:"value"`
+}
+
+func (m *MeshRateLimitItemSni) GetType() MeshRateLimitItemSpecType {
+	if m == nil {
+		return MeshRateLimitItemSpecType("")
+	}
+	return m.Type
+}
+
+func (m *MeshRateLimitItemSni) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// MeshRateLimitItemSpecRulesType - Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
+type MeshRateLimitItemSpecRulesType string
+
+const (
+	MeshRateLimitItemSpecRulesTypeExact  MeshRateLimitItemSpecRulesType = "Exact"
+	MeshRateLimitItemSpecRulesTypePrefix MeshRateLimitItemSpecRulesType = "Prefix"
+)
+
+func (e MeshRateLimitItemSpecRulesType) ToPointer() *MeshRateLimitItemSpecRulesType {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshRateLimitItemSpecKind) IsExact() bool {
+func (e *MeshRateLimitItemSpecRulesType) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+		case "Exact", "Prefix":
 			return true
 		}
 	}
 	return false
 }
 
-type MeshRateLimitItemSpecProxyTypes string
+// MeshRateLimitItemSpiffeID - SpiffeID defines a matcher configuration for SpiffeID matching
+type MeshRateLimitItemSpiffeID struct {
+	// Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
+	Type MeshRateLimitItemSpecRulesType `json:"type"`
+	// Value is SpiffeID of a client that needs to match for the configuration to be applied
+	Value string `json:"value"`
+}
+
+func (m *MeshRateLimitItemSpiffeID) GetType() MeshRateLimitItemSpecRulesType {
+	if m == nil {
+		return MeshRateLimitItemSpecRulesType("")
+	}
+	return m.Type
+}
+
+func (m *MeshRateLimitItemSpiffeID) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+type MeshRateLimitItemMatches struct {
+	// SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+	Sni *MeshRateLimitItemSni `json:"sni,omitempty"`
+	// SpiffeID defines a matcher configuration for SpiffeID matching
+	SpiffeID *MeshRateLimitItemSpiffeID `json:"spiffeID,omitempty"`
+}
+
+func (m *MeshRateLimitItemMatches) GetSni() *MeshRateLimitItemSni {
+	if m == nil {
+		return nil
+	}
+	return m.Sni
+}
+
+func (m *MeshRateLimitItemMatches) GetSpiffeID() *MeshRateLimitItemSpiffeID {
+	if m == nil {
+		return nil
+	}
+	return m.SpiffeID
+}
+
+type MeshRateLimitItemRules struct {
+	// Default contains configuration of the inbound rate limits
+	Default *MeshRateLimitItemDefault `json:"default,omitempty"`
+	// Matches define additional conditions for applying this rate limit rule.
+	Matches []MeshRateLimitItemMatches `json:"matches,omitempty"`
+}
+
+func (m *MeshRateLimitItemRules) GetDefault() *MeshRateLimitItemDefault {
+	if m == nil {
+		return nil
+	}
+	return m.Default
+}
+
+func (m *MeshRateLimitItemRules) GetMatches() []MeshRateLimitItemMatches {
+	if m == nil {
+		return nil
+	}
+	return m.Matches
+}
+
+// MeshRateLimitItemKind - Kind of the referenced resource
+type MeshRateLimitItemKind string
 
 const (
-	MeshRateLimitItemSpecProxyTypesSidecar MeshRateLimitItemSpecProxyTypes = "Sidecar"
-	MeshRateLimitItemSpecProxyTypesGateway MeshRateLimitItemSpecProxyTypes = "Gateway"
+	MeshRateLimitItemKindMesh                 MeshRateLimitItemKind = "Mesh"
+	MeshRateLimitItemKindMeshSubset           MeshRateLimitItemKind = "MeshSubset"
+	MeshRateLimitItemKindMeshService          MeshRateLimitItemKind = "MeshService"
+	MeshRateLimitItemKindMeshExternalService  MeshRateLimitItemKind = "MeshExternalService"
+	MeshRateLimitItemKindMeshMultiZoneService MeshRateLimitItemKind = "MeshMultiZoneService"
+	MeshRateLimitItemKindMeshServiceSubset    MeshRateLimitItemKind = "MeshServiceSubset"
+	MeshRateLimitItemKindMeshHTTPRoute        MeshRateLimitItemKind = "MeshHTTPRoute"
+	MeshRateLimitItemKindDataplane            MeshRateLimitItemKind = "Dataplane"
 )
 
-func (e MeshRateLimitItemSpecProxyTypes) ToPointer() *MeshRateLimitItemSpecProxyTypes {
+func (e MeshRateLimitItemKind) ToPointer() *MeshRateLimitItemKind {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshRateLimitItemSpecProxyTypes) IsExact() bool {
+func (e *MeshRateLimitItemKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Sidecar", "Gateway":
+		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
 			return true
 		}
 	}
 	return false
 }
 
-// MeshRateLimitItemSpecTargetRef - TargetRef is a reference to the resource that represents a group of
-// clients.
-type MeshRateLimitItemSpecTargetRef struct {
+// MeshRateLimitItemTargetRef - TargetRef is a reference to the resource the policy takes an effect on.
+// The resource could be either a real store object or virtual resource
+// defined inplace.
+type MeshRateLimitItemTargetRef struct {
 	// Kind of the referenced resource
-	Kind MeshRateLimitItemSpecKind `json:"kind"`
+	Kind MeshRateLimitItemKind `json:"kind"`
 	// Labels are used to select group of MeshServices that match labels. Either Labels or
 	// Name and Namespace can be used.
 	Labels map[string]string `json:"labels,omitempty"`
 	// Mesh is reserved for future use to identify cross mesh resources.
 	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
+	// Name of the referenced resource. Can only be used with kinds: `MeshService`
+	// and `MeshServiceSubset`
 	Name *string `json:"name,omitempty"`
 	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 	// will be targeted.
 	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshRateLimitItemSpecProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
@@ -332,83 +439,53 @@ type MeshRateLimitItemSpecTargetRef struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (m *MeshRateLimitItemSpecTargetRef) GetKind() MeshRateLimitItemSpecKind {
+func (m *MeshRateLimitItemTargetRef) GetKind() MeshRateLimitItemKind {
 	if m == nil {
-		return MeshRateLimitItemSpecKind("")
+		return MeshRateLimitItemKind("")
 	}
 	return m.Kind
 }
 
-func (m *MeshRateLimitItemSpecTargetRef) GetLabels() map[string]string {
+func (m *MeshRateLimitItemTargetRef) GetLabels() map[string]string {
 	if m == nil {
 		return nil
 	}
 	return m.Labels
 }
 
-func (m *MeshRateLimitItemSpecTargetRef) GetMesh() *string {
+func (m *MeshRateLimitItemTargetRef) GetMesh() *string {
 	if m == nil {
 		return nil
 	}
 	return m.Mesh
 }
 
-func (m *MeshRateLimitItemSpecTargetRef) GetName() *string {
+func (m *MeshRateLimitItemTargetRef) GetName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.Name
 }
 
-func (m *MeshRateLimitItemSpecTargetRef) GetNamespace() *string {
+func (m *MeshRateLimitItemTargetRef) GetNamespace() *string {
 	if m == nil {
 		return nil
 	}
 	return m.Namespace
 }
 
-func (m *MeshRateLimitItemSpecTargetRef) GetProxyTypes() []MeshRateLimitItemSpecProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
-func (m *MeshRateLimitItemSpecTargetRef) GetSectionName() *string {
+func (m *MeshRateLimitItemTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
 }
 
-func (m *MeshRateLimitItemSpecTargetRef) GetTags() map[string]string {
+func (m *MeshRateLimitItemTargetRef) GetTags() map[string]string {
 	if m == nil {
 		return nil
 	}
 	return m.Tags
-}
-
-type MeshRateLimitItemFrom struct {
-	// Default is a configuration specific to the group of clients referenced in
-	// 'targetRef'
-	Default *MeshRateLimitItemDefault `json:"default,omitempty"`
-	// TargetRef is a reference to the resource that represents a group of
-	// clients.
-	TargetRef MeshRateLimitItemSpecTargetRef `json:"targetRef"`
-}
-
-func (m *MeshRateLimitItemFrom) GetDefault() *MeshRateLimitItemDefault {
-	if m == nil {
-		return nil
-	}
-	return m.Default
-}
-
-func (m *MeshRateLimitItemFrom) GetTargetRef() MeshRateLimitItemSpecTargetRef {
-	if m == nil {
-		return MeshRateLimitItemSpecTargetRef{}
-	}
-	return m.TargetRef
 }
 
 type MeshRateLimitItemSpecAdd struct {
@@ -617,7 +694,8 @@ func (m *MeshRateLimitItemLocal) GetTCP() *MeshRateLimitItemSpecTCP {
 	return m.TCP
 }
 
-// MeshRateLimitItemSpecDefault - Default contains configuration of the inbound rate limits
+// MeshRateLimitItemSpecDefault - Default is a configuration specific to the group of clients referenced in
+// 'targetRef'
 type MeshRateLimitItemSpecDefault struct {
 	// LocalConf defines local http or/and tcp rate limit configuration
 	Local *MeshRateLimitItemLocal `json:"local,omitempty"`
@@ -630,445 +708,51 @@ func (m *MeshRateLimitItemSpecDefault) GetLocal() *MeshRateLimitItemLocal {
 	return m.Local
 }
 
-type MeshRateLimitItemRules struct {
-	// Default contains configuration of the inbound rate limits
-	Default *MeshRateLimitItemSpecDefault `json:"default,omitempty"`
-}
-
-func (m *MeshRateLimitItemRules) GetDefault() *MeshRateLimitItemSpecDefault {
-	if m == nil {
-		return nil
-	}
-	return m.Default
-}
-
-// MeshRateLimitItemKind - Kind of the referenced resource
-type MeshRateLimitItemKind string
+// MeshRateLimitItemSpecKind - Kind of the referenced resource
+type MeshRateLimitItemSpecKind string
 
 const (
-	MeshRateLimitItemKindMesh                 MeshRateLimitItemKind = "Mesh"
-	MeshRateLimitItemKindMeshSubset           MeshRateLimitItemKind = "MeshSubset"
-	MeshRateLimitItemKindMeshGateway          MeshRateLimitItemKind = "MeshGateway"
-	MeshRateLimitItemKindMeshService          MeshRateLimitItemKind = "MeshService"
-	MeshRateLimitItemKindMeshExternalService  MeshRateLimitItemKind = "MeshExternalService"
-	MeshRateLimitItemKindMeshMultiZoneService MeshRateLimitItemKind = "MeshMultiZoneService"
-	MeshRateLimitItemKindMeshServiceSubset    MeshRateLimitItemKind = "MeshServiceSubset"
-	MeshRateLimitItemKindMeshHTTPRoute        MeshRateLimitItemKind = "MeshHTTPRoute"
-	MeshRateLimitItemKindDataplane            MeshRateLimitItemKind = "Dataplane"
+	MeshRateLimitItemSpecKindMesh                 MeshRateLimitItemSpecKind = "Mesh"
+	MeshRateLimitItemSpecKindMeshSubset           MeshRateLimitItemSpecKind = "MeshSubset"
+	MeshRateLimitItemSpecKindMeshService          MeshRateLimitItemSpecKind = "MeshService"
+	MeshRateLimitItemSpecKindMeshExternalService  MeshRateLimitItemSpecKind = "MeshExternalService"
+	MeshRateLimitItemSpecKindMeshMultiZoneService MeshRateLimitItemSpecKind = "MeshMultiZoneService"
+	MeshRateLimitItemSpecKindMeshServiceSubset    MeshRateLimitItemSpecKind = "MeshServiceSubset"
+	MeshRateLimitItemSpecKindMeshHTTPRoute        MeshRateLimitItemSpecKind = "MeshHTTPRoute"
+	MeshRateLimitItemSpecKindDataplane            MeshRateLimitItemSpecKind = "Dataplane"
 )
 
-func (e MeshRateLimitItemKind) ToPointer() *MeshRateLimitItemKind {
+func (e MeshRateLimitItemSpecKind) ToPointer() *MeshRateLimitItemSpecKind {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshRateLimitItemKind) IsExact() bool {
+func (e *MeshRateLimitItemSpecKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
 			return true
 		}
 	}
 	return false
 }
 
-type MeshRateLimitItemProxyTypes string
-
-const (
-	MeshRateLimitItemProxyTypesSidecar MeshRateLimitItemProxyTypes = "Sidecar"
-	MeshRateLimitItemProxyTypesGateway MeshRateLimitItemProxyTypes = "Gateway"
-)
-
-func (e MeshRateLimitItemProxyTypes) ToPointer() *MeshRateLimitItemProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshRateLimitItemProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshRateLimitItemTargetRef - TargetRef is a reference to the resource the policy takes an effect on.
-// The resource could be either a real store object or virtual resource
-// defined inplace.
-type MeshRateLimitItemTargetRef struct {
-	// Kind of the referenced resource
-	Kind MeshRateLimitItemKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
-	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshRateLimitItemProxyTypes `json:"proxyTypes,omitempty"`
-	// SectionName is used to target specific section of resource.
-	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
-}
-
-func (m *MeshRateLimitItemTargetRef) GetKind() MeshRateLimitItemKind {
-	if m == nil {
-		return MeshRateLimitItemKind("")
-	}
-	return m.Kind
-}
-
-func (m *MeshRateLimitItemTargetRef) GetLabels() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Labels
-}
-
-func (m *MeshRateLimitItemTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshRateLimitItemTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshRateLimitItemTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
-func (m *MeshRateLimitItemTargetRef) GetProxyTypes() []MeshRateLimitItemProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
-func (m *MeshRateLimitItemTargetRef) GetSectionName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.SectionName
-}
-
-func (m *MeshRateLimitItemTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
-}
-
-type MeshRateLimitItemSpecToAdd struct {
-	Name  string `json:"name"`
-	Value string `json:"value"`
-}
-
-func (m *MeshRateLimitItemSpecToAdd) GetName() string {
-	if m == nil {
-		return ""
-	}
-	return m.Name
-}
-
-func (m *MeshRateLimitItemSpecToAdd) GetValue() string {
-	if m == nil {
-		return ""
-	}
-	return m.Value
-}
-
-type MeshRateLimitItemSpecToSet struct {
-	Name  string `json:"name"`
-	Value string `json:"value"`
-}
-
-func (m *MeshRateLimitItemSpecToSet) GetName() string {
-	if m == nil {
-		return ""
-	}
-	return m.Name
-}
-
-func (m *MeshRateLimitItemSpecToSet) GetValue() string {
-	if m == nil {
-		return ""
-	}
-	return m.Value
-}
-
-// MeshRateLimitItemSpecToHeaders - The Headers to be added to the HTTP response on a rate limit event
-type MeshRateLimitItemSpecToHeaders struct {
-	Add []MeshRateLimitItemSpecToAdd `json:"add,omitempty"`
-	Set []MeshRateLimitItemSpecToSet `json:"set,omitempty"`
-}
-
-func (m *MeshRateLimitItemSpecToHeaders) GetAdd() []MeshRateLimitItemSpecToAdd {
-	if m == nil {
-		return nil
-	}
-	return m.Add
-}
-
-func (m *MeshRateLimitItemSpecToHeaders) GetSet() []MeshRateLimitItemSpecToSet {
-	if m == nil {
-		return nil
-	}
-	return m.Set
-}
-
-// MeshRateLimitItemSpecOnRateLimit - Describes the actions to take on a rate limit event
-type MeshRateLimitItemSpecOnRateLimit struct {
-	// The Headers to be added to the HTTP response on a rate limit event
-	Headers *MeshRateLimitItemSpecToHeaders `json:"headers,omitempty"`
-	// The HTTP status code to be set on a rate limit event
-	Status *int `json:"status,omitempty"`
-}
-
-func (m *MeshRateLimitItemSpecOnRateLimit) GetHeaders() *MeshRateLimitItemSpecToHeaders {
-	if m == nil {
-		return nil
-	}
-	return m.Headers
-}
-
-func (m *MeshRateLimitItemSpecOnRateLimit) GetStatus() *int {
-	if m == nil {
-		return nil
-	}
-	return m.Status
-}
-
-// MeshRateLimitItemSpecRequestRate - Defines how many requests are allowed per interval.
-type MeshRateLimitItemSpecRequestRate struct {
-	// The interval the number of units is accounted for.
-	Interval string `json:"interval"`
-	// Number of units per interval (depending on usage it can be a number of requests,
-	// or a number of connections).
-	Num int `json:"num"`
-}
-
-func (m *MeshRateLimitItemSpecRequestRate) GetInterval() string {
-	if m == nil {
-		return ""
-	}
-	return m.Interval
-}
-
-func (m *MeshRateLimitItemSpecRequestRate) GetNum() int {
-	if m == nil {
-		return 0
-	}
-	return m.Num
-}
-
-// MeshRateLimitItemSpecToHTTP - LocalHTTP defines configuration of local HTTP rate limiting
-// https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/local_rate_limit_filter
-type MeshRateLimitItemSpecToHTTP struct {
-	// Define if rate limiting should be disabled.
-	Disabled *bool `json:"disabled,omitempty"`
-	// Describes the actions to take on a rate limit event
-	OnRateLimit *MeshRateLimitItemSpecOnRateLimit `json:"onRateLimit,omitempty"`
-	// Defines how many requests are allowed per interval.
-	RequestRate *MeshRateLimitItemSpecRequestRate `json:"requestRate,omitempty"`
-}
-
-func (m *MeshRateLimitItemSpecToHTTP) GetDisabled() *bool {
-	if m == nil {
-		return nil
-	}
-	return m.Disabled
-}
-
-func (m *MeshRateLimitItemSpecToHTTP) GetOnRateLimit() *MeshRateLimitItemSpecOnRateLimit {
-	if m == nil {
-		return nil
-	}
-	return m.OnRateLimit
-}
-
-func (m *MeshRateLimitItemSpecToHTTP) GetRequestRate() *MeshRateLimitItemSpecRequestRate {
-	if m == nil {
-		return nil
-	}
-	return m.RequestRate
-}
-
-// MeshRateLimitItemSpecConnectionRate - Defines how many connections are allowed per interval.
-type MeshRateLimitItemSpecConnectionRate struct {
-	// The interval the number of units is accounted for.
-	Interval string `json:"interval"`
-	// Number of units per interval (depending on usage it can be a number of requests,
-	// or a number of connections).
-	Num int `json:"num"`
-}
-
-func (m *MeshRateLimitItemSpecConnectionRate) GetInterval() string {
-	if m == nil {
-		return ""
-	}
-	return m.Interval
-}
-
-func (m *MeshRateLimitItemSpecConnectionRate) GetNum() int {
-	if m == nil {
-		return 0
-	}
-	return m.Num
-}
-
-// MeshRateLimitItemSpecToTCP - LocalTCP defines confguration of local TCP rate limiting
-// https://www.envoyproxy.io/docs/envoy/latest/configuration/listeners/network_filters/local_rate_limit_filter
-type MeshRateLimitItemSpecToTCP struct {
-	// Defines how many connections are allowed per interval.
-	ConnectionRate *MeshRateLimitItemSpecConnectionRate `json:"connectionRate,omitempty"`
-	// Define if rate limiting should be disabled.
-	// Default: false
-	Disabled *bool `json:"disabled,omitempty"`
-}
-
-func (m *MeshRateLimitItemSpecToTCP) GetConnectionRate() *MeshRateLimitItemSpecConnectionRate {
-	if m == nil {
-		return nil
-	}
-	return m.ConnectionRate
-}
-
-func (m *MeshRateLimitItemSpecToTCP) GetDisabled() *bool {
-	if m == nil {
-		return nil
-	}
-	return m.Disabled
-}
-
-// MeshRateLimitItemSpecLocal - LocalConf defines local http or/and tcp rate limit configuration
-type MeshRateLimitItemSpecLocal struct {
-	// LocalHTTP defines configuration of local HTTP rate limiting
-	// https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/local_rate_limit_filter
-	HTTP *MeshRateLimitItemSpecToHTTP `json:"http,omitempty"`
-	// LocalTCP defines confguration of local TCP rate limiting
-	// https://www.envoyproxy.io/docs/envoy/latest/configuration/listeners/network_filters/local_rate_limit_filter
-	TCP *MeshRateLimitItemSpecToTCP `json:"tcp,omitempty"`
-}
-
-func (m *MeshRateLimitItemSpecLocal) GetHTTP() *MeshRateLimitItemSpecToHTTP {
-	if m == nil {
-		return nil
-	}
-	return m.HTTP
-}
-
-func (m *MeshRateLimitItemSpecLocal) GetTCP() *MeshRateLimitItemSpecToTCP {
-	if m == nil {
-		return nil
-	}
-	return m.TCP
-}
-
-// MeshRateLimitItemSpecToDefault - Default is a configuration specific to the group of clients referenced in
-// 'targetRef'
-type MeshRateLimitItemSpecToDefault struct {
-	// LocalConf defines local http or/and tcp rate limit configuration
-	Local *MeshRateLimitItemSpecLocal `json:"local,omitempty"`
-}
-
-func (m *MeshRateLimitItemSpecToDefault) GetLocal() *MeshRateLimitItemSpecLocal {
-	if m == nil {
-		return nil
-	}
-	return m.Local
-}
-
-// MeshRateLimitItemSpecToKind - Kind of the referenced resource
-type MeshRateLimitItemSpecToKind string
-
-const (
-	MeshRateLimitItemSpecToKindMesh                 MeshRateLimitItemSpecToKind = "Mesh"
-	MeshRateLimitItemSpecToKindMeshSubset           MeshRateLimitItemSpecToKind = "MeshSubset"
-	MeshRateLimitItemSpecToKindMeshGateway          MeshRateLimitItemSpecToKind = "MeshGateway"
-	MeshRateLimitItemSpecToKindMeshService          MeshRateLimitItemSpecToKind = "MeshService"
-	MeshRateLimitItemSpecToKindMeshExternalService  MeshRateLimitItemSpecToKind = "MeshExternalService"
-	MeshRateLimitItemSpecToKindMeshMultiZoneService MeshRateLimitItemSpecToKind = "MeshMultiZoneService"
-	MeshRateLimitItemSpecToKindMeshServiceSubset    MeshRateLimitItemSpecToKind = "MeshServiceSubset"
-	MeshRateLimitItemSpecToKindMeshHTTPRoute        MeshRateLimitItemSpecToKind = "MeshHTTPRoute"
-	MeshRateLimitItemSpecToKindDataplane            MeshRateLimitItemSpecToKind = "Dataplane"
-)
-
-func (e MeshRateLimitItemSpecToKind) ToPointer() *MeshRateLimitItemSpecToKind {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshRateLimitItemSpecToKind) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshRateLimitItemSpecToProxyTypes string
-
-const (
-	MeshRateLimitItemSpecToProxyTypesSidecar MeshRateLimitItemSpecToProxyTypes = "Sidecar"
-	MeshRateLimitItemSpecToProxyTypesGateway MeshRateLimitItemSpecToProxyTypes = "Gateway"
-)
-
-func (e MeshRateLimitItemSpecToProxyTypes) ToPointer() *MeshRateLimitItemSpecToProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshRateLimitItemSpecToProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshRateLimitItemSpecToTargetRef - TargetRef is a reference to the resource that represents a group of
+// MeshRateLimitItemSpecTargetRef - TargetRef is a reference to the resource that represents a group of
 // clients.
-type MeshRateLimitItemSpecToTargetRef struct {
+type MeshRateLimitItemSpecTargetRef struct {
 	// Kind of the referenced resource
-	Kind MeshRateLimitItemSpecToKind `json:"kind"`
+	Kind MeshRateLimitItemSpecKind `json:"kind"`
 	// Labels are used to select group of MeshServices that match labels. Either Labels or
 	// Name and Namespace can be used.
 	Labels map[string]string `json:"labels,omitempty"`
 	// Mesh is reserved for future use to identify cross mesh resources.
 	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
+	// Name of the referenced resource. Can only be used with kinds: `MeshService`
+	// and `MeshServiceSubset`
 	Name *string `json:"name,omitempty"`
 	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 	// will be targeted.
 	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshRateLimitItemSpecToProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
@@ -1077,56 +761,49 @@ type MeshRateLimitItemSpecToTargetRef struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func (m *MeshRateLimitItemSpecToTargetRef) GetKind() MeshRateLimitItemSpecToKind {
+func (m *MeshRateLimitItemSpecTargetRef) GetKind() MeshRateLimitItemSpecKind {
 	if m == nil {
-		return MeshRateLimitItemSpecToKind("")
+		return MeshRateLimitItemSpecKind("")
 	}
 	return m.Kind
 }
 
-func (m *MeshRateLimitItemSpecToTargetRef) GetLabels() map[string]string {
+func (m *MeshRateLimitItemSpecTargetRef) GetLabels() map[string]string {
 	if m == nil {
 		return nil
 	}
 	return m.Labels
 }
 
-func (m *MeshRateLimitItemSpecToTargetRef) GetMesh() *string {
+func (m *MeshRateLimitItemSpecTargetRef) GetMesh() *string {
 	if m == nil {
 		return nil
 	}
 	return m.Mesh
 }
 
-func (m *MeshRateLimitItemSpecToTargetRef) GetName() *string {
+func (m *MeshRateLimitItemSpecTargetRef) GetName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.Name
 }
 
-func (m *MeshRateLimitItemSpecToTargetRef) GetNamespace() *string {
+func (m *MeshRateLimitItemSpecTargetRef) GetNamespace() *string {
 	if m == nil {
 		return nil
 	}
 	return m.Namespace
 }
 
-func (m *MeshRateLimitItemSpecToTargetRef) GetProxyTypes() []MeshRateLimitItemSpecToProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
-func (m *MeshRateLimitItemSpecToTargetRef) GetSectionName() *string {
+func (m *MeshRateLimitItemSpecTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
 }
 
-func (m *MeshRateLimitItemSpecToTargetRef) GetTags() map[string]string {
+func (m *MeshRateLimitItemSpecTargetRef) GetTags() map[string]string {
 	if m == nil {
 		return nil
 	}
@@ -1136,32 +813,29 @@ func (m *MeshRateLimitItemSpecToTargetRef) GetTags() map[string]string {
 type MeshRateLimitItemTo struct {
 	// Default is a configuration specific to the group of clients referenced in
 	// 'targetRef'
-	Default *MeshRateLimitItemSpecToDefault `json:"default,omitempty"`
+	Default *MeshRateLimitItemSpecDefault `json:"default,omitempty"`
 	// TargetRef is a reference to the resource that represents a group of
 	// clients.
-	TargetRef MeshRateLimitItemSpecToTargetRef `json:"targetRef"`
+	TargetRef MeshRateLimitItemSpecTargetRef `json:"targetRef"`
 }
 
-func (m *MeshRateLimitItemTo) GetDefault() *MeshRateLimitItemSpecToDefault {
+func (m *MeshRateLimitItemTo) GetDefault() *MeshRateLimitItemSpecDefault {
 	if m == nil {
 		return nil
 	}
 	return m.Default
 }
 
-func (m *MeshRateLimitItemTo) GetTargetRef() MeshRateLimitItemSpecToTargetRef {
+func (m *MeshRateLimitItemTo) GetTargetRef() MeshRateLimitItemSpecTargetRef {
 	if m == nil {
-		return MeshRateLimitItemSpecToTargetRef{}
+		return MeshRateLimitItemSpecTargetRef{}
 	}
 	return m.TargetRef
 }
 
 // MeshRateLimitItemSpec - Spec is the specification of the Kuma MeshRateLimit resource.
 type MeshRateLimitItemSpec struct {
-	// From list makes a match between clients and corresponding configurations
-	From []MeshRateLimitItemFrom `json:"from,omitempty"`
-	// Rules defines inbound rate limiting configurations. Currently limited to
-	// selecting all inbound traffic, as L7 matching is not yet implemented.
+	// Rules defines inbound rate limiting configurations.
 	Rules []MeshRateLimitItemRules `json:"rules,omitempty"`
 	// TargetRef is a reference to the resource the policy takes an effect on.
 	// The resource could be either a real store object or virtual resource
@@ -1169,13 +843,6 @@ type MeshRateLimitItemSpec struct {
 	TargetRef *MeshRateLimitItemTargetRef `json:"targetRef,omitempty"`
 	// To list makes a match between clients and corresponding configurations
 	To []MeshRateLimitItemTo `json:"to,omitempty"`
-}
-
-func (m *MeshRateLimitItemSpec) GetFrom() []MeshRateLimitItemFrom {
-	if m == nil {
-		return nil
-	}
-	return m.From
 }
 
 func (m *MeshRateLimitItemSpec) GetRules() []MeshRateLimitItemRules {

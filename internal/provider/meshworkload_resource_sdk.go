@@ -40,7 +40,7 @@ func (r *MeshWorkloadResourceModel) RefreshFromSharedWorkloadItem(ctx context.Co
 		r.Mesh = types.StringPointerValue(resp.Mesh)
 		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
-		r.Spec = &tfTypes.Options{}
+		r.Spec = &tfTypes.Routing{}
 		if resp.Status == nil {
 			r.Status = nil
 		} else {

@@ -2,6 +2,11 @@
 
 package shared
 
+import (
+	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/utils"
+	"time"
+)
+
 // Admin contains configuration related to Envoy Admin API
 type Admin struct {
 	// Port on which Envoy Admin API server will be listening
@@ -15,8 +20,8 @@ func (a *Admin) GetPort() *int64 {
 	return a.Port
 }
 
-// ZoneEgressItemNetworking - Networking defines the address and port of the Egress to listen on.
-type ZoneEgressItemNetworking struct {
+// Networking defines the address and port of the Egress to listen on.
+type Networking struct {
 	// Address on which inbound listener will be exposed
 	Address *string `json:"address,omitempty"`
 	// Admin contains configuration related to Envoy Admin API
@@ -25,36 +30,67 @@ type ZoneEgressItemNetworking struct {
 	Port *int64 `json:"port,omitempty"`
 }
 
-func (z *ZoneEgressItemNetworking) GetAddress() *string {
-	if z == nil {
+func (n *Networking) GetAddress() *string {
+	if n == nil {
 		return nil
 	}
-	return z.Address
+	return n.Address
 }
 
-func (z *ZoneEgressItemNetworking) GetAdmin() *Admin {
-	if z == nil {
+func (n *Networking) GetAdmin() *Admin {
+	if n == nil {
 		return nil
 	}
-	return z.Admin
+	return n.Admin
 }
 
-func (z *ZoneEgressItemNetworking) GetPort() *int64 {
-	if z == nil {
+func (n *Networking) GetPort() *int64 {
+	if n == nil {
 		return nil
 	}
-	return z.Port
+	return n.Port
 }
 
 type ZoneEgressItem struct {
+	// Time at which the resource was created
+	CreationTime *time.Time `json:"creationTime,omitempty"`
+	// Kuma Resource Identifier (KRI) of the given resource
+	Kri    *string           `json:"kri,omitempty"`
 	Labels map[string]string `json:"labels,omitempty"`
-	Name   string            `json:"name"`
+	// Time at which the resource was updated
+	ModificationTime *time.Time `json:"modificationTime,omitempty"`
+	Name             string     `json:"name"`
 	// Networking defines the address and port of the Egress to listen on.
-	Networking *ZoneEgressItemNetworking `json:"networking,omitempty"`
-	Type       string                    `json:"type"`
+	Networking *Networking `json:"networking,omitempty"`
+	Type       string      `json:"type"`
 	// Zone field contains Zone name where egress is serving, field will be
 	// automatically set by Global Kuma CP
 	Zone *string `json:"zone,omitempty"`
+}
+
+func (z ZoneEgressItem) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(z, "", false)
+}
+
+func (z *ZoneEgressItem) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &z, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (z *ZoneEgressItem) GetCreationTime() *time.Time {
+	if z == nil {
+		return nil
+	}
+	return z.CreationTime
+}
+
+func (z *ZoneEgressItem) GetKri() *string {
+	if z == nil {
+		return nil
+	}
+	return z.Kri
 }
 
 func (z *ZoneEgressItem) GetLabels() map[string]string {
@@ -64,6 +100,13 @@ func (z *ZoneEgressItem) GetLabels() map[string]string {
 	return z.Labels
 }
 
+func (z *ZoneEgressItem) GetModificationTime() *time.Time {
+	if z == nil {
+		return nil
+	}
+	return z.ModificationTime
+}
+
 func (z *ZoneEgressItem) GetName() string {
 	if z == nil {
 		return ""
@@ -71,7 +114,7 @@ func (z *ZoneEgressItem) GetName() string {
 	return z.Name
 }
 
-func (z *ZoneEgressItem) GetNetworking() *ZoneEgressItemNetworking {
+func (z *ZoneEgressItem) GetNetworking() *Networking {
 	if z == nil {
 		return nil
 	}
@@ -86,6 +129,52 @@ func (z *ZoneEgressItem) GetType() string {
 }
 
 func (z *ZoneEgressItem) GetZone() *string {
+	if z == nil {
+		return nil
+	}
+	return z.Zone
+}
+
+type ZoneEgressItemInput struct {
+	Labels map[string]string `json:"labels,omitempty"`
+	Name   string            `json:"name"`
+	// Networking defines the address and port of the Egress to listen on.
+	Networking *Networking `json:"networking,omitempty"`
+	Type       string      `json:"type"`
+	// Zone field contains Zone name where egress is serving, field will be
+	// automatically set by Global Kuma CP
+	Zone *string `json:"zone,omitempty"`
+}
+
+func (z *ZoneEgressItemInput) GetLabels() map[string]string {
+	if z == nil {
+		return nil
+	}
+	return z.Labels
+}
+
+func (z *ZoneEgressItemInput) GetName() string {
+	if z == nil {
+		return ""
+	}
+	return z.Name
+}
+
+func (z *ZoneEgressItemInput) GetNetworking() *Networking {
+	if z == nil {
+		return nil
+	}
+	return z.Networking
+}
+
+func (z *ZoneEgressItemInput) GetType() string {
+	if z == nil {
+		return ""
+	}
+	return z.Type
+}
+
+func (z *ZoneEgressItemInput) GetZone() *string {
 	if z == nil {
 		return nil
 	}
