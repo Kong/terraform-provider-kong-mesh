@@ -72,7 +72,6 @@ type KongMesh struct {
 	MeshTrace                 *MeshTrace
 	MeshTrafficPermission     *MeshTrafficPermission
 	Mesh                      *Mesh
-	MeshGateway               *MeshGateway
 	Secret                    *Secret
 	ZoneEgress                *ZoneEgress
 	ZoneIngress               *ZoneIngress
@@ -80,10 +79,12 @@ type KongMesh struct {
 	MeshExternalService       *MeshExternalService
 	MeshIdentity              *MeshIdentity
 	MeshMultiZoneService      *MeshMultiZoneService
+	MeshOpenTelemetryBackend  *MeshOpenTelemetryBackend
 	MeshService               *MeshService
 	MeshTrust                 *MeshTrust
+	MeshZoneAddress           *MeshZoneAddress
 	Workload                  *Workload
-	MeshGlobalRateLimit       *MeshGlobalRateLimit
+	Tenants                   *Tenants
 	MeshOPA                   *MeshOPA
 	AccessAudit               *AccessAudit
 	AccessRole                *AccessRole
@@ -203,7 +204,6 @@ func New(opts ...SDKOption) *KongMesh {
 	sdk.MeshTrace = newMeshTrace(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MeshTrafficPermission = newMeshTrafficPermission(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Mesh = newMesh(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.MeshGateway = newMeshGateway(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Secret = newSecret(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.ZoneEgress = newZoneEgress(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.ZoneIngress = newZoneIngress(sdk, sdk.sdkConfiguration, sdk.hooks)
@@ -211,10 +211,12 @@ func New(opts ...SDKOption) *KongMesh {
 	sdk.MeshExternalService = newMeshExternalService(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MeshIdentity = newMeshIdentity(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MeshMultiZoneService = newMeshMultiZoneService(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.MeshOpenTelemetryBackend = newMeshOpenTelemetryBackend(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MeshService = newMeshService(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MeshTrust = newMeshTrust(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.MeshZoneAddress = newMeshZoneAddress(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Workload = newWorkload(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.MeshGlobalRateLimit = newMeshGlobalRateLimit(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Tenants = newTenants(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MeshOPA = newMeshOPA(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.AccessAudit = newAccessAudit(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.AccessRole = newAccessRole(sdk, sdk.sdkConfiguration, sdk.hooks)

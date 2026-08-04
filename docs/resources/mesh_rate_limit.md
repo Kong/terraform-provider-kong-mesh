@@ -20,61 +20,6 @@ resource "kong-mesh_mesh_rate_limit" "my_meshratelimit" {
   mesh = "...my_mesh..."
   name = "...my_name..."
   spec = {
-    from = [
-      {
-        default = {
-          local = {
-            http = {
-              disabled = true
-              on_rate_limit = {
-                headers = {
-                  add = [
-                    {
-                      name  = "...my_name..."
-                      value = "...my_value..."
-                    }
-                  ]
-                  set = [
-                    {
-                      name  = "...my_name..."
-                      value = "...my_value..."
-                    }
-                  ]
-                }
-                status = 7
-              }
-              request_rate = {
-                interval = "...my_interval..."
-                num      = 6
-              }
-            }
-            tcp = {
-              connection_rate = {
-                interval = "...my_interval..."
-                num      = 1
-              }
-              disabled = true
-            }
-          }
-        }
-        target_ref = {
-          kind = "MeshHTTPRoute"
-          labels = {
-            key = "value"
-          }
-          mesh      = "...my_mesh..."
-          name      = "...my_name..."
-          namespace = "...my_namespace..."
-          proxy_types = [
-            "Gateway"
-          ]
-          section_name = "...my_section_name..."
-          tags = {
-            key = "value"
-          }
-        }
-      }
-    ]
     rules = [
       {
         default = {
@@ -112,6 +57,18 @@ resource "kong-mesh_mesh_rate_limit" "my_meshratelimit" {
             }
           }
         }
+        matches = [
+          {
+            sni = {
+              type  = "Exact"
+              value = "...my_value..."
+            }
+            spiffe_id = {
+              type  = "Exact"
+              value = "...my_value..."
+            }
+          }
+        ]
       }
     ]
     target_ref = {
@@ -119,12 +76,9 @@ resource "kong-mesh_mesh_rate_limit" "my_meshratelimit" {
       labels = {
         key = "value"
       }
-      mesh      = "...my_mesh..."
-      name      = "...my_name..."
-      namespace = "...my_namespace..."
-      proxy_types = [
-        "Gateway"
-      ]
+      mesh         = "...my_mesh..."
+      name         = "...my_name..."
+      namespace    = "...my_namespace..."
       section_name = "...my_section_name..."
       tags = {
         key = "value"
@@ -172,12 +126,9 @@ resource "kong-mesh_mesh_rate_limit" "my_meshratelimit" {
           labels = {
             key = "value"
           }
-          mesh      = "...my_mesh..."
-          name      = "...my_name..."
-          namespace = "...my_namespace..."
-          proxy_types = [
-            "Gateway"
-          ]
+          mesh         = "...my_mesh..."
+          name         = "...my_name..."
+          namespace    = "...my_namespace..."
           section_name = "...my_section_name..."
           tags = {
             key = "value"
@@ -217,143 +168,11 @@ Warning messages describe a problem the client making the API request should cor
 
 Optional:
 
-- `from` (Attributes List) From list makes a match between clients and corresponding configurations (see [below for nested schema](#nestedatt--spec--from))
-- `rules` (Attributes List) Rules defines inbound rate limiting configurations. Currently limited to
-selecting all inbound traffic, as L7 matching is not yet implemented. (see [below for nested schema](#nestedatt--spec--rules))
+- `rules` (Attributes List) Rules defines inbound rate limiting configurations. (see [below for nested schema](#nestedatt--spec--rules))
 - `target_ref` (Attributes) TargetRef is a reference to the resource the policy takes an effect on.
 The resource could be either a real store object or virtual resource
 defined inplace. (see [below for nested schema](#nestedatt--spec--target_ref))
 - `to` (Attributes List) To list makes a match between clients and corresponding configurations (see [below for nested schema](#nestedatt--spec--to))
-
-<a id="nestedatt--spec--from"></a>
-### Nested Schema for `spec.from`
-
-Optional:
-
-- `default` (Attributes) Default is a configuration specific to the group of clients referenced in
-'targetRef' (see [below for nested schema](#nestedatt--spec--from--default))
-- `target_ref` (Attributes) TargetRef is a reference to the resource that represents a group of
-clients.
-Not Null (see [below for nested schema](#nestedatt--spec--from--target_ref))
-
-<a id="nestedatt--spec--from--default"></a>
-### Nested Schema for `spec.from.default`
-
-Optional:
-
-- `local` (Attributes) LocalConf defines local http or/and tcp rate limit configuration (see [below for nested schema](#nestedatt--spec--from--default--local))
-
-<a id="nestedatt--spec--from--default--local"></a>
-### Nested Schema for `spec.from.default.local`
-
-Optional:
-
-- `http` (Attributes) LocalHTTP defines configuration of local HTTP rate limiting
-https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/local_rate_limit_filter (see [below for nested schema](#nestedatt--spec--from--default--local--http))
-- `tcp` (Attributes) LocalTCP defines confguration of local TCP rate limiting
-https://www.envoyproxy.io/docs/envoy/latest/configuration/listeners/network_filters/local_rate_limit_filter (see [below for nested schema](#nestedatt--spec--from--default--local--tcp))
-
-<a id="nestedatt--spec--from--default--local--http"></a>
-### Nested Schema for `spec.from.default.local.http`
-
-Optional:
-
-- `disabled` (Boolean) Define if rate limiting should be disabled.
-- `on_rate_limit` (Attributes) Describes the actions to take on a rate limit event (see [below for nested schema](#nestedatt--spec--from--default--local--http--on_rate_limit))
-- `request_rate` (Attributes) Defines how many requests are allowed per interval. (see [below for nested schema](#nestedatt--spec--from--default--local--http--request_rate))
-
-<a id="nestedatt--spec--from--default--local--http--on_rate_limit"></a>
-### Nested Schema for `spec.from.default.local.http.on_rate_limit`
-
-Optional:
-
-- `headers` (Attributes) The Headers to be added to the HTTP response on a rate limit event (see [below for nested schema](#nestedatt--spec--from--default--local--http--on_rate_limit--headers))
-- `status` (Number) The HTTP status code to be set on a rate limit event
-
-<a id="nestedatt--spec--from--default--local--http--on_rate_limit--headers"></a>
-### Nested Schema for `spec.from.default.local.http.on_rate_limit.headers`
-
-Optional:
-
-- `add` (Attributes List) (see [below for nested schema](#nestedatt--spec--from--default--local--http--on_rate_limit--headers--add))
-- `set` (Attributes List) (see [below for nested schema](#nestedatt--spec--from--default--local--http--on_rate_limit--headers--set))
-
-<a id="nestedatt--spec--from--default--local--http--on_rate_limit--headers--add"></a>
-### Nested Schema for `spec.from.default.local.http.on_rate_limit.headers.add`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-<a id="nestedatt--spec--from--default--local--http--on_rate_limit--headers--set"></a>
-### Nested Schema for `spec.from.default.local.http.on_rate_limit.headers.set`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-
-
-<a id="nestedatt--spec--from--default--local--http--request_rate"></a>
-### Nested Schema for `spec.from.default.local.http.request_rate`
-
-Optional:
-
-- `interval` (String) The interval the number of units is accounted for. Not Null
-- `num` (Number) Number of units per interval (depending on usage it can be a number of requests,
-or a number of connections).
-Not Null
-
-
-
-<a id="nestedatt--spec--from--default--local--tcp"></a>
-### Nested Schema for `spec.from.default.local.tcp`
-
-Optional:
-
-- `connection_rate` (Attributes) Defines how many connections are allowed per interval. (see [below for nested schema](#nestedatt--spec--from--default--local--tcp--connection_rate))
-- `disabled` (Boolean) Define if rate limiting should be disabled.
-Default: false
-
-<a id="nestedatt--spec--from--default--local--tcp--connection_rate"></a>
-### Nested Schema for `spec.from.default.local.tcp.connection_rate`
-
-Optional:
-
-- `interval` (String) The interval the number of units is accounted for. Not Null
-- `num` (Number) Number of units per interval (depending on usage it can be a number of requests,
-or a number of connections).
-Not Null
-
-
-
-
-
-<a id="nestedatt--spec--from--target_ref"></a>
-### Nested Schema for `spec.from.target_ref`
-
-Optional:
-
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
-- `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
-Name and Namespace can be used.
-- `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`,
-`MeshServiceSubset` and `MeshGatewayRoute`
-- `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-will be targeted.
-- `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-all data plane types are targeted by the policy.
-- `section_name` (String) SectionName is used to target specific section of resource.
-For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-- `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds
-`MeshSubset` and `MeshServiceSubset`
-
-
 
 <a id="nestedatt--spec--rules"></a>
 ### Nested Schema for `spec.rules`
@@ -361,6 +180,7 @@ For example, you can target port from MeshService.ports[] by its name. Only traf
 Optional:
 
 - `default` (Attributes) Default contains configuration of the inbound rate limits (see [below for nested schema](#nestedatt--spec--rules--default))
+- `matches` (Attributes List) Matches define additional conditions for applying this rate limit rule. (see [below for nested schema](#nestedatt--spec--rules--matches))
 
 <a id="nestedatt--spec--rules--default"></a>
 ### Nested Schema for `spec.rules.default`
@@ -459,25 +279,50 @@ Not Null
 
 
 
+<a id="nestedatt--spec--rules--matches"></a>
+### Nested Schema for `spec.rules.matches`
+
+Optional:
+
+- `sni` (Attributes) SNI defines a matcher configuration for matching by SNI value carried on the TLS connection (see [below for nested schema](#nestedatt--spec--rules--matches--sni))
+- `spiffe_id` (Attributes) SpiffeID defines a matcher configuration for SpiffeID matching (see [below for nested schema](#nestedatt--spec--rules--matches--spiffe_id))
+
+<a id="nestedatt--spec--rules--matches--sni"></a>
+### Nested Schema for `spec.rules.matches.sni`
+
+Optional:
+
+- `type` (String) Type defines how to match traffic by SNI. Only `Exact` is supported. Not Null; must be "Exact"
+- `value` (String) Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied. Not Null
+
+
+<a id="nestedatt--spec--rules--matches--spiffe_id"></a>
+### Nested Schema for `spec.rules.matches.spiffe_id`
+
+Optional:
+
+- `type` (String) Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed. possible known values include one of ["Exact", "Prefix"]; Not Null
+- `value` (String) Value is SpiffeID of a client that needs to match for the configuration to be applied. Not Null
+
+
+
 
 <a id="nestedatt--spec--target_ref"></a>
 ### Nested Schema for `spec.target_ref`
 
 Required:
 
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
 
 Optional:
 
 - `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
 Name and Namespace can be used.
 - `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`,
-`MeshServiceSubset` and `MeshGatewayRoute`
+- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`
+and `MeshServiceSubset`
 - `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 will be targeted.
-- `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-all data plane types are targeted by the policy.
 - `section_name` (String) SectionName is used to target specific section of resource.
 For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 - `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds
@@ -597,16 +442,14 @@ Not Null
 
 Optional:
 
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
 - `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
 Name and Namespace can be used.
 - `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`,
-`MeshServiceSubset` and `MeshGatewayRoute`
+- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`
+and `MeshServiceSubset`
 - `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 will be targeted.
-- `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-all data plane types are targeted by the policy.
 - `section_name` (String) SectionName is used to target specific section of resource.
 For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 - `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds

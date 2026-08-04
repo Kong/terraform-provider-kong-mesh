@@ -7,6 +7,7 @@ import (
 	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
 )
@@ -28,6 +29,7 @@ func (r *MeshSecretResourceModel) RefreshFromSharedSecretItem(ctx context.Contex
 	var diags diag.Diagnostics
 
 	if resp != nil {
+		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
 		r.Data = types.StringPointerValue(resp.Data)
 		labelsValue, labelsDiags := types.MapValueFrom(ctx, types.StringType, resp.Labels)
 		diags.Append(labelsDiags...)
@@ -35,6 +37,7 @@ func (r *MeshSecretResourceModel) RefreshFromSharedSecretItem(ctx context.Contex
 		diags.Append(labelsDiags...)
 		r.Labels, _ = labelsValuable.(kumalabels.KumaLabelsMapValue)
 		r.Mesh = types.StringValue(resp.Mesh)
+		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
 		r.Type = types.StringValue(resp.Type)
 	}
@@ -85,7 +88,7 @@ func (r *MeshSecretResourceModel) ToOperationsPutSecretRequest(ctx context.Conte
 	var name string
 	name = r.Name.ValueString()
 
-	secretItem, secretItemDiags := r.ToSharedSecretItem(ctx)
+	secretItem, secretItemDiags := r.ToSharedSecretItemInput(ctx)
 	diags.Append(secretItemDiags...)
 
 	if diags.HasError() {
@@ -101,7 +104,7 @@ func (r *MeshSecretResourceModel) ToOperationsPutSecretRequest(ctx context.Conte
 	return &out, diags
 }
 
-func (r *MeshSecretResourceModel) ToSharedSecretItem(ctx context.Context) (*shared.SecretItem, diag.Diagnostics) {
+func (r *MeshSecretResourceModel) ToSharedSecretItemInput(ctx context.Context) (*shared.SecretItemInput, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	data := new(string)
@@ -123,7 +126,7 @@ func (r *MeshSecretResourceModel) ToSharedSecretItem(ctx context.Context) (*shar
 	var typeVar string
 	typeVar = r.Type.ValueString()
 
-	out := shared.SecretItem{
+	out := shared.SecretItemInput{
 		Data:   data,
 		Labels: labels,
 		Mesh:   mesh,

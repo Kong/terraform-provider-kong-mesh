@@ -7,8 +7,8 @@ import (
 )
 
 type MeshHTTPRouteItemMatches struct {
-	Headers     []Headers                       `tfsdk:"headers"`
-	Method      types.String                    `tfsdk:"method"`
-	Path        *MeshFaultInjectionItemSpiffeID `tfsdk:"path"`
-	QueryParams []QueryParams                   `tfsdk:"query_params"`
+	Headers     []Headers     `tfsdk:"headers"`
+	Method      types.String  `tfsdk:"method"`
+	Path        *Sni          `tfsdk:"path"`
+	QueryParams []QueryParams `tfsdk:"query_params"`
 }

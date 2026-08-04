@@ -180,7 +180,6 @@ func (r *MeshProxyPatchResource) Schema(ctx context.Context, req resource.Schema
 																`direct-access - resources generated for Direct Access functionality.` + "\n" +
 																`ingress - resources generated for Zone Ingress.` + "\n" +
 																`egress - resources generated for Zone Egress.` + "\n" +
-																`gateway - resources generated for MeshGateway.` + "\n" +
 																`` + "\n" +
 																`The list is not complete, because policy plugins can introduce new resources.` + "\n" +
 																`For example MeshTrace plugin can create Cluster with "mesh-trace" origin.`,
@@ -272,7 +271,6 @@ func (r *MeshProxyPatchResource) Schema(ctx context.Context, req resource.Schema
 																`direct-access - resources generated for Direct Access functionality.` + "\n" +
 																`ingress - resources generated for Zone Ingress.` + "\n" +
 																`egress - resources generated for Zone Egress.` + "\n" +
-																`gateway - resources generated for MeshGateway.` + "\n" +
 																`` + "\n" +
 																`The list is not complete, because policy plugins can introduce new resources.` + "\n" +
 																`For example MeshTrace plugin can create Cluster with "mesh-trace" origin.`,
@@ -356,7 +354,6 @@ func (r *MeshProxyPatchResource) Schema(ctx context.Context, req resource.Schema
 																`direct-access - resources generated for Direct Access functionality.` + "\n" +
 																`ingress - resources generated for Zone Ingress.` + "\n" +
 																`egress - resources generated for Zone Egress.` + "\n" +
-																`gateway - resources generated for MeshGateway.` + "\n" +
 																`` + "\n" +
 																`The list is not complete, because policy plugins can introduce new resources.` + "\n" +
 																`For example MeshTrace plugin can create Cluster with "mesh-trace" origin.`,
@@ -453,7 +450,6 @@ func (r *MeshProxyPatchResource) Schema(ctx context.Context, req resource.Schema
 																`direct-access - resources generated for Direct Access functionality.` + "\n" +
 																`ingress - resources generated for Zone Ingress.` + "\n" +
 																`egress - resources generated for Zone Egress.` + "\n" +
-																`gateway - resources generated for MeshGateway.` + "\n" +
 																`` + "\n" +
 																`The list is not complete, because policy plugins can introduce new resources.` + "\n" +
 																`For example MeshTrace plugin can create Cluster with "mesh-trace" origin.`,
@@ -536,7 +532,6 @@ func (r *MeshProxyPatchResource) Schema(ctx context.Context, req resource.Schema
 																`direct-access - resources generated for Direct Access functionality.` + "\n" +
 																`ingress - resources generated for Zone Ingress.` + "\n" +
 																`egress - resources generated for Zone Egress.` + "\n" +
-																`gateway - resources generated for MeshGateway.` + "\n" +
 																`` + "\n" +
 																`The list is not complete, because policy plugins can introduce new resources.` + "\n" +
 																`For example MeshTrace plugin can create Cluster with "mesh-trace" origin.`,
@@ -579,7 +574,7 @@ func (r *MeshProxyPatchResource) Schema(ctx context.Context, req resource.Schema
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
 								Required:    true,
-								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
+								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
 							},
 							"labels": schema.MapAttribute{
 								Optional:    true,
@@ -593,23 +588,13 @@ func (r *MeshProxyPatchResource) Schema(ctx context.Context, req resource.Schema
 							},
 							"name": schema.StringAttribute{
 								Optional: true,
-								MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `,` + "\n" +
-									`` + "`" + `MeshServiceSubset` + "`" + ` and ` + "`" + `MeshGatewayRoute` + "`" + ``,
+								MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `` + "\n" +
+									`and ` + "`" + `MeshServiceSubset` + "`" + ``,
 							},
 							"namespace": schema.StringAttribute{
 								Optional: true,
 								MarkdownDescription: `Namespace specifies the namespace of target resource. If empty only resources in policy namespace` + "\n" +
 									`will be targeted.`,
-							},
-							"proxy_types": schema.ListAttribute{
-								Computed: true,
-								Optional: true,
-								PlanModifiers: []planmodifier.List{
-									custom_listplanmodifier.SupressZeroNullModifier(),
-								},
-								ElementType: types.StringType,
-								MarkdownDescription: `ProxyTypes specifies the data plane types that are subject to the policy. When not specified,` + "\n" +
-									`all data plane types are targeted by the policy.`,
 							},
 							"section_name": schema.StringAttribute{
 								Optional: true,

@@ -36,12 +36,9 @@ resource "kong-mesh_mesh_opa" "my_meshopa" {
       labels = {
         key = "value"
       }
-      mesh      = "...my_mesh..."
-      name      = "...my_name..."
-      namespace = "...my_namespace..."
-      proxy_types = [
-        "Sidecar"
-      ]
+      mesh         = "...my_mesh..."
+      name         = "...my_name..."
+      namespace    = "...my_namespace..."
       section_name = "...my_section_name..."
       tags = {
         key = "value"

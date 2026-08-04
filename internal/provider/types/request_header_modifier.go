@@ -7,7 +7,7 @@ import (
 )
 
 type RequestHeaderModifier struct {
-	Add    []MeshGlobalRateLimitItemAdd `tfsdk:"add"`
-	Remove []types.String               `tfsdk:"remove"`
-	Set    []MeshGlobalRateLimitItemAdd `tfsdk:"set"`
+	Add    []MeshHTTPRouteItemAdd `tfsdk:"add"`
+	Remove []types.String         `tfsdk:"remove"`
+	Set    []MeshHTTPRouteItemAdd `tfsdk:"set"`
 }

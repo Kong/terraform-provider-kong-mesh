@@ -2,10 +2,6 @@
 
 package types
 
-import (
-	"github.com/hashicorp/terraform-plugin-framework/types"
-)
-
 type MeshTraceItemOpenTelemetry struct {
-	Endpoint types.String `tfsdk:"endpoint"`
+	BackendRef *MeshAccessLogItemSpecBackendRef `tfsdk:"backend_ref"`
 }

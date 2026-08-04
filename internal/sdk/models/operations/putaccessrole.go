@@ -11,7 +11,7 @@ type PutAccessRoleRequest struct {
 	// name of the AccessRole
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 	// Put request
-	AccessRoleItem shared.AccessRoleItem `request:"mediaType=application/json"`
+	AccessRoleItem shared.AccessRoleItemInput `request:"mediaType=application/json"`
 }
 
 func (p *PutAccessRoleRequest) GetName() string {
@@ -21,9 +21,9 @@ func (p *PutAccessRoleRequest) GetName() string {
 	return p.Name
 }
 
-func (p *PutAccessRoleRequest) GetAccessRoleItem() shared.AccessRoleItem {
+func (p *PutAccessRoleRequest) GetAccessRoleItem() shared.AccessRoleItemInput {
 	if p == nil {
-		return shared.AccessRoleItem{}
+		return shared.AccessRoleItemInput{}
 	}
 	return p.AccessRoleItem
 }

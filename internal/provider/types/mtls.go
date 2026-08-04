@@ -7,7 +7,7 @@ import (
 )
 
 type Mtls struct {
-	Backends       []MeshItemMtlsBackends `tfsdk:"backends"`
-	EnabledBackend types.String           `tfsdk:"enabled_backend"`
-	SkipValidation types.Bool             `tfsdk:"skip_validation"`
+	Backends       []Backends   `tfsdk:"backends"`
+	EnabledBackend types.String `tfsdk:"enabled_backend"`
+	SkipValidation types.Bool   `tfsdk:"skip_validation"`
 }

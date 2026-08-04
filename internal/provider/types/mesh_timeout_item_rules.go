@@ -4,4 +4,5 @@ package types
 
 type MeshTimeoutItemRules struct {
 	Default *MeshTimeoutItemDefault `tfsdk:"default"`
+	Matches []Matches               `tfsdk:"matches"`
 }

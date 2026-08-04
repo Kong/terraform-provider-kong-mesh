@@ -20,36 +20,6 @@ resource "kong-mesh_mesh_tls" "my_meshtls" {
   mesh = "...my_mesh..."
   name = "...my_name..."
   spec = {
-    from = [
-      {
-        default = {
-          mode = "Permissive"
-          tls_ciphers = [
-            "ECDHE-RSA-CHACHA20-POLY1305"
-          ]
-          tls_version = {
-            max = "TLSAuto"
-            min = "TLSAuto"
-          }
-        }
-        target_ref = {
-          kind = "MeshService"
-          labels = {
-            key = "value"
-          }
-          mesh      = "...my_mesh..."
-          name      = "...my_name..."
-          namespace = "...my_namespace..."
-          proxy_types = [
-            "Sidecar"
-          ]
-          section_name = "...my_section_name..."
-          tags = {
-            key = "value"
-          }
-        }
-      }
-    ]
     rules = [
       {
         default = {
@@ -65,16 +35,13 @@ resource "kong-mesh_mesh_tls" "my_meshtls" {
       }
     ]
     target_ref = {
-      kind = "MeshService"
+      kind = "MeshExternalService"
       labels = {
         key = "value"
       }
-      mesh      = "...my_mesh..."
-      name      = "...my_name..."
-      namespace = "...my_namespace..."
-      proxy_types = [
-        "Gateway"
-      ]
+      mesh         = "...my_mesh..."
+      name         = "...my_name..."
+      namespace    = "...my_namespace..."
       section_name = "...my_section_name..."
       tags = {
         key = "value"
@@ -112,64 +79,11 @@ Warning messages describe a problem the client making the API request should cor
 
 Optional:
 
-- `from` (Attributes List) From list makes a match between clients and corresponding configurations (see [below for nested schema](#nestedatt--spec--from))
 - `rules` (Attributes List) Rules defines inbound tls configurations. Currently limited to
 selecting all inbound traffic, as L7 matching is not yet implemented. (see [below for nested schema](#nestedatt--spec--rules))
 - `target_ref` (Attributes) TargetRef is a reference to the resource the policy takes an effect on.
 The resource could be either a real store object or virtual resource
 defined in-place. (see [below for nested schema](#nestedatt--spec--target_ref))
-
-<a id="nestedatt--spec--from"></a>
-### Nested Schema for `spec.from`
-
-Optional:
-
-- `default` (Attributes) Default is a configuration specific to the group of clients referenced in
-'targetRef' (see [below for nested schema](#nestedatt--spec--from--default))
-- `target_ref` (Attributes) TargetRef is a reference to the resource that represents a group of
-clients.
-Not Null (see [below for nested schema](#nestedatt--spec--from--target_ref))
-
-<a id="nestedatt--spec--from--default"></a>
-### Nested Schema for `spec.from.default`
-
-Optional:
-
-- `mode` (String) Mode defines the behavior of inbound listeners with regard to traffic encryption. possible known values include one of ["Permissive", "Strict"]
-- `tls_ciphers` (List of String) TlsCiphers section for providing ciphers specification.
-- `tls_version` (Attributes) Version section for providing version specification. (see [below for nested schema](#nestedatt--spec--from--default--tls_version))
-
-<a id="nestedatt--spec--from--default--tls_version"></a>
-### Nested Schema for `spec.from.default.tls_version`
-
-Optional:
-
-- `max` (String) Max defines maximum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`. possible known values include one of ["TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13"]; Default: "TLSAuto"
-- `min` (String) Min defines minimum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`. possible known values include one of ["TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13"]; Default: "TLSAuto"
-
-
-
-<a id="nestedatt--spec--from--target_ref"></a>
-### Nested Schema for `spec.from.target_ref`
-
-Optional:
-
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
-- `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
-Name and Namespace can be used.
-- `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`,
-`MeshServiceSubset` and `MeshGatewayRoute`
-- `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-will be targeted.
-- `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-all data plane types are targeted by the policy.
-- `section_name` (String) SectionName is used to target specific section of resource.
-For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-- `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds
-`MeshSubset` and `MeshServiceSubset`
-
-
 
 <a id="nestedatt--spec--rules"></a>
 ### Nested Schema for `spec.rules`
@@ -203,19 +117,17 @@ Optional:
 
 Required:
 
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
 
 Optional:
 
 - `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
 Name and Namespace can be used.
 - `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`,
-`MeshServiceSubset` and `MeshGatewayRoute`
+- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`
+and `MeshServiceSubset`
 - `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 will be targeted.
-- `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-all data plane types are targeted by the policy.
 - `section_name` (String) SectionName is used to target specific section of resource.
 For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 - `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds

@@ -10,12 +10,9 @@ resource "kong-mesh_mesh_tcp_route" "my_meshtcproute" {
       labels = {
         key = "value"
       }
-      mesh      = "...my_mesh..."
-      name      = "...my_name..."
-      namespace = "...my_namespace..."
-      proxy_types = [
-        "Sidecar"
-      ]
+      mesh         = "...my_mesh..."
+      name         = "...my_name..."
+      namespace    = "...my_namespace..."
       section_name = "...my_section_name..."
       tags = {
         key = "value"
@@ -32,13 +29,10 @@ resource "kong-mesh_mesh_tcp_route" "my_meshtcproute" {
                   labels = {
                     key = "value"
                   }
-                  mesh      = "...my_mesh..."
-                  name      = "...my_name..."
-                  namespace = "...my_namespace..."
-                  port      = 6
-                  proxy_types = [
-                    "Gateway"
-                  ]
+                  mesh         = "...my_mesh..."
+                  name         = "...my_name..."
+                  namespace    = "...my_namespace..."
+                  port         = 6
                   section_name = "...my_section_name..."
                   tags = {
                     key = "value"
@@ -54,12 +48,9 @@ resource "kong-mesh_mesh_tcp_route" "my_meshtcproute" {
           labels = {
             key = "value"
           }
-          mesh      = "...my_mesh..."
-          name      = "...my_name..."
-          namespace = "...my_namespace..."
-          proxy_types = [
-            "Gateway"
-          ]
+          mesh         = "...my_mesh..."
+          name         = "...my_name..."
+          namespace    = "...my_namespace..."
           section_name = "...my_section_name..."
           tags = {
             key = "value"

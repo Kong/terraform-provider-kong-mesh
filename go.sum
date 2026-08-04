@@ -6,10 +6,10 @@ github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c h1:udKWzYgxTojEK
 github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c/go.mod h1:xomTg63KZ2rFqZQzSB4Vz2SUXa1BpHTVz9L5PTmPC4E=
 github.com/BurntSushi/toml v1.2.1 h1:9F2/+DoOYIOksmaJFPw1tGFy1eDnIJXg+UHjuD8lTak=
 github.com/BurntSushi/toml v1.2.1/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=
-github.com/Kong/shared-speakeasy/customtypes v0.2.5 h1:VxMhCPyaOcU/Utd2RqLi4xOxz9Sf+4xA9sXJbBPGszA=
-github.com/Kong/shared-speakeasy/customtypes v0.2.5/go.mod h1:JNv+ygEk9Dw3MyZLNxHSJS3Wo7HMexOSP2qH6kfaZhI=
-github.com/Kong/shared-speakeasy/hclbuilder v0.0.1 h1:4qGdHFEd4f7fK+zQi7xBHaqXkY3yh6WuKjp33Ha6JGs=
-github.com/Kong/shared-speakeasy/hclbuilder v0.0.1/go.mod h1:g7/r/ksRwKhskqr9Hga47H8PH6wjh6LcXBhFAAomIgA=
+github.com/Kong/shared-speakeasy/customtypes v0.2.7 h1:U1UXeKGm29RGohgY2+S7eNkZt/IFmdA8+mhK5VXukRs=
+github.com/Kong/shared-speakeasy/customtypes v0.2.7/go.mod h1:xy4RcqfbmCQNWU+91r0tn1eiJh3poxpA+ZUCvOeKh0k=
+github.com/Kong/shared-speakeasy/hclbuilder v0.0.3 h1:QKYKMAcCLoARynxF6w/g5gAEBSFPCDE7fCYtC0kNvz0=
+github.com/Kong/shared-speakeasy/hclbuilder v0.0.3/go.mod h1:wd+9VPJwuhTEPnto7BgXghTD8G4NjV0eLCQU1cMiYGM=
 github.com/Kong/shared-speakeasy/hooks/mesh_defaults v0.0.4 h1:BIlFfdeqRP33wP5GOSwLxFPujL4C1GozoIjZMpzZXj0=
 github.com/Kong/shared-speakeasy/hooks/mesh_defaults v0.0.4/go.mod h1:Tu9kdp+k8JF7ES5gcXBi6jHyLEOr1EAAWq8ROOipWqg=
 github.com/Kong/shared-speakeasy/planmodifiers/arbitrary_json v0.0.1 h1:S3f3RAPNv274Yd8ShkGjSTXLWS55AY1SHNKfcX8sQjU=

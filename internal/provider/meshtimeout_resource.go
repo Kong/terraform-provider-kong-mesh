@@ -104,134 +104,6 @@ func (r *MeshTimeoutResource) Schema(ctx context.Context, req resource.SchemaReq
 			"spec": schema.SingleNestedAttribute{
 				Required: true,
 				Attributes: map[string]schema.Attribute{
-					"from": schema.ListNestedAttribute{
-						Computed: true,
-						Optional: true,
-						PlanModifiers: []planmodifier.List{
-							custom_listplanmodifier.SupressZeroNullModifier(),
-						},
-						NestedObject: schema.NestedAttributeObject{
-							Validators: []validator.Object{
-								speakeasy_objectvalidators.NotNull(),
-							},
-							Attributes: map[string]schema.Attribute{
-								"default": schema.SingleNestedAttribute{
-									Optional: true,
-									Attributes: map[string]schema.Attribute{
-										"connection_timeout": schema.StringAttribute{
-											Optional: true,
-											MarkdownDescription: `ConnectionTimeout specifies the amount of time proxy will wait for an TCP connection to be established.` + "\n" +
-												`Default value is 5 seconds. Cannot be set to 0.`,
-										},
-										"http": schema.SingleNestedAttribute{
-											Optional: true,
-											Attributes: map[string]schema.Attribute{
-												"max_connection_duration": schema.StringAttribute{
-													Optional: true,
-													MarkdownDescription: `MaxConnectionDuration is the time after which a connection will be drained and/or closed,` + "\n" +
-														`starting from when it was first established. Setting this timeout to 0 will disable it.` + "\n" +
-														`Disabled by default.`,
-												},
-												"max_stream_duration": schema.StringAttribute{
-													Optional: true,
-													MarkdownDescription: `MaxStreamDuration is the maximum time that a stream’s lifetime will span.` + "\n" +
-														`Setting this timeout to 0 will disable it. Disabled by default.`,
-												},
-												"request_headers_timeout": schema.StringAttribute{
-													Optional: true,
-													MarkdownDescription: `RequestHeadersTimeout The amount of time that proxy will wait for the request headers to be received. The timer is` + "\n" +
-														`activated when the first byte of the headers is received, and is disarmed when the last byte of` + "\n" +
-														`the headers has been received. If not specified or set to 0, this timeout is disabled.` + "\n" +
-														`Disabled by default.`,
-												},
-												"request_timeout": schema.StringAttribute{
-													Optional: true,
-													MarkdownDescription: `RequestTimeout The amount of time that proxy will wait for the entire request to be received.` + "\n" +
-														`The timer is activated when the request is initiated, and is disarmed when the last byte of the request is sent,` + "\n" +
-														`OR when the response is initiated. Setting this timeout to 0 will disable it.` + "\n" +
-														`Default is 15s.`,
-												},
-												"stream_idle_timeout": schema.StringAttribute{
-													Optional: true,
-													MarkdownDescription: `StreamIdleTimeout is the amount of time that proxy will allow a stream to exist with no activity.` + "\n" +
-														`Setting this timeout to 0 will disable it. Default is 30m`,
-												},
-											},
-											Description: `Http provides configuration for HTTP specific timeouts`,
-										},
-										"idle_timeout": schema.StringAttribute{
-											Optional: true,
-											MarkdownDescription: `IdleTimeout is defined as the period in which there are no bytes sent or received on connection` + "\n" +
-												`Setting this timeout to 0 will disable it. Be cautious when disabling it because` + "\n" +
-												`it can lead to connection leaking. Default value is 1h.`,
-										},
-									},
-									MarkdownDescription: `Default is a configuration specific to the group of clients referenced in` + "\n" +
-										`'targetRef'`,
-								},
-								"target_ref": schema.SingleNestedAttribute{
-									Optional: true,
-									Attributes: map[string]schema.Attribute{
-										"kind": schema.StringAttribute{
-											Optional:    true,
-											Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null`,
-											Validators: []validator.String{
-												speakeasy_stringvalidators.NotNull(),
-											},
-										},
-										"labels": schema.MapAttribute{
-											Optional:    true,
-											ElementType: types.StringType,
-											MarkdownDescription: `Labels are used to select group of MeshServices that match labels. Either Labels or` + "\n" +
-												`Name and Namespace can be used.`,
-										},
-										"mesh": schema.StringAttribute{
-											Optional:    true,
-											Description: `Mesh is reserved for future use to identify cross mesh resources.`,
-										},
-										"name": schema.StringAttribute{
-											Optional: true,
-											MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `,` + "\n" +
-												`` + "`" + `MeshServiceSubset` + "`" + ` and ` + "`" + `MeshGatewayRoute` + "`" + ``,
-										},
-										"namespace": schema.StringAttribute{
-											Optional: true,
-											MarkdownDescription: `Namespace specifies the namespace of target resource. If empty only resources in policy namespace` + "\n" +
-												`will be targeted.`,
-										},
-										"proxy_types": schema.ListAttribute{
-											Computed: true,
-											Optional: true,
-											PlanModifiers: []planmodifier.List{
-												custom_listplanmodifier.SupressZeroNullModifier(),
-											},
-											ElementType: types.StringType,
-											MarkdownDescription: `ProxyTypes specifies the data plane types that are subject to the policy. When not specified,` + "\n" +
-												`all data plane types are targeted by the policy.`,
-										},
-										"section_name": schema.StringAttribute{
-											Optional: true,
-											MarkdownDescription: `SectionName is used to target specific section of resource.` + "\n" +
-												`For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.`,
-										},
-										"tags": schema.MapAttribute{
-											Optional:    true,
-											ElementType: types.StringType,
-											MarkdownDescription: `Tags used to select a subset of proxies by tags. Can only be used with kinds` + "\n" +
-												`` + "`" + `MeshSubset` + "`" + ` and ` + "`" + `MeshServiceSubset` + "`" + ``,
-										},
-									},
-									MarkdownDescription: `TargetRef is a reference to the resource that represents a group of` + "\n" +
-										`clients.` + "\n" +
-										`Not Null`,
-									Validators: []validator.Object{
-										speakeasy_objectvalidators.NotNull(),
-									},
-								},
-							},
-						},
-						Description: `From list makes a match between clients and corresponding configurations`,
-					},
 					"rules": schema.ListNestedAttribute{
 						Computed: true,
 						Optional: true,
@@ -296,17 +168,73 @@ func (r *MeshTimeoutResource) Schema(ctx context.Context, req resource.SchemaReq
 									},
 									Description: `Default contains configuration of the inbound timeouts`,
 								},
+								"matches": schema.ListNestedAttribute{
+									Computed: true,
+									Optional: true,
+									PlanModifiers: []planmodifier.List{
+										custom_listplanmodifier.SupressZeroNullModifier(),
+									},
+									NestedObject: schema.NestedAttributeObject{
+										Validators: []validator.Object{
+											speakeasy_objectvalidators.NotNull(),
+										},
+										Attributes: map[string]schema.Attribute{
+											"sni": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"type": schema.StringAttribute{
+														Optional:    true,
+														Description: `Type defines how to match traffic by SNI. Only ` + "`" + `Exact` + "`" + ` is supported. Not Null; must be "Exact"`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+															stringvalidator.OneOf("Exact"),
+														},
+													},
+													"value": schema.StringAttribute{
+														Optional:    true,
+														Description: `Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied. Not Null`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+														},
+													},
+												},
+												Description: `SNI defines a matcher configuration for matching by SNI value carried on the TLS connection`,
+											},
+											"spiffe_id": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"type": schema.StringAttribute{
+														Optional:    true,
+														Description: `Type defines how to match incoming traffic by SpiffeID. ` + "`" + `Exact` + "`" + ` or ` + "`" + `Prefix` + "`" + ` are allowed. possible known values include one of ["Exact", "Prefix"]; Not Null`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+														},
+													},
+													"value": schema.StringAttribute{
+														Optional:    true,
+														Description: `Value is SpiffeID of a client that needs to match for the configuration to be applied. Not Null`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+														},
+													},
+												},
+												Description: `SpiffeID defines a matcher configuration for SpiffeID matching`,
+											},
+										},
+									},
+									Description: `Matches define predicates for selecting traffic this configuration applies to.`,
+								},
 							},
 						},
-						MarkdownDescription: `Rules defines inbound timeout configurations. Currently limited to exactly one rule containing` + "\n" +
-							`default timeouts that apply to all inbound traffic, as L7 matching is not yet implemented.`,
+						MarkdownDescription: `Rules defines inbound timeout configurations. When matches are present, the rule is applied only` + "\n" +
+							`to traffic selected by the given source and destination matchers.`,
 					},
 					"target_ref": schema.SingleNestedAttribute{
 						Optional: true,
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
 								Required:    true,
-								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
+								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
 							},
 							"labels": schema.MapAttribute{
 								Optional:    true,
@@ -320,23 +248,13 @@ func (r *MeshTimeoutResource) Schema(ctx context.Context, req resource.SchemaReq
 							},
 							"name": schema.StringAttribute{
 								Optional: true,
-								MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `,` + "\n" +
-									`` + "`" + `MeshServiceSubset` + "`" + ` and ` + "`" + `MeshGatewayRoute` + "`" + ``,
+								MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `` + "\n" +
+									`and ` + "`" + `MeshServiceSubset` + "`" + ``,
 							},
 							"namespace": schema.StringAttribute{
 								Optional: true,
 								MarkdownDescription: `Namespace specifies the namespace of target resource. If empty only resources in policy namespace` + "\n" +
 									`will be targeted.`,
-							},
-							"proxy_types": schema.ListAttribute{
-								Computed: true,
-								Optional: true,
-								PlanModifiers: []planmodifier.List{
-									custom_listplanmodifier.SupressZeroNullModifier(),
-								},
-								ElementType: types.StringType,
-								MarkdownDescription: `ProxyTypes specifies the data plane types that are subject to the policy. When not specified,` + "\n" +
-									`all data plane types are targeted by the policy.`,
 							},
 							"section_name": schema.StringAttribute{
 								Optional: true,
@@ -424,7 +342,7 @@ func (r *MeshTimeoutResource) Schema(ctx context.Context, req resource.SchemaReq
 									Attributes: map[string]schema.Attribute{
 										"kind": schema.StringAttribute{
 											Optional:    true,
-											Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null`,
+											Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null`,
 											Validators: []validator.String{
 												speakeasy_stringvalidators.NotNull(),
 											},
@@ -441,23 +359,13 @@ func (r *MeshTimeoutResource) Schema(ctx context.Context, req resource.SchemaReq
 										},
 										"name": schema.StringAttribute{
 											Optional: true,
-											MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `,` + "\n" +
-												`` + "`" + `MeshServiceSubset` + "`" + ` and ` + "`" + `MeshGatewayRoute` + "`" + ``,
+											MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `` + "\n" +
+												`and ` + "`" + `MeshServiceSubset` + "`" + ``,
 										},
 										"namespace": schema.StringAttribute{
 											Optional: true,
 											MarkdownDescription: `Namespace specifies the namespace of target resource. If empty only resources in policy namespace` + "\n" +
 												`will be targeted.`,
-										},
-										"proxy_types": schema.ListAttribute{
-											Computed: true,
-											Optional: true,
-											PlanModifiers: []planmodifier.List{
-												custom_listplanmodifier.SupressZeroNullModifier(),
-											},
-											ElementType: types.StringType,
-											MarkdownDescription: `ProxyTypes specifies the data plane types that are subject to the policy. When not specified,` + "\n" +
-												`all data plane types are targeted by the policy.`,
 										},
 										"section_name": schema.StringAttribute{
 											Optional: true,

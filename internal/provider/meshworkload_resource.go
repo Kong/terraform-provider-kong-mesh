@@ -44,7 +44,7 @@ type MeshWorkloadResourceModel struct {
 	Mesh             types.String                `tfsdk:"mesh"`
 	ModificationTime types.String                `tfsdk:"modification_time"`
 	Name             types.String                `tfsdk:"name"`
-	Spec             *tfTypes.Options            `tfsdk:"spec"`
+	Spec             *tfTypes.Routing            `tfsdk:"spec"`
 	Status           *tfTypes.WorkloadItemStatus `tfsdk:"status"`
 	Type             types.String                `tfsdk:"type"`
 	Warnings         []types.String              `tfsdk:"warnings"`

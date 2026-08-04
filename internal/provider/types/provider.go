@@ -7,7 +7,8 @@ import (
 )
 
 type Provider struct {
-	Bundled *Bundled     `tfsdk:"bundled"`
-	Spire   *Spire       `tfsdk:"spire"`
-	Type    types.String `tfsdk:"type"`
+	Bundled   *Bundled                   `tfsdk:"bundled"`
+	Extension *MeshIdentityItemExtension `tfsdk:"extension"`
+	Spire     *Spire                     `tfsdk:"spire"`
+	Type      types.String               `tfsdk:"type"`
 }

@@ -146,18 +146,6 @@ func (r *MeshTrustResource) Schema(ctx context.Context, req resource.SchemaReque
 							listvalidator.SizeAtLeast(1),
 						},
 					},
-					"origin": schema.SingleNestedAttribute{
-						Optional: true,
-						Attributes: map[string]schema.Attribute{
-							"kri": schema.StringAttribute{
-								Optional:    true,
-								Description: `Resource identifier`,
-							},
-						},
-						MarkdownDescription: `Origin specifies whether the resource was created from a MeshIdentity.` + "\n" +
-							`` + "\n" +
-							`Deprecated: use Status.Origin instead`,
-					},
 					"trust_domain": schema.StringAttribute{
 						Required:    true,
 						Description: `TrustDomain is the trust domain associated with this resource.`,

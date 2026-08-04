@@ -50,6 +50,10 @@ resource "kong-mesh_mesh_identity" "my_meshidentity" {
         insecure_allow_self_signed = true
         mesh_trust_creation        = "Enabled"
       }
+      extension = {
+        config = "{ \"see\": \"documentation\" }"
+        name   = "...my_name..."
+      }
       spire = {
         agent = {
           timeout = "...my_timeout..."

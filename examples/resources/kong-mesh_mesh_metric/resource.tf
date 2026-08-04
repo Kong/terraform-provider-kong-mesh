@@ -17,7 +17,12 @@ resource "kong-mesh_mesh_metric" "my_meshmetric" {
       backends = [
         {
           open_telemetry = {
-            endpoint         = "...my_endpoint..."
+            backend_ref = {
+              kind = "MeshOpenTelemetryBackend"
+              labels = {
+                key = "value"
+              }
+            }
             refresh_interval = "...my_refresh_interval..."
           }
           prometheus = {
@@ -59,12 +64,9 @@ resource "kong-mesh_mesh_metric" "my_meshmetric" {
       labels = {
         key = "value"
       }
-      mesh      = "...my_mesh..."
-      name      = "...my_name..."
-      namespace = "...my_namespace..."
-      proxy_types = [
-        "Gateway"
-      ]
+      mesh         = "...my_mesh..."
+      name         = "...my_name..."
+      namespace    = "...my_namespace..."
       section_name = "...my_section_name..."
       tags = {
         key = "value"

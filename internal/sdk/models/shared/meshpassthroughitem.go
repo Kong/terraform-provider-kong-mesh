@@ -190,7 +190,6 @@ type MeshPassthroughItemKind string
 const (
 	MeshPassthroughItemKindMesh                 MeshPassthroughItemKind = "Mesh"
 	MeshPassthroughItemKindMeshSubset           MeshPassthroughItemKind = "MeshSubset"
-	MeshPassthroughItemKindMeshGateway          MeshPassthroughItemKind = "MeshGateway"
 	MeshPassthroughItemKindMeshService          MeshPassthroughItemKind = "MeshService"
 	MeshPassthroughItemKindMeshExternalService  MeshPassthroughItemKind = "MeshExternalService"
 	MeshPassthroughItemKindMeshMultiZoneService MeshPassthroughItemKind = "MeshMultiZoneService"
@@ -207,29 +206,7 @@ func (e MeshPassthroughItemKind) ToPointer() *MeshPassthroughItemKind {
 func (e *MeshPassthroughItemKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshPassthroughItemProxyTypes string
-
-const (
-	MeshPassthroughItemProxyTypesSidecar MeshPassthroughItemProxyTypes = "Sidecar"
-	MeshPassthroughItemProxyTypesGateway MeshPassthroughItemProxyTypes = "Gateway"
-)
-
-func (e MeshPassthroughItemProxyTypes) ToPointer() *MeshPassthroughItemProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshPassthroughItemProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
+		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
 			return true
 		}
 	}
@@ -247,15 +224,12 @@ type MeshPassthroughItemTargetRef struct {
 	Labels map[string]string `json:"labels,omitempty"`
 	// Mesh is reserved for future use to identify cross mesh resources.
 	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
+	// Name of the referenced resource. Can only be used with kinds: `MeshService`
+	// and `MeshServiceSubset`
 	Name *string `json:"name,omitempty"`
 	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
 	// will be targeted.
 	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshPassthroughItemProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
@@ -297,13 +271,6 @@ func (m *MeshPassthroughItemTargetRef) GetNamespace() *string {
 		return nil
 	}
 	return m.Namespace
-}
-
-func (m *MeshPassthroughItemTargetRef) GetProxyTypes() []MeshPassthroughItemProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
 }
 
 func (m *MeshPassthroughItemTargetRef) GetSectionName() *string {

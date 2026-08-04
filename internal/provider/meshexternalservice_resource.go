@@ -49,16 +49,17 @@ type MeshExternalServiceResource struct {
 
 // MeshExternalServiceResourceModel describes the resource data model.
 type MeshExternalServiceResourceModel struct {
-	CreationTime     types.String                         `tfsdk:"creation_time"`
-	Kri              types.String                         `tfsdk:"kri"`
-	Labels           kumalabels.KumaLabelsMapValue        `tfsdk:"labels"`
-	Mesh             types.String                         `tfsdk:"mesh"`
-	ModificationTime types.String                         `tfsdk:"modification_time"`
-	Name             types.String                         `tfsdk:"name"`
-	Spec             *tfTypes.MeshExternalServiceItemSpec `tfsdk:"spec"`
-	Status           *tfTypes.Status                      `tfsdk:"status"`
-	Type             types.String                         `tfsdk:"type"`
-	Warnings         []types.String                       `tfsdk:"warnings"`
+	CreationTime     types.String                           `tfsdk:"creation_time"`
+	Kri              types.String                           `tfsdk:"kri"`
+	Labels           kumalabels.KumaLabelsMapValue          `tfsdk:"labels"`
+	Mesh             types.String                           `tfsdk:"mesh"`
+	ModificationTime types.String                           `tfsdk:"modification_time"`
+	Name             types.String                           `tfsdk:"name"`
+	Snis             []tfTypes.Snis                         `tfsdk:"snis"`
+	Spec             *tfTypes.MeshExternalServiceItemSpec   `tfsdk:"spec"`
+	Status           *tfTypes.MeshExternalServiceItemStatus `tfsdk:"status"`
+	Type             types.String                           `tfsdk:"type"`
+	Warnings         []types.String                         `tfsdk:"warnings"`
 }
 
 func (r *MeshExternalServiceResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -109,6 +110,29 @@ func (r *MeshExternalServiceResource) Schema(ctx context.Context, req resource.S
 				},
 				Description: `name of the MeshExternalService. Requires replacement if changed.`,
 			},
+			"snis": schema.ListNestedAttribute{
+				Computed: true,
+				PlanModifiers: []planmodifier.List{
+					custom_listplanmodifier.SupressZeroNullModifier(),
+					speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
+				},
+				NestedObject: schema.NestedAttributeObject{
+					PlanModifiers: []planmodifier.Object{
+						speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+					},
+					Attributes: map[string]schema.Attribute{
+						"port": schema.Int32Attribute{
+							Computed:    true,
+							Description: `The destination port this SNI corresponds to.`,
+						},
+						"sni": schema.StringAttribute{
+							Computed:    true,
+							Description: `The SNI string advertised by xDS for this port.`,
+						},
+					},
+				},
+				Description: `List of SNIs (Server Name Indication) advertised by xDS for this destination, one entry per port, sorted by port ascending. Present for MeshService, MeshMultiZoneService and MeshExternalService.`,
+			},
 			"spec": schema.SingleNestedAttribute{
 				Required: true,
 				Attributes: map[string]schema.Attribute{
@@ -137,6 +161,15 @@ func (r *MeshExternalServiceResource) Schema(ctx context.Context, req resource.S
 									Validators: []validator.Int32{
 										speakeasy_int32validators.NotNull(),
 										int32validator.Between(1, 65535),
+									},
+								},
+								"priority": schema.Int32Attribute{
+									Optional: true,
+									MarkdownDescription: `Priority maps to Envoy's priority levels to enable endpoint failover.` + "\n" +
+										`Lower values have higher priority (0 is the default/primary).` + "\n" +
+										`When the primary endpoints become unhealthy, traffic fails over to the next priority level.`,
+									Validators: []validator.Int32{
+										int32validator.Between(0, 128),
 									},
 								},
 							},

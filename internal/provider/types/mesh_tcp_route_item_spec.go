@@ -3,6 +3,6 @@
 package types
 
 type MeshTCPRouteItemSpec struct {
-	TargetRef *MeshAccessLogItemTargetRef `tfsdk:"target_ref"`
-	To        []MeshTCPRouteItemTo        `tfsdk:"to"`
+	TargetRef *TargetRef           `tfsdk:"target_ref"`
+	To        []MeshTCPRouteItemTo `tfsdk:"to"`
 }
