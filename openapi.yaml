@@ -3852,140 +3852,6 @@ paths:
           $ref: '#/components/responses/Internal'
       tags:
         - Tenants
-  '/meshes/{mesh}/meshglobalratelimits/{name}':
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshGlobalRateLimit#get
-        terraform-datasource: null
-      operationId: getMeshGlobalRateLimit
-      summary: Returns MeshGlobalRateLimit entity
-      parameters:
-        - name: mesh
-          in: path
-          description: name of the mesh
-          required: true
-          schema:
-            type: string
-        - name: name
-          in: path
-          description: name of the MeshGlobalRateLimit
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          $ref: '#/components/responses/MeshGlobalRateLimitItem'
-        '404':
-          $ref: '#/components/responses/NotFound'
-      tags:
-        - MeshGlobalRateLimit
-    put:
-      x-speakeasy-entity-operation:
-        terraform-resource: 'MeshGlobalRateLimit#create,update'
-        terraform-datasource: null
-      operationId: putMeshGlobalRateLimit
-      summary: Creates or Updates MeshGlobalRateLimit entity
-      parameters:
-        - name: mesh
-          in: path
-          description: name of the mesh
-          required: true
-          schema:
-            type: string
-        - name: name
-          in: path
-          description: name of the MeshGlobalRateLimit
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Put request
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MeshGlobalRateLimitItem'
-      responses:
-        '200':
-          $ref: '#/components/responses/MeshGlobalRateLimitCreateOrUpdateSuccessResponse'
-        '201':
-          $ref: '#/components/responses/MeshGlobalRateLimitCreateOrUpdateSuccessResponse'
-      tags:
-        - MeshGlobalRateLimit
-    delete:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshGlobalRateLimit#delete
-        terraform-datasource: null
-      operationId: deleteMeshGlobalRateLimit
-      summary: Deletes MeshGlobalRateLimit entity
-      parameters:
-        - name: mesh
-          in: path
-          description: name of the mesh
-          required: true
-          schema:
-            type: string
-        - name: name
-          in: path
-          description: name of the MeshGlobalRateLimit
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          $ref: '#/components/responses/MeshGlobalRateLimitDeleteSuccessResponse'
-        '404':
-          $ref: '#/components/responses/NotFound'
-      tags:
-        - MeshGlobalRateLimit
-  '/meshes/{mesh}/meshglobalratelimits':
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshGlobalRateLimitList#get
-        terraform-datasource: null
-      operationId: getMeshGlobalRateLimitList
-      summary: Returns a list of MeshGlobalRateLimit in the mesh.
-      parameters:
-        - name: offset
-          in: query
-          description: offset in the list of entities
-          required: false
-          schema:
-            type: integer
-          example: 0
-        - name: size
-          in: query
-          description: the number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 100
-            maximum: 1000
-            minimum: 1
-        - name: filter
-          in: query
-          description: 'filter by labels when multiple filters are present, they are ANDed'
-          required: false
-          schema:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
-          example:
-            label.k8s.kuma.io/namespace: my-ns
-        - name: mesh
-          in: path
-          description: name of the mesh
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          $ref: '#/components/responses/MeshGlobalRateLimitList'
-      tags:
-        - MeshGlobalRateLimit
   '/meshes/{mesh}/meshopas/{name}':
     get:
       x-speakeasy-entity-operation:
@@ -4517,60 +4383,6 @@ components:
     MeshItem:
       type: object
       properties:
-        constraints:
-          description: Constraints that applies to the mesh and its entities
-          type: object
-          properties:
-            dataplaneProxy:
-              description: |-
-                DataplaneProxyMembership defines a set of requirements for data plane
-                proxies to be a member of the mesh.
-              type: object
-              properties:
-                requirements:
-                  description: |-
-                    Requirements defines a set of requirements that data plane proxies must
-                    fulfill in order to join the mesh. A data plane proxy must fulfill at
-                    least one requirement in order to join the mesh. Empty list of allowed
-                    requirements means that any proxy that is not explicitly denied can join.
-                  type: array
-                  items:
-                    description: Rules defines a set of rules for data plane proxies to be member of the mesh.
-                    properties:
-                      tags:
-                        description: |-
-                          Tags defines set of required tags. You can specify '*' in value to
-                          require non empty value of tag
-                        type: object
-                        additionalProperties:
-                          type: string
-                        x-speakeasy-param-computed: false
-                    type: object
-                    x-speakeasy-param-computed: false
-                  default: []
-                restrictions:
-                  description: |-
-                    Restrictions defines a set of restrictions that data plane proxies cannot
-                    fulfill in order to join the mesh. A data plane proxy cannot fulfill any
-                    requirement in order to join the mesh.
-                    Restrictions takes precedence over requirements.
-                  type: array
-                  items:
-                    description: Rules defines a set of rules for data plane proxies to be member of the mesh.
-                    properties:
-                      tags:
-                        description: |-
-                          Tags defines set of required tags. You can specify '*' in value to
-                          require non empty value of tag
-                        type: object
-                        additionalProperties:
-                          type: string
-                        x-speakeasy-param-computed: false
-                    type: object
-                    x-speakeasy-param-computed: false
-                  default: []
-              x-speakeasy-param-computed: false
-          x-speakeasy-param-computed: false
         creationTime:
           description: Time at which the resource was created
           type: string
@@ -4588,6 +4400,15 @@ components:
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
+            valueType: kumalabels.KumaLabelsMapValue
         modificationTime:
           description: Time at which the resource was updated
           type: string
@@ -4694,19 +4515,7 @@ components:
         routing:
           description: Routing settings of the mesh
           type: object
-          properties:
-            defaultForbidMeshExternalServiceAccess:
-              description: |-
-                If true, blocks traffic to MeshExternalServices.
-                Default: false
-              type: boolean
-              x-speakeasy-param-computed: false
-            zoneEgress:
-              description: |-
-                Enable routing traffic to services in other zone or external services
-                through ZoneEgress. Default: false
-              type: boolean
-              x-speakeasy-param-computed: false
+          properties: {}
           x-speakeasy-param-computed: false
         skipCreatingInitialPolicies:
           description: |-
@@ -5074,18 +4883,6 @@ components:
                     will be targeted.
                   type: string
                   x-speakeasy-param-computed: false
-                proxyTypes:
-                  description: |-
-                    ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                    all data plane types are targeted by the policy.
-                  type: array
-                  items:
-                    enum:
-                      - Sidecar
-                      - Gateway
-                    type: string
-                    x-speakeasy-unknown-values: allow
-                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
                     SectionName is used to target specific section of resource.
@@ -5356,18 +5153,6 @@ components:
                           will be targeted.
                         type: string
                         x-speakeasy-param-computed: false
-                      proxyTypes:
-                        description: |-
-                          ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                          all data plane types are targeted by the policy.
-                        type: array
-                        items:
-                          enum:
-                            - Sidecar
-                            - Gateway
-                          type: string
-                          x-speakeasy-unknown-values: allow
-                        x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
                           SectionName is used to target specific section of resource.
@@ -5833,18 +5618,6 @@ components:
                     will be targeted.
                   type: string
                   x-speakeasy-param-computed: false
-                proxyTypes:
-                  description: |-
-                    ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                    all data plane types are targeted by the policy.
-                  type: array
-                  items:
-                    enum:
-                      - Sidecar
-                      - Gateway
-                    type: string
-                    x-speakeasy-unknown-values: allow
-                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
                     SectionName is used to target specific section of resource.
@@ -6188,18 +5961,6 @@ components:
                           will be targeted.
                         type: string
                         x-speakeasy-param-computed: false
-                      proxyTypes:
-                        description: |-
-                          ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                          all data plane types are targeted by the policy.
-                        type: array
-                        items:
-                          enum:
-                            - Sidecar
-                            - Gateway
-                          type: string
-                          x-speakeasy-unknown-values: allow
-                        x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
                           SectionName is used to target specific section of resource.
@@ -6470,18 +6231,6 @@ components:
                     will be targeted.
                   type: string
                   x-speakeasy-param-computed: false
-                proxyTypes:
-                  description: |-
-                    ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                    all data plane types are targeted by the policy.
-                  type: array
-                  items:
-                    enum:
-                      - Sidecar
-                      - Gateway
-                    type: string
-                    x-speakeasy-unknown-values: allow
-                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
                     SectionName is used to target specific section of resource.
@@ -6634,18 +6383,6 @@ components:
                           will be targeted.
                         type: string
                         x-speakeasy-param-computed: false
-                      proxyTypes:
-                        description: |-
-                          ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                          all data plane types are targeted by the policy.
-                        type: array
-                        items:
-                          enum:
-                            - Sidecar
-                            - Gateway
-                          type: string
-                          x-speakeasy-unknown-values: allow
-                        x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
                           SectionName is used to target specific section of resource.
@@ -6783,18 +6520,6 @@ components:
                     will be targeted.
                   type: string
                   x-speakeasy-param-computed: false
-                proxyTypes:
-                  description: |-
-                    ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                    all data plane types are targeted by the policy.
-                  type: array
-                  items:
-                    enum:
-                      - Sidecar
-                      - Gateway
-                    type: string
-                    x-speakeasy-unknown-values: allow
-                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
                     SectionName is used to target specific section of resource.
@@ -6884,18 +6609,6 @@ components:
                                     type: integer
                                     format: int32
                                     x-speakeasy-param-computed: false
-                                  proxyTypes:
-                                    description: |-
-                                      ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                                      all data plane types are targeted by the policy.
-                                    type: array
-                                    items:
-                                      enum:
-                                        - Sidecar
-                                        - Gateway
-                                      type: string
-                                      x-speakeasy-unknown-values: allow
-                                    x-speakeasy-plan-modifiers: SupressZeroNullModifier
                                   sectionName:
                                     description: |-
                                       SectionName is used to target specific section of resource.
@@ -7031,18 +6744,6 @@ components:
                                             type: integer
                                             format: int32
                                             x-speakeasy-param-computed: false
-                                          proxyTypes:
-                                            description: |-
-                                              ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                                              all data plane types are targeted by the policy.
-                                            type: array
-                                            items:
-                                              enum:
-                                                - Sidecar
-                                                - Gateway
-                                              type: string
-                                              x-speakeasy-unknown-values: allow
-                                            x-speakeasy-plan-modifiers: SupressZeroNullModifier
                                           sectionName:
                                             description: |-
                                               SectionName is used to target specific section of resource.
@@ -7413,18 +7114,6 @@ components:
                           will be targeted.
                         type: string
                         x-speakeasy-param-computed: false
-                      proxyTypes:
-                        description: |-
-                          ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                          all data plane types are targeted by the policy.
-                        type: array
-                        items:
-                          enum:
-                            - Sidecar
-                            - Gateway
-                          type: string
-                          x-speakeasy-unknown-values: allow
-                        x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
                           SectionName is used to target specific section of resource.
@@ -7558,18 +7247,6 @@ components:
                     will be targeted.
                   type: string
                   x-speakeasy-param-computed: false
-                proxyTypes:
-                  description: |-
-                    ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                    all data plane types are targeted by the policy.
-                  type: array
-                  items:
-                    enum:
-                      - Sidecar
-                      - Gateway
-                    type: string
-                    x-speakeasy-unknown-values: allow
-                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
                     SectionName is used to target specific section of resource.
@@ -7863,18 +7540,6 @@ components:
                           will be targeted.
                         type: string
                         x-speakeasy-param-computed: false
-                      proxyTypes:
-                        description: |-
-                          ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                          all data plane types are targeted by the policy.
-                        type: array
-                        items:
-                          enum:
-                            - Sidecar
-                            - Gateway
-                          type: string
-                          x-speakeasy-unknown-values: allow
-                        x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
                           SectionName is used to target specific section of resource.
@@ -8007,18 +7672,6 @@ components:
                     will be targeted.
                   type: string
                   x-speakeasy-param-computed: false
-                proxyTypes:
-                  description: |-
-                    ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                    all data plane types are targeted by the policy.
-                  type: array
-                  items:
-                    enum:
-                      - Sidecar
-                      - Gateway
-                    type: string
-                    x-speakeasy-unknown-values: allow
-                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
                     SectionName is used to target specific section of resource.
@@ -8415,18 +8068,6 @@ components:
                           will be targeted.
                         type: string
                         x-speakeasy-param-computed: false
-                      proxyTypes:
-                        description: |-
-                          ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                          all data plane types are targeted by the policy.
-                        type: array
-                        items:
-                          enum:
-                            - Sidecar
-                            - Gateway
-                          type: string
-                          x-speakeasy-unknown-values: allow
-                        x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
                           SectionName is used to target specific section of resource.
@@ -8765,18 +8406,6 @@ components:
                     will be targeted.
                   type: string
                   x-speakeasy-param-computed: false
-                proxyTypes:
-                  description: |-
-                    ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                    all data plane types are targeted by the policy.
-                  type: array
-                  items:
-                    enum:
-                      - Sidecar
-                      - Gateway
-                    type: string
-                    x-speakeasy-unknown-values: allow
-                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
                     SectionName is used to target specific section of resource.
@@ -9013,18 +8642,6 @@ components:
                     will be targeted.
                   type: string
                   x-speakeasy-param-computed: false
-                proxyTypes:
-                  description: |-
-                    ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                    all data plane types are targeted by the policy.
-                  type: array
-                  items:
-                    enum:
-                      - Sidecar
-                      - Gateway
-                    type: string
-                    x-speakeasy-unknown-values: allow
-                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
                     SectionName is used to target specific section of resource.
@@ -9618,18 +9235,6 @@ components:
                     will be targeted.
                   type: string
                   x-speakeasy-param-computed: false
-                proxyTypes:
-                  description: |-
-                    ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                    all data plane types are targeted by the policy.
-                  type: array
-                  items:
-                    enum:
-                      - Sidecar
-                      - Gateway
-                    type: string
-                    x-speakeasy-unknown-values: allow
-                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
                     SectionName is used to target specific section of resource.
@@ -9942,18 +9547,6 @@ components:
                     will be targeted.
                   type: string
                   x-speakeasy-param-computed: false
-                proxyTypes:
-                  description: |-
-                    ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                    all data plane types are targeted by the policy.
-                  type: array
-                  items:
-                    enum:
-                      - Sidecar
-                      - Gateway
-                    type: string
-                    x-speakeasy-unknown-values: allow
-                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
                     SectionName is used to target specific section of resource.
@@ -10152,18 +9745,6 @@ components:
                           will be targeted.
                         type: string
                         x-speakeasy-param-computed: false
-                      proxyTypes:
-                        description: |-
-                          ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                          all data plane types are targeted by the policy.
-                        type: array
-                        items:
-                          enum:
-                            - Sidecar
-                            - Gateway
-                          type: string
-                          x-speakeasy-unknown-values: allow
-                        x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
                           SectionName is used to target specific section of resource.
@@ -10296,18 +9877,6 @@ components:
                     will be targeted.
                   type: string
                   x-speakeasy-param-computed: false
-                proxyTypes:
-                  description: |-
-                    ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                    all data plane types are targeted by the policy.
-                  type: array
-                  items:
-                    enum:
-                      - Sidecar
-                      - Gateway
-                    type: string
-                    x-speakeasy-unknown-values: allow
-                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
                     SectionName is used to target specific section of resource.
@@ -10731,18 +10300,6 @@ components:
                           will be targeted.
                         type: string
                         x-speakeasy-param-computed: false
-                      proxyTypes:
-                        description: |-
-                          ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                          all data plane types are targeted by the policy.
-                        type: array
-                        items:
-                          enum:
-                            - Sidecar
-                            - Gateway
-                          type: string
-                          x-speakeasy-unknown-values: allow
-                        x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
                           SectionName is used to target specific section of resource.
@@ -10880,18 +10437,6 @@ components:
                     will be targeted.
                   type: string
                   x-speakeasy-param-computed: false
-                proxyTypes:
-                  description: |-
-                    ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                    all data plane types are targeted by the policy.
-                  type: array
-                  items:
-                    enum:
-                      - Sidecar
-                      - Gateway
-                    type: string
-                    x-speakeasy-unknown-values: allow
-                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
                     SectionName is used to target specific section of resource.
@@ -10977,18 +10522,6 @@ components:
                                     type: integer
                                     format: int32
                                     x-speakeasy-param-computed: false
-                                  proxyTypes:
-                                    description: |-
-                                      ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                                      all data plane types are targeted by the policy.
-                                    type: array
-                                    items:
-                                      enum:
-                                        - Sidecar
-                                        - Gateway
-                                      type: string
-                                      x-speakeasy-unknown-values: allow
-                                    x-speakeasy-plan-modifiers: SupressZeroNullModifier
                                   sectionName:
                                     description: |-
                                       SectionName is used to target specific section of resource.
@@ -11062,18 +10595,6 @@ components:
                           will be targeted.
                         type: string
                         x-speakeasy-param-computed: false
-                      proxyTypes:
-                        description: |-
-                          ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                          all data plane types are targeted by the policy.
-                        type: array
-                        items:
-                          enum:
-                            - Sidecar
-                            - Gateway
-                          type: string
-                          x-speakeasy-unknown-values: allow
-                        x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
                           SectionName is used to target specific section of resource.
@@ -11273,18 +10794,6 @@ components:
                     will be targeted.
                   type: string
                   x-speakeasy-param-computed: false
-                proxyTypes:
-                  description: |-
-                    ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                    all data plane types are targeted by the policy.
-                  type: array
-                  items:
-                    enum:
-                      - Sidecar
-                      - Gateway
-                    type: string
-                    x-speakeasy-unknown-values: allow
-                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
                     SectionName is used to target specific section of resource.
@@ -11525,18 +11034,6 @@ components:
                     will be targeted.
                   type: string
                   x-speakeasy-param-computed: false
-                proxyTypes:
-                  description: |-
-                    ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                    all data plane types are targeted by the policy.
-                  type: array
-                  items:
-                    enum:
-                      - Sidecar
-                      - Gateway
-                    type: string
-                    x-speakeasy-unknown-values: allow
-                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
                     SectionName is used to target specific section of resource.
@@ -11663,18 +11160,6 @@ components:
                           will be targeted.
                         type: string
                         x-speakeasy-param-computed: false
-                      proxyTypes:
-                        description: |-
-                          ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                          all data plane types are targeted by the policy.
-                        type: array
-                        items:
-                          enum:
-                            - Sidecar
-                            - Gateway
-                          type: string
-                          x-speakeasy-unknown-values: allow
-                        x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       sectionName:
                         description: |-
                           SectionName is used to target specific section of resource.
@@ -12012,18 +11497,6 @@ components:
                     will be targeted.
                   type: string
                   x-speakeasy-param-computed: false
-                proxyTypes:
-                  description: |-
-                    ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                    all data plane types are targeted by the policy.
-                  type: array
-                  items:
-                    enum:
-                      - Sidecar
-                      - Gateway
-                    type: string
-                    x-speakeasy-unknown-values: allow
-                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
                     SectionName is used to target specific section of resource.
@@ -12352,18 +11825,6 @@ components:
                     will be targeted.
                   type: string
                   x-speakeasy-param-computed: false
-                proxyTypes:
-                  description: |-
-                    ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                    all data plane types are targeted by the policy.
-                  type: array
-                  items:
-                    enum:
-                      - Sidecar
-                      - Gateway
-                    type: string
-                    x-speakeasy-unknown-values: allow
-                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
                     SectionName is used to target specific section of resource.
@@ -14756,672 +14217,6 @@ components:
               type: string
               x-speakeasy-param-computed: false
           x-speakeasy-param-computed: false
-    MeshGlobalRateLimitItem:
-      description: MeshGlobalRateLimit
-      type: object
-      properties:
-        type:
-          description: the type of the resource
-          type: string
-          enum:
-            - MeshGlobalRateLimit
-          x-speakeasy-param-computed: false
-        mesh:
-          description: Mesh is the name of the Kuma mesh this resource belongs to. It may be omitted for cluster-scoped resources.
-          type: string
-          default: default
-          x-speakeasy-param-computed: false
-          x-speakeasy-param-force-new: true
-        kri:
-          description: A unique identifier for this resource instance used by internal tooling and integrations. Typically derived from resource attributes and may be used for cross-references or indexing
-          type: string
-          example: kri_mgrl_default_zone-east_kuma-demo_mypolicy1_
-          readOnly: true
-          x-speakeasy-param-computed: false
-          x-speakeasy-param-suppress-computed-diff: true
-        name:
-          description: Name of the Kuma resource
-          type: string
-          x-speakeasy-param-computed: false
-          x-speakeasy-param-force-new: true
-        labels:
-          description: The labels to help identity resources
-          type: object
-          additionalProperties:
-            type: string
-          x-speakeasy-param-computed: false
-          x-speakeasy-terraform-custom-default:
-            imports:
-              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
-            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
-          x-speakeasy-terraform-custom-type:
-            imports:
-              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
-            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
-            valueType: kumalabels.KumaLabelsMapValue
-        spec:
-          description: Spec is the specification of the Kuma MeshGlobalRateLimit resource.
-          type: object
-          properties:
-            from:
-              description: From list makes a match between clients and corresponding configurations
-              type: array
-              items:
-                properties:
-                  default:
-                    description: |-
-                      Default is a configuration specific to the group of clients referenced in
-                      'targetRef'
-                    type: object
-                    properties:
-                      backend:
-                        description: Backend defines location of rate limit backend service.
-                        type: object
-                        properties:
-                          rateLimitService:
-                            type: object
-                            properties:
-                              limitOnServiceFail:
-                                description: LimitOnServiceFail will pass limit requests if ratelimit service is not reachable.
-                                type: boolean
-                                x-speakeasy-param-computed: false
-                              timeout:
-                                description: Timeout for rate limit request made form Data Plane Proxy to rate limit service.
-                                type: string
-                                x-speakeasy-param-computed: false
-                              url:
-                                description: Url defines address of rate limit service.
-                                type: string
-                                x-speakeasy-param-computed: false
-                            x-speakeasy-param-computed: false
-                        required:
-                          - rateLimitService
-                        x-speakeasy-param-computed: false
-                      http:
-                        type: object
-                        properties:
-                          disabled:
-                            description: Define if rate limiting should be disabled.
-                            type: boolean
-                            x-speakeasy-param-computed: false
-                          onRateLimit:
-                            description: Describes the actions to take on a rate limit event
-                            type: object
-                            properties:
-                              headers:
-                                description: The Headers to be added to the HTTP response on a rate limit event
-                                type: object
-                                properties:
-                                  add:
-                                    type: array
-                                    items:
-                                      properties:
-                                        name:
-                                          type: string
-                                          maxLength: 256
-                                          minLength: 1
-                                          pattern: '^[a-z0-9!#$%&''*+\-.^_\x60|~]+$'
-                                          x-speakeasy-param-computed: false
-                                        value:
-                                          type: string
-                                          x-speakeasy-param-computed: false
-                                      required:
-                                        - name
-                                        - value
-                                      type: object
-                                    maxItems: 16
-                                    x-kubernetes-list-map-keys:
-                                      - name
-                                    x-kubernetes-list-type: map
-                                    x-speakeasy-plan-modifiers: SupressZeroNullModifier
-                                  set:
-                                    type: array
-                                    items:
-                                      properties:
-                                        name:
-                                          type: string
-                                          maxLength: 256
-                                          minLength: 1
-                                          pattern: '^[a-z0-9!#$%&''*+\-.^_\x60|~]+$'
-                                          x-speakeasy-param-computed: false
-                                        value:
-                                          type: string
-                                          x-speakeasy-param-computed: false
-                                      required:
-                                        - name
-                                        - value
-                                      type: object
-                                    maxItems: 16
-                                    x-kubernetes-list-map-keys:
-                                      - name
-                                    x-kubernetes-list-type: map
-                                    x-speakeasy-plan-modifiers: SupressZeroNullModifier
-                                x-speakeasy-param-computed: false
-                              status:
-                                description: The HTTP status code to be set on a rate limit event
-                                type: integer
-                                format: int32
-                            x-speakeasy-param-computed: false
-                          ratelimitOnRequest:
-                            description: Defines rate limit based on request content
-                            type: array
-                            items:
-                              properties:
-                                kind:
-                                  description: 'Kind defines type of rate limit config. Possible options: OnHeader.'
-                                  type: string
-                                  enum:
-                                    - OnHeader
-                                  x-speakeasy-param-computed: false
-                                limits:
-                                  description: Limits defines limit configuration.
-                                  type: array
-                                  items:
-                                    properties:
-                                      requestRate:
-                                        description: Defines how many requests are allowed per interval.
-                                        type: object
-                                        properties:
-                                          interval:
-                                            description: 'The interval the number of units is accounted for. Only 1s, 1m, 1h or 24h can be configured.'
-                                            type: string
-                                            x-speakeasy-param-computed: false
-                                          num:
-                                            description: |-
-                                              Number of units per interval (depending on usage it can be a number of requests,
-                                              or a number of connections).
-                                            type: integer
-                                            format: int32
-                                            x-speakeasy-param-computed: false
-                                        required:
-                                          - interval
-                                          - num
-                                        x-speakeasy-param-computed: false
-                                      value:
-                                        description: Value of the request element on which rate limit should apply. E.g. header value.
-                                        type: string
-                                        x-speakeasy-param-computed: false
-                                    required:
-                                      - value
-                                    type: object
-                                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
-                                name:
-                                  description: Name of the request element on which rate limit should apply. E.g. header name.
-                                  type: string
-                                  x-speakeasy-param-computed: false
-                              required:
-                                - kind
-                                - limits
-                                - name
-                              type: object
-                            x-speakeasy-plan-modifiers: SupressZeroNullModifier
-                          requestRate:
-                            description: Defines how many requests are allowed per interval.
-                            type: object
-                            properties:
-                              interval:
-                                description: 'The interval the number of units is accounted for. Only 1s, 1m, 1h or 24h can be configured.'
-                                type: string
-                                x-speakeasy-param-computed: false
-                              num:
-                                description: |-
-                                  Number of units per interval (depending on usage it can be a number of requests,
-                                  or a number of connections).
-                                type: integer
-                                format: int32
-                                x-speakeasy-param-computed: false
-                            required:
-                              - interval
-                              - num
-                            x-speakeasy-param-computed: false
-                        x-speakeasy-param-computed: false
-                      mode:
-                        description: |-
-                          Mode defines rate limit behavior when limits are reached. Possible options: Limit and Shadow. Setting Shadow will
-                          not block over the limit requests but will update metrics. This is useful for testing rate limit configuration.
-                        type: string
-                        enum:
-                          - Limit
-                          - Shadow
-                        x-speakeasy-param-computed: false
-                        x-speakeasy-unknown-values: allow
-                    required:
-                      - backend
-                      - http
-                    x-speakeasy-param-computed: false
-                  targetRef:
-                    description: |-
-                      TargetRef is a reference to the resource that represents a group of
-                      clients.
-                    type: object
-                    properties:
-                      kind:
-                        description: Kind of the referenced resource
-                        type: string
-                        enum:
-                          - Mesh
-                          - MeshSubset
-                          - MeshService
-                          - MeshExternalService
-                          - MeshMultiZoneService
-                          - MeshServiceSubset
-                          - MeshHTTPRoute
-                          - Dataplane
-                        x-speakeasy-param-computed: false
-                        x-speakeasy-unknown-values: allow
-                      labels:
-                        description: |-
-                          Labels are used to select group of MeshServices that match labels. Either Labels or
-                          Name and Namespace can be used.
-                        type: object
-                        additionalProperties:
-                          type: string
-                        x-speakeasy-param-computed: false
-                      mesh:
-                        description: Mesh is reserved for future use to identify cross mesh resources.
-                        type: string
-                        x-speakeasy-param-computed: false
-                      name:
-                        description: |-
-                          Name of the referenced resource. Can only be used with kinds: `MeshService`
-                          and `MeshServiceSubset`
-                        type: string
-                        x-speakeasy-param-computed: false
-                      namespace:
-                        description: |-
-                          Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-                          will be targeted.
-                        type: string
-                        x-speakeasy-param-computed: false
-                      proxyTypes:
-                        description: |-
-                          ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                          all data plane types are targeted by the policy.
-                        type: array
-                        items:
-                          enum:
-                            - Sidecar
-                            - Gateway
-                          type: string
-                          x-speakeasy-unknown-values: allow
-                        x-speakeasy-plan-modifiers: SupressZeroNullModifier
-                      sectionName:
-                        description: |-
-                          SectionName is used to target specific section of resource.
-                          For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-                        type: string
-                        x-speakeasy-param-computed: false
-                      tags:
-                        description: |-
-                          Tags used to select a subset of proxies by tags. Can only be used with kinds
-                          `MeshSubset` and `MeshServiceSubset`
-                        type: object
-                        additionalProperties:
-                          type: string
-                        x-speakeasy-param-computed: false
-                    required:
-                      - kind
-                    x-speakeasy-param-computed: false
-                required:
-                  - targetRef
-                type: object
-              x-speakeasy-plan-modifiers: SupressZeroNullModifier
-            targetRef:
-              description: |-
-                TargetRef is a reference to the resource the policy takes an effect on.
-                The resource could be either a real store object or virtual resource
-                defined inplace.
-              type: object
-              properties:
-                kind:
-                  description: Kind of the referenced resource
-                  type: string
-                  enum:
-                    - Mesh
-                    - MeshSubset
-                    - MeshService
-                    - MeshExternalService
-                    - MeshMultiZoneService
-                    - MeshServiceSubset
-                    - MeshHTTPRoute
-                    - Dataplane
-                  x-speakeasy-param-computed: false
-                  x-speakeasy-unknown-values: allow
-                labels:
-                  description: |-
-                    Labels are used to select group of MeshServices that match labels. Either Labels or
-                    Name and Namespace can be used.
-                  type: object
-                  additionalProperties:
-                    type: string
-                  x-speakeasy-param-computed: false
-                mesh:
-                  description: Mesh is reserved for future use to identify cross mesh resources.
-                  type: string
-                  x-speakeasy-param-computed: false
-                name:
-                  description: |-
-                    Name of the referenced resource. Can only be used with kinds: `MeshService`
-                    and `MeshServiceSubset`
-                  type: string
-                  x-speakeasy-param-computed: false
-                namespace:
-                  description: |-
-                    Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-                    will be targeted.
-                  type: string
-                  x-speakeasy-param-computed: false
-                proxyTypes:
-                  description: |-
-                    ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                    all data plane types are targeted by the policy.
-                  type: array
-                  items:
-                    enum:
-                      - Sidecar
-                      - Gateway
-                    type: string
-                    x-speakeasy-unknown-values: allow
-                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
-                sectionName:
-                  description: |-
-                    SectionName is used to target specific section of resource.
-                    For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-                  type: string
-                  x-speakeasy-param-computed: false
-                tags:
-                  description: |-
-                    Tags used to select a subset of proxies by tags. Can only be used with kinds
-                    `MeshSubset` and `MeshServiceSubset`
-                  type: object
-                  additionalProperties:
-                    type: string
-                  x-speakeasy-param-computed: false
-              required:
-                - kind
-              x-speakeasy-param-computed: false
-            to:
-              description: To list makes a match between clients and corresponding configurations
-              type: array
-              items:
-                properties:
-                  default:
-                    description: |-
-                      Default is a configuration specific to the group of clients referenced in
-                      'targetRef'
-                    type: object
-                    properties:
-                      backend:
-                        description: Backend defines location of rate limit backend service.
-                        type: object
-                        properties:
-                          rateLimitService:
-                            type: object
-                            properties:
-                              limitOnServiceFail:
-                                description: LimitOnServiceFail will pass limit requests if ratelimit service is not reachable.
-                                type: boolean
-                                x-speakeasy-param-computed: false
-                              timeout:
-                                description: Timeout for rate limit request made form Data Plane Proxy to rate limit service.
-                                type: string
-                                x-speakeasy-param-computed: false
-                              url:
-                                description: Url defines address of rate limit service.
-                                type: string
-                                x-speakeasy-param-computed: false
-                            x-speakeasy-param-computed: false
-                        required:
-                          - rateLimitService
-                        x-speakeasy-param-computed: false
-                      http:
-                        type: object
-                        properties:
-                          disabled:
-                            description: Define if rate limiting should be disabled.
-                            type: boolean
-                            x-speakeasy-param-computed: false
-                          onRateLimit:
-                            description: Describes the actions to take on a rate limit event
-                            type: object
-                            properties:
-                              headers:
-                                description: The Headers to be added to the HTTP response on a rate limit event
-                                type: object
-                                properties:
-                                  add:
-                                    type: array
-                                    items:
-                                      properties:
-                                        name:
-                                          type: string
-                                          maxLength: 256
-                                          minLength: 1
-                                          pattern: '^[a-z0-9!#$%&''*+\-.^_\x60|~]+$'
-                                          x-speakeasy-param-computed: false
-                                        value:
-                                          type: string
-                                          x-speakeasy-param-computed: false
-                                      required:
-                                        - name
-                                        - value
-                                      type: object
-                                    maxItems: 16
-                                    x-kubernetes-list-map-keys:
-                                      - name
-                                    x-kubernetes-list-type: map
-                                    x-speakeasy-plan-modifiers: SupressZeroNullModifier
-                                  set:
-                                    type: array
-                                    items:
-                                      properties:
-                                        name:
-                                          type: string
-                                          maxLength: 256
-                                          minLength: 1
-                                          pattern: '^[a-z0-9!#$%&''*+\-.^_\x60|~]+$'
-                                          x-speakeasy-param-computed: false
-                                        value:
-                                          type: string
-                                          x-speakeasy-param-computed: false
-                                      required:
-                                        - name
-                                        - value
-                                      type: object
-                                    maxItems: 16
-                                    x-kubernetes-list-map-keys:
-                                      - name
-                                    x-kubernetes-list-type: map
-                                    x-speakeasy-plan-modifiers: SupressZeroNullModifier
-                                x-speakeasy-param-computed: false
-                              status:
-                                description: The HTTP status code to be set on a rate limit event
-                                type: integer
-                                format: int32
-                            x-speakeasy-param-computed: false
-                          ratelimitOnRequest:
-                            description: Defines rate limit based on request content
-                            type: array
-                            items:
-                              properties:
-                                kind:
-                                  description: 'Kind defines type of rate limit config. Possible options: OnHeader.'
-                                  type: string
-                                  enum:
-                                    - OnHeader
-                                  x-speakeasy-param-computed: false
-                                limits:
-                                  description: Limits defines limit configuration.
-                                  type: array
-                                  items:
-                                    properties:
-                                      requestRate:
-                                        description: Defines how many requests are allowed per interval.
-                                        type: object
-                                        properties:
-                                          interval:
-                                            description: 'The interval the number of units is accounted for. Only 1s, 1m, 1h or 24h can be configured.'
-                                            type: string
-                                            x-speakeasy-param-computed: false
-                                          num:
-                                            description: |-
-                                              Number of units per interval (depending on usage it can be a number of requests,
-                                              or a number of connections).
-                                            type: integer
-                                            format: int32
-                                            x-speakeasy-param-computed: false
-                                        required:
-                                          - interval
-                                          - num
-                                        x-speakeasy-param-computed: false
-                                      value:
-                                        description: Value of the request element on which rate limit should apply. E.g. header value.
-                                        type: string
-                                        x-speakeasy-param-computed: false
-                                    required:
-                                      - value
-                                    type: object
-                                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
-                                name:
-                                  description: Name of the request element on which rate limit should apply. E.g. header name.
-                                  type: string
-                                  x-speakeasy-param-computed: false
-                              required:
-                                - kind
-                                - limits
-                                - name
-                              type: object
-                            x-speakeasy-plan-modifiers: SupressZeroNullModifier
-                          requestRate:
-                            description: Defines how many requests are allowed per interval.
-                            type: object
-                            properties:
-                              interval:
-                                description: 'The interval the number of units is accounted for. Only 1s, 1m, 1h or 24h can be configured.'
-                                type: string
-                                x-speakeasy-param-computed: false
-                              num:
-                                description: |-
-                                  Number of units per interval (depending on usage it can be a number of requests,
-                                  or a number of connections).
-                                type: integer
-                                format: int32
-                                x-speakeasy-param-computed: false
-                            required:
-                              - interval
-                              - num
-                            x-speakeasy-param-computed: false
-                        x-speakeasy-param-computed: false
-                      mode:
-                        description: |-
-                          Mode defines rate limit behavior when limits are reached. Possible options: Limit and Shadow. Setting Shadow will
-                          not block over the limit requests but will update metrics. This is useful for testing rate limit configuration.
-                        type: string
-                        enum:
-                          - Limit
-                          - Shadow
-                        x-speakeasy-param-computed: false
-                        x-speakeasy-unknown-values: allow
-                    required:
-                      - backend
-                      - http
-                    x-speakeasy-param-computed: false
-                  targetRef:
-                    description: |-
-                      TargetRef is a reference to the resource that represents a group of
-                      clients.
-                    type: object
-                    properties:
-                      kind:
-                        description: Kind of the referenced resource
-                        type: string
-                        enum:
-                          - Mesh
-                          - MeshSubset
-                          - MeshService
-                          - MeshExternalService
-                          - MeshMultiZoneService
-                          - MeshServiceSubset
-                          - MeshHTTPRoute
-                          - Dataplane
-                        x-speakeasy-param-computed: false
-                        x-speakeasy-unknown-values: allow
-                      labels:
-                        description: |-
-                          Labels are used to select group of MeshServices that match labels. Either Labels or
-                          Name and Namespace can be used.
-                        type: object
-                        additionalProperties:
-                          type: string
-                        x-speakeasy-param-computed: false
-                      mesh:
-                        description: Mesh is reserved for future use to identify cross mesh resources.
-                        type: string
-                        x-speakeasy-param-computed: false
-                      name:
-                        description: |-
-                          Name of the referenced resource. Can only be used with kinds: `MeshService`
-                          and `MeshServiceSubset`
-                        type: string
-                        x-speakeasy-param-computed: false
-                      namespace:
-                        description: |-
-                          Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-                          will be targeted.
-                        type: string
-                        x-speakeasy-param-computed: false
-                      proxyTypes:
-                        description: |-
-                          ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                          all data plane types are targeted by the policy.
-                        type: array
-                        items:
-                          enum:
-                            - Sidecar
-                            - Gateway
-                          type: string
-                          x-speakeasy-unknown-values: allow
-                        x-speakeasy-plan-modifiers: SupressZeroNullModifier
-                      sectionName:
-                        description: |-
-                          SectionName is used to target specific section of resource.
-                          For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-                        type: string
-                        x-speakeasy-param-computed: false
-                      tags:
-                        description: |-
-                          Tags used to select a subset of proxies by tags. Can only be used with kinds
-                          `MeshSubset` and `MeshServiceSubset`
-                        type: object
-                        additionalProperties:
-                          type: string
-                        x-speakeasy-param-computed: false
-                    required:
-                      - kind
-                    x-speakeasy-param-computed: false
-                required:
-                  - targetRef
-                type: object
-              x-speakeasy-plan-modifiers: SupressZeroNullModifier
-          x-speakeasy-param-computed: false
-        creationTime:
-          description: Time at which the resource was created
-          type: string
-          format: date-time
-          example: '0001-01-01T00:00:00Z'
-          readOnly: true
-          x-speakeasy-param-suppress-computed-diff: true
-        modificationTime:
-          description: Time at which the resource was updated
-          type: string
-          format: date-time
-          example: '0001-01-01T00:00:00Z'
-          readOnly: true
-          x-speakeasy-param-suppress-computed-diff: true
-      required:
-        - type
-        - name
-        - spec
     MeshOPAItem:
       description: MeshOPA
       type: object
@@ -15613,18 +14408,6 @@ components:
                     will be targeted.
                   type: string
                   x-speakeasy-param-computed: false
-                proxyTypes:
-                  description: |-
-                    ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-                    all data plane types are targeted by the policy.
-                  type: array
-                  items:
-                    enum:
-                      - Sidecar
-                      - Gateway
-                    type: string
-                    x-speakeasy-unknown-values: allow
-                  x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sectionName:
                   description: |-
                     SectionName is used to target specific section of resource.
@@ -15999,9 +14782,10 @@ components:
       type: object
       properties:
         version:
-          type: string
+          type:
+            - string
+            - 'null'
           example: v3
-          nullable: true
           pattern: '^v[0-9]{1,9}$'
           x-speakeasy-param-computed: false
     BaseError:
@@ -17654,51 +16438,6 @@ components:
                 readOnly: true
                 x-speakeasy-param-suppress-computed-diff: true
     WorkloadDeleteSuccessResponse:
-      description: Successful response
-      content:
-        application/json:
-          schema:
-            type: object
-    MeshGlobalRateLimitItem:
-      description: Successful response
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/MeshGlobalRateLimitItem'
-    MeshGlobalRateLimitList:
-      description: List
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              items:
-                type: array
-                items:
-                  $ref: '#/components/schemas/MeshGlobalRateLimitItem'
-              total:
-                description: The total number of entities
-                type: number
-              next:
-                description: URL to the next page
-                type: string
-    MeshGlobalRateLimitCreateOrUpdateSuccessResponse:
-      description: Successful response
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              warnings:
-                description: |
-                  warnings is a list of warning messages to return to the requesting Kuma API clients.
-                  Warning messages describe a problem the client making the API request should correct or be aware of.
-                type: array
-                items:
-                  type: string
-                readOnly: true
-                x-speakeasy-param-suppress-computed-diff: true
-    MeshGlobalRateLimitDeleteSuccessResponse:
       description: Successful response
       content:
         application/json:
