@@ -3,14 +3,14 @@ id: 322c4806-8b53-493c-a05f-50d4d113c747
 management:
   docChecksum: 1d1242ab3830f652ac02e04e69a92b7b
   docVersion: 2.0.0
-  speakeasyVersion: 1.791.0
-  generationVersion: 2.924.0
+  speakeasyVersion: 1.791.1
+  generationVersion: 2.926.2
   releaseVersion: 0.8.2
   configChecksum: 6ac168708c863a8f1683043607fe87cb
 persistentEdits:
-  generation_id: 803ae58b-569a-426e-9faf-1e00f76833d7
-  pristine_commit_hash: 4cbe862c70a0f02cdb8fa0605a551a26390664b1
-  pristine_tree_hash: 3475418c9481ddfb943ed201ab6d8644f2bb0fcf
+  generation_id: b200a07b-c532-4f13-b511-8733f5fa4cc3
+  pristine_commit_hash: 933e80586deda2762ab416d713fdb56fffce56c9
+  pristine_tree_hash: 49ca51755b4e08d9cf315ed80402b68958e41f1b
 features:
   terraform:
     additionalDependencies: 0.1.0
@@ -22,7 +22,7 @@ features:
     nullables: 0.0.0
     openEnums: 0.1.0
     retries: 2.81.5
-    unions: 2.82.15
+    unions: 2.82.16
 trackedFiles:
   .gitattributes:
     id: 24139dae6567
@@ -2126,8 +2126,8 @@ trackedFiles:
     pristine_git_object: a614e37673d3ea81eabc6139236edfb22a15dc55
   internal/sdk/kongmesh.go:
     id: a3ff2dba35c0
-    last_write_checksum: sha1:bf8fe7cc6188b6bcb691ba8cd492f0a78cbda1b0
-    pristine_git_object: 8abd2c50a361b0d4c4be611f0794032c6295ca51
+    last_write_checksum: sha1:23ff01829f0782593c7d48ca1912855f1a1b7670
+    pristine_git_object: cad6d53adef25b52676cfdee7175eff463013b59
   internal/sdk/mesh.go:
     id: c3f36614baba
     last_write_checksum: sha1:130baf86f4dba0b1a3efae340daa6cc106ded8a6
