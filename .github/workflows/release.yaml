@@ -63,7 +63,7 @@ jobs:
           passphrase: ${{ secrets.TERRAFORM_GPG_PASSPHRASE }}
       - name: Run GoReleaser
         if: ${{ steps.check_version.outputs.skip_release != 'true' }}
-        uses: goreleaser/goreleaser-action@f82d6c1c344bcacabba2c841718984797f664a6b # v4.2.0
+        uses: goreleaser/goreleaser-action@f06c13b6b1a9625abc9e6e439d9c05a8f2190e94 # v7.2.3
         with:
           args: release --clean
           version: ~> v1
