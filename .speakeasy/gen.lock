@@ -8,9 +8,9 @@ management:
   releaseVersion: 0.8.2
   configChecksum: 6ac168708c863a8f1683043607fe87cb
 persistentEdits:
-  generation_id: 803ae58b-569a-426e-9faf-1e00f76833d7
-  pristine_commit_hash: 4cbe862c70a0f02cdb8fa0605a551a26390664b1
-  pristine_tree_hash: 3475418c9481ddfb943ed201ab6d8644f2bb0fcf
+  generation_id: d594314e-4f15-4ce1-9cc0-a475d4d9ba8d
+  pristine_commit_hash: 5e8d326548a6dbf96f7a930ed6ded2be46f62583
+  pristine_tree_hash: 986c39a4fc51f80cb1e7f11daa8d856b27f8b3c6
 features:
   terraform:
     additionalDependencies: 0.1.0
@@ -434,8 +434,8 @@ trackedFiles:
     pristine_git_object: e2f51bd85e8ac34731757384603c8698acd82621
   go.mod:
     id: c47645c391ad
-    last_write_checksum: sha1:5822e1b08f39d1884d613d700484ea59a3a8c754
-    pristine_git_object: ef8a724848d3288bbc0c801c5c654d366ef17883
+    last_write_checksum: sha1:8cc4c2d5979ca283b63765c224c4964ca682d7e5
+    pristine_git_object: 712275fb5bcc12eff5760bf293ea7af0fa6e990d
   internal/planmodifiers/boolplanmodifier/suppress_diff.go:
     id: 3cf85b98963e
     last_write_checksum: sha1:1e37c3d378182a201759b77d68d43534a9174fe2
