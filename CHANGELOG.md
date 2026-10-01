@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.8.3
+> Released on 2026/10/01
+>
+> - chore(deps): bump customtypes to v0.2.8 (#146)
+> - fix(make): clean plan modifiers before speakeasy (#145)
+> - chore(deps): bump speakeasy-api/speakeasy from 1.642.1 to 1.791.0 (#100)
+> - chore(deps): upgrade golang from 1.24.1 to 1.26.0 (#125)
+
+
 ## 0.8.2
 > Released on 2026/04/01
 >
