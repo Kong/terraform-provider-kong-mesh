@@ -4,7 +4,9 @@ package provider
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
@@ -135,6 +137,18 @@ func (r *MeshIdentityResourceModel) RefreshFromSharedMeshIdentityItem(ctx contex
 					r.Spec.Provider.Bundled.MeshTrustCreation = types.StringNull()
 				}
 			}
+			if resp.Spec.Provider.Extension == nil {
+				r.Spec.Provider.Extension = nil
+			} else {
+				r.Spec.Provider.Extension = &tfTypes.MeshIdentityItemExtension{}
+				if resp.Spec.Provider.Extension.Config == nil {
+					r.Spec.Provider.Extension.Config = jsontypes.NewNormalizedNull()
+				} else {
+					configResult, _ := json.Marshal(resp.Spec.Provider.Extension.Config)
+					r.Spec.Provider.Extension.Config = jsontypes.NewNormalizedValue(string(configResult))
+				}
+				r.Spec.Provider.Extension.Name = types.StringValue(resp.Spec.Provider.Extension.Name)
+			}
 			if resp.Spec.Provider.Spire == nil {
 				r.Spec.Provider.Spire = nil
 			} else {
@@ -174,11 +188,11 @@ func (r *MeshIdentityResourceModel) RefreshFromSharedMeshIdentityItem(ctx contex
 		if resp.Status == nil {
 			r.Status = nil
 		} else {
-			r.Status = &tfTypes.MeshIdentityItemStatus{}
-			r.Status.Conditions = []tfTypes.MeshExternalServiceItemConditions{}
+			r.Status = &tfTypes.Status{}
+			r.Status.Conditions = []tfTypes.Conditions{}
 
 			for _, conditionsItem := range resp.Status.Conditions {
-				var conditions tfTypes.MeshExternalServiceItemConditions
+				var conditions tfTypes.Conditions
 
 				conditions.Message = types.StringValue(conditionsItem.Message)
 				conditions.Reason = types.StringValue(conditionsItem.Reason)
@@ -308,22 +322,22 @@ func (r *MeshIdentityResourceModel) ToSharedMeshIdentityItemInput(ctx context.Co
 							Path: path,
 						}
 					}
-					var insecureInline *shared.InsecureInline
+					var insecureInline *shared.MeshIdentityItemInsecureInline
 					if r.Spec.Provider.Bundled.Ca.Certificate.InsecureInline != nil {
 						var value string
 						value = r.Spec.Provider.Bundled.Ca.Certificate.InsecureInline.Value.ValueString()
 
-						insecureInline = &shared.InsecureInline{
+						insecureInline = &shared.MeshIdentityItemInsecureInline{
 							Value: value,
 						}
 					}
-					var secretRef *shared.SecretRef
+					var secretRef *shared.MeshIdentityItemSecretRef
 					if r.Spec.Provider.Bundled.Ca.Certificate.SecretRef != nil {
 						kind := shared.MeshIdentityItemKind(r.Spec.Provider.Bundled.Ca.Certificate.SecretRef.Kind.ValueString())
 						var name2 string
 						name2 = r.Spec.Provider.Bundled.Ca.Certificate.SecretRef.Name.ValueString()
 
-						secretRef = &shared.SecretRef{
+						secretRef = &shared.MeshIdentityItemSecretRef{
 							Kind: kind,
 							Name: name2,
 						}
@@ -357,22 +371,22 @@ func (r *MeshIdentityResourceModel) ToSharedMeshIdentityItemInput(ctx context.Co
 							Path: path1,
 						}
 					}
-					var insecureInline1 *shared.MeshIdentityItemInsecureInline
+					var insecureInline1 *shared.MeshIdentityItemSpecInsecureInline
 					if r.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline != nil {
 						var value1 string
 						value1 = r.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline.Value.ValueString()
 
-						insecureInline1 = &shared.MeshIdentityItemInsecureInline{
+						insecureInline1 = &shared.MeshIdentityItemSpecInsecureInline{
 							Value: value1,
 						}
 					}
-					var secretRef1 *shared.MeshIdentityItemSecretRef
+					var secretRef1 *shared.MeshIdentityItemSpecSecretRef
 					if r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef != nil {
 						kind1 := shared.MeshIdentityItemSpecKind(r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef.Kind.ValueString())
 						var name4 string
 						name4 = r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef.Name.ValueString()
 
-						secretRef1 = &shared.MeshIdentityItemSecretRef{
+						secretRef1 = &shared.MeshIdentityItemSpecSecretRef{
 							Kind: kind1,
 							Name: name4,
 						}
@@ -423,6 +437,20 @@ func (r *MeshIdentityResourceModel) ToSharedMeshIdentityItemInput(ctx context.Co
 				MeshTrustCreation:       meshTrustCreation,
 			}
 		}
+		var extension *shared.MeshIdentityItemExtension
+		if r.Spec.Provider.Extension != nil {
+			var config interface{}
+			if !r.Spec.Provider.Extension.Config.IsUnknown() && !r.Spec.Provider.Extension.Config.IsNull() {
+				_ = json.Unmarshal([]byte(r.Spec.Provider.Extension.Config.ValueString()), &config)
+			}
+			var name5 string
+			name5 = r.Spec.Provider.Extension.Name.ValueString()
+
+			extension = &shared.MeshIdentityItemExtension{
+				Config: config,
+				Name:   name5,
+			}
+		}
 		var spire *shared.Spire
 		if r.Spec.Provider.Spire != nil {
 			var agent *shared.Agent
@@ -443,9 +471,10 @@ func (r *MeshIdentityResourceModel) ToSharedMeshIdentityItemInput(ctx context.Co
 		}
 		typeVar3 := shared.MeshIdentityItemSpecType(r.Spec.Provider.Type.ValueString())
 		provider = &shared.Provider{
-			Bundled: bundled,
-			Spire:   spire,
-			Type:    typeVar3,
+			Bundled:   bundled,
+			Extension: extension,
+			Spire:     spire,
+			Type:      typeVar3,
 		}
 	}
 	var selector *shared.MeshIdentityItemSelector

@@ -5,6 +5,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -20,6 +21,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	speakeasy_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
 	custom_objectplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/objectplanmodifier"
+	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
@@ -41,19 +43,22 @@ type MeshResource struct {
 
 // MeshResourceModel describes the resource data model.
 type MeshResourceModel struct {
-	Constraints                 *tfTypes.Constraints    `tfsdk:"constraints"`
-	Labels                      map[string]types.String `tfsdk:"labels"`
-	Logging                     *tfTypes.Logging        `tfsdk:"logging"`
-	MeshServices                *tfTypes.MeshServices   `tfsdk:"mesh_services"`
-	Metrics                     *tfTypes.Metrics        `tfsdk:"metrics"`
-	Mtls                        *tfTypes.Mtls           `tfsdk:"mtls"`
-	Name                        types.String            `tfsdk:"name"`
-	Networking                  *tfTypes.Networking     `tfsdk:"networking"`
-	Routing                     *tfTypes.Routing        `tfsdk:"routing"`
-	SkipCreatingInitialPolicies []types.String          `tfsdk:"skip_creating_initial_policies"`
-	Tracing                     *tfTypes.Tracing        `tfsdk:"tracing"`
-	Type                        types.String            `tfsdk:"type"`
-	Warnings                    []types.String          `tfsdk:"warnings"`
+	Constraints                 *tfTypes.Constraints          `tfsdk:"constraints"`
+	CreationTime                types.String                  `tfsdk:"creation_time"`
+	Kri                         types.String                  `tfsdk:"kri"`
+	Labels                      kumalabels.KumaLabelsMapValue `tfsdk:"labels"`
+	Logging                     *tfTypes.Logging              `tfsdk:"logging"`
+	MeshServices                *tfTypes.MeshServices         `tfsdk:"mesh_services"`
+	Metrics                     *tfTypes.Metrics              `tfsdk:"metrics"`
+	ModificationTime            types.String                  `tfsdk:"modification_time"`
+	Mtls                        *tfTypes.Mtls                 `tfsdk:"mtls"`
+	Name                        types.String                  `tfsdk:"name"`
+	Networking                  *tfTypes.Networking           `tfsdk:"networking"`
+	Routing                     *tfTypes.Routing              `tfsdk:"routing"`
+	SkipCreatingInitialPolicies []types.String                `tfsdk:"skip_creating_initial_policies"`
+	Tracing                     *tfTypes.Tracing              `tfsdk:"tracing"`
+	Type                        types.String                  `tfsdk:"type"`
+	Warnings                    []types.String                `tfsdk:"warnings"`
 }
 
 func (r *MeshResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -119,8 +124,22 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				},
 				Description: `Constraints that applies to the mesh and its entities`,
 			},
+			"creation_time": schema.StringAttribute{
+				Computed: true,
+				PlanModifiers: []planmodifier.String{
+					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+				},
+				Description: `Time at which the resource was created`,
+			},
+			"kri": schema.StringAttribute{
+				Computed:    true,
+				Description: `Kuma Resource Identifier (KRI) of the given resource`,
+			},
 			"labels": schema.MapAttribute{
+				CustomType:  kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}},
+				Computed:    true,
 				Optional:    true,
+				Default:     kumalabels.EmptyKumaLabelsMapDefault{},
 				ElementType: types.StringType,
 			},
 			"logging": schema.SingleNestedAttribute{
@@ -372,6 +391,13 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 					`Additionally, it is also possible to further customize this configuration` + "\n" +
 					`for each dataplane individually using Dataplane resource.` + "\n" +
 					`+optional`,
+			},
+			"modification_time": schema.StringAttribute{
+				Computed: true,
+				PlanModifiers: []planmodifier.String{
+					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+				},
+				Description: `Time at which the resource was updated`,
 			},
 			"mtls": schema.SingleNestedAttribute{
 				Optional: true,
@@ -1658,6 +1684,43 @@ func (r *MeshResource) Create(ctx context.Context, req resource.CreateRequest, r
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	request1, request1Diags := data.ToOperationsGetMeshRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.Mesh.GetMesh(ctx, *request1)
+	if err != nil {
+		resp.Diagnostics.AddError("failure to invoke API", err.Error())
+		if res1 != nil && res1.RawResponse != nil {
+			resp.Diagnostics.AddError("unexpected http request/response", debugResponse(res1.RawResponse))
+		}
+		return
+	}
+	if res1 == nil {
+		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res1))
+		return
+	}
+	if res1.StatusCode != 200 {
+		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res1.StatusCode), debugResponse(res1.RawResponse))
+		return
+	}
+	if !(res1.MeshItem != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
+		return
+	}
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshItem(ctx, res1.MeshItem)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -1765,6 +1828,43 @@ func (r *MeshResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		return
 	}
 	resp.Diagnostics.Append(data.RefreshFromSharedMeshCreateOrUpdateSuccessResponse(ctx, res.MeshCreateOrUpdateSuccessResponse)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	request1, request1Diags := data.ToOperationsGetMeshRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.Mesh.GetMesh(ctx, *request1)
+	if err != nil {
+		resp.Diagnostics.AddError("failure to invoke API", err.Error())
+		if res1 != nil && res1.RawResponse != nil {
+			resp.Diagnostics.AddError("unexpected http request/response", debugResponse(res1.RawResponse))
+		}
+		return
+	}
+	if res1 == nil {
+		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res1))
+		return
+	}
+	if res1.StatusCode != 200 {
+		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res1.StatusCode), debugResponse(res1.RawResponse))
+		return
+	}
+	if !(res1.MeshItem != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
+		return
+	}
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshItem(ctx, res1.MeshItem)...)
 
 	if resp.Diagnostics.HasError() {
 		return

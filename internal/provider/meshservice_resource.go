@@ -52,6 +52,7 @@ type MeshServiceResourceModel struct {
 	Mesh             types.String                   `tfsdk:"mesh"`
 	ModificationTime types.String                   `tfsdk:"modification_time"`
 	Name             types.String                   `tfsdk:"name"`
+	Snis             []tfTypes.Snis                 `tfsdk:"snis"`
 	Spec             *tfTypes.MeshServiceItemSpec   `tfsdk:"spec"`
 	Status           *tfTypes.MeshServiceItemStatus `tfsdk:"status"`
 	Type             types.String                   `tfsdk:"type"`
@@ -105,6 +106,29 @@ func (r *MeshServiceResource) Schema(ctx context.Context, req resource.SchemaReq
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
 				Description: `name of the MeshService. Requires replacement if changed.`,
+			},
+			"snis": schema.ListNestedAttribute{
+				Computed: true,
+				PlanModifiers: []planmodifier.List{
+					custom_listplanmodifier.SupressZeroNullModifier(),
+					speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
+				},
+				NestedObject: schema.NestedAttributeObject{
+					PlanModifiers: []planmodifier.Object{
+						speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+					},
+					Attributes: map[string]schema.Attribute{
+						"port": schema.Int32Attribute{
+							Computed:    true,
+							Description: `The destination port this SNI corresponds to.`,
+						},
+						"sni": schema.StringAttribute{
+							Computed:    true,
+							Description: `The SNI string advertised by xDS for this port.`,
+						},
+					},
+				},
+				Description: `List of SNIs (Server Name Indication) advertised by xDS for this destination, one entry per port, sorted by port ascending. Present for MeshService, MeshMultiZoneService and MeshExternalService.`,
 			},
 			"spec": schema.SingleNestedAttribute{
 				Required: true,

@@ -48,7 +48,7 @@ func (r *MeshOPAResourceModel) RefreshFromSharedMeshOPAItem(ctx context.Context,
 			if resp.Spec.Default.AgentConfig == nil {
 				r.Spec.Default.AgentConfig = nil
 			} else {
-				r.Spec.Default.AgentConfig = &tfTypes.CaCert{}
+				r.Spec.Default.AgentConfig = &tfTypes.AgentConfig{}
 				r.Spec.Default.AgentConfig.Inline = types.StringPointerValue(resp.Spec.Default.AgentConfig.Inline)
 				r.Spec.Default.AgentConfig.InlineString = types.StringPointerValue(resp.Spec.Default.AgentConfig.InlineString)
 				r.Spec.Default.AgentConfig.Secret = types.StringPointerValue(resp.Spec.Default.AgentConfig.Secret)
@@ -59,7 +59,7 @@ func (r *MeshOPAResourceModel) RefreshFromSharedMeshOPAItem(ctx context.Context,
 				var appendPolicies tfTypes.AppendPolicies
 
 				appendPolicies.IgnoreDecision = types.BoolPointerValue(appendPoliciesItem.IgnoreDecision)
-				appendPolicies.Rego = &tfTypes.CaCert{}
+				appendPolicies.Rego = &tfTypes.AgentConfig{}
 				appendPolicies.Rego.Inline = types.StringPointerValue(appendPoliciesItem.Rego.Inline)
 				appendPolicies.Rego.InlineString = types.StringPointerValue(appendPoliciesItem.Rego.InlineString)
 				appendPolicies.Rego.Secret = types.StringPointerValue(appendPoliciesItem.Rego.Secret)

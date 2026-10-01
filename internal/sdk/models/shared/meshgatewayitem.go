@@ -6,42 +6,43 @@ import (
 	"errors"
 	"fmt"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/utils"
+	"time"
 )
 
-type ProtocolType string
+type MeshGatewayItemProtocolType string
 
 const (
-	ProtocolTypeStr     ProtocolType = "str"
-	ProtocolTypeInteger ProtocolType = "integer"
+	MeshGatewayItemProtocolTypeStr     MeshGatewayItemProtocolType = "str"
+	MeshGatewayItemProtocolTypeInteger MeshGatewayItemProtocolType = "integer"
 )
 
-// Protocol specifies the network protocol this listener expects to receive.
-type Protocol struct {
+// MeshGatewayItemProtocol - Protocol specifies the network protocol this listener expects to receive.
+type MeshGatewayItemProtocol struct {
 	Str     *string `queryParam:"inline" union:"member"`
 	Integer *int64  `queryParam:"inline" union:"member"`
 
-	Type ProtocolType
+	Type MeshGatewayItemProtocolType
 }
 
-func CreateProtocolStr(str string) Protocol {
-	typ := ProtocolTypeStr
+func CreateMeshGatewayItemProtocolStr(str string) MeshGatewayItemProtocol {
+	typ := MeshGatewayItemProtocolTypeStr
 
-	return Protocol{
+	return MeshGatewayItemProtocol{
 		Str:  &str,
 		Type: typ,
 	}
 }
 
-func CreateProtocolInteger(integer int64) Protocol {
-	typ := ProtocolTypeInteger
+func CreateMeshGatewayItemProtocolInteger(integer int64) MeshGatewayItemProtocol {
+	typ := MeshGatewayItemProtocolTypeInteger
 
-	return Protocol{
+	return MeshGatewayItemProtocol{
 		Integer: &integer,
 		Type:    typ,
 	}
 }
 
-func (u *Protocol) UnmarshalJSON(data []byte) error {
+func (u *MeshGatewayItemProtocol) UnmarshalJSON(data []byte) error {
 
 	var candidates []utils.UnionCandidate
 
@@ -49,7 +50,7 @@ func (u *Protocol) UnmarshalJSON(data []byte) error {
 	var str string = ""
 	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  ProtocolTypeStr,
+			Type:  MeshGatewayItemProtocolTypeStr,
 			Value: &str,
 		})
 	}
@@ -57,36 +58,36 @@ func (u *Protocol) UnmarshalJSON(data []byte) error {
 	var integer int64 = int64(0)
 	if err := utils.UnmarshalJSON(data, &integer, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  ProtocolTypeInteger,
+			Type:  MeshGatewayItemProtocolTypeInteger,
 			Value: &integer,
 		})
 	}
 
 	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Protocol", string(data))
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshGatewayItemProtocol", string(data))
 	}
 
 	// Pick the best candidate using multi-stage filtering
 	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Protocol", string(data))
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshGatewayItemProtocol", string(data))
 	}
 
 	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(ProtocolType)
+	u.Type = best.Type.(MeshGatewayItemProtocolType)
 	switch best.Type {
-	case ProtocolTypeStr:
+	case MeshGatewayItemProtocolTypeStr:
 		u.Str = best.Value.(*string)
 		return nil
-	case ProtocolTypeInteger:
+	case MeshGatewayItemProtocolTypeInteger:
 		u.Integer = best.Value.(*int64)
 		return nil
 	}
 
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for Protocol", string(data))
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshGatewayItemProtocol", string(data))
 }
 
-func (u Protocol) MarshalJSON() ([]byte, error) {
+func (u MeshGatewayItemProtocol) MarshalJSON() ([]byte, error) {
 	if u.Str != nil {
 		return utils.MarshalJSON(u.Str, "", true)
 	}
@@ -95,7 +96,7 @@ func (u Protocol) MarshalJSON() ([]byte, error) {
 		return utils.MarshalJSON(u.Integer, "", true)
 	}
 
-	return nil, errors.New("could not marshal union type Protocol: all fields are null")
+	return nil, errors.New("could not marshal union type MeshGatewayItemProtocol: all fields are null")
 }
 
 // Resources is used to specify listener-specific resource settings.
@@ -500,7 +501,7 @@ type Listeners struct {
 	// same port, subject to the Listener compatibility rules.
 	Port *int64 `json:"port,omitempty"`
 	// Protocol specifies the network protocol this listener expects to receive.
-	Protocol *Protocol `json:"protocol,omitempty"`
+	Protocol *MeshGatewayItemProtocol `json:"protocol,omitempty"`
 	// Resources is used to specify listener-specific resource settings.
 	Resources *Resources `json:"resources,omitempty"`
 	// Tags specifies a unique combination of tags that routes can use
@@ -538,7 +539,7 @@ func (l *Listeners) GetPort() *int64 {
 	return l.Port
 }
 
-func (l *Listeners) GetProtocol() *Protocol {
+func (l *Listeners) GetProtocol() *MeshGatewayItemProtocol {
 	if l == nil {
 		return nil
 	}
@@ -595,10 +596,16 @@ func (s *Selectors) GetMatch() map[string]string {
 
 type MeshGatewayItem struct {
 	// The desired configuration of the MeshGateway.
-	Conf   *Conf             `json:"conf,omitempty"`
+	Conf *Conf `json:"conf,omitempty"`
+	// Time at which the resource was created
+	CreationTime *time.Time `json:"creationTime,omitempty"`
+	// Kuma Resource Identifier (KRI) of the given resource
+	Kri    *string           `json:"kri,omitempty"`
 	Labels map[string]string `json:"labels,omitempty"`
 	Mesh   string            `json:"mesh"`
-	Name   string            `json:"name"`
+	// Time at which the resource was updated
+	ModificationTime *time.Time `json:"modificationTime,omitempty"`
+	Name             string     `json:"name"`
 	// Selectors is a list of selectors that are used to match builtin
 	// gateway dataplanes that will receive this MeshGateway configuration.
 	Selectors []Selectors `json:"selectors,omitempty"`
@@ -610,11 +617,36 @@ type MeshGatewayItem struct {
 	Type string            `json:"type"`
 }
 
+func (m MeshGatewayItem) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshGatewayItem) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (m *MeshGatewayItem) GetConf() *Conf {
 	if m == nil {
 		return nil
 	}
 	return m.Conf
+}
+
+func (m *MeshGatewayItem) GetCreationTime() *time.Time {
+	if m == nil {
+		return nil
+	}
+	return m.CreationTime
+}
+
+func (m *MeshGatewayItem) GetKri() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Kri
 }
 
 func (m *MeshGatewayItem) GetLabels() map[string]string {
@@ -629,6 +661,13 @@ func (m *MeshGatewayItem) GetMesh() string {
 		return ""
 	}
 	return m.Mesh
+}
+
+func (m *MeshGatewayItem) GetModificationTime() *time.Time {
+	if m == nil {
+		return nil
+	}
+	return m.ModificationTime
 }
 
 func (m *MeshGatewayItem) GetName() string {
@@ -653,6 +692,72 @@ func (m *MeshGatewayItem) GetTags() map[string]string {
 }
 
 func (m *MeshGatewayItem) GetType() string {
+	if m == nil {
+		return ""
+	}
+	return m.Type
+}
+
+type MeshGatewayItemInput struct {
+	// The desired configuration of the MeshGateway.
+	Conf   *Conf             `json:"conf,omitempty"`
+	Labels map[string]string `json:"labels,omitempty"`
+	Mesh   string            `json:"mesh"`
+	Name   string            `json:"name"`
+	// Selectors is a list of selectors that are used to match builtin
+	// gateway dataplanes that will receive this MeshGateway configuration.
+	Selectors []Selectors `json:"selectors,omitempty"`
+	// Tags is the set of tags common to all of the gateway's listeners.
+	//
+	// This field must not include a `kuma.io/service` tag (the service is always
+	// defined on the dataplanes).
+	Tags map[string]string `json:"tags,omitempty"`
+	Type string            `json:"type"`
+}
+
+func (m *MeshGatewayItemInput) GetConf() *Conf {
+	if m == nil {
+		return nil
+	}
+	return m.Conf
+}
+
+func (m *MeshGatewayItemInput) GetLabels() map[string]string {
+	if m == nil {
+		return nil
+	}
+	return m.Labels
+}
+
+func (m *MeshGatewayItemInput) GetMesh() string {
+	if m == nil {
+		return ""
+	}
+	return m.Mesh
+}
+
+func (m *MeshGatewayItemInput) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+func (m *MeshGatewayItemInput) GetSelectors() []Selectors {
+	if m == nil {
+		return nil
+	}
+	return m.Selectors
+}
+
+func (m *MeshGatewayItemInput) GetTags() map[string]string {
+	if m == nil {
+		return nil
+	}
+	return m.Tags
+}
+
+func (m *MeshGatewayItemInput) GetType() string {
 	if m == nil {
 		return ""
 	}

@@ -13,7 +13,7 @@ type PutMeshGatewayRequest struct {
 	// name of the MeshGateway
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 	// Put request
-	MeshGatewayItem shared.MeshGatewayItem `request:"mediaType=application/json"`
+	MeshGatewayItem shared.MeshGatewayItemInput `request:"mediaType=application/json"`
 }
 
 func (p *PutMeshGatewayRequest) GetMesh() string {
@@ -30,9 +30,9 @@ func (p *PutMeshGatewayRequest) GetName() string {
 	return p.Name
 }
 
-func (p *PutMeshGatewayRequest) GetMeshGatewayItem() shared.MeshGatewayItem {
+func (p *PutMeshGatewayRequest) GetMeshGatewayItem() shared.MeshGatewayItemInput {
 	if p == nil {
-		return shared.MeshGatewayItem{}
+		return shared.MeshGatewayItemInput{}
 	}
 	return p.MeshGatewayItem
 }

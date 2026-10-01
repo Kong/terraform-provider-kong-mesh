@@ -11,7 +11,7 @@ type PutZoneEgressRequest struct {
 	// name of the ZoneEgress
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 	// Put request
-	ZoneEgressItem shared.ZoneEgressItem `request:"mediaType=application/json"`
+	ZoneEgressItem shared.ZoneEgressItemInput `request:"mediaType=application/json"`
 }
 
 func (p *PutZoneEgressRequest) GetName() string {
@@ -21,9 +21,9 @@ func (p *PutZoneEgressRequest) GetName() string {
 	return p.Name
 }
 
-func (p *PutZoneEgressRequest) GetZoneEgressItem() shared.ZoneEgressItem {
+func (p *PutZoneEgressRequest) GetZoneEgressItem() shared.ZoneEgressItemInput {
 	if p == nil {
-		return shared.ZoneEgressItem{}
+		return shared.ZoneEgressItemInput{}
 	}
 	return p.ZoneEgressItem
 }

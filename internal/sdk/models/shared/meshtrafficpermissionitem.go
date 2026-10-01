@@ -229,61 +229,50 @@ func (m *MeshTrafficPermissionItemFrom) GetTargetRef() MeshTrafficPermissionItem
 	return m.TargetRef
 }
 
-// MeshTrafficPermissionItemSpecType - Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
+// MeshTrafficPermissionItemSpecType - Type defines how to match traffic by SNI. Only `Exact` is supported.
 type MeshTrafficPermissionItemSpecType string
 
 const (
-	MeshTrafficPermissionItemSpecTypeExact  MeshTrafficPermissionItemSpecType = "Exact"
-	MeshTrafficPermissionItemSpecTypePrefix MeshTrafficPermissionItemSpecType = "Prefix"
+	MeshTrafficPermissionItemSpecTypeExact MeshTrafficPermissionItemSpecType = "Exact"
 )
 
 func (e MeshTrafficPermissionItemSpecType) ToPointer() *MeshTrafficPermissionItemSpecType {
 	return &e
 }
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshTrafficPermissionItemSpecType) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Exact", "Prefix":
-			return true
-		}
+func (e *MeshTrafficPermissionItemSpecType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
 	}
-	return false
+	switch v {
+	case "Exact":
+		*e = MeshTrafficPermissionItemSpecType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshTrafficPermissionItemSpecType: %v", v)
+	}
 }
 
-// MeshTrafficPermissionItemSpiffeID - SpiffeID defines a matcher configuration for SpiffeID matching
-type MeshTrafficPermissionItemSpiffeID struct {
-	// Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
+// MeshTrafficPermissionItemSni - SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+type MeshTrafficPermissionItemSni struct {
+	// Type defines how to match traffic by SNI. Only `Exact` is supported.
 	Type MeshTrafficPermissionItemSpecType `json:"type"`
-	// Value is SpiffeId of a client that needs to match for the configuration to be applied
+	// Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied
 	Value string `json:"value"`
 }
 
-func (m *MeshTrafficPermissionItemSpiffeID) GetType() MeshTrafficPermissionItemSpecType {
+func (m *MeshTrafficPermissionItemSni) GetType() MeshTrafficPermissionItemSpecType {
 	if m == nil {
 		return MeshTrafficPermissionItemSpecType("")
 	}
 	return m.Type
 }
 
-func (m *MeshTrafficPermissionItemSpiffeID) GetValue() string {
+func (m *MeshTrafficPermissionItemSni) GetValue() string {
 	if m == nil {
 		return ""
 	}
 	return m.Value
-}
-
-type Allow struct {
-	// SpiffeID defines a matcher configuration for SpiffeID matching
-	SpiffeID *MeshTrafficPermissionItemSpiffeID `json:"spiffeID,omitempty"`
-}
-
-func (a *Allow) GetSpiffeID() *MeshTrafficPermissionItemSpiffeID {
-	if a == nil {
-		return nil
-	}
-	return a.SpiffeID
 }
 
 // MeshTrafficPermissionItemSpecRulesType - Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
@@ -309,17 +298,129 @@ func (e *MeshTrafficPermissionItemSpecRulesType) IsExact() bool {
 	return false
 }
 
-// MeshTrafficPermissionItemSpecSpiffeID - SpiffeID defines a matcher configuration for SpiffeID matching
-type MeshTrafficPermissionItemSpecSpiffeID struct {
+// MeshTrafficPermissionItemSpiffeID - SpiffeID defines a matcher configuration for SpiffeID matching
+type MeshTrafficPermissionItemSpiffeID struct {
 	// Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
 	Type MeshTrafficPermissionItemSpecRulesType `json:"type"`
-	// Value is SpiffeId of a client that needs to match for the configuration to be applied
+	// Value is SpiffeID of a client that needs to match for the configuration to be applied
 	Value string `json:"value"`
 }
 
-func (m *MeshTrafficPermissionItemSpecSpiffeID) GetType() MeshTrafficPermissionItemSpecRulesType {
+func (m *MeshTrafficPermissionItemSpiffeID) GetType() MeshTrafficPermissionItemSpecRulesType {
 	if m == nil {
 		return MeshTrafficPermissionItemSpecRulesType("")
+	}
+	return m.Type
+}
+
+func (m *MeshTrafficPermissionItemSpiffeID) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+type Allow struct {
+	// SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+	Sni *MeshTrafficPermissionItemSni `json:"sni,omitempty"`
+	// SpiffeID defines a matcher configuration for SpiffeID matching
+	SpiffeID *MeshTrafficPermissionItemSpiffeID `json:"spiffeID,omitempty"`
+}
+
+func (a *Allow) GetSni() *MeshTrafficPermissionItemSni {
+	if a == nil {
+		return nil
+	}
+	return a.Sni
+}
+
+func (a *Allow) GetSpiffeID() *MeshTrafficPermissionItemSpiffeID {
+	if a == nil {
+		return nil
+	}
+	return a.SpiffeID
+}
+
+// MeshTrafficPermissionItemSpecRulesDefaultType - Type defines how to match traffic by SNI. Only `Exact` is supported.
+type MeshTrafficPermissionItemSpecRulesDefaultType string
+
+const (
+	MeshTrafficPermissionItemSpecRulesDefaultTypeExact MeshTrafficPermissionItemSpecRulesDefaultType = "Exact"
+)
+
+func (e MeshTrafficPermissionItemSpecRulesDefaultType) ToPointer() *MeshTrafficPermissionItemSpecRulesDefaultType {
+	return &e
+}
+func (e *MeshTrafficPermissionItemSpecRulesDefaultType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "Exact":
+		*e = MeshTrafficPermissionItemSpecRulesDefaultType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshTrafficPermissionItemSpecRulesDefaultType: %v", v)
+	}
+}
+
+// MeshTrafficPermissionItemSpecSni - SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+type MeshTrafficPermissionItemSpecSni struct {
+	// Type defines how to match traffic by SNI. Only `Exact` is supported.
+	Type MeshTrafficPermissionItemSpecRulesDefaultType `json:"type"`
+	// Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied
+	Value string `json:"value"`
+}
+
+func (m *MeshTrafficPermissionItemSpecSni) GetType() MeshTrafficPermissionItemSpecRulesDefaultType {
+	if m == nil {
+		return MeshTrafficPermissionItemSpecRulesDefaultType("")
+	}
+	return m.Type
+}
+
+func (m *MeshTrafficPermissionItemSpecSni) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// MeshTrafficPermissionItemSpecRulesDefaultAllowWithShadowDenyType - Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
+type MeshTrafficPermissionItemSpecRulesDefaultAllowWithShadowDenyType string
+
+const (
+	MeshTrafficPermissionItemSpecRulesDefaultAllowWithShadowDenyTypeExact  MeshTrafficPermissionItemSpecRulesDefaultAllowWithShadowDenyType = "Exact"
+	MeshTrafficPermissionItemSpecRulesDefaultAllowWithShadowDenyTypePrefix MeshTrafficPermissionItemSpecRulesDefaultAllowWithShadowDenyType = "Prefix"
+)
+
+func (e MeshTrafficPermissionItemSpecRulesDefaultAllowWithShadowDenyType) ToPointer() *MeshTrafficPermissionItemSpecRulesDefaultAllowWithShadowDenyType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTrafficPermissionItemSpecRulesDefaultAllowWithShadowDenyType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Exact", "Prefix":
+			return true
+		}
+	}
+	return false
+}
+
+// MeshTrafficPermissionItemSpecSpiffeID - SpiffeID defines a matcher configuration for SpiffeID matching
+type MeshTrafficPermissionItemSpecSpiffeID struct {
+	// Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
+	Type MeshTrafficPermissionItemSpecRulesDefaultAllowWithShadowDenyType `json:"type"`
+	// Value is SpiffeID of a client that needs to match for the configuration to be applied
+	Value string `json:"value"`
+}
+
+func (m *MeshTrafficPermissionItemSpecSpiffeID) GetType() MeshTrafficPermissionItemSpecRulesDefaultAllowWithShadowDenyType {
+	if m == nil {
+		return MeshTrafficPermissionItemSpecRulesDefaultAllowWithShadowDenyType("")
 	}
 	return m.Type
 }
@@ -332,8 +433,17 @@ func (m *MeshTrafficPermissionItemSpecSpiffeID) GetValue() string {
 }
 
 type AllowWithShadowDeny struct {
+	// SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+	Sni *MeshTrafficPermissionItemSpecSni `json:"sni,omitempty"`
 	// SpiffeID defines a matcher configuration for SpiffeID matching
 	SpiffeID *MeshTrafficPermissionItemSpecSpiffeID `json:"spiffeID,omitempty"`
+}
+
+func (a *AllowWithShadowDeny) GetSni() *MeshTrafficPermissionItemSpecSni {
+	if a == nil {
+		return nil
+	}
+	return a.Sni
 }
 
 func (a *AllowWithShadowDeny) GetSpiffeID() *MeshTrafficPermissionItemSpecSpiffeID {
@@ -343,20 +453,66 @@ func (a *AllowWithShadowDeny) GetSpiffeID() *MeshTrafficPermissionItemSpecSpiffe
 	return a.SpiffeID
 }
 
-// MeshTrafficPermissionItemSpecRulesDefaultType - Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
-type MeshTrafficPermissionItemSpecRulesDefaultType string
+// MeshTrafficPermissionItemSpecRulesDefaultDenyType - Type defines how to match traffic by SNI. Only `Exact` is supported.
+type MeshTrafficPermissionItemSpecRulesDefaultDenyType string
 
 const (
-	MeshTrafficPermissionItemSpecRulesDefaultTypeExact  MeshTrafficPermissionItemSpecRulesDefaultType = "Exact"
-	MeshTrafficPermissionItemSpecRulesDefaultTypePrefix MeshTrafficPermissionItemSpecRulesDefaultType = "Prefix"
+	MeshTrafficPermissionItemSpecRulesDefaultDenyTypeExact MeshTrafficPermissionItemSpecRulesDefaultDenyType = "Exact"
 )
 
-func (e MeshTrafficPermissionItemSpecRulesDefaultType) ToPointer() *MeshTrafficPermissionItemSpecRulesDefaultType {
+func (e MeshTrafficPermissionItemSpecRulesDefaultDenyType) ToPointer() *MeshTrafficPermissionItemSpecRulesDefaultDenyType {
+	return &e
+}
+func (e *MeshTrafficPermissionItemSpecRulesDefaultDenyType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "Exact":
+		*e = MeshTrafficPermissionItemSpecRulesDefaultDenyType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshTrafficPermissionItemSpecRulesDefaultDenyType: %v", v)
+	}
+}
+
+// MeshTrafficPermissionItemSpecRulesSni - SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+type MeshTrafficPermissionItemSpecRulesSni struct {
+	// Type defines how to match traffic by SNI. Only `Exact` is supported.
+	Type MeshTrafficPermissionItemSpecRulesDefaultDenyType `json:"type"`
+	// Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied
+	Value string `json:"value"`
+}
+
+func (m *MeshTrafficPermissionItemSpecRulesSni) GetType() MeshTrafficPermissionItemSpecRulesDefaultDenyType {
+	if m == nil {
+		return MeshTrafficPermissionItemSpecRulesDefaultDenyType("")
+	}
+	return m.Type
+}
+
+func (m *MeshTrafficPermissionItemSpecRulesSni) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// MeshTrafficPermissionItemSpecRulesDefaultDenySpiffeIDType - Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
+type MeshTrafficPermissionItemSpecRulesDefaultDenySpiffeIDType string
+
+const (
+	MeshTrafficPermissionItemSpecRulesDefaultDenySpiffeIDTypeExact  MeshTrafficPermissionItemSpecRulesDefaultDenySpiffeIDType = "Exact"
+	MeshTrafficPermissionItemSpecRulesDefaultDenySpiffeIDTypePrefix MeshTrafficPermissionItemSpecRulesDefaultDenySpiffeIDType = "Prefix"
+)
+
+func (e MeshTrafficPermissionItemSpecRulesDefaultDenySpiffeIDType) ToPointer() *MeshTrafficPermissionItemSpecRulesDefaultDenySpiffeIDType {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshTrafficPermissionItemSpecRulesDefaultType) IsExact() bool {
+func (e *MeshTrafficPermissionItemSpecRulesDefaultDenySpiffeIDType) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "Exact", "Prefix":
@@ -369,14 +525,14 @@ func (e *MeshTrafficPermissionItemSpecRulesDefaultType) IsExact() bool {
 // MeshTrafficPermissionItemSpecRulesSpiffeID - SpiffeID defines a matcher configuration for SpiffeID matching
 type MeshTrafficPermissionItemSpecRulesSpiffeID struct {
 	// Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
-	Type MeshTrafficPermissionItemSpecRulesDefaultType `json:"type"`
-	// Value is SpiffeId of a client that needs to match for the configuration to be applied
+	Type MeshTrafficPermissionItemSpecRulesDefaultDenySpiffeIDType `json:"type"`
+	// Value is SpiffeID of a client that needs to match for the configuration to be applied
 	Value string `json:"value"`
 }
 
-func (m *MeshTrafficPermissionItemSpecRulesSpiffeID) GetType() MeshTrafficPermissionItemSpecRulesDefaultType {
+func (m *MeshTrafficPermissionItemSpecRulesSpiffeID) GetType() MeshTrafficPermissionItemSpecRulesDefaultDenySpiffeIDType {
 	if m == nil {
-		return MeshTrafficPermissionItemSpecRulesDefaultType("")
+		return MeshTrafficPermissionItemSpecRulesDefaultDenySpiffeIDType("")
 	}
 	return m.Type
 }
@@ -389,8 +545,17 @@ func (m *MeshTrafficPermissionItemSpecRulesSpiffeID) GetValue() string {
 }
 
 type Deny struct {
+	// SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+	Sni *MeshTrafficPermissionItemSpecRulesSni `json:"sni,omitempty"`
 	// SpiffeID defines a matcher configuration for SpiffeID matching
 	SpiffeID *MeshTrafficPermissionItemSpecRulesSpiffeID `json:"spiffeID,omitempty"`
+}
+
+func (d *Deny) GetSni() *MeshTrafficPermissionItemSpecRulesSni {
+	if d == nil {
+		return nil
+	}
+	return d.Sni
 }
 
 func (d *Deny) GetSpiffeID() *MeshTrafficPermissionItemSpecRulesSpiffeID {

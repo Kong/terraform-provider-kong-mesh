@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/utils"
+	"time"
 )
 
 type AccessRoleItemAccessType string
@@ -393,10 +394,32 @@ func (a *AccessRoleItemRules) GetWhen() []When {
 }
 
 type AccessRoleItem struct {
-	Labels map[string]string     `json:"labels,omitempty"`
-	Name   string                `json:"name"`
-	Rules  []AccessRoleItemRules `json:"rules"`
-	Type   string                `json:"type"`
+	// Time at which the resource was created
+	CreationTime *time.Time        `json:"creationTime,omitempty"`
+	Labels       map[string]string `json:"labels,omitempty"`
+	// Time at which the resource was updated
+	ModificationTime *time.Time            `json:"modificationTime,omitempty"`
+	Name             string                `json:"name"`
+	Rules            []AccessRoleItemRules `json:"rules"`
+	Type             string                `json:"type"`
+}
+
+func (a AccessRoleItem) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(a, "", false)
+}
+
+func (a *AccessRoleItem) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (a *AccessRoleItem) GetCreationTime() *time.Time {
+	if a == nil {
+		return nil
+	}
+	return a.CreationTime
 }
 
 func (a *AccessRoleItem) GetLabels() map[string]string {
@@ -404,6 +427,13 @@ func (a *AccessRoleItem) GetLabels() map[string]string {
 		return nil
 	}
 	return a.Labels
+}
+
+func (a *AccessRoleItem) GetModificationTime() *time.Time {
+	if a == nil {
+		return nil
+	}
+	return a.ModificationTime
 }
 
 func (a *AccessRoleItem) GetName() string {
@@ -421,6 +451,41 @@ func (a *AccessRoleItem) GetRules() []AccessRoleItemRules {
 }
 
 func (a *AccessRoleItem) GetType() string {
+	if a == nil {
+		return ""
+	}
+	return a.Type
+}
+
+type AccessRoleItemInput struct {
+	Labels map[string]string     `json:"labels,omitempty"`
+	Name   string                `json:"name"`
+	Rules  []AccessRoleItemRules `json:"rules"`
+	Type   string                `json:"type"`
+}
+
+func (a *AccessRoleItemInput) GetLabels() map[string]string {
+	if a == nil {
+		return nil
+	}
+	return a.Labels
+}
+
+func (a *AccessRoleItemInput) GetName() string {
+	if a == nil {
+		return ""
+	}
+	return a.Name
+}
+
+func (a *AccessRoleItemInput) GetRules() []AccessRoleItemRules {
+	if a == nil {
+		return nil
+	}
+	return a.Rules
+}
+
+func (a *AccessRoleItemInput) GetType() string {
 	if a == nil {
 		return ""
 	}

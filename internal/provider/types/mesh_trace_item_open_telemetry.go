@@ -7,5 +7,6 @@ import (
 )
 
 type MeshTraceItemOpenTelemetry struct {
-	Endpoint types.String `tfsdk:"endpoint"`
+	BackendRef *MeshAccessLogItemSpecFromBackendRef `tfsdk:"backend_ref"`
+	Endpoint   types.String                         `tfsdk:"endpoint"`
 }

@@ -7,6 +7,6 @@ import (
 )
 
 type AppendPolicies struct {
-	IgnoreDecision types.Bool `tfsdk:"ignore_decision"`
-	Rego           *CaCert    `tfsdk:"rego"`
+	IgnoreDecision types.Bool   `tfsdk:"ignore_decision"`
+	Rego           *AgentConfig `tfsdk:"rego"`
 }

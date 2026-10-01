@@ -48,6 +48,10 @@ resource "kong-mesh_mesh_traffic_permission" "my_meshtrafficpermission" {
         default = {
           allow = [
             {
+              sni = {
+                type  = "Exact"
+                value = "...my_value..."
+              }
               spiffe_id = {
                 type  = "Exact"
                 value = "...my_value..."
@@ -56,6 +60,10 @@ resource "kong-mesh_mesh_traffic_permission" "my_meshtrafficpermission" {
           ]
           allow_with_shadow_deny = [
             {
+              sni = {
+                type  = "Exact"
+                value = "...my_value..."
+              }
               spiffe_id = {
                 type  = "Prefix"
                 value = "...my_value..."
@@ -64,6 +72,10 @@ resource "kong-mesh_mesh_traffic_permission" "my_meshtrafficpermission" {
           ]
           deny = [
             {
+              sni = {
+                type  = "Exact"
+                value = "...my_value..."
+              }
               spiffe_id = {
                 type  = "Prefix"
                 value = "...my_value..."
@@ -190,7 +202,17 @@ requests are denied (see [below for nested schema](#nestedatt--spec--rules--defa
 
 Optional:
 
+- `sni` (Attributes) SNI defines a matcher configuration for matching by SNI value carried on the TLS connection (see [below for nested schema](#nestedatt--spec--rules--default--allow--sni))
 - `spiffe_id` (Attributes) SpiffeID defines a matcher configuration for SpiffeID matching (see [below for nested schema](#nestedatt--spec--rules--default--allow--spiffe_id))
+
+<a id="nestedatt--spec--rules--default--allow--sni"></a>
+### Nested Schema for `spec.rules.default.allow.sni`
+
+Optional:
+
+- `type` (String) Type defines how to match traffic by SNI. Only `Exact` is supported. Not Null; must be "Exact"
+- `value` (String) Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied. Not Null
+
 
 <a id="nestedatt--spec--rules--default--allow--spiffe_id"></a>
 ### Nested Schema for `spec.rules.default.allow.spiffe_id`
@@ -198,7 +220,7 @@ Optional:
 Optional:
 
 - `type` (String) Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed. possible known values include one of ["Exact", "Prefix"]; Not Null
-- `value` (String) Value is SpiffeId of a client that needs to match for the configuration to be applied. Not Null
+- `value` (String) Value is SpiffeID of a client that needs to match for the configuration to be applied. Not Null
 
 
 
@@ -207,7 +229,17 @@ Optional:
 
 Optional:
 
+- `sni` (Attributes) SNI defines a matcher configuration for matching by SNI value carried on the TLS connection (see [below for nested schema](#nestedatt--spec--rules--default--allow_with_shadow_deny--sni))
 - `spiffe_id` (Attributes) SpiffeID defines a matcher configuration for SpiffeID matching (see [below for nested schema](#nestedatt--spec--rules--default--allow_with_shadow_deny--spiffe_id))
+
+<a id="nestedatt--spec--rules--default--allow_with_shadow_deny--sni"></a>
+### Nested Schema for `spec.rules.default.allow_with_shadow_deny.sni`
+
+Optional:
+
+- `type` (String) Type defines how to match traffic by SNI. Only `Exact` is supported. Not Null; must be "Exact"
+- `value` (String) Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied. Not Null
+
 
 <a id="nestedatt--spec--rules--default--allow_with_shadow_deny--spiffe_id"></a>
 ### Nested Schema for `spec.rules.default.allow_with_shadow_deny.spiffe_id`
@@ -215,7 +247,7 @@ Optional:
 Optional:
 
 - `type` (String) Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed. possible known values include one of ["Exact", "Prefix"]; Not Null
-- `value` (String) Value is SpiffeId of a client that needs to match for the configuration to be applied. Not Null
+- `value` (String) Value is SpiffeID of a client that needs to match for the configuration to be applied. Not Null
 
 
 
@@ -224,7 +256,17 @@ Optional:
 
 Optional:
 
+- `sni` (Attributes) SNI defines a matcher configuration for matching by SNI value carried on the TLS connection (see [below for nested schema](#nestedatt--spec--rules--default--deny--sni))
 - `spiffe_id` (Attributes) SpiffeID defines a matcher configuration for SpiffeID matching (see [below for nested schema](#nestedatt--spec--rules--default--deny--spiffe_id))
+
+<a id="nestedatt--spec--rules--default--deny--sni"></a>
+### Nested Schema for `spec.rules.default.deny.sni`
+
+Optional:
+
+- `type` (String) Type defines how to match traffic by SNI. Only `Exact` is supported. Not Null; must be "Exact"
+- `value` (String) Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied. Not Null
+
 
 <a id="nestedatt--spec--rules--default--deny--spiffe_id"></a>
 ### Nested Schema for `spec.rules.default.deny.spiffe_id`
@@ -232,7 +274,7 @@ Optional:
 Optional:
 
 - `type` (String) Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed. possible known values include one of ["Exact", "Prefix"]; Not Null
-- `value` (String) Value is SpiffeId of a client that needs to match for the configuration to be applied. Not Null
+- `value` (String) Value is SpiffeID of a client that needs to match for the configuration to be applied. Not Null
 
 
 

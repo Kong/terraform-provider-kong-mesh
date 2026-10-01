@@ -64,6 +64,18 @@ resource "kong-mesh_mesh_timeout" "my_meshtimeout" {
           }
           idle_timeout = "...my_idle_timeout..."
         }
+        matches = [
+          {
+            sni = {
+              type  = "Exact"
+              value = "...my_value..."
+            }
+            spiffe_id = {
+              type  = "Exact"
+              value = "...my_value..."
+            }
+          }
+        ]
       }
     ]
     target_ref = {
@@ -146,8 +158,8 @@ Warning messages describe a problem the client making the API request should cor
 Optional:
 
 - `from` (Attributes List) From list makes a match between clients and corresponding configurations (see [below for nested schema](#nestedatt--spec--from))
-- `rules` (Attributes List) Rules defines inbound timeout configurations. Currently limited to exactly one rule containing
-default timeouts that apply to all inbound traffic, as L7 matching is not yet implemented. (see [below for nested schema](#nestedatt--spec--rules))
+- `rules` (Attributes List) Rules defines inbound timeout configurations. When matches are present, the rule is applied only
+to traffic selected by the given source and destination matchers. (see [below for nested schema](#nestedatt--spec--rules))
 - `target_ref` (Attributes) TargetRef is a reference to the resource the policy takes an effect on.
 The resource could be either a real store object or virtual resource
 defined inplace. (see [below for nested schema](#nestedatt--spec--target_ref))
@@ -227,6 +239,7 @@ For example, you can target port from MeshService.ports[] by its name. Only traf
 Optional:
 
 - `default` (Attributes) Default contains configuration of the inbound timeouts (see [below for nested schema](#nestedatt--spec--rules--default))
+- `matches` (Attributes List) Matches define predicates for selecting traffic this configuration applies to. (see [below for nested schema](#nestedatt--spec--rules--matches))
 
 <a id="nestedatt--spec--rules--default"></a>
 ### Nested Schema for `spec.rules.default`
@@ -260,6 +273,33 @@ OR when the response is initiated. Setting this timeout to 0 will disable it.
 Default is 15s.
 - `stream_idle_timeout` (String) StreamIdleTimeout is the amount of time that proxy will allow a stream to exist with no activity.
 Setting this timeout to 0 will disable it. Default is 30m
+
+
+
+<a id="nestedatt--spec--rules--matches"></a>
+### Nested Schema for `spec.rules.matches`
+
+Optional:
+
+- `sni` (Attributes) SNI defines a matcher configuration for matching by SNI value carried on the TLS connection (see [below for nested schema](#nestedatt--spec--rules--matches--sni))
+- `spiffe_id` (Attributes) SpiffeID defines a matcher configuration for SpiffeID matching (see [below for nested schema](#nestedatt--spec--rules--matches--spiffe_id))
+
+<a id="nestedatt--spec--rules--matches--sni"></a>
+### Nested Schema for `spec.rules.matches.sni`
+
+Optional:
+
+- `type` (String) Type defines how to match traffic by SNI. Only `Exact` is supported. Not Null; must be "Exact"
+- `value` (String) Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied. Not Null
+
+
+<a id="nestedatt--spec--rules--matches--spiffe_id"></a>
+### Nested Schema for `spec.rules.matches.spiffe_id`
+
+Optional:
+
+- `type` (String) Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed. possible known values include one of ["Exact", "Prefix"]; Not Null
+- `value` (String) Value is SpiffeID of a client that needs to match for the configuration to be applied. Not Null
 
 
 

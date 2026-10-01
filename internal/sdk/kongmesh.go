@@ -80,8 +80,10 @@ type KongMesh struct {
 	MeshExternalService       *MeshExternalService
 	MeshIdentity              *MeshIdentity
 	MeshMultiZoneService      *MeshMultiZoneService
+	MeshOpenTelemetryBackend  *MeshOpenTelemetryBackend
 	MeshService               *MeshService
 	MeshTrust                 *MeshTrust
+	MeshZoneAddress           *MeshZoneAddress
 	Workload                  *Workload
 	MeshGlobalRateLimit       *MeshGlobalRateLimit
 	MeshOPA                   *MeshOPA
@@ -211,8 +213,10 @@ func New(opts ...SDKOption) *KongMesh {
 	sdk.MeshExternalService = newMeshExternalService(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MeshIdentity = newMeshIdentity(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MeshMultiZoneService = newMeshMultiZoneService(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.MeshOpenTelemetryBackend = newMeshOpenTelemetryBackend(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MeshService = newMeshService(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MeshTrust = newMeshTrust(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.MeshZoneAddress = newMeshZoneAddress(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Workload = newWorkload(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MeshGlobalRateLimit = newMeshGlobalRateLimit(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.MeshOPA = newMeshOPA(sdk, sdk.sdkConfiguration, sdk.hooks)

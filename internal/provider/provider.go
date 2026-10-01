@@ -160,6 +160,7 @@ func (p *KongMeshProvider) Resources(ctx context.Context) []func() resource.Reso
 		NewMeshMetricResource,
 		NewMeshMultiZoneServiceResource,
 		NewMeshOPAResource,
+		NewMeshOpenTelemetryBackendResource,
 		NewMeshPassthroughResource,
 		NewMeshProxyPatchResource,
 		NewMeshRateLimitResource,
@@ -173,6 +174,7 @@ func (p *KongMeshProvider) Resources(ctx context.Context) []func() resource.Reso
 		NewMeshTrafficPermissionResource,
 		NewMeshTrustResource,
 		NewMeshWorkloadResource,
+		NewMeshZoneAddressResource,
 		NewMeshZoneEgressResource,
 		NewMeshZoneIngressResource,
 	}

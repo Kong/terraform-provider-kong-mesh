@@ -33,6 +33,27 @@ func (e *MeshMultiZoneServiceItemType) UnmarshalJSON(data []byte) error {
 	}
 }
 
+type MeshMultiZoneServiceItemSnis struct {
+	// The destination port this SNI corresponds to.
+	Port int `json:"port"`
+	// The SNI string advertised by xDS for this port.
+	Sni string `json:"sni"`
+}
+
+func (m *MeshMultiZoneServiceItemSnis) GetPort() int {
+	if m == nil {
+		return 0
+	}
+	return m.Port
+}
+
+func (m *MeshMultiZoneServiceItemSnis) GetSni() string {
+	if m == nil {
+		return ""
+	}
+	return m.Sni
+}
+
 type Ports struct {
 	// Protocol identifies a protocol supported by a service.
 	AppProtocol *string `default:"tcp" json:"appProtocol"`
@@ -429,6 +450,8 @@ type MeshMultiZoneServiceItem struct {
 	Mesh *string `default:"default" json:"mesh"`
 	// A unique identifier for this resource instance used by internal tooling and integrations. Typically derived from resource attributes and may be used for cross-references or indexing
 	Kri *string `json:"kri,omitempty"`
+	// List of SNIs (Server Name Indication) advertised by xDS for this destination, one entry per port, sorted by port ascending. Present for MeshService, MeshMultiZoneService and MeshExternalService.
+	Snis []MeshMultiZoneServiceItemSnis `json:"snis,omitempty"`
 	// Name of the Kuma resource
 	Name string `json:"name"`
 	// The labels to help identity resources
@@ -473,6 +496,13 @@ func (m *MeshMultiZoneServiceItem) GetKri() *string {
 		return nil
 	}
 	return m.Kri
+}
+
+func (m *MeshMultiZoneServiceItem) GetSnis() []MeshMultiZoneServiceItemSnis {
+	if m == nil {
+		return nil
+	}
+	return m.Snis
 }
 
 func (m *MeshMultiZoneServiceItem) GetName() string {

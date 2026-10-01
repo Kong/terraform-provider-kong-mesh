@@ -296,10 +296,66 @@ func (r *MeshTimeoutResource) Schema(ctx context.Context, req resource.SchemaReq
 									},
 									Description: `Default contains configuration of the inbound timeouts`,
 								},
+								"matches": schema.ListNestedAttribute{
+									Computed: true,
+									Optional: true,
+									PlanModifiers: []planmodifier.List{
+										custom_listplanmodifier.SupressZeroNullModifier(),
+									},
+									NestedObject: schema.NestedAttributeObject{
+										Validators: []validator.Object{
+											speakeasy_objectvalidators.NotNull(),
+										},
+										Attributes: map[string]schema.Attribute{
+											"sni": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"type": schema.StringAttribute{
+														Optional:    true,
+														Description: `Type defines how to match traffic by SNI. Only ` + "`" + `Exact` + "`" + ` is supported. Not Null; must be "Exact"`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+															stringvalidator.OneOf("Exact"),
+														},
+													},
+													"value": schema.StringAttribute{
+														Optional:    true,
+														Description: `Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied. Not Null`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+														},
+													},
+												},
+												Description: `SNI defines a matcher configuration for matching by SNI value carried on the TLS connection`,
+											},
+											"spiffe_id": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"type": schema.StringAttribute{
+														Optional:    true,
+														Description: `Type defines how to match incoming traffic by SpiffeID. ` + "`" + `Exact` + "`" + ` or ` + "`" + `Prefix` + "`" + ` are allowed. possible known values include one of ["Exact", "Prefix"]; Not Null`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+														},
+													},
+													"value": schema.StringAttribute{
+														Optional:    true,
+														Description: `Value is SpiffeID of a client that needs to match for the configuration to be applied. Not Null`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+														},
+													},
+												},
+												Description: `SpiffeID defines a matcher configuration for SpiffeID matching`,
+											},
+										},
+									},
+									Description: `Matches define predicates for selecting traffic this configuration applies to.`,
+								},
 							},
 						},
-						MarkdownDescription: `Rules defines inbound timeout configurations. Currently limited to exactly one rule containing` + "\n" +
-							`default timeouts that apply to all inbound traffic, as L7 matching is not yet implemented.`,
+						MarkdownDescription: `Rules defines inbound timeout configurations. When matches are present, the rule is applied only` + "\n" +
+							`to traffic selected by the given source and destination matchers.`,
 					},
 					"target_ref": schema.SingleNestedAttribute{
 						Optional: true,

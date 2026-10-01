@@ -49,6 +49,18 @@ resource "kong-mesh_mesh_timeout" "my_meshtimeout" {
           }
           idle_timeout = "...my_idle_timeout..."
         }
+        matches = [
+          {
+            sni = {
+              type  = "Exact"
+              value = "...my_value..."
+            }
+            spiffe_id = {
+              type  = "Exact"
+              value = "...my_value..."
+            }
+          }
+        ]
       }
     ]
     target_ref = {

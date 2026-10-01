@@ -40,11 +40,21 @@ func (r *MeshServiceResourceModel) RefreshFromSharedMeshServiceItem(ctx context.
 		r.Mesh = types.StringPointerValue(resp.Mesh)
 		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
+		r.Snis = []tfTypes.Snis{}
+
+		for _, snisItem := range resp.Snis {
+			var snis tfTypes.Snis
+
+			snis.Port = types.Int32Value(int32(snisItem.Port))
+			snis.Sni = types.StringValue(snisItem.Sni)
+
+			r.Snis = append(r.Snis, snis)
+		}
 		r.Spec = &tfTypes.MeshServiceItemSpec{}
-		r.Spec.Identities = []tfTypes.MeshFaultInjectionItemSpiffeID{}
+		r.Spec.Identities = []tfTypes.Sni{}
 
 		for _, identitiesItem := range resp.Spec.Identities {
-			var identities tfTypes.MeshFaultInjectionItemSpiffeID
+			var identities tfTypes.Sni
 
 			identities.Type = types.StringValue(string(identitiesItem.Type))
 			identities.Value = types.StringValue(identitiesItem.Value)
@@ -137,10 +147,10 @@ func (r *MeshServiceResourceModel) RefreshFromSharedMeshServiceItem(ctx context.
 			for _, hostnameGeneratorsItem := range resp.Status.HostnameGenerators {
 				var hostnameGenerators tfTypes.HostnameGenerators
 
-				hostnameGenerators.Conditions = []tfTypes.MeshExternalServiceItemConditions{}
+				hostnameGenerators.Conditions = []tfTypes.Conditions{}
 
 				for _, conditionsItem := range hostnameGeneratorsItem.Conditions {
-					var conditions tfTypes.MeshExternalServiceItemConditions
+					var conditions tfTypes.Conditions
 
 					conditions.Message = types.StringValue(conditionsItem.Message)
 					conditions.Reason = types.StringValue(conditionsItem.Reason)

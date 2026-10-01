@@ -4,4 +4,5 @@ package types
 
 type MeshAccessLogItemRules struct {
 	Default *MeshAccessLogItemSpecFromDefault `tfsdk:"default"`
+	Matches []Matches                         `tfsdk:"matches"`
 }

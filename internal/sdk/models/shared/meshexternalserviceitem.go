@@ -33,11 +33,36 @@ func (e *MeshExternalServiceItemType) UnmarshalJSON(data []byte) error {
 	}
 }
 
+type Snis struct {
+	// The destination port this SNI corresponds to.
+	Port int `json:"port"`
+	// The SNI string advertised by xDS for this port.
+	Sni string `json:"sni"`
+}
+
+func (s *Snis) GetPort() int {
+	if s == nil {
+		return 0
+	}
+	return s.Port
+}
+
+func (s *Snis) GetSni() string {
+	if s == nil {
+		return ""
+	}
+	return s.Sni
+}
+
 type Endpoints struct {
 	// Address defines an address to which a user want to send a request. Is possible to provide `domain`, `ip`.
 	Address string `json:"address"`
 	// Port of the endpoint
 	Port int `json:"port"`
+	// Priority maps to Envoy's priority levels to enable endpoint failover.
+	// Lower values have higher priority (0 is the default/primary).
+	// When the primary endpoints become unhealthy, traffic fails over to the next priority level.
+	Priority *int `json:"priority,omitempty"`
 }
 
 func (e *Endpoints) GetAddress() string {
@@ -52,6 +77,13 @@ func (e *Endpoints) GetPort() int {
 		return 0
 	}
 	return e.Port
+}
+
+func (e *Endpoints) GetPriority() *int {
+	if e == nil {
+		return nil
+	}
+	return e.Priority
 }
 
 // MeshExternalServiceItemExtension - Extension struct for a plugin configuration, in the presence of an extension `endpoints` and `tls` are not required anymore - it's up to the extension to validate them independently.
@@ -167,14 +199,100 @@ func (m *Match) GetType() *MeshExternalServiceItemSpecType {
 	return m.Type
 }
 
+// InsecureInline is the data source value as plain text, used with `type: InsecureInline`.
+type InsecureInline struct {
+	Value string `json:"value"`
+}
+
+func (i *InsecureInline) GetValue() string {
+	if i == nil {
+		return ""
+	}
+	return i.Value
+}
+
+type MeshExternalServiceItemKind string
+
+const (
+	MeshExternalServiceItemKindSecret MeshExternalServiceItemKind = "Secret"
+)
+
+func (e MeshExternalServiceItemKind) ToPointer() *MeshExternalServiceItemKind {
+	return &e
+}
+func (e *MeshExternalServiceItemKind) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "Secret":
+		*e = MeshExternalServiceItemKind(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshExternalServiceItemKind: %v", v)
+	}
+}
+
+// SecretRef references a Secret, used with `type: Secret`.
+type SecretRef struct {
+	Kind MeshExternalServiceItemKind `json:"kind"`
+	Name string                      `json:"name"`
+}
+
+func (s *SecretRef) GetKind() MeshExternalServiceItemKind {
+	if s == nil {
+		return MeshExternalServiceItemKind("")
+	}
+	return s.Kind
+}
+
+func (s *SecretRef) GetName() string {
+	if s == nil {
+		return ""
+	}
+	return s.Name
+}
+
+// MeshExternalServiceItemSpecTLSType - Type of the data source, one of `Secret` or `InsecureInline`.
+type MeshExternalServiceItemSpecTLSType string
+
+const (
+	MeshExternalServiceItemSpecTLSTypeFile           MeshExternalServiceItemSpecTLSType = "File"
+	MeshExternalServiceItemSpecTLSTypeSecret         MeshExternalServiceItemSpecTLSType = "Secret"
+	MeshExternalServiceItemSpecTLSTypeEnvVar         MeshExternalServiceItemSpecTLSType = "EnvVar"
+	MeshExternalServiceItemSpecTLSTypeInsecureInline MeshExternalServiceItemSpecTLSType = "InsecureInline"
+)
+
+func (e MeshExternalServiceItemSpecTLSType) ToPointer() *MeshExternalServiceItemSpecTLSType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshExternalServiceItemSpecTLSType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "File", "Secret", "EnvVar", "InsecureInline":
+			return true
+		}
+	}
+	return false
+}
+
 // CaCert defines a certificate of CA.
 type CaCert struct {
-	// Data source is inline bytes.
+	// Inline is the legacy, base64-encoded form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
 	Inline *string `json:"inline,omitempty"`
-	// Data source is inline string`
+	// InlineString is the legacy form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
 	InlineString *string `json:"inlineString,omitempty"`
-	// Data source is a secret with given Secret key.
+	// InsecureInline is the data source value as plain text, used with `type: InsecureInline`.
+	InsecureInline *InsecureInline `json:"insecureInline,omitempty"`
+	// Secret is the legacy form of `type: Secret` with `secretRef`, not read by 3.0.
 	Secret *string `json:"secret,omitempty"`
+	// SecretRef references a Secret, used with `type: Secret`.
+	SecretRef *SecretRef `json:"secretRef,omitempty"`
+	// Type of the data source, one of `Secret` or `InsecureInline`.
+	Type *MeshExternalServiceItemSpecTLSType `json:"type,omitempty"`
 }
 
 func (c *CaCert) GetInline() *string {
@@ -191,6 +309,13 @@ func (c *CaCert) GetInlineString() *string {
 	return c.InlineString
 }
 
+func (c *CaCert) GetInsecureInline() *InsecureInline {
+	if c == nil {
+		return nil
+	}
+	return c.InsecureInline
+}
+
 func (c *CaCert) GetSecret() *string {
 	if c == nil {
 		return nil
@@ -198,14 +323,114 @@ func (c *CaCert) GetSecret() *string {
 	return c.Secret
 }
 
+func (c *CaCert) GetSecretRef() *SecretRef {
+	if c == nil {
+		return nil
+	}
+	return c.SecretRef
+}
+
+func (c *CaCert) GetType() *MeshExternalServiceItemSpecTLSType {
+	if c == nil {
+		return nil
+	}
+	return c.Type
+}
+
+// MeshExternalServiceItemInsecureInline - InsecureInline is the data source value as plain text, used with `type: InsecureInline`.
+type MeshExternalServiceItemInsecureInline struct {
+	Value string `json:"value"`
+}
+
+func (m *MeshExternalServiceItemInsecureInline) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+type MeshExternalServiceItemSpecKind string
+
+const (
+	MeshExternalServiceItemSpecKindSecret MeshExternalServiceItemSpecKind = "Secret"
+)
+
+func (e MeshExternalServiceItemSpecKind) ToPointer() *MeshExternalServiceItemSpecKind {
+	return &e
+}
+func (e *MeshExternalServiceItemSpecKind) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "Secret":
+		*e = MeshExternalServiceItemSpecKind(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshExternalServiceItemSpecKind: %v", v)
+	}
+}
+
+// MeshExternalServiceItemSecretRef - SecretRef references a Secret, used with `type: Secret`.
+type MeshExternalServiceItemSecretRef struct {
+	Kind MeshExternalServiceItemSpecKind `json:"kind"`
+	Name string                          `json:"name"`
+}
+
+func (m *MeshExternalServiceItemSecretRef) GetKind() MeshExternalServiceItemSpecKind {
+	if m == nil {
+		return MeshExternalServiceItemSpecKind("")
+	}
+	return m.Kind
+}
+
+func (m *MeshExternalServiceItemSecretRef) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+// MeshExternalServiceItemSpecTLSVerificationType - Type of the data source, one of `Secret` or `InsecureInline`.
+type MeshExternalServiceItemSpecTLSVerificationType string
+
+const (
+	MeshExternalServiceItemSpecTLSVerificationTypeFile           MeshExternalServiceItemSpecTLSVerificationType = "File"
+	MeshExternalServiceItemSpecTLSVerificationTypeSecret         MeshExternalServiceItemSpecTLSVerificationType = "Secret"
+	MeshExternalServiceItemSpecTLSVerificationTypeEnvVar         MeshExternalServiceItemSpecTLSVerificationType = "EnvVar"
+	MeshExternalServiceItemSpecTLSVerificationTypeInsecureInline MeshExternalServiceItemSpecTLSVerificationType = "InsecureInline"
+)
+
+func (e MeshExternalServiceItemSpecTLSVerificationType) ToPointer() *MeshExternalServiceItemSpecTLSVerificationType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshExternalServiceItemSpecTLSVerificationType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "File", "Secret", "EnvVar", "InsecureInline":
+			return true
+		}
+	}
+	return false
+}
+
 // ClientCert defines a certificate of a client.
 type ClientCert struct {
-	// Data source is inline bytes.
+	// Inline is the legacy, base64-encoded form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
 	Inline *string `json:"inline,omitempty"`
-	// Data source is inline string`
+	// InlineString is the legacy form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
 	InlineString *string `json:"inlineString,omitempty"`
-	// Data source is a secret with given Secret key.
+	// InsecureInline is the data source value as plain text, used with `type: InsecureInline`.
+	InsecureInline *MeshExternalServiceItemInsecureInline `json:"insecureInline,omitempty"`
+	// Secret is the legacy form of `type: Secret` with `secretRef`, not read by 3.0.
 	Secret *string `json:"secret,omitempty"`
+	// SecretRef references a Secret, used with `type: Secret`.
+	SecretRef *MeshExternalServiceItemSecretRef `json:"secretRef,omitempty"`
+	// Type of the data source, one of `Secret` or `InsecureInline`.
+	Type *MeshExternalServiceItemSpecTLSVerificationType `json:"type,omitempty"`
 }
 
 func (c *ClientCert) GetInline() *string {
@@ -222,6 +447,13 @@ func (c *ClientCert) GetInlineString() *string {
 	return c.InlineString
 }
 
+func (c *ClientCert) GetInsecureInline() *MeshExternalServiceItemInsecureInline {
+	if c == nil {
+		return nil
+	}
+	return c.InsecureInline
+}
+
 func (c *ClientCert) GetSecret() *string {
 	if c == nil {
 		return nil
@@ -229,14 +461,114 @@ func (c *ClientCert) GetSecret() *string {
 	return c.Secret
 }
 
+func (c *ClientCert) GetSecretRef() *MeshExternalServiceItemSecretRef {
+	if c == nil {
+		return nil
+	}
+	return c.SecretRef
+}
+
+func (c *ClientCert) GetType() *MeshExternalServiceItemSpecTLSVerificationType {
+	if c == nil {
+		return nil
+	}
+	return c.Type
+}
+
+// MeshExternalServiceItemSpecInsecureInline - InsecureInline is the data source value as plain text, used with `type: InsecureInline`.
+type MeshExternalServiceItemSpecInsecureInline struct {
+	Value string `json:"value"`
+}
+
+func (m *MeshExternalServiceItemSpecInsecureInline) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+type MeshExternalServiceItemSpecTLSKind string
+
+const (
+	MeshExternalServiceItemSpecTLSKindSecret MeshExternalServiceItemSpecTLSKind = "Secret"
+)
+
+func (e MeshExternalServiceItemSpecTLSKind) ToPointer() *MeshExternalServiceItemSpecTLSKind {
+	return &e
+}
+func (e *MeshExternalServiceItemSpecTLSKind) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "Secret":
+		*e = MeshExternalServiceItemSpecTLSKind(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshExternalServiceItemSpecTLSKind: %v", v)
+	}
+}
+
+// MeshExternalServiceItemSpecSecretRef - SecretRef references a Secret, used with `type: Secret`.
+type MeshExternalServiceItemSpecSecretRef struct {
+	Kind MeshExternalServiceItemSpecTLSKind `json:"kind"`
+	Name string                             `json:"name"`
+}
+
+func (m *MeshExternalServiceItemSpecSecretRef) GetKind() MeshExternalServiceItemSpecTLSKind {
+	if m == nil {
+		return MeshExternalServiceItemSpecTLSKind("")
+	}
+	return m.Kind
+}
+
+func (m *MeshExternalServiceItemSpecSecretRef) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+// MeshExternalServiceItemSpecTLSVerificationClientKeyType - Type of the data source, one of `Secret` or `InsecureInline`.
+type MeshExternalServiceItemSpecTLSVerificationClientKeyType string
+
+const (
+	MeshExternalServiceItemSpecTLSVerificationClientKeyTypeFile           MeshExternalServiceItemSpecTLSVerificationClientKeyType = "File"
+	MeshExternalServiceItemSpecTLSVerificationClientKeyTypeSecret         MeshExternalServiceItemSpecTLSVerificationClientKeyType = "Secret"
+	MeshExternalServiceItemSpecTLSVerificationClientKeyTypeEnvVar         MeshExternalServiceItemSpecTLSVerificationClientKeyType = "EnvVar"
+	MeshExternalServiceItemSpecTLSVerificationClientKeyTypeInsecureInline MeshExternalServiceItemSpecTLSVerificationClientKeyType = "InsecureInline"
+)
+
+func (e MeshExternalServiceItemSpecTLSVerificationClientKeyType) ToPointer() *MeshExternalServiceItemSpecTLSVerificationClientKeyType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshExternalServiceItemSpecTLSVerificationClientKeyType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "File", "Secret", "EnvVar", "InsecureInline":
+			return true
+		}
+	}
+	return false
+}
+
 // ClientKey defines a client private key.
 type ClientKey struct {
-	// Data source is inline bytes.
+	// Inline is the legacy, base64-encoded form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
 	Inline *string `json:"inline,omitempty"`
-	// Data source is inline string`
+	// InlineString is the legacy form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
 	InlineString *string `json:"inlineString,omitempty"`
-	// Data source is a secret with given Secret key.
+	// InsecureInline is the data source value as plain text, used with `type: InsecureInline`.
+	InsecureInline *MeshExternalServiceItemSpecInsecureInline `json:"insecureInline,omitempty"`
+	// Secret is the legacy form of `type: Secret` with `secretRef`, not read by 3.0.
 	Secret *string `json:"secret,omitempty"`
+	// SecretRef references a Secret, used with `type: Secret`.
+	SecretRef *MeshExternalServiceItemSpecSecretRef `json:"secretRef,omitempty"`
+	// Type of the data source, one of `Secret` or `InsecureInline`.
+	Type *MeshExternalServiceItemSpecTLSVerificationClientKeyType `json:"type,omitempty"`
 }
 
 func (c *ClientKey) GetInline() *string {
@@ -253,11 +585,32 @@ func (c *ClientKey) GetInlineString() *string {
 	return c.InlineString
 }
 
+func (c *ClientKey) GetInsecureInline() *MeshExternalServiceItemSpecInsecureInline {
+	if c == nil {
+		return nil
+	}
+	return c.InsecureInline
+}
+
 func (c *ClientKey) GetSecret() *string {
 	if c == nil {
 		return nil
 	}
 	return c.Secret
+}
+
+func (c *ClientKey) GetSecretRef() *MeshExternalServiceItemSpecSecretRef {
+	if c == nil {
+		return nil
+	}
+	return c.SecretRef
+}
+
+func (c *ClientKey) GetType() *MeshExternalServiceItemSpecTLSVerificationClientKeyType {
+	if c == nil {
+		return nil
+	}
+	return c.Type
 }
 
 // MeshExternalServiceItemMode - Mode defines if proxy should skip verification, one of `SkipSAN`, `SkipCA`, `Secured`, `SkipAll`. Default `Secured`.
@@ -285,20 +638,20 @@ func (e *MeshExternalServiceItemMode) IsExact() bool {
 	return false
 }
 
-// MeshExternalServiceItemSpecTLSType - Type specifies matching type, one of `Exact`, `Prefix`. Default: `Exact`
-type MeshExternalServiceItemSpecTLSType string
+// MeshExternalServiceItemSpecTLSVerificationSubjectAltNamesType - Type specifies matching type, one of `Exact`, `Prefix`. Default: `Exact`
+type MeshExternalServiceItemSpecTLSVerificationSubjectAltNamesType string
 
 const (
-	MeshExternalServiceItemSpecTLSTypeExact  MeshExternalServiceItemSpecTLSType = "Exact"
-	MeshExternalServiceItemSpecTLSTypePrefix MeshExternalServiceItemSpecTLSType = "Prefix"
+	MeshExternalServiceItemSpecTLSVerificationSubjectAltNamesTypeExact  MeshExternalServiceItemSpecTLSVerificationSubjectAltNamesType = "Exact"
+	MeshExternalServiceItemSpecTLSVerificationSubjectAltNamesTypePrefix MeshExternalServiceItemSpecTLSVerificationSubjectAltNamesType = "Prefix"
 )
 
-func (e MeshExternalServiceItemSpecTLSType) ToPointer() *MeshExternalServiceItemSpecTLSType {
+func (e MeshExternalServiceItemSpecTLSVerificationSubjectAltNamesType) ToPointer() *MeshExternalServiceItemSpecTLSVerificationSubjectAltNamesType {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshExternalServiceItemSpecTLSType) IsExact() bool {
+func (e *MeshExternalServiceItemSpecTLSVerificationSubjectAltNamesType) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "Exact", "Prefix":
@@ -310,7 +663,7 @@ func (e *MeshExternalServiceItemSpecTLSType) IsExact() bool {
 
 type SubjectAltNames struct {
 	// Type specifies matching type, one of `Exact`, `Prefix`. Default: `Exact`
-	Type *MeshExternalServiceItemSpecTLSType `default:"Exact" json:"type"`
+	Type *MeshExternalServiceItemSpecTLSVerificationSubjectAltNamesType `default:"Exact" json:"type"`
 	// Value to match.
 	Value string `json:"value"`
 }
@@ -326,7 +679,7 @@ func (s *SubjectAltNames) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (s *SubjectAltNames) GetType() *MeshExternalServiceItemSpecTLSType {
+func (s *SubjectAltNames) GetType() *MeshExternalServiceItemSpecTLSVerificationSubjectAltNamesType {
 	if s == nil {
 		return nil
 	}
@@ -624,21 +977,21 @@ func (a *Addresses) GetOrigin() *string {
 	return a.Origin
 }
 
-// MeshExternalServiceItemStatus - status of the condition, one of True, False, Unknown.
-type MeshExternalServiceItemStatus string
+// MeshExternalServiceItemStatusStatus - status of the condition, one of True, False, Unknown.
+type MeshExternalServiceItemStatusStatus string
 
 const (
-	MeshExternalServiceItemStatusTrue    MeshExternalServiceItemStatus = "True"
-	MeshExternalServiceItemStatusFalse   MeshExternalServiceItemStatus = "False"
-	MeshExternalServiceItemStatusUnknown MeshExternalServiceItemStatus = "Unknown"
+	MeshExternalServiceItemStatusStatusTrue    MeshExternalServiceItemStatusStatus = "True"
+	MeshExternalServiceItemStatusStatusFalse   MeshExternalServiceItemStatusStatus = "False"
+	MeshExternalServiceItemStatusStatusUnknown MeshExternalServiceItemStatusStatus = "Unknown"
 )
 
-func (e MeshExternalServiceItemStatus) ToPointer() *MeshExternalServiceItemStatus {
+func (e MeshExternalServiceItemStatusStatus) ToPointer() *MeshExternalServiceItemStatusStatus {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshExternalServiceItemStatus) IsExact() bool {
+func (e *MeshExternalServiceItemStatusStatus) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "True", "False", "Unknown":
@@ -659,7 +1012,7 @@ type MeshExternalServiceItemConditions struct {
 	// This field may not be empty.
 	Reason string `json:"reason"`
 	// status of the condition, one of True, False, Unknown.
-	Status MeshExternalServiceItemStatus `json:"status"`
+	Status MeshExternalServiceItemStatusStatus `json:"status"`
 	// type of condition in CamelCase or in foo.example.com/CamelCase.
 	Type string `json:"type"`
 }
@@ -678,9 +1031,9 @@ func (m *MeshExternalServiceItemConditions) GetReason() string {
 	return m.Reason
 }
 
-func (m *MeshExternalServiceItemConditions) GetStatus() MeshExternalServiceItemStatus {
+func (m *MeshExternalServiceItemConditions) GetStatus() MeshExternalServiceItemStatusStatus {
 	if m == nil {
-		return MeshExternalServiceItemStatus("")
+		return MeshExternalServiceItemStatusStatus("")
 	}
 	return m.Status
 }
@@ -736,8 +1089,8 @@ func (v *Vip) GetIP() *string {
 	return v.IP
 }
 
-// Status is the current status of the Kuma MeshExternalService resource.
-type Status struct {
+// MeshExternalServiceItemStatus - Status is the current status of the Kuma MeshExternalService resource.
+type MeshExternalServiceItemStatus struct {
 	// Addresses section for generated domains
 	Addresses          []Addresses          `json:"addresses,omitempty"`
 	HostnameGenerators []HostnameGenerators `json:"hostnameGenerators,omitempty"`
@@ -745,25 +1098,25 @@ type Status struct {
 	Vip *Vip `json:"vip,omitempty"`
 }
 
-func (s *Status) GetAddresses() []Addresses {
-	if s == nil {
+func (m *MeshExternalServiceItemStatus) GetAddresses() []Addresses {
+	if m == nil {
 		return nil
 	}
-	return s.Addresses
+	return m.Addresses
 }
 
-func (s *Status) GetHostnameGenerators() []HostnameGenerators {
-	if s == nil {
+func (m *MeshExternalServiceItemStatus) GetHostnameGenerators() []HostnameGenerators {
+	if m == nil {
 		return nil
 	}
-	return s.HostnameGenerators
+	return m.HostnameGenerators
 }
 
-func (s *Status) GetVip() *Vip {
-	if s == nil {
+func (m *MeshExternalServiceItemStatus) GetVip() *Vip {
+	if m == nil {
 		return nil
 	}
-	return s.Vip
+	return m.Vip
 }
 
 // MeshExternalServiceItem - MeshExternalService represents external services (outside the mesh) that mesh services can communicate with securely. It enables mesh services to reach external APIs, databases, or third-party services by defining endpoints, ports, protocols, and optional TLS configuration for secure outbound connections with hostname-based routing support.
@@ -774,6 +1127,8 @@ type MeshExternalServiceItem struct {
 	Mesh *string `default:"default" json:"mesh"`
 	// A unique identifier for this resource instance used by internal tooling and integrations. Typically derived from resource attributes and may be used for cross-references or indexing
 	Kri *string `json:"kri,omitempty"`
+	// List of SNIs (Server Name Indication) advertised by xDS for this destination, one entry per port, sorted by port ascending. Present for MeshService, MeshMultiZoneService and MeshExternalService.
+	Snis []Snis `json:"snis,omitempty"`
 	// Name of the Kuma resource
 	Name string `json:"name"`
 	// The labels to help identity resources
@@ -785,7 +1140,7 @@ type MeshExternalServiceItem struct {
 	// Time at which the resource was updated
 	ModificationTime *time.Time `json:"modificationTime,omitempty"`
 	// Status is the current status of the Kuma MeshExternalService resource.
-	Status *Status `json:"status,omitempty"`
+	Status *MeshExternalServiceItemStatus `json:"status,omitempty"`
 }
 
 func (m MeshExternalServiceItem) MarshalJSON() ([]byte, error) {
@@ -818,6 +1173,13 @@ func (m *MeshExternalServiceItem) GetKri() *string {
 		return nil
 	}
 	return m.Kri
+}
+
+func (m *MeshExternalServiceItem) GetSnis() []Snis {
+	if m == nil {
+		return nil
+	}
+	return m.Snis
 }
 
 func (m *MeshExternalServiceItem) GetName() string {
@@ -855,7 +1217,7 @@ func (m *MeshExternalServiceItem) GetModificationTime() *time.Time {
 	return m.ModificationTime
 }
 
-func (m *MeshExternalServiceItem) GetStatus() *Status {
+func (m *MeshExternalServiceItem) GetStatus() *MeshExternalServiceItemStatus {
 	if m == nil {
 		return nil
 	}
