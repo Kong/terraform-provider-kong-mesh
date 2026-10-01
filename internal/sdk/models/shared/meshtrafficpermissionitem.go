@@ -415,14 +415,8 @@ func (m *MeshTrafficPermissionItemRules) GetDefault() MeshTrafficPermissionItemD
 type MeshTrafficPermissionItemKind string
 
 const (
-	MeshTrafficPermissionItemKindMesh                 MeshTrafficPermissionItemKind = "Mesh"
-	MeshTrafficPermissionItemKindMeshSubset           MeshTrafficPermissionItemKind = "MeshSubset"
-	MeshTrafficPermissionItemKindMeshService          MeshTrafficPermissionItemKind = "MeshService"
-	MeshTrafficPermissionItemKindMeshExternalService  MeshTrafficPermissionItemKind = "MeshExternalService"
-	MeshTrafficPermissionItemKindMeshMultiZoneService MeshTrafficPermissionItemKind = "MeshMultiZoneService"
-	MeshTrafficPermissionItemKindMeshServiceSubset    MeshTrafficPermissionItemKind = "MeshServiceSubset"
-	MeshTrafficPermissionItemKindMeshHTTPRoute        MeshTrafficPermissionItemKind = "MeshHTTPRoute"
-	MeshTrafficPermissionItemKindDataplane            MeshTrafficPermissionItemKind = "Dataplane"
+	MeshTrafficPermissionItemKindMesh      MeshTrafficPermissionItemKind = "Mesh"
+	MeshTrafficPermissionItemKindDataplane MeshTrafficPermissionItemKind = "Dataplane"
 )
 
 func (e MeshTrafficPermissionItemKind) ToPointer() *MeshTrafficPermissionItemKind {
@@ -433,7 +427,7 @@ func (e MeshTrafficPermissionItemKind) ToPointer() *MeshTrafficPermissionItemKin
 func (e *MeshTrafficPermissionItemKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+		case "Mesh", "Dataplane":
 			return true
 		}
 	}
@@ -446,23 +440,13 @@ func (e *MeshTrafficPermissionItemKind) IsExact() bool {
 type MeshTrafficPermissionItemTargetRef struct {
 	// Kind of the referenced resource
 	Kind MeshTrafficPermissionItemKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select referenced real resources and to carry legacy
+	// service identity when a common TargetRef must still target old
+	// service-tag based paths.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`
-	// and `MeshServiceSubset`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
 }
 
 func (m *MeshTrafficPermissionItemTargetRef) GetKind() MeshTrafficPermissionItemKind {
@@ -479,39 +463,11 @@ func (m *MeshTrafficPermissionItemTargetRef) GetLabels() map[string]string {
 	return m.Labels
 }
 
-func (m *MeshTrafficPermissionItemTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshTrafficPermissionItemTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshTrafficPermissionItemTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
 func (m *MeshTrafficPermissionItemTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
-}
-
-func (m *MeshTrafficPermissionItemTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
 }
 
 // MeshTrafficPermissionItemSpec - Spec is the specification of the Kuma MeshTrafficPermission resource.

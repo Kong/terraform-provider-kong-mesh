@@ -3,5 +3,5 @@
 package types
 
 type FailoverThreshold struct {
-	Percentage *AuthType `tfsdk:"percentage"`
+	Percentage *StandardDeviationFactor `tfsdk:"percentage"`
 }

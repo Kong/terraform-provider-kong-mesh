@@ -29,7 +29,7 @@ type DeleteTenantResponse struct {
 	// Bad Request
 	BadRequestError *shared.BadRequestError
 	// Internal
-	BaseError *shared.BaseError
+	InternalError *shared.InternalError
 }
 
 func (d *DeleteTenantResponse) GetContentType() string {
@@ -60,9 +60,9 @@ func (d *DeleteTenantResponse) GetBadRequestError() *shared.BadRequestError {
 	return d.BadRequestError
 }
 
-func (d *DeleteTenantResponse) GetBaseError() *shared.BaseError {
+func (d *DeleteTenantResponse) GetInternalError() *shared.InternalError {
 	if d == nil {
 		return nil
 	}
-	return d.BaseError
+	return d.InternalError
 }

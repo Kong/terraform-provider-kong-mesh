@@ -38,14 +38,8 @@ func (e *MeshLoadBalancingStrategyItemType) UnmarshalJSON(data []byte) error {
 type MeshLoadBalancingStrategyItemKind string
 
 const (
-	MeshLoadBalancingStrategyItemKindMesh                 MeshLoadBalancingStrategyItemKind = "Mesh"
-	MeshLoadBalancingStrategyItemKindMeshSubset           MeshLoadBalancingStrategyItemKind = "MeshSubset"
-	MeshLoadBalancingStrategyItemKindMeshService          MeshLoadBalancingStrategyItemKind = "MeshService"
-	MeshLoadBalancingStrategyItemKindMeshExternalService  MeshLoadBalancingStrategyItemKind = "MeshExternalService"
-	MeshLoadBalancingStrategyItemKindMeshMultiZoneService MeshLoadBalancingStrategyItemKind = "MeshMultiZoneService"
-	MeshLoadBalancingStrategyItemKindMeshServiceSubset    MeshLoadBalancingStrategyItemKind = "MeshServiceSubset"
-	MeshLoadBalancingStrategyItemKindMeshHTTPRoute        MeshLoadBalancingStrategyItemKind = "MeshHTTPRoute"
-	MeshLoadBalancingStrategyItemKindDataplane            MeshLoadBalancingStrategyItemKind = "Dataplane"
+	MeshLoadBalancingStrategyItemKindMesh      MeshLoadBalancingStrategyItemKind = "Mesh"
+	MeshLoadBalancingStrategyItemKindDataplane MeshLoadBalancingStrategyItemKind = "Dataplane"
 )
 
 func (e MeshLoadBalancingStrategyItemKind) ToPointer() *MeshLoadBalancingStrategyItemKind {
@@ -56,7 +50,7 @@ func (e MeshLoadBalancingStrategyItemKind) ToPointer() *MeshLoadBalancingStrateg
 func (e *MeshLoadBalancingStrategyItemKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+		case "Mesh", "Dataplane":
 			return true
 		}
 	}
@@ -69,23 +63,13 @@ func (e *MeshLoadBalancingStrategyItemKind) IsExact() bool {
 type MeshLoadBalancingStrategyItemTargetRef struct {
 	// Kind of the referenced resource
 	Kind MeshLoadBalancingStrategyItemKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select referenced real resources and to carry legacy
+	// service identity when a common TargetRef must still target old
+	// service-tag based paths.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`
-	// and `MeshServiceSubset`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
 }
 
 func (m *MeshLoadBalancingStrategyItemTargetRef) GetKind() MeshLoadBalancingStrategyItemKind {
@@ -102,27 +86,6 @@ func (m *MeshLoadBalancingStrategyItemTargetRef) GetLabels() map[string]string {
 	return m.Labels
 }
 
-func (m *MeshLoadBalancingStrategyItemTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshLoadBalancingStrategyItemTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshLoadBalancingStrategyItemTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
 func (m *MeshLoadBalancingStrategyItemTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
@@ -130,16 +93,1018 @@ func (m *MeshLoadBalancingStrategyItemTargetRef) GetSectionName() *string {
 	return m.SectionName
 }
 
-func (m *MeshLoadBalancingStrategyItemTargetRef) GetTags() map[string]string {
+type MeshLoadBalancingStrategyItemHashPoliciesSpecToFilterState struct {
+	// The name of the Object in the per-request filterState, which is
+	// an Envoy::Hashable object. If there is no data associated with the key,
+	// or the stored object is not Envoy::Hashable, no hash will be produced.
+	Key string `json:"key"`
+}
+
+func (m MeshLoadBalancingStrategyItemHashPoliciesSpecToFilterState) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesSpecToFilterState) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesSpecToFilterState) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+type MeshLoadBalancingStrategyItemHashPoliciesSpecToDefaultType string
+
+const (
+	MeshLoadBalancingStrategyItemHashPoliciesSpecToDefaultTypeHeader         MeshLoadBalancingStrategyItemHashPoliciesSpecToDefaultType = "Header"
+	MeshLoadBalancingStrategyItemHashPoliciesSpecToDefaultTypeCookie         MeshLoadBalancingStrategyItemHashPoliciesSpecToDefaultType = "Cookie"
+	MeshLoadBalancingStrategyItemHashPoliciesSpecToDefaultTypeConnection     MeshLoadBalancingStrategyItemHashPoliciesSpecToDefaultType = "Connection"
+	MeshLoadBalancingStrategyItemHashPoliciesSpecToDefaultTypeQueryParameter MeshLoadBalancingStrategyItemHashPoliciesSpecToDefaultType = "QueryParameter"
+	MeshLoadBalancingStrategyItemHashPoliciesSpecToDefaultTypeFilterState    MeshLoadBalancingStrategyItemHashPoliciesSpecToDefaultType = "FilterState"
+)
+
+func (e MeshLoadBalancingStrategyItemHashPoliciesSpecToDefaultType) ToPointer() *MeshLoadBalancingStrategyItemHashPoliciesSpecToDefaultType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshLoadBalancingStrategyItemHashPoliciesSpecToDefaultType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Header", "Cookie", "Connection", "QueryParameter", "FilterState":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshLoadBalancingStrategyItemHashPoliciesSpecToConnection struct {
+	// Hash on source IP address.
+	SourceIP *bool `json:"sourceIP,omitempty"`
+}
+
+func (m MeshLoadBalancingStrategyItemHashPoliciesSpecToConnection) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesSpecToConnection) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesSpecToConnection) GetSourceIP() *bool {
 	if m == nil {
 		return nil
 	}
-	return m.Tags
+	return m.SourceIP
+}
+
+type MeshLoadBalancingStrategyItemHashPoliciesSpecToCookie struct {
+	// The name of the cookie that will be used to obtain the hash key.
+	Name string `json:"name"`
+	// The name of the path for the cookie.
+	Path *string `json:"path,omitempty"`
+	// If specified, a cookie with the TTL will be generated if the cookie is not present.
+	TTL *string `json:"ttl,omitempty"`
+}
+
+func (m MeshLoadBalancingStrategyItemHashPoliciesSpecToCookie) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesSpecToCookie) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesSpecToCookie) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesSpecToCookie) GetPath() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Path
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesSpecToCookie) GetTTL() *string {
+	if m == nil {
+		return nil
+	}
+	return m.TTL
+}
+
+type MeshLoadBalancingStrategyItemHashPoliciesSpecToHeader struct {
+	// The name of the request header that will be used to obtain the hash key.
+	Name string `json:"name"`
+}
+
+func (m MeshLoadBalancingStrategyItemHashPoliciesSpecToHeader) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesSpecToHeader) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesSpecToHeader) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+type MeshLoadBalancingStrategyItemHashPoliciesSpecToQueryParameter struct {
+	// The name of the URL query parameter that will be used to obtain the hash key.
+	// If the parameter is not present, no hash will be produced. Query parameter names
+	// are case-sensitive.
+	Name string `json:"name"`
+}
+
+func (m MeshLoadBalancingStrategyItemHashPoliciesSpecToQueryParameter) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesSpecToQueryParameter) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesSpecToQueryParameter) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+type Five struct {
+	FilterState    *MeshLoadBalancingStrategyItemHashPoliciesSpecToFilterState    `json:"filterState,omitempty"`
+	Type           MeshLoadBalancingStrategyItemHashPoliciesSpecToDefaultType     `json:"type"`
+	Connection     *MeshLoadBalancingStrategyItemHashPoliciesSpecToConnection     `json:"connection,omitempty"`
+	Cookie         *MeshLoadBalancingStrategyItemHashPoliciesSpecToCookie         `json:"cookie,omitempty"`
+	Header         *MeshLoadBalancingStrategyItemHashPoliciesSpecToHeader         `json:"header,omitempty"`
+	QueryParameter *MeshLoadBalancingStrategyItemHashPoliciesSpecToQueryParameter `json:"queryParameter,omitempty"`
+	// Terminal is a flag that short-circuits the hash computing. This field provides
+	// a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback
+	// to rest of the policy list”, it saves time when the terminal policy works.
+	// If true, and there is already a hash computed, ignore rest of the list of hash polices.
+	Terminal *bool `json:"terminal,omitempty"`
+}
+
+func (f Five) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(f, "", false)
+}
+
+func (f *Five) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &f, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (f *Five) GetFilterState() *MeshLoadBalancingStrategyItemHashPoliciesSpecToFilterState {
+	if f == nil {
+		return nil
+	}
+	return f.FilterState
+}
+
+func (f *Five) GetType() MeshLoadBalancingStrategyItemHashPoliciesSpecToDefaultType {
+	if f == nil {
+		return MeshLoadBalancingStrategyItemHashPoliciesSpecToDefaultType("")
+	}
+	return f.Type
+}
+
+func (f *Five) GetConnection() *MeshLoadBalancingStrategyItemHashPoliciesSpecToConnection {
+	if f == nil {
+		return nil
+	}
+	return f.Connection
+}
+
+func (f *Five) GetCookie() *MeshLoadBalancingStrategyItemHashPoliciesSpecToCookie {
+	if f == nil {
+		return nil
+	}
+	return f.Cookie
+}
+
+func (f *Five) GetHeader() *MeshLoadBalancingStrategyItemHashPoliciesSpecToHeader {
+	if f == nil {
+		return nil
+	}
+	return f.Header
+}
+
+func (f *Five) GetQueryParameter() *MeshLoadBalancingStrategyItemHashPoliciesSpecToQueryParameter {
+	if f == nil {
+		return nil
+	}
+	return f.QueryParameter
+}
+
+func (f *Five) GetTerminal() *bool {
+	if f == nil {
+		return nil
+	}
+	return f.Terminal
+}
+
+type MeshLoadBalancingStrategyItemHashPoliciesSpecQueryParameter struct {
+	// The name of the URL query parameter that will be used to obtain the hash key.
+	// If the parameter is not present, no hash will be produced. Query parameter names
+	// are case-sensitive.
+	Name string `json:"name"`
+}
+
+func (m MeshLoadBalancingStrategyItemHashPoliciesSpecQueryParameter) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesSpecQueryParameter) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesSpecQueryParameter) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+type MeshLoadBalancingStrategyItemHashPoliciesSpecToType string
+
+const (
+	MeshLoadBalancingStrategyItemHashPoliciesSpecToTypeHeader         MeshLoadBalancingStrategyItemHashPoliciesSpecToType = "Header"
+	MeshLoadBalancingStrategyItemHashPoliciesSpecToTypeCookie         MeshLoadBalancingStrategyItemHashPoliciesSpecToType = "Cookie"
+	MeshLoadBalancingStrategyItemHashPoliciesSpecToTypeConnection     MeshLoadBalancingStrategyItemHashPoliciesSpecToType = "Connection"
+	MeshLoadBalancingStrategyItemHashPoliciesSpecToTypeQueryParameter MeshLoadBalancingStrategyItemHashPoliciesSpecToType = "QueryParameter"
+	MeshLoadBalancingStrategyItemHashPoliciesSpecToTypeFilterState    MeshLoadBalancingStrategyItemHashPoliciesSpecToType = "FilterState"
+)
+
+func (e MeshLoadBalancingStrategyItemHashPoliciesSpecToType) ToPointer() *MeshLoadBalancingStrategyItemHashPoliciesSpecToType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshLoadBalancingStrategyItemHashPoliciesSpecToType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Header", "Cookie", "Connection", "QueryParameter", "FilterState":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshLoadBalancingStrategyItemHashPoliciesSpecConnection struct {
+	// Hash on source IP address.
+	SourceIP *bool `json:"sourceIP,omitempty"`
+}
+
+func (m MeshLoadBalancingStrategyItemHashPoliciesSpecConnection) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesSpecConnection) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesSpecConnection) GetSourceIP() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.SourceIP
+}
+
+type MeshLoadBalancingStrategyItemHashPoliciesSpecCookie struct {
+	// The name of the cookie that will be used to obtain the hash key.
+	Name string `json:"name"`
+	// The name of the path for the cookie.
+	Path *string `json:"path,omitempty"`
+	// If specified, a cookie with the TTL will be generated if the cookie is not present.
+	TTL *string `json:"ttl,omitempty"`
+}
+
+func (m MeshLoadBalancingStrategyItemHashPoliciesSpecCookie) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesSpecCookie) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesSpecCookie) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesSpecCookie) GetPath() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Path
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesSpecCookie) GetTTL() *string {
+	if m == nil {
+		return nil
+	}
+	return m.TTL
+}
+
+type MeshLoadBalancingStrategyItemHashPoliciesSpecFilterState struct {
+	// The name of the Object in the per-request filterState, which is
+	// an Envoy::Hashable object. If there is no data associated with the key,
+	// or the stored object is not Envoy::Hashable, no hash will be produced.
+	Key string `json:"key"`
+}
+
+func (m MeshLoadBalancingStrategyItemHashPoliciesSpecFilterState) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesSpecFilterState) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesSpecFilterState) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+type MeshLoadBalancingStrategyItemHashPoliciesSpecHeader struct {
+	// The name of the request header that will be used to obtain the hash key.
+	Name string `json:"name"`
+}
+
+func (m MeshLoadBalancingStrategyItemHashPoliciesSpecHeader) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesSpecHeader) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesSpecHeader) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+type Four struct {
+	QueryParameter *MeshLoadBalancingStrategyItemHashPoliciesSpecQueryParameter `json:"queryParameter,omitempty"`
+	Type           MeshLoadBalancingStrategyItemHashPoliciesSpecToType          `json:"type"`
+	Connection     *MeshLoadBalancingStrategyItemHashPoliciesSpecConnection     `json:"connection,omitempty"`
+	Cookie         *MeshLoadBalancingStrategyItemHashPoliciesSpecCookie         `json:"cookie,omitempty"`
+	FilterState    *MeshLoadBalancingStrategyItemHashPoliciesSpecFilterState    `json:"filterState,omitempty"`
+	Header         *MeshLoadBalancingStrategyItemHashPoliciesSpecHeader         `json:"header,omitempty"`
+	// Terminal is a flag that short-circuits the hash computing. This field provides
+	// a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback
+	// to rest of the policy list”, it saves time when the terminal policy works.
+	// If true, and there is already a hash computed, ignore rest of the list of hash polices.
+	Terminal *bool `json:"terminal,omitempty"`
+}
+
+func (f Four) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(f, "", false)
+}
+
+func (f *Four) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &f, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (f *Four) GetQueryParameter() *MeshLoadBalancingStrategyItemHashPoliciesSpecQueryParameter {
+	if f == nil {
+		return nil
+	}
+	return f.QueryParameter
+}
+
+func (f *Four) GetType() MeshLoadBalancingStrategyItemHashPoliciesSpecToType {
+	if f == nil {
+		return MeshLoadBalancingStrategyItemHashPoliciesSpecToType("")
+	}
+	return f.Type
+}
+
+func (f *Four) GetConnection() *MeshLoadBalancingStrategyItemHashPoliciesSpecConnection {
+	if f == nil {
+		return nil
+	}
+	return f.Connection
+}
+
+func (f *Four) GetCookie() *MeshLoadBalancingStrategyItemHashPoliciesSpecCookie {
+	if f == nil {
+		return nil
+	}
+	return f.Cookie
+}
+
+func (f *Four) GetFilterState() *MeshLoadBalancingStrategyItemHashPoliciesSpecFilterState {
+	if f == nil {
+		return nil
+	}
+	return f.FilterState
+}
+
+func (f *Four) GetHeader() *MeshLoadBalancingStrategyItemHashPoliciesSpecHeader {
+	if f == nil {
+		return nil
+	}
+	return f.Header
+}
+
+func (f *Four) GetTerminal() *bool {
+	if f == nil {
+		return nil
+	}
+	return f.Terminal
+}
+
+type MeshLoadBalancingStrategyItemHashPoliciesConnection struct {
+	// Hash on source IP address.
+	SourceIP *bool `json:"sourceIP,omitempty"`
+}
+
+func (m MeshLoadBalancingStrategyItemHashPoliciesConnection) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesConnection) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesConnection) GetSourceIP() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.SourceIP
+}
+
+type MeshLoadBalancingStrategyItemHashPoliciesSpecType string
+
+const (
+	MeshLoadBalancingStrategyItemHashPoliciesSpecTypeHeader         MeshLoadBalancingStrategyItemHashPoliciesSpecType = "Header"
+	MeshLoadBalancingStrategyItemHashPoliciesSpecTypeCookie         MeshLoadBalancingStrategyItemHashPoliciesSpecType = "Cookie"
+	MeshLoadBalancingStrategyItemHashPoliciesSpecTypeConnection     MeshLoadBalancingStrategyItemHashPoliciesSpecType = "Connection"
+	MeshLoadBalancingStrategyItemHashPoliciesSpecTypeQueryParameter MeshLoadBalancingStrategyItemHashPoliciesSpecType = "QueryParameter"
+	MeshLoadBalancingStrategyItemHashPoliciesSpecTypeFilterState    MeshLoadBalancingStrategyItemHashPoliciesSpecType = "FilterState"
+)
+
+func (e MeshLoadBalancingStrategyItemHashPoliciesSpecType) ToPointer() *MeshLoadBalancingStrategyItemHashPoliciesSpecType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshLoadBalancingStrategyItemHashPoliciesSpecType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Header", "Cookie", "Connection", "QueryParameter", "FilterState":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshLoadBalancingStrategyItemHashPoliciesCookie struct {
+	// The name of the cookie that will be used to obtain the hash key.
+	Name string `json:"name"`
+	// The name of the path for the cookie.
+	Path *string `json:"path,omitempty"`
+	// If specified, a cookie with the TTL will be generated if the cookie is not present.
+	TTL *string `json:"ttl,omitempty"`
+}
+
+func (m MeshLoadBalancingStrategyItemHashPoliciesCookie) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesCookie) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesCookie) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesCookie) GetPath() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Path
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesCookie) GetTTL() *string {
+	if m == nil {
+		return nil
+	}
+	return m.TTL
+}
+
+type MeshLoadBalancingStrategyItemHashPoliciesFilterState struct {
+	// The name of the Object in the per-request filterState, which is
+	// an Envoy::Hashable object. If there is no data associated with the key,
+	// or the stored object is not Envoy::Hashable, no hash will be produced.
+	Key string `json:"key"`
+}
+
+func (m MeshLoadBalancingStrategyItemHashPoliciesFilterState) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesFilterState) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesFilterState) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+type MeshLoadBalancingStrategyItemHashPoliciesHeader struct {
+	// The name of the request header that will be used to obtain the hash key.
+	Name string `json:"name"`
+}
+
+func (m MeshLoadBalancingStrategyItemHashPoliciesHeader) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesHeader) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesHeader) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+type MeshLoadBalancingStrategyItemHashPoliciesQueryParameter struct {
+	// The name of the URL query parameter that will be used to obtain the hash key.
+	// If the parameter is not present, no hash will be produced. Query parameter names
+	// are case-sensitive.
+	Name string `json:"name"`
+}
+
+func (m MeshLoadBalancingStrategyItemHashPoliciesQueryParameter) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesQueryParameter) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesQueryParameter) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+type HashPolicies3 struct {
+	Connection     *MeshLoadBalancingStrategyItemHashPoliciesConnection     `json:"connection,omitempty"`
+	Type           MeshLoadBalancingStrategyItemHashPoliciesSpecType        `json:"type"`
+	Cookie         *MeshLoadBalancingStrategyItemHashPoliciesCookie         `json:"cookie,omitempty"`
+	FilterState    *MeshLoadBalancingStrategyItemHashPoliciesFilterState    `json:"filterState,omitempty"`
+	Header         *MeshLoadBalancingStrategyItemHashPoliciesHeader         `json:"header,omitempty"`
+	QueryParameter *MeshLoadBalancingStrategyItemHashPoliciesQueryParameter `json:"queryParameter,omitempty"`
+	// Terminal is a flag that short-circuits the hash computing. This field provides
+	// a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback
+	// to rest of the policy list”, it saves time when the terminal policy works.
+	// If true, and there is already a hash computed, ignore rest of the list of hash polices.
+	Terminal *bool `json:"terminal,omitempty"`
+}
+
+func (h HashPolicies3) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(h, "", false)
+}
+
+func (h *HashPolicies3) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &h, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (h *HashPolicies3) GetConnection() *MeshLoadBalancingStrategyItemHashPoliciesConnection {
+	if h == nil {
+		return nil
+	}
+	return h.Connection
+}
+
+func (h *HashPolicies3) GetType() MeshLoadBalancingStrategyItemHashPoliciesSpecType {
+	if h == nil {
+		return MeshLoadBalancingStrategyItemHashPoliciesSpecType("")
+	}
+	return h.Type
+}
+
+func (h *HashPolicies3) GetCookie() *MeshLoadBalancingStrategyItemHashPoliciesCookie {
+	if h == nil {
+		return nil
+	}
+	return h.Cookie
+}
+
+func (h *HashPolicies3) GetFilterState() *MeshLoadBalancingStrategyItemHashPoliciesFilterState {
+	if h == nil {
+		return nil
+	}
+	return h.FilterState
+}
+
+func (h *HashPolicies3) GetHeader() *MeshLoadBalancingStrategyItemHashPoliciesHeader {
+	if h == nil {
+		return nil
+	}
+	return h.Header
+}
+
+func (h *HashPolicies3) GetQueryParameter() *MeshLoadBalancingStrategyItemHashPoliciesQueryParameter {
+	if h == nil {
+		return nil
+	}
+	return h.QueryParameter
+}
+
+func (h *HashPolicies3) GetTerminal() *bool {
+	if h == nil {
+		return nil
+	}
+	return h.Terminal
+}
+
+// #region class-body-hashpolicies3
+// #endregion class-body-hashpolicies3
+
+type HashPoliciesCookie struct {
+	// The name of the cookie that will be used to obtain the hash key.
+	Name string `json:"name"`
+	// The name of the path for the cookie.
+	Path *string `json:"path,omitempty"`
+	// If specified, a cookie with the TTL will be generated if the cookie is not present.
+	TTL *string `json:"ttl,omitempty"`
+}
+
+func (h HashPoliciesCookie) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(h, "", false)
+}
+
+func (h *HashPoliciesCookie) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &h, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (h *HashPoliciesCookie) GetName() string {
+	if h == nil {
+		return ""
+	}
+	return h.Name
+}
+
+func (h *HashPoliciesCookie) GetPath() *string {
+	if h == nil {
+		return nil
+	}
+	return h.Path
+}
+
+func (h *HashPoliciesCookie) GetTTL() *string {
+	if h == nil {
+		return nil
+	}
+	return h.TTL
+}
+
+type MeshLoadBalancingStrategyItemHashPoliciesType string
+
+const (
+	MeshLoadBalancingStrategyItemHashPoliciesTypeHeader         MeshLoadBalancingStrategyItemHashPoliciesType = "Header"
+	MeshLoadBalancingStrategyItemHashPoliciesTypeCookie         MeshLoadBalancingStrategyItemHashPoliciesType = "Cookie"
+	MeshLoadBalancingStrategyItemHashPoliciesTypeConnection     MeshLoadBalancingStrategyItemHashPoliciesType = "Connection"
+	MeshLoadBalancingStrategyItemHashPoliciesTypeQueryParameter MeshLoadBalancingStrategyItemHashPoliciesType = "QueryParameter"
+	MeshLoadBalancingStrategyItemHashPoliciesTypeFilterState    MeshLoadBalancingStrategyItemHashPoliciesType = "FilterState"
+)
+
+func (e MeshLoadBalancingStrategyItemHashPoliciesType) ToPointer() *MeshLoadBalancingStrategyItemHashPoliciesType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshLoadBalancingStrategyItemHashPoliciesType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Header", "Cookie", "Connection", "QueryParameter", "FilterState":
+			return true
+		}
+	}
+	return false
+}
+
+type HashPoliciesConnection struct {
+	// Hash on source IP address.
+	SourceIP *bool `json:"sourceIP,omitempty"`
+}
+
+func (h HashPoliciesConnection) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(h, "", false)
+}
+
+func (h *HashPoliciesConnection) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &h, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (h *HashPoliciesConnection) GetSourceIP() *bool {
+	if h == nil {
+		return nil
+	}
+	return h.SourceIP
+}
+
+type HashPoliciesFilterState struct {
+	// The name of the Object in the per-request filterState, which is
+	// an Envoy::Hashable object. If there is no data associated with the key,
+	// or the stored object is not Envoy::Hashable, no hash will be produced.
+	Key string `json:"key"`
+}
+
+func (h HashPoliciesFilterState) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(h, "", false)
+}
+
+func (h *HashPoliciesFilterState) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &h, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (h *HashPoliciesFilterState) GetKey() string {
+	if h == nil {
+		return ""
+	}
+	return h.Key
+}
+
+type HashPoliciesHeader struct {
+	// The name of the request header that will be used to obtain the hash key.
+	Name string `json:"name"`
+}
+
+func (h HashPoliciesHeader) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(h, "", false)
+}
+
+func (h *HashPoliciesHeader) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &h, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (h *HashPoliciesHeader) GetName() string {
+	if h == nil {
+		return ""
+	}
+	return h.Name
+}
+
+type HashPoliciesQueryParameter struct {
+	// The name of the URL query parameter that will be used to obtain the hash key.
+	// If the parameter is not present, no hash will be produced. Query parameter names
+	// are case-sensitive.
+	Name string `json:"name"`
+}
+
+func (h HashPoliciesQueryParameter) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(h, "", false)
+}
+
+func (h *HashPoliciesQueryParameter) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &h, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (h *HashPoliciesQueryParameter) GetName() string {
+	if h == nil {
+		return ""
+	}
+	return h.Name
+}
+
+type HashPolicies2 struct {
+	Cookie         *HashPoliciesCookie                           `json:"cookie,omitempty"`
+	Type           MeshLoadBalancingStrategyItemHashPoliciesType `json:"type"`
+	Connection     *HashPoliciesConnection                       `json:"connection,omitempty"`
+	FilterState    *HashPoliciesFilterState                      `json:"filterState,omitempty"`
+	Header         *HashPoliciesHeader                           `json:"header,omitempty"`
+	QueryParameter *HashPoliciesQueryParameter                   `json:"queryParameter,omitempty"`
+	// Terminal is a flag that short-circuits the hash computing. This field provides
+	// a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback
+	// to rest of the policy list”, it saves time when the terminal policy works.
+	// If true, and there is already a hash computed, ignore rest of the list of hash polices.
+	Terminal *bool `json:"terminal,omitempty"`
+}
+
+func (h HashPolicies2) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(h, "", false)
+}
+
+func (h *HashPolicies2) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &h, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (h *HashPolicies2) GetCookie() *HashPoliciesCookie {
+	if h == nil {
+		return nil
+	}
+	return h.Cookie
+}
+
+func (h *HashPolicies2) GetType() MeshLoadBalancingStrategyItemHashPoliciesType {
+	if h == nil {
+		return MeshLoadBalancingStrategyItemHashPoliciesType("")
+	}
+	return h.Type
+}
+
+func (h *HashPolicies2) GetConnection() *HashPoliciesConnection {
+	if h == nil {
+		return nil
+	}
+	return h.Connection
+}
+
+func (h *HashPolicies2) GetFilterState() *HashPoliciesFilterState {
+	if h == nil {
+		return nil
+	}
+	return h.FilterState
+}
+
+func (h *HashPolicies2) GetHeader() *HashPoliciesHeader {
+	if h == nil {
+		return nil
+	}
+	return h.Header
+}
+
+func (h *HashPolicies2) GetQueryParameter() *HashPoliciesQueryParameter {
+	if h == nil {
+		return nil
+	}
+	return h.QueryParameter
+}
+
+func (h *HashPolicies2) GetTerminal() *bool {
+	if h == nil {
+		return nil
+	}
+	return h.Terminal
+}
+
+// #region class-body-hashpolicies2
+// #endregion class-body-hashpolicies2
+
+type MeshLoadBalancingStrategyItemHashPoliciesSpecToDefaultHeader struct {
+	// The name of the request header that will be used to obtain the hash key.
+	Name string `json:"name"`
+}
+
+func (m MeshLoadBalancingStrategyItemHashPoliciesSpecToDefaultHeader) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesSpecToDefaultHeader) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshLoadBalancingStrategyItemHashPoliciesSpecToDefaultHeader) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+type HashPoliciesType string
+
+const (
+	HashPoliciesTypeHeader         HashPoliciesType = "Header"
+	HashPoliciesTypeCookie         HashPoliciesType = "Cookie"
+	HashPoliciesTypeConnection     HashPoliciesType = "Connection"
+	HashPoliciesTypeQueryParameter HashPoliciesType = "QueryParameter"
+	HashPoliciesTypeFilterState    HashPoliciesType = "FilterState"
+)
+
+func (e HashPoliciesType) ToPointer() *HashPoliciesType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *HashPoliciesType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Header", "Cookie", "Connection", "QueryParameter", "FilterState":
+			return true
+		}
+	}
+	return false
 }
 
 type Connection struct {
 	// Hash on source IP address.
 	SourceIP *bool `json:"sourceIP,omitempty"`
+}
+
+func (c Connection) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(c, "", false)
+}
+
+func (c *Connection) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &c, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c *Connection) GetSourceIP() *bool {
@@ -156,6 +1121,17 @@ type Cookie struct {
 	Path *string `json:"path,omitempty"`
 	// If specified, a cookie with the TTL will be generated if the cookie is not present.
 	TTL *string `json:"ttl,omitempty"`
+}
+
+func (c Cookie) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(c, "", false)
+}
+
+func (c *Cookie) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &c, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c *Cookie) GetName() string {
@@ -186,23 +1162,22 @@ type FilterState struct {
 	Key string `json:"key"`
 }
 
+func (f FilterState) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(f, "", false)
+}
+
+func (f *FilterState) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &f, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (f *FilterState) GetKey() string {
 	if f == nil {
 		return ""
 	}
 	return f.Key
-}
-
-type MeshLoadBalancingStrategyItemHeader struct {
-	// The name of the request header that will be used to obtain the hash key.
-	Name string `json:"name"`
-}
-
-func (m *MeshLoadBalancingStrategyItemHeader) GetName() string {
-	if m == nil {
-		return ""
-	}
-	return m.Name
 }
 
 type QueryParameter struct {
@@ -212,6 +1187,17 @@ type QueryParameter struct {
 	Name string `json:"name"`
 }
 
+func (q QueryParameter) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(q, "", false)
+}
+
+func (q *QueryParameter) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &q, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (q *QueryParameter) GetName() string {
 	if q == nil {
 		return ""
@@ -219,93 +1205,1789 @@ func (q *QueryParameter) GetName() string {
 	return q.Name
 }
 
-type MeshLoadBalancingStrategyItemSpecType string
-
-const (
-	MeshLoadBalancingStrategyItemSpecTypeHeader         MeshLoadBalancingStrategyItemSpecType = "Header"
-	MeshLoadBalancingStrategyItemSpecTypeCookie         MeshLoadBalancingStrategyItemSpecType = "Cookie"
-	MeshLoadBalancingStrategyItemSpecTypeConnection     MeshLoadBalancingStrategyItemSpecType = "Connection"
-	MeshLoadBalancingStrategyItemSpecTypeSourceIP       MeshLoadBalancingStrategyItemSpecType = "SourceIP"
-	MeshLoadBalancingStrategyItemSpecTypeQueryParameter MeshLoadBalancingStrategyItemSpecType = "QueryParameter"
-	MeshLoadBalancingStrategyItemSpecTypeFilterState    MeshLoadBalancingStrategyItemSpecType = "FilterState"
-)
-
-func (e MeshLoadBalancingStrategyItemSpecType) ToPointer() *MeshLoadBalancingStrategyItemSpecType {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshLoadBalancingStrategyItemSpecType) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Header", "Cookie", "Connection", "SourceIP", "QueryParameter", "FilterState":
-			return true
-		}
-	}
-	return false
-}
-
-type HashPolicies struct {
-	Connection     *Connection                          `json:"connection,omitempty"`
-	Cookie         *Cookie                              `json:"cookie,omitempty"`
-	FilterState    *FilterState                         `json:"filterState,omitempty"`
-	Header         *MeshLoadBalancingStrategyItemHeader `json:"header,omitempty"`
-	QueryParameter *QueryParameter                      `json:"queryParameter,omitempty"`
+type HashPolicies1 struct {
+	Header         *MeshLoadBalancingStrategyItemHashPoliciesSpecToDefaultHeader `json:"header,omitempty"`
+	Type           HashPoliciesType                                              `json:"type"`
+	Connection     *Connection                                                   `json:"connection,omitempty"`
+	Cookie         *Cookie                                                       `json:"cookie,omitempty"`
+	FilterState    *FilterState                                                  `json:"filterState,omitempty"`
+	QueryParameter *QueryParameter                                               `json:"queryParameter,omitempty"`
 	// Terminal is a flag that short-circuits the hash computing. This field provides
 	// a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback
 	// to rest of the policy list”, it saves time when the terminal policy works.
 	// If true, and there is already a hash computed, ignore rest of the list of hash polices.
-	Terminal *bool                                 `json:"terminal,omitempty"`
-	Type     MeshLoadBalancingStrategyItemSpecType `json:"type"`
+	Terminal *bool `json:"terminal,omitempty"`
 }
 
-func (h *HashPolicies) GetConnection() *Connection {
-	if h == nil {
-		return nil
+func (h HashPolicies1) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(h, "", false)
+}
+
+func (h *HashPolicies1) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &h, "", false, nil); err != nil {
+		return err
 	}
-	return h.Connection
+	return nil
 }
 
-func (h *HashPolicies) GetCookie() *Cookie {
-	if h == nil {
-		return nil
-	}
-	return h.Cookie
-}
-
-func (h *HashPolicies) GetFilterState() *FilterState {
-	if h == nil {
-		return nil
-	}
-	return h.FilterState
-}
-
-func (h *HashPolicies) GetHeader() *MeshLoadBalancingStrategyItemHeader {
+func (h *HashPolicies1) GetHeader() *MeshLoadBalancingStrategyItemHashPoliciesSpecToDefaultHeader {
 	if h == nil {
 		return nil
 	}
 	return h.Header
 }
 
-func (h *HashPolicies) GetQueryParameter() *QueryParameter {
+func (h *HashPolicies1) GetType() HashPoliciesType {
+	if h == nil {
+		return HashPoliciesType("")
+	}
+	return h.Type
+}
+
+func (h *HashPolicies1) GetConnection() *Connection {
+	if h == nil {
+		return nil
+	}
+	return h.Connection
+}
+
+func (h *HashPolicies1) GetCookie() *Cookie {
+	if h == nil {
+		return nil
+	}
+	return h.Cookie
+}
+
+func (h *HashPolicies1) GetFilterState() *FilterState {
+	if h == nil {
+		return nil
+	}
+	return h.FilterState
+}
+
+func (h *HashPolicies1) GetQueryParameter() *QueryParameter {
 	if h == nil {
 		return nil
 	}
 	return h.QueryParameter
 }
 
-func (h *HashPolicies) GetTerminal() *bool {
+func (h *HashPolicies1) GetTerminal() *bool {
 	if h == nil {
 		return nil
 	}
 	return h.Terminal
 }
 
-func (h *HashPolicies) GetType() MeshLoadBalancingStrategyItemSpecType {
-	if h == nil {
-		return MeshLoadBalancingStrategyItemSpecType("")
+// #region class-body-hashpolicies1
+// #endregion class-body-hashpolicies1
+
+type HashPoliciesUnionType string
+
+const (
+	HashPoliciesUnionTypeHashPolicies1 HashPoliciesUnionType = "hashPolicies_1"
+	HashPoliciesUnionTypeHashPolicies2 HashPoliciesUnionType = "hashPolicies_2"
+	HashPoliciesUnionTypeHashPolicies3 HashPoliciesUnionType = "hashPolicies_3"
+	HashPoliciesUnionTypeFour          HashPoliciesUnionType = "4"
+	HashPoliciesUnionTypeFive          HashPoliciesUnionType = "5"
+)
+
+type HashPolicies struct {
+	HashPolicies1 *HashPolicies1 `queryParam:"inline" union:"member"`
+	HashPolicies2 *HashPolicies2 `queryParam:"inline" union:"member"`
+	HashPolicies3 *HashPolicies3 `queryParam:"inline" union:"member"`
+	Four          *Four          `queryParam:"inline" union:"member"`
+	Five          *Five          `queryParam:"inline" union:"member"`
+
+	Type HashPoliciesUnionType
+}
+
+func CreateHashPoliciesHashPolicies1(hashPolicies1 HashPolicies1) HashPolicies {
+	typ := HashPoliciesUnionTypeHashPolicies1
+
+	return HashPolicies{
+		HashPolicies1: &hashPolicies1,
+		Type:          typ,
 	}
-	return h.Type
+}
+
+func CreateHashPoliciesHashPolicies2(hashPolicies2 HashPolicies2) HashPolicies {
+	typ := HashPoliciesUnionTypeHashPolicies2
+
+	return HashPolicies{
+		HashPolicies2: &hashPolicies2,
+		Type:          typ,
+	}
+}
+
+func CreateHashPoliciesHashPolicies3(hashPolicies3 HashPolicies3) HashPolicies {
+	typ := HashPoliciesUnionTypeHashPolicies3
+
+	return HashPolicies{
+		HashPolicies3: &hashPolicies3,
+		Type:          typ,
+	}
+}
+
+func CreateHashPoliciesFour(four Four) HashPolicies {
+	typ := HashPoliciesUnionTypeFour
+
+	return HashPolicies{
+		Four: &four,
+		Type: typ,
+	}
+}
+
+func CreateHashPoliciesFive(five Five) HashPolicies {
+	typ := HashPoliciesUnionTypeFive
+
+	return HashPolicies{
+		Five: &five,
+		Type: typ,
+	}
+}
+
+func (u *HashPolicies) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var hashPolicies1 HashPolicies1 = HashPolicies1{}
+	if err := utils.UnmarshalJSON(data, &hashPolicies1, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  HashPoliciesUnionTypeHashPolicies1,
+			Value: &hashPolicies1,
+		})
+	}
+
+	var hashPolicies2 HashPolicies2 = HashPolicies2{}
+	if err := utils.UnmarshalJSON(data, &hashPolicies2, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  HashPoliciesUnionTypeHashPolicies2,
+			Value: &hashPolicies2,
+		})
+	}
+
+	var hashPolicies3 HashPolicies3 = HashPolicies3{}
+	if err := utils.UnmarshalJSON(data, &hashPolicies3, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  HashPoliciesUnionTypeHashPolicies3,
+			Value: &hashPolicies3,
+		})
+	}
+
+	var four Four = Four{}
+	if err := utils.UnmarshalJSON(data, &four, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  HashPoliciesUnionTypeFour,
+			Value: &four,
+		})
+	}
+
+	var five Five = Five{}
+	if err := utils.UnmarshalJSON(data, &five, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  HashPoliciesUnionTypeFive,
+			Value: &five,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for HashPolicies", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for HashPolicies", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(HashPoliciesUnionType)
+	switch best.Type {
+	case HashPoliciesUnionTypeHashPolicies1:
+		u.HashPolicies1 = best.Value.(*HashPolicies1)
+		return nil
+	case HashPoliciesUnionTypeHashPolicies2:
+		u.HashPolicies2 = best.Value.(*HashPolicies2)
+		return nil
+	case HashPoliciesUnionTypeHashPolicies3:
+		u.HashPolicies3 = best.Value.(*HashPolicies3)
+		return nil
+	case HashPoliciesUnionTypeFour:
+		u.Four = best.Value.(*Four)
+		return nil
+	case HashPoliciesUnionTypeFive:
+		u.Five = best.Value.(*Five)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for HashPolicies", string(data))
+}
+
+func (u HashPolicies) MarshalJSON() ([]byte, error) {
+	if u.HashPolicies1 != nil {
+		return utils.MarshalJSON(u.HashPolicies1, "", true)
+	}
+
+	if u.HashPolicies2 != nil {
+		return utils.MarshalJSON(u.HashPolicies2, "", true)
+	}
+
+	if u.HashPolicies3 != nil {
+		return utils.MarshalJSON(u.HashPolicies3, "", true)
+	}
+
+	if u.Four != nil {
+		return utils.MarshalJSON(u.Four, "", true)
+	}
+
+	if u.Five != nil {
+		return utils.MarshalJSON(u.Five, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type HashPolicies: all fields are null")
+}
+
+// MeshLoadBalancingStrategyItemLoadBalancerSpecToMaglev - Maglev implements consistent hashing to upstream hosts. Maglev can be used as
+// a drop in replacement for the ring hash load balancer any place in which
+// consistent hashing is desired.
+type MeshLoadBalancingStrategyItemLoadBalancerSpecToMaglev struct {
+	// The table size for Maglev hashing. Maglev aims for “minimal disruption”
+	// rather than an absolute guarantee. Minimal disruption means that when
+	// the set of upstream hosts change, a connection will likely be sent
+	// to the same upstream as it was before. Increasing the table size reduces
+	// the amount of disruption. The table size must be prime number limited to 5000011.
+	// If it is not specified, the default is 65537.
+	TableSize *int `json:"tableSize,omitempty"`
+}
+
+func (m MeshLoadBalancingStrategyItemLoadBalancerSpecToMaglev) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerSpecToMaglev) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerSpecToMaglev) GetTableSize() *int {
+	if m == nil {
+		return nil
+	}
+	return m.TableSize
+}
+
+type MeshLoadBalancingStrategyItemLoadBalancerSpecToDefaultType string
+
+const (
+	MeshLoadBalancingStrategyItemLoadBalancerSpecToDefaultTypeRoundRobin   MeshLoadBalancingStrategyItemLoadBalancerSpecToDefaultType = "RoundRobin"
+	MeshLoadBalancingStrategyItemLoadBalancerSpecToDefaultTypeLeastRequest MeshLoadBalancingStrategyItemLoadBalancerSpecToDefaultType = "LeastRequest"
+	MeshLoadBalancingStrategyItemLoadBalancerSpecToDefaultTypeRingHash     MeshLoadBalancingStrategyItemLoadBalancerSpecToDefaultType = "RingHash"
+	MeshLoadBalancingStrategyItemLoadBalancerSpecToDefaultTypeRandom       MeshLoadBalancingStrategyItemLoadBalancerSpecToDefaultType = "Random"
+	MeshLoadBalancingStrategyItemLoadBalancerSpecToDefaultTypeMaglev       MeshLoadBalancingStrategyItemLoadBalancerSpecToDefaultType = "Maglev"
+)
+
+func (e MeshLoadBalancingStrategyItemLoadBalancerSpecToDefaultType) ToPointer() *MeshLoadBalancingStrategyItemLoadBalancerSpecToDefaultType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshLoadBalancingStrategyItemLoadBalancerSpecToDefaultType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "RoundRobin", "LeastRequest", "RingHash", "Random", "Maglev":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBiasType string
+
+const (
+	MeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBiasTypeInteger MeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBiasType = "integer"
+	MeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBiasTypeStr     MeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBiasType = "str"
+)
+
+// MeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBias - ActiveRequestBias refers to dynamic weights applied when hosts have varying load
+// balancing weights. A higher value here aggressively reduces the weight of endpoints
+// that are currently handling active requests. In essence, the higher the ActiveRequestBias
+// value, the more forcefully it reduces the load balancing weight of endpoints that are
+// actively serving requests.
+type MeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBias struct {
+	Integer *int64  `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
+
+	Type MeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBiasType
+}
+
+func CreateMeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBiasInteger(integer int64) MeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBias {
+	typ := MeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBiasTypeInteger
+
+	return MeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBias{
+		Integer: &integer,
+		Type:    typ,
+	}
+}
+
+func CreateMeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBiasStr(str string) MeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBias {
+	typ := MeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBiasTypeStr
+
+	return MeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBias{
+		Str:  &str,
+		Type: typ,
+	}
+}
+
+func (u *MeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBias) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var integer int64 = int64(0)
+	if err := utils.UnmarshalJSON(data, &integer, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBiasTypeInteger,
+			Value: &integer,
+		})
+	}
+
+	var str string = ""
+	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBiasTypeStr,
+			Value: &str,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBias", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBias", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(MeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBiasType)
+	switch best.Type {
+	case MeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBiasTypeInteger:
+		u.Integer = best.Value.(*int64)
+		return nil
+	case MeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBiasTypeStr:
+		u.Str = best.Value.(*string)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBias", string(data))
+}
+
+func (u MeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBias) MarshalJSON() ([]byte, error) {
+	if u.Integer != nil {
+		return utils.MarshalJSON(u.Integer, "", true)
+	}
+
+	if u.Str != nil {
+		return utils.MarshalJSON(u.Str, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type MeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBias: all fields are null")
+}
+
+// MeshLoadBalancingStrategyItemLoadBalancerSpecToLeastRequest - LeastRequest selects N random available hosts as specified in 'choiceCount' (2 by default)
+// and picks the host which has the fewest active requests
+type MeshLoadBalancingStrategyItemLoadBalancerSpecToLeastRequest struct {
+	// ActiveRequestBias refers to dynamic weights applied when hosts have varying load
+	// balancing weights. A higher value here aggressively reduces the weight of endpoints
+	// that are currently handling active requests. In essence, the higher the ActiveRequestBias
+	// value, the more forcefully it reduces the load balancing weight of endpoints that are
+	// actively serving requests.
+	ActiveRequestBias *MeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBias `json:"activeRequestBias,omitempty"`
+	// ChoiceCount is the number of random healthy hosts from which the host with
+	// the fewest active requests will be chosen. Defaults to 2 so that Envoy performs
+	// two-choice selection if the field is not set.
+	ChoiceCount *int `json:"choiceCount,omitempty"`
+}
+
+func (m MeshLoadBalancingStrategyItemLoadBalancerSpecToLeastRequest) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerSpecToLeastRequest) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerSpecToLeastRequest) GetActiveRequestBias() *MeshLoadBalancingStrategyItemLoadBalancerSpecToActiveRequestBias {
+	if m == nil {
+		return nil
+	}
+	return m.ActiveRequestBias
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerSpecToLeastRequest) GetChoiceCount() *int {
+	if m == nil {
+		return nil
+	}
+	return m.ChoiceCount
+}
+
+// MeshLoadBalancingStrategyItemLoadBalancerSpecToRandom - Random selects a random available host. The random load balancer generally
+// performs better than round-robin if no health checking policy is configured.
+// Random selection avoids bias towards the host in the set that comes after a failed host.
+type MeshLoadBalancingStrategyItemLoadBalancerSpecToRandom struct {
+}
+
+func (m MeshLoadBalancingStrategyItemLoadBalancerSpecToRandom) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerSpecToRandom) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MeshLoadBalancingStrategyItemLoadBalancerSpecToHashFunction - HashFunction is a function used to hash hosts onto the ketama ring.
+// The value defaults to XX_HASH. Available values – XX_HASH, MURMUR_HASH_2.
+type MeshLoadBalancingStrategyItemLoadBalancerSpecToHashFunction string
+
+const (
+	MeshLoadBalancingStrategyItemLoadBalancerSpecToHashFunctionXxHash      MeshLoadBalancingStrategyItemLoadBalancerSpecToHashFunction = "XXHash"
+	MeshLoadBalancingStrategyItemLoadBalancerSpecToHashFunctionMurmurHash2 MeshLoadBalancingStrategyItemLoadBalancerSpecToHashFunction = "MurmurHash2"
+)
+
+func (e MeshLoadBalancingStrategyItemLoadBalancerSpecToHashFunction) ToPointer() *MeshLoadBalancingStrategyItemLoadBalancerSpecToHashFunction {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshLoadBalancingStrategyItemLoadBalancerSpecToHashFunction) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "XXHash", "MurmurHash2":
+			return true
+		}
+	}
+	return false
+}
+
+// MeshLoadBalancingStrategyItemLoadBalancerSpecToRingHash - RingHash  implements consistent hashing to upstream hosts. Each host is mapped
+// onto a circle (the “ring”) by hashing its address; each request is then routed
+// to a host by hashing some property of the request, and finding the nearest
+// corresponding host clockwise around the ring.
+type MeshLoadBalancingStrategyItemLoadBalancerSpecToRingHash struct {
+	// HashFunction is a function used to hash hosts onto the ketama ring.
+	// The value defaults to XX_HASH. Available values – XX_HASH, MURMUR_HASH_2.
+	HashFunction *MeshLoadBalancingStrategyItemLoadBalancerSpecToHashFunction `json:"hashFunction,omitempty"`
+	// Maximum hash ring size. Defaults to 8M entries, and limited to 8M entries,
+	// but can be lowered to further constrain resource use.
+	MaxRingSize *int `json:"maxRingSize,omitempty"`
+	// Minimum hash ring size. The larger the ring is (that is,
+	// the more hashes there are for each provided host) the better the request distribution
+	// will reflect the desired weights. Defaults to 1024 entries, and limited to 8M entries.
+	MinRingSize *int `json:"minRingSize,omitempty"`
+}
+
+func (m MeshLoadBalancingStrategyItemLoadBalancerSpecToRingHash) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerSpecToRingHash) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerSpecToRingHash) GetHashFunction() *MeshLoadBalancingStrategyItemLoadBalancerSpecToHashFunction {
+	if m == nil {
+		return nil
+	}
+	return m.HashFunction
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerSpecToRingHash) GetMaxRingSize() *int {
+	if m == nil {
+		return nil
+	}
+	return m.MaxRingSize
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerSpecToRingHash) GetMinRingSize() *int {
+	if m == nil {
+		return nil
+	}
+	return m.MinRingSize
+}
+
+// MeshLoadBalancingStrategyItemLoadBalancerSpecToRoundRobin - RoundRobin is a load balancing algorithm that distributes requests
+// across available upstream hosts in round-robin order.
+type MeshLoadBalancingStrategyItemLoadBalancerSpecToRoundRobin struct {
+}
+
+func (m MeshLoadBalancingStrategyItemLoadBalancerSpecToRoundRobin) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerSpecToRoundRobin) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+type LoadBalancer5 struct {
+	// Maglev implements consistent hashing to upstream hosts. Maglev can be used as
+	// a drop in replacement for the ring hash load balancer any place in which
+	// consistent hashing is desired.
+	Maglev *MeshLoadBalancingStrategyItemLoadBalancerSpecToMaglev     `json:"maglev,omitempty"`
+	Type   MeshLoadBalancingStrategyItemLoadBalancerSpecToDefaultType `json:"type"`
+	// LeastRequest selects N random available hosts as specified in 'choiceCount' (2 by default)
+	// and picks the host which has the fewest active requests
+	LeastRequest *MeshLoadBalancingStrategyItemLoadBalancerSpecToLeastRequest `json:"leastRequest,omitempty"`
+	// Random selects a random available host. The random load balancer generally
+	// performs better than round-robin if no health checking policy is configured.
+	// Random selection avoids bias towards the host in the set that comes after a failed host.
+	Random *MeshLoadBalancingStrategyItemLoadBalancerSpecToRandom `json:"random,omitempty"`
+	// RingHash  implements consistent hashing to upstream hosts. Each host is mapped
+	// onto a circle (the “ring”) by hashing its address; each request is then routed
+	// to a host by hashing some property of the request, and finding the nearest
+	// corresponding host clockwise around the ring.
+	RingHash *MeshLoadBalancingStrategyItemLoadBalancerSpecToRingHash `json:"ringHash,omitempty"`
+	// RoundRobin is a load balancing algorithm that distributes requests
+	// across available upstream hosts in round-robin order.
+	RoundRobin *MeshLoadBalancingStrategyItemLoadBalancerSpecToRoundRobin `json:"roundRobin,omitempty"`
+}
+
+func (l LoadBalancer5) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(l, "", false)
+}
+
+func (l *LoadBalancer5) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &l, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (l *LoadBalancer5) GetMaglev() *MeshLoadBalancingStrategyItemLoadBalancerSpecToMaglev {
+	if l == nil {
+		return nil
+	}
+	return l.Maglev
+}
+
+func (l *LoadBalancer5) GetType() MeshLoadBalancingStrategyItemLoadBalancerSpecToDefaultType {
+	if l == nil {
+		return MeshLoadBalancingStrategyItemLoadBalancerSpecToDefaultType("")
+	}
+	return l.Type
+}
+
+func (l *LoadBalancer5) GetLeastRequest() *MeshLoadBalancingStrategyItemLoadBalancerSpecToLeastRequest {
+	if l == nil {
+		return nil
+	}
+	return l.LeastRequest
+}
+
+func (l *LoadBalancer5) GetRandom() *MeshLoadBalancingStrategyItemLoadBalancerSpecToRandom {
+	if l == nil {
+		return nil
+	}
+	return l.Random
+}
+
+func (l *LoadBalancer5) GetRingHash() *MeshLoadBalancingStrategyItemLoadBalancerSpecToRingHash {
+	if l == nil {
+		return nil
+	}
+	return l.RingHash
+}
+
+func (l *LoadBalancer5) GetRoundRobin() *MeshLoadBalancingStrategyItemLoadBalancerSpecToRoundRobin {
+	if l == nil {
+		return nil
+	}
+	return l.RoundRobin
+}
+
+// #region class-body-loadbalancer5
+// #endregion class-body-loadbalancer5
+
+// MeshLoadBalancingStrategyItemLoadBalancerSpecRandom - Random selects a random available host. The random load balancer generally
+// performs better than round-robin if no health checking policy is configured.
+// Random selection avoids bias towards the host in the set that comes after a failed host.
+type MeshLoadBalancingStrategyItemLoadBalancerSpecRandom struct {
+}
+
+func (m MeshLoadBalancingStrategyItemLoadBalancerSpecRandom) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerSpecRandom) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+type MeshLoadBalancingStrategyItemLoadBalancerSpecToType string
+
+const (
+	MeshLoadBalancingStrategyItemLoadBalancerSpecToTypeRoundRobin   MeshLoadBalancingStrategyItemLoadBalancerSpecToType = "RoundRobin"
+	MeshLoadBalancingStrategyItemLoadBalancerSpecToTypeLeastRequest MeshLoadBalancingStrategyItemLoadBalancerSpecToType = "LeastRequest"
+	MeshLoadBalancingStrategyItemLoadBalancerSpecToTypeRingHash     MeshLoadBalancingStrategyItemLoadBalancerSpecToType = "RingHash"
+	MeshLoadBalancingStrategyItemLoadBalancerSpecToTypeRandom       MeshLoadBalancingStrategyItemLoadBalancerSpecToType = "Random"
+	MeshLoadBalancingStrategyItemLoadBalancerSpecToTypeMaglev       MeshLoadBalancingStrategyItemLoadBalancerSpecToType = "Maglev"
+)
+
+func (e MeshLoadBalancingStrategyItemLoadBalancerSpecToType) ToPointer() *MeshLoadBalancingStrategyItemLoadBalancerSpecToType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshLoadBalancingStrategyItemLoadBalancerSpecToType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "RoundRobin", "LeastRequest", "RingHash", "Random", "Maglev":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBiasType string
+
+const (
+	MeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBiasTypeInteger MeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBiasType = "integer"
+	MeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBiasTypeStr     MeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBiasType = "str"
+)
+
+// MeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBias - ActiveRequestBias refers to dynamic weights applied when hosts have varying load
+// balancing weights. A higher value here aggressively reduces the weight of endpoints
+// that are currently handling active requests. In essence, the higher the ActiveRequestBias
+// value, the more forcefully it reduces the load balancing weight of endpoints that are
+// actively serving requests.
+type MeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBias struct {
+	Integer *int64  `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
+
+	Type MeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBiasType
+}
+
+func CreateMeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBiasInteger(integer int64) MeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBias {
+	typ := MeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBiasTypeInteger
+
+	return MeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBias{
+		Integer: &integer,
+		Type:    typ,
+	}
+}
+
+func CreateMeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBiasStr(str string) MeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBias {
+	typ := MeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBiasTypeStr
+
+	return MeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBias{
+		Str:  &str,
+		Type: typ,
+	}
+}
+
+func (u *MeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBias) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var integer int64 = int64(0)
+	if err := utils.UnmarshalJSON(data, &integer, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBiasTypeInteger,
+			Value: &integer,
+		})
+	}
+
+	var str string = ""
+	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBiasTypeStr,
+			Value: &str,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBias", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBias", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(MeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBiasType)
+	switch best.Type {
+	case MeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBiasTypeInteger:
+		u.Integer = best.Value.(*int64)
+		return nil
+	case MeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBiasTypeStr:
+		u.Str = best.Value.(*string)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBias", string(data))
+}
+
+func (u MeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBias) MarshalJSON() ([]byte, error) {
+	if u.Integer != nil {
+		return utils.MarshalJSON(u.Integer, "", true)
+	}
+
+	if u.Str != nil {
+		return utils.MarshalJSON(u.Str, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type MeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBias: all fields are null")
+}
+
+// MeshLoadBalancingStrategyItemLoadBalancerSpecLeastRequest - LeastRequest selects N random available hosts as specified in 'choiceCount' (2 by default)
+// and picks the host which has the fewest active requests
+type MeshLoadBalancingStrategyItemLoadBalancerSpecLeastRequest struct {
+	// ActiveRequestBias refers to dynamic weights applied when hosts have varying load
+	// balancing weights. A higher value here aggressively reduces the weight of endpoints
+	// that are currently handling active requests. In essence, the higher the ActiveRequestBias
+	// value, the more forcefully it reduces the load balancing weight of endpoints that are
+	// actively serving requests.
+	ActiveRequestBias *MeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBias `json:"activeRequestBias,omitempty"`
+	// ChoiceCount is the number of random healthy hosts from which the host with
+	// the fewest active requests will be chosen. Defaults to 2 so that Envoy performs
+	// two-choice selection if the field is not set.
+	ChoiceCount *int `json:"choiceCount,omitempty"`
+}
+
+func (m MeshLoadBalancingStrategyItemLoadBalancerSpecLeastRequest) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerSpecLeastRequest) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerSpecLeastRequest) GetActiveRequestBias() *MeshLoadBalancingStrategyItemLoadBalancerSpecActiveRequestBias {
+	if m == nil {
+		return nil
+	}
+	return m.ActiveRequestBias
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerSpecLeastRequest) GetChoiceCount() *int {
+	if m == nil {
+		return nil
+	}
+	return m.ChoiceCount
+}
+
+// MeshLoadBalancingStrategyItemLoadBalancerSpecMaglev - Maglev implements consistent hashing to upstream hosts. Maglev can be used as
+// a drop in replacement for the ring hash load balancer any place in which
+// consistent hashing is desired.
+type MeshLoadBalancingStrategyItemLoadBalancerSpecMaglev struct {
+	// The table size for Maglev hashing. Maglev aims for “minimal disruption”
+	// rather than an absolute guarantee. Minimal disruption means that when
+	// the set of upstream hosts change, a connection will likely be sent
+	// to the same upstream as it was before. Increasing the table size reduces
+	// the amount of disruption. The table size must be prime number limited to 5000011.
+	// If it is not specified, the default is 65537.
+	TableSize *int `json:"tableSize,omitempty"`
+}
+
+func (m MeshLoadBalancingStrategyItemLoadBalancerSpecMaglev) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerSpecMaglev) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerSpecMaglev) GetTableSize() *int {
+	if m == nil {
+		return nil
+	}
+	return m.TableSize
+}
+
+// MeshLoadBalancingStrategyItemLoadBalancerSpecHashFunction - HashFunction is a function used to hash hosts onto the ketama ring.
+// The value defaults to XX_HASH. Available values – XX_HASH, MURMUR_HASH_2.
+type MeshLoadBalancingStrategyItemLoadBalancerSpecHashFunction string
+
+const (
+	MeshLoadBalancingStrategyItemLoadBalancerSpecHashFunctionXxHash      MeshLoadBalancingStrategyItemLoadBalancerSpecHashFunction = "XXHash"
+	MeshLoadBalancingStrategyItemLoadBalancerSpecHashFunctionMurmurHash2 MeshLoadBalancingStrategyItemLoadBalancerSpecHashFunction = "MurmurHash2"
+)
+
+func (e MeshLoadBalancingStrategyItemLoadBalancerSpecHashFunction) ToPointer() *MeshLoadBalancingStrategyItemLoadBalancerSpecHashFunction {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshLoadBalancingStrategyItemLoadBalancerSpecHashFunction) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "XXHash", "MurmurHash2":
+			return true
+		}
+	}
+	return false
+}
+
+// MeshLoadBalancingStrategyItemLoadBalancerSpecRingHash - RingHash  implements consistent hashing to upstream hosts. Each host is mapped
+// onto a circle (the “ring”) by hashing its address; each request is then routed
+// to a host by hashing some property of the request, and finding the nearest
+// corresponding host clockwise around the ring.
+type MeshLoadBalancingStrategyItemLoadBalancerSpecRingHash struct {
+	// HashFunction is a function used to hash hosts onto the ketama ring.
+	// The value defaults to XX_HASH. Available values – XX_HASH, MURMUR_HASH_2.
+	HashFunction *MeshLoadBalancingStrategyItemLoadBalancerSpecHashFunction `json:"hashFunction,omitempty"`
+	// Maximum hash ring size. Defaults to 8M entries, and limited to 8M entries,
+	// but can be lowered to further constrain resource use.
+	MaxRingSize *int `json:"maxRingSize,omitempty"`
+	// Minimum hash ring size. The larger the ring is (that is,
+	// the more hashes there are for each provided host) the better the request distribution
+	// will reflect the desired weights. Defaults to 1024 entries, and limited to 8M entries.
+	MinRingSize *int `json:"minRingSize,omitempty"`
+}
+
+func (m MeshLoadBalancingStrategyItemLoadBalancerSpecRingHash) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerSpecRingHash) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerSpecRingHash) GetHashFunction() *MeshLoadBalancingStrategyItemLoadBalancerSpecHashFunction {
+	if m == nil {
+		return nil
+	}
+	return m.HashFunction
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerSpecRingHash) GetMaxRingSize() *int {
+	if m == nil {
+		return nil
+	}
+	return m.MaxRingSize
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerSpecRingHash) GetMinRingSize() *int {
+	if m == nil {
+		return nil
+	}
+	return m.MinRingSize
+}
+
+// MeshLoadBalancingStrategyItemLoadBalancerSpecRoundRobin - RoundRobin is a load balancing algorithm that distributes requests
+// across available upstream hosts in round-robin order.
+type MeshLoadBalancingStrategyItemLoadBalancerSpecRoundRobin struct {
+}
+
+func (m MeshLoadBalancingStrategyItemLoadBalancerSpecRoundRobin) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerSpecRoundRobin) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+type LoadBalancer4 struct {
+	// Random selects a random available host. The random load balancer generally
+	// performs better than round-robin if no health checking policy is configured.
+	// Random selection avoids bias towards the host in the set that comes after a failed host.
+	Random *MeshLoadBalancingStrategyItemLoadBalancerSpecRandom `json:"random,omitempty"`
+	Type   MeshLoadBalancingStrategyItemLoadBalancerSpecToType  `json:"type"`
+	// LeastRequest selects N random available hosts as specified in 'choiceCount' (2 by default)
+	// and picks the host which has the fewest active requests
+	LeastRequest *MeshLoadBalancingStrategyItemLoadBalancerSpecLeastRequest `json:"leastRequest,omitempty"`
+	// Maglev implements consistent hashing to upstream hosts. Maglev can be used as
+	// a drop in replacement for the ring hash load balancer any place in which
+	// consistent hashing is desired.
+	Maglev *MeshLoadBalancingStrategyItemLoadBalancerSpecMaglev `json:"maglev,omitempty"`
+	// RingHash  implements consistent hashing to upstream hosts. Each host is mapped
+	// onto a circle (the “ring”) by hashing its address; each request is then routed
+	// to a host by hashing some property of the request, and finding the nearest
+	// corresponding host clockwise around the ring.
+	RingHash *MeshLoadBalancingStrategyItemLoadBalancerSpecRingHash `json:"ringHash,omitempty"`
+	// RoundRobin is a load balancing algorithm that distributes requests
+	// across available upstream hosts in round-robin order.
+	RoundRobin *MeshLoadBalancingStrategyItemLoadBalancerSpecRoundRobin `json:"roundRobin,omitempty"`
+}
+
+func (l LoadBalancer4) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(l, "", false)
+}
+
+func (l *LoadBalancer4) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &l, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (l *LoadBalancer4) GetRandom() *MeshLoadBalancingStrategyItemLoadBalancerSpecRandom {
+	if l == nil {
+		return nil
+	}
+	return l.Random
+}
+
+func (l *LoadBalancer4) GetType() MeshLoadBalancingStrategyItemLoadBalancerSpecToType {
+	if l == nil {
+		return MeshLoadBalancingStrategyItemLoadBalancerSpecToType("")
+	}
+	return l.Type
+}
+
+func (l *LoadBalancer4) GetLeastRequest() *MeshLoadBalancingStrategyItemLoadBalancerSpecLeastRequest {
+	if l == nil {
+		return nil
+	}
+	return l.LeastRequest
+}
+
+func (l *LoadBalancer4) GetMaglev() *MeshLoadBalancingStrategyItemLoadBalancerSpecMaglev {
+	if l == nil {
+		return nil
+	}
+	return l.Maglev
+}
+
+func (l *LoadBalancer4) GetRingHash() *MeshLoadBalancingStrategyItemLoadBalancerSpecRingHash {
+	if l == nil {
+		return nil
+	}
+	return l.RingHash
+}
+
+func (l *LoadBalancer4) GetRoundRobin() *MeshLoadBalancingStrategyItemLoadBalancerSpecRoundRobin {
+	if l == nil {
+		return nil
+	}
+	return l.RoundRobin
+}
+
+// #region class-body-loadbalancer4
+// #endregion class-body-loadbalancer4
+
+// MeshLoadBalancingStrategyItemLoadBalancerHashFunction - HashFunction is a function used to hash hosts onto the ketama ring.
+// The value defaults to XX_HASH. Available values – XX_HASH, MURMUR_HASH_2.
+type MeshLoadBalancingStrategyItemLoadBalancerHashFunction string
+
+const (
+	MeshLoadBalancingStrategyItemLoadBalancerHashFunctionXxHash      MeshLoadBalancingStrategyItemLoadBalancerHashFunction = "XXHash"
+	MeshLoadBalancingStrategyItemLoadBalancerHashFunctionMurmurHash2 MeshLoadBalancingStrategyItemLoadBalancerHashFunction = "MurmurHash2"
+)
+
+func (e MeshLoadBalancingStrategyItemLoadBalancerHashFunction) ToPointer() *MeshLoadBalancingStrategyItemLoadBalancerHashFunction {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshLoadBalancingStrategyItemLoadBalancerHashFunction) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "XXHash", "MurmurHash2":
+			return true
+		}
+	}
+	return false
+}
+
+// MeshLoadBalancingStrategyItemLoadBalancerRingHash - RingHash  implements consistent hashing to upstream hosts. Each host is mapped
+// onto a circle (the “ring”) by hashing its address; each request is then routed
+// to a host by hashing some property of the request, and finding the nearest
+// corresponding host clockwise around the ring.
+type MeshLoadBalancingStrategyItemLoadBalancerRingHash struct {
+	// HashFunction is a function used to hash hosts onto the ketama ring.
+	// The value defaults to XX_HASH. Available values – XX_HASH, MURMUR_HASH_2.
+	HashFunction *MeshLoadBalancingStrategyItemLoadBalancerHashFunction `json:"hashFunction,omitempty"`
+	// Maximum hash ring size. Defaults to 8M entries, and limited to 8M entries,
+	// but can be lowered to further constrain resource use.
+	MaxRingSize *int `json:"maxRingSize,omitempty"`
+	// Minimum hash ring size. The larger the ring is (that is,
+	// the more hashes there are for each provided host) the better the request distribution
+	// will reflect the desired weights. Defaults to 1024 entries, and limited to 8M entries.
+	MinRingSize *int `json:"minRingSize,omitempty"`
+}
+
+func (m MeshLoadBalancingStrategyItemLoadBalancerRingHash) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerRingHash) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerRingHash) GetHashFunction() *MeshLoadBalancingStrategyItemLoadBalancerHashFunction {
+	if m == nil {
+		return nil
+	}
+	return m.HashFunction
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerRingHash) GetMaxRingSize() *int {
+	if m == nil {
+		return nil
+	}
+	return m.MaxRingSize
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerRingHash) GetMinRingSize() *int {
+	if m == nil {
+		return nil
+	}
+	return m.MinRingSize
+}
+
+type MeshLoadBalancingStrategyItemLoadBalancerSpecType string
+
+const (
+	MeshLoadBalancingStrategyItemLoadBalancerSpecTypeRoundRobin   MeshLoadBalancingStrategyItemLoadBalancerSpecType = "RoundRobin"
+	MeshLoadBalancingStrategyItemLoadBalancerSpecTypeLeastRequest MeshLoadBalancingStrategyItemLoadBalancerSpecType = "LeastRequest"
+	MeshLoadBalancingStrategyItemLoadBalancerSpecTypeRingHash     MeshLoadBalancingStrategyItemLoadBalancerSpecType = "RingHash"
+	MeshLoadBalancingStrategyItemLoadBalancerSpecTypeRandom       MeshLoadBalancingStrategyItemLoadBalancerSpecType = "Random"
+	MeshLoadBalancingStrategyItemLoadBalancerSpecTypeMaglev       MeshLoadBalancingStrategyItemLoadBalancerSpecType = "Maglev"
+)
+
+func (e MeshLoadBalancingStrategyItemLoadBalancerSpecType) ToPointer() *MeshLoadBalancingStrategyItemLoadBalancerSpecType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshLoadBalancingStrategyItemLoadBalancerSpecType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "RoundRobin", "LeastRequest", "RingHash", "Random", "Maglev":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshLoadBalancingStrategyItemLoadBalancerActiveRequestBiasType string
+
+const (
+	MeshLoadBalancingStrategyItemLoadBalancerActiveRequestBiasTypeInteger MeshLoadBalancingStrategyItemLoadBalancerActiveRequestBiasType = "integer"
+	MeshLoadBalancingStrategyItemLoadBalancerActiveRequestBiasTypeStr     MeshLoadBalancingStrategyItemLoadBalancerActiveRequestBiasType = "str"
+)
+
+// MeshLoadBalancingStrategyItemLoadBalancerActiveRequestBias - ActiveRequestBias refers to dynamic weights applied when hosts have varying load
+// balancing weights. A higher value here aggressively reduces the weight of endpoints
+// that are currently handling active requests. In essence, the higher the ActiveRequestBias
+// value, the more forcefully it reduces the load balancing weight of endpoints that are
+// actively serving requests.
+type MeshLoadBalancingStrategyItemLoadBalancerActiveRequestBias struct {
+	Integer *int64  `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
+
+	Type MeshLoadBalancingStrategyItemLoadBalancerActiveRequestBiasType
+}
+
+func CreateMeshLoadBalancingStrategyItemLoadBalancerActiveRequestBiasInteger(integer int64) MeshLoadBalancingStrategyItemLoadBalancerActiveRequestBias {
+	typ := MeshLoadBalancingStrategyItemLoadBalancerActiveRequestBiasTypeInteger
+
+	return MeshLoadBalancingStrategyItemLoadBalancerActiveRequestBias{
+		Integer: &integer,
+		Type:    typ,
+	}
+}
+
+func CreateMeshLoadBalancingStrategyItemLoadBalancerActiveRequestBiasStr(str string) MeshLoadBalancingStrategyItemLoadBalancerActiveRequestBias {
+	typ := MeshLoadBalancingStrategyItemLoadBalancerActiveRequestBiasTypeStr
+
+	return MeshLoadBalancingStrategyItemLoadBalancerActiveRequestBias{
+		Str:  &str,
+		Type: typ,
+	}
+}
+
+func (u *MeshLoadBalancingStrategyItemLoadBalancerActiveRequestBias) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var integer int64 = int64(0)
+	if err := utils.UnmarshalJSON(data, &integer, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshLoadBalancingStrategyItemLoadBalancerActiveRequestBiasTypeInteger,
+			Value: &integer,
+		})
+	}
+
+	var str string = ""
+	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshLoadBalancingStrategyItemLoadBalancerActiveRequestBiasTypeStr,
+			Value: &str,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshLoadBalancingStrategyItemLoadBalancerActiveRequestBias", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshLoadBalancingStrategyItemLoadBalancerActiveRequestBias", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(MeshLoadBalancingStrategyItemLoadBalancerActiveRequestBiasType)
+	switch best.Type {
+	case MeshLoadBalancingStrategyItemLoadBalancerActiveRequestBiasTypeInteger:
+		u.Integer = best.Value.(*int64)
+		return nil
+	case MeshLoadBalancingStrategyItemLoadBalancerActiveRequestBiasTypeStr:
+		u.Str = best.Value.(*string)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshLoadBalancingStrategyItemLoadBalancerActiveRequestBias", string(data))
+}
+
+func (u MeshLoadBalancingStrategyItemLoadBalancerActiveRequestBias) MarshalJSON() ([]byte, error) {
+	if u.Integer != nil {
+		return utils.MarshalJSON(u.Integer, "", true)
+	}
+
+	if u.Str != nil {
+		return utils.MarshalJSON(u.Str, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type MeshLoadBalancingStrategyItemLoadBalancerActiveRequestBias: all fields are null")
+}
+
+// MeshLoadBalancingStrategyItemLoadBalancerLeastRequest - LeastRequest selects N random available hosts as specified in 'choiceCount' (2 by default)
+// and picks the host which has the fewest active requests
+type MeshLoadBalancingStrategyItemLoadBalancerLeastRequest struct {
+	// ActiveRequestBias refers to dynamic weights applied when hosts have varying load
+	// balancing weights. A higher value here aggressively reduces the weight of endpoints
+	// that are currently handling active requests. In essence, the higher the ActiveRequestBias
+	// value, the more forcefully it reduces the load balancing weight of endpoints that are
+	// actively serving requests.
+	ActiveRequestBias *MeshLoadBalancingStrategyItemLoadBalancerActiveRequestBias `json:"activeRequestBias,omitempty"`
+	// ChoiceCount is the number of random healthy hosts from which the host with
+	// the fewest active requests will be chosen. Defaults to 2 so that Envoy performs
+	// two-choice selection if the field is not set.
+	ChoiceCount *int `json:"choiceCount,omitempty"`
+}
+
+func (m MeshLoadBalancingStrategyItemLoadBalancerLeastRequest) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerLeastRequest) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerLeastRequest) GetActiveRequestBias() *MeshLoadBalancingStrategyItemLoadBalancerActiveRequestBias {
+	if m == nil {
+		return nil
+	}
+	return m.ActiveRequestBias
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerLeastRequest) GetChoiceCount() *int {
+	if m == nil {
+		return nil
+	}
+	return m.ChoiceCount
+}
+
+// MeshLoadBalancingStrategyItemLoadBalancerMaglev - Maglev implements consistent hashing to upstream hosts. Maglev can be used as
+// a drop in replacement for the ring hash load balancer any place in which
+// consistent hashing is desired.
+type MeshLoadBalancingStrategyItemLoadBalancerMaglev struct {
+	// The table size for Maglev hashing. Maglev aims for “minimal disruption”
+	// rather than an absolute guarantee. Minimal disruption means that when
+	// the set of upstream hosts change, a connection will likely be sent
+	// to the same upstream as it was before. Increasing the table size reduces
+	// the amount of disruption. The table size must be prime number limited to 5000011.
+	// If it is not specified, the default is 65537.
+	TableSize *int `json:"tableSize,omitempty"`
+}
+
+func (m MeshLoadBalancingStrategyItemLoadBalancerMaglev) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerMaglev) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerMaglev) GetTableSize() *int {
+	if m == nil {
+		return nil
+	}
+	return m.TableSize
+}
+
+// MeshLoadBalancingStrategyItemLoadBalancerRandom - Random selects a random available host. The random load balancer generally
+// performs better than round-robin if no health checking policy is configured.
+// Random selection avoids bias towards the host in the set that comes after a failed host.
+type MeshLoadBalancingStrategyItemLoadBalancerRandom struct {
+}
+
+func (m MeshLoadBalancingStrategyItemLoadBalancerRandom) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerRandom) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MeshLoadBalancingStrategyItemLoadBalancerRoundRobin - RoundRobin is a load balancing algorithm that distributes requests
+// across available upstream hosts in round-robin order.
+type MeshLoadBalancingStrategyItemLoadBalancerRoundRobin struct {
+}
+
+func (m MeshLoadBalancingStrategyItemLoadBalancerRoundRobin) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerRoundRobin) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+type LoadBalancer3 struct {
+	// RingHash  implements consistent hashing to upstream hosts. Each host is mapped
+	// onto a circle (the “ring”) by hashing its address; each request is then routed
+	// to a host by hashing some property of the request, and finding the nearest
+	// corresponding host clockwise around the ring.
+	RingHash *MeshLoadBalancingStrategyItemLoadBalancerRingHash `json:"ringHash,omitempty"`
+	Type     MeshLoadBalancingStrategyItemLoadBalancerSpecType  `json:"type"`
+	// LeastRequest selects N random available hosts as specified in 'choiceCount' (2 by default)
+	// and picks the host which has the fewest active requests
+	LeastRequest *MeshLoadBalancingStrategyItemLoadBalancerLeastRequest `json:"leastRequest,omitempty"`
+	// Maglev implements consistent hashing to upstream hosts. Maglev can be used as
+	// a drop in replacement for the ring hash load balancer any place in which
+	// consistent hashing is desired.
+	Maglev *MeshLoadBalancingStrategyItemLoadBalancerMaglev `json:"maglev,omitempty"`
+	// Random selects a random available host. The random load balancer generally
+	// performs better than round-robin if no health checking policy is configured.
+	// Random selection avoids bias towards the host in the set that comes after a failed host.
+	Random *MeshLoadBalancingStrategyItemLoadBalancerRandom `json:"random,omitempty"`
+	// RoundRobin is a load balancing algorithm that distributes requests
+	// across available upstream hosts in round-robin order.
+	RoundRobin *MeshLoadBalancingStrategyItemLoadBalancerRoundRobin `json:"roundRobin,omitempty"`
+}
+
+func (l LoadBalancer3) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(l, "", false)
+}
+
+func (l *LoadBalancer3) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &l, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (l *LoadBalancer3) GetRingHash() *MeshLoadBalancingStrategyItemLoadBalancerRingHash {
+	if l == nil {
+		return nil
+	}
+	return l.RingHash
+}
+
+func (l *LoadBalancer3) GetType() MeshLoadBalancingStrategyItemLoadBalancerSpecType {
+	if l == nil {
+		return MeshLoadBalancingStrategyItemLoadBalancerSpecType("")
+	}
+	return l.Type
+}
+
+func (l *LoadBalancer3) GetLeastRequest() *MeshLoadBalancingStrategyItemLoadBalancerLeastRequest {
+	if l == nil {
+		return nil
+	}
+	return l.LeastRequest
+}
+
+func (l *LoadBalancer3) GetMaglev() *MeshLoadBalancingStrategyItemLoadBalancerMaglev {
+	if l == nil {
+		return nil
+	}
+	return l.Maglev
+}
+
+func (l *LoadBalancer3) GetRandom() *MeshLoadBalancingStrategyItemLoadBalancerRandom {
+	if l == nil {
+		return nil
+	}
+	return l.Random
+}
+
+func (l *LoadBalancer3) GetRoundRobin() *MeshLoadBalancingStrategyItemLoadBalancerRoundRobin {
+	if l == nil {
+		return nil
+	}
+	return l.RoundRobin
+}
+
+// #region class-body-loadbalancer3
+// #endregion class-body-loadbalancer3
+
+type LoadBalancerActiveRequestBiasType string
+
+const (
+	LoadBalancerActiveRequestBiasTypeInteger LoadBalancerActiveRequestBiasType = "integer"
+	LoadBalancerActiveRequestBiasTypeStr     LoadBalancerActiveRequestBiasType = "str"
+)
+
+// LoadBalancerActiveRequestBias - ActiveRequestBias refers to dynamic weights applied when hosts have varying load
+// balancing weights. A higher value here aggressively reduces the weight of endpoints
+// that are currently handling active requests. In essence, the higher the ActiveRequestBias
+// value, the more forcefully it reduces the load balancing weight of endpoints that are
+// actively serving requests.
+type LoadBalancerActiveRequestBias struct {
+	Integer *int64  `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
+
+	Type LoadBalancerActiveRequestBiasType
+}
+
+func CreateLoadBalancerActiveRequestBiasInteger(integer int64) LoadBalancerActiveRequestBias {
+	typ := LoadBalancerActiveRequestBiasTypeInteger
+
+	return LoadBalancerActiveRequestBias{
+		Integer: &integer,
+		Type:    typ,
+	}
+}
+
+func CreateLoadBalancerActiveRequestBiasStr(str string) LoadBalancerActiveRequestBias {
+	typ := LoadBalancerActiveRequestBiasTypeStr
+
+	return LoadBalancerActiveRequestBias{
+		Str:  &str,
+		Type: typ,
+	}
+}
+
+func (u *LoadBalancerActiveRequestBias) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var integer int64 = int64(0)
+	if err := utils.UnmarshalJSON(data, &integer, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  LoadBalancerActiveRequestBiasTypeInteger,
+			Value: &integer,
+		})
+	}
+
+	var str string = ""
+	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  LoadBalancerActiveRequestBiasTypeStr,
+			Value: &str,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for LoadBalancerActiveRequestBias", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for LoadBalancerActiveRequestBias", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(LoadBalancerActiveRequestBiasType)
+	switch best.Type {
+	case LoadBalancerActiveRequestBiasTypeInteger:
+		u.Integer = best.Value.(*int64)
+		return nil
+	case LoadBalancerActiveRequestBiasTypeStr:
+		u.Str = best.Value.(*string)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for LoadBalancerActiveRequestBias", string(data))
+}
+
+func (u LoadBalancerActiveRequestBias) MarshalJSON() ([]byte, error) {
+	if u.Integer != nil {
+		return utils.MarshalJSON(u.Integer, "", true)
+	}
+
+	if u.Str != nil {
+		return utils.MarshalJSON(u.Str, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type LoadBalancerActiveRequestBias: all fields are null")
+}
+
+// LoadBalancerLeastRequest - LeastRequest selects N random available hosts as specified in 'choiceCount' (2 by default)
+// and picks the host which has the fewest active requests
+type LoadBalancerLeastRequest struct {
+	// ActiveRequestBias refers to dynamic weights applied when hosts have varying load
+	// balancing weights. A higher value here aggressively reduces the weight of endpoints
+	// that are currently handling active requests. In essence, the higher the ActiveRequestBias
+	// value, the more forcefully it reduces the load balancing weight of endpoints that are
+	// actively serving requests.
+	ActiveRequestBias *LoadBalancerActiveRequestBias `json:"activeRequestBias,omitempty"`
+	// ChoiceCount is the number of random healthy hosts from which the host with
+	// the fewest active requests will be chosen. Defaults to 2 so that Envoy performs
+	// two-choice selection if the field is not set.
+	ChoiceCount *int `json:"choiceCount,omitempty"`
+}
+
+func (l LoadBalancerLeastRequest) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(l, "", false)
+}
+
+func (l *LoadBalancerLeastRequest) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &l, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (l *LoadBalancerLeastRequest) GetActiveRequestBias() *LoadBalancerActiveRequestBias {
+	if l == nil {
+		return nil
+	}
+	return l.ActiveRequestBias
+}
+
+func (l *LoadBalancerLeastRequest) GetChoiceCount() *int {
+	if l == nil {
+		return nil
+	}
+	return l.ChoiceCount
+}
+
+type MeshLoadBalancingStrategyItemLoadBalancerType string
+
+const (
+	MeshLoadBalancingStrategyItemLoadBalancerTypeRoundRobin   MeshLoadBalancingStrategyItemLoadBalancerType = "RoundRobin"
+	MeshLoadBalancingStrategyItemLoadBalancerTypeLeastRequest MeshLoadBalancingStrategyItemLoadBalancerType = "LeastRequest"
+	MeshLoadBalancingStrategyItemLoadBalancerTypeRingHash     MeshLoadBalancingStrategyItemLoadBalancerType = "RingHash"
+	MeshLoadBalancingStrategyItemLoadBalancerTypeRandom       MeshLoadBalancingStrategyItemLoadBalancerType = "Random"
+	MeshLoadBalancingStrategyItemLoadBalancerTypeMaglev       MeshLoadBalancingStrategyItemLoadBalancerType = "Maglev"
+)
+
+func (e MeshLoadBalancingStrategyItemLoadBalancerType) ToPointer() *MeshLoadBalancingStrategyItemLoadBalancerType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshLoadBalancingStrategyItemLoadBalancerType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "RoundRobin", "LeastRequest", "RingHash", "Random", "Maglev":
+			return true
+		}
+	}
+	return false
+}
+
+// LoadBalancerMaglev - Maglev implements consistent hashing to upstream hosts. Maglev can be used as
+// a drop in replacement for the ring hash load balancer any place in which
+// consistent hashing is desired.
+type LoadBalancerMaglev struct {
+	// The table size for Maglev hashing. Maglev aims for “minimal disruption”
+	// rather than an absolute guarantee. Minimal disruption means that when
+	// the set of upstream hosts change, a connection will likely be sent
+	// to the same upstream as it was before. Increasing the table size reduces
+	// the amount of disruption. The table size must be prime number limited to 5000011.
+	// If it is not specified, the default is 65537.
+	TableSize *int `json:"tableSize,omitempty"`
+}
+
+func (l LoadBalancerMaglev) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(l, "", false)
+}
+
+func (l *LoadBalancerMaglev) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &l, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (l *LoadBalancerMaglev) GetTableSize() *int {
+	if l == nil {
+		return nil
+	}
+	return l.TableSize
+}
+
+// LoadBalancerRandom - Random selects a random available host. The random load balancer generally
+// performs better than round-robin if no health checking policy is configured.
+// Random selection avoids bias towards the host in the set that comes after a failed host.
+type LoadBalancerRandom struct {
+}
+
+func (l LoadBalancerRandom) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(l, "", false)
+}
+
+func (l *LoadBalancerRandom) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &l, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+// LoadBalancerHashFunction - HashFunction is a function used to hash hosts onto the ketama ring.
+// The value defaults to XX_HASH. Available values – XX_HASH, MURMUR_HASH_2.
+type LoadBalancerHashFunction string
+
+const (
+	LoadBalancerHashFunctionXxHash      LoadBalancerHashFunction = "XXHash"
+	LoadBalancerHashFunctionMurmurHash2 LoadBalancerHashFunction = "MurmurHash2"
+)
+
+func (e LoadBalancerHashFunction) ToPointer() *LoadBalancerHashFunction {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *LoadBalancerHashFunction) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "XXHash", "MurmurHash2":
+			return true
+		}
+	}
+	return false
+}
+
+// LoadBalancerRingHash - RingHash  implements consistent hashing to upstream hosts. Each host is mapped
+// onto a circle (the “ring”) by hashing its address; each request is then routed
+// to a host by hashing some property of the request, and finding the nearest
+// corresponding host clockwise around the ring.
+type LoadBalancerRingHash struct {
+	// HashFunction is a function used to hash hosts onto the ketama ring.
+	// The value defaults to XX_HASH. Available values – XX_HASH, MURMUR_HASH_2.
+	HashFunction *LoadBalancerHashFunction `json:"hashFunction,omitempty"`
+	// Maximum hash ring size. Defaults to 8M entries, and limited to 8M entries,
+	// but can be lowered to further constrain resource use.
+	MaxRingSize *int `json:"maxRingSize,omitempty"`
+	// Minimum hash ring size. The larger the ring is (that is,
+	// the more hashes there are for each provided host) the better the request distribution
+	// will reflect the desired weights. Defaults to 1024 entries, and limited to 8M entries.
+	MinRingSize *int `json:"minRingSize,omitempty"`
+}
+
+func (l LoadBalancerRingHash) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(l, "", false)
+}
+
+func (l *LoadBalancerRingHash) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &l, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (l *LoadBalancerRingHash) GetHashFunction() *LoadBalancerHashFunction {
+	if l == nil {
+		return nil
+	}
+	return l.HashFunction
+}
+
+func (l *LoadBalancerRingHash) GetMaxRingSize() *int {
+	if l == nil {
+		return nil
+	}
+	return l.MaxRingSize
+}
+
+func (l *LoadBalancerRingHash) GetMinRingSize() *int {
+	if l == nil {
+		return nil
+	}
+	return l.MinRingSize
+}
+
+// LoadBalancerRoundRobin - RoundRobin is a load balancing algorithm that distributes requests
+// across available upstream hosts in round-robin order.
+type LoadBalancerRoundRobin struct {
+}
+
+func (l LoadBalancerRoundRobin) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(l, "", false)
+}
+
+func (l *LoadBalancerRoundRobin) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &l, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+type LoadBalancer2 struct {
+	// LeastRequest selects N random available hosts as specified in 'choiceCount' (2 by default)
+	// and picks the host which has the fewest active requests
+	LeastRequest *LoadBalancerLeastRequest                     `json:"leastRequest,omitempty"`
+	Type         MeshLoadBalancingStrategyItemLoadBalancerType `json:"type"`
+	// Maglev implements consistent hashing to upstream hosts. Maglev can be used as
+	// a drop in replacement for the ring hash load balancer any place in which
+	// consistent hashing is desired.
+	Maglev *LoadBalancerMaglev `json:"maglev,omitempty"`
+	// Random selects a random available host. The random load balancer generally
+	// performs better than round-robin if no health checking policy is configured.
+	// Random selection avoids bias towards the host in the set that comes after a failed host.
+	Random *LoadBalancerRandom `json:"random,omitempty"`
+	// RingHash  implements consistent hashing to upstream hosts. Each host is mapped
+	// onto a circle (the “ring”) by hashing its address; each request is then routed
+	// to a host by hashing some property of the request, and finding the nearest
+	// corresponding host clockwise around the ring.
+	RingHash *LoadBalancerRingHash `json:"ringHash,omitempty"`
+	// RoundRobin is a load balancing algorithm that distributes requests
+	// across available upstream hosts in round-robin order.
+	RoundRobin *LoadBalancerRoundRobin `json:"roundRobin,omitempty"`
+}
+
+func (l LoadBalancer2) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(l, "", false)
+}
+
+func (l *LoadBalancer2) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &l, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (l *LoadBalancer2) GetLeastRequest() *LoadBalancerLeastRequest {
+	if l == nil {
+		return nil
+	}
+	return l.LeastRequest
+}
+
+func (l *LoadBalancer2) GetType() MeshLoadBalancingStrategyItemLoadBalancerType {
+	if l == nil {
+		return MeshLoadBalancingStrategyItemLoadBalancerType("")
+	}
+	return l.Type
+}
+
+func (l *LoadBalancer2) GetMaglev() *LoadBalancerMaglev {
+	if l == nil {
+		return nil
+	}
+	return l.Maglev
+}
+
+func (l *LoadBalancer2) GetRandom() *LoadBalancerRandom {
+	if l == nil {
+		return nil
+	}
+	return l.Random
+}
+
+func (l *LoadBalancer2) GetRingHash() *LoadBalancerRingHash {
+	if l == nil {
+		return nil
+	}
+	return l.RingHash
+}
+
+func (l *LoadBalancer2) GetRoundRobin() *LoadBalancerRoundRobin {
+	if l == nil {
+		return nil
+	}
+	return l.RoundRobin
+}
+
+// #region class-body-loadbalancer2
+// #endregion class-body-loadbalancer2
+
+// RoundRobin is a load balancing algorithm that distributes requests
+// across available upstream hosts in round-robin order.
+type RoundRobin struct {
+}
+
+func (r RoundRobin) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(r, "", false)
+}
+
+func (r *RoundRobin) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &r, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+type LoadBalancerType string
+
+const (
+	LoadBalancerTypeRoundRobin   LoadBalancerType = "RoundRobin"
+	LoadBalancerTypeLeastRequest LoadBalancerType = "LeastRequest"
+	LoadBalancerTypeRingHash     LoadBalancerType = "RingHash"
+	LoadBalancerTypeRandom       LoadBalancerType = "Random"
+	LoadBalancerTypeMaglev       LoadBalancerType = "Maglev"
+)
+
+func (e LoadBalancerType) ToPointer() *LoadBalancerType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *LoadBalancerType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "RoundRobin", "LeastRequest", "RingHash", "Random", "Maglev":
+			return true
+		}
+	}
+	return false
 }
 
 type ActiveRequestBiasType string
@@ -417,6 +3099,17 @@ type LeastRequest struct {
 	ChoiceCount *int `json:"choiceCount,omitempty"`
 }
 
+func (l LeastRequest) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(l, "", false)
+}
+
+func (l *LeastRequest) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &l, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (l *LeastRequest) GetActiveRequestBias() *ActiveRequestBias {
 	if l == nil {
 		return nil
@@ -444,6 +3137,17 @@ type Maglev struct {
 	TableSize *int `json:"tableSize,omitempty"`
 }
 
+func (m Maglev) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *Maglev) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (m *Maglev) GetTableSize() *int {
 	if m == nil {
 		return nil
@@ -451,10 +3155,21 @@ func (m *Maglev) GetTableSize() *int {
 	return m.TableSize
 }
 
-// MeshLoadBalancingStrategyItemRandom - Random selects a random available host. The random load balancer generally
+// MeshLoadBalancingStrategyItemLoadBalancerSpecToDefaultRandom - Random selects a random available host. The random load balancer generally
 // performs better than round-robin if no health checking policy is configured.
 // Random selection avoids bias towards the host in the set that comes after a failed host.
-type MeshLoadBalancingStrategyItemRandom struct {
+type MeshLoadBalancingStrategyItemLoadBalancerSpecToDefaultRandom struct {
+}
+
+func (m MeshLoadBalancingStrategyItemLoadBalancerSpecToDefaultRandom) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshLoadBalancingStrategyItemLoadBalancerSpecToDefaultRandom) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 // HashFunction is a function used to hash hosts onto the ketama ring.
@@ -498,6 +3213,17 @@ type RingHash struct {
 	MinRingSize *int `json:"minRingSize,omitempty"`
 }
 
+func (r RingHash) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(r, "", false)
+}
+
+func (r *RingHash) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &r, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (r *RingHash) GetHashFunction() *HashFunction {
 	if r == nil {
 		return nil
@@ -519,38 +3245,11 @@ func (r *RingHash) GetMinRingSize() *int {
 	return r.MinRingSize
 }
 
-// RoundRobin is a load balancing algorithm that distributes requests
-// across available upstream hosts in round-robin order.
-type RoundRobin struct {
-}
-
-type MeshLoadBalancingStrategyItemSpecToType string
-
-const (
-	MeshLoadBalancingStrategyItemSpecToTypeRoundRobin   MeshLoadBalancingStrategyItemSpecToType = "RoundRobin"
-	MeshLoadBalancingStrategyItemSpecToTypeLeastRequest MeshLoadBalancingStrategyItemSpecToType = "LeastRequest"
-	MeshLoadBalancingStrategyItemSpecToTypeRingHash     MeshLoadBalancingStrategyItemSpecToType = "RingHash"
-	MeshLoadBalancingStrategyItemSpecToTypeRandom       MeshLoadBalancingStrategyItemSpecToType = "Random"
-	MeshLoadBalancingStrategyItemSpecToTypeMaglev       MeshLoadBalancingStrategyItemSpecToType = "Maglev"
-)
-
-func (e MeshLoadBalancingStrategyItemSpecToType) ToPointer() *MeshLoadBalancingStrategyItemSpecToType {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshLoadBalancingStrategyItemSpecToType) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "RoundRobin", "LeastRequest", "RingHash", "Random", "Maglev":
-			return true
-		}
-	}
-	return false
-}
-
-// LoadBalancer allows to specify load balancing algorithm.
-type LoadBalancer struct {
+type LoadBalancer1 struct {
+	// RoundRobin is a load balancing algorithm that distributes requests
+	// across available upstream hosts in round-robin order.
+	RoundRobin *RoundRobin      `json:"roundRobin,omitempty"`
+	Type       LoadBalancerType `json:"type"`
 	// LeastRequest selects N random available hosts as specified in 'choiceCount' (2 by default)
 	// and picks the host which has the fewest active requests
 	LeastRequest *LeastRequest `json:"leastRequest,omitempty"`
@@ -561,58 +3260,236 @@ type LoadBalancer struct {
 	// Random selects a random available host. The random load balancer generally
 	// performs better than round-robin if no health checking policy is configured.
 	// Random selection avoids bias towards the host in the set that comes after a failed host.
-	Random *MeshLoadBalancingStrategyItemRandom `json:"random,omitempty"`
+	Random *MeshLoadBalancingStrategyItemLoadBalancerSpecToDefaultRandom `json:"random,omitempty"`
 	// RingHash  implements consistent hashing to upstream hosts. Each host is mapped
 	// onto a circle (the “ring”) by hashing its address; each request is then routed
 	// to a host by hashing some property of the request, and finding the nearest
 	// corresponding host clockwise around the ring.
 	RingHash *RingHash `json:"ringHash,omitempty"`
-	// RoundRobin is a load balancing algorithm that distributes requests
-	// across available upstream hosts in round-robin order.
-	RoundRobin *RoundRobin                             `json:"roundRobin,omitempty"`
-	Type       MeshLoadBalancingStrategyItemSpecToType `json:"type"`
 }
 
-func (l *LoadBalancer) GetLeastRequest() *LeastRequest {
-	if l == nil {
-		return nil
+func (l LoadBalancer1) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(l, "", false)
+}
+
+func (l *LoadBalancer1) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &l, "", false, nil); err != nil {
+		return err
 	}
-	return l.LeastRequest
+	return nil
 }
 
-func (l *LoadBalancer) GetMaglev() *Maglev {
-	if l == nil {
-		return nil
-	}
-	return l.Maglev
-}
-
-func (l *LoadBalancer) GetRandom() *MeshLoadBalancingStrategyItemRandom {
-	if l == nil {
-		return nil
-	}
-	return l.Random
-}
-
-func (l *LoadBalancer) GetRingHash() *RingHash {
-	if l == nil {
-		return nil
-	}
-	return l.RingHash
-}
-
-func (l *LoadBalancer) GetRoundRobin() *RoundRobin {
+func (l *LoadBalancer1) GetRoundRobin() *RoundRobin {
 	if l == nil {
 		return nil
 	}
 	return l.RoundRobin
 }
 
-func (l *LoadBalancer) GetType() MeshLoadBalancingStrategyItemSpecToType {
+func (l *LoadBalancer1) GetType() LoadBalancerType {
 	if l == nil {
-		return MeshLoadBalancingStrategyItemSpecToType("")
+		return LoadBalancerType("")
 	}
 	return l.Type
+}
+
+func (l *LoadBalancer1) GetLeastRequest() *LeastRequest {
+	if l == nil {
+		return nil
+	}
+	return l.LeastRequest
+}
+
+func (l *LoadBalancer1) GetMaglev() *Maglev {
+	if l == nil {
+		return nil
+	}
+	return l.Maglev
+}
+
+func (l *LoadBalancer1) GetRandom() *MeshLoadBalancingStrategyItemLoadBalancerSpecToDefaultRandom {
+	if l == nil {
+		return nil
+	}
+	return l.Random
+}
+
+func (l *LoadBalancer1) GetRingHash() *RingHash {
+	if l == nil {
+		return nil
+	}
+	return l.RingHash
+}
+
+// #region class-body-loadbalancer1
+// #endregion class-body-loadbalancer1
+
+type LoadBalancerUnionType string
+
+const (
+	LoadBalancerUnionTypeLoadBalancer1 LoadBalancerUnionType = "loadBalancer_1"
+	LoadBalancerUnionTypeLoadBalancer2 LoadBalancerUnionType = "loadBalancer_2"
+	LoadBalancerUnionTypeLoadBalancer3 LoadBalancerUnionType = "loadBalancer_3"
+	LoadBalancerUnionTypeLoadBalancer4 LoadBalancerUnionType = "loadBalancer_4"
+	LoadBalancerUnionTypeLoadBalancer5 LoadBalancerUnionType = "loadBalancer_5"
+)
+
+// LoadBalancer allows to specify load balancing algorithm.
+type LoadBalancer struct {
+	LoadBalancer1 *LoadBalancer1 `queryParam:"inline" union:"member"`
+	LoadBalancer2 *LoadBalancer2 `queryParam:"inline" union:"member"`
+	LoadBalancer3 *LoadBalancer3 `queryParam:"inline" union:"member"`
+	LoadBalancer4 *LoadBalancer4 `queryParam:"inline" union:"member"`
+	LoadBalancer5 *LoadBalancer5 `queryParam:"inline" union:"member"`
+
+	Type LoadBalancerUnionType
+}
+
+func CreateLoadBalancerLoadBalancer1(loadBalancer1 LoadBalancer1) LoadBalancer {
+	typ := LoadBalancerUnionTypeLoadBalancer1
+
+	return LoadBalancer{
+		LoadBalancer1: &loadBalancer1,
+		Type:          typ,
+	}
+}
+
+func CreateLoadBalancerLoadBalancer2(loadBalancer2 LoadBalancer2) LoadBalancer {
+	typ := LoadBalancerUnionTypeLoadBalancer2
+
+	return LoadBalancer{
+		LoadBalancer2: &loadBalancer2,
+		Type:          typ,
+	}
+}
+
+func CreateLoadBalancerLoadBalancer3(loadBalancer3 LoadBalancer3) LoadBalancer {
+	typ := LoadBalancerUnionTypeLoadBalancer3
+
+	return LoadBalancer{
+		LoadBalancer3: &loadBalancer3,
+		Type:          typ,
+	}
+}
+
+func CreateLoadBalancerLoadBalancer4(loadBalancer4 LoadBalancer4) LoadBalancer {
+	typ := LoadBalancerUnionTypeLoadBalancer4
+
+	return LoadBalancer{
+		LoadBalancer4: &loadBalancer4,
+		Type:          typ,
+	}
+}
+
+func CreateLoadBalancerLoadBalancer5(loadBalancer5 LoadBalancer5) LoadBalancer {
+	typ := LoadBalancerUnionTypeLoadBalancer5
+
+	return LoadBalancer{
+		LoadBalancer5: &loadBalancer5,
+		Type:          typ,
+	}
+}
+
+func (u *LoadBalancer) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var loadBalancer1 LoadBalancer1 = LoadBalancer1{}
+	if err := utils.UnmarshalJSON(data, &loadBalancer1, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  LoadBalancerUnionTypeLoadBalancer1,
+			Value: &loadBalancer1,
+		})
+	}
+
+	var loadBalancer2 LoadBalancer2 = LoadBalancer2{}
+	if err := utils.UnmarshalJSON(data, &loadBalancer2, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  LoadBalancerUnionTypeLoadBalancer2,
+			Value: &loadBalancer2,
+		})
+	}
+
+	var loadBalancer3 LoadBalancer3 = LoadBalancer3{}
+	if err := utils.UnmarshalJSON(data, &loadBalancer3, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  LoadBalancerUnionTypeLoadBalancer3,
+			Value: &loadBalancer3,
+		})
+	}
+
+	var loadBalancer4 LoadBalancer4 = LoadBalancer4{}
+	if err := utils.UnmarshalJSON(data, &loadBalancer4, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  LoadBalancerUnionTypeLoadBalancer4,
+			Value: &loadBalancer4,
+		})
+	}
+
+	var loadBalancer5 LoadBalancer5 = LoadBalancer5{}
+	if err := utils.UnmarshalJSON(data, &loadBalancer5, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  LoadBalancerUnionTypeLoadBalancer5,
+			Value: &loadBalancer5,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for LoadBalancer", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for LoadBalancer", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(LoadBalancerUnionType)
+	switch best.Type {
+	case LoadBalancerUnionTypeLoadBalancer1:
+		u.LoadBalancer1 = best.Value.(*LoadBalancer1)
+		return nil
+	case LoadBalancerUnionTypeLoadBalancer2:
+		u.LoadBalancer2 = best.Value.(*LoadBalancer2)
+		return nil
+	case LoadBalancerUnionTypeLoadBalancer3:
+		u.LoadBalancer3 = best.Value.(*LoadBalancer3)
+		return nil
+	case LoadBalancerUnionTypeLoadBalancer4:
+		u.LoadBalancer4 = best.Value.(*LoadBalancer4)
+		return nil
+	case LoadBalancerUnionTypeLoadBalancer5:
+		u.LoadBalancer5 = best.Value.(*LoadBalancer5)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for LoadBalancer", string(data))
+}
+
+func (u LoadBalancer) MarshalJSON() ([]byte, error) {
+	if u.LoadBalancer1 != nil {
+		return utils.MarshalJSON(u.LoadBalancer1, "", true)
+	}
+
+	if u.LoadBalancer2 != nil {
+		return utils.MarshalJSON(u.LoadBalancer2, "", true)
+	}
+
+	if u.LoadBalancer3 != nil {
+		return utils.MarshalJSON(u.LoadBalancer3, "", true)
+	}
+
+	if u.LoadBalancer4 != nil {
+		return utils.MarshalJSON(u.LoadBalancer4, "", true)
+	}
+
+	if u.LoadBalancer5 != nil {
+		return utils.MarshalJSON(u.LoadBalancer5, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type LoadBalancer: all fields are null")
 }
 
 // MeshLoadBalancingStrategyItemFrom - From defines the list of zones to which the rule applies
@@ -627,22 +3504,22 @@ func (m *MeshLoadBalancingStrategyItemFrom) GetZones() []string {
 	return m.Zones
 }
 
-// MeshLoadBalancingStrategyItemSpecToDefaultType - Type defines how target zones will be picked from available zones
-type MeshLoadBalancingStrategyItemSpecToDefaultType string
+// MeshLoadBalancingStrategyItemSpecType - Type defines how target zones will be picked from available zones
+type MeshLoadBalancingStrategyItemSpecType string
 
 const (
-	MeshLoadBalancingStrategyItemSpecToDefaultTypeNone      MeshLoadBalancingStrategyItemSpecToDefaultType = "None"
-	MeshLoadBalancingStrategyItemSpecToDefaultTypeOnly      MeshLoadBalancingStrategyItemSpecToDefaultType = "Only"
-	MeshLoadBalancingStrategyItemSpecToDefaultTypeAny       MeshLoadBalancingStrategyItemSpecToDefaultType = "Any"
-	MeshLoadBalancingStrategyItemSpecToDefaultTypeAnyExcept MeshLoadBalancingStrategyItemSpecToDefaultType = "AnyExcept"
+	MeshLoadBalancingStrategyItemSpecTypeNone      MeshLoadBalancingStrategyItemSpecType = "None"
+	MeshLoadBalancingStrategyItemSpecTypeOnly      MeshLoadBalancingStrategyItemSpecType = "Only"
+	MeshLoadBalancingStrategyItemSpecTypeAny       MeshLoadBalancingStrategyItemSpecType = "Any"
+	MeshLoadBalancingStrategyItemSpecTypeAnyExcept MeshLoadBalancingStrategyItemSpecType = "AnyExcept"
 )
 
-func (e MeshLoadBalancingStrategyItemSpecToDefaultType) ToPointer() *MeshLoadBalancingStrategyItemSpecToDefaultType {
+func (e MeshLoadBalancingStrategyItemSpecType) ToPointer() *MeshLoadBalancingStrategyItemSpecType {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshLoadBalancingStrategyItemSpecToDefaultType) IsExact() bool {
+func (e *MeshLoadBalancingStrategyItemSpecType) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "None", "Only", "Any", "AnyExcept":
@@ -655,13 +3532,13 @@ func (e *MeshLoadBalancingStrategyItemSpecToDefaultType) IsExact() bool {
 // MeshLoadBalancingStrategyItemSpecTo - To defines to which zones the traffic should be load balanced
 type MeshLoadBalancingStrategyItemSpecTo struct {
 	// Type defines how target zones will be picked from available zones
-	Type  MeshLoadBalancingStrategyItemSpecToDefaultType `json:"type"`
-	Zones []string                                       `json:"zones,omitempty"`
+	Type  MeshLoadBalancingStrategyItemSpecType `json:"type"`
+	Zones []string                              `json:"zones,omitempty"`
 }
 
-func (m *MeshLoadBalancingStrategyItemSpecTo) GetType() MeshLoadBalancingStrategyItemSpecToDefaultType {
+func (m *MeshLoadBalancingStrategyItemSpecTo) GetType() MeshLoadBalancingStrategyItemSpecType {
 	if m == nil {
-		return MeshLoadBalancingStrategyItemSpecToDefaultType("")
+		return MeshLoadBalancingStrategyItemSpecType("")
 	}
 	return m.Type
 }
@@ -800,7 +3677,7 @@ func (f *FailoverThreshold) GetPercentage() MeshLoadBalancingStrategyItemPercent
 }
 
 // CrossZone defines locality aware load balancing priorities when dataplane proxies inside local zone
-// are unavailable
+// are unavailable. Supported only for to[].targetRef.kind MeshMultiZoneService.
 type CrossZone struct {
 	// Failover defines list of load balancing rules in order of priority
 	Failover []Failover `json:"failover,omitempty"`
@@ -868,7 +3745,7 @@ func (l *LocalZone) GetAffinityTags() []AffinityTags {
 // LocalityAwareness contains configuration for locality aware load balancing.
 type LocalityAwareness struct {
 	// CrossZone defines locality aware load balancing priorities when dataplane proxies inside local zone
-	// are unavailable
+	// are unavailable. Supported only for to[].targetRef.kind MeshMultiZoneService.
 	CrossZone *CrossZone `json:"crossZone,omitempty"`
 	// Disabled allows to disable locality-aware load balancing.
 	// When disabled requests are distributed across all endpoints regardless of locality.
@@ -938,13 +3815,10 @@ type MeshLoadBalancingStrategyItemSpecKind string
 
 const (
 	MeshLoadBalancingStrategyItemSpecKindMesh                 MeshLoadBalancingStrategyItemSpecKind = "Mesh"
-	MeshLoadBalancingStrategyItemSpecKindMeshSubset           MeshLoadBalancingStrategyItemSpecKind = "MeshSubset"
 	MeshLoadBalancingStrategyItemSpecKindMeshService          MeshLoadBalancingStrategyItemSpecKind = "MeshService"
 	MeshLoadBalancingStrategyItemSpecKindMeshExternalService  MeshLoadBalancingStrategyItemSpecKind = "MeshExternalService"
 	MeshLoadBalancingStrategyItemSpecKindMeshMultiZoneService MeshLoadBalancingStrategyItemSpecKind = "MeshMultiZoneService"
-	MeshLoadBalancingStrategyItemSpecKindMeshServiceSubset    MeshLoadBalancingStrategyItemSpecKind = "MeshServiceSubset"
 	MeshLoadBalancingStrategyItemSpecKindMeshHTTPRoute        MeshLoadBalancingStrategyItemSpecKind = "MeshHTTPRoute"
-	MeshLoadBalancingStrategyItemSpecKindDataplane            MeshLoadBalancingStrategyItemSpecKind = "Dataplane"
 )
 
 func (e MeshLoadBalancingStrategyItemSpecKind) ToPointer() *MeshLoadBalancingStrategyItemSpecKind {
@@ -955,7 +3829,7 @@ func (e MeshLoadBalancingStrategyItemSpecKind) ToPointer() *MeshLoadBalancingStr
 func (e *MeshLoadBalancingStrategyItemSpecKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+		case "Mesh", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshHTTPRoute":
 			return true
 		}
 	}
@@ -967,23 +3841,13 @@ func (e *MeshLoadBalancingStrategyItemSpecKind) IsExact() bool {
 type MeshLoadBalancingStrategyItemSpecTargetRef struct {
 	// Kind of the referenced resource
 	Kind MeshLoadBalancingStrategyItemSpecKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select referenced real resources and to carry legacy
+	// service identity when a common TargetRef must still target old
+	// service-tag based paths.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`
-	// and `MeshServiceSubset`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
 }
 
 func (m *MeshLoadBalancingStrategyItemSpecTargetRef) GetKind() MeshLoadBalancingStrategyItemSpecKind {
@@ -1000,39 +3864,11 @@ func (m *MeshLoadBalancingStrategyItemSpecTargetRef) GetLabels() map[string]stri
 	return m.Labels
 }
 
-func (m *MeshLoadBalancingStrategyItemSpecTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshLoadBalancingStrategyItemSpecTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshLoadBalancingStrategyItemSpecTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
 func (m *MeshLoadBalancingStrategyItemSpecTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
-}
-
-func (m *MeshLoadBalancingStrategyItemSpecTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
 }
 
 type MeshLoadBalancingStrategyItemTo struct {

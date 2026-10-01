@@ -104,17 +104,11 @@ resource "kong-mesh_mesh_proxy_patch" "my_meshproxypatch" {
       ]
     }
     target_ref = {
-      kind = "MeshMultiZoneService"
+      kind = "Dataplane"
       labels = {
         key = "value"
       }
-      mesh         = "...my_mesh..."
-      name         = "...my_name..."
-      namespace    = "...my_namespace..."
       section_name = "...my_section_name..."
-      tags = {
-        key = "value"
-      }
     }
   }
   type = "MeshProxyPatch"

@@ -62,7 +62,7 @@ func (r *MeshTLSResourceModel) RefreshFromSharedMeshTLSItem(ctx context.Context,
 				if rulesItem.Default.TLSVersion == nil {
 					rules.Default.TLSVersion = nil
 				} else {
-					rules.Default.TLSVersion = &tfTypes.Version{}
+					rules.Default.TLSVersion = &tfTypes.MeshExternalServiceItemVersion{}
 					if rulesItem.Default.TLSVersion.Max != nil {
 						rules.Default.TLSVersion.Max = types.StringValue(string(*rulesItem.Default.TLSVersion.Max))
 					} else {
@@ -89,16 +89,7 @@ func (r *MeshTLSResourceModel) RefreshFromSharedMeshTLSItem(ctx context.Context,
 					r.Spec.TargetRef.Labels[key] = types.StringValue(value)
 				}
 			}
-			r.Spec.TargetRef.Mesh = types.StringPointerValue(resp.Spec.TargetRef.Mesh)
-			r.Spec.TargetRef.Name = types.StringPointerValue(resp.Spec.TargetRef.Name)
-			r.Spec.TargetRef.Namespace = types.StringPointerValue(resp.Spec.TargetRef.Namespace)
 			r.Spec.TargetRef.SectionName = types.StringPointerValue(resp.Spec.TargetRef.SectionName)
-			if len(resp.Spec.TargetRef.Tags) > 0 {
-				r.Spec.TargetRef.Tags = make(map[string]types.String, len(resp.Spec.TargetRef.Tags))
-				for key1, value1 := range resp.Spec.TargetRef.Tags {
-					r.Spec.TargetRef.Tags[key1] = types.StringValue(value1)
-				}
-			}
 		}
 		r.Type = types.StringValue(string(resp.Type))
 	}
@@ -235,45 +226,16 @@ func (r *MeshTLSResourceModel) ToSharedMeshTLSItemInput(ctx context.Context) (*s
 
 			labels1[labelsKey] = labelsInst
 		}
-		mesh1 := new(string)
-		if !r.Spec.TargetRef.Mesh.IsUnknown() && !r.Spec.TargetRef.Mesh.IsNull() {
-			*mesh1 = r.Spec.TargetRef.Mesh.ValueString()
-		} else {
-			mesh1 = nil
-		}
-		name1 := new(string)
-		if !r.Spec.TargetRef.Name.IsUnknown() && !r.Spec.TargetRef.Name.IsNull() {
-			*name1 = r.Spec.TargetRef.Name.ValueString()
-		} else {
-			name1 = nil
-		}
-		namespace := new(string)
-		if !r.Spec.TargetRef.Namespace.IsUnknown() && !r.Spec.TargetRef.Namespace.IsNull() {
-			*namespace = r.Spec.TargetRef.Namespace.ValueString()
-		} else {
-			namespace = nil
-		}
 		sectionName := new(string)
 		if !r.Spec.TargetRef.SectionName.IsUnknown() && !r.Spec.TargetRef.SectionName.IsNull() {
 			*sectionName = r.Spec.TargetRef.SectionName.ValueString()
 		} else {
 			sectionName = nil
 		}
-		tags := make(map[string]string)
-		for tagsKey := range r.Spec.TargetRef.Tags {
-			var tagsInst string
-			tagsInst = r.Spec.TargetRef.Tags[tagsKey].ValueString()
-
-			tags[tagsKey] = tagsInst
-		}
 		targetRef = &shared.MeshTLSItemTargetRef{
 			Kind:        kind,
 			Labels:      labels1,
-			Mesh:        mesh1,
-			Name:        name1,
-			Namespace:   namespace,
 			SectionName: sectionName,
-			Tags:        tags,
 		}
 	}
 	spec := shared.MeshTLSItemSpec{

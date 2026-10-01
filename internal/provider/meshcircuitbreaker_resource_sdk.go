@@ -96,7 +96,7 @@ func (r *MeshCircuitBreakerResourceModel) RefreshFromSharedMeshCircuitBreakerIte
 							rules.Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(rulesItem.Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts))
 							rules.Default.OutlierDetection.Detectors.SuccessRate.RequestVolume = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(rulesItem.Default.OutlierDetection.Detectors.SuccessRate.RequestVolume))
 							if rulesItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor != nil {
-								rules.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor = &tfTypes.AuthType{}
+								rules.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor = &tfTypes.StandardDeviationFactor{}
 								if rulesItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer != nil {
 									rules.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer = types.Int64PointerValue(rulesItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer)
 								}
@@ -114,7 +114,7 @@ func (r *MeshCircuitBreakerResourceModel) RefreshFromSharedMeshCircuitBreakerIte
 					}
 					rules.Default.OutlierDetection.Disabled = types.BoolPointerValue(rulesItem.Default.OutlierDetection.Disabled)
 					if rulesItem.Default.OutlierDetection.HealthyPanicThreshold != nil {
-						rules.Default.OutlierDetection.HealthyPanicThreshold = &tfTypes.AuthType{}
+						rules.Default.OutlierDetection.HealthyPanicThreshold = &tfTypes.StandardDeviationFactor{}
 						if rulesItem.Default.OutlierDetection.HealthyPanicThreshold.Integer != nil {
 							rules.Default.OutlierDetection.HealthyPanicThreshold.Integer = types.Int64PointerValue(rulesItem.Default.OutlierDetection.HealthyPanicThreshold.Integer)
 						}
@@ -141,16 +141,7 @@ func (r *MeshCircuitBreakerResourceModel) RefreshFromSharedMeshCircuitBreakerIte
 					r.Spec.TargetRef.Labels[key] = types.StringValue(value)
 				}
 			}
-			r.Spec.TargetRef.Mesh = types.StringPointerValue(resp.Spec.TargetRef.Mesh)
-			r.Spec.TargetRef.Name = types.StringPointerValue(resp.Spec.TargetRef.Name)
-			r.Spec.TargetRef.Namespace = types.StringPointerValue(resp.Spec.TargetRef.Namespace)
 			r.Spec.TargetRef.SectionName = types.StringPointerValue(resp.Spec.TargetRef.SectionName)
-			if len(resp.Spec.TargetRef.Tags) > 0 {
-				r.Spec.TargetRef.Tags = make(map[string]types.String, len(resp.Spec.TargetRef.Tags))
-				for key1, value1 := range resp.Spec.TargetRef.Tags {
-					r.Spec.TargetRef.Tags[key1] = types.StringValue(value1)
-				}
-			}
 		}
 		r.Spec.To = []tfTypes.MeshCircuitBreakerItemTo{}
 
@@ -207,7 +198,7 @@ func (r *MeshCircuitBreakerResourceModel) RefreshFromSharedMeshCircuitBreakerIte
 							to.Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(toItem.Default.OutlierDetection.Detectors.SuccessRate.MinimumHosts))
 							to.Default.OutlierDetection.Detectors.SuccessRate.RequestVolume = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(toItem.Default.OutlierDetection.Detectors.SuccessRate.RequestVolume))
 							if toItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor != nil {
-								to.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor = &tfTypes.AuthType{}
+								to.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor = &tfTypes.StandardDeviationFactor{}
 								if toItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer != nil {
 									to.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer = types.Int64PointerValue(toItem.Default.OutlierDetection.Detectors.SuccessRate.StandardDeviationFactor.Integer)
 								}
@@ -225,7 +216,7 @@ func (r *MeshCircuitBreakerResourceModel) RefreshFromSharedMeshCircuitBreakerIte
 					}
 					to.Default.OutlierDetection.Disabled = types.BoolPointerValue(toItem.Default.OutlierDetection.Disabled)
 					if toItem.Default.OutlierDetection.HealthyPanicThreshold != nil {
-						to.Default.OutlierDetection.HealthyPanicThreshold = &tfTypes.AuthType{}
+						to.Default.OutlierDetection.HealthyPanicThreshold = &tfTypes.StandardDeviationFactor{}
 						if toItem.Default.OutlierDetection.HealthyPanicThreshold.Integer != nil {
 							to.Default.OutlierDetection.HealthyPanicThreshold.Integer = types.Int64PointerValue(toItem.Default.OutlierDetection.HealthyPanicThreshold.Integer)
 						}
@@ -242,20 +233,11 @@ func (r *MeshCircuitBreakerResourceModel) RefreshFromSharedMeshCircuitBreakerIte
 			to.TargetRef.Kind = types.StringValue(string(toItem.TargetRef.Kind))
 			if len(toItem.TargetRef.Labels) > 0 {
 				to.TargetRef.Labels = make(map[string]types.String, len(toItem.TargetRef.Labels))
-				for key2, value2 := range toItem.TargetRef.Labels {
-					to.TargetRef.Labels[key2] = types.StringValue(value2)
+				for key1, value1 := range toItem.TargetRef.Labels {
+					to.TargetRef.Labels[key1] = types.StringValue(value1)
 				}
 			}
-			to.TargetRef.Mesh = types.StringPointerValue(toItem.TargetRef.Mesh)
-			to.TargetRef.Name = types.StringPointerValue(toItem.TargetRef.Name)
-			to.TargetRef.Namespace = types.StringPointerValue(toItem.TargetRef.Namespace)
 			to.TargetRef.SectionName = types.StringPointerValue(toItem.TargetRef.SectionName)
-			if len(toItem.TargetRef.Tags) > 0 {
-				to.TargetRef.Tags = make(map[string]types.String, len(toItem.TargetRef.Tags))
-				for key3, value3 := range toItem.TargetRef.Tags {
-					to.TargetRef.Tags[key3] = types.StringValue(value3)
-				}
-			}
 
 			r.Spec.To = append(r.Spec.To, to)
 		}
@@ -516,7 +498,7 @@ func (r *MeshCircuitBreakerResourceModel) ToSharedMeshCircuitBreakerItemInput(ct
 				} else {
 					disabled = nil
 				}
-				var healthyPanicThreshold *shared.MeshCircuitBreakerItemSpecHealthyPanicThreshold
+				var healthyPanicThreshold *shared.HealthyPanicThreshold
 				if r.Spec.Rules[rulesIndex].Default.OutlierDetection.HealthyPanicThreshold != nil {
 					integer1 := new(int64)
 					if !r.Spec.Rules[rulesIndex].Default.OutlierDetection.HealthyPanicThreshold.Integer.IsUnknown() && !r.Spec.Rules[rulesIndex].Default.OutlierDetection.HealthyPanicThreshold.Integer.IsNull() {
@@ -525,7 +507,7 @@ func (r *MeshCircuitBreakerResourceModel) ToSharedMeshCircuitBreakerItemInput(ct
 						integer1 = nil
 					}
 					if integer1 != nil {
-						healthyPanicThreshold = &shared.MeshCircuitBreakerItemSpecHealthyPanicThreshold{
+						healthyPanicThreshold = &shared.HealthyPanicThreshold{
 							Integer: integer1,
 						}
 					}
@@ -536,7 +518,7 @@ func (r *MeshCircuitBreakerResourceModel) ToSharedMeshCircuitBreakerItemInput(ct
 						str1 = nil
 					}
 					if str1 != nil {
-						healthyPanicThreshold = &shared.MeshCircuitBreakerItemSpecHealthyPanicThreshold{
+						healthyPanicThreshold = &shared.HealthyPanicThreshold{
 							Str: str1,
 						}
 					}
@@ -588,45 +570,16 @@ func (r *MeshCircuitBreakerResourceModel) ToSharedMeshCircuitBreakerItemInput(ct
 
 			labels1[labelsKey] = labelsInst
 		}
-		mesh1 := new(string)
-		if !r.Spec.TargetRef.Mesh.IsUnknown() && !r.Spec.TargetRef.Mesh.IsNull() {
-			*mesh1 = r.Spec.TargetRef.Mesh.ValueString()
-		} else {
-			mesh1 = nil
-		}
-		name1 := new(string)
-		if !r.Spec.TargetRef.Name.IsUnknown() && !r.Spec.TargetRef.Name.IsNull() {
-			*name1 = r.Spec.TargetRef.Name.ValueString()
-		} else {
-			name1 = nil
-		}
-		namespace := new(string)
-		if !r.Spec.TargetRef.Namespace.IsUnknown() && !r.Spec.TargetRef.Namespace.IsNull() {
-			*namespace = r.Spec.TargetRef.Namespace.ValueString()
-		} else {
-			namespace = nil
-		}
 		sectionName := new(string)
 		if !r.Spec.TargetRef.SectionName.IsUnknown() && !r.Spec.TargetRef.SectionName.IsNull() {
 			*sectionName = r.Spec.TargetRef.SectionName.ValueString()
 		} else {
 			sectionName = nil
 		}
-		tags := make(map[string]string)
-		for tagsKey := range r.Spec.TargetRef.Tags {
-			var tagsInst string
-			tagsInst = r.Spec.TargetRef.Tags[tagsKey].ValueString()
-
-			tags[tagsKey] = tagsInst
-		}
 		targetRef = &shared.MeshCircuitBreakerItemTargetRef{
 			Kind:        kind,
 			Labels:      labels1,
-			Mesh:        mesh1,
-			Name:        name1,
-			Namespace:   namespace,
 			SectionName: sectionName,
-			Tags:        tags,
 		}
 	}
 	to := make([]shared.MeshCircuitBreakerItemTo, 0, len(r.Spec.To))
@@ -870,45 +823,16 @@ func (r *MeshCircuitBreakerResourceModel) ToSharedMeshCircuitBreakerItemInput(ct
 
 			labels2[labelsKey1] = labelsInst1
 		}
-		mesh2 := new(string)
-		if !r.Spec.To[toIndex].TargetRef.Mesh.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Mesh.IsNull() {
-			*mesh2 = r.Spec.To[toIndex].TargetRef.Mesh.ValueString()
-		} else {
-			mesh2 = nil
-		}
-		name2 := new(string)
-		if !r.Spec.To[toIndex].TargetRef.Name.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Name.IsNull() {
-			*name2 = r.Spec.To[toIndex].TargetRef.Name.ValueString()
-		} else {
-			name2 = nil
-		}
-		namespace1 := new(string)
-		if !r.Spec.To[toIndex].TargetRef.Namespace.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Namespace.IsNull() {
-			*namespace1 = r.Spec.To[toIndex].TargetRef.Namespace.ValueString()
-		} else {
-			namespace1 = nil
-		}
 		sectionName1 := new(string)
 		if !r.Spec.To[toIndex].TargetRef.SectionName.IsUnknown() && !r.Spec.To[toIndex].TargetRef.SectionName.IsNull() {
 			*sectionName1 = r.Spec.To[toIndex].TargetRef.SectionName.ValueString()
 		} else {
 			sectionName1 = nil
 		}
-		tags1 := make(map[string]string)
-		for tagsKey1 := range r.Spec.To[toIndex].TargetRef.Tags {
-			var tagsInst1 string
-			tagsInst1 = r.Spec.To[toIndex].TargetRef.Tags[tagsKey1].ValueString()
-
-			tags1[tagsKey1] = tagsInst1
-		}
 		targetRef1 := shared.MeshCircuitBreakerItemSpecTargetRef{
 			Kind:        kind1,
 			Labels:      labels2,
-			Mesh:        mesh2,
-			Name:        name2,
-			Namespace:   namespace1,
 			SectionName: sectionName1,
-			Tags:        tags1,
 		}
 		to = append(to, shared.MeshCircuitBreakerItemTo{
 			Default:   default1,

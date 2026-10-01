@@ -85,13 +85,18 @@ func (e *MeshPassthroughItemSpecType) IsExact() bool {
 }
 
 type AppendMatch struct {
-	// Port defines the port to which a user makes a request.
+	// Port defines the port to which a user makes a request. It is required for a
+	// `Domain` that is not a wildcard: the sidecar resolves the domain itself and
+	// connects to this port, so the destination doesn't depend on the address the
+	// client dials.
 	Port *int `json:"port,omitempty"`
 	// Protocol defines the communication protocol. Possible values: `tcp`, `tls`, `grpc`, `http`, `http2`, `mysql`.
 	Protocol *MeshPassthroughItemProtocol `default:"tcp" json:"protocol"`
 	// Type of the match, one of `Domain`, `IP` or `CIDR` is available.
 	Type MeshPassthroughItemSpecType `json:"type"`
-	// Value for the specified Type.
+	// Value for the specified Type. A wildcard `Domain`, for example
+	// `*.example.com`, cannot be resolved by the sidecar, so its traffic goes to the
+	// address the client dials and the match only restricts the SNI or Host.
 	Value string `json:"value"`
 }
 
@@ -188,14 +193,8 @@ func (m *MeshPassthroughItemDefault) GetPassthroughMode() *PassthroughMode {
 type MeshPassthroughItemKind string
 
 const (
-	MeshPassthroughItemKindMesh                 MeshPassthroughItemKind = "Mesh"
-	MeshPassthroughItemKindMeshSubset           MeshPassthroughItemKind = "MeshSubset"
-	MeshPassthroughItemKindMeshService          MeshPassthroughItemKind = "MeshService"
-	MeshPassthroughItemKindMeshExternalService  MeshPassthroughItemKind = "MeshExternalService"
-	MeshPassthroughItemKindMeshMultiZoneService MeshPassthroughItemKind = "MeshMultiZoneService"
-	MeshPassthroughItemKindMeshServiceSubset    MeshPassthroughItemKind = "MeshServiceSubset"
-	MeshPassthroughItemKindMeshHTTPRoute        MeshPassthroughItemKind = "MeshHTTPRoute"
-	MeshPassthroughItemKindDataplane            MeshPassthroughItemKind = "Dataplane"
+	MeshPassthroughItemKindMesh      MeshPassthroughItemKind = "Mesh"
+	MeshPassthroughItemKindDataplane MeshPassthroughItemKind = "Dataplane"
 )
 
 func (e MeshPassthroughItemKind) ToPointer() *MeshPassthroughItemKind {
@@ -206,7 +205,7 @@ func (e MeshPassthroughItemKind) ToPointer() *MeshPassthroughItemKind {
 func (e *MeshPassthroughItemKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+		case "Mesh", "Dataplane":
 			return true
 		}
 	}
@@ -219,23 +218,13 @@ func (e *MeshPassthroughItemKind) IsExact() bool {
 type MeshPassthroughItemTargetRef struct {
 	// Kind of the referenced resource
 	Kind MeshPassthroughItemKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select referenced real resources and to carry legacy
+	// service identity when a common TargetRef must still target old
+	// service-tag based paths.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`
-	// and `MeshServiceSubset`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
 }
 
 func (m *MeshPassthroughItemTargetRef) GetKind() MeshPassthroughItemKind {
@@ -252,39 +241,11 @@ func (m *MeshPassthroughItemTargetRef) GetLabels() map[string]string {
 	return m.Labels
 }
 
-func (m *MeshPassthroughItemTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshPassthroughItemTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshPassthroughItemTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
 func (m *MeshPassthroughItemTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
-}
-
-func (m *MeshPassthroughItemTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
 }
 
 // MeshPassthroughItemSpec - Spec is the specification of the Kuma MeshPassthrough resource.

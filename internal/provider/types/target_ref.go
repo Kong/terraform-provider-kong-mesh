@@ -9,9 +9,5 @@ import (
 type TargetRef struct {
 	Kind        types.String            `tfsdk:"kind"`
 	Labels      map[string]types.String `tfsdk:"labels"`
-	Mesh        types.String            `tfsdk:"mesh"`
-	Name        types.String            `tfsdk:"name"`
-	Namespace   types.String            `tfsdk:"namespace"`
 	SectionName types.String            `tfsdk:"section_name"`
-	Tags        map[string]types.String `tfsdk:"tags"`
 }

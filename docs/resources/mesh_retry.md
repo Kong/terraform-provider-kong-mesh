@@ -21,17 +21,11 @@ resource "kong-mesh_mesh_retry" "my_meshretry" {
   name = "...my_name..."
   spec = {
     target_ref = {
-      kind = "MeshServiceSubset"
+      kind = "Dataplane"
       labels = {
         key = "value"
       }
-      mesh         = "...my_mesh..."
-      name         = "...my_name..."
-      namespace    = "...my_namespace..."
       section_name = "...my_section_name..."
-      tags = {
-        key = "value"
-      }
     }
     to = [
       {
@@ -89,14 +83,14 @@ resource "kong-mesh_mesh_retry" "my_meshretry" {
             retriable_request_headers = [
               {
                 name  = "...my_name..."
-                type  = "Exact"
+                type  = "RegularExpression"
                 value = "...my_value..."
               }
             ]
             retriable_response_headers = [
               {
                 name  = "...my_name..."
-                type  = "Exact"
+                type  = "RegularExpression"
                 value = "...my_value..."
               }
             ]
@@ -127,17 +121,11 @@ resource "kong-mesh_mesh_retry" "my_meshretry" {
           }
         }
         target_ref = {
-          kind = "Dataplane"
+          kind = "MeshHTTPRoute"
           labels = {
             key = "value"
           }
-          mesh         = "...my_mesh..."
-          name         = "...my_name..."
-          namespace    = "...my_namespace..."
           section_name = "...my_section_name..."
-          tags = {
-            key = "value"
-          }
         }
       }
     ]
@@ -183,21 +171,15 @@ defined inplace. (see [below for nested schema](#nestedatt--spec--target_ref))
 
 Required:
 
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "Dataplane"]
 
 Optional:
 
-- `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
-Name and Namespace can be used.
-- `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`
-and `MeshServiceSubset`
-- `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-will be targeted.
+- `labels` (Map of String) Labels are used to select referenced real resources and to carry legacy
+service identity when a common TargetRef must still target old
+service-tag based paths.
 - `section_name` (String) SectionName is used to target specific section of resource.
 For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-- `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds
-`MeshSubset` and `MeshServiceSubset`
 
 
 <a id="nestedatt--spec--to"></a>
@@ -359,7 +341,7 @@ Optional:
 - `name` (String) Name is the name of the HTTP Header to be matched. Name MUST be lower case
 as they will be handled with case insensitivity (See https://tools.ietf.org/html/rfc7230#section-3.2).
 Not Null
-- `type` (String) Type specifies how to match against the value of the header. possible known values include one of ["Exact", "Present", "RegularExpression", "Absent", "Prefix"]; Default: "Exact"
+- `type` (String) Type specifies how to match against the value of the header. possible known values include one of ["Exact", "Present", "RegularExpression", "Absent", "Prefix"]
 - `value` (String) Value is the value of HTTP Header to be matched.
 
 
@@ -371,7 +353,7 @@ Optional:
 - `name` (String) Name is the name of the HTTP Header to be matched. Name MUST be lower case
 as they will be handled with case insensitivity (See https://tools.ietf.org/html/rfc7230#section-3.2).
 Not Null
-- `type` (String) Type specifies how to match against the value of the header. possible known values include one of ["Exact", "Present", "RegularExpression", "Absent", "Prefix"]; Default: "Exact"
+- `type` (String) Type specifies how to match against the value of the header. possible known values include one of ["Exact", "Present", "RegularExpression", "Absent", "Prefix"]
 - `value` (String) Value is the value of HTTP Header to be matched.
 
 
@@ -391,18 +373,12 @@ which will be made before giving up
 
 Optional:
 
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
-- `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
-Name and Namespace can be used.
-- `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`
-and `MeshServiceSubset`
-- `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-will be targeted.
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshHTTPRoute"]; Not Null
+- `labels` (Map of String) Labels are used to select referenced real resources and to carry legacy
+service identity when a common TargetRef must still target old
+service-tag based paths.
 - `section_name` (String) SectionName is used to target specific section of resource.
 For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-- `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds
-`MeshSubset` and `MeshServiceSubset`
 
 ## Import
 

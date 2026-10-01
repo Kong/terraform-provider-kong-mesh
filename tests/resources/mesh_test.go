@@ -8,7 +8,6 @@ import (
 
 	"github.com/Kong/shared-speakeasy/hclbuilder"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
@@ -54,47 +53,7 @@ func TestMesh(t *testing.T) {
 	port, err := cpContainer.MappedPort(ctx, "5681/tcp")
 	require.NoError(t, err)
 
-	t.Run("should create a mesh without initial policies", func(t *testing.T) {
-		serverURL := fmt.Sprintf("http://localhost:%d", port.Num())
-		builder := hclbuilder.NewWithProvider(hclbuilder.KongMesh, serverURL)
-
-		meshName := "m0"
-		meshResourceName := "m0"
-
-		// Create mesh resource
-		mesh, _ := hclbuilder.FromString(fmt.Sprintf(`
-resource "kong-mesh_mesh" "%s" {
-  type  = "Mesh"
-  name  = "%s"
-}
-`, meshResourceName, meshName))
-
-		// if this grows move this to shared-speakeasy
-		resource.ParallelTest(t, resource.TestCase{
-			ProtoV6ProviderFactories: providerFactory,
-			Steps: []resource.TestStep{
-				{
-					Config: builder.Upsert(mesh).Build(),
-					ConfigPlanChecks: resource.ConfigPlanChecks{
-						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction(builder.ResourceAddress("mesh", meshResourceName), plancheck.ResourceActionCreate),
-						},
-					},
-					ExpectNonEmptyPlan: true, // skip_creating_initial_policies was set by the hook
-				},
-				{
-					Config: builder.Upsert(mesh.AddAttribute("skip_creating_initial_policies", `["*"]`)).Build(),
-					ConfigPlanChecks: resource.ConfigPlanChecks{
-						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction(builder.ResourceAddress("mesh", meshResourceName), plancheck.ResourceActionNoop),
-						},
-					},
-				},
-			},
-		})
-	})
-
-	t.Run("create a mesh and modify fields on it", func(t *testing.T) {
+	t.Run("create a mesh and modify labels on it", func(t *testing.T) {
 		serverURL := fmt.Sprintf("http://localhost:%d", port.Num())
 		builder := hclbuilder.NewWithProvider(hclbuilder.KongMesh, serverURL)
 
@@ -105,11 +64,10 @@ resource "kong-mesh_mesh" "%s" {
 resource "kong-mesh_mesh" "%s" {
   type = "Mesh"
   name = "%s"
-  skip_creating_initial_policies = ["*"]
 }
 `, meshResourceName, meshName))
 
-		resource.ParallelTest(t, hclbuilder.CreateMeshWithMtlsAndModifyFields(providerFactory, builder, mesh))
+		resource.ParallelTest(t, hclbuilder.CreateMeshAndModifyLabels(providerFactory, builder, mesh))
 	})
 
 	t.Run("create a policy and modify fields on it", func(t *testing.T) {
@@ -123,7 +81,6 @@ resource "kong-mesh_mesh" "%s" {
 resource "kong-mesh_mesh" "%s" {
   type = "Mesh"
   name = "%s"
-  skip_creating_initial_policies = ["*"]
 }
 `, meshResourceName, meshName))
 
@@ -153,7 +110,6 @@ resource "kong-mesh_mesh_traffic_permission" "%s" {
 resource "kong-mesh_mesh" "%s" {
   type = "Mesh"
   name = "%s"
-  skip_creating_initial_policies = ["*"]
 }
 `, meshResourceName, meshName))
 
@@ -181,7 +137,6 @@ resource "kong-mesh_mesh_traffic_permission" "%s" {
 resource "kong-mesh_mesh" "%s" {
   type = "Mesh"
   name = "%s"
-  skip_creating_initial_policies = ["*"]
 }
 `, meshResourceName, meshName))
 
@@ -207,7 +162,7 @@ resource "kong-mesh_mesh_secret" "%s" {
 }
 `, skeyResourceName, skeyName, meshName))
 
-		resource.ParallelTest(t, hclbuilder.ShouldBeAbleToStoreSecrets(providerFactory, builder, mesh, scert, skey))
+		resource.ParallelTest(t, hclbuilder.ShouldBeAbleToStoreAndUpdateSecrets(providerFactory, builder, mesh, scert, skey))
 	})
 }
 

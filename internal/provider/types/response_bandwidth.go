@@ -7,6 +7,6 @@ import (
 )
 
 type ResponseBandwidth struct {
-	Limit      types.String `tfsdk:"limit"`
-	Percentage *AuthType    `tfsdk:"percentage"`
+	Limit      types.String             `tfsdk:"limit"`
+	Percentage *StandardDeviationFactor `tfsdk:"percentage"`
 }

@@ -688,7 +688,7 @@ func (s *HostnameGenerator) DeleteHostnameGenerator(ctx context.Context, request
 
 }
 
-// GetHostnameGeneratorList - Returns a list of HostnameGenerator in the mesh.
+// GetHostnameGeneratorList - Returns a list of HostnameGenerator.
 func (s *HostnameGenerator) GetHostnameGeneratorList(ctx context.Context, request operations.GetHostnameGeneratorListRequest, opts ...operations.Option) (*operations.GetHostnameGeneratorListResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

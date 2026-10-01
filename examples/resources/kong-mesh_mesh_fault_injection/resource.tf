@@ -50,13 +50,7 @@ resource "kong-mesh_mesh_fault_injection" "my_meshfaultinjection" {
       labels = {
         key = "value"
       }
-      mesh         = "...my_mesh..."
-      name         = "...my_name..."
-      namespace    = "...my_namespace..."
       section_name = "...my_section_name..."
-      tags = {
-        key = "value"
-      }
     }
     to = [
       {
@@ -89,13 +83,7 @@ resource "kong-mesh_mesh_fault_injection" "my_meshfaultinjection" {
           labels = {
             key = "value"
           }
-          mesh         = "...my_mesh..."
-          name         = "...my_name..."
-          namespace    = "...my_namespace..."
           section_name = "...my_section_name..."
-          tags = {
-            key = "value"
-          }
         }
       }
     ]

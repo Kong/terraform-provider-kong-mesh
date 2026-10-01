@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
+	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -28,6 +29,7 @@ import (
 	speakeasy_int32validators "github.com/kong/terraform-provider-kong-mesh/internal/validators/int32validators"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/stringvalidators"
+	"regexp"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -91,6 +93,10 @@ func (r *MeshMetricResource) Schema(ctx context.Context, req resource.SchemaRequ
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
 				Description: `name of the mesh. Requires replacement if changed.`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(253),
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[0-9a-z-_.]*$`), "must match pattern "+regexp.MustCompile(`^[0-9a-z-_.]*$`).String()),
+				},
 			},
 			"modification_time": schema.StringAttribute{
 				Computed: true,
@@ -105,6 +111,10 @@ func (r *MeshMetricResource) Schema(ctx context.Context, req resource.SchemaRequ
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
 				Description: `name of the MeshMetric. Requires replacement if changed.`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(253),
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
+				},
 			},
 			"spec": schema.SingleNestedAttribute{
 				Required: true,
@@ -160,78 +170,172 @@ func (r *MeshMetricResource) Schema(ctx context.Context, req resource.SchemaRequ
 										speakeasy_objectvalidators.NotNull(),
 									},
 									Attributes: map[string]schema.Attribute{
-										"open_telemetry": schema.SingleNestedAttribute{
+										"one": schema.SingleNestedAttribute{
 											Optional: true,
 											Attributes: map[string]schema.Attribute{
-												"backend_ref": schema.SingleNestedAttribute{
+												"open_telemetry": schema.SingleNestedAttribute{
 													Optional: true,
 													Attributes: map[string]schema.Attribute{
-														"kind": schema.StringAttribute{
-															Optional:    true,
-															Description: `Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"`,
-															Validators: []validator.String{
-																speakeasy_stringvalidators.NotNull(),
-																stringvalidator.OneOf(
-																	"MeshOpenTelemetryBackend",
-																),
+														"backend_ref": schema.SingleNestedAttribute{
+															Optional: true,
+															Attributes: map[string]schema.Attribute{
+																"kind": schema.StringAttribute{
+																	Optional:    true,
+																	Description: `Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"`,
+																	Validators: []validator.String{
+																		speakeasy_stringvalidators.NotNull(),
+																		stringvalidator.OneOf(
+																			"MeshOpenTelemetryBackend",
+																		),
+																	},
+																},
+																"labels": schema.MapAttribute{
+																	Optional:    true,
+																	ElementType: types.StringType,
+																	MarkdownDescription: `Labels to match the referenced resource. When multiple resources match,` + "\n" +
+																		`the oldest by creation time wins.`,
+																},
 															},
+															MarkdownDescription: `BackendRef is a reference to a MeshOpenTelemetryBackend resource that` + "\n" +
+																`defines the collector endpoint.`,
 														},
-														"labels": schema.MapAttribute{
+														"refresh_interval": schema.StringAttribute{
 															Optional:    true,
-															ElementType: types.StringType,
-															MarkdownDescription: `Labels to match the referenced resource. When multiple resources match,` + "\n" +
-																`the oldest by creation time wins.`,
+															Description: `RefreshInterval defines how frequent metrics should be pushed to collector`,
 														},
 													},
-													MarkdownDescription: `BackendRef is a reference to a MeshOpenTelemetryBackend resource that` + "\n" +
-														`defines the collector endpoint.`,
+													Description: `OpenTelemetry backend configuration`,
 												},
-												"refresh_interval": schema.StringAttribute{
-													Optional:    true,
-													Description: `RefreshInterval defines how frequent metrics should be pushed to collector`,
-												},
-											},
-											Description: `OpenTelemetry backend configuration`,
-										},
-										"prometheus": schema.SingleNestedAttribute{
-											Optional: true,
-											Attributes: map[string]schema.Attribute{
-												"client_id": schema.StringAttribute{
-													Optional:    true,
-													Description: `ClientId of the Prometheus backend. Needed when using MADS for DP discovery.`,
-												},
-												"path": schema.StringAttribute{
-													Computed:    true,
-													Optional:    true,
-													Default:     stringdefault.StaticString(`/metrics`),
-													Description: `Path on which a dataplane should expose HTTP endpoint with Prometheus metrics. Default: "/metrics"`,
-												},
-												"port": schema.Int32Attribute{
-													Computed:    true,
-													Optional:    true,
-													Default:     int32default.StaticInt32(5670),
-													Description: `Port on which a dataplane should expose HTTP endpoint with Prometheus metrics. Default: 5670`,
-												},
-												"tls": schema.SingleNestedAttribute{
+												"prometheus": schema.SingleNestedAttribute{
 													Optional: true,
 													Attributes: map[string]schema.Attribute{
-														"mode": schema.StringAttribute{
+														"client_id": schema.StringAttribute{
+															Optional:    true,
+															Description: `ClientId of the Prometheus backend. Needed when using MADS for DP discovery.`,
+														},
+														"path": schema.StringAttribute{
 															Computed:    true,
 															Optional:    true,
-															Default:     stringdefault.StaticString(`Disabled`),
-															Description: `Configuration of TLS for Prometheus listener. possible known values include one of ["Disabled", "ProvidedTLS", "ActiveMTLSBackend"]; Default: "Disabled"`,
+															Default:     stringdefault.StaticString(`/metrics`),
+															Description: `Path on which a dataplane should expose HTTP endpoint with Prometheus metrics. Default: "/metrics"`,
+														},
+														"port": schema.Int32Attribute{
+															Computed:    true,
+															Optional:    true,
+															Default:     int32default.StaticInt32(5670),
+															Description: `Port on which a dataplane should expose HTTP endpoint with Prometheus metrics. Default: 5670`,
+														},
+														"tls": schema.SingleNestedAttribute{
+															Optional: true,
+															Attributes: map[string]schema.Attribute{
+																"mode": schema.StringAttribute{
+																	Computed:    true,
+																	Optional:    true,
+																	Default:     stringdefault.StaticString(`Disabled`),
+																	Description: `Configuration of TLS for Prometheus listener. possible known values include one of ["Disabled", "ProvidedTLS", "ActiveMTLSBackend"]; Default: "Disabled"`,
+																},
+															},
+															Description: `Configuration of TLS for prometheus listener.`,
 														},
 													},
-													Description: `Configuration of TLS for prometheus listener.`,
+													Description: `Prometheus backend configuration.`,
+												},
+												"type": schema.StringAttribute{
+													Optional:    true,
+													Description: `Type of the backend that will be used to collect metrics. At the moment only Prometheus backend is available. possible known values include one of ["Prometheus", "OpenTelemetry"]; Not Null`,
+													Validators: []validator.String{
+														speakeasy_stringvalidators.NotNull(),
+													},
 												},
 											},
-											Description: `Prometheus backend configuration.`,
+											Validators: []validator.Object{
+												objectvalidator.ConflictsWith(path.Expressions{
+													path.MatchRelative().AtParent().AtName("two"),
+												}...),
+											},
 										},
-										"type": schema.StringAttribute{
-											Optional:    true,
-											Description: `Type of the backend that will be used to collect metrics. At the moment only Prometheus backend is available. possible known values include one of ["Prometheus", "OpenTelemetry"]; Not Null`,
-											Validators: []validator.String{
-												speakeasy_stringvalidators.NotNull(),
+										"two": schema.SingleNestedAttribute{
+											Optional: true,
+											Attributes: map[string]schema.Attribute{
+												"open_telemetry": schema.SingleNestedAttribute{
+													Optional: true,
+													Attributes: map[string]schema.Attribute{
+														"backend_ref": schema.SingleNestedAttribute{
+															Optional: true,
+															Attributes: map[string]schema.Attribute{
+																"kind": schema.StringAttribute{
+																	Optional:    true,
+																	Description: `Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"`,
+																	Validators: []validator.String{
+																		speakeasy_stringvalidators.NotNull(),
+																		stringvalidator.OneOf(
+																			"MeshOpenTelemetryBackend",
+																		),
+																	},
+																},
+																"labels": schema.MapAttribute{
+																	Optional:    true,
+																	ElementType: types.StringType,
+																	MarkdownDescription: `Labels to match the referenced resource. When multiple resources match,` + "\n" +
+																		`the oldest by creation time wins.`,
+																},
+															},
+															MarkdownDescription: `BackendRef is a reference to a MeshOpenTelemetryBackend resource that` + "\n" +
+																`defines the collector endpoint.`,
+														},
+														"refresh_interval": schema.StringAttribute{
+															Optional:    true,
+															Description: `RefreshInterval defines how frequent metrics should be pushed to collector`,
+														},
+													},
+													Description: `OpenTelemetry backend configuration`,
+												},
+												"prometheus": schema.SingleNestedAttribute{
+													Optional: true,
+													Attributes: map[string]schema.Attribute{
+														"client_id": schema.StringAttribute{
+															Optional:    true,
+															Description: `ClientId of the Prometheus backend. Needed when using MADS for DP discovery.`,
+														},
+														"path": schema.StringAttribute{
+															Computed:    true,
+															Optional:    true,
+															Default:     stringdefault.StaticString(`/metrics`),
+															Description: `Path on which a dataplane should expose HTTP endpoint with Prometheus metrics. Default: "/metrics"`,
+														},
+														"port": schema.Int32Attribute{
+															Computed:    true,
+															Optional:    true,
+															Default:     int32default.StaticInt32(5670),
+															Description: `Port on which a dataplane should expose HTTP endpoint with Prometheus metrics. Default: 5670`,
+														},
+														"tls": schema.SingleNestedAttribute{
+															Optional: true,
+															Attributes: map[string]schema.Attribute{
+																"mode": schema.StringAttribute{
+																	Computed:    true,
+																	Optional:    true,
+																	Default:     stringdefault.StaticString(`Disabled`),
+																	Description: `Configuration of TLS for Prometheus listener. possible known values include one of ["Disabled", "ProvidedTLS", "ActiveMTLSBackend"]; Default: "Disabled"`,
+																},
+															},
+															Description: `Configuration of TLS for prometheus listener.`,
+														},
+													},
+													Description: `Prometheus backend configuration.`,
+												},
+												"type": schema.StringAttribute{
+													Optional:    true,
+													Description: `Type of the backend that will be used to collect metrics. At the moment only Prometheus backend is available. possible known values include one of ["Prometheus", "OpenTelemetry"]; Not Null`,
+													Validators: []validator.String{
+														speakeasy_stringvalidators.NotNull(),
+													},
+												},
+											},
+											Validators: []validator.Object{
+												objectvalidator.ConflictsWith(path.Expressions{
+													path.MatchRelative().AtParent().AtName("one"),
+												}...),
 											},
 										},
 									},
@@ -347,38 +451,19 @@ func (r *MeshMetricResource) Schema(ctx context.Context, req resource.SchemaRequ
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
 								Required:    true,
-								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
+								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "Dataplane"]`,
 							},
 							"labels": schema.MapAttribute{
 								Optional:    true,
 								ElementType: types.StringType,
-								MarkdownDescription: `Labels are used to select group of MeshServices that match labels. Either Labels or` + "\n" +
-									`Name and Namespace can be used.`,
-							},
-							"mesh": schema.StringAttribute{
-								Optional:    true,
-								Description: `Mesh is reserved for future use to identify cross mesh resources.`,
-							},
-							"name": schema.StringAttribute{
-								Optional: true,
-								MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `` + "\n" +
-									`and ` + "`" + `MeshServiceSubset` + "`" + ``,
-							},
-							"namespace": schema.StringAttribute{
-								Optional: true,
-								MarkdownDescription: `Namespace specifies the namespace of target resource. If empty only resources in policy namespace` + "\n" +
-									`will be targeted.`,
+								MarkdownDescription: `Labels are used to select referenced real resources and to carry legacy` + "\n" +
+									`service identity when a common TargetRef must still target old` + "\n" +
+									`service-tag based paths.`,
 							},
 							"section_name": schema.StringAttribute{
 								Optional: true,
 								MarkdownDescription: `SectionName is used to target specific section of resource.` + "\n" +
 									`For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.`,
-							},
-							"tags": schema.MapAttribute{
-								Optional:    true,
-								ElementType: types.StringType,
-								MarkdownDescription: `Tags used to select a subset of proxies by tags. Can only be used with kinds` + "\n" +
-									`` + "`" + `MeshSubset` + "`" + ` and ` + "`" + `MeshServiceSubset` + "`" + ``,
 							},
 						},
 						MarkdownDescription: `TargetRef is a reference to the resource the policy takes an effect on.` + "\n" +

@@ -57,17 +57,11 @@ resource "kong-mesh_mesh_rate_limit" "my_meshratelimit" {
       }
     ]
     target_ref = {
-      kind = "MeshServiceSubset"
+      kind = "Dataplane"
       labels = {
         key = "value"
       }
-      mesh         = "...my_mesh..."
-      name         = "...my_name..."
-      namespace    = "...my_namespace..."
       section_name = "...my_section_name..."
-      tags = {
-        key = "value"
-      }
     }
     to = [
       {
@@ -107,17 +101,11 @@ resource "kong-mesh_mesh_rate_limit" "my_meshratelimit" {
           }
         }
         target_ref = {
-          kind = "MeshServiceSubset"
+          kind = "MeshMultiZoneService"
           labels = {
             key = "value"
           }
-          mesh         = "...my_mesh..."
-          name         = "...my_name..."
-          namespace    = "...my_namespace..."
           section_name = "...my_section_name..."
-          tags = {
-            key = "value"
-          }
         }
       }
     ]

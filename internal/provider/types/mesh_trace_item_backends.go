@@ -2,13 +2,8 @@
 
 package types
 
-import (
-	"github.com/hashicorp/terraform-plugin-framework/types"
-)
-
 type MeshTraceItemBackends struct {
-	Datadog       *Datadog                    `tfsdk:"datadog"`
-	OpenTelemetry *MeshTraceItemOpenTelemetry `tfsdk:"open_telemetry"`
-	Type          types.String                `tfsdk:"type"`
-	Zipkin        *Zipkin                     `tfsdk:"zipkin"`
+	One   *Backends1 `queryParam:"inline" tfsdk:"one"`
+	Two   *Backends1 `queryParam:"inline" tfsdk:"two"`
+	Three *Backends1 `queryParam:"inline" tfsdk:"three"`
 }

@@ -21,9 +21,7 @@ resource "kong-mesh_mesh_access_role" "my_meshaccessrole" {
   rules = [
     {
       access = [
-        {
-          str = "...my_str..."
-        }
+        "GENERATE_ZONE_TOKEN"
       ]
       mesh = "...my_mesh..."
       names = [
@@ -53,11 +51,7 @@ resource "kong-mesh_mesh_access_role" "my_meshaccessrole" {
               labels = {
                 key = "value"
               }
-              mesh = "...my_mesh..."
               name = "...my_name..."
-              tags = {
-                key = "value"
-              }
             }
           }
           selectors = {
@@ -75,11 +69,7 @@ resource "kong-mesh_mesh_access_role" "my_meshaccessrole" {
             labels = {
               key = "value"
             }
-            mesh = "...my_mesh..."
             name = "...my_name..."
-            tags = {
-              key = "value"
-            }
           }
           to = {
             target_ref = {
@@ -87,11 +77,7 @@ resource "kong-mesh_mesh_access_role" "my_meshaccessrole" {
               labels = {
                 key = "value"
               }
-              mesh = "...my_mesh..."
               name = "...my_name..."
-              tags = {
-                key = "value"
-              }
             }
           }
         }
@@ -128,20 +114,11 @@ Warning messages describe a problem the client making the API request should cor
 
 Optional:
 
-- `access` (Attributes List) (see [below for nested schema](#nestedatt--rules--access))
+- `access` (List of String)
 - `mesh` (String)
 - `names` (List of String)
 - `types` (List of String)
 - `when` (Attributes List) (see [below for nested schema](#nestedatt--rules--when))
-
-<a id="nestedatt--rules--access"></a>
-### Nested Schema for `rules.access`
-
-Optional:
-
-- `integer` (Number)
-- `str` (String)
-
 
 <a id="nestedatt--rules--when"></a>
 ### Nested Schema for `rules.when`
@@ -195,9 +172,7 @@ Optional:
 
 - `kind` (String)
 - `labels` (Map of String)
-- `mesh` (String)
 - `name` (String)
-- `tags` (Map of String)
 
 
 
@@ -224,9 +199,7 @@ Optional:
 
 - `kind` (String)
 - `labels` (Map of String)
-- `mesh` (String)
 - `name` (String)
-- `tags` (Map of String)
 
 
 <a id="nestedatt--rules--when--to"></a>
@@ -243,9 +216,7 @@ Optional:
 
 - `kind` (String)
 - `labels` (Map of String)
-- `mesh` (String)
 - `name` (String)
-- `tags` (Map of String)
 
 ## Import
 

@@ -7,7 +7,7 @@ import (
 )
 
 type AccessRoleItemRules struct {
-	Access []AuthType     `tfsdk:"access"`
+	Access []types.String `tfsdk:"access"`
 	Mesh   types.String   `tfsdk:"mesh"`
 	Names  []types.String `tfsdk:"names"`
 	Types  []types.String `tfsdk:"types"`

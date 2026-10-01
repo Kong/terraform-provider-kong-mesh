@@ -2,33 +2,18 @@
 
 package shared
 
-import (
-	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/utils"
-)
-
 // SecretList - List
 type SecretList struct {
 	Items []SecretItem `json:"items"`
-	// URL to the next page
-	Next *string `default:"null" json:"next"`
+	// URL to the next page, or null when this is the last page
+	Next *string `json:"next"`
 	// The total number of entities
-	Total *float64 `default:"null" json:"total"`
-}
-
-func (s SecretList) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(s, "", false)
-}
-
-func (s *SecretList) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &s, "", false, nil); err != nil {
-		return err
-	}
-	return nil
+	Total float64 `json:"total"`
 }
 
 func (s *SecretList) GetItems() []SecretItem {
 	if s == nil {
-		return nil
+		return []SecretItem{}
 	}
 	return s.Items
 }
@@ -40,9 +25,9 @@ func (s *SecretList) GetNext() *string {
 	return s.Next
 }
 
-func (s *SecretList) GetTotal() *float64 {
+func (s *SecretList) GetTotal() float64 {
 	if s == nil {
-		return nil
+		return 0.0
 	}
 	return s.Total
 }

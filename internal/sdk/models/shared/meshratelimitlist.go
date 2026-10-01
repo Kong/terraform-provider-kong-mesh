@@ -4,23 +4,23 @@ package shared
 
 // MeshRateLimitList - List
 type MeshRateLimitList struct {
-	Items []MeshRateLimitItem `json:"items,omitempty"`
+	Items []MeshRateLimitItem `json:"items"`
 	// The total number of entities
-	Total *float64 `json:"total,omitempty"`
-	// URL to the next page
-	Next *string `json:"next,omitempty"`
+	Total float64 `json:"total"`
+	// URL to the next page, or null when this is the last page
+	Next *string `json:"next"`
 }
 
 func (m *MeshRateLimitList) GetItems() []MeshRateLimitItem {
 	if m == nil {
-		return nil
+		return []MeshRateLimitItem{}
 	}
 	return m.Items
 }
 
-func (m *MeshRateLimitList) GetTotal() *float64 {
+func (m *MeshRateLimitList) GetTotal() float64 {
 	if m == nil {
-		return nil
+		return 0.0
 	}
 	return m.Total
 }

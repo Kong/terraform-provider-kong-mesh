@@ -4,23 +4,23 @@ package shared
 
 // MeshFaultInjectionList - List
 type MeshFaultInjectionList struct {
-	Items []MeshFaultInjectionItem `json:"items,omitempty"`
+	Items []MeshFaultInjectionItem `json:"items"`
 	// The total number of entities
-	Total *float64 `json:"total,omitempty"`
-	// URL to the next page
-	Next *string `json:"next,omitempty"`
+	Total float64 `json:"total"`
+	// URL to the next page, or null when this is the last page
+	Next *string `json:"next"`
 }
 
 func (m *MeshFaultInjectionList) GetItems() []MeshFaultInjectionItem {
 	if m == nil {
-		return nil
+		return []MeshFaultInjectionItem{}
 	}
 	return m.Items
 }
 
-func (m *MeshFaultInjectionList) GetTotal() *float64 {
+func (m *MeshFaultInjectionList) GetTotal() float64 {
 	if m == nil {
-		return nil
+		return 0.0
 	}
 	return m.Total
 }

@@ -31,7 +31,7 @@ func newMesh(rootSDK *KongMesh, sdkConfig config.SDKConfiguration, hooks *hooks.
 	}
 }
 
-// GetMeshList - Returns a list of Mesh in the mesh.
+// GetMeshList - Returns a list of Mesh.
 func (s *Mesh) GetMeshList(ctx context.Context, request operations.GetMeshListRequest, opts ...operations.Option) (*operations.GetMeshListResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

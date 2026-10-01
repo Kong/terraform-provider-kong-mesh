@@ -23,24 +23,26 @@ resource "kong-mesh_mesh_trace" "my_meshtrace" {
     default = {
       backends = [
         {
-          datadog = {
-            split_service = false
-            url           = "...my_url..."
-          }
-          open_telemetry = {
-            backend_ref = {
-              kind = "MeshOpenTelemetryBackend"
-              labels = {
-                key = "value"
+          three = {
+            datadog = {
+              split_service = false
+              url           = "...my_url..."
+            }
+            open_telemetry = {
+              backend_ref = {
+                kind = "MeshOpenTelemetryBackend"
+                labels = {
+                  key = "value"
+                }
               }
             }
-          }
-          type = "OpenTelemetry"
-          zipkin = {
-            api_version         = "httpJson"
-            shared_span_context = true
-            trace_id128bit      = false
-            url                 = "...my_url..."
+            type = "Datadog"
+            zipkin = {
+              api_version         = "httpJson"
+              shared_span_context = true
+              trace_id128bit      = false
+              url                 = "...my_url..."
+            }
           }
         }
       ]
@@ -71,13 +73,7 @@ resource "kong-mesh_mesh_trace" "my_meshtrace" {
       labels = {
         key = "value"
       }
-      mesh         = "...my_mesh..."
-      name         = "...my_name..."
-      namespace    = "...my_namespace..."
       section_name = "...my_section_name..."
-      tags = {
-        key = "value"
-      }
     }
   }
   type = "MeshTrace"
@@ -138,13 +134,22 @@ headers or literal values. (see [below for nested schema](#nestedatt--spec--defa
 
 Optional:
 
-- `datadog` (Attributes) Datadog backend configuration. (see [below for nested schema](#nestedatt--spec--default--backends--datadog))
-- `open_telemetry` (Attributes) OpenTelemetry backend configuration. (see [below for nested schema](#nestedatt--spec--default--backends--open_telemetry))
-- `type` (String) possible known values include one of ["Zipkin", "Datadog", "OpenTelemetry"]; Not Null
-- `zipkin` (Attributes) Zipkin backend configuration. (see [below for nested schema](#nestedatt--spec--default--backends--zipkin))
+- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--default--backends--one))
+- `three` (Attributes) (see [below for nested schema](#nestedatt--spec--default--backends--three))
+- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--default--backends--two))
 
-<a id="nestedatt--spec--default--backends--datadog"></a>
-### Nested Schema for `spec.default.backends.datadog`
+<a id="nestedatt--spec--default--backends--one"></a>
+### Nested Schema for `spec.default.backends.one`
+
+Optional:
+
+- `datadog` (Attributes) Datadog backend configuration. (see [below for nested schema](#nestedatt--spec--default--backends--one--datadog))
+- `open_telemetry` (Attributes) OpenTelemetry backend configuration. (see [below for nested schema](#nestedatt--spec--default--backends--one--open_telemetry))
+- `type` (String) possible known values include one of ["Zipkin", "Datadog", "OpenTelemetry"]; Not Null
+- `zipkin` (Attributes) Zipkin backend configuration. (see [below for nested schema](#nestedatt--spec--default--backends--one--zipkin))
+
+<a id="nestedatt--spec--default--backends--one--datadog"></a>
+### Nested Schema for `spec.default.backends.one.datadog`
 
 Optional:
 
@@ -159,16 +164,16 @@ fragments etc.)
 Not Null
 
 
-<a id="nestedatt--spec--default--backends--open_telemetry"></a>
-### Nested Schema for `spec.default.backends.open_telemetry`
+<a id="nestedatt--spec--default--backends--one--open_telemetry"></a>
+### Nested Schema for `spec.default.backends.one.open_telemetry`
 
 Optional:
 
 - `backend_ref` (Attributes) BackendRef is a reference to a MeshOpenTelemetryBackend resource that
-defines the collector endpoint. (see [below for nested schema](#nestedatt--spec--default--backends--open_telemetry--backend_ref))
+defines the collector endpoint. (see [below for nested schema](#nestedatt--spec--default--backends--one--open_telemetry--backend_ref))
 
-<a id="nestedatt--spec--default--backends--open_telemetry--backend_ref"></a>
-### Nested Schema for `spec.default.backends.open_telemetry.backend_ref`
+<a id="nestedatt--spec--default--backends--one--open_telemetry--backend_ref"></a>
+### Nested Schema for `spec.default.backends.one.open_telemetry.backend_ref`
 
 Optional:
 
@@ -178,8 +183,8 @@ the oldest by creation time wins.
 
 
 
-<a id="nestedatt--spec--default--backends--zipkin"></a>
-### Nested Schema for `spec.default.backends.zipkin`
+<a id="nestedatt--spec--default--backends--one--zipkin"></a>
+### Nested Schema for `spec.default.backends.one.zipkin`
 
 Optional:
 
@@ -192,6 +197,131 @@ https://github.com/envoyproxy/envoy/blob/v1.22.0/api/envoy/config/trace/v3/zipki
 Default: true
 - `trace_id128bit` (Boolean) Generate 128bit traces. Default: false
 - `url` (String) Address of Zipkin collector. Not Null
+
+
+
+<a id="nestedatt--spec--default--backends--three"></a>
+### Nested Schema for `spec.default.backends.three`
+
+Optional:
+
+- `datadog` (Attributes) Datadog backend configuration. (see [below for nested schema](#nestedatt--spec--default--backends--three--datadog))
+- `open_telemetry` (Attributes) OpenTelemetry backend configuration. (see [below for nested schema](#nestedatt--spec--default--backends--three--open_telemetry))
+- `type` (String) possible known values include one of ["Zipkin", "Datadog", "OpenTelemetry"]; Not Null
+- `zipkin` (Attributes) Zipkin backend configuration. (see [below for nested schema](#nestedatt--spec--default--backends--three--zipkin))
+
+<a id="nestedatt--spec--default--backends--three--datadog"></a>
+### Nested Schema for `spec.default.backends.three.datadog`
+
+Optional:
+
+- `split_service` (Boolean) Determines if datadog service name should be split based on traffic
+direction and destination. For example, with `splitService: true` and a
+`backend` service that communicates with a couple of databases, you would
+get service names like `backend_INBOUND`, `backend_OUTBOUND_db1`, and
+`backend_OUTBOUND_db2` in Datadog.
+Default: false
+- `url` (String) Address of Datadog collector, only host and port are allowed (no paths,
+fragments etc.)
+Not Null
+
+
+<a id="nestedatt--spec--default--backends--three--open_telemetry"></a>
+### Nested Schema for `spec.default.backends.three.open_telemetry`
+
+Optional:
+
+- `backend_ref` (Attributes) BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+defines the collector endpoint. (see [below for nested schema](#nestedatt--spec--default--backends--three--open_telemetry--backend_ref))
+
+<a id="nestedatt--spec--default--backends--three--open_telemetry--backend_ref"></a>
+### Nested Schema for `spec.default.backends.three.open_telemetry.backend_ref`
+
+Optional:
+
+- `kind` (String) Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"
+- `labels` (Map of String) Labels to match the referenced resource. When multiple resources match,
+the oldest by creation time wins.
+
+
+
+<a id="nestedatt--spec--default--backends--three--zipkin"></a>
+### Nested Schema for `spec.default.backends.three.zipkin`
+
+Optional:
+
+- `api_version` (String) Version of the API.
+https://github.com/envoyproxy/envoy/blob/v1.22.0/api/envoy/config/trace/v3/zipkin.proto#L66
+possible known values include one of ["httpJson", "httpProto"]; Default: "httpJson"
+- `shared_span_context` (Boolean) Determines whether client and server spans will share the same span
+context.
+https://github.com/envoyproxy/envoy/blob/v1.22.0/api/envoy/config/trace/v3/zipkin.proto#L63
+Default: true
+- `trace_id128bit` (Boolean) Generate 128bit traces. Default: false
+- `url` (String) Address of Zipkin collector. Not Null
+
+
+
+<a id="nestedatt--spec--default--backends--two"></a>
+### Nested Schema for `spec.default.backends.two`
+
+Optional:
+
+- `datadog` (Attributes) Datadog backend configuration. (see [below for nested schema](#nestedatt--spec--default--backends--two--datadog))
+- `open_telemetry` (Attributes) OpenTelemetry backend configuration. (see [below for nested schema](#nestedatt--spec--default--backends--two--open_telemetry))
+- `type` (String) possible known values include one of ["Zipkin", "Datadog", "OpenTelemetry"]; Not Null
+- `zipkin` (Attributes) Zipkin backend configuration. (see [below for nested schema](#nestedatt--spec--default--backends--two--zipkin))
+
+<a id="nestedatt--spec--default--backends--two--datadog"></a>
+### Nested Schema for `spec.default.backends.two.datadog`
+
+Optional:
+
+- `split_service` (Boolean) Determines if datadog service name should be split based on traffic
+direction and destination. For example, with `splitService: true` and a
+`backend` service that communicates with a couple of databases, you would
+get service names like `backend_INBOUND`, `backend_OUTBOUND_db1`, and
+`backend_OUTBOUND_db2` in Datadog.
+Default: false
+- `url` (String) Address of Datadog collector, only host and port are allowed (no paths,
+fragments etc.)
+Not Null
+
+
+<a id="nestedatt--spec--default--backends--two--open_telemetry"></a>
+### Nested Schema for `spec.default.backends.two.open_telemetry`
+
+Optional:
+
+- `backend_ref` (Attributes) BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+defines the collector endpoint. (see [below for nested schema](#nestedatt--spec--default--backends--two--open_telemetry--backend_ref))
+
+<a id="nestedatt--spec--default--backends--two--open_telemetry--backend_ref"></a>
+### Nested Schema for `spec.default.backends.two.open_telemetry.backend_ref`
+
+Optional:
+
+- `kind` (String) Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"
+- `labels` (Map of String) Labels to match the referenced resource. When multiple resources match,
+the oldest by creation time wins.
+
+
+
+<a id="nestedatt--spec--default--backends--two--zipkin"></a>
+### Nested Schema for `spec.default.backends.two.zipkin`
+
+Optional:
+
+- `api_version` (String) Version of the API.
+https://github.com/envoyproxy/envoy/blob/v1.22.0/api/envoy/config/trace/v3/zipkin.proto#L66
+possible known values include one of ["httpJson", "httpProto"]; Default: "httpJson"
+- `shared_span_context` (Boolean) Determines whether client and server spans will share the same span
+context.
+https://github.com/envoyproxy/envoy/blob/v1.22.0/api/envoy/config/trace/v3/zipkin.proto#L63
+Default: true
+- `trace_id128bit` (Boolean) Generate 128bit traces. Default: false
+- `url` (String) Address of Zipkin collector. Not Null
+
 
 
 
@@ -277,21 +407,15 @@ included.
 
 Required:
 
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "Dataplane"]
 
 Optional:
 
-- `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
-Name and Namespace can be used.
-- `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`
-and `MeshServiceSubset`
-- `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-will be targeted.
+- `labels` (Map of String) Labels are used to select referenced real resources and to carry legacy
+service identity when a common TargetRef must still target old
+service-tag based paths.
 - `section_name` (String) SectionName is used to target specific section of resource.
 For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-- `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds
-`MeshSubset` and `MeshServiceSubset`
 
 
 

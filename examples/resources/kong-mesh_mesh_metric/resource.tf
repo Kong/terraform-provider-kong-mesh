@@ -16,24 +16,26 @@ resource "kong-mesh_mesh_metric" "my_meshmetric" {
       ]
       backends = [
         {
-          open_telemetry = {
-            backend_ref = {
-              kind = "MeshOpenTelemetryBackend"
-              labels = {
-                key = "value"
+          one = {
+            open_telemetry = {
+              backend_ref = {
+                kind = "MeshOpenTelemetryBackend"
+                labels = {
+                  key = "value"
+                }
+              }
+              refresh_interval = "...my_refresh_interval..."
+            }
+            prometheus = {
+              client_id = "...my_client_id..."
+              path      = "/metrics"
+              port      = 5670
+              tls = {
+                mode = "Disabled"
               }
             }
-            refresh_interval = "...my_refresh_interval..."
+            type = "OpenTelemetry"
           }
-          prometheus = {
-            client_id = "...my_client_id..."
-            path      = "/metrics"
-            port      = 5670
-            tls = {
-              mode = "Disabled"
-            }
-          }
-          type = "Prometheus"
         }
       ]
       sidecar = {
@@ -60,17 +62,11 @@ resource "kong-mesh_mesh_metric" "my_meshmetric" {
       }
     }
     target_ref = {
-      kind = "MeshSubset"
+      kind = "Mesh"
       labels = {
         key = "value"
       }
-      mesh         = "...my_mesh..."
-      name         = "...my_name..."
-      namespace    = "...my_namespace..."
       section_name = "...my_section_name..."
-      tags = {
-        key = "value"
-      }
     }
   }
   type = "MeshMetric"

@@ -252,12 +252,12 @@ func (s *Tenants) GetTenant(ctx context.Context, request operations.GetTenantReq
 				return nil, err
 			}
 
-			var out shared.BaseError
+			var out shared.InternalError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.BaseError = &out
+			res.InternalError = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
@@ -474,12 +474,12 @@ func (s *Tenants) DeleteTenant(ctx context.Context, request operations.DeleteTen
 				return nil, err
 			}
 
-			var out shared.BaseError
+			var out shared.InternalError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.BaseError = &out
+			res.InternalError = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {

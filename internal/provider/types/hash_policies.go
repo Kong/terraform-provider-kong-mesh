@@ -2,16 +2,10 @@
 
 package types
 
-import (
-	"github.com/hashicorp/terraform-plugin-framework/types"
-)
-
 type HashPolicies struct {
-	Connection     *Connection  `tfsdk:"connection"`
-	Cookie         *Cookie      `tfsdk:"cookie"`
-	FilterState    *FilterState `tfsdk:"filter_state"`
-	Header         *EnvVar      `tfsdk:"header"`
-	QueryParameter *EnvVar      `tfsdk:"query_parameter"`
-	Terminal       types.Bool   `tfsdk:"terminal"`
-	Type           types.String `tfsdk:"type"`
+	One   *HashPolicies1 `queryParam:"inline" tfsdk:"one"`
+	Two   *HashPolicies1 `queryParam:"inline" tfsdk:"two"`
+	Three *HashPolicies1 `queryParam:"inline" tfsdk:"three"`
+	Four  *HashPolicies1 `queryParam:"inline" tfsdk:"four"`
+	Five  *HashPolicies1 `queryParam:"inline" tfsdk:"five"`
 }

@@ -3,99 +3,39 @@
 package shared
 
 import (
-	"errors"
-	"fmt"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/utils"
 	"time"
 )
 
-type AccessType string
+type Access string
 
 const (
-	AccessTypeStr     AccessType = "str"
-	AccessTypeInteger AccessType = "integer"
+	AccessCreate                   Access = "CREATE"
+	AccessUpdate                   Access = "UPDATE"
+	AccessDelete                   Access = "DELETE"
+	AccessGenerateDataplaneToken   Access = "GENERATE_DATAPLANE_TOKEN"
+	AccessGenerateUserToken        Access = "GENERATE_USER_TOKEN"
+	AccessGenerateZoneCpToken      Access = "GENERATE_ZONE_CP_TOKEN"
+	AccessGenerateZoneToken        Access = "GENERATE_ZONE_TOKEN"
+	AccessViewConfigDump           Access = "VIEW_CONFIG_DUMP"
+	AccessViewStats                Access = "VIEW_STATS"
+	AccessViewClusters             Access = "VIEW_CLUSTERS"
+	AccessViewControlPlaneMetadata Access = "VIEW_CONTROL_PLANE_METADATA"
 )
 
-type Access struct {
-	Str     *string `queryParam:"inline" union:"member"`
-	Integer *int64  `queryParam:"inline" union:"member"`
-
-	Type AccessType
+func (e Access) ToPointer() *Access {
+	return &e
 }
 
-func CreateAccessStr(str string) Access {
-	typ := AccessTypeStr
-
-	return Access{
-		Str:  &str,
-		Type: typ,
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *Access) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "CREATE", "UPDATE", "DELETE", "GENERATE_DATAPLANE_TOKEN", "GENERATE_USER_TOKEN", "GENERATE_ZONE_CP_TOKEN", "GENERATE_ZONE_TOKEN", "VIEW_CONFIG_DUMP", "VIEW_STATS", "VIEW_CLUSTERS", "VIEW_CONTROL_PLANE_METADATA":
+			return true
+		}
 	}
-}
-
-func CreateAccessInteger(integer int64) Access {
-	typ := AccessTypeInteger
-
-	return Access{
-		Integer: &integer,
-		Type:    typ,
-	}
-}
-
-func (u *Access) UnmarshalJSON(data []byte) error {
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var str string = ""
-	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  AccessTypeStr,
-			Value: &str,
-		})
-	}
-
-	var integer int64 = int64(0)
-	if err := utils.UnmarshalJSON(data, &integer, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  AccessTypeInteger,
-			Value: &integer,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Access", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Access", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(AccessType)
-	switch best.Type {
-	case AccessTypeStr:
-		u.Str = best.Value.(*string)
-		return nil
-	case AccessTypeInteger:
-		u.Integer = best.Value.(*int64)
-		return nil
-	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for Access", string(data))
-}
-
-func (u Access) MarshalJSON() ([]byte, error) {
-	if u.Str != nil {
-		return utils.MarshalJSON(u.Str, "", true)
-	}
-
-	if u.Integer != nil {
-		return utils.MarshalJSON(u.Integer, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type Access: all fields are null")
+	return false
 }
 
 type Rules struct {
