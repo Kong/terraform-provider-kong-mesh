@@ -7,6 +7,6 @@ import (
 )
 
 type Abort struct {
-	HTTPStatus types.Int32 `tfsdk:"http_status"`
-	Percentage *Mode       `tfsdk:"percentage"`
+	HTTPStatus types.Int32              `tfsdk:"http_status"`
+	Percentage *StandardDeviationFactor `tfsdk:"percentage"`
 }

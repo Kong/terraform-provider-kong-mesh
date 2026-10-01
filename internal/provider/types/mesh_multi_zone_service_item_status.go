@@ -4,7 +4,7 @@ package types
 
 type MeshMultiZoneServiceItemStatus struct {
 	Addresses          []Addresses                            `tfsdk:"addresses"`
-	Conditions         []MeshExternalServiceItemConditions    `tfsdk:"conditions"`
+	Conditions         []Conditions                           `tfsdk:"conditions"`
 	HostnameGenerators []HostnameGenerators                   `tfsdk:"hostname_generators"`
 	MeshServices       []MeshMultiZoneServiceItemMeshServices `tfsdk:"mesh_services"`
 	Vips               []Vip                                  `tfsdk:"vips"`

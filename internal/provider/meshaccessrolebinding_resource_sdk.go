@@ -6,6 +6,7 @@ import (
 	"context"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/kong/terraform-provider-kong-mesh/internal/provider/typeconvert"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
@@ -28,12 +29,15 @@ func (r *MeshAccessRoleBindingResourceModel) RefreshFromSharedAccessRoleBindingI
 	var diags diag.Diagnostics
 
 	if resp != nil {
+		r.CreationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreationTime))
+		r.Kri = types.StringPointerValue(resp.Kri)
 		if len(resp.Labels) > 0 {
 			r.Labels = make(map[string]types.String, len(resp.Labels))
 			for key, value := range resp.Labels {
 				r.Labels[key] = types.StringValue(value)
 			}
 		}
+		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
 		if resp.Roles != nil {
 			r.Roles = make([]types.String, 0, len(resp.Roles))
@@ -95,7 +99,7 @@ func (r *MeshAccessRoleBindingResourceModel) ToOperationsPutAccessRoleBindingReq
 	var name string
 	name = r.Name.ValueString()
 
-	accessRoleBindingItem, accessRoleBindingItemDiags := r.ToSharedAccessRoleBindingItem(ctx)
+	accessRoleBindingItem, accessRoleBindingItemDiags := r.ToSharedAccessRoleBindingItemInput(ctx)
 	diags.Append(accessRoleBindingItemDiags...)
 
 	if diags.HasError() {
@@ -110,7 +114,7 @@ func (r *MeshAccessRoleBindingResourceModel) ToOperationsPutAccessRoleBindingReq
 	return &out, diags
 }
 
-func (r *MeshAccessRoleBindingResourceModel) ToSharedAccessRoleBindingItem(ctx context.Context) (*shared.AccessRoleBindingItem, diag.Diagnostics) {
+func (r *MeshAccessRoleBindingResourceModel) ToSharedAccessRoleBindingItemInput(ctx context.Context) (*shared.AccessRoleBindingItemInput, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	labels := make(map[string]string)
@@ -155,7 +159,7 @@ func (r *MeshAccessRoleBindingResourceModel) ToSharedAccessRoleBindingItem(ctx c
 	var typeVar1 string
 	typeVar1 = r.Type.ValueString()
 
-	out := shared.AccessRoleBindingItem{
+	out := shared.AccessRoleBindingItemInput{
 		Labels:   labels,
 		Name:     name,
 		Roles:    roles,

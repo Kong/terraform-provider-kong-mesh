@@ -25,111 +25,60 @@ resource "kong-mesh_mesh_load_balancing_strategy" "my_meshloadbalancingstrategy"
       labels = {
         key = "value"
       }
-      mesh      = "...my_mesh..."
-      name      = "...my_name..."
-      namespace = "...my_namespace..."
-      proxy_types = [
-        "Sidecar"
-      ]
       section_name = "...my_section_name..."
-      tags = {
-        key = "value"
-      }
     }
     to = [
       {
         default = {
           hash_policies = [
             {
-              connection = {
-                source_ip = false
+              one = {
+                connection = {
+                  source_ip = true
+                }
+                cookie = {
+                  name = "...my_name..."
+                  path = "...my_path..."
+                  ttl  = "...my_ttl..."
+                }
+                filter_state = {
+                  key = "...my_key..."
+                }
+                header = {
+                  name = "...my_name..."
+                }
+                query_parameter = {
+                  name = "...my_name..."
+                }
+                terminal = false
+                type     = "FilterState"
               }
-              cookie = {
-                name = "...my_name..."
-                path = "...my_path..."
-                ttl  = "...my_ttl..."
-              }
-              filter_state = {
-                key = "...my_key..."
-              }
-              header = {
-                name = "...my_name..."
-              }
-              query_parameter = {
-                name = "...my_name..."
-              }
-              terminal = true
-              type     = "FilterState"
             }
           ]
           load_balancer = {
-            least_request = {
-              active_request_bias = {
-                integer = 10
+            three = {
+              least_request = {
+                active_request_bias = {
+                  str = "...my_str..."
+                }
+                choice_count = 5
               }
-              choice_count = 4
+              maglev = {
+                table_size = 3499575
+              }
+              random = {
+                # ...
+              }
+              ring_hash = {
+                hash_function = "MurmurHash2"
+                max_ring_size = 5981191
+                min_ring_size = 554037
+              }
+              round_robin = {
+                # ...
+              }
+              type = "Random"
             }
-            maglev = {
-              hash_policies = [
-                {
-                  connection = {
-                    source_ip = false
-                  }
-                  cookie = {
-                    name = "...my_name..."
-                    path = "...my_path..."
-                    ttl  = "...my_ttl..."
-                  }
-                  filter_state = {
-                    key = "...my_key..."
-                  }
-                  header = {
-                    name = "...my_name..."
-                  }
-                  query_parameter = {
-                    name = "...my_name..."
-                  }
-                  terminal = false
-                  type     = "Connection"
-                }
-              ]
-              table_size = 26413
-            }
-            random = {
-              # ...
-            }
-            ring_hash = {
-              hash_function = "XXHash"
-              hash_policies = [
-                {
-                  connection = {
-                    source_ip = false
-                  }
-                  cookie = {
-                    name = "...my_name..."
-                    path = "...my_path..."
-                    ttl  = "...my_ttl..."
-                  }
-                  filter_state = {
-                    key = "...my_key..."
-                  }
-                  header = {
-                    name = "...my_name..."
-                  }
-                  query_parameter = {
-                    name = "...my_name..."
-                  }
-                  terminal = false
-                  type     = "QueryParameter"
-                }
-              ]
-              max_ring_size = 5614666
-              min_ring_size = 623920
-            }
-            round_robin = {
-              # ...
-            }
-            type = "Maglev"
           }
           locality_awareness = {
             cross_zone = {
@@ -170,16 +119,7 @@ resource "kong-mesh_mesh_load_balancing_strategy" "my_meshloadbalancingstrategy"
           labels = {
             key = "value"
           }
-          mesh      = "...my_mesh..."
-          name      = "...my_name..."
-          namespace = "...my_namespace..."
-          proxy_types = [
-            "Sidecar"
-          ]
           section_name = "...my_section_name..."
-          tags = {
-            key = "value"
-          }
         }
       }
     ]
@@ -225,23 +165,15 @@ defined inplace. (see [below for nested schema](#nestedatt--spec--target_ref))
 
 Required:
 
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "Dataplane"]
 
 Optional:
 
-- `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
-Name and Namespace can be used.
-- `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`,
-`MeshServiceSubset` and `MeshGatewayRoute`
-- `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-will be targeted.
-- `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-all data plane types are targeted by the policy.
+- `labels` (Map of String) Labels are used to select referenced real resources and to carry legacy
+service identity when a common TargetRef must still target old
+service-tag based paths.
 - `section_name` (String) SectionName is used to target specific section of resource.
 For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-- `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds
-`MeshSubset` and `MeshServiceSubset`
 
 
 <a id="nestedatt--spec--to"></a>
@@ -272,27 +204,38 @@ ignoring the rest of the hash policy list. (see [below for nested schema](#neste
 
 Optional:
 
-- `connection` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--connection))
-- `cookie` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--cookie))
-- `filter_state` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--filter_state))
-- `header` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--header))
-- `query_parameter` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--query_parameter))
+- `five` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--five))
+- `four` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--four))
+- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--one))
+- `three` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--three))
+- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--two))
+
+<a id="nestedatt--spec--to--default--hash_policies--five"></a>
+### Nested Schema for `spec.to.default.hash_policies.five`
+
+Optional:
+
+- `connection` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--five--connection))
+- `cookie` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--five--cookie))
+- `filter_state` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--five--filter_state))
+- `header` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--five--header))
+- `query_parameter` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--five--query_parameter))
 - `terminal` (Boolean) Terminal is a flag that short-circuits the hash computing. This field provides
 a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback
 to rest of the policy list”, it saves time when the terminal policy works.
 If true, and there is already a hash computed, ignore rest of the list of hash polices.
-- `type` (String) possible known values include one of ["Header", "Cookie", "Connection", "SourceIP", "QueryParameter", "FilterState"]; Not Null
+- `type` (String) possible known values include one of ["Header", "Cookie", "Connection", "QueryParameter", "FilterState"]; Not Null
 
-<a id="nestedatt--spec--to--default--hash_policies--connection"></a>
-### Nested Schema for `spec.to.default.hash_policies.connection`
+<a id="nestedatt--spec--to--default--hash_policies--five--connection"></a>
+### Nested Schema for `spec.to.default.hash_policies.five.connection`
 
 Optional:
 
 - `source_ip` (Boolean) Hash on source IP address.
 
 
-<a id="nestedatt--spec--to--default--hash_policies--cookie"></a>
-### Nested Schema for `spec.to.default.hash_policies.cookie`
+<a id="nestedatt--spec--to--default--hash_policies--five--cookie"></a>
+### Nested Schema for `spec.to.default.hash_policies.five.cookie`
 
 Optional:
 
@@ -301,8 +244,8 @@ Optional:
 - `ttl` (String) If specified, a cookie with the TTL will be generated if the cookie is not present.
 
 
-<a id="nestedatt--spec--to--default--hash_policies--filter_state"></a>
-### Nested Schema for `spec.to.default.hash_policies.filter_state`
+<a id="nestedatt--spec--to--default--hash_policies--five--filter_state"></a>
+### Nested Schema for `spec.to.default.hash_policies.five.filter_state`
 
 Optional:
 
@@ -312,16 +255,16 @@ or the stored object is not Envoy::Hashable, no hash will be produced.
 Not Null
 
 
-<a id="nestedatt--spec--to--default--hash_policies--header"></a>
-### Nested Schema for `spec.to.default.hash_policies.header`
+<a id="nestedatt--spec--to--default--hash_policies--five--header"></a>
+### Nested Schema for `spec.to.default.hash_policies.five.header`
 
 Optional:
 
 - `name` (String) The name of the request header that will be used to obtain the hash key. Not Null
 
 
-<a id="nestedatt--spec--to--default--hash_policies--query_parameter"></a>
-### Nested Schema for `spec.to.default.hash_policies.query_parameter`
+<a id="nestedatt--spec--to--default--hash_policies--five--query_parameter"></a>
+### Nested Schema for `spec.to.default.hash_policies.five.query_parameter`
 
 Optional:
 
@@ -329,6 +272,267 @@ Optional:
 If the parameter is not present, no hash will be produced. Query parameter names
 are case-sensitive.
 Not Null
+
+
+
+<a id="nestedatt--spec--to--default--hash_policies--four"></a>
+### Nested Schema for `spec.to.default.hash_policies.four`
+
+Optional:
+
+- `connection` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--four--connection))
+- `cookie` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--four--cookie))
+- `filter_state` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--four--filter_state))
+- `header` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--four--header))
+- `query_parameter` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--four--query_parameter))
+- `terminal` (Boolean) Terminal is a flag that short-circuits the hash computing. This field provides
+a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback
+to rest of the policy list”, it saves time when the terminal policy works.
+If true, and there is already a hash computed, ignore rest of the list of hash polices.
+- `type` (String) possible known values include one of ["Header", "Cookie", "Connection", "QueryParameter", "FilterState"]; Not Null
+
+<a id="nestedatt--spec--to--default--hash_policies--four--connection"></a>
+### Nested Schema for `spec.to.default.hash_policies.four.connection`
+
+Optional:
+
+- `source_ip` (Boolean) Hash on source IP address.
+
+
+<a id="nestedatt--spec--to--default--hash_policies--four--cookie"></a>
+### Nested Schema for `spec.to.default.hash_policies.four.cookie`
+
+Optional:
+
+- `name` (String) The name of the cookie that will be used to obtain the hash key. Not Null
+- `path` (String) The name of the path for the cookie.
+- `ttl` (String) If specified, a cookie with the TTL will be generated if the cookie is not present.
+
+
+<a id="nestedatt--spec--to--default--hash_policies--four--filter_state"></a>
+### Nested Schema for `spec.to.default.hash_policies.four.filter_state`
+
+Optional:
+
+- `key` (String) The name of the Object in the per-request filterState, which is
+an Envoy::Hashable object. If there is no data associated with the key,
+or the stored object is not Envoy::Hashable, no hash will be produced.
+Not Null
+
+
+<a id="nestedatt--spec--to--default--hash_policies--four--header"></a>
+### Nested Schema for `spec.to.default.hash_policies.four.header`
+
+Optional:
+
+- `name` (String) The name of the request header that will be used to obtain the hash key. Not Null
+
+
+<a id="nestedatt--spec--to--default--hash_policies--four--query_parameter"></a>
+### Nested Schema for `spec.to.default.hash_policies.four.query_parameter`
+
+Optional:
+
+- `name` (String) The name of the URL query parameter that will be used to obtain the hash key.
+If the parameter is not present, no hash will be produced. Query parameter names
+are case-sensitive.
+Not Null
+
+
+
+<a id="nestedatt--spec--to--default--hash_policies--one"></a>
+### Nested Schema for `spec.to.default.hash_policies.one`
+
+Optional:
+
+- `connection` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--one--connection))
+- `cookie` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--one--cookie))
+- `filter_state` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--one--filter_state))
+- `header` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--one--header))
+- `query_parameter` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--one--query_parameter))
+- `terminal` (Boolean) Terminal is a flag that short-circuits the hash computing. This field provides
+a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback
+to rest of the policy list”, it saves time when the terminal policy works.
+If true, and there is already a hash computed, ignore rest of the list of hash polices.
+- `type` (String) possible known values include one of ["Header", "Cookie", "Connection", "QueryParameter", "FilterState"]; Not Null
+
+<a id="nestedatt--spec--to--default--hash_policies--one--connection"></a>
+### Nested Schema for `spec.to.default.hash_policies.one.connection`
+
+Optional:
+
+- `source_ip` (Boolean) Hash on source IP address.
+
+
+<a id="nestedatt--spec--to--default--hash_policies--one--cookie"></a>
+### Nested Schema for `spec.to.default.hash_policies.one.cookie`
+
+Optional:
+
+- `name` (String) The name of the cookie that will be used to obtain the hash key. Not Null
+- `path` (String) The name of the path for the cookie.
+- `ttl` (String) If specified, a cookie with the TTL will be generated if the cookie is not present.
+
+
+<a id="nestedatt--spec--to--default--hash_policies--one--filter_state"></a>
+### Nested Schema for `spec.to.default.hash_policies.one.filter_state`
+
+Optional:
+
+- `key` (String) The name of the Object in the per-request filterState, which is
+an Envoy::Hashable object. If there is no data associated with the key,
+or the stored object is not Envoy::Hashable, no hash will be produced.
+Not Null
+
+
+<a id="nestedatt--spec--to--default--hash_policies--one--header"></a>
+### Nested Schema for `spec.to.default.hash_policies.one.header`
+
+Optional:
+
+- `name` (String) The name of the request header that will be used to obtain the hash key. Not Null
+
+
+<a id="nestedatt--spec--to--default--hash_policies--one--query_parameter"></a>
+### Nested Schema for `spec.to.default.hash_policies.one.query_parameter`
+
+Optional:
+
+- `name` (String) The name of the URL query parameter that will be used to obtain the hash key.
+If the parameter is not present, no hash will be produced. Query parameter names
+are case-sensitive.
+Not Null
+
+
+
+<a id="nestedatt--spec--to--default--hash_policies--three"></a>
+### Nested Schema for `spec.to.default.hash_policies.three`
+
+Optional:
+
+- `connection` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--three--connection))
+- `cookie` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--three--cookie))
+- `filter_state` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--three--filter_state))
+- `header` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--three--header))
+- `query_parameter` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--three--query_parameter))
+- `terminal` (Boolean) Terminal is a flag that short-circuits the hash computing. This field provides
+a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback
+to rest of the policy list”, it saves time when the terminal policy works.
+If true, and there is already a hash computed, ignore rest of the list of hash polices.
+- `type` (String) possible known values include one of ["Header", "Cookie", "Connection", "QueryParameter", "FilterState"]; Not Null
+
+<a id="nestedatt--spec--to--default--hash_policies--three--connection"></a>
+### Nested Schema for `spec.to.default.hash_policies.three.connection`
+
+Optional:
+
+- `source_ip` (Boolean) Hash on source IP address.
+
+
+<a id="nestedatt--spec--to--default--hash_policies--three--cookie"></a>
+### Nested Schema for `spec.to.default.hash_policies.three.cookie`
+
+Optional:
+
+- `name` (String) The name of the cookie that will be used to obtain the hash key. Not Null
+- `path` (String) The name of the path for the cookie.
+- `ttl` (String) If specified, a cookie with the TTL will be generated if the cookie is not present.
+
+
+<a id="nestedatt--spec--to--default--hash_policies--three--filter_state"></a>
+### Nested Schema for `spec.to.default.hash_policies.three.filter_state`
+
+Optional:
+
+- `key` (String) The name of the Object in the per-request filterState, which is
+an Envoy::Hashable object. If there is no data associated with the key,
+or the stored object is not Envoy::Hashable, no hash will be produced.
+Not Null
+
+
+<a id="nestedatt--spec--to--default--hash_policies--three--header"></a>
+### Nested Schema for `spec.to.default.hash_policies.three.header`
+
+Optional:
+
+- `name` (String) The name of the request header that will be used to obtain the hash key. Not Null
+
+
+<a id="nestedatt--spec--to--default--hash_policies--three--query_parameter"></a>
+### Nested Schema for `spec.to.default.hash_policies.three.query_parameter`
+
+Optional:
+
+- `name` (String) The name of the URL query parameter that will be used to obtain the hash key.
+If the parameter is not present, no hash will be produced. Query parameter names
+are case-sensitive.
+Not Null
+
+
+
+<a id="nestedatt--spec--to--default--hash_policies--two"></a>
+### Nested Schema for `spec.to.default.hash_policies.two`
+
+Optional:
+
+- `connection` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--two--connection))
+- `cookie` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--two--cookie))
+- `filter_state` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--two--filter_state))
+- `header` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--two--header))
+- `query_parameter` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--hash_policies--two--query_parameter))
+- `terminal` (Boolean) Terminal is a flag that short-circuits the hash computing. This field provides
+a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback
+to rest of the policy list”, it saves time when the terminal policy works.
+If true, and there is already a hash computed, ignore rest of the list of hash polices.
+- `type` (String) possible known values include one of ["Header", "Cookie", "Connection", "QueryParameter", "FilterState"]; Not Null
+
+<a id="nestedatt--spec--to--default--hash_policies--two--connection"></a>
+### Nested Schema for `spec.to.default.hash_policies.two.connection`
+
+Optional:
+
+- `source_ip` (Boolean) Hash on source IP address.
+
+
+<a id="nestedatt--spec--to--default--hash_policies--two--cookie"></a>
+### Nested Schema for `spec.to.default.hash_policies.two.cookie`
+
+Optional:
+
+- `name` (String) The name of the cookie that will be used to obtain the hash key. Not Null
+- `path` (String) The name of the path for the cookie.
+- `ttl` (String) If specified, a cookie with the TTL will be generated if the cookie is not present.
+
+
+<a id="nestedatt--spec--to--default--hash_policies--two--filter_state"></a>
+### Nested Schema for `spec.to.default.hash_policies.two.filter_state`
+
+Optional:
+
+- `key` (String) The name of the Object in the per-request filterState, which is
+an Envoy::Hashable object. If there is no data associated with the key,
+or the stored object is not Envoy::Hashable, no hash will be produced.
+Not Null
+
+
+<a id="nestedatt--spec--to--default--hash_policies--two--header"></a>
+### Nested Schema for `spec.to.default.hash_policies.two.header`
+
+Optional:
+
+- `name` (String) The name of the request header that will be used to obtain the hash key. Not Null
+
+
+<a id="nestedatt--spec--to--default--hash_policies--two--query_parameter"></a>
+### Nested Schema for `spec.to.default.hash_policies.two.query_parameter`
+
+Optional:
+
+- `name` (String) The name of the URL query parameter that will be used to obtain the hash key.
+If the parameter is not present, no hash will be produced. Query parameter names
+are case-sensitive.
+Not Null
+
 
 
 
@@ -337,24 +541,35 @@ Not Null
 
 Optional:
 
+- `five` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--five))
+- `four` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--four))
+- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--one))
+- `three` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--three))
+- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--two))
+
+<a id="nestedatt--spec--to--default--load_balancer--five"></a>
+### Nested Schema for `spec.to.default.load_balancer.five`
+
+Optional:
+
 - `least_request` (Attributes) LeastRequest selects N random available hosts as specified in 'choiceCount' (2 by default)
-and picks the host which has the fewest active requests (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--least_request))
+and picks the host which has the fewest active requests (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--five--least_request))
 - `maglev` (Attributes) Maglev implements consistent hashing to upstream hosts. Maglev can be used as
 a drop in replacement for the ring hash load balancer any place in which
-consistent hashing is desired. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--maglev))
+consistent hashing is desired. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--five--maglev))
 - `random` (Attributes) Random selects a random available host. The random load balancer generally
 performs better than round-robin if no health checking policy is configured.
-Random selection avoids bias towards the host in the set that comes after a failed host. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--random))
+Random selection avoids bias towards the host in the set that comes after a failed host. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--five--random))
 - `ring_hash` (Attributes) RingHash  implements consistent hashing to upstream hosts. Each host is mapped
 onto a circle (the “ring”) by hashing its address; each request is then routed
 to a host by hashing some property of the request, and finding the nearest
-corresponding host clockwise around the ring. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--ring_hash))
+corresponding host clockwise around the ring. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--five--ring_hash))
 - `round_robin` (Attributes) RoundRobin is a load balancing algorithm that distributes requests
-across available upstream hosts in round-robin order. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--round_robin))
+across available upstream hosts in round-robin order. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--five--round_robin))
 - `type` (String) possible known values include one of ["RoundRobin", "LeastRequest", "RingHash", "Random", "Maglev"]; Not Null
 
-<a id="nestedatt--spec--to--default--load_balancer--least_request"></a>
-### Nested Schema for `spec.to.default.load_balancer.least_request`
+<a id="nestedatt--spec--to--default--load_balancer--five--least_request"></a>
+### Nested Schema for `spec.to.default.load_balancer.five.least_request`
 
 Optional:
 
@@ -362,13 +577,13 @@ Optional:
 balancing weights. A higher value here aggressively reduces the weight of endpoints
 that are currently handling active requests. In essence, the higher the ActiveRequestBias
 value, the more forcefully it reduces the load balancing weight of endpoints that are
-actively serving requests. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--least_request--active_request_bias))
+actively serving requests. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--five--least_request--active_request_bias))
 - `choice_count` (Number) ChoiceCount is the number of random healthy hosts from which the host with
 the fewest active requests will be chosen. Defaults to 2 so that Envoy performs
 two-choice selection if the field is not set.
 
-<a id="nestedatt--spec--to--default--load_balancer--least_request--active_request_bias"></a>
-### Nested Schema for `spec.to.default.load_balancer.least_request.active_request_bias`
+<a id="nestedatt--spec--to--default--load_balancer--five--least_request--active_request_bias"></a>
+### Nested Schema for `spec.to.default.load_balancer.five.least_request.active_request_bias`
 
 Optional:
 
@@ -377,15 +592,11 @@ Optional:
 
 
 
-<a id="nestedatt--spec--to--default--load_balancer--maglev"></a>
-### Nested Schema for `spec.to.default.load_balancer.maglev`
+<a id="nestedatt--spec--to--default--load_balancer--five--maglev"></a>
+### Nested Schema for `spec.to.default.load_balancer.five.maglev`
 
 Optional:
 
-- `hash_policies` (Attributes List) HashPolicies specify a list of request/connection properties that are used to calculate a hash.
-These hash policies are executed in the specified order. If a hash policy has the “terminal” attribute
-set to true, and there is already a hash generated, the hash is returned immediately,
-ignoring the rest of the hash policy list. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--maglev--hash_policies))
 - `table_size` (Number) The table size for Maglev hashing. Maglev aims for “minimal disruption”
 rather than an absolute guarantee. Minimal disruption means that when
 the set of upstream hosts change, a connection will likely be sent
@@ -393,162 +604,357 @@ to the same upstream as it was before. Increasing the table size reduces
 the amount of disruption. The table size must be prime number limited to 5000011.
 If it is not specified, the default is 65537.
 
-<a id="nestedatt--spec--to--default--load_balancer--maglev--hash_policies"></a>
-### Nested Schema for `spec.to.default.load_balancer.maglev.hash_policies`
 
-Optional:
-
-- `connection` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--maglev--hash_policies--connection))
-- `cookie` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--maglev--hash_policies--cookie))
-- `filter_state` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--maglev--hash_policies--filter_state))
-- `header` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--maglev--hash_policies--header))
-- `query_parameter` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--maglev--hash_policies--query_parameter))
-- `terminal` (Boolean) Terminal is a flag that short-circuits the hash computing. This field provides
-a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback
-to rest of the policy list”, it saves time when the terminal policy works.
-If true, and there is already a hash computed, ignore rest of the list of hash polices.
-- `type` (String) possible known values include one of ["Header", "Cookie", "Connection", "SourceIP", "QueryParameter", "FilterState"]; Not Null
-
-<a id="nestedatt--spec--to--default--load_balancer--maglev--hash_policies--connection"></a>
-### Nested Schema for `spec.to.default.load_balancer.maglev.hash_policies.connection`
-
-Optional:
-
-- `source_ip` (Boolean) Hash on source IP address.
+<a id="nestedatt--spec--to--default--load_balancer--five--random"></a>
+### Nested Schema for `spec.to.default.load_balancer.five.random`
 
 
-<a id="nestedatt--spec--to--default--load_balancer--maglev--hash_policies--cookie"></a>
-### Nested Schema for `spec.to.default.load_balancer.maglev.hash_policies.cookie`
-
-Optional:
-
-- `name` (String) The name of the cookie that will be used to obtain the hash key. Not Null
-- `path` (String) The name of the path for the cookie.
-- `ttl` (String) If specified, a cookie with the TTL will be generated if the cookie is not present.
-
-
-<a id="nestedatt--spec--to--default--load_balancer--maglev--hash_policies--filter_state"></a>
-### Nested Schema for `spec.to.default.load_balancer.maglev.hash_policies.filter_state`
-
-Optional:
-
-- `key` (String) The name of the Object in the per-request filterState, which is
-an Envoy::Hashable object. If there is no data associated with the key,
-or the stored object is not Envoy::Hashable, no hash will be produced.
-Not Null
-
-
-<a id="nestedatt--spec--to--default--load_balancer--maglev--hash_policies--header"></a>
-### Nested Schema for `spec.to.default.load_balancer.maglev.hash_policies.header`
-
-Optional:
-
-- `name` (String) The name of the request header that will be used to obtain the hash key. Not Null
-
-
-<a id="nestedatt--spec--to--default--load_balancer--maglev--hash_policies--query_parameter"></a>
-### Nested Schema for `spec.to.default.load_balancer.maglev.hash_policies.query_parameter`
-
-Optional:
-
-- `name` (String) The name of the URL query parameter that will be used to obtain the hash key.
-If the parameter is not present, no hash will be produced. Query parameter names
-are case-sensitive.
-Not Null
-
-
-
-
-<a id="nestedatt--spec--to--default--load_balancer--random"></a>
-### Nested Schema for `spec.to.default.load_balancer.random`
-
-
-<a id="nestedatt--spec--to--default--load_balancer--ring_hash"></a>
-### Nested Schema for `spec.to.default.load_balancer.ring_hash`
+<a id="nestedatt--spec--to--default--load_balancer--five--ring_hash"></a>
+### Nested Schema for `spec.to.default.load_balancer.five.ring_hash`
 
 Optional:
 
 - `hash_function` (String) HashFunction is a function used to hash hosts onto the ketama ring.
 The value defaults to XX_HASH. Available values – XX_HASH, MURMUR_HASH_2.
 possible known values include one of ["XXHash", "MurmurHash2"]
-- `hash_policies` (Attributes List) HashPolicies specify a list of request/connection properties that are used to calculate a hash.
-These hash policies are executed in the specified order. If a hash policy has the “terminal” attribute
-set to true, and there is already a hash generated, the hash is returned immediately,
-ignoring the rest of the hash policy list. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--ring_hash--hash_policies))
 - `max_ring_size` (Number) Maximum hash ring size. Defaults to 8M entries, and limited to 8M entries,
 but can be lowered to further constrain resource use.
 - `min_ring_size` (Number) Minimum hash ring size. The larger the ring is (that is,
 the more hashes there are for each provided host) the better the request distribution
 will reflect the desired weights. Defaults to 1024 entries, and limited to 8M entries.
 
-<a id="nestedatt--spec--to--default--load_balancer--ring_hash--hash_policies"></a>
-### Nested Schema for `spec.to.default.load_balancer.ring_hash.hash_policies`
+
+<a id="nestedatt--spec--to--default--load_balancer--five--round_robin"></a>
+### Nested Schema for `spec.to.default.load_balancer.five.round_robin`
+
+
+
+<a id="nestedatt--spec--to--default--load_balancer--four"></a>
+### Nested Schema for `spec.to.default.load_balancer.four`
 
 Optional:
 
-- `connection` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--ring_hash--hash_policies--connection))
-- `cookie` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--ring_hash--hash_policies--cookie))
-- `filter_state` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--ring_hash--hash_policies--filter_state))
-- `header` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--ring_hash--hash_policies--header))
-- `query_parameter` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--ring_hash--hash_policies--query_parameter))
-- `terminal` (Boolean) Terminal is a flag that short-circuits the hash computing. This field provides
-a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback
-to rest of the policy list”, it saves time when the terminal policy works.
-If true, and there is already a hash computed, ignore rest of the list of hash polices.
-- `type` (String) possible known values include one of ["Header", "Cookie", "Connection", "SourceIP", "QueryParameter", "FilterState"]; Not Null
+- `least_request` (Attributes) LeastRequest selects N random available hosts as specified in 'choiceCount' (2 by default)
+and picks the host which has the fewest active requests (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--four--least_request))
+- `maglev` (Attributes) Maglev implements consistent hashing to upstream hosts. Maglev can be used as
+a drop in replacement for the ring hash load balancer any place in which
+consistent hashing is desired. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--four--maglev))
+- `random` (Attributes) Random selects a random available host. The random load balancer generally
+performs better than round-robin if no health checking policy is configured.
+Random selection avoids bias towards the host in the set that comes after a failed host. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--four--random))
+- `ring_hash` (Attributes) RingHash  implements consistent hashing to upstream hosts. Each host is mapped
+onto a circle (the “ring”) by hashing its address; each request is then routed
+to a host by hashing some property of the request, and finding the nearest
+corresponding host clockwise around the ring. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--four--ring_hash))
+- `round_robin` (Attributes) RoundRobin is a load balancing algorithm that distributes requests
+across available upstream hosts in round-robin order. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--four--round_robin))
+- `type` (String) possible known values include one of ["RoundRobin", "LeastRequest", "RingHash", "Random", "Maglev"]; Not Null
 
-<a id="nestedatt--spec--to--default--load_balancer--ring_hash--hash_policies--connection"></a>
-### Nested Schema for `spec.to.default.load_balancer.ring_hash.hash_policies.connection`
-
-Optional:
-
-- `source_ip` (Boolean) Hash on source IP address.
-
-
-<a id="nestedatt--spec--to--default--load_balancer--ring_hash--hash_policies--cookie"></a>
-### Nested Schema for `spec.to.default.load_balancer.ring_hash.hash_policies.cookie`
+<a id="nestedatt--spec--to--default--load_balancer--four--least_request"></a>
+### Nested Schema for `spec.to.default.load_balancer.four.least_request`
 
 Optional:
 
-- `name` (String) The name of the cookie that will be used to obtain the hash key. Not Null
-- `path` (String) The name of the path for the cookie.
-- `ttl` (String) If specified, a cookie with the TTL will be generated if the cookie is not present.
+- `active_request_bias` (Attributes) ActiveRequestBias refers to dynamic weights applied when hosts have varying load
+balancing weights. A higher value here aggressively reduces the weight of endpoints
+that are currently handling active requests. In essence, the higher the ActiveRequestBias
+value, the more forcefully it reduces the load balancing weight of endpoints that are
+actively serving requests. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--four--least_request--active_request_bias))
+- `choice_count` (Number) ChoiceCount is the number of random healthy hosts from which the host with
+the fewest active requests will be chosen. Defaults to 2 so that Envoy performs
+two-choice selection if the field is not set.
 
-
-<a id="nestedatt--spec--to--default--load_balancer--ring_hash--hash_policies--filter_state"></a>
-### Nested Schema for `spec.to.default.load_balancer.ring_hash.hash_policies.filter_state`
-
-Optional:
-
-- `key` (String) The name of the Object in the per-request filterState, which is
-an Envoy::Hashable object. If there is no data associated with the key,
-or the stored object is not Envoy::Hashable, no hash will be produced.
-Not Null
-
-
-<a id="nestedatt--spec--to--default--load_balancer--ring_hash--hash_policies--header"></a>
-### Nested Schema for `spec.to.default.load_balancer.ring_hash.hash_policies.header`
+<a id="nestedatt--spec--to--default--load_balancer--four--least_request--active_request_bias"></a>
+### Nested Schema for `spec.to.default.load_balancer.four.least_request.active_request_bias`
 
 Optional:
 
-- `name` (String) The name of the request header that will be used to obtain the hash key. Not Null
+- `integer` (Number)
+- `str` (String)
 
 
-<a id="nestedatt--spec--to--default--load_balancer--ring_hash--hash_policies--query_parameter"></a>
-### Nested Schema for `spec.to.default.load_balancer.ring_hash.hash_policies.query_parameter`
+
+<a id="nestedatt--spec--to--default--load_balancer--four--maglev"></a>
+### Nested Schema for `spec.to.default.load_balancer.four.maglev`
 
 Optional:
 
-- `name` (String) The name of the URL query parameter that will be used to obtain the hash key.
-If the parameter is not present, no hash will be produced. Query parameter names
-are case-sensitive.
-Not Null
+- `table_size` (Number) The table size for Maglev hashing. Maglev aims for “minimal disruption”
+rather than an absolute guarantee. Minimal disruption means that when
+the set of upstream hosts change, a connection will likely be sent
+to the same upstream as it was before. Increasing the table size reduces
+the amount of disruption. The table size must be prime number limited to 5000011.
+If it is not specified, the default is 65537.
+
+
+<a id="nestedatt--spec--to--default--load_balancer--four--random"></a>
+### Nested Schema for `spec.to.default.load_balancer.four.random`
+
+
+<a id="nestedatt--spec--to--default--load_balancer--four--ring_hash"></a>
+### Nested Schema for `spec.to.default.load_balancer.four.ring_hash`
+
+Optional:
+
+- `hash_function` (String) HashFunction is a function used to hash hosts onto the ketama ring.
+The value defaults to XX_HASH. Available values – XX_HASH, MURMUR_HASH_2.
+possible known values include one of ["XXHash", "MurmurHash2"]
+- `max_ring_size` (Number) Maximum hash ring size. Defaults to 8M entries, and limited to 8M entries,
+but can be lowered to further constrain resource use.
+- `min_ring_size` (Number) Minimum hash ring size. The larger the ring is (that is,
+the more hashes there are for each provided host) the better the request distribution
+will reflect the desired weights. Defaults to 1024 entries, and limited to 8M entries.
+
+
+<a id="nestedatt--spec--to--default--load_balancer--four--round_robin"></a>
+### Nested Schema for `spec.to.default.load_balancer.four.round_robin`
 
 
 
+<a id="nestedatt--spec--to--default--load_balancer--one"></a>
+### Nested Schema for `spec.to.default.load_balancer.one`
 
-<a id="nestedatt--spec--to--default--load_balancer--round_robin"></a>
-### Nested Schema for `spec.to.default.load_balancer.round_robin`
+Optional:
+
+- `least_request` (Attributes) LeastRequest selects N random available hosts as specified in 'choiceCount' (2 by default)
+and picks the host which has the fewest active requests (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--one--least_request))
+- `maglev` (Attributes) Maglev implements consistent hashing to upstream hosts. Maglev can be used as
+a drop in replacement for the ring hash load balancer any place in which
+consistent hashing is desired. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--one--maglev))
+- `random` (Attributes) Random selects a random available host. The random load balancer generally
+performs better than round-robin if no health checking policy is configured.
+Random selection avoids bias towards the host in the set that comes after a failed host. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--one--random))
+- `ring_hash` (Attributes) RingHash  implements consistent hashing to upstream hosts. Each host is mapped
+onto a circle (the “ring”) by hashing its address; each request is then routed
+to a host by hashing some property of the request, and finding the nearest
+corresponding host clockwise around the ring. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--one--ring_hash))
+- `round_robin` (Attributes) RoundRobin is a load balancing algorithm that distributes requests
+across available upstream hosts in round-robin order. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--one--round_robin))
+- `type` (String) possible known values include one of ["RoundRobin", "LeastRequest", "RingHash", "Random", "Maglev"]; Not Null
+
+<a id="nestedatt--spec--to--default--load_balancer--one--least_request"></a>
+### Nested Schema for `spec.to.default.load_balancer.one.least_request`
+
+Optional:
+
+- `active_request_bias` (Attributes) ActiveRequestBias refers to dynamic weights applied when hosts have varying load
+balancing weights. A higher value here aggressively reduces the weight of endpoints
+that are currently handling active requests. In essence, the higher the ActiveRequestBias
+value, the more forcefully it reduces the load balancing weight of endpoints that are
+actively serving requests. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--one--least_request--active_request_bias))
+- `choice_count` (Number) ChoiceCount is the number of random healthy hosts from which the host with
+the fewest active requests will be chosen. Defaults to 2 so that Envoy performs
+two-choice selection if the field is not set.
+
+<a id="nestedatt--spec--to--default--load_balancer--one--least_request--active_request_bias"></a>
+### Nested Schema for `spec.to.default.load_balancer.one.least_request.active_request_bias`
+
+Optional:
+
+- `integer` (Number)
+- `str` (String)
+
+
+
+<a id="nestedatt--spec--to--default--load_balancer--one--maglev"></a>
+### Nested Schema for `spec.to.default.load_balancer.one.maglev`
+
+Optional:
+
+- `table_size` (Number) The table size for Maglev hashing. Maglev aims for “minimal disruption”
+rather than an absolute guarantee. Minimal disruption means that when
+the set of upstream hosts change, a connection will likely be sent
+to the same upstream as it was before. Increasing the table size reduces
+the amount of disruption. The table size must be prime number limited to 5000011.
+If it is not specified, the default is 65537.
+
+
+<a id="nestedatt--spec--to--default--load_balancer--one--random"></a>
+### Nested Schema for `spec.to.default.load_balancer.one.random`
+
+
+<a id="nestedatt--spec--to--default--load_balancer--one--ring_hash"></a>
+### Nested Schema for `spec.to.default.load_balancer.one.ring_hash`
+
+Optional:
+
+- `hash_function` (String) HashFunction is a function used to hash hosts onto the ketama ring.
+The value defaults to XX_HASH. Available values – XX_HASH, MURMUR_HASH_2.
+possible known values include one of ["XXHash", "MurmurHash2"]
+- `max_ring_size` (Number) Maximum hash ring size. Defaults to 8M entries, and limited to 8M entries,
+but can be lowered to further constrain resource use.
+- `min_ring_size` (Number) Minimum hash ring size. The larger the ring is (that is,
+the more hashes there are for each provided host) the better the request distribution
+will reflect the desired weights. Defaults to 1024 entries, and limited to 8M entries.
+
+
+<a id="nestedatt--spec--to--default--load_balancer--one--round_robin"></a>
+### Nested Schema for `spec.to.default.load_balancer.one.round_robin`
+
+
+
+<a id="nestedatt--spec--to--default--load_balancer--three"></a>
+### Nested Schema for `spec.to.default.load_balancer.three`
+
+Optional:
+
+- `least_request` (Attributes) LeastRequest selects N random available hosts as specified in 'choiceCount' (2 by default)
+and picks the host which has the fewest active requests (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--three--least_request))
+- `maglev` (Attributes) Maglev implements consistent hashing to upstream hosts. Maglev can be used as
+a drop in replacement for the ring hash load balancer any place in which
+consistent hashing is desired. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--three--maglev))
+- `random` (Attributes) Random selects a random available host. The random load balancer generally
+performs better than round-robin if no health checking policy is configured.
+Random selection avoids bias towards the host in the set that comes after a failed host. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--three--random))
+- `ring_hash` (Attributes) RingHash  implements consistent hashing to upstream hosts. Each host is mapped
+onto a circle (the “ring”) by hashing its address; each request is then routed
+to a host by hashing some property of the request, and finding the nearest
+corresponding host clockwise around the ring. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--three--ring_hash))
+- `round_robin` (Attributes) RoundRobin is a load balancing algorithm that distributes requests
+across available upstream hosts in round-robin order. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--three--round_robin))
+- `type` (String) possible known values include one of ["RoundRobin", "LeastRequest", "RingHash", "Random", "Maglev"]; Not Null
+
+<a id="nestedatt--spec--to--default--load_balancer--three--least_request"></a>
+### Nested Schema for `spec.to.default.load_balancer.three.least_request`
+
+Optional:
+
+- `active_request_bias` (Attributes) ActiveRequestBias refers to dynamic weights applied when hosts have varying load
+balancing weights. A higher value here aggressively reduces the weight of endpoints
+that are currently handling active requests. In essence, the higher the ActiveRequestBias
+value, the more forcefully it reduces the load balancing weight of endpoints that are
+actively serving requests. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--three--least_request--active_request_bias))
+- `choice_count` (Number) ChoiceCount is the number of random healthy hosts from which the host with
+the fewest active requests will be chosen. Defaults to 2 so that Envoy performs
+two-choice selection if the field is not set.
+
+<a id="nestedatt--spec--to--default--load_balancer--three--least_request--active_request_bias"></a>
+### Nested Schema for `spec.to.default.load_balancer.three.least_request.active_request_bias`
+
+Optional:
+
+- `integer` (Number)
+- `str` (String)
+
+
+
+<a id="nestedatt--spec--to--default--load_balancer--three--maglev"></a>
+### Nested Schema for `spec.to.default.load_balancer.three.maglev`
+
+Optional:
+
+- `table_size` (Number) The table size for Maglev hashing. Maglev aims for “minimal disruption”
+rather than an absolute guarantee. Minimal disruption means that when
+the set of upstream hosts change, a connection will likely be sent
+to the same upstream as it was before. Increasing the table size reduces
+the amount of disruption. The table size must be prime number limited to 5000011.
+If it is not specified, the default is 65537.
+
+
+<a id="nestedatt--spec--to--default--load_balancer--three--random"></a>
+### Nested Schema for `spec.to.default.load_balancer.three.random`
+
+
+<a id="nestedatt--spec--to--default--load_balancer--three--ring_hash"></a>
+### Nested Schema for `spec.to.default.load_balancer.three.ring_hash`
+
+Optional:
+
+- `hash_function` (String) HashFunction is a function used to hash hosts onto the ketama ring.
+The value defaults to XX_HASH. Available values – XX_HASH, MURMUR_HASH_2.
+possible known values include one of ["XXHash", "MurmurHash2"]
+- `max_ring_size` (Number) Maximum hash ring size. Defaults to 8M entries, and limited to 8M entries,
+but can be lowered to further constrain resource use.
+- `min_ring_size` (Number) Minimum hash ring size. The larger the ring is (that is,
+the more hashes there are for each provided host) the better the request distribution
+will reflect the desired weights. Defaults to 1024 entries, and limited to 8M entries.
+
+
+<a id="nestedatt--spec--to--default--load_balancer--three--round_robin"></a>
+### Nested Schema for `spec.to.default.load_balancer.three.round_robin`
+
+
+
+<a id="nestedatt--spec--to--default--load_balancer--two"></a>
+### Nested Schema for `spec.to.default.load_balancer.two`
+
+Optional:
+
+- `least_request` (Attributes) LeastRequest selects N random available hosts as specified in 'choiceCount' (2 by default)
+and picks the host which has the fewest active requests (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--two--least_request))
+- `maglev` (Attributes) Maglev implements consistent hashing to upstream hosts. Maglev can be used as
+a drop in replacement for the ring hash load balancer any place in which
+consistent hashing is desired. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--two--maglev))
+- `random` (Attributes) Random selects a random available host. The random load balancer generally
+performs better than round-robin if no health checking policy is configured.
+Random selection avoids bias towards the host in the set that comes after a failed host. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--two--random))
+- `ring_hash` (Attributes) RingHash  implements consistent hashing to upstream hosts. Each host is mapped
+onto a circle (the “ring”) by hashing its address; each request is then routed
+to a host by hashing some property of the request, and finding the nearest
+corresponding host clockwise around the ring. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--two--ring_hash))
+- `round_robin` (Attributes) RoundRobin is a load balancing algorithm that distributes requests
+across available upstream hosts in round-robin order. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--two--round_robin))
+- `type` (String) possible known values include one of ["RoundRobin", "LeastRequest", "RingHash", "Random", "Maglev"]; Not Null
+
+<a id="nestedatt--spec--to--default--load_balancer--two--least_request"></a>
+### Nested Schema for `spec.to.default.load_balancer.two.least_request`
+
+Optional:
+
+- `active_request_bias` (Attributes) ActiveRequestBias refers to dynamic weights applied when hosts have varying load
+balancing weights. A higher value here aggressively reduces the weight of endpoints
+that are currently handling active requests. In essence, the higher the ActiveRequestBias
+value, the more forcefully it reduces the load balancing weight of endpoints that are
+actively serving requests. (see [below for nested schema](#nestedatt--spec--to--default--load_balancer--two--least_request--active_request_bias))
+- `choice_count` (Number) ChoiceCount is the number of random healthy hosts from which the host with
+the fewest active requests will be chosen. Defaults to 2 so that Envoy performs
+two-choice selection if the field is not set.
+
+<a id="nestedatt--spec--to--default--load_balancer--two--least_request--active_request_bias"></a>
+### Nested Schema for `spec.to.default.load_balancer.two.least_request.active_request_bias`
+
+Optional:
+
+- `integer` (Number)
+- `str` (String)
+
+
+
+<a id="nestedatt--spec--to--default--load_balancer--two--maglev"></a>
+### Nested Schema for `spec.to.default.load_balancer.two.maglev`
+
+Optional:
+
+- `table_size` (Number) The table size for Maglev hashing. Maglev aims for “minimal disruption”
+rather than an absolute guarantee. Minimal disruption means that when
+the set of upstream hosts change, a connection will likely be sent
+to the same upstream as it was before. Increasing the table size reduces
+the amount of disruption. The table size must be prime number limited to 5000011.
+If it is not specified, the default is 65537.
+
+
+<a id="nestedatt--spec--to--default--load_balancer--two--random"></a>
+### Nested Schema for `spec.to.default.load_balancer.two.random`
+
+
+<a id="nestedatt--spec--to--default--load_balancer--two--ring_hash"></a>
+### Nested Schema for `spec.to.default.load_balancer.two.ring_hash`
+
+Optional:
+
+- `hash_function` (String) HashFunction is a function used to hash hosts onto the ketama ring.
+The value defaults to XX_HASH. Available values – XX_HASH, MURMUR_HASH_2.
+possible known values include one of ["XXHash", "MurmurHash2"]
+- `max_ring_size` (Number) Maximum hash ring size. Defaults to 8M entries, and limited to 8M entries,
+but can be lowered to further constrain resource use.
+- `min_ring_size` (Number) Minimum hash ring size. The larger the ring is (that is,
+the more hashes there are for each provided host) the better the request distribution
+will reflect the desired weights. Defaults to 1024 entries, and limited to 8M entries.
+
+
+<a id="nestedatt--spec--to--default--load_balancer--two--round_robin"></a>
+### Nested Schema for `spec.to.default.load_balancer.two.round_robin`
+
 
 
 
@@ -558,7 +964,7 @@ Not Null
 Optional:
 
 - `cross_zone` (Attributes) CrossZone defines locality aware load balancing priorities when dataplane proxies inside local zone
-are unavailable (see [below for nested schema](#nestedatt--spec--to--default--locality_awareness--cross_zone))
+are unavailable. Supported only for to[].targetRef.kind MeshMultiZoneService. (see [below for nested schema](#nestedatt--spec--to--default--locality_awareness--cross_zone))
 - `disabled` (Boolean) Disabled allows to disable locality-aware load balancing.
 When disabled requests are distributed across all endpoints regardless of locality.
 - `local_zone` (Attributes) LocalZone defines locality aware load balancing priorities between dataplane proxies inside a zone (see [below for nested schema](#nestedatt--spec--to--default--locality_awareness--local_zone))
@@ -648,20 +1054,12 @@ Default: If you do not specify weight we will adjust them so that 90% traffic go
 
 Optional:
 
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
-- `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
-Name and Namespace can be used.
-- `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`,
-`MeshServiceSubset` and `MeshGatewayRoute`
-- `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-will be targeted.
-- `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-all data plane types are targeted by the policy.
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshHTTPRoute"]; Not Null
+- `labels` (Map of String) Labels are used to select referenced real resources and to carry legacy
+service identity when a common TargetRef must still target old
+service-tag based paths.
 - `section_name` (String) SectionName is used to target specific section of resource.
 For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-- `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds
-`MeshSubset` and `MeshServiceSubset`
 
 ## Import
 

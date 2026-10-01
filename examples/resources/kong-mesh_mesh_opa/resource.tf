@@ -7,17 +7,39 @@ resource "kong-mesh_mesh_opa" "my_meshopa" {
   spec = {
     default = {
       agent_config = {
-        inline        = "...my_inline..."
-        inline_string = "...my_inline_string..."
-        secret        = "...my_secret..."
+        env_var = {
+          name = "...my_name..."
+        }
+        file = {
+          path = "...my_path..."
+        }
+        insecure_inline = {
+          value = "...my_value..."
+        }
+        secret_ref = {
+          kind = "Secret"
+          name = "...my_name..."
+        }
+        type = "File"
       }
       append_policies = [
         {
           ignore_decision = true
           rego = {
-            inline        = "...my_inline..."
-            inline_string = "...my_inline_string..."
-            secret        = "...my_secret..."
+            env_var = {
+              name = "...my_name..."
+            }
+            file = {
+              path = "...my_path..."
+            }
+            insecure_inline = {
+              value = "...my_value..."
+            }
+            secret_ref = {
+              kind = "Secret"
+              name = "...my_name..."
+            }
+            type = "Secret"
           }
         }
       ]
@@ -36,16 +58,7 @@ resource "kong-mesh_mesh_opa" "my_meshopa" {
       labels = {
         key = "value"
       }
-      mesh      = "...my_mesh..."
-      name      = "...my_name..."
-      namespace = "...my_namespace..."
-      proxy_types = [
-        "Sidecar"
-      ]
       section_name = "...my_section_name..."
-      tags = {
-        key = "value"
-      }
     }
   }
   type = "MeshOPA"

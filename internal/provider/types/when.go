@@ -5,9 +5,9 @@ package types
 type When struct {
 	Destinations *Destinations                 `tfsdk:"destinations"`
 	DpToken      *DpToken                      `tfsdk:"dp_token"`
-	From         *AccessRoleItemFrom           `tfsdk:"from"`
+	From         *From                         `tfsdk:"from"`
 	Selectors    *Destinations                 `tfsdk:"selectors"`
 	Sources      *Destinations                 `tfsdk:"sources"`
 	TargetRef    *AccessRoleItemRulesTargetRef `tfsdk:"target_ref"`
-	To           *AccessRoleItemFrom           `tfsdk:"to"`
+	To           *From                         `tfsdk:"to"`
 }

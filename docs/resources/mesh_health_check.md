@@ -21,20 +21,11 @@ resource "kong-mesh_mesh_health_check" "my_meshhealthcheck" {
   name = "...my_name..."
   spec = {
     target_ref = {
-      kind = "MeshHTTPRoute"
+      kind = "Dataplane"
       labels = {
         key = "value"
       }
-      mesh      = "...my_mesh..."
-      name      = "...my_name..."
-      namespace = "...my_namespace..."
-      proxy_types = [
-        "Sidecar"
-      ]
       section_name = "...my_section_name..."
-      tags = {
-        key = "value"
-      }
     }
     to = [
       {
@@ -46,9 +37,6 @@ resource "kong-mesh_mesh_health_check" "my_meshhealthcheck" {
             authority    = "...my_authority..."
             disabled     = true
             service_name = "...my_service_name..."
-          }
-          healthy_panic_threshold = {
-            str = "...my_str..."
           }
           healthy_threshold = 1
           http = {
@@ -89,20 +77,11 @@ resource "kong-mesh_mesh_health_check" "my_meshhealthcheck" {
           unhealthy_threshold = 5
         }
         target_ref = {
-          kind = "MeshServiceSubset"
+          kind = "MeshMultiZoneService"
           labels = {
             key = "value"
           }
-          mesh      = "...my_mesh..."
-          name      = "...my_name..."
-          namespace = "...my_namespace..."
-          proxy_types = [
-            "Sidecar"
-          ]
           section_name = "...my_section_name..."
-          tags = {
-            key = "value"
-          }
         }
       }
     ]
@@ -148,23 +127,15 @@ defined inplace. (see [below for nested schema](#nestedatt--spec--target_ref))
 
 Required:
 
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "Dataplane"]
 
 Optional:
 
-- `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
-Name and Namespace can be used.
-- `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`,
-`MeshServiceSubset` and `MeshGatewayRoute`
-- `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-will be targeted.
-- `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-all data plane types are targeted by the policy.
+- `labels` (Map of String) Labels are used to select referenced real resources and to carry legacy
+service identity when a common TargetRef must still target old
+service-tag based paths.
 - `section_name` (String) SectionName is used to target specific section of resource.
 For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-- `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds
-`MeshSubset` and `MeshServiceSubset`
 
 
 <a id="nestedatt--spec--to"></a>
@@ -194,12 +165,6 @@ are unhealthy. This can help avoid potentially overwhelming a failing
 service.
 - `grpc` (Attributes) GrpcHealthCheck defines gRPC configuration which will instruct the service
 the health check will be made for is a gRPC service. (see [below for nested schema](#nestedatt--spec--to--default--grpc))
-- `healthy_panic_threshold` (Attributes) Allows to configure panic threshold for Envoy cluster. If not specified,
-the default is 50%. To disable panic mode, set to 0%.
-Either int or decimal represented as string.
-
-Deprecated: the setting has been moved to MeshCircuitBreaker policy,
-please use MeshCircuitBreaker policy instead. (see [below for nested schema](#nestedatt--spec--to--default--healthy_panic_threshold))
 - `healthy_threshold` (Number) Number of consecutive healthy checks before considering a host healthy.
 If not specified then the default value is 1
 - `http` (Attributes) HttpHealthCheck defines HTTP configuration which will instruct the service
@@ -241,15 +206,6 @@ Optional:
 by default name of the cluster this health check is associated with
 - `disabled` (Boolean) If true the GrpcHealthCheck is disabled
 - `service_name` (String) Service name parameter which will be sent to gRPC service
-
-
-<a id="nestedatt--spec--to--default--healthy_panic_threshold"></a>
-### Nested Schema for `spec.to.default.healthy_panic_threshold`
-
-Optional:
-
-- `integer` (Number)
-- `str` (String)
 
 
 <a id="nestedatt--spec--to--default--http"></a>
@@ -312,20 +268,12 @@ If not provided or empty, checks will be performed as "connect only" and be mark
 
 Optional:
 
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
-- `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
-Name and Namespace can be used.
-- `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`,
-`MeshServiceSubset` and `MeshGatewayRoute`
-- `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-will be targeted.
-- `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-all data plane types are targeted by the policy.
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshHTTPRoute"]; Not Null
+- `labels` (Map of String) Labels are used to select referenced real resources and to carry legacy
+service identity when a common TargetRef must still target old
+service-tag based paths.
 - `section_name` (String) SectionName is used to target specific section of resource.
 For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-- `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds
-`MeshSubset` and `MeshServiceSubset`
 
 ## Import
 

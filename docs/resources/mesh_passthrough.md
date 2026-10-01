@@ -32,20 +32,11 @@ resource "kong-mesh_mesh_passthrough" "my_meshpassthrough" {
       passthrough_mode = "Matched"
     }
     target_ref = {
-      kind = "MeshMultiZoneService"
+      kind = "Dataplane"
       labels = {
         key = "value"
       }
-      mesh      = "...my_mesh..."
-      name      = "...my_name..."
-      namespace = "...my_namespace..."
-      proxy_types = [
-        "Gateway"
-      ]
       section_name = "...my_section_name..."
-      tags = {
-        key = "value"
-      }
     }
   }
   type = "MeshPassthrough"
@@ -100,10 +91,16 @@ possible known values include one of ["All", "Matched", "None"]
 
 Optional:
 
-- `port` (Number) Port defines the port to which a user makes a request.
+- `port` (Number) Port defines the port to which a user makes a request. It is required for a
+`Domain` that is not a wildcard: the sidecar resolves the domain itself and
+connects to this port, so the destination doesn't depend on the address the
+client dials.
 - `protocol` (String) Protocol defines the communication protocol. Possible values: `tcp`, `tls`, `grpc`, `http`, `http2`, `mysql`. possible known values include one of ["tcp", "tls", "grpc", "http", "http2", "mysql"]; Default: "tcp"
 - `type` (String) Type of the match, one of `Domain`, `IP` or `CIDR` is available. possible known values include one of ["Domain", "IP", "CIDR"]; Not Null
-- `value` (String) Value for the specified Type. Not Null
+- `value` (String) Value for the specified Type. A wildcard `Domain`, for example
+`*.example.com`, cannot be resolved by the sidecar, so its traffic goes to the
+address the client dials and the match only restricts the SNI or Host.
+Not Null
 
 
 
@@ -112,23 +109,15 @@ Optional:
 
 Required:
 
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "Dataplane"]
 
 Optional:
 
-- `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
-Name and Namespace can be used.
-- `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`,
-`MeshServiceSubset` and `MeshGatewayRoute`
-- `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-will be targeted.
-- `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-all data plane types are targeted by the policy.
+- `labels` (Map of String) Labels are used to select referenced real resources and to carry legacy
+service identity when a common TargetRef must still target old
+service-tag based paths.
 - `section_name` (String) SectionName is used to target specific section of resource.
 For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-- `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds
-`MeshSubset` and `MeshServiceSubset`
 
 ## Import
 

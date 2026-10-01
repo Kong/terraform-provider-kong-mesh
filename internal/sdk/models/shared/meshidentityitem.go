@@ -4,6 +4,7 @@ package shared
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/utils"
 	"time"
@@ -33,9 +34,1968 @@ func (e *MeshIdentityItemType) UnmarshalJSON(data []byte) error {
 	}
 }
 
+// MeshIdentityItemExtensionSpecOther - An extension this control plane does not ship. Its configuration is not described here.
+type MeshIdentityItemExtensionSpecOther struct {
+	// Name is the name of the extension provider.
+	Name string `json:"name"`
+	// Config is a freeform configuration for the extension.
+	Config any `json:"config,omitempty"`
+}
+
+func (m MeshIdentityItemExtensionSpecOther) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemExtensionSpecOther) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemExtensionSpecOther) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+func (m *MeshIdentityItemExtensionSpecOther) GetConfig() any {
+	if m == nil {
+		return nil
+	}
+	return m.Config
+}
+
+type MeshIdentityItemExtensionVault struct {
+	// Config is a freeform configuration for the extension.
+	Config any `json:"config,omitempty"`
+	// Name is the name of the extension provider.
+	Name string `json:"name"`
+}
+
+func (m MeshIdentityItemExtensionVault) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemExtensionVault) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemExtensionVault) GetConfig() any {
+	if m == nil {
+		return nil
+	}
+	return m.Config
+}
+
+func (m *MeshIdentityItemExtensionVault) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+type MeshIdentityItemExtensionCertmanager struct {
+	// Config is a freeform configuration for the extension.
+	Config any `json:"config,omitempty"`
+	// Name is the name of the extension provider.
+	Name string `json:"name"`
+}
+
+func (m MeshIdentityItemExtensionCertmanager) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemExtensionCertmanager) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemExtensionCertmanager) GetConfig() any {
+	if m == nil {
+		return nil
+	}
+	return m.Config
+}
+
+func (m *MeshIdentityItemExtensionCertmanager) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+type MeshIdentityItemExtensionAcmpca struct {
+	// Config is a freeform configuration for the extension.
+	Config any `json:"config,omitempty"`
+	// Name is the name of the extension provider.
+	Name string `json:"name"`
+}
+
+func (m MeshIdentityItemExtensionAcmpca) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemExtensionAcmpca) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemExtensionAcmpca) GetConfig() any {
+	if m == nil {
+		return nil
+	}
+	return m.Config
+}
+
+func (m *MeshIdentityItemExtensionAcmpca) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+type MeshIdentityItemProviderSpecExtensionType string
+
+const (
+	MeshIdentityItemProviderSpecExtensionTypeMeshIdentityItemExtensionAcmpca      MeshIdentityItemProviderSpecExtensionType = "MeshIdentityItem_extension_acmpca"
+	MeshIdentityItemProviderSpecExtensionTypeMeshIdentityItemExtensionCertmanager MeshIdentityItemProviderSpecExtensionType = "MeshIdentityItem_extension_certmanager"
+	MeshIdentityItemProviderSpecExtensionTypeMeshIdentityItemExtensionVault       MeshIdentityItemProviderSpecExtensionType = "MeshIdentityItem_extension_vault"
+	MeshIdentityItemProviderSpecExtensionTypeMeshIdentityItemExtensionSpecOther   MeshIdentityItemProviderSpecExtensionType = "MeshIdentityItem_extension_spec_Other"
+)
+
+// MeshIdentityItemProviderSpecExtension - Extension indicates that custom provider is used.
+type MeshIdentityItemProviderSpecExtension struct {
+	MeshIdentityItemExtensionAcmpca      *MeshIdentityItemExtensionAcmpca      `queryParam:"inline" union:"member"`
+	MeshIdentityItemExtensionCertmanager *MeshIdentityItemExtensionCertmanager `queryParam:"inline" union:"member"`
+	MeshIdentityItemExtensionVault       *MeshIdentityItemExtensionVault       `queryParam:"inline" union:"member"`
+	MeshIdentityItemExtensionSpecOther   *MeshIdentityItemExtensionSpecOther   `queryParam:"inline" union:"member"`
+
+	Type MeshIdentityItemProviderSpecExtensionType
+}
+
+func CreateMeshIdentityItemProviderSpecExtensionMeshIdentityItemExtensionAcmpca(meshIdentityItemExtensionAcmpca MeshIdentityItemExtensionAcmpca) MeshIdentityItemProviderSpecExtension {
+	typ := MeshIdentityItemProviderSpecExtensionTypeMeshIdentityItemExtensionAcmpca
+
+	return MeshIdentityItemProviderSpecExtension{
+		MeshIdentityItemExtensionAcmpca: &meshIdentityItemExtensionAcmpca,
+		Type:                            typ,
+	}
+}
+
+func CreateMeshIdentityItemProviderSpecExtensionMeshIdentityItemExtensionCertmanager(meshIdentityItemExtensionCertmanager MeshIdentityItemExtensionCertmanager) MeshIdentityItemProviderSpecExtension {
+	typ := MeshIdentityItemProviderSpecExtensionTypeMeshIdentityItemExtensionCertmanager
+
+	return MeshIdentityItemProviderSpecExtension{
+		MeshIdentityItemExtensionCertmanager: &meshIdentityItemExtensionCertmanager,
+		Type:                                 typ,
+	}
+}
+
+func CreateMeshIdentityItemProviderSpecExtensionMeshIdentityItemExtensionVault(meshIdentityItemExtensionVault MeshIdentityItemExtensionVault) MeshIdentityItemProviderSpecExtension {
+	typ := MeshIdentityItemProviderSpecExtensionTypeMeshIdentityItemExtensionVault
+
+	return MeshIdentityItemProviderSpecExtension{
+		MeshIdentityItemExtensionVault: &meshIdentityItemExtensionVault,
+		Type:                           typ,
+	}
+}
+
+func CreateMeshIdentityItemProviderSpecExtensionMeshIdentityItemExtensionSpecOther(meshIdentityItemExtensionSpecOther MeshIdentityItemExtensionSpecOther) MeshIdentityItemProviderSpecExtension {
+	typ := MeshIdentityItemProviderSpecExtensionTypeMeshIdentityItemExtensionSpecOther
+
+	return MeshIdentityItemProviderSpecExtension{
+		MeshIdentityItemExtensionSpecOther: &meshIdentityItemExtensionSpecOther,
+		Type:                               typ,
+	}
+}
+
+func (u *MeshIdentityItemProviderSpecExtension) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var meshIdentityItemExtensionAcmpca MeshIdentityItemExtensionAcmpca = MeshIdentityItemExtensionAcmpca{}
+	if err := utils.UnmarshalJSON(data, &meshIdentityItemExtensionAcmpca, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshIdentityItemProviderSpecExtensionTypeMeshIdentityItemExtensionAcmpca,
+			Value: &meshIdentityItemExtensionAcmpca,
+		})
+	}
+
+	var meshIdentityItemExtensionCertmanager MeshIdentityItemExtensionCertmanager = MeshIdentityItemExtensionCertmanager{}
+	if err := utils.UnmarshalJSON(data, &meshIdentityItemExtensionCertmanager, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshIdentityItemProviderSpecExtensionTypeMeshIdentityItemExtensionCertmanager,
+			Value: &meshIdentityItemExtensionCertmanager,
+		})
+	}
+
+	var meshIdentityItemExtensionVault MeshIdentityItemExtensionVault = MeshIdentityItemExtensionVault{}
+	if err := utils.UnmarshalJSON(data, &meshIdentityItemExtensionVault, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshIdentityItemProviderSpecExtensionTypeMeshIdentityItemExtensionVault,
+			Value: &meshIdentityItemExtensionVault,
+		})
+	}
+
+	var meshIdentityItemExtensionSpecOther MeshIdentityItemExtensionSpecOther = MeshIdentityItemExtensionSpecOther{}
+	if err := utils.UnmarshalJSON(data, &meshIdentityItemExtensionSpecOther, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshIdentityItemProviderSpecExtensionTypeMeshIdentityItemExtensionSpecOther,
+			Value: &meshIdentityItemExtensionSpecOther,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshIdentityItemProviderSpecExtension", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshIdentityItemProviderSpecExtension", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(MeshIdentityItemProviderSpecExtensionType)
+	switch best.Type {
+	case MeshIdentityItemProviderSpecExtensionTypeMeshIdentityItemExtensionAcmpca:
+		u.MeshIdentityItemExtensionAcmpca = best.Value.(*MeshIdentityItemExtensionAcmpca)
+		return nil
+	case MeshIdentityItemProviderSpecExtensionTypeMeshIdentityItemExtensionCertmanager:
+		u.MeshIdentityItemExtensionCertmanager = best.Value.(*MeshIdentityItemExtensionCertmanager)
+		return nil
+	case MeshIdentityItemProviderSpecExtensionTypeMeshIdentityItemExtensionVault:
+		u.MeshIdentityItemExtensionVault = best.Value.(*MeshIdentityItemExtensionVault)
+		return nil
+	case MeshIdentityItemProviderSpecExtensionTypeMeshIdentityItemExtensionSpecOther:
+		u.MeshIdentityItemExtensionSpecOther = best.Value.(*MeshIdentityItemExtensionSpecOther)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshIdentityItemProviderSpecExtension", string(data))
+}
+
+func (u MeshIdentityItemProviderSpecExtension) MarshalJSON() ([]byte, error) {
+	if u.MeshIdentityItemExtensionAcmpca != nil {
+		return utils.MarshalJSON(u.MeshIdentityItemExtensionAcmpca, "", true)
+	}
+
+	if u.MeshIdentityItemExtensionCertmanager != nil {
+		return utils.MarshalJSON(u.MeshIdentityItemExtensionCertmanager, "", true)
+	}
+
+	if u.MeshIdentityItemExtensionVault != nil {
+		return utils.MarshalJSON(u.MeshIdentityItemExtensionVault, "", true)
+	}
+
+	if u.MeshIdentityItemExtensionSpecOther != nil {
+		return utils.MarshalJSON(u.MeshIdentityItemExtensionSpecOther, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type MeshIdentityItemProviderSpecExtension: all fields are null")
+}
+
+// MeshIdentityItemProviderSpecType - Type specifies the type of certificate provider.
+type MeshIdentityItemProviderSpecType string
+
+const (
+	MeshIdentityItemProviderSpecTypeBundled   MeshIdentityItemProviderSpecType = "Bundled"
+	MeshIdentityItemProviderSpecTypeSpire     MeshIdentityItemProviderSpecType = "Spire"
+	MeshIdentityItemProviderSpecTypeExtension MeshIdentityItemProviderSpecType = "Extension"
+)
+
+func (e MeshIdentityItemProviderSpecType) ToPointer() *MeshIdentityItemProviderSpecType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshIdentityItemProviderSpecType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Bundled", "Spire", "Extension":
+			return true
+		}
+	}
+	return false
+}
+
+// MeshIdentityItemProviderAutogenerate - Autogenerate configures the control plane to use self-signed certificates.
+type MeshIdentityItemProviderAutogenerate struct {
+	Enabled *bool `json:"enabled,omitempty"`
+}
+
+func (m MeshIdentityItemProviderAutogenerate) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemProviderAutogenerate) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemProviderAutogenerate) GetEnabled() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.Enabled
+}
+
+type MeshIdentityItemProviderSpec3EnvVar struct {
+	Name string `json:"name"`
+}
+
+func (m MeshIdentityItemProviderSpec3EnvVar) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemProviderSpec3EnvVar) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemProviderSpec3EnvVar) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+// #region class-body-meshidentityitemproviderspec3envvar
+// #endregion class-body-meshidentityitemproviderspec3envvar
+
+type MeshIdentityItemProviderSpec3File struct {
+	Path string `json:"path"`
+}
+
+func (m MeshIdentityItemProviderSpec3File) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemProviderSpec3File) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemProviderSpec3File) GetPath() string {
+	if m == nil {
+		return ""
+	}
+	return m.Path
+}
+
+// #region class-body-meshidentityitemproviderspec3file
+// #endregion class-body-meshidentityitemproviderspec3file
+
+type MeshIdentityItemProviderSpec3InsecureInline struct {
+	Value string `json:"value"`
+}
+
+func (m MeshIdentityItemProviderSpec3InsecureInline) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemProviderSpec3InsecureInline) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemProviderSpec3InsecureInline) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// #region class-body-meshidentityitemproviderspec3insecureinline
+// #endregion class-body-meshidentityitemproviderspec3insecureinline
+
+type MeshIdentityItemProviderSpec3Kind string
+
+const (
+	MeshIdentityItemProviderSpec3KindSecret MeshIdentityItemProviderSpec3Kind = "Secret"
+)
+
+func (e MeshIdentityItemProviderSpec3Kind) ToPointer() *MeshIdentityItemProviderSpec3Kind {
+	return &e
+}
+func (e *MeshIdentityItemProviderSpec3Kind) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "Secret":
+		*e = MeshIdentityItemProviderSpec3Kind(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshIdentityItemProviderSpec3Kind: %v", v)
+	}
+}
+
+type MeshIdentityItemProviderSpec3SecretRef struct {
+	Kind MeshIdentityItemProviderSpec3Kind `json:"kind"`
+	Name string                            `json:"name"`
+}
+
+func (m MeshIdentityItemProviderSpec3SecretRef) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemProviderSpec3SecretRef) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemProviderSpec3SecretRef) GetKind() MeshIdentityItemProviderSpec3Kind {
+	if m == nil {
+		return MeshIdentityItemProviderSpec3Kind("")
+	}
+	return m.Kind
+}
+
+func (m *MeshIdentityItemProviderSpec3SecretRef) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+// #region class-body-meshidentityitemproviderspec3secretref
+// #endregion class-body-meshidentityitemproviderspec3secretref
+
+type MeshIdentityItemProviderSpec3Type string
+
+const (
+	MeshIdentityItemProviderSpec3TypeFile           MeshIdentityItemProviderSpec3Type = "File"
+	MeshIdentityItemProviderSpec3TypeSecret         MeshIdentityItemProviderSpec3Type = "Secret"
+	MeshIdentityItemProviderSpec3TypeEnvVar         MeshIdentityItemProviderSpec3Type = "EnvVar"
+	MeshIdentityItemProviderSpec3TypeInsecureInline MeshIdentityItemProviderSpec3Type = "InsecureInline"
+)
+
+func (e MeshIdentityItemProviderSpec3Type) ToPointer() *MeshIdentityItemProviderSpec3Type {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshIdentityItemProviderSpec3Type) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "File", "Secret", "EnvVar", "InsecureInline":
+			return true
+		}
+	}
+	return false
+}
+
+// MeshIdentityItemProviderCertificate - Certificate allows the user to specify a custom certificate.
+type MeshIdentityItemProviderCertificate struct {
+	EnvVar         *MeshIdentityItemProviderSpec3EnvVar         `json:"envVar,omitempty"`
+	File           *MeshIdentityItemProviderSpec3File           `json:"file,omitempty"`
+	InsecureInline *MeshIdentityItemProviderSpec3InsecureInline `json:"insecureInline,omitempty"`
+	SecretRef      *MeshIdentityItemProviderSpec3SecretRef      `json:"secretRef,omitempty"`
+	Type           MeshIdentityItemProviderSpec3Type            `json:"type"`
+}
+
+func (m MeshIdentityItemProviderCertificate) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemProviderCertificate) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemProviderCertificate) GetEnvVar() *MeshIdentityItemProviderSpec3EnvVar {
+	if m == nil {
+		return nil
+	}
+	return m.EnvVar
+}
+
+func (m *MeshIdentityItemProviderCertificate) GetFile() *MeshIdentityItemProviderSpec3File {
+	if m == nil {
+		return nil
+	}
+	return m.File
+}
+
+func (m *MeshIdentityItemProviderCertificate) GetInsecureInline() *MeshIdentityItemProviderSpec3InsecureInline {
+	if m == nil {
+		return nil
+	}
+	return m.InsecureInline
+}
+
+func (m *MeshIdentityItemProviderCertificate) GetSecretRef() *MeshIdentityItemProviderSpec3SecretRef {
+	if m == nil {
+		return nil
+	}
+	return m.SecretRef
+}
+
+func (m *MeshIdentityItemProviderCertificate) GetType() MeshIdentityItemProviderSpec3Type {
+	if m == nil {
+		return MeshIdentityItemProviderSpec3Type("")
+	}
+	return m.Type
+}
+
+type MeshIdentityItemProviderSpec3BundledEnvVar struct {
+	Name string `json:"name"`
+}
+
+func (m MeshIdentityItemProviderSpec3BundledEnvVar) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemProviderSpec3BundledEnvVar) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemProviderSpec3BundledEnvVar) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+// #region class-body-meshidentityitemproviderspec3bundledenvvar
+// #endregion class-body-meshidentityitemproviderspec3bundledenvvar
+
+type MeshIdentityItemProviderSpec3BundledFile struct {
+	Path string `json:"path"`
+}
+
+func (m MeshIdentityItemProviderSpec3BundledFile) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemProviderSpec3BundledFile) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemProviderSpec3BundledFile) GetPath() string {
+	if m == nil {
+		return ""
+	}
+	return m.Path
+}
+
+// #region class-body-meshidentityitemproviderspec3bundledfile
+// #endregion class-body-meshidentityitemproviderspec3bundledfile
+
+type MeshIdentityItemProviderSpec3BundledInsecureInline struct {
+	Value string `json:"value"`
+}
+
+func (m MeshIdentityItemProviderSpec3BundledInsecureInline) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemProviderSpec3BundledInsecureInline) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemProviderSpec3BundledInsecureInline) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// #region class-body-meshidentityitemproviderspec3bundledinsecureinline
+// #endregion class-body-meshidentityitemproviderspec3bundledinsecureinline
+
+type MeshIdentityItemProviderSpec3BundledKind string
+
+const (
+	MeshIdentityItemProviderSpec3BundledKindSecret MeshIdentityItemProviderSpec3BundledKind = "Secret"
+)
+
+func (e MeshIdentityItemProviderSpec3BundledKind) ToPointer() *MeshIdentityItemProviderSpec3BundledKind {
+	return &e
+}
+func (e *MeshIdentityItemProviderSpec3BundledKind) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "Secret":
+		*e = MeshIdentityItemProviderSpec3BundledKind(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshIdentityItemProviderSpec3BundledKind: %v", v)
+	}
+}
+
+type MeshIdentityItemProviderSpec3BundledSecretRef struct {
+	Kind MeshIdentityItemProviderSpec3BundledKind `json:"kind"`
+	Name string                                   `json:"name"`
+}
+
+func (m MeshIdentityItemProviderSpec3BundledSecretRef) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemProviderSpec3BundledSecretRef) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemProviderSpec3BundledSecretRef) GetKind() MeshIdentityItemProviderSpec3BundledKind {
+	if m == nil {
+		return MeshIdentityItemProviderSpec3BundledKind("")
+	}
+	return m.Kind
+}
+
+func (m *MeshIdentityItemProviderSpec3BundledSecretRef) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+// #region class-body-meshidentityitemproviderspec3bundledsecretref
+// #endregion class-body-meshidentityitemproviderspec3bundledsecretref
+
+type MeshIdentityItemProviderSpec3BundledType string
+
+const (
+	MeshIdentityItemProviderSpec3BundledTypeFile           MeshIdentityItemProviderSpec3BundledType = "File"
+	MeshIdentityItemProviderSpec3BundledTypeSecret         MeshIdentityItemProviderSpec3BundledType = "Secret"
+	MeshIdentityItemProviderSpec3BundledTypeEnvVar         MeshIdentityItemProviderSpec3BundledType = "EnvVar"
+	MeshIdentityItemProviderSpec3BundledTypeInsecureInline MeshIdentityItemProviderSpec3BundledType = "InsecureInline"
+)
+
+func (e MeshIdentityItemProviderSpec3BundledType) ToPointer() *MeshIdentityItemProviderSpec3BundledType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshIdentityItemProviderSpec3BundledType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "File", "Secret", "EnvVar", "InsecureInline":
+			return true
+		}
+	}
+	return false
+}
+
+// MeshIdentityItemProviderPrivateKey - PrivateKey allows the user to specify a custom private key.
+type MeshIdentityItemProviderPrivateKey struct {
+	EnvVar         *MeshIdentityItemProviderSpec3BundledEnvVar         `json:"envVar,omitempty"`
+	File           *MeshIdentityItemProviderSpec3BundledFile           `json:"file,omitempty"`
+	InsecureInline *MeshIdentityItemProviderSpec3BundledInsecureInline `json:"insecureInline,omitempty"`
+	SecretRef      *MeshIdentityItemProviderSpec3BundledSecretRef      `json:"secretRef,omitempty"`
+	Type           MeshIdentityItemProviderSpec3BundledType            `json:"type"`
+}
+
+func (m MeshIdentityItemProviderPrivateKey) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemProviderPrivateKey) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemProviderPrivateKey) GetEnvVar() *MeshIdentityItemProviderSpec3BundledEnvVar {
+	if m == nil {
+		return nil
+	}
+	return m.EnvVar
+}
+
+func (m *MeshIdentityItemProviderPrivateKey) GetFile() *MeshIdentityItemProviderSpec3BundledFile {
+	if m == nil {
+		return nil
+	}
+	return m.File
+}
+
+func (m *MeshIdentityItemProviderPrivateKey) GetInsecureInline() *MeshIdentityItemProviderSpec3BundledInsecureInline {
+	if m == nil {
+		return nil
+	}
+	return m.InsecureInline
+}
+
+func (m *MeshIdentityItemProviderPrivateKey) GetSecretRef() *MeshIdentityItemProviderSpec3BundledSecretRef {
+	if m == nil {
+		return nil
+	}
+	return m.SecretRef
+}
+
+func (m *MeshIdentityItemProviderPrivateKey) GetType() MeshIdentityItemProviderSpec3BundledType {
+	if m == nil {
+		return MeshIdentityItemProviderSpec3BundledType("")
+	}
+	return m.Type
+}
+
+// MeshIdentityItemProviderCa - CA has configuration related to the CA
+type MeshIdentityItemProviderCa struct {
+	// Certificate allows the user to specify a custom certificate.
+	Certificate *MeshIdentityItemProviderCertificate `json:"certificate,omitempty"`
+	// PrivateKey allows the user to specify a custom private key.
+	PrivateKey *MeshIdentityItemProviderPrivateKey `json:"privateKey,omitempty"`
+}
+
+func (m MeshIdentityItemProviderCa) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemProviderCa) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemProviderCa) GetCertificate() *MeshIdentityItemProviderCertificate {
+	if m == nil {
+		return nil
+	}
+	return m.Certificate
+}
+
+func (m *MeshIdentityItemProviderCa) GetPrivateKey() *MeshIdentityItemProviderPrivateKey {
+	if m == nil {
+		return nil
+	}
+	return m.PrivateKey
+}
+
+// MeshIdentityItemProviderCertificateParameters - CertificateParameters allows users to define certificate generation parameters.
+type MeshIdentityItemProviderCertificateParameters struct {
+	Expiry *string `json:"expiry,omitempty"`
+}
+
+func (m MeshIdentityItemProviderCertificateParameters) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemProviderCertificateParameters) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemProviderCertificateParameters) GetExpiry() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Expiry
+}
+
+// MeshIdentityItemProviderMeshTrustCreation - MeshTrustCreation defines whether a MeshTrust resource should be automatically created
+// from an existing MeshIdentity. If not defined, the control plane automatically generates a MeshTrust.
+type MeshIdentityItemProviderMeshTrustCreation string
+
+const (
+	MeshIdentityItemProviderMeshTrustCreationEnabled  MeshIdentityItemProviderMeshTrustCreation = "Enabled"
+	MeshIdentityItemProviderMeshTrustCreationDisabled MeshIdentityItemProviderMeshTrustCreation = "Disabled"
+)
+
+func (e MeshIdentityItemProviderMeshTrustCreation) ToPointer() *MeshIdentityItemProviderMeshTrustCreation {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshIdentityItemProviderMeshTrustCreation) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Enabled", "Disabled":
+			return true
+		}
+	}
+	return false
+}
+
+// MeshIdentityItemProviderBundled - Bundled provides information about certificates that are generated by the control plane,
+// either autogenerated or provided by the user.
+type MeshIdentityItemProviderBundled struct {
+	// Autogenerate configures the control plane to use self-signed certificates.
+	Autogenerate *MeshIdentityItemProviderAutogenerate `json:"autogenerate,omitempty"`
+	// CA has configuration related to the CA
+	Ca *MeshIdentityItemProviderCa `json:"ca,omitempty"`
+	// CertificateParameters allows users to define certificate generation parameters.
+	CertificateParameters *MeshIdentityItemProviderCertificateParameters `json:"certificateParameters,omitempty"`
+	// InsecureAllowSelfSigned allows users to enable the use of self-signed certificates.
+	InsecureAllowSelfSigned *bool `json:"insecureAllowSelfSigned,omitempty"`
+	// MeshTrustCreation defines whether a MeshTrust resource should be automatically created
+	// from an existing MeshIdentity. If not defined, the control plane automatically generates a MeshTrust.
+	MeshTrustCreation *MeshIdentityItemProviderMeshTrustCreation `json:"meshTrustCreation,omitempty"`
+}
+
+func (m MeshIdentityItemProviderBundled) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemProviderBundled) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemProviderBundled) GetAutogenerate() *MeshIdentityItemProviderAutogenerate {
+	if m == nil {
+		return nil
+	}
+	return m.Autogenerate
+}
+
+func (m *MeshIdentityItemProviderBundled) GetCa() *MeshIdentityItemProviderCa {
+	if m == nil {
+		return nil
+	}
+	return m.Ca
+}
+
+func (m *MeshIdentityItemProviderBundled) GetCertificateParameters() *MeshIdentityItemProviderCertificateParameters {
+	if m == nil {
+		return nil
+	}
+	return m.CertificateParameters
+}
+
+func (m *MeshIdentityItemProviderBundled) GetInsecureAllowSelfSigned() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.InsecureAllowSelfSigned
+}
+
+func (m *MeshIdentityItemProviderBundled) GetMeshTrustCreation() *MeshIdentityItemProviderMeshTrustCreation {
+	if m == nil {
+		return nil
+	}
+	return m.MeshTrustCreation
+}
+
+// MeshIdentityItemProviderAgent - Spire agent configuration
+type MeshIdentityItemProviderAgent struct {
+	// Connection timeout to the socket exposed by Spire agent
+	// Default 1 second.
+	Timeout *string `json:"timeout,omitempty"`
+}
+
+func (m MeshIdentityItemProviderAgent) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemProviderAgent) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemProviderAgent) GetTimeout() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Timeout
+}
+
+// MeshIdentityItemProviderSpire - Spire indicates that SPIRE is used for certificate delivery.
+type MeshIdentityItemProviderSpire struct {
+	// Spire agent configuration
+	Agent *MeshIdentityItemProviderAgent `json:"agent,omitempty"`
+}
+
+func (m MeshIdentityItemProviderSpire) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemProviderSpire) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemProviderSpire) GetAgent() *MeshIdentityItemProviderAgent {
+	if m == nil {
+		return nil
+	}
+	return m.Agent
+}
+
+type Three struct {
+	// Extension indicates that custom provider is used.
+	Extension *MeshIdentityItemProviderSpecExtension `json:"extension,omitempty"`
+	// Type specifies the type of certificate provider.
+	Type MeshIdentityItemProviderSpecType `json:"type"`
+	// Bundled provides information about certificates that are generated by the control plane,
+	// either autogenerated or provided by the user.
+	Bundled *MeshIdentityItemProviderBundled `json:"bundled,omitempty"`
+	// Spire indicates that SPIRE is used for certificate delivery.
+	Spire *MeshIdentityItemProviderSpire `json:"spire,omitempty"`
+}
+
+func (t Three) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(t, "", false)
+}
+
+func (t *Three) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &t, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (t *Three) GetExtension() *MeshIdentityItemProviderSpecExtension {
+	if t == nil {
+		return nil
+	}
+	return t.Extension
+}
+
+func (t *Three) GetType() MeshIdentityItemProviderSpecType {
+	if t == nil {
+		return MeshIdentityItemProviderSpecType("")
+	}
+	return t.Type
+}
+
+func (t *Three) GetBundled() *MeshIdentityItemProviderBundled {
+	if t == nil {
+		return nil
+	}
+	return t.Bundled
+}
+
+func (t *Three) GetSpire() *MeshIdentityItemProviderSpire {
+	if t == nil {
+		return nil
+	}
+	return t.Spire
+}
+
+// ProviderAgent - Spire agent configuration
+type ProviderAgent struct {
+	// Connection timeout to the socket exposed by Spire agent
+	// Default 1 second.
+	Timeout *string `json:"timeout,omitempty"`
+}
+
+func (p ProviderAgent) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(p, "", false)
+}
+
+func (p *ProviderAgent) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *ProviderAgent) GetTimeout() *string {
+	if p == nil {
+		return nil
+	}
+	return p.Timeout
+}
+
+// ProviderSpire - Spire indicates that SPIRE is used for certificate delivery.
+type ProviderSpire struct {
+	// Spire agent configuration
+	Agent *ProviderAgent `json:"agent,omitempty"`
+}
+
+func (p ProviderSpire) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(p, "", false)
+}
+
+func (p *ProviderSpire) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *ProviderSpire) GetAgent() *ProviderAgent {
+	if p == nil {
+		return nil
+	}
+	return p.Agent
+}
+
+// MeshIdentityItemProviderType - Type specifies the type of certificate provider.
+type MeshIdentityItemProviderType string
+
+const (
+	MeshIdentityItemProviderTypeBundled   MeshIdentityItemProviderType = "Bundled"
+	MeshIdentityItemProviderTypeSpire     MeshIdentityItemProviderType = "Spire"
+	MeshIdentityItemProviderTypeExtension MeshIdentityItemProviderType = "Extension"
+)
+
+func (e MeshIdentityItemProviderType) ToPointer() *MeshIdentityItemProviderType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshIdentityItemProviderType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Bundled", "Spire", "Extension":
+			return true
+		}
+	}
+	return false
+}
+
+// ProviderAutogenerate - Autogenerate configures the control plane to use self-signed certificates.
+type ProviderAutogenerate struct {
+	Enabled *bool `json:"enabled,omitempty"`
+}
+
+func (p ProviderAutogenerate) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(p, "", false)
+}
+
+func (p *ProviderAutogenerate) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *ProviderAutogenerate) GetEnabled() *bool {
+	if p == nil {
+		return nil
+	}
+	return p.Enabled
+}
+
+type MeshIdentityItemProviderSpecEnvVar struct {
+	Name string `json:"name"`
+}
+
+func (m MeshIdentityItemProviderSpecEnvVar) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemProviderSpecEnvVar) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemProviderSpecEnvVar) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+type MeshIdentityItemProviderSpecFile struct {
+	Path string `json:"path"`
+}
+
+func (m MeshIdentityItemProviderSpecFile) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemProviderSpecFile) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemProviderSpecFile) GetPath() string {
+	if m == nil {
+		return ""
+	}
+	return m.Path
+}
+
+type MeshIdentityItemProviderSpecInsecureInline struct {
+	Value string `json:"value"`
+}
+
+func (m MeshIdentityItemProviderSpecInsecureInline) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemProviderSpecInsecureInline) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemProviderSpecInsecureInline) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+type MeshIdentityItemProviderSpecKind string
+
+const (
+	MeshIdentityItemProviderSpecKindSecret MeshIdentityItemProviderSpecKind = "Secret"
+)
+
+func (e MeshIdentityItemProviderSpecKind) ToPointer() *MeshIdentityItemProviderSpecKind {
+	return &e
+}
+func (e *MeshIdentityItemProviderSpecKind) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "Secret":
+		*e = MeshIdentityItemProviderSpecKind(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshIdentityItemProviderSpecKind: %v", v)
+	}
+}
+
+type MeshIdentityItemProviderSpecSecretRef struct {
+	Kind MeshIdentityItemProviderSpecKind `json:"kind"`
+	Name string                           `json:"name"`
+}
+
+func (m MeshIdentityItemProviderSpecSecretRef) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemProviderSpecSecretRef) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemProviderSpecSecretRef) GetKind() MeshIdentityItemProviderSpecKind {
+	if m == nil {
+		return MeshIdentityItemProviderSpecKind("")
+	}
+	return m.Kind
+}
+
+func (m *MeshIdentityItemProviderSpecSecretRef) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+type MeshIdentityItemProviderSpec2Type string
+
+const (
+	MeshIdentityItemProviderSpec2TypeFile           MeshIdentityItemProviderSpec2Type = "File"
+	MeshIdentityItemProviderSpec2TypeSecret         MeshIdentityItemProviderSpec2Type = "Secret"
+	MeshIdentityItemProviderSpec2TypeEnvVar         MeshIdentityItemProviderSpec2Type = "EnvVar"
+	MeshIdentityItemProviderSpec2TypeInsecureInline MeshIdentityItemProviderSpec2Type = "InsecureInline"
+)
+
+func (e MeshIdentityItemProviderSpec2Type) ToPointer() *MeshIdentityItemProviderSpec2Type {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshIdentityItemProviderSpec2Type) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "File", "Secret", "EnvVar", "InsecureInline":
+			return true
+		}
+	}
+	return false
+}
+
+// ProviderCertificate - Certificate allows the user to specify a custom certificate.
+type ProviderCertificate struct {
+	EnvVar         *MeshIdentityItemProviderSpecEnvVar         `json:"envVar,omitempty"`
+	File           *MeshIdentityItemProviderSpecFile           `json:"file,omitempty"`
+	InsecureInline *MeshIdentityItemProviderSpecInsecureInline `json:"insecureInline,omitempty"`
+	SecretRef      *MeshIdentityItemProviderSpecSecretRef      `json:"secretRef,omitempty"`
+	Type           MeshIdentityItemProviderSpec2Type           `json:"type"`
+}
+
+func (p ProviderCertificate) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(p, "", false)
+}
+
+func (p *ProviderCertificate) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *ProviderCertificate) GetEnvVar() *MeshIdentityItemProviderSpecEnvVar {
+	if p == nil {
+		return nil
+	}
+	return p.EnvVar
+}
+
+func (p *ProviderCertificate) GetFile() *MeshIdentityItemProviderSpecFile {
+	if p == nil {
+		return nil
+	}
+	return p.File
+}
+
+func (p *ProviderCertificate) GetInsecureInline() *MeshIdentityItemProviderSpecInsecureInline {
+	if p == nil {
+		return nil
+	}
+	return p.InsecureInline
+}
+
+func (p *ProviderCertificate) GetSecretRef() *MeshIdentityItemProviderSpecSecretRef {
+	if p == nil {
+		return nil
+	}
+	return p.SecretRef
+}
+
+func (p *ProviderCertificate) GetType() MeshIdentityItemProviderSpec2Type {
+	if p == nil {
+		return MeshIdentityItemProviderSpec2Type("")
+	}
+	return p.Type
+}
+
+type MeshIdentityItemProviderSpec2EnvVar struct {
+	Name string `json:"name"`
+}
+
+func (m MeshIdentityItemProviderSpec2EnvVar) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemProviderSpec2EnvVar) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemProviderSpec2EnvVar) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+// #region class-body-meshidentityitemproviderspec2envvar
+// #endregion class-body-meshidentityitemproviderspec2envvar
+
+type MeshIdentityItemProviderSpec2File struct {
+	Path string `json:"path"`
+}
+
+func (m MeshIdentityItemProviderSpec2File) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemProviderSpec2File) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemProviderSpec2File) GetPath() string {
+	if m == nil {
+		return ""
+	}
+	return m.Path
+}
+
+// #region class-body-meshidentityitemproviderspec2file
+// #endregion class-body-meshidentityitemproviderspec2file
+
+type MeshIdentityItemProviderSpec2InsecureInline struct {
+	Value string `json:"value"`
+}
+
+func (m MeshIdentityItemProviderSpec2InsecureInline) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemProviderSpec2InsecureInline) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemProviderSpec2InsecureInline) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// #region class-body-meshidentityitemproviderspec2insecureinline
+// #endregion class-body-meshidentityitemproviderspec2insecureinline
+
+type MeshIdentityItemProviderSpec2Kind string
+
+const (
+	MeshIdentityItemProviderSpec2KindSecret MeshIdentityItemProviderSpec2Kind = "Secret"
+)
+
+func (e MeshIdentityItemProviderSpec2Kind) ToPointer() *MeshIdentityItemProviderSpec2Kind {
+	return &e
+}
+func (e *MeshIdentityItemProviderSpec2Kind) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "Secret":
+		*e = MeshIdentityItemProviderSpec2Kind(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshIdentityItemProviderSpec2Kind: %v", v)
+	}
+}
+
+type MeshIdentityItemProviderSpec2SecretRef struct {
+	Kind MeshIdentityItemProviderSpec2Kind `json:"kind"`
+	Name string                            `json:"name"`
+}
+
+func (m MeshIdentityItemProviderSpec2SecretRef) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemProviderSpec2SecretRef) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemProviderSpec2SecretRef) GetKind() MeshIdentityItemProviderSpec2Kind {
+	if m == nil {
+		return MeshIdentityItemProviderSpec2Kind("")
+	}
+	return m.Kind
+}
+
+func (m *MeshIdentityItemProviderSpec2SecretRef) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+// #region class-body-meshidentityitemproviderspec2secretref
+// #endregion class-body-meshidentityitemproviderspec2secretref
+
+type MeshIdentityItemProviderSpec2BundledType string
+
+const (
+	MeshIdentityItemProviderSpec2BundledTypeFile           MeshIdentityItemProviderSpec2BundledType = "File"
+	MeshIdentityItemProviderSpec2BundledTypeSecret         MeshIdentityItemProviderSpec2BundledType = "Secret"
+	MeshIdentityItemProviderSpec2BundledTypeEnvVar         MeshIdentityItemProviderSpec2BundledType = "EnvVar"
+	MeshIdentityItemProviderSpec2BundledTypeInsecureInline MeshIdentityItemProviderSpec2BundledType = "InsecureInline"
+)
+
+func (e MeshIdentityItemProviderSpec2BundledType) ToPointer() *MeshIdentityItemProviderSpec2BundledType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshIdentityItemProviderSpec2BundledType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "File", "Secret", "EnvVar", "InsecureInline":
+			return true
+		}
+	}
+	return false
+}
+
+// ProviderPrivateKey - PrivateKey allows the user to specify a custom private key.
+type ProviderPrivateKey struct {
+	EnvVar         *MeshIdentityItemProviderSpec2EnvVar         `json:"envVar,omitempty"`
+	File           *MeshIdentityItemProviderSpec2File           `json:"file,omitempty"`
+	InsecureInline *MeshIdentityItemProviderSpec2InsecureInline `json:"insecureInline,omitempty"`
+	SecretRef      *MeshIdentityItemProviderSpec2SecretRef      `json:"secretRef,omitempty"`
+	Type           MeshIdentityItemProviderSpec2BundledType     `json:"type"`
+}
+
+func (p ProviderPrivateKey) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(p, "", false)
+}
+
+func (p *ProviderPrivateKey) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *ProviderPrivateKey) GetEnvVar() *MeshIdentityItemProviderSpec2EnvVar {
+	if p == nil {
+		return nil
+	}
+	return p.EnvVar
+}
+
+func (p *ProviderPrivateKey) GetFile() *MeshIdentityItemProviderSpec2File {
+	if p == nil {
+		return nil
+	}
+	return p.File
+}
+
+func (p *ProviderPrivateKey) GetInsecureInline() *MeshIdentityItemProviderSpec2InsecureInline {
+	if p == nil {
+		return nil
+	}
+	return p.InsecureInline
+}
+
+func (p *ProviderPrivateKey) GetSecretRef() *MeshIdentityItemProviderSpec2SecretRef {
+	if p == nil {
+		return nil
+	}
+	return p.SecretRef
+}
+
+func (p *ProviderPrivateKey) GetType() MeshIdentityItemProviderSpec2BundledType {
+	if p == nil {
+		return MeshIdentityItemProviderSpec2BundledType("")
+	}
+	return p.Type
+}
+
+// ProviderCa - CA has configuration related to the CA
+type ProviderCa struct {
+	// Certificate allows the user to specify a custom certificate.
+	Certificate *ProviderCertificate `json:"certificate,omitempty"`
+	// PrivateKey allows the user to specify a custom private key.
+	PrivateKey *ProviderPrivateKey `json:"privateKey,omitempty"`
+}
+
+func (p ProviderCa) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(p, "", false)
+}
+
+func (p *ProviderCa) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *ProviderCa) GetCertificate() *ProviderCertificate {
+	if p == nil {
+		return nil
+	}
+	return p.Certificate
+}
+
+func (p *ProviderCa) GetPrivateKey() *ProviderPrivateKey {
+	if p == nil {
+		return nil
+	}
+	return p.PrivateKey
+}
+
+// ProviderCertificateParameters - CertificateParameters allows users to define certificate generation parameters.
+type ProviderCertificateParameters struct {
+	Expiry *string `json:"expiry,omitempty"`
+}
+
+func (p ProviderCertificateParameters) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(p, "", false)
+}
+
+func (p *ProviderCertificateParameters) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *ProviderCertificateParameters) GetExpiry() *string {
+	if p == nil {
+		return nil
+	}
+	return p.Expiry
+}
+
+// ProviderMeshTrustCreation - MeshTrustCreation defines whether a MeshTrust resource should be automatically created
+// from an existing MeshIdentity. If not defined, the control plane automatically generates a MeshTrust.
+type ProviderMeshTrustCreation string
+
+const (
+	ProviderMeshTrustCreationEnabled  ProviderMeshTrustCreation = "Enabled"
+	ProviderMeshTrustCreationDisabled ProviderMeshTrustCreation = "Disabled"
+)
+
+func (e ProviderMeshTrustCreation) ToPointer() *ProviderMeshTrustCreation {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *ProviderMeshTrustCreation) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Enabled", "Disabled":
+			return true
+		}
+	}
+	return false
+}
+
+// ProviderBundled - Bundled provides information about certificates that are generated by the control plane,
+// either autogenerated or provided by the user.
+type ProviderBundled struct {
+	// Autogenerate configures the control plane to use self-signed certificates.
+	Autogenerate *ProviderAutogenerate `json:"autogenerate,omitempty"`
+	// CA has configuration related to the CA
+	Ca *ProviderCa `json:"ca,omitempty"`
+	// CertificateParameters allows users to define certificate generation parameters.
+	CertificateParameters *ProviderCertificateParameters `json:"certificateParameters,omitempty"`
+	// InsecureAllowSelfSigned allows users to enable the use of self-signed certificates.
+	InsecureAllowSelfSigned *bool `json:"insecureAllowSelfSigned,omitempty"`
+	// MeshTrustCreation defines whether a MeshTrust resource should be automatically created
+	// from an existing MeshIdentity. If not defined, the control plane automatically generates a MeshTrust.
+	MeshTrustCreation *ProviderMeshTrustCreation `json:"meshTrustCreation,omitempty"`
+}
+
+func (p ProviderBundled) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(p, "", false)
+}
+
+func (p *ProviderBundled) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *ProviderBundled) GetAutogenerate() *ProviderAutogenerate {
+	if p == nil {
+		return nil
+	}
+	return p.Autogenerate
+}
+
+func (p *ProviderBundled) GetCa() *ProviderCa {
+	if p == nil {
+		return nil
+	}
+	return p.Ca
+}
+
+func (p *ProviderBundled) GetCertificateParameters() *ProviderCertificateParameters {
+	if p == nil {
+		return nil
+	}
+	return p.CertificateParameters
+}
+
+func (p *ProviderBundled) GetInsecureAllowSelfSigned() *bool {
+	if p == nil {
+		return nil
+	}
+	return p.InsecureAllowSelfSigned
+}
+
+func (p *ProviderBundled) GetMeshTrustCreation() *ProviderMeshTrustCreation {
+	if p == nil {
+		return nil
+	}
+	return p.MeshTrustCreation
+}
+
+// MeshIdentityItemExtensionOther - An extension this control plane does not ship. Its configuration is not described here.
+type MeshIdentityItemExtensionOther struct {
+	// Name is the name of the extension provider.
+	Name string `json:"name"`
+	// Config is a freeform configuration for the extension.
+	Config any `json:"config,omitempty"`
+}
+
+func (m MeshIdentityItemExtensionOther) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemExtensionOther) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemExtensionOther) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+func (m *MeshIdentityItemExtensionOther) GetConfig() any {
+	if m == nil {
+		return nil
+	}
+	return m.Config
+}
+
+type ExtensionVault struct {
+	// Config is a freeform configuration for the extension.
+	Config any `json:"config,omitempty"`
+	// Name is the name of the extension provider.
+	Name string `json:"name"`
+}
+
+func (e ExtensionVault) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(e, "", false)
+}
+
+func (e *ExtensionVault) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &e, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (e *ExtensionVault) GetConfig() any {
+	if e == nil {
+		return nil
+	}
+	return e.Config
+}
+
+func (e *ExtensionVault) GetName() string {
+	if e == nil {
+		return ""
+	}
+	return e.Name
+}
+
+type ExtensionCertmanager struct {
+	// Config is a freeform configuration for the extension.
+	Config any `json:"config,omitempty"`
+	// Name is the name of the extension provider.
+	Name string `json:"name"`
+}
+
+func (e ExtensionCertmanager) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(e, "", false)
+}
+
+func (e *ExtensionCertmanager) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &e, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (e *ExtensionCertmanager) GetConfig() any {
+	if e == nil {
+		return nil
+	}
+	return e.Config
+}
+
+func (e *ExtensionCertmanager) GetName() string {
+	if e == nil {
+		return ""
+	}
+	return e.Name
+}
+
+type ExtensionAcmpca struct {
+	// Config is a freeform configuration for the extension.
+	Config any `json:"config,omitempty"`
+	// Name is the name of the extension provider.
+	Name string `json:"name"`
+}
+
+func (e ExtensionAcmpca) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(e, "", false)
+}
+
+func (e *ExtensionAcmpca) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &e, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (e *ExtensionAcmpca) GetConfig() any {
+	if e == nil {
+		return nil
+	}
+	return e.Config
+}
+
+func (e *ExtensionAcmpca) GetName() string {
+	if e == nil {
+		return ""
+	}
+	return e.Name
+}
+
+type MeshIdentityItemProviderExtensionType string
+
+const (
+	MeshIdentityItemProviderExtensionTypeExtensionAcmpca                MeshIdentityItemProviderExtensionType = "extension_acmpca"
+	MeshIdentityItemProviderExtensionTypeExtensionCertmanager           MeshIdentityItemProviderExtensionType = "extension_certmanager"
+	MeshIdentityItemProviderExtensionTypeExtensionVault                 MeshIdentityItemProviderExtensionType = "extension_vault"
+	MeshIdentityItemProviderExtensionTypeMeshIdentityItemExtensionOther MeshIdentityItemProviderExtensionType = "MeshIdentityItem_extension_Other"
+)
+
+// MeshIdentityItemProviderExtension - Extension indicates that custom provider is used.
+type MeshIdentityItemProviderExtension struct {
+	ExtensionAcmpca                *ExtensionAcmpca                `queryParam:"inline" union:"member"`
+	ExtensionCertmanager           *ExtensionCertmanager           `queryParam:"inline" union:"member"`
+	ExtensionVault                 *ExtensionVault                 `queryParam:"inline" union:"member"`
+	MeshIdentityItemExtensionOther *MeshIdentityItemExtensionOther `queryParam:"inline" union:"member"`
+
+	Type MeshIdentityItemProviderExtensionType
+}
+
+func CreateMeshIdentityItemProviderExtensionExtensionAcmpca(extensionAcmpca ExtensionAcmpca) MeshIdentityItemProviderExtension {
+	typ := MeshIdentityItemProviderExtensionTypeExtensionAcmpca
+
+	return MeshIdentityItemProviderExtension{
+		ExtensionAcmpca: &extensionAcmpca,
+		Type:            typ,
+	}
+}
+
+func CreateMeshIdentityItemProviderExtensionExtensionCertmanager(extensionCertmanager ExtensionCertmanager) MeshIdentityItemProviderExtension {
+	typ := MeshIdentityItemProviderExtensionTypeExtensionCertmanager
+
+	return MeshIdentityItemProviderExtension{
+		ExtensionCertmanager: &extensionCertmanager,
+		Type:                 typ,
+	}
+}
+
+func CreateMeshIdentityItemProviderExtensionExtensionVault(extensionVault ExtensionVault) MeshIdentityItemProviderExtension {
+	typ := MeshIdentityItemProviderExtensionTypeExtensionVault
+
+	return MeshIdentityItemProviderExtension{
+		ExtensionVault: &extensionVault,
+		Type:           typ,
+	}
+}
+
+func CreateMeshIdentityItemProviderExtensionMeshIdentityItemExtensionOther(meshIdentityItemExtensionOther MeshIdentityItemExtensionOther) MeshIdentityItemProviderExtension {
+	typ := MeshIdentityItemProviderExtensionTypeMeshIdentityItemExtensionOther
+
+	return MeshIdentityItemProviderExtension{
+		MeshIdentityItemExtensionOther: &meshIdentityItemExtensionOther,
+		Type:                           typ,
+	}
+}
+
+func (u *MeshIdentityItemProviderExtension) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var extensionAcmpca ExtensionAcmpca = ExtensionAcmpca{}
+	if err := utils.UnmarshalJSON(data, &extensionAcmpca, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshIdentityItemProviderExtensionTypeExtensionAcmpca,
+			Value: &extensionAcmpca,
+		})
+	}
+
+	var extensionCertmanager ExtensionCertmanager = ExtensionCertmanager{}
+	if err := utils.UnmarshalJSON(data, &extensionCertmanager, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshIdentityItemProviderExtensionTypeExtensionCertmanager,
+			Value: &extensionCertmanager,
+		})
+	}
+
+	var extensionVault ExtensionVault = ExtensionVault{}
+	if err := utils.UnmarshalJSON(data, &extensionVault, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshIdentityItemProviderExtensionTypeExtensionVault,
+			Value: &extensionVault,
+		})
+	}
+
+	var meshIdentityItemExtensionOther MeshIdentityItemExtensionOther = MeshIdentityItemExtensionOther{}
+	if err := utils.UnmarshalJSON(data, &meshIdentityItemExtensionOther, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshIdentityItemProviderExtensionTypeMeshIdentityItemExtensionOther,
+			Value: &meshIdentityItemExtensionOther,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshIdentityItemProviderExtension", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshIdentityItemProviderExtension", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(MeshIdentityItemProviderExtensionType)
+	switch best.Type {
+	case MeshIdentityItemProviderExtensionTypeExtensionAcmpca:
+		u.ExtensionAcmpca = best.Value.(*ExtensionAcmpca)
+		return nil
+	case MeshIdentityItemProviderExtensionTypeExtensionCertmanager:
+		u.ExtensionCertmanager = best.Value.(*ExtensionCertmanager)
+		return nil
+	case MeshIdentityItemProviderExtensionTypeExtensionVault:
+		u.ExtensionVault = best.Value.(*ExtensionVault)
+		return nil
+	case MeshIdentityItemProviderExtensionTypeMeshIdentityItemExtensionOther:
+		u.MeshIdentityItemExtensionOther = best.Value.(*MeshIdentityItemExtensionOther)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshIdentityItemProviderExtension", string(data))
+}
+
+func (u MeshIdentityItemProviderExtension) MarshalJSON() ([]byte, error) {
+	if u.ExtensionAcmpca != nil {
+		return utils.MarshalJSON(u.ExtensionAcmpca, "", true)
+	}
+
+	if u.ExtensionCertmanager != nil {
+		return utils.MarshalJSON(u.ExtensionCertmanager, "", true)
+	}
+
+	if u.ExtensionVault != nil {
+		return utils.MarshalJSON(u.ExtensionVault, "", true)
+	}
+
+	if u.MeshIdentityItemExtensionOther != nil {
+		return utils.MarshalJSON(u.MeshIdentityItemExtensionOther, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type MeshIdentityItemProviderExtension: all fields are null")
+}
+
+type Two struct {
+	// Spire indicates that SPIRE is used for certificate delivery.
+	Spire *ProviderSpire `json:"spire,omitempty"`
+	// Type specifies the type of certificate provider.
+	Type MeshIdentityItemProviderType `json:"type"`
+	// Bundled provides information about certificates that are generated by the control plane,
+	// either autogenerated or provided by the user.
+	Bundled *ProviderBundled `json:"bundled,omitempty"`
+	// Extension indicates that custom provider is used.
+	Extension *MeshIdentityItemProviderExtension `json:"extension,omitempty"`
+}
+
+func (t Two) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(t, "", false)
+}
+
+func (t *Two) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &t, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (t *Two) GetSpire() *ProviderSpire {
+	if t == nil {
+		return nil
+	}
+	return t.Spire
+}
+
+func (t *Two) GetType() MeshIdentityItemProviderType {
+	if t == nil {
+		return MeshIdentityItemProviderType("")
+	}
+	return t.Type
+}
+
+func (t *Two) GetBundled() *ProviderBundled {
+	if t == nil {
+		return nil
+	}
+	return t.Bundled
+}
+
+func (t *Two) GetExtension() *MeshIdentityItemProviderExtension {
+	if t == nil {
+		return nil
+	}
+	return t.Extension
+}
+
 // Autogenerate configures the control plane to use self-signed certificates.
 type Autogenerate struct {
 	Enabled *bool `json:"enabled,omitempty"`
+}
+
+func (a Autogenerate) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(a, "", false)
+}
+
+func (a *Autogenerate) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (a *Autogenerate) GetEnabled() *bool {
@@ -45,96 +2005,140 @@ func (a *Autogenerate) GetEnabled() *bool {
 	return a.Enabled
 }
 
-type EnvVar struct {
+type ProviderEnvVar struct {
 	Name string `json:"name"`
 }
 
-func (e *EnvVar) GetName() string {
-	if e == nil {
-		return ""
-	}
-	return e.Name
+func (p ProviderEnvVar) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(p, "", false)
 }
 
-type MeshIdentityItemFile struct {
+func (p *ProviderEnvVar) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *ProviderEnvVar) GetName() string {
+	if p == nil {
+		return ""
+	}
+	return p.Name
+}
+
+type ProviderFile struct {
 	Path string `json:"path"`
 }
 
-func (m *MeshIdentityItemFile) GetPath() string {
-	if m == nil {
-		return ""
-	}
-	return m.Path
+func (p ProviderFile) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(p, "", false)
 }
 
-type InsecureInline struct {
+func (p *ProviderFile) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *ProviderFile) GetPath() string {
+	if p == nil {
+		return ""
+	}
+	return p.Path
+}
+
+type ProviderInsecureInline struct {
 	Value string `json:"value"`
 }
 
-func (i *InsecureInline) GetValue() string {
-	if i == nil {
+func (p ProviderInsecureInline) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(p, "", false)
+}
+
+func (p *ProviderInsecureInline) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *ProviderInsecureInline) GetValue() string {
+	if p == nil {
 		return ""
 	}
-	return i.Value
+	return p.Value
 }
 
-type MeshIdentityItemKind string
+type ProviderKind string
 
 const (
-	MeshIdentityItemKindSecret MeshIdentityItemKind = "Secret"
+	ProviderKindSecret ProviderKind = "Secret"
 )
 
-func (e MeshIdentityItemKind) ToPointer() *MeshIdentityItemKind {
+func (e ProviderKind) ToPointer() *ProviderKind {
 	return &e
 }
-func (e *MeshIdentityItemKind) UnmarshalJSON(data []byte) error {
+func (e *ProviderKind) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	switch v {
 	case "Secret":
-		*e = MeshIdentityItemKind(v)
+		*e = ProviderKind(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for MeshIdentityItemKind: %v", v)
+		return fmt.Errorf("invalid value for ProviderKind: %v", v)
 	}
 }
 
-type SecretRef struct {
-	Kind MeshIdentityItemKind `json:"kind"`
-	Name string               `json:"name"`
+type ProviderSecretRef struct {
+	Kind ProviderKind `json:"kind"`
+	Name string       `json:"name"`
 }
 
-func (s *SecretRef) GetKind() MeshIdentityItemKind {
-	if s == nil {
-		return MeshIdentityItemKind("")
+func (p ProviderSecretRef) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(p, "", false)
+}
+
+func (p *ProviderSecretRef) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
+		return err
 	}
-	return s.Kind
+	return nil
 }
 
-func (s *SecretRef) GetName() string {
-	if s == nil {
+func (p *ProviderSecretRef) GetKind() ProviderKind {
+	if p == nil {
+		return ProviderKind("")
+	}
+	return p.Kind
+}
+
+func (p *ProviderSecretRef) GetName() string {
+	if p == nil {
 		return ""
 	}
-	return s.Name
+	return p.Name
 }
 
-type MeshIdentityItemSpecProviderBundledType string
+type MeshIdentityItemProviderSpec1BundledType string
 
 const (
-	MeshIdentityItemSpecProviderBundledTypeFile           MeshIdentityItemSpecProviderBundledType = "File"
-	MeshIdentityItemSpecProviderBundledTypeSecret         MeshIdentityItemSpecProviderBundledType = "Secret"
-	MeshIdentityItemSpecProviderBundledTypeEnvVar         MeshIdentityItemSpecProviderBundledType = "EnvVar"
-	MeshIdentityItemSpecProviderBundledTypeInsecureInline MeshIdentityItemSpecProviderBundledType = "InsecureInline"
+	MeshIdentityItemProviderSpec1BundledTypeFile           MeshIdentityItemProviderSpec1BundledType = "File"
+	MeshIdentityItemProviderSpec1BundledTypeSecret         MeshIdentityItemProviderSpec1BundledType = "Secret"
+	MeshIdentityItemProviderSpec1BundledTypeEnvVar         MeshIdentityItemProviderSpec1BundledType = "EnvVar"
+	MeshIdentityItemProviderSpec1BundledTypeInsecureInline MeshIdentityItemProviderSpec1BundledType = "InsecureInline"
 )
 
-func (e MeshIdentityItemSpecProviderBundledType) ToPointer() *MeshIdentityItemSpecProviderBundledType {
+func (e MeshIdentityItemProviderSpec1BundledType) ToPointer() *MeshIdentityItemProviderSpec1BundledType {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshIdentityItemSpecProviderBundledType) IsExact() bool {
+func (e *MeshIdentityItemProviderSpec1BundledType) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "File", "Secret", "EnvVar", "InsecureInline":
@@ -146,138 +2150,193 @@ func (e *MeshIdentityItemSpecProviderBundledType) IsExact() bool {
 
 // Certificate allows the user to specify a custom certificate.
 type Certificate struct {
-	EnvVar         *EnvVar                                 `json:"envVar,omitempty"`
-	File           *MeshIdentityItemFile                   `json:"file,omitempty"`
-	InsecureInline *InsecureInline                         `json:"insecureInline,omitempty"`
-	SecretRef      *SecretRef                              `json:"secretRef,omitempty"`
-	Type           MeshIdentityItemSpecProviderBundledType `json:"type"`
+	EnvVar         *ProviderEnvVar                          `json:"envVar,omitempty"`
+	File           *ProviderFile                            `json:"file,omitempty"`
+	InsecureInline *ProviderInsecureInline                  `json:"insecureInline,omitempty"`
+	SecretRef      *ProviderSecretRef                       `json:"secretRef,omitempty"`
+	Type           MeshIdentityItemProviderSpec1BundledType `json:"type"`
 }
 
-func (c *Certificate) GetEnvVar() *EnvVar {
+func (c Certificate) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(c, "", false)
+}
+
+func (c *Certificate) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &c, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *Certificate) GetEnvVar() *ProviderEnvVar {
 	if c == nil {
 		return nil
 	}
 	return c.EnvVar
 }
 
-func (c *Certificate) GetFile() *MeshIdentityItemFile {
+func (c *Certificate) GetFile() *ProviderFile {
 	if c == nil {
 		return nil
 	}
 	return c.File
 }
 
-func (c *Certificate) GetInsecureInline() *InsecureInline {
+func (c *Certificate) GetInsecureInline() *ProviderInsecureInline {
 	if c == nil {
 		return nil
 	}
 	return c.InsecureInline
 }
 
-func (c *Certificate) GetSecretRef() *SecretRef {
+func (c *Certificate) GetSecretRef() *ProviderSecretRef {
 	if c == nil {
 		return nil
 	}
 	return c.SecretRef
 }
 
-func (c *Certificate) GetType() MeshIdentityItemSpecProviderBundledType {
+func (c *Certificate) GetType() MeshIdentityItemProviderSpec1BundledType {
 	if c == nil {
-		return MeshIdentityItemSpecProviderBundledType("")
+		return MeshIdentityItemProviderSpec1BundledType("")
 	}
 	return c.Type
 }
 
-type MeshIdentityItemEnvVar struct {
+type MeshIdentityItemProviderEnvVar struct {
 	Name string `json:"name"`
 }
 
-func (m *MeshIdentityItemEnvVar) GetName() string {
+func (m MeshIdentityItemProviderEnvVar) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemProviderEnvVar) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemProviderEnvVar) GetName() string {
 	if m == nil {
 		return ""
 	}
 	return m.Name
 }
 
-type MeshIdentityItemSpecFile struct {
+type MeshIdentityItemProviderFile struct {
 	Path string `json:"path"`
 }
 
-func (m *MeshIdentityItemSpecFile) GetPath() string {
+func (m MeshIdentityItemProviderFile) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemProviderFile) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemProviderFile) GetPath() string {
 	if m == nil {
 		return ""
 	}
 	return m.Path
 }
 
-type MeshIdentityItemInsecureInline struct {
+type MeshIdentityItemProviderInsecureInline struct {
 	Value string `json:"value"`
 }
 
-func (m *MeshIdentityItemInsecureInline) GetValue() string {
+func (m MeshIdentityItemProviderInsecureInline) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemProviderInsecureInline) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemProviderInsecureInline) GetValue() string {
 	if m == nil {
 		return ""
 	}
 	return m.Value
 }
 
-type MeshIdentityItemSpecKind string
+type MeshIdentityItemProviderKind string
 
 const (
-	MeshIdentityItemSpecKindSecret MeshIdentityItemSpecKind = "Secret"
+	MeshIdentityItemProviderKindSecret MeshIdentityItemProviderKind = "Secret"
 )
 
-func (e MeshIdentityItemSpecKind) ToPointer() *MeshIdentityItemSpecKind {
+func (e MeshIdentityItemProviderKind) ToPointer() *MeshIdentityItemProviderKind {
 	return &e
 }
-func (e *MeshIdentityItemSpecKind) UnmarshalJSON(data []byte) error {
+func (e *MeshIdentityItemProviderKind) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	switch v {
 	case "Secret":
-		*e = MeshIdentityItemSpecKind(v)
+		*e = MeshIdentityItemProviderKind(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for MeshIdentityItemSpecKind: %v", v)
+		return fmt.Errorf("invalid value for MeshIdentityItemProviderKind: %v", v)
 	}
 }
 
-type MeshIdentityItemSecretRef struct {
-	Kind MeshIdentityItemSpecKind `json:"kind"`
-	Name string                   `json:"name"`
+type MeshIdentityItemProviderSecretRef struct {
+	Kind MeshIdentityItemProviderKind `json:"kind"`
+	Name string                       `json:"name"`
 }
 
-func (m *MeshIdentityItemSecretRef) GetKind() MeshIdentityItemSpecKind {
+func (m MeshIdentityItemProviderSecretRef) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshIdentityItemProviderSecretRef) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshIdentityItemProviderSecretRef) GetKind() MeshIdentityItemProviderKind {
 	if m == nil {
-		return MeshIdentityItemSpecKind("")
+		return MeshIdentityItemProviderKind("")
 	}
 	return m.Kind
 }
 
-func (m *MeshIdentityItemSecretRef) GetName() string {
+func (m *MeshIdentityItemProviderSecretRef) GetName() string {
 	if m == nil {
 		return ""
 	}
 	return m.Name
 }
 
-type MeshIdentityItemSpecProviderType string
+type MeshIdentityItemProviderSpec1Type string
 
 const (
-	MeshIdentityItemSpecProviderTypeFile           MeshIdentityItemSpecProviderType = "File"
-	MeshIdentityItemSpecProviderTypeSecret         MeshIdentityItemSpecProviderType = "Secret"
-	MeshIdentityItemSpecProviderTypeEnvVar         MeshIdentityItemSpecProviderType = "EnvVar"
-	MeshIdentityItemSpecProviderTypeInsecureInline MeshIdentityItemSpecProviderType = "InsecureInline"
+	MeshIdentityItemProviderSpec1TypeFile           MeshIdentityItemProviderSpec1Type = "File"
+	MeshIdentityItemProviderSpec1TypeSecret         MeshIdentityItemProviderSpec1Type = "Secret"
+	MeshIdentityItemProviderSpec1TypeEnvVar         MeshIdentityItemProviderSpec1Type = "EnvVar"
+	MeshIdentityItemProviderSpec1TypeInsecureInline MeshIdentityItemProviderSpec1Type = "InsecureInline"
 )
 
-func (e MeshIdentityItemSpecProviderType) ToPointer() *MeshIdentityItemSpecProviderType {
+func (e MeshIdentityItemProviderSpec1Type) ToPointer() *MeshIdentityItemProviderSpec1Type {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshIdentityItemSpecProviderType) IsExact() bool {
+func (e *MeshIdentityItemProviderSpec1Type) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "File", "Secret", "EnvVar", "InsecureInline":
@@ -289,44 +2348,55 @@ func (e *MeshIdentityItemSpecProviderType) IsExact() bool {
 
 // PrivateKey allows the user to specify a custom private key.
 type PrivateKey struct {
-	EnvVar         *MeshIdentityItemEnvVar          `json:"envVar,omitempty"`
-	File           *MeshIdentityItemSpecFile        `json:"file,omitempty"`
-	InsecureInline *MeshIdentityItemInsecureInline  `json:"insecureInline,omitempty"`
-	SecretRef      *MeshIdentityItemSecretRef       `json:"secretRef,omitempty"`
-	Type           MeshIdentityItemSpecProviderType `json:"type"`
+	EnvVar         *MeshIdentityItemProviderEnvVar         `json:"envVar,omitempty"`
+	File           *MeshIdentityItemProviderFile           `json:"file,omitempty"`
+	InsecureInline *MeshIdentityItemProviderInsecureInline `json:"insecureInline,omitempty"`
+	SecretRef      *MeshIdentityItemProviderSecretRef      `json:"secretRef,omitempty"`
+	Type           MeshIdentityItemProviderSpec1Type       `json:"type"`
 }
 
-func (p *PrivateKey) GetEnvVar() *MeshIdentityItemEnvVar {
+func (p PrivateKey) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(p, "", false)
+}
+
+func (p *PrivateKey) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *PrivateKey) GetEnvVar() *MeshIdentityItemProviderEnvVar {
 	if p == nil {
 		return nil
 	}
 	return p.EnvVar
 }
 
-func (p *PrivateKey) GetFile() *MeshIdentityItemSpecFile {
+func (p *PrivateKey) GetFile() *MeshIdentityItemProviderFile {
 	if p == nil {
 		return nil
 	}
 	return p.File
 }
 
-func (p *PrivateKey) GetInsecureInline() *MeshIdentityItemInsecureInline {
+func (p *PrivateKey) GetInsecureInline() *MeshIdentityItemProviderInsecureInline {
 	if p == nil {
 		return nil
 	}
 	return p.InsecureInline
 }
 
-func (p *PrivateKey) GetSecretRef() *MeshIdentityItemSecretRef {
+func (p *PrivateKey) GetSecretRef() *MeshIdentityItemProviderSecretRef {
 	if p == nil {
 		return nil
 	}
 	return p.SecretRef
 }
 
-func (p *PrivateKey) GetType() MeshIdentityItemSpecProviderType {
+func (p *PrivateKey) GetType() MeshIdentityItemProviderSpec1Type {
 	if p == nil {
-		return MeshIdentityItemSpecProviderType("")
+		return MeshIdentityItemProviderSpec1Type("")
 	}
 	return p.Type
 }
@@ -337,6 +2407,17 @@ type Ca struct {
 	Certificate *Certificate `json:"certificate,omitempty"`
 	// PrivateKey allows the user to specify a custom private key.
 	PrivateKey *PrivateKey `json:"privateKey,omitempty"`
+}
+
+func (c Ca) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(c, "", false)
+}
+
+func (c *Ca) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &c, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c *Ca) GetCertificate() *Certificate {
@@ -356,6 +2437,17 @@ func (c *Ca) GetPrivateKey() *PrivateKey {
 // CertificateParameters allows users to define certificate generation parameters.
 type CertificateParameters struct {
 	Expiry *string `json:"expiry,omitempty"`
+}
+
+func (c CertificateParameters) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(c, "", false)
+}
+
+func (c *CertificateParameters) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &c, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c *CertificateParameters) GetExpiry() *string {
@@ -405,6 +2497,17 @@ type Bundled struct {
 	MeshTrustCreation *MeshTrustCreation `json:"meshTrustCreation,omitempty"`
 }
 
+func (b Bundled) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(b, "", false)
+}
+
+func (b *Bundled) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &b, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (b *Bundled) GetAutogenerate() *Autogenerate {
 	if b == nil {
 		return nil
@@ -440,11 +2543,317 @@ func (b *Bundled) GetMeshTrustCreation() *MeshTrustCreation {
 	return b.MeshTrustCreation
 }
 
+// ProviderType - Type specifies the type of certificate provider.
+type ProviderType string
+
+const (
+	ProviderTypeBundled   ProviderType = "Bundled"
+	ProviderTypeSpire     ProviderType = "Spire"
+	ProviderTypeExtension ProviderType = "Extension"
+)
+
+func (e ProviderType) ToPointer() *ProviderType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *ProviderType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Bundled", "Spire", "Extension":
+			return true
+		}
+	}
+	return false
+}
+
+// ExtensionOther - An extension this control plane does not ship. Its configuration is not described here.
+type ExtensionOther struct {
+	// Name is the name of the extension provider.
+	Name string `json:"name"`
+	// Config is a freeform configuration for the extension.
+	Config any `json:"config,omitempty"`
+}
+
+func (e ExtensionOther) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(e, "", false)
+}
+
+func (e *ExtensionOther) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &e, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (e *ExtensionOther) GetName() string {
+	if e == nil {
+		return ""
+	}
+	return e.Name
+}
+
+func (e *ExtensionOther) GetConfig() any {
+	if e == nil {
+		return nil
+	}
+	return e.Config
+}
+
+type Vault struct {
+	// Config is a freeform configuration for the extension.
+	Config any `json:"config,omitempty"`
+	// Name is the name of the extension provider.
+	Name string `json:"name"`
+}
+
+func (v Vault) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(v, "", false)
+}
+
+func (v *Vault) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &v, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (v *Vault) GetConfig() any {
+	if v == nil {
+		return nil
+	}
+	return v.Config
+}
+
+func (v *Vault) GetName() string {
+	if v == nil {
+		return ""
+	}
+	return v.Name
+}
+
+type Certmanager struct {
+	// Config is a freeform configuration for the extension.
+	Config any `json:"config,omitempty"`
+	// Name is the name of the extension provider.
+	Name string `json:"name"`
+}
+
+func (c Certmanager) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(c, "", false)
+}
+
+func (c *Certmanager) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &c, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *Certmanager) GetConfig() any {
+	if c == nil {
+		return nil
+	}
+	return c.Config
+}
+
+func (c *Certmanager) GetName() string {
+	if c == nil {
+		return ""
+	}
+	return c.Name
+}
+
+type Acmpca struct {
+	// Config is a freeform configuration for the extension.
+	Config any `json:"config,omitempty"`
+	// Name is the name of the extension provider.
+	Name string `json:"name"`
+}
+
+func (a Acmpca) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(a, "", false)
+}
+
+func (a *Acmpca) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (a *Acmpca) GetConfig() any {
+	if a == nil {
+		return nil
+	}
+	return a.Config
+}
+
+func (a *Acmpca) GetName() string {
+	if a == nil {
+		return ""
+	}
+	return a.Name
+}
+
+type ProviderExtensionType string
+
+const (
+	ProviderExtensionTypeAcmpca         ProviderExtensionType = "acmpca"
+	ProviderExtensionTypeCertmanager    ProviderExtensionType = "certmanager"
+	ProviderExtensionTypeVault          ProviderExtensionType = "vault"
+	ProviderExtensionTypeExtensionOther ProviderExtensionType = "extension_Other"
+)
+
+// ProviderExtension - Extension indicates that custom provider is used.
+type ProviderExtension struct {
+	Acmpca         *Acmpca         `queryParam:"inline" union:"member"`
+	Certmanager    *Certmanager    `queryParam:"inline" union:"member"`
+	Vault          *Vault          `queryParam:"inline" union:"member"`
+	ExtensionOther *ExtensionOther `queryParam:"inline" union:"member"`
+
+	Type ProviderExtensionType
+}
+
+func CreateProviderExtensionAcmpca(acmpca Acmpca) ProviderExtension {
+	typ := ProviderExtensionTypeAcmpca
+
+	return ProviderExtension{
+		Acmpca: &acmpca,
+		Type:   typ,
+	}
+}
+
+func CreateProviderExtensionCertmanager(certmanager Certmanager) ProviderExtension {
+	typ := ProviderExtensionTypeCertmanager
+
+	return ProviderExtension{
+		Certmanager: &certmanager,
+		Type:        typ,
+	}
+}
+
+func CreateProviderExtensionVault(vault Vault) ProviderExtension {
+	typ := ProviderExtensionTypeVault
+
+	return ProviderExtension{
+		Vault: &vault,
+		Type:  typ,
+	}
+}
+
+func CreateProviderExtensionExtensionOther(extensionOther ExtensionOther) ProviderExtension {
+	typ := ProviderExtensionTypeExtensionOther
+
+	return ProviderExtension{
+		ExtensionOther: &extensionOther,
+		Type:           typ,
+	}
+}
+
+func (u *ProviderExtension) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var acmpca Acmpca = Acmpca{}
+	if err := utils.UnmarshalJSON(data, &acmpca, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  ProviderExtensionTypeAcmpca,
+			Value: &acmpca,
+		})
+	}
+
+	var certmanager Certmanager = Certmanager{}
+	if err := utils.UnmarshalJSON(data, &certmanager, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  ProviderExtensionTypeCertmanager,
+			Value: &certmanager,
+		})
+	}
+
+	var vault Vault = Vault{}
+	if err := utils.UnmarshalJSON(data, &vault, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  ProviderExtensionTypeVault,
+			Value: &vault,
+		})
+	}
+
+	var extensionOther ExtensionOther = ExtensionOther{}
+	if err := utils.UnmarshalJSON(data, &extensionOther, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  ProviderExtensionTypeExtensionOther,
+			Value: &extensionOther,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for ProviderExtension", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for ProviderExtension", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(ProviderExtensionType)
+	switch best.Type {
+	case ProviderExtensionTypeAcmpca:
+		u.Acmpca = best.Value.(*Acmpca)
+		return nil
+	case ProviderExtensionTypeCertmanager:
+		u.Certmanager = best.Value.(*Certmanager)
+		return nil
+	case ProviderExtensionTypeVault:
+		u.Vault = best.Value.(*Vault)
+		return nil
+	case ProviderExtensionTypeExtensionOther:
+		u.ExtensionOther = best.Value.(*ExtensionOther)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for ProviderExtension", string(data))
+}
+
+func (u ProviderExtension) MarshalJSON() ([]byte, error) {
+	if u.Acmpca != nil {
+		return utils.MarshalJSON(u.Acmpca, "", true)
+	}
+
+	if u.Certmanager != nil {
+		return utils.MarshalJSON(u.Certmanager, "", true)
+	}
+
+	if u.Vault != nil {
+		return utils.MarshalJSON(u.Vault, "", true)
+	}
+
+	if u.ExtensionOther != nil {
+		return utils.MarshalJSON(u.ExtensionOther, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type ProviderExtension: all fields are null")
+}
+
 // Agent - Spire agent configuration
 type Agent struct {
 	// Connection timeout to the socket exposed by Spire agent
 	// Default 1 second.
 	Timeout *string `json:"timeout,omitempty"`
+}
+
+func (a Agent) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(a, "", false)
+}
+
+func (a *Agent) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (a *Agent) GetTimeout() *string {
@@ -460,6 +2869,17 @@ type Spire struct {
 	Agent *Agent `json:"agent,omitempty"`
 }
 
+func (s Spire) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(s, "", false)
+}
+
+func (s *Spire) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &s, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *Spire) GetAgent() *Agent {
 	if s == nil {
 		return nil
@@ -467,58 +2887,170 @@ func (s *Spire) GetAgent() *Agent {
 	return s.Agent
 }
 
-// MeshIdentityItemSpecType - Type specifies the type of certificate provider.
-type MeshIdentityItemSpecType string
-
-const (
-	MeshIdentityItemSpecTypeBundled MeshIdentityItemSpecType = "Bundled"
-	MeshIdentityItemSpecTypeSpire   MeshIdentityItemSpecType = "Spire"
-)
-
-func (e MeshIdentityItemSpecType) ToPointer() *MeshIdentityItemSpecType {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshIdentityItemSpecType) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Bundled", "Spire":
-			return true
-		}
-	}
-	return false
-}
-
-type Provider struct {
+type One struct {
 	// Bundled provides information about certificates that are generated by the control plane,
 	// either autogenerated or provided by the user.
 	Bundled *Bundled `json:"bundled,omitempty"`
+	// Type specifies the type of certificate provider.
+	Type ProviderType `json:"type"`
+	// Extension indicates that custom provider is used.
+	Extension *ProviderExtension `json:"extension,omitempty"`
 	// Spire indicates that SPIRE is used for certificate delivery.
 	Spire *Spire `json:"spire,omitempty"`
-	// Type specifies the type of certificate provider.
-	Type MeshIdentityItemSpecType `json:"type"`
 }
 
-func (p *Provider) GetBundled() *Bundled {
-	if p == nil {
+func (o One) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(o, "", false)
+}
+
+func (o *One) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &o, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *One) GetBundled() *Bundled {
+	if o == nil {
 		return nil
 	}
-	return p.Bundled
+	return o.Bundled
 }
 
-func (p *Provider) GetSpire() *Spire {
-	if p == nil {
+func (o *One) GetType() ProviderType {
+	if o == nil {
+		return ProviderType("")
+	}
+	return o.Type
+}
+
+func (o *One) GetExtension() *ProviderExtension {
+	if o == nil {
 		return nil
 	}
-	return p.Spire
+	return o.Extension
 }
 
-func (p *Provider) GetType() MeshIdentityItemSpecType {
-	if p == nil {
-		return MeshIdentityItemSpecType("")
+func (o *One) GetSpire() *Spire {
+	if o == nil {
+		return nil
 	}
-	return p.Type
+	return o.Spire
+}
+
+type ProviderUnionType string
+
+const (
+	ProviderUnionTypeOne   ProviderUnionType = "1"
+	ProviderUnionTypeTwo   ProviderUnionType = "2"
+	ProviderUnionTypeThree ProviderUnionType = "3"
+)
+
+type Provider struct {
+	One   *One   `queryParam:"inline" union:"member"`
+	Two   *Two   `queryParam:"inline" union:"member"`
+	Three *Three `queryParam:"inline" union:"member"`
+
+	Type ProviderUnionType
+}
+
+func CreateProviderOne(one One) Provider {
+	typ := ProviderUnionTypeOne
+
+	return Provider{
+		One:  &one,
+		Type: typ,
+	}
+}
+
+func CreateProviderTwo(two Two) Provider {
+	typ := ProviderUnionTypeTwo
+
+	return Provider{
+		Two:  &two,
+		Type: typ,
+	}
+}
+
+func CreateProviderThree(three Three) Provider {
+	typ := ProviderUnionTypeThree
+
+	return Provider{
+		Three: &three,
+		Type:  typ,
+	}
+}
+
+func (u *Provider) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var one One = One{}
+	if err := utils.UnmarshalJSON(data, &one, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  ProviderUnionTypeOne,
+			Value: &one,
+		})
+	}
+
+	var two Two = Two{}
+	if err := utils.UnmarshalJSON(data, &two, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  ProviderUnionTypeTwo,
+			Value: &two,
+		})
+	}
+
+	var three Three = Three{}
+	if err := utils.UnmarshalJSON(data, &three, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  ProviderUnionTypeThree,
+			Value: &three,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Provider", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Provider", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(ProviderUnionType)
+	switch best.Type {
+	case ProviderUnionTypeOne:
+		u.One = best.Value.(*One)
+		return nil
+	case ProviderUnionTypeTwo:
+		u.Two = best.Value.(*Two)
+		return nil
+	case ProviderUnionTypeThree:
+		u.Three = best.Value.(*Three)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for Provider", string(data))
+}
+
+func (u Provider) MarshalJSON() ([]byte, error) {
+	if u.One != nil {
+		return utils.MarshalJSON(u.One, "", true)
+	}
+
+	if u.Two != nil {
+		return utils.MarshalJSON(u.Two, "", true)
+	}
+
+	if u.Three != nil {
+		return utils.MarshalJSON(u.Three, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type Provider: all fields are null")
 }
 
 type Dataplane struct {
@@ -614,7 +3146,7 @@ func (e *MeshIdentityItemStatusStatus) IsExact() bool {
 	return false
 }
 
-type Conditions struct {
+type MeshIdentityItemConditions struct {
 	// message is a human readable message indicating details about the transition.
 	// This may be an empty string.
 	Message string `json:"message"`
@@ -630,45 +3162,59 @@ type Conditions struct {
 	Type string `json:"type"`
 }
 
-func (c *Conditions) GetMessage() string {
-	if c == nil {
+func (m *MeshIdentityItemConditions) GetMessage() string {
+	if m == nil {
 		return ""
 	}
-	return c.Message
+	return m.Message
 }
 
-func (c *Conditions) GetReason() string {
-	if c == nil {
+func (m *MeshIdentityItemConditions) GetReason() string {
+	if m == nil {
 		return ""
 	}
-	return c.Reason
+	return m.Reason
 }
 
-func (c *Conditions) GetStatus() MeshIdentityItemStatusStatus {
-	if c == nil {
+func (m *MeshIdentityItemConditions) GetStatus() MeshIdentityItemStatusStatus {
+	if m == nil {
 		return MeshIdentityItemStatusStatus("")
 	}
-	return c.Status
+	return m.Status
 }
 
-func (c *Conditions) GetType() string {
-	if c == nil {
+func (m *MeshIdentityItemConditions) GetType() string {
+	if m == nil {
 		return ""
 	}
-	return c.Type
+	return m.Type
 }
 
 // MeshIdentityItemStatus - Status is the current status of the Kuma MeshIdentity resource.
 type MeshIdentityItemStatus struct {
 	// Conditions is an array of hostname generator conditions.
-	Conditions []Conditions `json:"conditions,omitempty"`
+	Conditions []MeshIdentityItemConditions `json:"conditions,omitempty"`
+	// TrustDomain is the trust domain this identity issues certificates in. The
+	// control plane renders `spec.spiffeID.trustDomain` once, when it first
+	// initializes the identity, and then keeps issuing in the recorded value.
+	// Templates such as `{{ .Zone }}` therefore stop following the zone name,
+	// which would otherwise silently move every workload into a trust domain no
+	// MeshTrust publishes yet.
+	TrustDomain *string `json:"trustDomain,omitempty"`
 }
 
-func (m *MeshIdentityItemStatus) GetConditions() []Conditions {
+func (m *MeshIdentityItemStatus) GetConditions() []MeshIdentityItemConditions {
 	if m == nil {
 		return nil
 	}
 	return m.Conditions
+}
+
+func (m *MeshIdentityItemStatus) GetTrustDomain() *string {
+	if m == nil {
+		return nil
+	}
+	return m.TrustDomain
 }
 
 // MeshIdentityItem - MeshIdentity manages service identity and certificate provisioning for workloads in the mesh. It configures how services obtain their identity certificates, supporting multiple providers including bundled certificates (self-signed or user-provided CA), SPIRE integration, and custom SPIFFE ID configuration for secure service-to-service authentication.

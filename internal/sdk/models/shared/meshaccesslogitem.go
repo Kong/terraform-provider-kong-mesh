@@ -4,6 +4,7 @@ package shared
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/utils"
 	"time"
@@ -33,9 +34,1894 @@ func (e *Type) UnmarshalJSON(data []byte) error {
 	}
 }
 
+type MeshAccessLogItemBackendsAttributes struct {
+	// Key is the OpenTelemetry attribute name.
+	Key string `json:"key"`
+	// Value can contain Kuma placeholders.
+	Value string `json:"value"`
+}
+
+func (m MeshAccessLogItemBackendsAttributes) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemBackendsAttributes) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemBackendsAttributes) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+func (m *MeshAccessLogItemBackendsAttributes) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// MeshAccessLogItemBackendsKind - Kind of the backend resource.
+type MeshAccessLogItemBackendsKind string
+
+const (
+	MeshAccessLogItemBackendsKindMeshOpenTelemetryBackend MeshAccessLogItemBackendsKind = "MeshOpenTelemetryBackend"
+)
+
+func (e MeshAccessLogItemBackendsKind) ToPointer() *MeshAccessLogItemBackendsKind {
+	return &e
+}
+func (e *MeshAccessLogItemBackendsKind) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "MeshOpenTelemetryBackend":
+		*e = MeshAccessLogItemBackendsKind(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshAccessLogItemBackendsKind: %v", v)
+	}
+}
+
+// MeshAccessLogItemBackendsBackendRef - BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+// defines the collector endpoint.
+type MeshAccessLogItemBackendsBackendRef struct {
+	// Kind of the backend resource.
+	Kind MeshAccessLogItemBackendsKind `json:"kind"`
+	// Labels to match the referenced resource. When multiple resources match,
+	// the oldest by creation time wins.
+	Labels map[string]string `json:"labels,omitempty"`
+}
+
+func (m MeshAccessLogItemBackendsBackendRef) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemBackendsBackendRef) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemBackendsBackendRef) GetKind() MeshAccessLogItemBackendsKind {
+	if m == nil {
+		return MeshAccessLogItemBackendsKind("")
+	}
+	return m.Kind
+}
+
+func (m *MeshAccessLogItemBackendsBackendRef) GetLabels() map[string]string {
+	if m == nil {
+		return nil
+	}
+	return m.Labels
+}
+
+// MeshAccessLogItemBackendsOpenTelemetry - Defines an OpenTelemetry logging backend.
+type MeshAccessLogItemBackendsOpenTelemetry struct {
+	// Attributes defines custom OpenTelemetry attributes. Keys must be static
+	// OpenTelemetry attribute names. Values can contain placeholders available on
+	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+	Attributes []MeshAccessLogItemBackendsAttributes `json:"attributes,omitempty"`
+	// BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+	// defines the collector endpoint.
+	BackendRef *MeshAccessLogItemBackendsBackendRef `json:"backendRef,omitempty"`
+	// Body is a raw string or an OTLP any value as described at
+	// https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body
+	// It can contain placeholders available on
+	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+	Body any `json:"body,omitempty"`
+}
+
+func (m MeshAccessLogItemBackendsOpenTelemetry) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemBackendsOpenTelemetry) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemBackendsOpenTelemetry) GetAttributes() []MeshAccessLogItemBackendsAttributes {
+	if m == nil {
+		return nil
+	}
+	return m.Attributes
+}
+
+func (m *MeshAccessLogItemBackendsOpenTelemetry) GetBackendRef() *MeshAccessLogItemBackendsBackendRef {
+	if m == nil {
+		return nil
+	}
+	return m.BackendRef
+}
+
+func (m *MeshAccessLogItemBackendsOpenTelemetry) GetBody() any {
+	if m == nil {
+		return nil
+	}
+	return m.Body
+}
+
+type MeshAccessLogItemBackendsSpecType string
+
+const (
+	MeshAccessLogItemBackendsSpecTypeTCP           MeshAccessLogItemBackendsSpecType = "Tcp"
+	MeshAccessLogItemBackendsSpecTypeFile          MeshAccessLogItemBackendsSpecType = "File"
+	MeshAccessLogItemBackendsSpecTypeOpenTelemetry MeshAccessLogItemBackendsSpecType = "OpenTelemetry"
+)
+
+func (e MeshAccessLogItemBackendsSpecType) ToPointer() *MeshAccessLogItemBackendsSpecType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemBackendsSpecType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Tcp", "File", "OpenTelemetry":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshAccessLogItemFormatSpecRulesDefaultBackends3FileJSON struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+func (m MeshAccessLogItemFormatSpecRulesDefaultBackends3FileJSON) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultBackends3FileJSON) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultBackends3FileJSON) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultBackends3FileJSON) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// #region class-body-meshaccesslogitemformatspecrulesdefaultbackends3filejson
+// #endregion class-body-meshaccesslogitemformatspecrulesdefaultbackends3filejson
+
+type MeshAccessLogItemFormatSpecRulesDefaultBackends3FileType string
+
+const (
+	MeshAccessLogItemFormatSpecRulesDefaultBackends3FileTypePlain MeshAccessLogItemFormatSpecRulesDefaultBackends3FileType = "Plain"
+	MeshAccessLogItemFormatSpecRulesDefaultBackends3FileTypeJSON  MeshAccessLogItemFormatSpecRulesDefaultBackends3FileType = "Json"
+)
+
+func (e MeshAccessLogItemFormatSpecRulesDefaultBackends3FileType) ToPointer() *MeshAccessLogItemFormatSpecRulesDefaultBackends3FileType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemFormatSpecRulesDefaultBackends3FileType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshAccessLogItemFormatSpecRulesDefault2 struct {
+	JSON            []MeshAccessLogItemFormatSpecRulesDefaultBackends3FileJSON `json:"json,omitempty"`
+	Type            MeshAccessLogItemFormatSpecRulesDefaultBackends3FileType   `json:"type"`
+	OmitEmptyValues *bool                                                      `default:"false" json:"omitEmptyValues"`
+	Plain           *string                                                    `json:"plain,omitempty"`
+}
+
+func (m MeshAccessLogItemFormatSpecRulesDefault2) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefault2) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefault2) GetJSON() []MeshAccessLogItemFormatSpecRulesDefaultBackends3FileJSON {
+	if m == nil {
+		return nil
+	}
+	return m.JSON
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefault2) GetType() MeshAccessLogItemFormatSpecRulesDefaultBackends3FileType {
+	if m == nil {
+		return MeshAccessLogItemFormatSpecRulesDefaultBackends3FileType("")
+	}
+	return m.Type
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefault2) GetOmitEmptyValues() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.OmitEmptyValues
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefault2) GetPlain() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Plain
+}
+
+// #region class-body-meshaccesslogitemformatspecrulesdefault2
+// #endregion class-body-meshaccesslogitemformatspecrulesdefault2
+
+type MeshAccessLogItemFormatSpecRulesDefaultBackends3Type string
+
+const (
+	MeshAccessLogItemFormatSpecRulesDefaultBackends3TypePlain MeshAccessLogItemFormatSpecRulesDefaultBackends3Type = "Plain"
+	MeshAccessLogItemFormatSpecRulesDefaultBackends3TypeJSON  MeshAccessLogItemFormatSpecRulesDefaultBackends3Type = "Json"
+)
+
+func (e MeshAccessLogItemFormatSpecRulesDefaultBackends3Type) ToPointer() *MeshAccessLogItemFormatSpecRulesDefaultBackends3Type {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemFormatSpecRulesDefaultBackends3Type) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshAccessLogItemFormatSpecRulesDefaultBackends3JSON struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+func (m MeshAccessLogItemFormatSpecRulesDefaultBackends3JSON) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultBackends3JSON) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultBackends3JSON) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultBackends3JSON) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// #region class-body-meshaccesslogitemformatspecrulesdefaultbackends3json
+// #endregion class-body-meshaccesslogitemformatspecrulesdefaultbackends3json
+
+type MeshAccessLogItemFormatSpecRulesDefault1 struct {
+	Plain           *string                                                `json:"plain,omitempty"`
+	Type            MeshAccessLogItemFormatSpecRulesDefaultBackends3Type   `json:"type"`
+	JSON            []MeshAccessLogItemFormatSpecRulesDefaultBackends3JSON `json:"json,omitempty"`
+	OmitEmptyValues *bool                                                  `default:"false" json:"omitEmptyValues"`
+}
+
+func (m MeshAccessLogItemFormatSpecRulesDefault1) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefault1) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefault1) GetPlain() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Plain
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefault1) GetType() MeshAccessLogItemFormatSpecRulesDefaultBackends3Type {
+	if m == nil {
+		return MeshAccessLogItemFormatSpecRulesDefaultBackends3Type("")
+	}
+	return m.Type
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefault1) GetJSON() []MeshAccessLogItemFormatSpecRulesDefaultBackends3JSON {
+	if m == nil {
+		return nil
+	}
+	return m.JSON
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefault1) GetOmitEmptyValues() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.OmitEmptyValues
+}
+
+// #region class-body-meshaccesslogitemformatspecrulesdefault1
+// #endregion class-body-meshaccesslogitemformatspecrulesdefault1
+
+type MeshAccessLogItemBackendsSpecRulesFormatType string
+
+const (
+	MeshAccessLogItemBackendsSpecRulesFormatTypeMeshAccessLogItemFormatSpecRulesDefault1 MeshAccessLogItemBackendsSpecRulesFormatType = "MeshAccessLogItem_format_spec_rules_default_1"
+	MeshAccessLogItemBackendsSpecRulesFormatTypeMeshAccessLogItemFormatSpecRulesDefault2 MeshAccessLogItemBackendsSpecRulesFormatType = "MeshAccessLogItem_format_spec_rules_default_2"
+)
+
+// MeshAccessLogItemBackendsSpecRulesFormat - Format of access logs. Placeholders available on
+// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+type MeshAccessLogItemBackendsSpecRulesFormat struct {
+	MeshAccessLogItemFormatSpecRulesDefault1 *MeshAccessLogItemFormatSpecRulesDefault1 `queryParam:"inline" union:"member"`
+	MeshAccessLogItemFormatSpecRulesDefault2 *MeshAccessLogItemFormatSpecRulesDefault2 `queryParam:"inline" union:"member"`
+
+	Type MeshAccessLogItemBackendsSpecRulesFormatType
+}
+
+func CreateMeshAccessLogItemBackendsSpecRulesFormatMeshAccessLogItemFormatSpecRulesDefault1(meshAccessLogItemFormatSpecRulesDefault1 MeshAccessLogItemFormatSpecRulesDefault1) MeshAccessLogItemBackendsSpecRulesFormat {
+	typ := MeshAccessLogItemBackendsSpecRulesFormatTypeMeshAccessLogItemFormatSpecRulesDefault1
+
+	return MeshAccessLogItemBackendsSpecRulesFormat{
+		MeshAccessLogItemFormatSpecRulesDefault1: &meshAccessLogItemFormatSpecRulesDefault1,
+		Type:                                     typ,
+	}
+}
+
+func CreateMeshAccessLogItemBackendsSpecRulesFormatMeshAccessLogItemFormatSpecRulesDefault2(meshAccessLogItemFormatSpecRulesDefault2 MeshAccessLogItemFormatSpecRulesDefault2) MeshAccessLogItemBackendsSpecRulesFormat {
+	typ := MeshAccessLogItemBackendsSpecRulesFormatTypeMeshAccessLogItemFormatSpecRulesDefault2
+
+	return MeshAccessLogItemBackendsSpecRulesFormat{
+		MeshAccessLogItemFormatSpecRulesDefault2: &meshAccessLogItemFormatSpecRulesDefault2,
+		Type:                                     typ,
+	}
+}
+
+func (u *MeshAccessLogItemBackendsSpecRulesFormat) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var meshAccessLogItemFormatSpecRulesDefault1 MeshAccessLogItemFormatSpecRulesDefault1 = MeshAccessLogItemFormatSpecRulesDefault1{}
+	if err := utils.UnmarshalJSON(data, &meshAccessLogItemFormatSpecRulesDefault1, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshAccessLogItemBackendsSpecRulesFormatTypeMeshAccessLogItemFormatSpecRulesDefault1,
+			Value: &meshAccessLogItemFormatSpecRulesDefault1,
+		})
+	}
+
+	var meshAccessLogItemFormatSpecRulesDefault2 MeshAccessLogItemFormatSpecRulesDefault2 = MeshAccessLogItemFormatSpecRulesDefault2{}
+	if err := utils.UnmarshalJSON(data, &meshAccessLogItemFormatSpecRulesDefault2, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshAccessLogItemBackendsSpecRulesFormatTypeMeshAccessLogItemFormatSpecRulesDefault2,
+			Value: &meshAccessLogItemFormatSpecRulesDefault2,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsSpecRulesFormat", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsSpecRulesFormat", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(MeshAccessLogItemBackendsSpecRulesFormatType)
+	switch best.Type {
+	case MeshAccessLogItemBackendsSpecRulesFormatTypeMeshAccessLogItemFormatSpecRulesDefault1:
+		u.MeshAccessLogItemFormatSpecRulesDefault1 = best.Value.(*MeshAccessLogItemFormatSpecRulesDefault1)
+		return nil
+	case MeshAccessLogItemBackendsSpecRulesFormatTypeMeshAccessLogItemFormatSpecRulesDefault2:
+		u.MeshAccessLogItemFormatSpecRulesDefault2 = best.Value.(*MeshAccessLogItemFormatSpecRulesDefault2)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsSpecRulesFormat", string(data))
+}
+
+func (u MeshAccessLogItemBackendsSpecRulesFormat) MarshalJSON() ([]byte, error) {
+	if u.MeshAccessLogItemFormatSpecRulesDefault1 != nil {
+		return utils.MarshalJSON(u.MeshAccessLogItemFormatSpecRulesDefault1, "", true)
+	}
+
+	if u.MeshAccessLogItemFormatSpecRulesDefault2 != nil {
+		return utils.MarshalJSON(u.MeshAccessLogItemFormatSpecRulesDefault2, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type MeshAccessLogItemBackendsSpecRulesFormat: all fields are null")
+}
+
+// MeshAccessLogItemBackendsFile - FileBackend defines configuration for file based access logs
+type MeshAccessLogItemBackendsFile struct {
+	// Format of access logs. Placeholders available on
+	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+	Format *MeshAccessLogItemBackendsSpecRulesFormat `json:"format,omitempty"`
+	// Path to a file that logs will be written to
+	Path string `json:"path"`
+}
+
+func (m MeshAccessLogItemBackendsFile) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemBackendsFile) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemBackendsFile) GetFormat() *MeshAccessLogItemBackendsSpecRulesFormat {
+	if m == nil {
+		return nil
+	}
+	return m.Format
+}
+
+func (m *MeshAccessLogItemBackendsFile) GetPath() string {
+	if m == nil {
+		return ""
+	}
+	return m.Path
+}
+
+type MeshAccessLogItemFormatSpecRulesDefaultBackends3TCP2JSON struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+func (m MeshAccessLogItemFormatSpecRulesDefaultBackends3TCP2JSON) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultBackends3TCP2JSON) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultBackends3TCP2JSON) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultBackends3TCP2JSON) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// #region class-body-meshaccesslogitemformatspecrulesdefaultbackends3tcp2json
+// #endregion class-body-meshaccesslogitemformatspecrulesdefaultbackends3tcp2json
+
+type MeshAccessLogItemFormatSpecRulesDefaultBackends3TCP2Type string
+
+const (
+	MeshAccessLogItemFormatSpecRulesDefaultBackends3TCP2TypePlain MeshAccessLogItemFormatSpecRulesDefaultBackends3TCP2Type = "Plain"
+	MeshAccessLogItemFormatSpecRulesDefaultBackends3TCP2TypeJSON  MeshAccessLogItemFormatSpecRulesDefaultBackends3TCP2Type = "Json"
+)
+
+func (e MeshAccessLogItemFormatSpecRulesDefaultBackends3TCP2Type) ToPointer() *MeshAccessLogItemFormatSpecRulesDefaultBackends3TCP2Type {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemFormatSpecRulesDefaultBackends3TCP2Type) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshAccessLogItemFormatSpecRulesDefaultBackends2 struct {
+	JSON            []MeshAccessLogItemFormatSpecRulesDefaultBackends3TCP2JSON `json:"json,omitempty"`
+	Type            MeshAccessLogItemFormatSpecRulesDefaultBackends3TCP2Type   `json:"type"`
+	OmitEmptyValues *bool                                                      `default:"false" json:"omitEmptyValues"`
+	Plain           *string                                                    `json:"plain,omitempty"`
+}
+
+func (m MeshAccessLogItemFormatSpecRulesDefaultBackends2) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultBackends2) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultBackends2) GetJSON() []MeshAccessLogItemFormatSpecRulesDefaultBackends3TCP2JSON {
+	if m == nil {
+		return nil
+	}
+	return m.JSON
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultBackends2) GetType() MeshAccessLogItemFormatSpecRulesDefaultBackends3TCP2Type {
+	if m == nil {
+		return MeshAccessLogItemFormatSpecRulesDefaultBackends3TCP2Type("")
+	}
+	return m.Type
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultBackends2) GetOmitEmptyValues() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.OmitEmptyValues
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultBackends2) GetPlain() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Plain
+}
+
+// #region class-body-meshaccesslogitemformatspecrulesdefaultbackends2
+// #endregion class-body-meshaccesslogitemformatspecrulesdefaultbackends2
+
+type MeshAccessLogItemFormatSpecRulesDefaultBackends3TCPType string
+
+const (
+	MeshAccessLogItemFormatSpecRulesDefaultBackends3TCPTypePlain MeshAccessLogItemFormatSpecRulesDefaultBackends3TCPType = "Plain"
+	MeshAccessLogItemFormatSpecRulesDefaultBackends3TCPTypeJSON  MeshAccessLogItemFormatSpecRulesDefaultBackends3TCPType = "Json"
+)
+
+func (e MeshAccessLogItemFormatSpecRulesDefaultBackends3TCPType) ToPointer() *MeshAccessLogItemFormatSpecRulesDefaultBackends3TCPType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemFormatSpecRulesDefaultBackends3TCPType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshAccessLogItemFormatSpecRulesDefaultBackends3TCPJSON struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+func (m MeshAccessLogItemFormatSpecRulesDefaultBackends3TCPJSON) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultBackends3TCPJSON) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultBackends3TCPJSON) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultBackends3TCPJSON) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// #region class-body-meshaccesslogitemformatspecrulesdefaultbackends3tcpjson
+// #endregion class-body-meshaccesslogitemformatspecrulesdefaultbackends3tcpjson
+
+type MeshAccessLogItemFormatSpecRulesDefaultBackends1 struct {
+	Plain           *string                                                   `json:"plain,omitempty"`
+	Type            MeshAccessLogItemFormatSpecRulesDefaultBackends3TCPType   `json:"type"`
+	JSON            []MeshAccessLogItemFormatSpecRulesDefaultBackends3TCPJSON `json:"json,omitempty"`
+	OmitEmptyValues *bool                                                     `default:"false" json:"omitEmptyValues"`
+}
+
+func (m MeshAccessLogItemFormatSpecRulesDefaultBackends1) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultBackends1) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultBackends1) GetPlain() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Plain
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultBackends1) GetType() MeshAccessLogItemFormatSpecRulesDefaultBackends3TCPType {
+	if m == nil {
+		return MeshAccessLogItemFormatSpecRulesDefaultBackends3TCPType("")
+	}
+	return m.Type
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultBackends1) GetJSON() []MeshAccessLogItemFormatSpecRulesDefaultBackends3TCPJSON {
+	if m == nil {
+		return nil
+	}
+	return m.JSON
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultBackends1) GetOmitEmptyValues() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.OmitEmptyValues
+}
+
+// #region class-body-meshaccesslogitemformatspecrulesdefaultbackends1
+// #endregion class-body-meshaccesslogitemformatspecrulesdefaultbackends1
+
+type MeshAccessLogItemBackendsSpecRulesDefaultFormatType string
+
+const (
+	MeshAccessLogItemBackendsSpecRulesDefaultFormatTypeMeshAccessLogItemFormatSpecRulesDefaultBackends1 MeshAccessLogItemBackendsSpecRulesDefaultFormatType = "MeshAccessLogItem_format_spec_rules_default_backends_1"
+	MeshAccessLogItemBackendsSpecRulesDefaultFormatTypeMeshAccessLogItemFormatSpecRulesDefaultBackends2 MeshAccessLogItemBackendsSpecRulesDefaultFormatType = "MeshAccessLogItem_format_spec_rules_default_backends_2"
+)
+
+// MeshAccessLogItemBackendsSpecRulesDefaultFormat - Format of access logs. Placeholders available on
+// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+type MeshAccessLogItemBackendsSpecRulesDefaultFormat struct {
+	MeshAccessLogItemFormatSpecRulesDefaultBackends1 *MeshAccessLogItemFormatSpecRulesDefaultBackends1 `queryParam:"inline" union:"member"`
+	MeshAccessLogItemFormatSpecRulesDefaultBackends2 *MeshAccessLogItemFormatSpecRulesDefaultBackends2 `queryParam:"inline" union:"member"`
+
+	Type MeshAccessLogItemBackendsSpecRulesDefaultFormatType
+}
+
+func CreateMeshAccessLogItemBackendsSpecRulesDefaultFormatMeshAccessLogItemFormatSpecRulesDefaultBackends1(meshAccessLogItemFormatSpecRulesDefaultBackends1 MeshAccessLogItemFormatSpecRulesDefaultBackends1) MeshAccessLogItemBackendsSpecRulesDefaultFormat {
+	typ := MeshAccessLogItemBackendsSpecRulesDefaultFormatTypeMeshAccessLogItemFormatSpecRulesDefaultBackends1
+
+	return MeshAccessLogItemBackendsSpecRulesDefaultFormat{
+		MeshAccessLogItemFormatSpecRulesDefaultBackends1: &meshAccessLogItemFormatSpecRulesDefaultBackends1,
+		Type: typ,
+	}
+}
+
+func CreateMeshAccessLogItemBackendsSpecRulesDefaultFormatMeshAccessLogItemFormatSpecRulesDefaultBackends2(meshAccessLogItemFormatSpecRulesDefaultBackends2 MeshAccessLogItemFormatSpecRulesDefaultBackends2) MeshAccessLogItemBackendsSpecRulesDefaultFormat {
+	typ := MeshAccessLogItemBackendsSpecRulesDefaultFormatTypeMeshAccessLogItemFormatSpecRulesDefaultBackends2
+
+	return MeshAccessLogItemBackendsSpecRulesDefaultFormat{
+		MeshAccessLogItemFormatSpecRulesDefaultBackends2: &meshAccessLogItemFormatSpecRulesDefaultBackends2,
+		Type: typ,
+	}
+}
+
+func (u *MeshAccessLogItemBackendsSpecRulesDefaultFormat) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var meshAccessLogItemFormatSpecRulesDefaultBackends1 MeshAccessLogItemFormatSpecRulesDefaultBackends1 = MeshAccessLogItemFormatSpecRulesDefaultBackends1{}
+	if err := utils.UnmarshalJSON(data, &meshAccessLogItemFormatSpecRulesDefaultBackends1, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshAccessLogItemBackendsSpecRulesDefaultFormatTypeMeshAccessLogItemFormatSpecRulesDefaultBackends1,
+			Value: &meshAccessLogItemFormatSpecRulesDefaultBackends1,
+		})
+	}
+
+	var meshAccessLogItemFormatSpecRulesDefaultBackends2 MeshAccessLogItemFormatSpecRulesDefaultBackends2 = MeshAccessLogItemFormatSpecRulesDefaultBackends2{}
+	if err := utils.UnmarshalJSON(data, &meshAccessLogItemFormatSpecRulesDefaultBackends2, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshAccessLogItemBackendsSpecRulesDefaultFormatTypeMeshAccessLogItemFormatSpecRulesDefaultBackends2,
+			Value: &meshAccessLogItemFormatSpecRulesDefaultBackends2,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsSpecRulesDefaultFormat", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsSpecRulesDefaultFormat", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(MeshAccessLogItemBackendsSpecRulesDefaultFormatType)
+	switch best.Type {
+	case MeshAccessLogItemBackendsSpecRulesDefaultFormatTypeMeshAccessLogItemFormatSpecRulesDefaultBackends1:
+		u.MeshAccessLogItemFormatSpecRulesDefaultBackends1 = best.Value.(*MeshAccessLogItemFormatSpecRulesDefaultBackends1)
+		return nil
+	case MeshAccessLogItemBackendsSpecRulesDefaultFormatTypeMeshAccessLogItemFormatSpecRulesDefaultBackends2:
+		u.MeshAccessLogItemFormatSpecRulesDefaultBackends2 = best.Value.(*MeshAccessLogItemFormatSpecRulesDefaultBackends2)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsSpecRulesDefaultFormat", string(data))
+}
+
+func (u MeshAccessLogItemBackendsSpecRulesDefaultFormat) MarshalJSON() ([]byte, error) {
+	if u.MeshAccessLogItemFormatSpecRulesDefaultBackends1 != nil {
+		return utils.MarshalJSON(u.MeshAccessLogItemFormatSpecRulesDefaultBackends1, "", true)
+	}
+
+	if u.MeshAccessLogItemFormatSpecRulesDefaultBackends2 != nil {
+		return utils.MarshalJSON(u.MeshAccessLogItemFormatSpecRulesDefaultBackends2, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type MeshAccessLogItemBackendsSpecRulesDefaultFormat: all fields are null")
+}
+
+// MeshAccessLogItemBackendsTCP - TCPBackend defines a TCP logging backend.
+type MeshAccessLogItemBackendsTCP struct {
+	// Address of the TCP logging backend
+	Address string `json:"address"`
+	// Format of access logs. Placeholders available on
+	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+	Format *MeshAccessLogItemBackendsSpecRulesDefaultFormat `json:"format,omitempty"`
+}
+
+func (m MeshAccessLogItemBackendsTCP) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemBackendsTCP) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemBackendsTCP) GetAddress() string {
+	if m == nil {
+		return ""
+	}
+	return m.Address
+}
+
+func (m *MeshAccessLogItemBackendsTCP) GetFormat() *MeshAccessLogItemBackendsSpecRulesDefaultFormat {
+	if m == nil {
+		return nil
+	}
+	return m.Format
+}
+
+type MeshAccessLogItemBackends3 struct {
+	// Defines an OpenTelemetry logging backend.
+	OpenTelemetry *MeshAccessLogItemBackendsOpenTelemetry `json:"openTelemetry,omitempty"`
+	Type          MeshAccessLogItemBackendsSpecType       `json:"type"`
+	// FileBackend defines configuration for file based access logs
+	File *MeshAccessLogItemBackendsFile `json:"file,omitempty"`
+	// TCPBackend defines a TCP logging backend.
+	TCP *MeshAccessLogItemBackendsTCP `json:"tcp,omitempty"`
+}
+
+func (m MeshAccessLogItemBackends3) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemBackends3) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemBackends3) GetOpenTelemetry() *MeshAccessLogItemBackendsOpenTelemetry {
+	if m == nil {
+		return nil
+	}
+	return m.OpenTelemetry
+}
+
+func (m *MeshAccessLogItemBackends3) GetType() MeshAccessLogItemBackendsSpecType {
+	if m == nil {
+		return MeshAccessLogItemBackendsSpecType("")
+	}
+	return m.Type
+}
+
+func (m *MeshAccessLogItemBackends3) GetFile() *MeshAccessLogItemBackendsFile {
+	if m == nil {
+		return nil
+	}
+	return m.File
+}
+
+func (m *MeshAccessLogItemBackends3) GetTCP() *MeshAccessLogItemBackendsTCP {
+	if m == nil {
+		return nil
+	}
+	return m.TCP
+}
+
+// #region class-body-meshaccesslogitembackends3
+// #endregion class-body-meshaccesslogitembackends3
+
+type MeshAccessLogItemFormatSpecRulesDefaultJSON struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+func (m MeshAccessLogItemFormatSpecRulesDefaultJSON) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultJSON) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultJSON) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultJSON) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+type MeshAccessLogItemFormatSpecRulesDefaultBackendsType string
+
+const (
+	MeshAccessLogItemFormatSpecRulesDefaultBackendsTypePlain MeshAccessLogItemFormatSpecRulesDefaultBackendsType = "Plain"
+	MeshAccessLogItemFormatSpecRulesDefaultBackendsTypeJSON  MeshAccessLogItemFormatSpecRulesDefaultBackendsType = "Json"
+)
+
+func (e MeshAccessLogItemFormatSpecRulesDefaultBackendsType) ToPointer() *MeshAccessLogItemFormatSpecRulesDefaultBackendsType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemFormatSpecRulesDefaultBackendsType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshAccessLogItemFormat2 struct {
+	JSON            []MeshAccessLogItemFormatSpecRulesDefaultJSON       `json:"json,omitempty"`
+	Type            MeshAccessLogItemFormatSpecRulesDefaultBackendsType `json:"type"`
+	OmitEmptyValues *bool                                               `default:"false" json:"omitEmptyValues"`
+	Plain           *string                                             `json:"plain,omitempty"`
+}
+
+func (m MeshAccessLogItemFormat2) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormat2) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormat2) GetJSON() []MeshAccessLogItemFormatSpecRulesDefaultJSON {
+	if m == nil {
+		return nil
+	}
+	return m.JSON
+}
+
+func (m *MeshAccessLogItemFormat2) GetType() MeshAccessLogItemFormatSpecRulesDefaultBackendsType {
+	if m == nil {
+		return MeshAccessLogItemFormatSpecRulesDefaultBackendsType("")
+	}
+	return m.Type
+}
+
+func (m *MeshAccessLogItemFormat2) GetOmitEmptyValues() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.OmitEmptyValues
+}
+
+func (m *MeshAccessLogItemFormat2) GetPlain() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Plain
+}
+
+// #region class-body-meshaccesslogitemformat2
+// #endregion class-body-meshaccesslogitemformat2
+
+type MeshAccessLogItemFormatSpecRulesDefaultType string
+
+const (
+	MeshAccessLogItemFormatSpecRulesDefaultTypePlain MeshAccessLogItemFormatSpecRulesDefaultType = "Plain"
+	MeshAccessLogItemFormatSpecRulesDefaultTypeJSON  MeshAccessLogItemFormatSpecRulesDefaultType = "Json"
+)
+
+func (e MeshAccessLogItemFormatSpecRulesDefaultType) ToPointer() *MeshAccessLogItemFormatSpecRulesDefaultType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemFormatSpecRulesDefaultType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshAccessLogItemFormatSpecRulesJSON struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+func (m MeshAccessLogItemFormatSpecRulesJSON) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesJSON) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesJSON) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesJSON) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+type MeshAccessLogItemFormatSpec1 struct {
+	Plain           *string                                     `json:"plain,omitempty"`
+	Type            MeshAccessLogItemFormatSpecRulesDefaultType `json:"type"`
+	JSON            []MeshAccessLogItemFormatSpecRulesJSON      `json:"json,omitempty"`
+	OmitEmptyValues *bool                                       `default:"false" json:"omitEmptyValues"`
+}
+
+func (m MeshAccessLogItemFormatSpec1) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpec1) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpec1) GetPlain() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Plain
+}
+
+func (m *MeshAccessLogItemFormatSpec1) GetType() MeshAccessLogItemFormatSpecRulesDefaultType {
+	if m == nil {
+		return MeshAccessLogItemFormatSpecRulesDefaultType("")
+	}
+	return m.Type
+}
+
+func (m *MeshAccessLogItemFormatSpec1) GetJSON() []MeshAccessLogItemFormatSpecRulesJSON {
+	if m == nil {
+		return nil
+	}
+	return m.JSON
+}
+
+func (m *MeshAccessLogItemFormatSpec1) GetOmitEmptyValues() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.OmitEmptyValues
+}
+
+// #region class-body-meshaccesslogitemformatspec1
+// #endregion class-body-meshaccesslogitemformatspec1
+
+type MeshAccessLogItemBackendsFormatType string
+
+const (
+	MeshAccessLogItemBackendsFormatTypeMeshAccessLogItemFormatSpec1 MeshAccessLogItemBackendsFormatType = "MeshAccessLogItem_format_spec_1"
+	MeshAccessLogItemBackendsFormatTypeMeshAccessLogItemFormat2     MeshAccessLogItemBackendsFormatType = "MeshAccessLogItem_format_2"
+)
+
+// MeshAccessLogItemBackendsFormat - Format of access logs. Placeholders available on
+// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+type MeshAccessLogItemBackendsFormat struct {
+	MeshAccessLogItemFormatSpec1 *MeshAccessLogItemFormatSpec1 `queryParam:"inline" union:"member"`
+	MeshAccessLogItemFormat2     *MeshAccessLogItemFormat2     `queryParam:"inline" union:"member"`
+
+	Type MeshAccessLogItemBackendsFormatType
+}
+
+func CreateMeshAccessLogItemBackendsFormatMeshAccessLogItemFormatSpec1(meshAccessLogItemFormatSpec1 MeshAccessLogItemFormatSpec1) MeshAccessLogItemBackendsFormat {
+	typ := MeshAccessLogItemBackendsFormatTypeMeshAccessLogItemFormatSpec1
+
+	return MeshAccessLogItemBackendsFormat{
+		MeshAccessLogItemFormatSpec1: &meshAccessLogItemFormatSpec1,
+		Type:                         typ,
+	}
+}
+
+func CreateMeshAccessLogItemBackendsFormatMeshAccessLogItemFormat2(meshAccessLogItemFormat2 MeshAccessLogItemFormat2) MeshAccessLogItemBackendsFormat {
+	typ := MeshAccessLogItemBackendsFormatTypeMeshAccessLogItemFormat2
+
+	return MeshAccessLogItemBackendsFormat{
+		MeshAccessLogItemFormat2: &meshAccessLogItemFormat2,
+		Type:                     typ,
+	}
+}
+
+func (u *MeshAccessLogItemBackendsFormat) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var meshAccessLogItemFormatSpec1 MeshAccessLogItemFormatSpec1 = MeshAccessLogItemFormatSpec1{}
+	if err := utils.UnmarshalJSON(data, &meshAccessLogItemFormatSpec1, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshAccessLogItemBackendsFormatTypeMeshAccessLogItemFormatSpec1,
+			Value: &meshAccessLogItemFormatSpec1,
+		})
+	}
+
+	var meshAccessLogItemFormat2 MeshAccessLogItemFormat2 = MeshAccessLogItemFormat2{}
+	if err := utils.UnmarshalJSON(data, &meshAccessLogItemFormat2, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshAccessLogItemBackendsFormatTypeMeshAccessLogItemFormat2,
+			Value: &meshAccessLogItemFormat2,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsFormat", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsFormat", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(MeshAccessLogItemBackendsFormatType)
+	switch best.Type {
+	case MeshAccessLogItemBackendsFormatTypeMeshAccessLogItemFormatSpec1:
+		u.MeshAccessLogItemFormatSpec1 = best.Value.(*MeshAccessLogItemFormatSpec1)
+		return nil
+	case MeshAccessLogItemBackendsFormatTypeMeshAccessLogItemFormat2:
+		u.MeshAccessLogItemFormat2 = best.Value.(*MeshAccessLogItemFormat2)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsFormat", string(data))
+}
+
+func (u MeshAccessLogItemBackendsFormat) MarshalJSON() ([]byte, error) {
+	if u.MeshAccessLogItemFormatSpec1 != nil {
+		return utils.MarshalJSON(u.MeshAccessLogItemFormatSpec1, "", true)
+	}
+
+	if u.MeshAccessLogItemFormat2 != nil {
+		return utils.MarshalJSON(u.MeshAccessLogItemFormat2, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type MeshAccessLogItemBackendsFormat: all fields are null")
+}
+
+// BackendsFile - FileBackend defines configuration for file based access logs
+type BackendsFile struct {
+	// Format of access logs. Placeholders available on
+	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+	Format *MeshAccessLogItemBackendsFormat `json:"format,omitempty"`
+	// Path to a file that logs will be written to
+	Path string `json:"path"`
+}
+
+func (b BackendsFile) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(b, "", false)
+}
+
+func (b *BackendsFile) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &b, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (b *BackendsFile) GetFormat() *MeshAccessLogItemBackendsFormat {
+	if b == nil {
+		return nil
+	}
+	return b.Format
+}
+
+func (b *BackendsFile) GetPath() string {
+	if b == nil {
+		return ""
+	}
+	return b.Path
+}
+
+type MeshAccessLogItemBackendsType string
+
+const (
+	MeshAccessLogItemBackendsTypeTCP           MeshAccessLogItemBackendsType = "Tcp"
+	MeshAccessLogItemBackendsTypeFile          MeshAccessLogItemBackendsType = "File"
+	MeshAccessLogItemBackendsTypeOpenTelemetry MeshAccessLogItemBackendsType = "OpenTelemetry"
+)
+
+func (e MeshAccessLogItemBackendsType) ToPointer() *MeshAccessLogItemBackendsType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemBackendsType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Tcp", "File", "OpenTelemetry":
+			return true
+		}
+	}
+	return false
+}
+
+type BackendsAttributes struct {
+	// Key is the OpenTelemetry attribute name.
+	Key string `json:"key"`
+	// Value can contain Kuma placeholders.
+	Value string `json:"value"`
+}
+
+func (b BackendsAttributes) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(b, "", false)
+}
+
+func (b *BackendsAttributes) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &b, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (b *BackendsAttributes) GetKey() string {
+	if b == nil {
+		return ""
+	}
+	return b.Key
+}
+
+func (b *BackendsAttributes) GetValue() string {
+	if b == nil {
+		return ""
+	}
+	return b.Value
+}
+
+// MeshAccessLogItemBackendsSpecRulesKind - Kind of the backend resource.
+type MeshAccessLogItemBackendsSpecRulesKind string
+
+const (
+	MeshAccessLogItemBackendsSpecRulesKindMeshOpenTelemetryBackend MeshAccessLogItemBackendsSpecRulesKind = "MeshOpenTelemetryBackend"
+)
+
+func (e MeshAccessLogItemBackendsSpecRulesKind) ToPointer() *MeshAccessLogItemBackendsSpecRulesKind {
+	return &e
+}
+func (e *MeshAccessLogItemBackendsSpecRulesKind) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "MeshOpenTelemetryBackend":
+		*e = MeshAccessLogItemBackendsSpecRulesKind(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshAccessLogItemBackendsSpecRulesKind: %v", v)
+	}
+}
+
+// MeshAccessLogItemBackendsSpecRulesDefaultBackendRef - BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+// defines the collector endpoint.
+type MeshAccessLogItemBackendsSpecRulesDefaultBackendRef struct {
+	// Kind of the backend resource.
+	Kind MeshAccessLogItemBackendsSpecRulesKind `json:"kind"`
+	// Labels to match the referenced resource. When multiple resources match,
+	// the oldest by creation time wins.
+	Labels map[string]string `json:"labels,omitempty"`
+}
+
+func (m MeshAccessLogItemBackendsSpecRulesDefaultBackendRef) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemBackendsSpecRulesDefaultBackendRef) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemBackendsSpecRulesDefaultBackendRef) GetKind() MeshAccessLogItemBackendsSpecRulesKind {
+	if m == nil {
+		return MeshAccessLogItemBackendsSpecRulesKind("")
+	}
+	return m.Kind
+}
+
+func (m *MeshAccessLogItemBackendsSpecRulesDefaultBackendRef) GetLabels() map[string]string {
+	if m == nil {
+		return nil
+	}
+	return m.Labels
+}
+
+// MeshAccessLogItemBackendsSpecRulesDefaultOpenTelemetry - Defines an OpenTelemetry logging backend.
+type MeshAccessLogItemBackendsSpecRulesDefaultOpenTelemetry struct {
+	// Attributes defines custom OpenTelemetry attributes. Keys must be static
+	// OpenTelemetry attribute names. Values can contain placeholders available on
+	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+	Attributes []BackendsAttributes `json:"attributes,omitempty"`
+	// BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+	// defines the collector endpoint.
+	BackendRef *MeshAccessLogItemBackendsSpecRulesDefaultBackendRef `json:"backendRef,omitempty"`
+	// Body is a raw string or an OTLP any value as described at
+	// https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body
+	// It can contain placeholders available on
+	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+	Body any `json:"body,omitempty"`
+}
+
+func (m MeshAccessLogItemBackendsSpecRulesDefaultOpenTelemetry) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemBackendsSpecRulesDefaultOpenTelemetry) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemBackendsSpecRulesDefaultOpenTelemetry) GetAttributes() []BackendsAttributes {
+	if m == nil {
+		return nil
+	}
+	return m.Attributes
+}
+
+func (m *MeshAccessLogItemBackendsSpecRulesDefaultOpenTelemetry) GetBackendRef() *MeshAccessLogItemBackendsSpecRulesDefaultBackendRef {
+	if m == nil {
+		return nil
+	}
+	return m.BackendRef
+}
+
+func (m *MeshAccessLogItemBackendsSpecRulesDefaultOpenTelemetry) GetBody() any {
+	if m == nil {
+		return nil
+	}
+	return m.Body
+}
+
+type MeshAccessLogItemFormatSpecRulesDefaultBackends2JSON struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+func (m MeshAccessLogItemFormatSpecRulesDefaultBackends2JSON) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultBackends2JSON) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultBackends2JSON) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultBackends2JSON) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// #region class-body-meshaccesslogitemformatspecrulesdefaultbackends2json
+// #endregion class-body-meshaccesslogitemformatspecrulesdefaultbackends2json
+
+type MeshAccessLogItemFormatSpecRulesDefaultBackends2TCPType string
+
+const (
+	MeshAccessLogItemFormatSpecRulesDefaultBackends2TCPTypePlain MeshAccessLogItemFormatSpecRulesDefaultBackends2TCPType = "Plain"
+	MeshAccessLogItemFormatSpecRulesDefaultBackends2TCPTypeJSON  MeshAccessLogItemFormatSpecRulesDefaultBackends2TCPType = "Json"
+)
+
+func (e MeshAccessLogItemFormatSpecRulesDefaultBackends2TCPType) ToPointer() *MeshAccessLogItemFormatSpecRulesDefaultBackends2TCPType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemFormatSpecRulesDefaultBackends2TCPType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshAccessLogItemFormatSpec2 struct {
+	JSON            []MeshAccessLogItemFormatSpecRulesDefaultBackends2JSON  `json:"json,omitempty"`
+	Type            MeshAccessLogItemFormatSpecRulesDefaultBackends2TCPType `json:"type"`
+	OmitEmptyValues *bool                                                   `default:"false" json:"omitEmptyValues"`
+	Plain           *string                                                 `json:"plain,omitempty"`
+}
+
+func (m MeshAccessLogItemFormatSpec2) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpec2) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpec2) GetJSON() []MeshAccessLogItemFormatSpecRulesDefaultBackends2JSON {
+	if m == nil {
+		return nil
+	}
+	return m.JSON
+}
+
+func (m *MeshAccessLogItemFormatSpec2) GetType() MeshAccessLogItemFormatSpecRulesDefaultBackends2TCPType {
+	if m == nil {
+		return MeshAccessLogItemFormatSpecRulesDefaultBackends2TCPType("")
+	}
+	return m.Type
+}
+
+func (m *MeshAccessLogItemFormatSpec2) GetOmitEmptyValues() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.OmitEmptyValues
+}
+
+func (m *MeshAccessLogItemFormatSpec2) GetPlain() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Plain
+}
+
+// #region class-body-meshaccesslogitemformatspec2
+// #endregion class-body-meshaccesslogitemformatspec2
+
+type MeshAccessLogItemFormatSpecRulesDefaultBackends2Type string
+
+const (
+	MeshAccessLogItemFormatSpecRulesDefaultBackends2TypePlain MeshAccessLogItemFormatSpecRulesDefaultBackends2Type = "Plain"
+	MeshAccessLogItemFormatSpecRulesDefaultBackends2TypeJSON  MeshAccessLogItemFormatSpecRulesDefaultBackends2Type = "Json"
+)
+
+func (e MeshAccessLogItemFormatSpecRulesDefaultBackends2Type) ToPointer() *MeshAccessLogItemFormatSpecRulesDefaultBackends2Type {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemFormatSpecRulesDefaultBackends2Type) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshAccessLogItemFormatSpecRulesDefaultBackendsJSON struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+func (m MeshAccessLogItemFormatSpecRulesDefaultBackendsJSON) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultBackendsJSON) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultBackendsJSON) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+func (m *MeshAccessLogItemFormatSpecRulesDefaultBackendsJSON) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+type MeshAccessLogItemFormatSpecRules1 struct {
+	Plain           *string                                               `json:"plain,omitempty"`
+	Type            MeshAccessLogItemFormatSpecRulesDefaultBackends2Type  `json:"type"`
+	JSON            []MeshAccessLogItemFormatSpecRulesDefaultBackendsJSON `json:"json,omitempty"`
+	OmitEmptyValues *bool                                                 `default:"false" json:"omitEmptyValues"`
+}
+
+func (m MeshAccessLogItemFormatSpecRules1) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecRules1) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecRules1) GetPlain() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Plain
+}
+
+func (m *MeshAccessLogItemFormatSpecRules1) GetType() MeshAccessLogItemFormatSpecRulesDefaultBackends2Type {
+	if m == nil {
+		return MeshAccessLogItemFormatSpecRulesDefaultBackends2Type("")
+	}
+	return m.Type
+}
+
+func (m *MeshAccessLogItemFormatSpecRules1) GetJSON() []MeshAccessLogItemFormatSpecRulesDefaultBackendsJSON {
+	if m == nil {
+		return nil
+	}
+	return m.JSON
+}
+
+func (m *MeshAccessLogItemFormatSpecRules1) GetOmitEmptyValues() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.OmitEmptyValues
+}
+
+// #region class-body-meshaccesslogitemformatspecrules1
+// #endregion class-body-meshaccesslogitemformatspecrules1
+
+type MeshAccessLogItemBackendsSpecFormatType string
+
+const (
+	MeshAccessLogItemBackendsSpecFormatTypeMeshAccessLogItemFormatSpecRules1 MeshAccessLogItemBackendsSpecFormatType = "MeshAccessLogItem_format_spec_rules_1"
+	MeshAccessLogItemBackendsSpecFormatTypeMeshAccessLogItemFormatSpec2      MeshAccessLogItemBackendsSpecFormatType = "MeshAccessLogItem_format_spec_2"
+)
+
+// MeshAccessLogItemBackendsSpecFormat - Format of access logs. Placeholders available on
+// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+type MeshAccessLogItemBackendsSpecFormat struct {
+	MeshAccessLogItemFormatSpecRules1 *MeshAccessLogItemFormatSpecRules1 `queryParam:"inline" union:"member"`
+	MeshAccessLogItemFormatSpec2      *MeshAccessLogItemFormatSpec2      `queryParam:"inline" union:"member"`
+
+	Type MeshAccessLogItemBackendsSpecFormatType
+}
+
+func CreateMeshAccessLogItemBackendsSpecFormatMeshAccessLogItemFormatSpecRules1(meshAccessLogItemFormatSpecRules1 MeshAccessLogItemFormatSpecRules1) MeshAccessLogItemBackendsSpecFormat {
+	typ := MeshAccessLogItemBackendsSpecFormatTypeMeshAccessLogItemFormatSpecRules1
+
+	return MeshAccessLogItemBackendsSpecFormat{
+		MeshAccessLogItemFormatSpecRules1: &meshAccessLogItemFormatSpecRules1,
+		Type:                              typ,
+	}
+}
+
+func CreateMeshAccessLogItemBackendsSpecFormatMeshAccessLogItemFormatSpec2(meshAccessLogItemFormatSpec2 MeshAccessLogItemFormatSpec2) MeshAccessLogItemBackendsSpecFormat {
+	typ := MeshAccessLogItemBackendsSpecFormatTypeMeshAccessLogItemFormatSpec2
+
+	return MeshAccessLogItemBackendsSpecFormat{
+		MeshAccessLogItemFormatSpec2: &meshAccessLogItemFormatSpec2,
+		Type:                         typ,
+	}
+}
+
+func (u *MeshAccessLogItemBackendsSpecFormat) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var meshAccessLogItemFormatSpecRules1 MeshAccessLogItemFormatSpecRules1 = MeshAccessLogItemFormatSpecRules1{}
+	if err := utils.UnmarshalJSON(data, &meshAccessLogItemFormatSpecRules1, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshAccessLogItemBackendsSpecFormatTypeMeshAccessLogItemFormatSpecRules1,
+			Value: &meshAccessLogItemFormatSpecRules1,
+		})
+	}
+
+	var meshAccessLogItemFormatSpec2 MeshAccessLogItemFormatSpec2 = MeshAccessLogItemFormatSpec2{}
+	if err := utils.UnmarshalJSON(data, &meshAccessLogItemFormatSpec2, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshAccessLogItemBackendsSpecFormatTypeMeshAccessLogItemFormatSpec2,
+			Value: &meshAccessLogItemFormatSpec2,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsSpecFormat", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsSpecFormat", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(MeshAccessLogItemBackendsSpecFormatType)
+	switch best.Type {
+	case MeshAccessLogItemBackendsSpecFormatTypeMeshAccessLogItemFormatSpecRules1:
+		u.MeshAccessLogItemFormatSpecRules1 = best.Value.(*MeshAccessLogItemFormatSpecRules1)
+		return nil
+	case MeshAccessLogItemBackendsSpecFormatTypeMeshAccessLogItemFormatSpec2:
+		u.MeshAccessLogItemFormatSpec2 = best.Value.(*MeshAccessLogItemFormatSpec2)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsSpecFormat", string(data))
+}
+
+func (u MeshAccessLogItemBackendsSpecFormat) MarshalJSON() ([]byte, error) {
+	if u.MeshAccessLogItemFormatSpecRules1 != nil {
+		return utils.MarshalJSON(u.MeshAccessLogItemFormatSpecRules1, "", true)
+	}
+
+	if u.MeshAccessLogItemFormatSpec2 != nil {
+		return utils.MarshalJSON(u.MeshAccessLogItemFormatSpec2, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type MeshAccessLogItemBackendsSpecFormat: all fields are null")
+}
+
+// BackendsTCP - TCPBackend defines a TCP logging backend.
+type BackendsTCP struct {
+	// Address of the TCP logging backend
+	Address string `json:"address"`
+	// Format of access logs. Placeholders available on
+	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+	Format *MeshAccessLogItemBackendsSpecFormat `json:"format,omitempty"`
+}
+
+func (b BackendsTCP) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(b, "", false)
+}
+
+func (b *BackendsTCP) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &b, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (b *BackendsTCP) GetAddress() string {
+	if b == nil {
+		return ""
+	}
+	return b.Address
+}
+
+func (b *BackendsTCP) GetFormat() *MeshAccessLogItemBackendsSpecFormat {
+	if b == nil {
+		return nil
+	}
+	return b.Format
+}
+
+type MeshAccessLogItemBackends2 struct {
+	// FileBackend defines configuration for file based access logs
+	File *BackendsFile                 `json:"file,omitempty"`
+	Type MeshAccessLogItemBackendsType `json:"type"`
+	// Defines an OpenTelemetry logging backend.
+	OpenTelemetry *MeshAccessLogItemBackendsSpecRulesDefaultOpenTelemetry `json:"openTelemetry,omitempty"`
+	// TCPBackend defines a TCP logging backend.
+	TCP *BackendsTCP `json:"tcp,omitempty"`
+}
+
+func (m MeshAccessLogItemBackends2) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemBackends2) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemBackends2) GetFile() *BackendsFile {
+	if m == nil {
+		return nil
+	}
+	return m.File
+}
+
+func (m *MeshAccessLogItemBackends2) GetType() MeshAccessLogItemBackendsType {
+	if m == nil {
+		return MeshAccessLogItemBackendsType("")
+	}
+	return m.Type
+}
+
+func (m *MeshAccessLogItemBackends2) GetOpenTelemetry() *MeshAccessLogItemBackendsSpecRulesDefaultOpenTelemetry {
+	if m == nil {
+		return nil
+	}
+	return m.OpenTelemetry
+}
+
+func (m *MeshAccessLogItemBackends2) GetTCP() *BackendsTCP {
+	if m == nil {
+		return nil
+	}
+	return m.TCP
+}
+
+// #region class-body-meshaccesslogitembackends2
+// #endregion class-body-meshaccesslogitembackends2
+
+type FormatJSON struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+func (f FormatJSON) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(f, "", false)
+}
+
+func (f *FormatJSON) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &f, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (f *FormatJSON) GetKey() string {
+	if f == nil {
+		return ""
+	}
+	return f.Key
+}
+
+func (f *FormatJSON) GetValue() string {
+	if f == nil {
+		return ""
+	}
+	return f.Value
+}
+
+type MeshAccessLogItemFormatType string
+
+const (
+	MeshAccessLogItemFormatTypePlain MeshAccessLogItemFormatType = "Plain"
+	MeshAccessLogItemFormatTypeJSON  MeshAccessLogItemFormatType = "Json"
+)
+
+func (e MeshAccessLogItemFormatType) ToPointer() *MeshAccessLogItemFormatType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemFormatType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshAccessLogItemFormatSpecRules2 struct {
+	JSON            []FormatJSON                `json:"json,omitempty"`
+	Type            MeshAccessLogItemFormatType `json:"type"`
+	OmitEmptyValues *bool                       `default:"false" json:"omitEmptyValues"`
+	Plain           *string                     `json:"plain,omitempty"`
+}
+
+func (m MeshAccessLogItemFormatSpecRules2) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecRules2) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecRules2) GetJSON() []FormatJSON {
+	if m == nil {
+		return nil
+	}
+	return m.JSON
+}
+
+func (m *MeshAccessLogItemFormatSpecRules2) GetType() MeshAccessLogItemFormatType {
+	if m == nil {
+		return MeshAccessLogItemFormatType("")
+	}
+	return m.Type
+}
+
+func (m *MeshAccessLogItemFormatSpecRules2) GetOmitEmptyValues() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.OmitEmptyValues
+}
+
+func (m *MeshAccessLogItemFormatSpecRules2) GetPlain() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Plain
+}
+
+// #region class-body-meshaccesslogitemformatspecrules2
+// #endregion class-body-meshaccesslogitemformatspecrules2
+
+type FormatType string
+
+const (
+	FormatTypePlain FormatType = "Plain"
+	FormatTypeJSON  FormatType = "Json"
+)
+
+func (e FormatType) ToPointer() *FormatType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *FormatType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
+	}
+	return false
+}
+
 type JSON struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
+}
+
+func (j JSON) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(j, "", false)
+}
+
+func (j *JSON) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &j, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (j *JSON) GetKey() string {
@@ -52,19 +1938,246 @@ func (j *JSON) GetValue() string {
 	return j.Value
 }
 
-type MeshAccessLogItemSpecFromType string
+type MeshAccessLogItemFormat1 struct {
+	Plain           *string    `json:"plain,omitempty"`
+	Type            FormatType `json:"type"`
+	JSON            []JSON     `json:"json,omitempty"`
+	OmitEmptyValues *bool      `default:"false" json:"omitEmptyValues"`
+}
+
+func (m MeshAccessLogItemFormat1) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormat1) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormat1) GetPlain() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Plain
+}
+
+func (m *MeshAccessLogItemFormat1) GetType() FormatType {
+	if m == nil {
+		return FormatType("")
+	}
+	return m.Type
+}
+
+func (m *MeshAccessLogItemFormat1) GetJSON() []JSON {
+	if m == nil {
+		return nil
+	}
+	return m.JSON
+}
+
+func (m *MeshAccessLogItemFormat1) GetOmitEmptyValues() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.OmitEmptyValues
+}
+
+// #region class-body-meshaccesslogitemformat1
+// #endregion class-body-meshaccesslogitemformat1
+
+type FormatUnionType string
 
 const (
-	MeshAccessLogItemSpecFromTypePlain MeshAccessLogItemSpecFromType = "Plain"
-	MeshAccessLogItemSpecFromTypeJSON  MeshAccessLogItemSpecFromType = "Json"
+	FormatUnionTypeMeshAccessLogItemFormat1          FormatUnionType = "MeshAccessLogItem_format_1"
+	FormatUnionTypeMeshAccessLogItemFormatSpecRules2 FormatUnionType = "MeshAccessLogItem_format_spec_rules_2"
 )
 
-func (e MeshAccessLogItemSpecFromType) ToPointer() *MeshAccessLogItemSpecFromType {
+// Format of access logs. Placeholders available on
+// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+type Format struct {
+	MeshAccessLogItemFormat1          *MeshAccessLogItemFormat1          `queryParam:"inline" union:"member"`
+	MeshAccessLogItemFormatSpecRules2 *MeshAccessLogItemFormatSpecRules2 `queryParam:"inline" union:"member"`
+
+	Type FormatUnionType
+}
+
+func CreateFormatMeshAccessLogItemFormat1(meshAccessLogItemFormat1 MeshAccessLogItemFormat1) Format {
+	typ := FormatUnionTypeMeshAccessLogItemFormat1
+
+	return Format{
+		MeshAccessLogItemFormat1: &meshAccessLogItemFormat1,
+		Type:                     typ,
+	}
+}
+
+func CreateFormatMeshAccessLogItemFormatSpecRules2(meshAccessLogItemFormatSpecRules2 MeshAccessLogItemFormatSpecRules2) Format {
+	typ := FormatUnionTypeMeshAccessLogItemFormatSpecRules2
+
+	return Format{
+		MeshAccessLogItemFormatSpecRules2: &meshAccessLogItemFormatSpecRules2,
+		Type:                              typ,
+	}
+}
+
+func (u *Format) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var meshAccessLogItemFormat1 MeshAccessLogItemFormat1 = MeshAccessLogItemFormat1{}
+	if err := utils.UnmarshalJSON(data, &meshAccessLogItemFormat1, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  FormatUnionTypeMeshAccessLogItemFormat1,
+			Value: &meshAccessLogItemFormat1,
+		})
+	}
+
+	var meshAccessLogItemFormatSpecRules2 MeshAccessLogItemFormatSpecRules2 = MeshAccessLogItemFormatSpecRules2{}
+	if err := utils.UnmarshalJSON(data, &meshAccessLogItemFormatSpecRules2, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  FormatUnionTypeMeshAccessLogItemFormatSpecRules2,
+			Value: &meshAccessLogItemFormatSpecRules2,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Format", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Format", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(FormatUnionType)
+	switch best.Type {
+	case FormatUnionTypeMeshAccessLogItemFormat1:
+		u.MeshAccessLogItemFormat1 = best.Value.(*MeshAccessLogItemFormat1)
+		return nil
+	case FormatUnionTypeMeshAccessLogItemFormatSpecRules2:
+		u.MeshAccessLogItemFormatSpecRules2 = best.Value.(*MeshAccessLogItemFormatSpecRules2)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for Format", string(data))
+}
+
+func (u Format) MarshalJSON() ([]byte, error) {
+	if u.MeshAccessLogItemFormat1 != nil {
+		return utils.MarshalJSON(u.MeshAccessLogItemFormat1, "", true)
+	}
+
+	if u.MeshAccessLogItemFormatSpecRules2 != nil {
+		return utils.MarshalJSON(u.MeshAccessLogItemFormatSpecRules2, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type Format: all fields are null")
+}
+
+// MeshAccessLogItemBackendsSpecRulesTCP - TCPBackend defines a TCP logging backend.
+type MeshAccessLogItemBackendsSpecRulesTCP struct {
+	// Address of the TCP logging backend
+	Address string `json:"address"`
+	// Format of access logs. Placeholders available on
+	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+	Format *Format `json:"format,omitempty"`
+}
+
+func (m MeshAccessLogItemBackendsSpecRulesTCP) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemBackendsSpecRulesTCP) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemBackendsSpecRulesTCP) GetAddress() string {
+	if m == nil {
+		return ""
+	}
+	return m.Address
+}
+
+func (m *MeshAccessLogItemBackendsSpecRulesTCP) GetFormat() *Format {
+	if m == nil {
+		return nil
+	}
+	return m.Format
+}
+
+type MeshAccessLogItemBackendsSpecRulesType string
+
+const (
+	MeshAccessLogItemBackendsSpecRulesTypeTCP           MeshAccessLogItemBackendsSpecRulesType = "Tcp"
+	MeshAccessLogItemBackendsSpecRulesTypeFile          MeshAccessLogItemBackendsSpecRulesType = "File"
+	MeshAccessLogItemBackendsSpecRulesTypeOpenTelemetry MeshAccessLogItemBackendsSpecRulesType = "OpenTelemetry"
+)
+
+func (e MeshAccessLogItemBackendsSpecRulesType) ToPointer() *MeshAccessLogItemBackendsSpecRulesType {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshAccessLogItemSpecFromType) IsExact() bool {
+func (e *MeshAccessLogItemBackendsSpecRulesType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Tcp", "File", "OpenTelemetry":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshAccessLogItemFormatSpecJSON struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+func (m MeshAccessLogItemFormatSpecJSON) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecJSON) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecJSON) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+func (m *MeshAccessLogItemFormatSpecJSON) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+type MeshAccessLogItemFormatSpecRulesType string
+
+const (
+	MeshAccessLogItemFormatSpecRulesTypePlain MeshAccessLogItemFormatSpecRulesType = "Plain"
+	MeshAccessLogItemFormatSpecRulesTypeJSON  MeshAccessLogItemFormatSpecRulesType = "Json"
+)
+
+func (e MeshAccessLogItemFormatSpecRulesType) ToPointer() *MeshAccessLogItemFormatSpecRulesType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemFormatSpecRulesType) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "Plain", "Json":
@@ -74,80 +2187,297 @@ func (e *MeshAccessLogItemSpecFromType) IsExact() bool {
 	return false
 }
 
-// Format of access logs. Placeholders available on
-// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-type Format struct {
-	JSON            []JSON                        `json:"json,omitempty"`
-	OmitEmptyValues *bool                         `default:"false" json:"omitEmptyValues"`
-	Plain           *string                       `json:"plain,omitempty"`
-	Type            MeshAccessLogItemSpecFromType `json:"type"`
+type Format2 struct {
+	JSON            []MeshAccessLogItemFormatSpecJSON    `json:"json,omitempty"`
+	Type            MeshAccessLogItemFormatSpecRulesType `json:"type"`
+	OmitEmptyValues *bool                                `default:"false" json:"omitEmptyValues"`
+	Plain           *string                              `json:"plain,omitempty"`
 }
 
-func (f Format) MarshalJSON() ([]byte, error) {
+func (f Format2) MarshalJSON() ([]byte, error) {
 	return utils.MarshalJSON(f, "", false)
 }
 
-func (f *Format) UnmarshalJSON(data []byte) error {
+func (f *Format2) UnmarshalJSON(data []byte) error {
 	if err := utils.UnmarshalJSON(data, &f, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (f *Format) GetJSON() []JSON {
+func (f *Format2) GetJSON() []MeshAccessLogItemFormatSpecJSON {
 	if f == nil {
 		return nil
 	}
 	return f.JSON
 }
 
-func (f *Format) GetOmitEmptyValues() *bool {
+func (f *Format2) GetType() MeshAccessLogItemFormatSpecRulesType {
+	if f == nil {
+		return MeshAccessLogItemFormatSpecRulesType("")
+	}
+	return f.Type
+}
+
+func (f *Format2) GetOmitEmptyValues() *bool {
 	if f == nil {
 		return nil
 	}
 	return f.OmitEmptyValues
 }
 
-func (f *Format) GetPlain() *string {
+func (f *Format2) GetPlain() *string {
 	if f == nil {
 		return nil
 	}
 	return f.Plain
 }
 
-func (f *Format) GetType() MeshAccessLogItemSpecFromType {
+// #region class-body-format2
+// #endregion class-body-format2
+
+type MeshAccessLogItemFormatSpecType string
+
+const (
+	MeshAccessLogItemFormatSpecTypePlain MeshAccessLogItemFormatSpecType = "Plain"
+	MeshAccessLogItemFormatSpecTypeJSON  MeshAccessLogItemFormatSpecType = "Json"
+)
+
+func (e MeshAccessLogItemFormatSpecType) ToPointer() *MeshAccessLogItemFormatSpecType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemFormatSpecType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshAccessLogItemFormatJSON struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+func (m MeshAccessLogItemFormatJSON) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatJSON) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatJSON) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+func (m *MeshAccessLogItemFormatJSON) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+type Format1 struct {
+	Plain           *string                         `json:"plain,omitempty"`
+	Type            MeshAccessLogItemFormatSpecType `json:"type"`
+	JSON            []MeshAccessLogItemFormatJSON   `json:"json,omitempty"`
+	OmitEmptyValues *bool                           `default:"false" json:"omitEmptyValues"`
+}
+
+func (f Format1) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(f, "", false)
+}
+
+func (f *Format1) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &f, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (f *Format1) GetPlain() *string {
 	if f == nil {
-		return MeshAccessLogItemSpecFromType("")
+		return nil
+	}
+	return f.Plain
+}
+
+func (f *Format1) GetType() MeshAccessLogItemFormatSpecType {
+	if f == nil {
+		return MeshAccessLogItemFormatSpecType("")
 	}
 	return f.Type
 }
 
-// File - FileBackend defines configuration for file based access logs
-type File struct {
+func (f *Format1) GetJSON() []MeshAccessLogItemFormatJSON {
+	if f == nil {
+		return nil
+	}
+	return f.JSON
+}
+
+func (f *Format1) GetOmitEmptyValues() *bool {
+	if f == nil {
+		return nil
+	}
+	return f.OmitEmptyValues
+}
+
+// #region class-body-format1
+// #endregion class-body-format1
+
+type BackendsFormatType string
+
+const (
+	BackendsFormatTypeFormat1 BackendsFormatType = "format_1"
+	BackendsFormatTypeFormat2 BackendsFormatType = "format_2"
+)
+
+// BackendsFormat - Format of access logs. Placeholders available on
+// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+type BackendsFormat struct {
+	Format1 *Format1 `queryParam:"inline" union:"member"`
+	Format2 *Format2 `queryParam:"inline" union:"member"`
+
+	Type BackendsFormatType
+}
+
+func CreateBackendsFormatFormat1(format1 Format1) BackendsFormat {
+	typ := BackendsFormatTypeFormat1
+
+	return BackendsFormat{
+		Format1: &format1,
+		Type:    typ,
+	}
+}
+
+func CreateBackendsFormatFormat2(format2 Format2) BackendsFormat {
+	typ := BackendsFormatTypeFormat2
+
+	return BackendsFormat{
+		Format2: &format2,
+		Type:    typ,
+	}
+}
+
+func (u *BackendsFormat) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var format1 Format1 = Format1{}
+	if err := utils.UnmarshalJSON(data, &format1, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  BackendsFormatTypeFormat1,
+			Value: &format1,
+		})
+	}
+
+	var format2 Format2 = Format2{}
+	if err := utils.UnmarshalJSON(data, &format2, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  BackendsFormatTypeFormat2,
+			Value: &format2,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for BackendsFormat", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for BackendsFormat", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(BackendsFormatType)
+	switch best.Type {
+	case BackendsFormatTypeFormat1:
+		u.Format1 = best.Value.(*Format1)
+		return nil
+	case BackendsFormatTypeFormat2:
+		u.Format2 = best.Value.(*Format2)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for BackendsFormat", string(data))
+}
+
+func (u BackendsFormat) MarshalJSON() ([]byte, error) {
+	if u.Format1 != nil {
+		return utils.MarshalJSON(u.Format1, "", true)
+	}
+
+	if u.Format2 != nil {
+		return utils.MarshalJSON(u.Format2, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type BackendsFormat: all fields are null")
+}
+
+// MeshAccessLogItemBackendsSpecRulesFile - FileBackend defines configuration for file based access logs
+type MeshAccessLogItemBackendsSpecRulesFile struct {
 	// Format of access logs. Placeholders available on
 	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-	Format *Format `json:"format,omitempty"`
+	Format *BackendsFormat `json:"format,omitempty"`
 	// Path to a file that logs will be written to
 	Path string `json:"path"`
 }
 
-func (f *File) GetFormat() *Format {
-	if f == nil {
-		return nil
-	}
-	return f.Format
+func (m MeshAccessLogItemBackendsSpecRulesFile) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
 }
 
-func (f *File) GetPath() string {
-	if f == nil {
+func (m *MeshAccessLogItemBackendsSpecRulesFile) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemBackendsSpecRulesFile) GetFormat() *BackendsFormat {
+	if m == nil {
+		return nil
+	}
+	return m.Format
+}
+
+func (m *MeshAccessLogItemBackendsSpecRulesFile) GetPath() string {
+	if m == nil {
 		return ""
 	}
-	return f.Path
+	return m.Path
 }
 
 type Attributes struct {
-	Key   string `json:"key"`
+	// Key is the OpenTelemetry attribute name.
+	Key string `json:"key"`
+	// Value can contain Kuma placeholders.
 	Value string `json:"value"`
+}
+
+func (a Attributes) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(a, "", false)
+}
+
+func (a *Attributes) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (a *Attributes) GetKey() string {
@@ -164,669 +2494,344 @@ func (a *Attributes) GetValue() string {
 	return a.Value
 }
 
-// MeshAccessLogItemSpecFromOpenTelemetry - Defines an OpenTelemetry logging backend.
-type MeshAccessLogItemSpecFromOpenTelemetry struct {
-	// Attributes can contain placeholders available on
-	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-	Attributes []Attributes `json:"attributes,omitempty"`
-	// Body is a raw string or an OTLP any value as described at
-	// https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body
-	// It can contain placeholders available on
-	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-	Body any `json:"body,omitempty"`
-	// Endpoint of OpenTelemetry collector. An empty port defaults to 4317.
-	Endpoint string `json:"endpoint"`
-}
-
-func (m *MeshAccessLogItemSpecFromOpenTelemetry) GetAttributes() []Attributes {
-	if m == nil {
-		return nil
-	}
-	return m.Attributes
-}
-
-func (m *MeshAccessLogItemSpecFromOpenTelemetry) GetBody() any {
-	if m == nil {
-		return nil
-	}
-	return m.Body
-}
-
-func (m *MeshAccessLogItemSpecFromOpenTelemetry) GetEndpoint() string {
-	if m == nil {
-		return ""
-	}
-	return m.Endpoint
-}
-
-type MeshAccessLogItemJSON struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
-}
-
-func (m *MeshAccessLogItemJSON) GetKey() string {
-	if m == nil {
-		return ""
-	}
-	return m.Key
-}
-
-func (m *MeshAccessLogItemJSON) GetValue() string {
-	if m == nil {
-		return ""
-	}
-	return m.Value
-}
-
-type MeshAccessLogItemSpecFromDefaultType string
+// MeshAccessLogItemBackendsSpecKind - Kind of the backend resource.
+type MeshAccessLogItemBackendsSpecKind string
 
 const (
-	MeshAccessLogItemSpecFromDefaultTypePlain MeshAccessLogItemSpecFromDefaultType = "Plain"
-	MeshAccessLogItemSpecFromDefaultTypeJSON  MeshAccessLogItemSpecFromDefaultType = "Json"
+	MeshAccessLogItemBackendsSpecKindMeshOpenTelemetryBackend MeshAccessLogItemBackendsSpecKind = "MeshOpenTelemetryBackend"
 )
 
-func (e MeshAccessLogItemSpecFromDefaultType) ToPointer() *MeshAccessLogItemSpecFromDefaultType {
+func (e MeshAccessLogItemBackendsSpecKind) ToPointer() *MeshAccessLogItemBackendsSpecKind {
 	return &e
 }
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshAccessLogItemSpecFromDefaultType) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Plain", "Json":
-			return true
-		}
+func (e *MeshAccessLogItemBackendsSpecKind) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
 	}
-	return false
+	switch v {
+	case "MeshOpenTelemetryBackend":
+		*e = MeshAccessLogItemBackendsSpecKind(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshAccessLogItemBackendsSpecKind: %v", v)
+	}
 }
 
-// MeshAccessLogItemFormat - Format of access logs. Placeholders available on
-// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-type MeshAccessLogItemFormat struct {
-	JSON            []MeshAccessLogItemJSON              `json:"json,omitempty"`
-	OmitEmptyValues *bool                                `default:"false" json:"omitEmptyValues"`
-	Plain           *string                              `json:"plain,omitempty"`
-	Type            MeshAccessLogItemSpecFromDefaultType `json:"type"`
+// MeshAccessLogItemBackendsSpecRulesBackendRef - BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+// defines the collector endpoint.
+type MeshAccessLogItemBackendsSpecRulesBackendRef struct {
+	// Kind of the backend resource.
+	Kind MeshAccessLogItemBackendsSpecKind `json:"kind"`
+	// Labels to match the referenced resource. When multiple resources match,
+	// the oldest by creation time wins.
+	Labels map[string]string `json:"labels,omitempty"`
 }
 
-func (m MeshAccessLogItemFormat) MarshalJSON() ([]byte, error) {
+func (m MeshAccessLogItemBackendsSpecRulesBackendRef) MarshalJSON() ([]byte, error) {
 	return utils.MarshalJSON(m, "", false)
 }
 
-func (m *MeshAccessLogItemFormat) UnmarshalJSON(data []byte) error {
+func (m *MeshAccessLogItemBackendsSpecRulesBackendRef) UnmarshalJSON(data []byte) error {
 	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (m *MeshAccessLogItemFormat) GetJSON() []MeshAccessLogItemJSON {
+func (m *MeshAccessLogItemBackendsSpecRulesBackendRef) GetKind() MeshAccessLogItemBackendsSpecKind {
 	if m == nil {
-		return nil
-	}
-	return m.JSON
-}
-
-func (m *MeshAccessLogItemFormat) GetOmitEmptyValues() *bool {
-	if m == nil {
-		return nil
-	}
-	return m.OmitEmptyValues
-}
-
-func (m *MeshAccessLogItemFormat) GetPlain() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Plain
-}
-
-func (m *MeshAccessLogItemFormat) GetType() MeshAccessLogItemSpecFromDefaultType {
-	if m == nil {
-		return MeshAccessLogItemSpecFromDefaultType("")
-	}
-	return m.Type
-}
-
-// MeshAccessLogItemSpecFromTCP - TCPBackend defines a TCP logging backend.
-type MeshAccessLogItemSpecFromTCP struct {
-	// Address of the TCP logging backend
-	Address string `json:"address"`
-	// Format of access logs. Placeholders available on
-	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-	Format *MeshAccessLogItemFormat `json:"format,omitempty"`
-}
-
-func (m *MeshAccessLogItemSpecFromTCP) GetAddress() string {
-	if m == nil {
-		return ""
-	}
-	return m.Address
-}
-
-func (m *MeshAccessLogItemSpecFromTCP) GetFormat() *MeshAccessLogItemFormat {
-	if m == nil {
-		return nil
-	}
-	return m.Format
-}
-
-type MeshAccessLogItemType string
-
-const (
-	MeshAccessLogItemTypeTCP           MeshAccessLogItemType = "Tcp"
-	MeshAccessLogItemTypeFile          MeshAccessLogItemType = "File"
-	MeshAccessLogItemTypeOpenTelemetry MeshAccessLogItemType = "OpenTelemetry"
-)
-
-func (e MeshAccessLogItemType) ToPointer() *MeshAccessLogItemType {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshAccessLogItemType) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Tcp", "File", "OpenTelemetry":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshAccessLogItemSpecFromBackends struct {
-	// FileBackend defines configuration for file based access logs
-	File *File `json:"file,omitempty"`
-	// Defines an OpenTelemetry logging backend.
-	OpenTelemetry *MeshAccessLogItemSpecFromOpenTelemetry `json:"openTelemetry,omitempty"`
-	// TCPBackend defines a TCP logging backend.
-	TCP  *MeshAccessLogItemSpecFromTCP `json:"tcp,omitempty"`
-	Type MeshAccessLogItemType         `json:"type"`
-}
-
-func (m *MeshAccessLogItemSpecFromBackends) GetFile() *File {
-	if m == nil {
-		return nil
-	}
-	return m.File
-}
-
-func (m *MeshAccessLogItemSpecFromBackends) GetOpenTelemetry() *MeshAccessLogItemSpecFromOpenTelemetry {
-	if m == nil {
-		return nil
-	}
-	return m.OpenTelemetry
-}
-
-func (m *MeshAccessLogItemSpecFromBackends) GetTCP() *MeshAccessLogItemSpecFromTCP {
-	if m == nil {
-		return nil
-	}
-	return m.TCP
-}
-
-func (m *MeshAccessLogItemSpecFromBackends) GetType() MeshAccessLogItemType {
-	if m == nil {
-		return MeshAccessLogItemType("")
-	}
-	return m.Type
-}
-
-// MeshAccessLogItemSpecFromDefault - Default is a configuration specific to the group of clients referenced in
-// 'targetRef'
-type MeshAccessLogItemSpecFromDefault struct {
-	Backends []MeshAccessLogItemSpecFromBackends `json:"backends,omitempty"`
-}
-
-func (m *MeshAccessLogItemSpecFromDefault) GetBackends() []MeshAccessLogItemSpecFromBackends {
-	if m == nil {
-		return nil
-	}
-	return m.Backends
-}
-
-// MeshAccessLogItemKind - Kind of the referenced resource
-type MeshAccessLogItemKind string
-
-const (
-	MeshAccessLogItemKindMesh                 MeshAccessLogItemKind = "Mesh"
-	MeshAccessLogItemKindMeshSubset           MeshAccessLogItemKind = "MeshSubset"
-	MeshAccessLogItemKindMeshGateway          MeshAccessLogItemKind = "MeshGateway"
-	MeshAccessLogItemKindMeshService          MeshAccessLogItemKind = "MeshService"
-	MeshAccessLogItemKindMeshExternalService  MeshAccessLogItemKind = "MeshExternalService"
-	MeshAccessLogItemKindMeshMultiZoneService MeshAccessLogItemKind = "MeshMultiZoneService"
-	MeshAccessLogItemKindMeshServiceSubset    MeshAccessLogItemKind = "MeshServiceSubset"
-	MeshAccessLogItemKindMeshHTTPRoute        MeshAccessLogItemKind = "MeshHTTPRoute"
-	MeshAccessLogItemKindDataplane            MeshAccessLogItemKind = "Dataplane"
-)
-
-func (e MeshAccessLogItemKind) ToPointer() *MeshAccessLogItemKind {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshAccessLogItemKind) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshAccessLogItemProxyTypes string
-
-const (
-	MeshAccessLogItemProxyTypesSidecar MeshAccessLogItemProxyTypes = "Sidecar"
-	MeshAccessLogItemProxyTypesGateway MeshAccessLogItemProxyTypes = "Gateway"
-)
-
-func (e MeshAccessLogItemProxyTypes) ToPointer() *MeshAccessLogItemProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshAccessLogItemProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshAccessLogItemTargetRef - TargetRef is a reference to the resource that represents a group of
-// clients.
-type MeshAccessLogItemTargetRef struct {
-	// Kind of the referenced resource
-	Kind MeshAccessLogItemKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
-	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshAccessLogItemProxyTypes `json:"proxyTypes,omitempty"`
-	// SectionName is used to target specific section of resource.
-	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
-}
-
-func (m *MeshAccessLogItemTargetRef) GetKind() MeshAccessLogItemKind {
-	if m == nil {
-		return MeshAccessLogItemKind("")
+		return MeshAccessLogItemBackendsSpecKind("")
 	}
 	return m.Kind
 }
 
-func (m *MeshAccessLogItemTargetRef) GetLabels() map[string]string {
+func (m *MeshAccessLogItemBackendsSpecRulesBackendRef) GetLabels() map[string]string {
 	if m == nil {
 		return nil
 	}
 	return m.Labels
 }
 
-func (m *MeshAccessLogItemTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
+// MeshAccessLogItemBackendsSpecRulesOpenTelemetry - Defines an OpenTelemetry logging backend.
+type MeshAccessLogItemBackendsSpecRulesOpenTelemetry struct {
+	// Attributes defines custom OpenTelemetry attributes. Keys must be static
+	// OpenTelemetry attribute names. Values can contain placeholders available on
+	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+	Attributes []Attributes `json:"attributes,omitempty"`
+	// BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+	// defines the collector endpoint.
+	BackendRef *MeshAccessLogItemBackendsSpecRulesBackendRef `json:"backendRef,omitempty"`
+	// Body is a raw string or an OTLP any value as described at
+	// https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body
+	// It can contain placeholders available on
+	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+	Body any `json:"body,omitempty"`
 }
 
-func (m *MeshAccessLogItemTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshAccessLogItemTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
-func (m *MeshAccessLogItemTargetRef) GetProxyTypes() []MeshAccessLogItemProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
-func (m *MeshAccessLogItemTargetRef) GetSectionName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.SectionName
-}
-
-func (m *MeshAccessLogItemTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
-}
-
-type From struct {
-	// Default is a configuration specific to the group of clients referenced in
-	// 'targetRef'
-	Default MeshAccessLogItemSpecFromDefault `json:"default"`
-	// TargetRef is a reference to the resource that represents a group of
-	// clients.
-	TargetRef MeshAccessLogItemTargetRef `json:"targetRef"`
-}
-
-func (f *From) GetDefault() MeshAccessLogItemSpecFromDefault {
-	if f == nil {
-		return MeshAccessLogItemSpecFromDefault{}
-	}
-	return f.Default
-}
-
-func (f *From) GetTargetRef() MeshAccessLogItemTargetRef {
-	if f == nil {
-		return MeshAccessLogItemTargetRef{}
-	}
-	return f.TargetRef
-}
-
-type MeshAccessLogItemSpecJSON struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
-}
-
-func (m *MeshAccessLogItemSpecJSON) GetKey() string {
-	if m == nil {
-		return ""
-	}
-	return m.Key
-}
-
-func (m *MeshAccessLogItemSpecJSON) GetValue() string {
-	if m == nil {
-		return ""
-	}
-	return m.Value
-}
-
-type MeshAccessLogItemSpecRulesType string
-
-const (
-	MeshAccessLogItemSpecRulesTypePlain MeshAccessLogItemSpecRulesType = "Plain"
-	MeshAccessLogItemSpecRulesTypeJSON  MeshAccessLogItemSpecRulesType = "Json"
-)
-
-func (e MeshAccessLogItemSpecRulesType) ToPointer() *MeshAccessLogItemSpecRulesType {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshAccessLogItemSpecRulesType) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Plain", "Json":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshAccessLogItemSpecFormat - Format of access logs. Placeholders available on
-// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-type MeshAccessLogItemSpecFormat struct {
-	JSON            []MeshAccessLogItemSpecJSON    `json:"json,omitempty"`
-	OmitEmptyValues *bool                          `default:"false" json:"omitEmptyValues"`
-	Plain           *string                        `json:"plain,omitempty"`
-	Type            MeshAccessLogItemSpecRulesType `json:"type"`
-}
-
-func (m MeshAccessLogItemSpecFormat) MarshalJSON() ([]byte, error) {
+func (m MeshAccessLogItemBackendsSpecRulesOpenTelemetry) MarshalJSON() ([]byte, error) {
 	return utils.MarshalJSON(m, "", false)
 }
 
-func (m *MeshAccessLogItemSpecFormat) UnmarshalJSON(data []byte) error {
+func (m *MeshAccessLogItemBackendsSpecRulesOpenTelemetry) UnmarshalJSON(data []byte) error {
 	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (m *MeshAccessLogItemSpecFormat) GetJSON() []MeshAccessLogItemSpecJSON {
-	if m == nil {
-		return nil
-	}
-	return m.JSON
-}
-
-func (m *MeshAccessLogItemSpecFormat) GetOmitEmptyValues() *bool {
-	if m == nil {
-		return nil
-	}
-	return m.OmitEmptyValues
-}
-
-func (m *MeshAccessLogItemSpecFormat) GetPlain() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Plain
-}
-
-func (m *MeshAccessLogItemSpecFormat) GetType() MeshAccessLogItemSpecRulesType {
-	if m == nil {
-		return MeshAccessLogItemSpecRulesType("")
-	}
-	return m.Type
-}
-
-// MeshAccessLogItemFile - FileBackend defines configuration for file based access logs
-type MeshAccessLogItemFile struct {
-	// Format of access logs. Placeholders available on
-	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-	Format *MeshAccessLogItemSpecFormat `json:"format,omitempty"`
-	// Path to a file that logs will be written to
-	Path string `json:"path"`
-}
-
-func (m *MeshAccessLogItemFile) GetFormat() *MeshAccessLogItemSpecFormat {
-	if m == nil {
-		return nil
-	}
-	return m.Format
-}
-
-func (m *MeshAccessLogItemFile) GetPath() string {
-	if m == nil {
-		return ""
-	}
-	return m.Path
-}
-
-type MeshAccessLogItemAttributes struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
-}
-
-func (m *MeshAccessLogItemAttributes) GetKey() string {
-	if m == nil {
-		return ""
-	}
-	return m.Key
-}
-
-func (m *MeshAccessLogItemAttributes) GetValue() string {
-	if m == nil {
-		return ""
-	}
-	return m.Value
-}
-
-// MeshAccessLogItemOpenTelemetry - Defines an OpenTelemetry logging backend.
-type MeshAccessLogItemOpenTelemetry struct {
-	// Attributes can contain placeholders available on
-	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-	Attributes []MeshAccessLogItemAttributes `json:"attributes,omitempty"`
-	// Body is a raw string or an OTLP any value as described at
-	// https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body
-	// It can contain placeholders available on
-	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-	Body any `json:"body,omitempty"`
-	// Endpoint of OpenTelemetry collector. An empty port defaults to 4317.
-	Endpoint string `json:"endpoint"`
-}
-
-func (m *MeshAccessLogItemOpenTelemetry) GetAttributes() []MeshAccessLogItemAttributes {
+func (m *MeshAccessLogItemBackendsSpecRulesOpenTelemetry) GetAttributes() []Attributes {
 	if m == nil {
 		return nil
 	}
 	return m.Attributes
 }
 
-func (m *MeshAccessLogItemOpenTelemetry) GetBody() any {
+func (m *MeshAccessLogItemBackendsSpecRulesOpenTelemetry) GetBackendRef() *MeshAccessLogItemBackendsSpecRulesBackendRef {
+	if m == nil {
+		return nil
+	}
+	return m.BackendRef
+}
+
+func (m *MeshAccessLogItemBackendsSpecRulesOpenTelemetry) GetBody() any {
 	if m == nil {
 		return nil
 	}
 	return m.Body
 }
 
-func (m *MeshAccessLogItemOpenTelemetry) GetEndpoint() string {
-	if m == nil {
-		return ""
-	}
-	return m.Endpoint
+type MeshAccessLogItemBackends1 struct {
+	// TCPBackend defines a TCP logging backend.
+	TCP  *MeshAccessLogItemBackendsSpecRulesTCP `json:"tcp,omitempty"`
+	Type MeshAccessLogItemBackendsSpecRulesType `json:"type"`
+	// FileBackend defines configuration for file based access logs
+	File *MeshAccessLogItemBackendsSpecRulesFile `json:"file,omitempty"`
+	// Defines an OpenTelemetry logging backend.
+	OpenTelemetry *MeshAccessLogItemBackendsSpecRulesOpenTelemetry `json:"openTelemetry,omitempty"`
 }
 
-type MeshAccessLogItemSpecRulesJSON struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
-}
-
-func (m *MeshAccessLogItemSpecRulesJSON) GetKey() string {
-	if m == nil {
-		return ""
-	}
-	return m.Key
-}
-
-func (m *MeshAccessLogItemSpecRulesJSON) GetValue() string {
-	if m == nil {
-		return ""
-	}
-	return m.Value
-}
-
-type MeshAccessLogItemSpecRulesDefaultType string
-
-const (
-	MeshAccessLogItemSpecRulesDefaultTypePlain MeshAccessLogItemSpecRulesDefaultType = "Plain"
-	MeshAccessLogItemSpecRulesDefaultTypeJSON  MeshAccessLogItemSpecRulesDefaultType = "Json"
-)
-
-func (e MeshAccessLogItemSpecRulesDefaultType) ToPointer() *MeshAccessLogItemSpecRulesDefaultType {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshAccessLogItemSpecRulesDefaultType) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Plain", "Json":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshAccessLogItemSpecRulesFormat - Format of access logs. Placeholders available on
-// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-type MeshAccessLogItemSpecRulesFormat struct {
-	JSON            []MeshAccessLogItemSpecRulesJSON      `json:"json,omitempty"`
-	OmitEmptyValues *bool                                 `default:"false" json:"omitEmptyValues"`
-	Plain           *string                               `json:"plain,omitempty"`
-	Type            MeshAccessLogItemSpecRulesDefaultType `json:"type"`
-}
-
-func (m MeshAccessLogItemSpecRulesFormat) MarshalJSON() ([]byte, error) {
+func (m MeshAccessLogItemBackends1) MarshalJSON() ([]byte, error) {
 	return utils.MarshalJSON(m, "", false)
 }
 
-func (m *MeshAccessLogItemSpecRulesFormat) UnmarshalJSON(data []byte) error {
+func (m *MeshAccessLogItemBackends1) UnmarshalJSON(data []byte) error {
 	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (m *MeshAccessLogItemSpecRulesFormat) GetJSON() []MeshAccessLogItemSpecRulesJSON {
+func (m *MeshAccessLogItemBackends1) GetTCP() *MeshAccessLogItemBackendsSpecRulesTCP {
 	if m == nil {
 		return nil
 	}
-	return m.JSON
+	return m.TCP
 }
 
-func (m *MeshAccessLogItemSpecRulesFormat) GetOmitEmptyValues() *bool {
+func (m *MeshAccessLogItemBackends1) GetType() MeshAccessLogItemBackendsSpecRulesType {
 	if m == nil {
-		return nil
-	}
-	return m.OmitEmptyValues
-}
-
-func (m *MeshAccessLogItemSpecRulesFormat) GetPlain() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Plain
-}
-
-func (m *MeshAccessLogItemSpecRulesFormat) GetType() MeshAccessLogItemSpecRulesDefaultType {
-	if m == nil {
-		return MeshAccessLogItemSpecRulesDefaultType("")
+		return MeshAccessLogItemBackendsSpecRulesType("")
 	}
 	return m.Type
 }
 
-// MeshAccessLogItemTCP - TCPBackend defines a TCP logging backend.
-type MeshAccessLogItemTCP struct {
-	// Address of the TCP logging backend
-	Address string `json:"address"`
-	// Format of access logs. Placeholders available on
-	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-	Format *MeshAccessLogItemSpecRulesFormat `json:"format,omitempty"`
-}
-
-func (m *MeshAccessLogItemTCP) GetAddress() string {
-	if m == nil {
-		return ""
-	}
-	return m.Address
-}
-
-func (m *MeshAccessLogItemTCP) GetFormat() *MeshAccessLogItemSpecRulesFormat {
+func (m *MeshAccessLogItemBackends1) GetFile() *MeshAccessLogItemBackendsSpecRulesFile {
 	if m == nil {
 		return nil
 	}
-	return m.Format
+	return m.File
 }
 
+func (m *MeshAccessLogItemBackends1) GetOpenTelemetry() *MeshAccessLogItemBackendsSpecRulesOpenTelemetry {
+	if m == nil {
+		return nil
+	}
+	return m.OpenTelemetry
+}
+
+// #region class-body-meshaccesslogitembackends1
+// #endregion class-body-meshaccesslogitembackends1
+
+type MeshAccessLogItemSpecBackendsType string
+
+const (
+	MeshAccessLogItemSpecBackendsTypeMeshAccessLogItemBackends1 MeshAccessLogItemSpecBackendsType = "MeshAccessLogItem_backends_1"
+	MeshAccessLogItemSpecBackendsTypeMeshAccessLogItemBackends2 MeshAccessLogItemSpecBackendsType = "MeshAccessLogItem_backends_2"
+	MeshAccessLogItemSpecBackendsTypeMeshAccessLogItemBackends3 MeshAccessLogItemSpecBackendsType = "MeshAccessLogItem_backends_3"
+)
+
+type MeshAccessLogItemSpecBackends struct {
+	MeshAccessLogItemBackends1 *MeshAccessLogItemBackends1 `queryParam:"inline" union:"member"`
+	MeshAccessLogItemBackends2 *MeshAccessLogItemBackends2 `queryParam:"inline" union:"member"`
+	MeshAccessLogItemBackends3 *MeshAccessLogItemBackends3 `queryParam:"inline" union:"member"`
+
+	Type MeshAccessLogItemSpecBackendsType
+}
+
+func CreateMeshAccessLogItemSpecBackendsMeshAccessLogItemBackends1(meshAccessLogItemBackends1 MeshAccessLogItemBackends1) MeshAccessLogItemSpecBackends {
+	typ := MeshAccessLogItemSpecBackendsTypeMeshAccessLogItemBackends1
+
+	return MeshAccessLogItemSpecBackends{
+		MeshAccessLogItemBackends1: &meshAccessLogItemBackends1,
+		Type:                       typ,
+	}
+}
+
+func CreateMeshAccessLogItemSpecBackendsMeshAccessLogItemBackends2(meshAccessLogItemBackends2 MeshAccessLogItemBackends2) MeshAccessLogItemSpecBackends {
+	typ := MeshAccessLogItemSpecBackendsTypeMeshAccessLogItemBackends2
+
+	return MeshAccessLogItemSpecBackends{
+		MeshAccessLogItemBackends2: &meshAccessLogItemBackends2,
+		Type:                       typ,
+	}
+}
+
+func CreateMeshAccessLogItemSpecBackendsMeshAccessLogItemBackends3(meshAccessLogItemBackends3 MeshAccessLogItemBackends3) MeshAccessLogItemSpecBackends {
+	typ := MeshAccessLogItemSpecBackendsTypeMeshAccessLogItemBackends3
+
+	return MeshAccessLogItemSpecBackends{
+		MeshAccessLogItemBackends3: &meshAccessLogItemBackends3,
+		Type:                       typ,
+	}
+}
+
+func (u *MeshAccessLogItemSpecBackends) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var meshAccessLogItemBackends1 MeshAccessLogItemBackends1 = MeshAccessLogItemBackends1{}
+	if err := utils.UnmarshalJSON(data, &meshAccessLogItemBackends1, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshAccessLogItemSpecBackendsTypeMeshAccessLogItemBackends1,
+			Value: &meshAccessLogItemBackends1,
+		})
+	}
+
+	var meshAccessLogItemBackends2 MeshAccessLogItemBackends2 = MeshAccessLogItemBackends2{}
+	if err := utils.UnmarshalJSON(data, &meshAccessLogItemBackends2, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshAccessLogItemSpecBackendsTypeMeshAccessLogItemBackends2,
+			Value: &meshAccessLogItemBackends2,
+		})
+	}
+
+	var meshAccessLogItemBackends3 MeshAccessLogItemBackends3 = MeshAccessLogItemBackends3{}
+	if err := utils.UnmarshalJSON(data, &meshAccessLogItemBackends3, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshAccessLogItemSpecBackendsTypeMeshAccessLogItemBackends3,
+			Value: &meshAccessLogItemBackends3,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemSpecBackends", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemSpecBackends", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(MeshAccessLogItemSpecBackendsType)
+	switch best.Type {
+	case MeshAccessLogItemSpecBackendsTypeMeshAccessLogItemBackends1:
+		u.MeshAccessLogItemBackends1 = best.Value.(*MeshAccessLogItemBackends1)
+		return nil
+	case MeshAccessLogItemSpecBackendsTypeMeshAccessLogItemBackends2:
+		u.MeshAccessLogItemBackends2 = best.Value.(*MeshAccessLogItemBackends2)
+		return nil
+	case MeshAccessLogItemSpecBackendsTypeMeshAccessLogItemBackends3:
+		u.MeshAccessLogItemBackends3 = best.Value.(*MeshAccessLogItemBackends3)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemSpecBackends", string(data))
+}
+
+func (u MeshAccessLogItemSpecBackends) MarshalJSON() ([]byte, error) {
+	if u.MeshAccessLogItemBackends1 != nil {
+		return utils.MarshalJSON(u.MeshAccessLogItemBackends1, "", true)
+	}
+
+	if u.MeshAccessLogItemBackends2 != nil {
+		return utils.MarshalJSON(u.MeshAccessLogItemBackends2, "", true)
+	}
+
+	if u.MeshAccessLogItemBackends3 != nil {
+		return utils.MarshalJSON(u.MeshAccessLogItemBackends3, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type MeshAccessLogItemSpecBackends: all fields are null")
+}
+
+// MeshAccessLogItemSpecDefault - Default contains configuration of the inbound access logging
+type MeshAccessLogItemSpecDefault struct {
+	Backends []MeshAccessLogItemSpecBackends `json:"backends,omitempty"`
+}
+
+func (m *MeshAccessLogItemSpecDefault) GetBackends() []MeshAccessLogItemSpecBackends {
+	if m == nil {
+		return nil
+	}
+	return m.Backends
+}
+
+// MeshAccessLogItemType - Type defines how to match traffic by SNI. Only `Exact` is supported.
+type MeshAccessLogItemType string
+
+const (
+	MeshAccessLogItemTypeExact MeshAccessLogItemType = "Exact"
+)
+
+func (e MeshAccessLogItemType) ToPointer() *MeshAccessLogItemType {
+	return &e
+}
+func (e *MeshAccessLogItemType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "Exact":
+		*e = MeshAccessLogItemType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshAccessLogItemType: %v", v)
+	}
+}
+
+// Sni - SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+type Sni struct {
+	// Type defines how to match traffic by SNI. Only `Exact` is supported.
+	Type MeshAccessLogItemType `json:"type"`
+	// Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied
+	Value string `json:"value"`
+}
+
+func (s *Sni) GetType() MeshAccessLogItemType {
+	if s == nil {
+		return MeshAccessLogItemType("")
+	}
+	return s.Type
+}
+
+func (s *Sni) GetValue() string {
+	if s == nil {
+		return ""
+	}
+	return s.Value
+}
+
+// MeshAccessLogItemSpecType - Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
 type MeshAccessLogItemSpecType string
 
 const (
-	MeshAccessLogItemSpecTypeTCP           MeshAccessLogItemSpecType = "Tcp"
-	MeshAccessLogItemSpecTypeFile          MeshAccessLogItemSpecType = "File"
-	MeshAccessLogItemSpecTypeOpenTelemetry MeshAccessLogItemSpecType = "OpenTelemetry"
+	MeshAccessLogItemSpecTypeExact  MeshAccessLogItemSpecType = "Exact"
+	MeshAccessLogItemSpecTypePrefix MeshAccessLogItemSpecType = "Prefix"
 )
 
 func (e MeshAccessLogItemSpecType) ToPointer() *MeshAccessLogItemSpecType {
@@ -837,88 +2842,85 @@ func (e MeshAccessLogItemSpecType) ToPointer() *MeshAccessLogItemSpecType {
 func (e *MeshAccessLogItemSpecType) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Tcp", "File", "OpenTelemetry":
+		case "Exact", "Prefix":
 			return true
 		}
 	}
 	return false
 }
 
-type MeshAccessLogItemBackends struct {
-	// FileBackend defines configuration for file based access logs
-	File *MeshAccessLogItemFile `json:"file,omitempty"`
-	// Defines an OpenTelemetry logging backend.
-	OpenTelemetry *MeshAccessLogItemOpenTelemetry `json:"openTelemetry,omitempty"`
-	// TCPBackend defines a TCP logging backend.
-	TCP  *MeshAccessLogItemTCP     `json:"tcp,omitempty"`
+// MeshAccessLogItemSpiffeID - SpiffeID defines a matcher configuration for SpiffeID matching
+type MeshAccessLogItemSpiffeID struct {
+	// Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
 	Type MeshAccessLogItemSpecType `json:"type"`
+	// Value is SpiffeID of a client that needs to match for the configuration to be applied
+	Value string `json:"value"`
 }
 
-func (m *MeshAccessLogItemBackends) GetFile() *MeshAccessLogItemFile {
-	if m == nil {
-		return nil
-	}
-	return m.File
-}
-
-func (m *MeshAccessLogItemBackends) GetOpenTelemetry() *MeshAccessLogItemOpenTelemetry {
-	if m == nil {
-		return nil
-	}
-	return m.OpenTelemetry
-}
-
-func (m *MeshAccessLogItemBackends) GetTCP() *MeshAccessLogItemTCP {
-	if m == nil {
-		return nil
-	}
-	return m.TCP
-}
-
-func (m *MeshAccessLogItemBackends) GetType() MeshAccessLogItemSpecType {
+func (m *MeshAccessLogItemSpiffeID) GetType() MeshAccessLogItemSpecType {
 	if m == nil {
 		return MeshAccessLogItemSpecType("")
 	}
 	return m.Type
 }
 
-// MeshAccessLogItemDefault - Default contains configuration of the inbound access logging
-type MeshAccessLogItemDefault struct {
-	Backends []MeshAccessLogItemBackends `json:"backends,omitempty"`
+func (m *MeshAccessLogItemSpiffeID) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
 }
 
-func (m *MeshAccessLogItemDefault) GetBackends() []MeshAccessLogItemBackends {
+type Matches struct {
+	// SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+	Sni *Sni `json:"sni,omitempty"`
+	// SpiffeID defines a matcher configuration for SpiffeID matching
+	SpiffeID *MeshAccessLogItemSpiffeID `json:"spiffeID,omitempty"`
+}
+
+func (m *Matches) GetSni() *Sni {
 	if m == nil {
 		return nil
 	}
-	return m.Backends
+	return m.Sni
+}
+
+func (m *Matches) GetSpiffeID() *MeshAccessLogItemSpiffeID {
+	if m == nil {
+		return nil
+	}
+	return m.SpiffeID
 }
 
 type MeshAccessLogItemRules struct {
 	// Default contains configuration of the inbound access logging
-	Default MeshAccessLogItemDefault `json:"default"`
+	Default MeshAccessLogItemSpecDefault `json:"default"`
+	// Matches defines a list of conditions (by SpiffeID or SNI) that select the
+	// traffic this rule applies to. Rules fire independently: a connection that
+	// satisfies multiple rules is logged to every matching rule's backends.
+	Matches []Matches `json:"matches,omitempty"`
 }
 
-func (m *MeshAccessLogItemRules) GetDefault() MeshAccessLogItemDefault {
+func (m *MeshAccessLogItemRules) GetDefault() MeshAccessLogItemSpecDefault {
 	if m == nil {
-		return MeshAccessLogItemDefault{}
+		return MeshAccessLogItemSpecDefault{}
 	}
 	return m.Default
+}
+
+func (m *MeshAccessLogItemRules) GetMatches() []Matches {
+	if m == nil {
+		return nil
+	}
+	return m.Matches
 }
 
 // Kind of the referenced resource
 type Kind string
 
 const (
-	KindMesh                 Kind = "Mesh"
-	KindMeshSubset           Kind = "MeshSubset"
-	KindMeshGateway          Kind = "MeshGateway"
-	KindMeshService          Kind = "MeshService"
-	KindMeshExternalService  Kind = "MeshExternalService"
-	KindMeshMultiZoneService Kind = "MeshMultiZoneService"
-	KindMeshServiceSubset    Kind = "MeshServiceSubset"
-	KindMeshHTTPRoute        Kind = "MeshHTTPRoute"
-	KindDataplane            Kind = "Dataplane"
+	KindMesh      Kind = "Mesh"
+	KindDataplane Kind = "Dataplane"
 )
 
 func (e Kind) ToPointer() *Kind {
@@ -929,29 +2931,7 @@ func (e Kind) ToPointer() *Kind {
 func (e *Kind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
-	}
-	return false
-}
-
-type ProxyTypes string
-
-const (
-	ProxyTypesSidecar ProxyTypes = "Sidecar"
-	ProxyTypesGateway ProxyTypes = "Gateway"
-)
-
-func (e ProxyTypes) ToPointer() *ProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *ProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
+		case "Mesh", "Dataplane":
 			return true
 		}
 	}
@@ -964,26 +2944,13 @@ func (e *ProxyTypes) IsExact() bool {
 type TargetRef struct {
 	// Kind of the referenced resource
 	Kind Kind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select referenced real resources and to carry legacy
+	// service identity when a common TargetRef must still target old
+	// service-tag based paths.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []ProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
 }
 
 func (t *TargetRef) GetKind() Kind {
@@ -1000,34 +2967,6 @@ func (t *TargetRef) GetLabels() map[string]string {
 	return t.Labels
 }
 
-func (t *TargetRef) GetMesh() *string {
-	if t == nil {
-		return nil
-	}
-	return t.Mesh
-}
-
-func (t *TargetRef) GetName() *string {
-	if t == nil {
-		return nil
-	}
-	return t.Name
-}
-
-func (t *TargetRef) GetNamespace() *string {
-	if t == nil {
-		return nil
-	}
-	return t.Namespace
-}
-
-func (t *TargetRef) GetProxyTypes() []ProxyTypes {
-	if t == nil {
-		return nil
-	}
-	return t.ProxyTypes
-}
-
 func (t *TargetRef) GetSectionName() *string {
 	if t == nil {
 		return nil
@@ -1035,305 +2974,159 @@ func (t *TargetRef) GetSectionName() *string {
 	return t.SectionName
 }
 
-func (t *TargetRef) GetTags() map[string]string {
-	if t == nil {
-		return nil
-	}
-	return t.Tags
-}
-
-type MeshAccessLogItemSpecToJSON struct {
-	Key   string `json:"key"`
+type MeshAccessLogItemBackendsSpecToDefaultAttributes struct {
+	// Key is the OpenTelemetry attribute name.
+	Key string `json:"key"`
+	// Value can contain Kuma placeholders.
 	Value string `json:"value"`
 }
 
-func (m *MeshAccessLogItemSpecToJSON) GetKey() string {
-	if m == nil {
-		return ""
-	}
-	return m.Key
-}
-
-func (m *MeshAccessLogItemSpecToJSON) GetValue() string {
-	if m == nil {
-		return ""
-	}
-	return m.Value
-}
-
-type MeshAccessLogItemSpecToDefaultBackendsType string
-
-const (
-	MeshAccessLogItemSpecToDefaultBackendsTypePlain MeshAccessLogItemSpecToDefaultBackendsType = "Plain"
-	MeshAccessLogItemSpecToDefaultBackendsTypeJSON  MeshAccessLogItemSpecToDefaultBackendsType = "Json"
-)
-
-func (e MeshAccessLogItemSpecToDefaultBackendsType) ToPointer() *MeshAccessLogItemSpecToDefaultBackendsType {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshAccessLogItemSpecToDefaultBackendsType) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Plain", "Json":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshAccessLogItemSpecToFormat - Format of access logs. Placeholders available on
-// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-type MeshAccessLogItemSpecToFormat struct {
-	JSON            []MeshAccessLogItemSpecToJSON              `json:"json,omitempty"`
-	OmitEmptyValues *bool                                      `default:"false" json:"omitEmptyValues"`
-	Plain           *string                                    `json:"plain,omitempty"`
-	Type            MeshAccessLogItemSpecToDefaultBackendsType `json:"type"`
-}
-
-func (m MeshAccessLogItemSpecToFormat) MarshalJSON() ([]byte, error) {
+func (m MeshAccessLogItemBackendsSpecToDefaultAttributes) MarshalJSON() ([]byte, error) {
 	return utils.MarshalJSON(m, "", false)
 }
 
-func (m *MeshAccessLogItemSpecToFormat) UnmarshalJSON(data []byte) error {
+func (m *MeshAccessLogItemBackendsSpecToDefaultAttributes) UnmarshalJSON(data []byte) error {
 	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (m *MeshAccessLogItemSpecToFormat) GetJSON() []MeshAccessLogItemSpecToJSON {
-	if m == nil {
-		return nil
-	}
-	return m.JSON
-}
-
-func (m *MeshAccessLogItemSpecToFormat) GetOmitEmptyValues() *bool {
-	if m == nil {
-		return nil
-	}
-	return m.OmitEmptyValues
-}
-
-func (m *MeshAccessLogItemSpecToFormat) GetPlain() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Plain
-}
-
-func (m *MeshAccessLogItemSpecToFormat) GetType() MeshAccessLogItemSpecToDefaultBackendsType {
-	if m == nil {
-		return MeshAccessLogItemSpecToDefaultBackendsType("")
-	}
-	return m.Type
-}
-
-// MeshAccessLogItemSpecFile - FileBackend defines configuration for file based access logs
-type MeshAccessLogItemSpecFile struct {
-	// Format of access logs. Placeholders available on
-	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-	Format *MeshAccessLogItemSpecToFormat `json:"format,omitempty"`
-	// Path to a file that logs will be written to
-	Path string `json:"path"`
-}
-
-func (m *MeshAccessLogItemSpecFile) GetFormat() *MeshAccessLogItemSpecToFormat {
-	if m == nil {
-		return nil
-	}
-	return m.Format
-}
-
-func (m *MeshAccessLogItemSpecFile) GetPath() string {
-	if m == nil {
-		return ""
-	}
-	return m.Path
-}
-
-type MeshAccessLogItemSpecAttributes struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
-}
-
-func (m *MeshAccessLogItemSpecAttributes) GetKey() string {
+func (m *MeshAccessLogItemBackendsSpecToDefaultAttributes) GetKey() string {
 	if m == nil {
 		return ""
 	}
 	return m.Key
 }
 
-func (m *MeshAccessLogItemSpecAttributes) GetValue() string {
+func (m *MeshAccessLogItemBackendsSpecToDefaultAttributes) GetValue() string {
 	if m == nil {
 		return ""
 	}
 	return m.Value
 }
 
-// MeshAccessLogItemSpecOpenTelemetry - Defines an OpenTelemetry logging backend.
-type MeshAccessLogItemSpecOpenTelemetry struct {
-	// Attributes can contain placeholders available on
+// MeshAccessLogItemBackendsSpecToDefault3Kind - Kind of the backend resource.
+type MeshAccessLogItemBackendsSpecToDefault3Kind string
+
+const (
+	MeshAccessLogItemBackendsSpecToDefault3KindMeshOpenTelemetryBackend MeshAccessLogItemBackendsSpecToDefault3Kind = "MeshOpenTelemetryBackend"
+)
+
+func (e MeshAccessLogItemBackendsSpecToDefault3Kind) ToPointer() *MeshAccessLogItemBackendsSpecToDefault3Kind {
+	return &e
+}
+func (e *MeshAccessLogItemBackendsSpecToDefault3Kind) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "MeshOpenTelemetryBackend":
+		*e = MeshAccessLogItemBackendsSpecToDefault3Kind(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshAccessLogItemBackendsSpecToDefault3Kind: %v", v)
+	}
+}
+
+// MeshAccessLogItemBackendsSpecToDefaultBackendRef - BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+// defines the collector endpoint.
+type MeshAccessLogItemBackendsSpecToDefaultBackendRef struct {
+	// Kind of the backend resource.
+	Kind MeshAccessLogItemBackendsSpecToDefault3Kind `json:"kind"`
+	// Labels to match the referenced resource. When multiple resources match,
+	// the oldest by creation time wins.
+	Labels map[string]string `json:"labels,omitempty"`
+}
+
+func (m MeshAccessLogItemBackendsSpecToDefaultBackendRef) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemBackendsSpecToDefaultBackendRef) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemBackendsSpecToDefaultBackendRef) GetKind() MeshAccessLogItemBackendsSpecToDefault3Kind {
+	if m == nil {
+		return MeshAccessLogItemBackendsSpecToDefault3Kind("")
+	}
+	return m.Kind
+}
+
+func (m *MeshAccessLogItemBackendsSpecToDefaultBackendRef) GetLabels() map[string]string {
+	if m == nil {
+		return nil
+	}
+	return m.Labels
+}
+
+// MeshAccessLogItemBackendsSpecToDefaultOpenTelemetry - Defines an OpenTelemetry logging backend.
+type MeshAccessLogItemBackendsSpecToDefaultOpenTelemetry struct {
+	// Attributes defines custom OpenTelemetry attributes. Keys must be static
+	// OpenTelemetry attribute names. Values can contain placeholders available on
 	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-	Attributes []MeshAccessLogItemSpecAttributes `json:"attributes,omitempty"`
+	Attributes []MeshAccessLogItemBackendsSpecToDefaultAttributes `json:"attributes,omitempty"`
+	// BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+	// defines the collector endpoint.
+	BackendRef *MeshAccessLogItemBackendsSpecToDefaultBackendRef `json:"backendRef,omitempty"`
 	// Body is a raw string or an OTLP any value as described at
 	// https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body
 	// It can contain placeholders available on
 	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
 	Body any `json:"body,omitempty"`
-	// Endpoint of OpenTelemetry collector. An empty port defaults to 4317.
-	Endpoint string `json:"endpoint"`
 }
 
-func (m *MeshAccessLogItemSpecOpenTelemetry) GetAttributes() []MeshAccessLogItemSpecAttributes {
+func (m MeshAccessLogItemBackendsSpecToDefaultOpenTelemetry) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemBackendsSpecToDefaultOpenTelemetry) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemBackendsSpecToDefaultOpenTelemetry) GetAttributes() []MeshAccessLogItemBackendsSpecToDefaultAttributes {
 	if m == nil {
 		return nil
 	}
 	return m.Attributes
 }
 
-func (m *MeshAccessLogItemSpecOpenTelemetry) GetBody() any {
+func (m *MeshAccessLogItemBackendsSpecToDefaultOpenTelemetry) GetBackendRef() *MeshAccessLogItemBackendsSpecToDefaultBackendRef {
+	if m == nil {
+		return nil
+	}
+	return m.BackendRef
+}
+
+func (m *MeshAccessLogItemBackendsSpecToDefaultOpenTelemetry) GetBody() any {
 	if m == nil {
 		return nil
 	}
 	return m.Body
 }
 
-func (m *MeshAccessLogItemSpecOpenTelemetry) GetEndpoint() string {
-	if m == nil {
-		return ""
-	}
-	return m.Endpoint
-}
-
-type MeshAccessLogItemSpecToDefaultJSON struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
-}
-
-func (m *MeshAccessLogItemSpecToDefaultJSON) GetKey() string {
-	if m == nil {
-		return ""
-	}
-	return m.Key
-}
-
-func (m *MeshAccessLogItemSpecToDefaultJSON) GetValue() string {
-	if m == nil {
-		return ""
-	}
-	return m.Value
-}
-
-type MeshAccessLogItemSpecToDefaultType string
+type MeshAccessLogItemBackendsSpecToDefault3Type string
 
 const (
-	MeshAccessLogItemSpecToDefaultTypePlain MeshAccessLogItemSpecToDefaultType = "Plain"
-	MeshAccessLogItemSpecToDefaultTypeJSON  MeshAccessLogItemSpecToDefaultType = "Json"
+	MeshAccessLogItemBackendsSpecToDefault3TypeTCP           MeshAccessLogItemBackendsSpecToDefault3Type = "Tcp"
+	MeshAccessLogItemBackendsSpecToDefault3TypeFile          MeshAccessLogItemBackendsSpecToDefault3Type = "File"
+	MeshAccessLogItemBackendsSpecToDefault3TypeOpenTelemetry MeshAccessLogItemBackendsSpecToDefault3Type = "OpenTelemetry"
 )
 
-func (e MeshAccessLogItemSpecToDefaultType) ToPointer() *MeshAccessLogItemSpecToDefaultType {
+func (e MeshAccessLogItemBackendsSpecToDefault3Type) ToPointer() *MeshAccessLogItemBackendsSpecToDefault3Type {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshAccessLogItemSpecToDefaultType) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Plain", "Json":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshAccessLogItemSpecToDefaultFormat - Format of access logs. Placeholders available on
-// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-type MeshAccessLogItemSpecToDefaultFormat struct {
-	JSON            []MeshAccessLogItemSpecToDefaultJSON `json:"json,omitempty"`
-	OmitEmptyValues *bool                                `default:"false" json:"omitEmptyValues"`
-	Plain           *string                              `json:"plain,omitempty"`
-	Type            MeshAccessLogItemSpecToDefaultType   `json:"type"`
-}
-
-func (m MeshAccessLogItemSpecToDefaultFormat) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(m, "", false)
-}
-
-func (m *MeshAccessLogItemSpecToDefaultFormat) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *MeshAccessLogItemSpecToDefaultFormat) GetJSON() []MeshAccessLogItemSpecToDefaultJSON {
-	if m == nil {
-		return nil
-	}
-	return m.JSON
-}
-
-func (m *MeshAccessLogItemSpecToDefaultFormat) GetOmitEmptyValues() *bool {
-	if m == nil {
-		return nil
-	}
-	return m.OmitEmptyValues
-}
-
-func (m *MeshAccessLogItemSpecToDefaultFormat) GetPlain() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Plain
-}
-
-func (m *MeshAccessLogItemSpecToDefaultFormat) GetType() MeshAccessLogItemSpecToDefaultType {
-	if m == nil {
-		return MeshAccessLogItemSpecToDefaultType("")
-	}
-	return m.Type
-}
-
-// MeshAccessLogItemSpecTCP - TCPBackend defines a TCP logging backend.
-type MeshAccessLogItemSpecTCP struct {
-	// Address of the TCP logging backend
-	Address string `json:"address"`
-	// Format of access logs. Placeholders available on
-	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-	Format *MeshAccessLogItemSpecToDefaultFormat `json:"format,omitempty"`
-}
-
-func (m *MeshAccessLogItemSpecTCP) GetAddress() string {
-	if m == nil {
-		return ""
-	}
-	return m.Address
-}
-
-func (m *MeshAccessLogItemSpecTCP) GetFormat() *MeshAccessLogItemSpecToDefaultFormat {
-	if m == nil {
-		return nil
-	}
-	return m.Format
-}
-
-type MeshAccessLogItemSpecToType string
-
-const (
-	MeshAccessLogItemSpecToTypeTCP           MeshAccessLogItemSpecToType = "Tcp"
-	MeshAccessLogItemSpecToTypeFile          MeshAccessLogItemSpecToType = "File"
-	MeshAccessLogItemSpecToTypeOpenTelemetry MeshAccessLogItemSpecToType = "OpenTelemetry"
-)
-
-func (e MeshAccessLogItemSpecToType) ToPointer() *MeshAccessLogItemSpecToType {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshAccessLogItemSpecToType) IsExact() bool {
+func (e *MeshAccessLogItemBackendsSpecToDefault3Type) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "Tcp", "File", "OpenTelemetry":
@@ -1343,221 +3136,2690 @@ func (e *MeshAccessLogItemSpecToType) IsExact() bool {
 	return false
 }
 
-type MeshAccessLogItemSpecBackends struct {
-	// FileBackend defines configuration for file based access logs
-	File *MeshAccessLogItemSpecFile `json:"file,omitempty"`
-	// Defines an OpenTelemetry logging backend.
-	OpenTelemetry *MeshAccessLogItemSpecOpenTelemetry `json:"openTelemetry,omitempty"`
-	// TCPBackend defines a TCP logging backend.
-	TCP  *MeshAccessLogItemSpecTCP   `json:"tcp,omitempty"`
-	Type MeshAccessLogItemSpecToType `json:"type"`
+type MeshAccessLogItemFormatSpecToDefaultBackends3FileJSON struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
 }
 
-func (m *MeshAccessLogItemSpecBackends) GetFile() *MeshAccessLogItemSpecFile {
+func (m MeshAccessLogItemFormatSpecToDefaultBackends3FileJSON) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends3FileJSON) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends3FileJSON) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends3FileJSON) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// #region class-body-meshaccesslogitemformatspectodefaultbackends3filejson
+// #endregion class-body-meshaccesslogitemformatspectodefaultbackends3filejson
+
+type MeshAccessLogItemFormatSpecToDefaultBackends3FileType string
+
+const (
+	MeshAccessLogItemFormatSpecToDefaultBackends3FileTypePlain MeshAccessLogItemFormatSpecToDefaultBackends3FileType = "Plain"
+	MeshAccessLogItemFormatSpecToDefaultBackends3FileTypeJSON  MeshAccessLogItemFormatSpecToDefaultBackends3FileType = "Json"
+)
+
+func (e MeshAccessLogItemFormatSpecToDefaultBackends3FileType) ToPointer() *MeshAccessLogItemFormatSpecToDefaultBackends3FileType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemFormatSpecToDefaultBackends3FileType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshAccessLogItemFormatSpecToDefaultBackends32 struct {
+	JSON            []MeshAccessLogItemFormatSpecToDefaultBackends3FileJSON `json:"json,omitempty"`
+	Type            MeshAccessLogItemFormatSpecToDefaultBackends3FileType   `json:"type"`
+	OmitEmptyValues *bool                                                   `default:"false" json:"omitEmptyValues"`
+	Plain           *string                                                 `json:"plain,omitempty"`
+}
+
+func (m MeshAccessLogItemFormatSpecToDefaultBackends32) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends32) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends32) GetJSON() []MeshAccessLogItemFormatSpecToDefaultBackends3FileJSON {
 	if m == nil {
 		return nil
 	}
-	return m.File
+	return m.JSON
 }
 
-func (m *MeshAccessLogItemSpecBackends) GetOpenTelemetry() *MeshAccessLogItemSpecOpenTelemetry {
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends32) GetType() MeshAccessLogItemFormatSpecToDefaultBackends3FileType {
+	if m == nil {
+		return MeshAccessLogItemFormatSpecToDefaultBackends3FileType("")
+	}
+	return m.Type
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends32) GetOmitEmptyValues() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.OmitEmptyValues
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends32) GetPlain() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Plain
+}
+
+// #region class-body-meshaccesslogitemformatspectodefaultbackends32
+// #endregion class-body-meshaccesslogitemformatspectodefaultbackends32
+
+type MeshAccessLogItemFormatSpecToDefaultBackends3Type string
+
+const (
+	MeshAccessLogItemFormatSpecToDefaultBackends3TypePlain MeshAccessLogItemFormatSpecToDefaultBackends3Type = "Plain"
+	MeshAccessLogItemFormatSpecToDefaultBackends3TypeJSON  MeshAccessLogItemFormatSpecToDefaultBackends3Type = "Json"
+)
+
+func (e MeshAccessLogItemFormatSpecToDefaultBackends3Type) ToPointer() *MeshAccessLogItemFormatSpecToDefaultBackends3Type {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemFormatSpecToDefaultBackends3Type) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshAccessLogItemFormatSpecToDefaultBackends3JSON struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+func (m MeshAccessLogItemFormatSpecToDefaultBackends3JSON) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends3JSON) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends3JSON) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends3JSON) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// #region class-body-meshaccesslogitemformatspectodefaultbackends3json
+// #endregion class-body-meshaccesslogitemformatspectodefaultbackends3json
+
+type MeshAccessLogItemFormatSpecToDefaultBackends31 struct {
+	Plain           *string                                             `json:"plain,omitempty"`
+	Type            MeshAccessLogItemFormatSpecToDefaultBackends3Type   `json:"type"`
+	JSON            []MeshAccessLogItemFormatSpecToDefaultBackends3JSON `json:"json,omitempty"`
+	OmitEmptyValues *bool                                               `default:"false" json:"omitEmptyValues"`
+}
+
+func (m MeshAccessLogItemFormatSpecToDefaultBackends31) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends31) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends31) GetPlain() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Plain
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends31) GetType() MeshAccessLogItemFormatSpecToDefaultBackends3Type {
+	if m == nil {
+		return MeshAccessLogItemFormatSpecToDefaultBackends3Type("")
+	}
+	return m.Type
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends31) GetJSON() []MeshAccessLogItemFormatSpecToDefaultBackends3JSON {
+	if m == nil {
+		return nil
+	}
+	return m.JSON
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends31) GetOmitEmptyValues() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.OmitEmptyValues
+}
+
+// #region class-body-meshaccesslogitemformatspectodefaultbackends31
+// #endregion class-body-meshaccesslogitemformatspectodefaultbackends31
+
+type MeshAccessLogItemBackendsSpecToDefault3FormatType string
+
+const (
+	MeshAccessLogItemBackendsSpecToDefault3FormatTypeMeshAccessLogItemFormatSpecToDefaultBackends31 MeshAccessLogItemBackendsSpecToDefault3FormatType = "MeshAccessLogItem_format_spec_to_default_backends_3_1"
+	MeshAccessLogItemBackendsSpecToDefault3FormatTypeMeshAccessLogItemFormatSpecToDefaultBackends32 MeshAccessLogItemBackendsSpecToDefault3FormatType = "MeshAccessLogItem_format_spec_to_default_backends_3_2"
+)
+
+// MeshAccessLogItemBackendsSpecToDefault3Format - Format of access logs. Placeholders available on
+// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+type MeshAccessLogItemBackendsSpecToDefault3Format struct {
+	MeshAccessLogItemFormatSpecToDefaultBackends31 *MeshAccessLogItemFormatSpecToDefaultBackends31 `queryParam:"inline" union:"member"`
+	MeshAccessLogItemFormatSpecToDefaultBackends32 *MeshAccessLogItemFormatSpecToDefaultBackends32 `queryParam:"inline" union:"member"`
+
+	Type MeshAccessLogItemBackendsSpecToDefault3FormatType
+}
+
+func CreateMeshAccessLogItemBackendsSpecToDefault3FormatMeshAccessLogItemFormatSpecToDefaultBackends31(meshAccessLogItemFormatSpecToDefaultBackends31 MeshAccessLogItemFormatSpecToDefaultBackends31) MeshAccessLogItemBackendsSpecToDefault3Format {
+	typ := MeshAccessLogItemBackendsSpecToDefault3FormatTypeMeshAccessLogItemFormatSpecToDefaultBackends31
+
+	return MeshAccessLogItemBackendsSpecToDefault3Format{
+		MeshAccessLogItemFormatSpecToDefaultBackends31: &meshAccessLogItemFormatSpecToDefaultBackends31,
+		Type: typ,
+	}
+}
+
+func CreateMeshAccessLogItemBackendsSpecToDefault3FormatMeshAccessLogItemFormatSpecToDefaultBackends32(meshAccessLogItemFormatSpecToDefaultBackends32 MeshAccessLogItemFormatSpecToDefaultBackends32) MeshAccessLogItemBackendsSpecToDefault3Format {
+	typ := MeshAccessLogItemBackendsSpecToDefault3FormatTypeMeshAccessLogItemFormatSpecToDefaultBackends32
+
+	return MeshAccessLogItemBackendsSpecToDefault3Format{
+		MeshAccessLogItemFormatSpecToDefaultBackends32: &meshAccessLogItemFormatSpecToDefaultBackends32,
+		Type: typ,
+	}
+}
+
+func (u *MeshAccessLogItemBackendsSpecToDefault3Format) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var meshAccessLogItemFormatSpecToDefaultBackends31 MeshAccessLogItemFormatSpecToDefaultBackends31 = MeshAccessLogItemFormatSpecToDefaultBackends31{}
+	if err := utils.UnmarshalJSON(data, &meshAccessLogItemFormatSpecToDefaultBackends31, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshAccessLogItemBackendsSpecToDefault3FormatTypeMeshAccessLogItemFormatSpecToDefaultBackends31,
+			Value: &meshAccessLogItemFormatSpecToDefaultBackends31,
+		})
+	}
+
+	var meshAccessLogItemFormatSpecToDefaultBackends32 MeshAccessLogItemFormatSpecToDefaultBackends32 = MeshAccessLogItemFormatSpecToDefaultBackends32{}
+	if err := utils.UnmarshalJSON(data, &meshAccessLogItemFormatSpecToDefaultBackends32, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshAccessLogItemBackendsSpecToDefault3FormatTypeMeshAccessLogItemFormatSpecToDefaultBackends32,
+			Value: &meshAccessLogItemFormatSpecToDefaultBackends32,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsSpecToDefault3Format", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsSpecToDefault3Format", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(MeshAccessLogItemBackendsSpecToDefault3FormatType)
+	switch best.Type {
+	case MeshAccessLogItemBackendsSpecToDefault3FormatTypeMeshAccessLogItemFormatSpecToDefaultBackends31:
+		u.MeshAccessLogItemFormatSpecToDefaultBackends31 = best.Value.(*MeshAccessLogItemFormatSpecToDefaultBackends31)
+		return nil
+	case MeshAccessLogItemBackendsSpecToDefault3FormatTypeMeshAccessLogItemFormatSpecToDefaultBackends32:
+		u.MeshAccessLogItemFormatSpecToDefaultBackends32 = best.Value.(*MeshAccessLogItemFormatSpecToDefaultBackends32)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsSpecToDefault3Format", string(data))
+}
+
+func (u MeshAccessLogItemBackendsSpecToDefault3Format) MarshalJSON() ([]byte, error) {
+	if u.MeshAccessLogItemFormatSpecToDefaultBackends31 != nil {
+		return utils.MarshalJSON(u.MeshAccessLogItemFormatSpecToDefaultBackends31, "", true)
+	}
+
+	if u.MeshAccessLogItemFormatSpecToDefaultBackends32 != nil {
+		return utils.MarshalJSON(u.MeshAccessLogItemFormatSpecToDefaultBackends32, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type MeshAccessLogItemBackendsSpecToDefault3Format: all fields are null")
+}
+
+// MeshAccessLogItemBackendsSpecToDefaultFile - FileBackend defines configuration for file based access logs
+type MeshAccessLogItemBackendsSpecToDefaultFile struct {
+	// Format of access logs. Placeholders available on
+	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+	Format *MeshAccessLogItemBackendsSpecToDefault3Format `json:"format,omitempty"`
+	// Path to a file that logs will be written to
+	Path string `json:"path"`
+}
+
+func (m MeshAccessLogItemBackendsSpecToDefaultFile) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemBackendsSpecToDefaultFile) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemBackendsSpecToDefaultFile) GetFormat() *MeshAccessLogItemBackendsSpecToDefault3Format {
+	if m == nil {
+		return nil
+	}
+	return m.Format
+}
+
+func (m *MeshAccessLogItemBackendsSpecToDefaultFile) GetPath() string {
+	if m == nil {
+		return ""
+	}
+	return m.Path
+}
+
+type MeshAccessLogItemFormatSpecToDefaultBackends3TCP2JSON struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+func (m MeshAccessLogItemFormatSpecToDefaultBackends3TCP2JSON) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends3TCP2JSON) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends3TCP2JSON) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends3TCP2JSON) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// #region class-body-meshaccesslogitemformatspectodefaultbackends3tcp2json
+// #endregion class-body-meshaccesslogitemformatspectodefaultbackends3tcp2json
+
+type MeshAccessLogItemFormatSpecToDefaultBackends3TCP2Type string
+
+const (
+	MeshAccessLogItemFormatSpecToDefaultBackends3TCP2TypePlain MeshAccessLogItemFormatSpecToDefaultBackends3TCP2Type = "Plain"
+	MeshAccessLogItemFormatSpecToDefaultBackends3TCP2TypeJSON  MeshAccessLogItemFormatSpecToDefaultBackends3TCP2Type = "Json"
+)
+
+func (e MeshAccessLogItemFormatSpecToDefaultBackends3TCP2Type) ToPointer() *MeshAccessLogItemFormatSpecToDefaultBackends3TCP2Type {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemFormatSpecToDefaultBackends3TCP2Type) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshAccessLogItemFormatSpecToDefaultBackends3TCP2 struct {
+	JSON            []MeshAccessLogItemFormatSpecToDefaultBackends3TCP2JSON `json:"json,omitempty"`
+	Type            MeshAccessLogItemFormatSpecToDefaultBackends3TCP2Type   `json:"type"`
+	OmitEmptyValues *bool                                                   `default:"false" json:"omitEmptyValues"`
+	Plain           *string                                                 `json:"plain,omitempty"`
+}
+
+func (m MeshAccessLogItemFormatSpecToDefaultBackends3TCP2) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends3TCP2) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends3TCP2) GetJSON() []MeshAccessLogItemFormatSpecToDefaultBackends3TCP2JSON {
+	if m == nil {
+		return nil
+	}
+	return m.JSON
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends3TCP2) GetType() MeshAccessLogItemFormatSpecToDefaultBackends3TCP2Type {
+	if m == nil {
+		return MeshAccessLogItemFormatSpecToDefaultBackends3TCP2Type("")
+	}
+	return m.Type
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends3TCP2) GetOmitEmptyValues() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.OmitEmptyValues
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends3TCP2) GetPlain() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Plain
+}
+
+// #region class-body-meshaccesslogitemformatspectodefaultbackends3tcp2
+// #endregion class-body-meshaccesslogitemformatspectodefaultbackends3tcp2
+
+type MeshAccessLogItemFormatSpecToDefaultBackends3TCPType string
+
+const (
+	MeshAccessLogItemFormatSpecToDefaultBackends3TCPTypePlain MeshAccessLogItemFormatSpecToDefaultBackends3TCPType = "Plain"
+	MeshAccessLogItemFormatSpecToDefaultBackends3TCPTypeJSON  MeshAccessLogItemFormatSpecToDefaultBackends3TCPType = "Json"
+)
+
+func (e MeshAccessLogItemFormatSpecToDefaultBackends3TCPType) ToPointer() *MeshAccessLogItemFormatSpecToDefaultBackends3TCPType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemFormatSpecToDefaultBackends3TCPType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshAccessLogItemFormatSpecToDefaultBackends3TCPJSON struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+func (m MeshAccessLogItemFormatSpecToDefaultBackends3TCPJSON) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends3TCPJSON) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends3TCPJSON) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends3TCPJSON) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// #region class-body-meshaccesslogitemformatspectodefaultbackends3tcpjson
+// #endregion class-body-meshaccesslogitemformatspectodefaultbackends3tcpjson
+
+type MeshAccessLogItemFormatSpecToDefaultBackends3TCP1 struct {
+	Plain           *string                                                `json:"plain,omitempty"`
+	Type            MeshAccessLogItemFormatSpecToDefaultBackends3TCPType   `json:"type"`
+	JSON            []MeshAccessLogItemFormatSpecToDefaultBackends3TCPJSON `json:"json,omitempty"`
+	OmitEmptyValues *bool                                                  `default:"false" json:"omitEmptyValues"`
+}
+
+func (m MeshAccessLogItemFormatSpecToDefaultBackends3TCP1) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends3TCP1) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends3TCP1) GetPlain() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Plain
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends3TCP1) GetType() MeshAccessLogItemFormatSpecToDefaultBackends3TCPType {
+	if m == nil {
+		return MeshAccessLogItemFormatSpecToDefaultBackends3TCPType("")
+	}
+	return m.Type
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends3TCP1) GetJSON() []MeshAccessLogItemFormatSpecToDefaultBackends3TCPJSON {
+	if m == nil {
+		return nil
+	}
+	return m.JSON
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends3TCP1) GetOmitEmptyValues() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.OmitEmptyValues
+}
+
+// #region class-body-meshaccesslogitemformatspectodefaultbackends3tcp1
+// #endregion class-body-meshaccesslogitemformatspectodefaultbackends3tcp1
+
+type MeshAccessLogItemBackendsSpecToDefault3TCPFormatType string
+
+const (
+	MeshAccessLogItemBackendsSpecToDefault3TCPFormatTypeMeshAccessLogItemFormatSpecToDefaultBackends3TCP1 MeshAccessLogItemBackendsSpecToDefault3TCPFormatType = "MeshAccessLogItem_format_spec_to_default_backends_3_tcp_1"
+	MeshAccessLogItemBackendsSpecToDefault3TCPFormatTypeMeshAccessLogItemFormatSpecToDefaultBackends3TCP2 MeshAccessLogItemBackendsSpecToDefault3TCPFormatType = "MeshAccessLogItem_format_spec_to_default_backends_3_tcp_2"
+)
+
+// MeshAccessLogItemBackendsSpecToDefault3TCPFormat - Format of access logs. Placeholders available on
+// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+type MeshAccessLogItemBackendsSpecToDefault3TCPFormat struct {
+	MeshAccessLogItemFormatSpecToDefaultBackends3TCP1 *MeshAccessLogItemFormatSpecToDefaultBackends3TCP1 `queryParam:"inline" union:"member"`
+	MeshAccessLogItemFormatSpecToDefaultBackends3TCP2 *MeshAccessLogItemFormatSpecToDefaultBackends3TCP2 `queryParam:"inline" union:"member"`
+
+	Type MeshAccessLogItemBackendsSpecToDefault3TCPFormatType
+}
+
+func CreateMeshAccessLogItemBackendsSpecToDefault3TCPFormatMeshAccessLogItemFormatSpecToDefaultBackends3TCP1(meshAccessLogItemFormatSpecToDefaultBackends3TCP1 MeshAccessLogItemFormatSpecToDefaultBackends3TCP1) MeshAccessLogItemBackendsSpecToDefault3TCPFormat {
+	typ := MeshAccessLogItemBackendsSpecToDefault3TCPFormatTypeMeshAccessLogItemFormatSpecToDefaultBackends3TCP1
+
+	return MeshAccessLogItemBackendsSpecToDefault3TCPFormat{
+		MeshAccessLogItemFormatSpecToDefaultBackends3TCP1: &meshAccessLogItemFormatSpecToDefaultBackends3TCP1,
+		Type: typ,
+	}
+}
+
+func CreateMeshAccessLogItemBackendsSpecToDefault3TCPFormatMeshAccessLogItemFormatSpecToDefaultBackends3TCP2(meshAccessLogItemFormatSpecToDefaultBackends3TCP2 MeshAccessLogItemFormatSpecToDefaultBackends3TCP2) MeshAccessLogItemBackendsSpecToDefault3TCPFormat {
+	typ := MeshAccessLogItemBackendsSpecToDefault3TCPFormatTypeMeshAccessLogItemFormatSpecToDefaultBackends3TCP2
+
+	return MeshAccessLogItemBackendsSpecToDefault3TCPFormat{
+		MeshAccessLogItemFormatSpecToDefaultBackends3TCP2: &meshAccessLogItemFormatSpecToDefaultBackends3TCP2,
+		Type: typ,
+	}
+}
+
+func (u *MeshAccessLogItemBackendsSpecToDefault3TCPFormat) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var meshAccessLogItemFormatSpecToDefaultBackends3TCP1 MeshAccessLogItemFormatSpecToDefaultBackends3TCP1 = MeshAccessLogItemFormatSpecToDefaultBackends3TCP1{}
+	if err := utils.UnmarshalJSON(data, &meshAccessLogItemFormatSpecToDefaultBackends3TCP1, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshAccessLogItemBackendsSpecToDefault3TCPFormatTypeMeshAccessLogItemFormatSpecToDefaultBackends3TCP1,
+			Value: &meshAccessLogItemFormatSpecToDefaultBackends3TCP1,
+		})
+	}
+
+	var meshAccessLogItemFormatSpecToDefaultBackends3TCP2 MeshAccessLogItemFormatSpecToDefaultBackends3TCP2 = MeshAccessLogItemFormatSpecToDefaultBackends3TCP2{}
+	if err := utils.UnmarshalJSON(data, &meshAccessLogItemFormatSpecToDefaultBackends3TCP2, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshAccessLogItemBackendsSpecToDefault3TCPFormatTypeMeshAccessLogItemFormatSpecToDefaultBackends3TCP2,
+			Value: &meshAccessLogItemFormatSpecToDefaultBackends3TCP2,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsSpecToDefault3TCPFormat", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsSpecToDefault3TCPFormat", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(MeshAccessLogItemBackendsSpecToDefault3TCPFormatType)
+	switch best.Type {
+	case MeshAccessLogItemBackendsSpecToDefault3TCPFormatTypeMeshAccessLogItemFormatSpecToDefaultBackends3TCP1:
+		u.MeshAccessLogItemFormatSpecToDefaultBackends3TCP1 = best.Value.(*MeshAccessLogItemFormatSpecToDefaultBackends3TCP1)
+		return nil
+	case MeshAccessLogItemBackendsSpecToDefault3TCPFormatTypeMeshAccessLogItemFormatSpecToDefaultBackends3TCP2:
+		u.MeshAccessLogItemFormatSpecToDefaultBackends3TCP2 = best.Value.(*MeshAccessLogItemFormatSpecToDefaultBackends3TCP2)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsSpecToDefault3TCPFormat", string(data))
+}
+
+func (u MeshAccessLogItemBackendsSpecToDefault3TCPFormat) MarshalJSON() ([]byte, error) {
+	if u.MeshAccessLogItemFormatSpecToDefaultBackends3TCP1 != nil {
+		return utils.MarshalJSON(u.MeshAccessLogItemFormatSpecToDefaultBackends3TCP1, "", true)
+	}
+
+	if u.MeshAccessLogItemFormatSpecToDefaultBackends3TCP2 != nil {
+		return utils.MarshalJSON(u.MeshAccessLogItemFormatSpecToDefaultBackends3TCP2, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type MeshAccessLogItemBackendsSpecToDefault3TCPFormat: all fields are null")
+}
+
+// MeshAccessLogItemBackendsSpecToDefaultTCP - TCPBackend defines a TCP logging backend.
+type MeshAccessLogItemBackendsSpecToDefaultTCP struct {
+	// Address of the TCP logging backend
+	Address string `json:"address"`
+	// Format of access logs. Placeholders available on
+	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+	Format *MeshAccessLogItemBackendsSpecToDefault3TCPFormat `json:"format,omitempty"`
+}
+
+func (m MeshAccessLogItemBackendsSpecToDefaultTCP) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemBackendsSpecToDefaultTCP) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemBackendsSpecToDefaultTCP) GetAddress() string {
+	if m == nil {
+		return ""
+	}
+	return m.Address
+}
+
+func (m *MeshAccessLogItemBackendsSpecToDefaultTCP) GetFormat() *MeshAccessLogItemBackendsSpecToDefault3TCPFormat {
+	if m == nil {
+		return nil
+	}
+	return m.Format
+}
+
+type MeshAccessLogItemBackendsSpec3 struct {
+	// Defines an OpenTelemetry logging backend.
+	OpenTelemetry *MeshAccessLogItemBackendsSpecToDefaultOpenTelemetry `json:"openTelemetry,omitempty"`
+	Type          MeshAccessLogItemBackendsSpecToDefault3Type          `json:"type"`
+	// FileBackend defines configuration for file based access logs
+	File *MeshAccessLogItemBackendsSpecToDefaultFile `json:"file,omitempty"`
+	// TCPBackend defines a TCP logging backend.
+	TCP *MeshAccessLogItemBackendsSpecToDefaultTCP `json:"tcp,omitempty"`
+}
+
+func (m MeshAccessLogItemBackendsSpec3) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemBackendsSpec3) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemBackendsSpec3) GetOpenTelemetry() *MeshAccessLogItemBackendsSpecToDefaultOpenTelemetry {
 	if m == nil {
 		return nil
 	}
 	return m.OpenTelemetry
 }
 
-func (m *MeshAccessLogItemSpecBackends) GetTCP() *MeshAccessLogItemSpecTCP {
+func (m *MeshAccessLogItemBackendsSpec3) GetType() MeshAccessLogItemBackendsSpecToDefault3Type {
+	if m == nil {
+		return MeshAccessLogItemBackendsSpecToDefault3Type("")
+	}
+	return m.Type
+}
+
+func (m *MeshAccessLogItemBackendsSpec3) GetFile() *MeshAccessLogItemBackendsSpecToDefaultFile {
+	if m == nil {
+		return nil
+	}
+	return m.File
+}
+
+func (m *MeshAccessLogItemBackendsSpec3) GetTCP() *MeshAccessLogItemBackendsSpecToDefaultTCP {
 	if m == nil {
 		return nil
 	}
 	return m.TCP
 }
 
-func (m *MeshAccessLogItemSpecBackends) GetType() MeshAccessLogItemSpecToType {
+// #region class-body-meshaccesslogitembackendsspec3
+// #endregion class-body-meshaccesslogitembackendsspec3
+
+type MeshAccessLogItemFormatSpecToDefaultBackends2FileJSON struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+func (m MeshAccessLogItemFormatSpecToDefaultBackends2FileJSON) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends2FileJSON) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends2FileJSON) GetKey() string {
 	if m == nil {
-		return MeshAccessLogItemSpecToType("")
+		return ""
+	}
+	return m.Key
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends2FileJSON) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// #region class-body-meshaccesslogitemformatspectodefaultbackends2filejson
+// #endregion class-body-meshaccesslogitemformatspectodefaultbackends2filejson
+
+type MeshAccessLogItemFormatSpecToDefaultBackends2FileType string
+
+const (
+	MeshAccessLogItemFormatSpecToDefaultBackends2FileTypePlain MeshAccessLogItemFormatSpecToDefaultBackends2FileType = "Plain"
+	MeshAccessLogItemFormatSpecToDefaultBackends2FileTypeJSON  MeshAccessLogItemFormatSpecToDefaultBackends2FileType = "Json"
+)
+
+func (e MeshAccessLogItemFormatSpecToDefaultBackends2FileType) ToPointer() *MeshAccessLogItemFormatSpecToDefaultBackends2FileType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemFormatSpecToDefaultBackends2FileType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshAccessLogItemFormatSpecToDefaultBackends2 struct {
+	JSON            []MeshAccessLogItemFormatSpecToDefaultBackends2FileJSON `json:"json,omitempty"`
+	Type            MeshAccessLogItemFormatSpecToDefaultBackends2FileType   `json:"type"`
+	OmitEmptyValues *bool                                                   `default:"false" json:"omitEmptyValues"`
+	Plain           *string                                                 `json:"plain,omitempty"`
+}
+
+func (m MeshAccessLogItemFormatSpecToDefaultBackends2) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends2) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends2) GetJSON() []MeshAccessLogItemFormatSpecToDefaultBackends2FileJSON {
+	if m == nil {
+		return nil
+	}
+	return m.JSON
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends2) GetType() MeshAccessLogItemFormatSpecToDefaultBackends2FileType {
+	if m == nil {
+		return MeshAccessLogItemFormatSpecToDefaultBackends2FileType("")
 	}
 	return m.Type
 }
 
-// MeshAccessLogItemSpecDefault - Default is a configuration specific to the group of destinations referenced in
-// 'targetRef'
-type MeshAccessLogItemSpecDefault struct {
-	Backends []MeshAccessLogItemSpecBackends `json:"backends,omitempty"`
-}
-
-func (m *MeshAccessLogItemSpecDefault) GetBackends() []MeshAccessLogItemSpecBackends {
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends2) GetOmitEmptyValues() *bool {
 	if m == nil {
 		return nil
 	}
-	return m.Backends
+	return m.OmitEmptyValues
 }
 
-// MeshAccessLogItemSpecKind - Kind of the referenced resource
-type MeshAccessLogItemSpecKind string
-
-const (
-	MeshAccessLogItemSpecKindMesh                 MeshAccessLogItemSpecKind = "Mesh"
-	MeshAccessLogItemSpecKindMeshSubset           MeshAccessLogItemSpecKind = "MeshSubset"
-	MeshAccessLogItemSpecKindMeshGateway          MeshAccessLogItemSpecKind = "MeshGateway"
-	MeshAccessLogItemSpecKindMeshService          MeshAccessLogItemSpecKind = "MeshService"
-	MeshAccessLogItemSpecKindMeshExternalService  MeshAccessLogItemSpecKind = "MeshExternalService"
-	MeshAccessLogItemSpecKindMeshMultiZoneService MeshAccessLogItemSpecKind = "MeshMultiZoneService"
-	MeshAccessLogItemSpecKindMeshServiceSubset    MeshAccessLogItemSpecKind = "MeshServiceSubset"
-	MeshAccessLogItemSpecKindMeshHTTPRoute        MeshAccessLogItemSpecKind = "MeshHTTPRoute"
-	MeshAccessLogItemSpecKindDataplane            MeshAccessLogItemSpecKind = "Dataplane"
-)
-
-func (e MeshAccessLogItemSpecKind) ToPointer() *MeshAccessLogItemSpecKind {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshAccessLogItemSpecKind) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshAccessLogItemSpecProxyTypes string
-
-const (
-	MeshAccessLogItemSpecProxyTypesSidecar MeshAccessLogItemSpecProxyTypes = "Sidecar"
-	MeshAccessLogItemSpecProxyTypesGateway MeshAccessLogItemSpecProxyTypes = "Gateway"
-)
-
-func (e MeshAccessLogItemSpecProxyTypes) ToPointer() *MeshAccessLogItemSpecProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshAccessLogItemSpecProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshAccessLogItemSpecTargetRef - TargetRef is a reference to the resource that represents a group of
-// destinations.
-type MeshAccessLogItemSpecTargetRef struct {
-	// Kind of the referenced resource
-	Kind MeshAccessLogItemSpecKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
-	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshAccessLogItemSpecProxyTypes `json:"proxyTypes,omitempty"`
-	// SectionName is used to target specific section of resource.
-	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
-}
-
-func (m *MeshAccessLogItemSpecTargetRef) GetKind() MeshAccessLogItemSpecKind {
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends2) GetPlain() *string {
 	if m == nil {
-		return MeshAccessLogItemSpecKind("")
+		return nil
+	}
+	return m.Plain
+}
+
+// #region class-body-meshaccesslogitemformatspectodefaultbackends2
+// #endregion class-body-meshaccesslogitemformatspectodefaultbackends2
+
+type MeshAccessLogItemFormatSpecToDefaultBackends2Type string
+
+const (
+	MeshAccessLogItemFormatSpecToDefaultBackends2TypePlain MeshAccessLogItemFormatSpecToDefaultBackends2Type = "Plain"
+	MeshAccessLogItemFormatSpecToDefaultBackends2TypeJSON  MeshAccessLogItemFormatSpecToDefaultBackends2Type = "Json"
+)
+
+func (e MeshAccessLogItemFormatSpecToDefaultBackends2Type) ToPointer() *MeshAccessLogItemFormatSpecToDefaultBackends2Type {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemFormatSpecToDefaultBackends2Type) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshAccessLogItemFormatSpecToDefaultBackends2JSON struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+func (m MeshAccessLogItemFormatSpecToDefaultBackends2JSON) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends2JSON) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends2JSON) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends2JSON) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// #region class-body-meshaccesslogitemformatspectodefaultbackends2json
+// #endregion class-body-meshaccesslogitemformatspectodefaultbackends2json
+
+type MeshAccessLogItemFormatSpecToDefaultBackends1 struct {
+	Plain           *string                                             `json:"plain,omitempty"`
+	Type            MeshAccessLogItemFormatSpecToDefaultBackends2Type   `json:"type"`
+	JSON            []MeshAccessLogItemFormatSpecToDefaultBackends2JSON `json:"json,omitempty"`
+	OmitEmptyValues *bool                                               `default:"false" json:"omitEmptyValues"`
+}
+
+func (m MeshAccessLogItemFormatSpecToDefaultBackends1) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends1) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends1) GetPlain() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Plain
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends1) GetType() MeshAccessLogItemFormatSpecToDefaultBackends2Type {
+	if m == nil {
+		return MeshAccessLogItemFormatSpecToDefaultBackends2Type("")
+	}
+	return m.Type
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends1) GetJSON() []MeshAccessLogItemFormatSpecToDefaultBackends2JSON {
+	if m == nil {
+		return nil
+	}
+	return m.JSON
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends1) GetOmitEmptyValues() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.OmitEmptyValues
+}
+
+// #region class-body-meshaccesslogitemformatspectodefaultbackends1
+// #endregion class-body-meshaccesslogitemformatspectodefaultbackends1
+
+type MeshAccessLogItemBackendsSpecToDefault2FormatType string
+
+const (
+	MeshAccessLogItemBackendsSpecToDefault2FormatTypeMeshAccessLogItemFormatSpecToDefaultBackends1 MeshAccessLogItemBackendsSpecToDefault2FormatType = "MeshAccessLogItem_format_spec_to_default_backends_1"
+	MeshAccessLogItemBackendsSpecToDefault2FormatTypeMeshAccessLogItemFormatSpecToDefaultBackends2 MeshAccessLogItemBackendsSpecToDefault2FormatType = "MeshAccessLogItem_format_spec_to_default_backends_2"
+)
+
+// MeshAccessLogItemBackendsSpecToDefault2Format - Format of access logs. Placeholders available on
+// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+type MeshAccessLogItemBackendsSpecToDefault2Format struct {
+	MeshAccessLogItemFormatSpecToDefaultBackends1 *MeshAccessLogItemFormatSpecToDefaultBackends1 `queryParam:"inline" union:"member"`
+	MeshAccessLogItemFormatSpecToDefaultBackends2 *MeshAccessLogItemFormatSpecToDefaultBackends2 `queryParam:"inline" union:"member"`
+
+	Type MeshAccessLogItemBackendsSpecToDefault2FormatType
+}
+
+func CreateMeshAccessLogItemBackendsSpecToDefault2FormatMeshAccessLogItemFormatSpecToDefaultBackends1(meshAccessLogItemFormatSpecToDefaultBackends1 MeshAccessLogItemFormatSpecToDefaultBackends1) MeshAccessLogItemBackendsSpecToDefault2Format {
+	typ := MeshAccessLogItemBackendsSpecToDefault2FormatTypeMeshAccessLogItemFormatSpecToDefaultBackends1
+
+	return MeshAccessLogItemBackendsSpecToDefault2Format{
+		MeshAccessLogItemFormatSpecToDefaultBackends1: &meshAccessLogItemFormatSpecToDefaultBackends1,
+		Type: typ,
+	}
+}
+
+func CreateMeshAccessLogItemBackendsSpecToDefault2FormatMeshAccessLogItemFormatSpecToDefaultBackends2(meshAccessLogItemFormatSpecToDefaultBackends2 MeshAccessLogItemFormatSpecToDefaultBackends2) MeshAccessLogItemBackendsSpecToDefault2Format {
+	typ := MeshAccessLogItemBackendsSpecToDefault2FormatTypeMeshAccessLogItemFormatSpecToDefaultBackends2
+
+	return MeshAccessLogItemBackendsSpecToDefault2Format{
+		MeshAccessLogItemFormatSpecToDefaultBackends2: &meshAccessLogItemFormatSpecToDefaultBackends2,
+		Type: typ,
+	}
+}
+
+func (u *MeshAccessLogItemBackendsSpecToDefault2Format) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var meshAccessLogItemFormatSpecToDefaultBackends1 MeshAccessLogItemFormatSpecToDefaultBackends1 = MeshAccessLogItemFormatSpecToDefaultBackends1{}
+	if err := utils.UnmarshalJSON(data, &meshAccessLogItemFormatSpecToDefaultBackends1, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshAccessLogItemBackendsSpecToDefault2FormatTypeMeshAccessLogItemFormatSpecToDefaultBackends1,
+			Value: &meshAccessLogItemFormatSpecToDefaultBackends1,
+		})
+	}
+
+	var meshAccessLogItemFormatSpecToDefaultBackends2 MeshAccessLogItemFormatSpecToDefaultBackends2 = MeshAccessLogItemFormatSpecToDefaultBackends2{}
+	if err := utils.UnmarshalJSON(data, &meshAccessLogItemFormatSpecToDefaultBackends2, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshAccessLogItemBackendsSpecToDefault2FormatTypeMeshAccessLogItemFormatSpecToDefaultBackends2,
+			Value: &meshAccessLogItemFormatSpecToDefaultBackends2,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsSpecToDefault2Format", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsSpecToDefault2Format", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(MeshAccessLogItemBackendsSpecToDefault2FormatType)
+	switch best.Type {
+	case MeshAccessLogItemBackendsSpecToDefault2FormatTypeMeshAccessLogItemFormatSpecToDefaultBackends1:
+		u.MeshAccessLogItemFormatSpecToDefaultBackends1 = best.Value.(*MeshAccessLogItemFormatSpecToDefaultBackends1)
+		return nil
+	case MeshAccessLogItemBackendsSpecToDefault2FormatTypeMeshAccessLogItemFormatSpecToDefaultBackends2:
+		u.MeshAccessLogItemFormatSpecToDefaultBackends2 = best.Value.(*MeshAccessLogItemFormatSpecToDefaultBackends2)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsSpecToDefault2Format", string(data))
+}
+
+func (u MeshAccessLogItemBackendsSpecToDefault2Format) MarshalJSON() ([]byte, error) {
+	if u.MeshAccessLogItemFormatSpecToDefaultBackends1 != nil {
+		return utils.MarshalJSON(u.MeshAccessLogItemFormatSpecToDefaultBackends1, "", true)
+	}
+
+	if u.MeshAccessLogItemFormatSpecToDefaultBackends2 != nil {
+		return utils.MarshalJSON(u.MeshAccessLogItemFormatSpecToDefaultBackends2, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type MeshAccessLogItemBackendsSpecToDefault2Format: all fields are null")
+}
+
+// MeshAccessLogItemBackendsSpecToFile - FileBackend defines configuration for file based access logs
+type MeshAccessLogItemBackendsSpecToFile struct {
+	// Format of access logs. Placeholders available on
+	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+	Format *MeshAccessLogItemBackendsSpecToDefault2Format `json:"format,omitempty"`
+	// Path to a file that logs will be written to
+	Path string `json:"path"`
+}
+
+func (m MeshAccessLogItemBackendsSpecToFile) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemBackendsSpecToFile) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemBackendsSpecToFile) GetFormat() *MeshAccessLogItemBackendsSpecToDefault2Format {
+	if m == nil {
+		return nil
+	}
+	return m.Format
+}
+
+func (m *MeshAccessLogItemBackendsSpecToFile) GetPath() string {
+	if m == nil {
+		return ""
+	}
+	return m.Path
+}
+
+type MeshAccessLogItemBackendsSpecToDefaultType string
+
+const (
+	MeshAccessLogItemBackendsSpecToDefaultTypeTCP           MeshAccessLogItemBackendsSpecToDefaultType = "Tcp"
+	MeshAccessLogItemBackendsSpecToDefaultTypeFile          MeshAccessLogItemBackendsSpecToDefaultType = "File"
+	MeshAccessLogItemBackendsSpecToDefaultTypeOpenTelemetry MeshAccessLogItemBackendsSpecToDefaultType = "OpenTelemetry"
+)
+
+func (e MeshAccessLogItemBackendsSpecToDefaultType) ToPointer() *MeshAccessLogItemBackendsSpecToDefaultType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemBackendsSpecToDefaultType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Tcp", "File", "OpenTelemetry":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshAccessLogItemBackendsSpecToAttributes struct {
+	// Key is the OpenTelemetry attribute name.
+	Key string `json:"key"`
+	// Value can contain Kuma placeholders.
+	Value string `json:"value"`
+}
+
+func (m MeshAccessLogItemBackendsSpecToAttributes) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemBackendsSpecToAttributes) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemBackendsSpecToAttributes) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+func (m *MeshAccessLogItemBackendsSpecToAttributes) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// MeshAccessLogItemBackendsSpecToDefaultKind - Kind of the backend resource.
+type MeshAccessLogItemBackendsSpecToDefaultKind string
+
+const (
+	MeshAccessLogItemBackendsSpecToDefaultKindMeshOpenTelemetryBackend MeshAccessLogItemBackendsSpecToDefaultKind = "MeshOpenTelemetryBackend"
+)
+
+func (e MeshAccessLogItemBackendsSpecToDefaultKind) ToPointer() *MeshAccessLogItemBackendsSpecToDefaultKind {
+	return &e
+}
+func (e *MeshAccessLogItemBackendsSpecToDefaultKind) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "MeshOpenTelemetryBackend":
+		*e = MeshAccessLogItemBackendsSpecToDefaultKind(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshAccessLogItemBackendsSpecToDefaultKind: %v", v)
+	}
+}
+
+// MeshAccessLogItemBackendsSpecToBackendRef - BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+// defines the collector endpoint.
+type MeshAccessLogItemBackendsSpecToBackendRef struct {
+	// Kind of the backend resource.
+	Kind MeshAccessLogItemBackendsSpecToDefaultKind `json:"kind"`
+	// Labels to match the referenced resource. When multiple resources match,
+	// the oldest by creation time wins.
+	Labels map[string]string `json:"labels,omitempty"`
+}
+
+func (m MeshAccessLogItemBackendsSpecToBackendRef) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemBackendsSpecToBackendRef) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemBackendsSpecToBackendRef) GetKind() MeshAccessLogItemBackendsSpecToDefaultKind {
+	if m == nil {
+		return MeshAccessLogItemBackendsSpecToDefaultKind("")
 	}
 	return m.Kind
 }
 
-func (m *MeshAccessLogItemSpecTargetRef) GetLabels() map[string]string {
+func (m *MeshAccessLogItemBackendsSpecToBackendRef) GetLabels() map[string]string {
 	if m == nil {
 		return nil
 	}
 	return m.Labels
 }
 
-func (m *MeshAccessLogItemSpecTargetRef) GetMesh() *string {
+// MeshAccessLogItemBackendsSpecToOpenTelemetry - Defines an OpenTelemetry logging backend.
+type MeshAccessLogItemBackendsSpecToOpenTelemetry struct {
+	// Attributes defines custom OpenTelemetry attributes. Keys must be static
+	// OpenTelemetry attribute names. Values can contain placeholders available on
+	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+	Attributes []MeshAccessLogItemBackendsSpecToAttributes `json:"attributes,omitempty"`
+	// BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+	// defines the collector endpoint.
+	BackendRef *MeshAccessLogItemBackendsSpecToBackendRef `json:"backendRef,omitempty"`
+	// Body is a raw string or an OTLP any value as described at
+	// https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body
+	// It can contain placeholders available on
+	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+	Body any `json:"body,omitempty"`
+}
+
+func (m MeshAccessLogItemBackendsSpecToOpenTelemetry) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemBackendsSpecToOpenTelemetry) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemBackendsSpecToOpenTelemetry) GetAttributes() []MeshAccessLogItemBackendsSpecToAttributes {
 	if m == nil {
 		return nil
 	}
-	return m.Mesh
+	return m.Attributes
 }
 
-func (m *MeshAccessLogItemSpecTargetRef) GetName() *string {
+func (m *MeshAccessLogItemBackendsSpecToOpenTelemetry) GetBackendRef() *MeshAccessLogItemBackendsSpecToBackendRef {
 	if m == nil {
 		return nil
 	}
-	return m.Name
+	return m.BackendRef
 }
 
-func (m *MeshAccessLogItemSpecTargetRef) GetNamespace() *string {
+func (m *MeshAccessLogItemBackendsSpecToOpenTelemetry) GetBody() any {
 	if m == nil {
 		return nil
 	}
-	return m.Namespace
+	return m.Body
 }
 
-func (m *MeshAccessLogItemSpecTargetRef) GetProxyTypes() []MeshAccessLogItemSpecProxyTypes {
+type MeshAccessLogItemFormatSpecToDefaultBackends2TCP2JSON struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+func (m MeshAccessLogItemFormatSpecToDefaultBackends2TCP2JSON) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends2TCP2JSON) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends2TCP2JSON) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends2TCP2JSON) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// #region class-body-meshaccesslogitemformatspectodefaultbackends2tcp2json
+// #endregion class-body-meshaccesslogitemformatspectodefaultbackends2tcp2json
+
+type MeshAccessLogItemFormatSpecToDefaultBackends2TCP2Type string
+
+const (
+	MeshAccessLogItemFormatSpecToDefaultBackends2TCP2TypePlain MeshAccessLogItemFormatSpecToDefaultBackends2TCP2Type = "Plain"
+	MeshAccessLogItemFormatSpecToDefaultBackends2TCP2TypeJSON  MeshAccessLogItemFormatSpecToDefaultBackends2TCP2Type = "Json"
+)
+
+func (e MeshAccessLogItemFormatSpecToDefaultBackends2TCP2Type) ToPointer() *MeshAccessLogItemFormatSpecToDefaultBackends2TCP2Type {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemFormatSpecToDefaultBackends2TCP2Type) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshAccessLogItemFormatSpecToDefaultBackends22 struct {
+	JSON            []MeshAccessLogItemFormatSpecToDefaultBackends2TCP2JSON `json:"json,omitempty"`
+	Type            MeshAccessLogItemFormatSpecToDefaultBackends2TCP2Type   `json:"type"`
+	OmitEmptyValues *bool                                                   `default:"false" json:"omitEmptyValues"`
+	Plain           *string                                                 `json:"plain,omitempty"`
+}
+
+func (m MeshAccessLogItemFormatSpecToDefaultBackends22) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends22) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends22) GetJSON() []MeshAccessLogItemFormatSpecToDefaultBackends2TCP2JSON {
 	if m == nil {
 		return nil
 	}
-	return m.ProxyTypes
+	return m.JSON
 }
 
-func (m *MeshAccessLogItemSpecTargetRef) GetSectionName() *string {
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends22) GetType() MeshAccessLogItemFormatSpecToDefaultBackends2TCP2Type {
+	if m == nil {
+		return MeshAccessLogItemFormatSpecToDefaultBackends2TCP2Type("")
+	}
+	return m.Type
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends22) GetOmitEmptyValues() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.OmitEmptyValues
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends22) GetPlain() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Plain
+}
+
+// #region class-body-meshaccesslogitemformatspectodefaultbackends22
+// #endregion class-body-meshaccesslogitemformatspectodefaultbackends22
+
+type MeshAccessLogItemFormatSpecToDefaultBackends2TCPType string
+
+const (
+	MeshAccessLogItemFormatSpecToDefaultBackends2TCPTypePlain MeshAccessLogItemFormatSpecToDefaultBackends2TCPType = "Plain"
+	MeshAccessLogItemFormatSpecToDefaultBackends2TCPTypeJSON  MeshAccessLogItemFormatSpecToDefaultBackends2TCPType = "Json"
+)
+
+func (e MeshAccessLogItemFormatSpecToDefaultBackends2TCPType) ToPointer() *MeshAccessLogItemFormatSpecToDefaultBackends2TCPType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemFormatSpecToDefaultBackends2TCPType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshAccessLogItemFormatSpecToDefaultBackends2TCPJSON struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+func (m MeshAccessLogItemFormatSpecToDefaultBackends2TCPJSON) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends2TCPJSON) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends2TCPJSON) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends2TCPJSON) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// #region class-body-meshaccesslogitemformatspectodefaultbackends2tcpjson
+// #endregion class-body-meshaccesslogitemformatspectodefaultbackends2tcpjson
+
+type MeshAccessLogItemFormatSpecToDefaultBackends21 struct {
+	Plain           *string                                                `json:"plain,omitempty"`
+	Type            MeshAccessLogItemFormatSpecToDefaultBackends2TCPType   `json:"type"`
+	JSON            []MeshAccessLogItemFormatSpecToDefaultBackends2TCPJSON `json:"json,omitempty"`
+	OmitEmptyValues *bool                                                  `default:"false" json:"omitEmptyValues"`
+}
+
+func (m MeshAccessLogItemFormatSpecToDefaultBackends21) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends21) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends21) GetPlain() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Plain
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends21) GetType() MeshAccessLogItemFormatSpecToDefaultBackends2TCPType {
+	if m == nil {
+		return MeshAccessLogItemFormatSpecToDefaultBackends2TCPType("")
+	}
+	return m.Type
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends21) GetJSON() []MeshAccessLogItemFormatSpecToDefaultBackends2TCPJSON {
+	if m == nil {
+		return nil
+	}
+	return m.JSON
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends21) GetOmitEmptyValues() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.OmitEmptyValues
+}
+
+// #region class-body-meshaccesslogitemformatspectodefaultbackends21
+// #endregion class-body-meshaccesslogitemformatspectodefaultbackends21
+
+type MeshAccessLogItemBackendsSpecToDefault2TCPFormatType string
+
+const (
+	MeshAccessLogItemBackendsSpecToDefault2TCPFormatTypeMeshAccessLogItemFormatSpecToDefaultBackends21 MeshAccessLogItemBackendsSpecToDefault2TCPFormatType = "MeshAccessLogItem_format_spec_to_default_backends_2_1"
+	MeshAccessLogItemBackendsSpecToDefault2TCPFormatTypeMeshAccessLogItemFormatSpecToDefaultBackends22 MeshAccessLogItemBackendsSpecToDefault2TCPFormatType = "MeshAccessLogItem_format_spec_to_default_backends_2_2"
+)
+
+// MeshAccessLogItemBackendsSpecToDefault2TCPFormat - Format of access logs. Placeholders available on
+// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+type MeshAccessLogItemBackendsSpecToDefault2TCPFormat struct {
+	MeshAccessLogItemFormatSpecToDefaultBackends21 *MeshAccessLogItemFormatSpecToDefaultBackends21 `queryParam:"inline" union:"member"`
+	MeshAccessLogItemFormatSpecToDefaultBackends22 *MeshAccessLogItemFormatSpecToDefaultBackends22 `queryParam:"inline" union:"member"`
+
+	Type MeshAccessLogItemBackendsSpecToDefault2TCPFormatType
+}
+
+func CreateMeshAccessLogItemBackendsSpecToDefault2TCPFormatMeshAccessLogItemFormatSpecToDefaultBackends21(meshAccessLogItemFormatSpecToDefaultBackends21 MeshAccessLogItemFormatSpecToDefaultBackends21) MeshAccessLogItemBackendsSpecToDefault2TCPFormat {
+	typ := MeshAccessLogItemBackendsSpecToDefault2TCPFormatTypeMeshAccessLogItemFormatSpecToDefaultBackends21
+
+	return MeshAccessLogItemBackendsSpecToDefault2TCPFormat{
+		MeshAccessLogItemFormatSpecToDefaultBackends21: &meshAccessLogItemFormatSpecToDefaultBackends21,
+		Type: typ,
+	}
+}
+
+func CreateMeshAccessLogItemBackendsSpecToDefault2TCPFormatMeshAccessLogItemFormatSpecToDefaultBackends22(meshAccessLogItemFormatSpecToDefaultBackends22 MeshAccessLogItemFormatSpecToDefaultBackends22) MeshAccessLogItemBackendsSpecToDefault2TCPFormat {
+	typ := MeshAccessLogItemBackendsSpecToDefault2TCPFormatTypeMeshAccessLogItemFormatSpecToDefaultBackends22
+
+	return MeshAccessLogItemBackendsSpecToDefault2TCPFormat{
+		MeshAccessLogItemFormatSpecToDefaultBackends22: &meshAccessLogItemFormatSpecToDefaultBackends22,
+		Type: typ,
+	}
+}
+
+func (u *MeshAccessLogItemBackendsSpecToDefault2TCPFormat) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var meshAccessLogItemFormatSpecToDefaultBackends21 MeshAccessLogItemFormatSpecToDefaultBackends21 = MeshAccessLogItemFormatSpecToDefaultBackends21{}
+	if err := utils.UnmarshalJSON(data, &meshAccessLogItemFormatSpecToDefaultBackends21, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshAccessLogItemBackendsSpecToDefault2TCPFormatTypeMeshAccessLogItemFormatSpecToDefaultBackends21,
+			Value: &meshAccessLogItemFormatSpecToDefaultBackends21,
+		})
+	}
+
+	var meshAccessLogItemFormatSpecToDefaultBackends22 MeshAccessLogItemFormatSpecToDefaultBackends22 = MeshAccessLogItemFormatSpecToDefaultBackends22{}
+	if err := utils.UnmarshalJSON(data, &meshAccessLogItemFormatSpecToDefaultBackends22, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshAccessLogItemBackendsSpecToDefault2TCPFormatTypeMeshAccessLogItemFormatSpecToDefaultBackends22,
+			Value: &meshAccessLogItemFormatSpecToDefaultBackends22,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsSpecToDefault2TCPFormat", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsSpecToDefault2TCPFormat", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(MeshAccessLogItemBackendsSpecToDefault2TCPFormatType)
+	switch best.Type {
+	case MeshAccessLogItemBackendsSpecToDefault2TCPFormatTypeMeshAccessLogItemFormatSpecToDefaultBackends21:
+		u.MeshAccessLogItemFormatSpecToDefaultBackends21 = best.Value.(*MeshAccessLogItemFormatSpecToDefaultBackends21)
+		return nil
+	case MeshAccessLogItemBackendsSpecToDefault2TCPFormatTypeMeshAccessLogItemFormatSpecToDefaultBackends22:
+		u.MeshAccessLogItemFormatSpecToDefaultBackends22 = best.Value.(*MeshAccessLogItemFormatSpecToDefaultBackends22)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsSpecToDefault2TCPFormat", string(data))
+}
+
+func (u MeshAccessLogItemBackendsSpecToDefault2TCPFormat) MarshalJSON() ([]byte, error) {
+	if u.MeshAccessLogItemFormatSpecToDefaultBackends21 != nil {
+		return utils.MarshalJSON(u.MeshAccessLogItemFormatSpecToDefaultBackends21, "", true)
+	}
+
+	if u.MeshAccessLogItemFormatSpecToDefaultBackends22 != nil {
+		return utils.MarshalJSON(u.MeshAccessLogItemFormatSpecToDefaultBackends22, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type MeshAccessLogItemBackendsSpecToDefault2TCPFormat: all fields are null")
+}
+
+// MeshAccessLogItemBackendsSpecToTCP - TCPBackend defines a TCP logging backend.
+type MeshAccessLogItemBackendsSpecToTCP struct {
+	// Address of the TCP logging backend
+	Address string `json:"address"`
+	// Format of access logs. Placeholders available on
+	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+	Format *MeshAccessLogItemBackendsSpecToDefault2TCPFormat `json:"format,omitempty"`
+}
+
+func (m MeshAccessLogItemBackendsSpecToTCP) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemBackendsSpecToTCP) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemBackendsSpecToTCP) GetAddress() string {
+	if m == nil {
+		return ""
+	}
+	return m.Address
+}
+
+func (m *MeshAccessLogItemBackendsSpecToTCP) GetFormat() *MeshAccessLogItemBackendsSpecToDefault2TCPFormat {
+	if m == nil {
+		return nil
+	}
+	return m.Format
+}
+
+type MeshAccessLogItemBackendsSpec2 struct {
+	// FileBackend defines configuration for file based access logs
+	File *MeshAccessLogItemBackendsSpecToFile       `json:"file,omitempty"`
+	Type MeshAccessLogItemBackendsSpecToDefaultType `json:"type"`
+	// Defines an OpenTelemetry logging backend.
+	OpenTelemetry *MeshAccessLogItemBackendsSpecToOpenTelemetry `json:"openTelemetry,omitempty"`
+	// TCPBackend defines a TCP logging backend.
+	TCP *MeshAccessLogItemBackendsSpecToTCP `json:"tcp,omitempty"`
+}
+
+func (m MeshAccessLogItemBackendsSpec2) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemBackendsSpec2) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemBackendsSpec2) GetFile() *MeshAccessLogItemBackendsSpecToFile {
+	if m == nil {
+		return nil
+	}
+	return m.File
+}
+
+func (m *MeshAccessLogItemBackendsSpec2) GetType() MeshAccessLogItemBackendsSpecToDefaultType {
+	if m == nil {
+		return MeshAccessLogItemBackendsSpecToDefaultType("")
+	}
+	return m.Type
+}
+
+func (m *MeshAccessLogItemBackendsSpec2) GetOpenTelemetry() *MeshAccessLogItemBackendsSpecToOpenTelemetry {
+	if m == nil {
+		return nil
+	}
+	return m.OpenTelemetry
+}
+
+func (m *MeshAccessLogItemBackendsSpec2) GetTCP() *MeshAccessLogItemBackendsSpecToTCP {
+	if m == nil {
+		return nil
+	}
+	return m.TCP
+}
+
+// #region class-body-meshaccesslogitembackendsspec2
+// #endregion class-body-meshaccesslogitembackendsspec2
+
+type MeshAccessLogItemFormatSpecToDefaultJSON struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+func (m MeshAccessLogItemFormatSpecToDefaultJSON) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultJSON) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultJSON) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultJSON) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+type MeshAccessLogItemFormatSpecToDefaultType string
+
+const (
+	MeshAccessLogItemFormatSpecToDefaultTypePlain MeshAccessLogItemFormatSpecToDefaultType = "Plain"
+	MeshAccessLogItemFormatSpecToDefaultTypeJSON  MeshAccessLogItemFormatSpecToDefaultType = "Json"
+)
+
+func (e MeshAccessLogItemFormatSpecToDefaultType) ToPointer() *MeshAccessLogItemFormatSpecToDefaultType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemFormatSpecToDefaultType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshAccessLogItemFormatSpecTo2 struct {
+	JSON            []MeshAccessLogItemFormatSpecToDefaultJSON `json:"json,omitempty"`
+	Type            MeshAccessLogItemFormatSpecToDefaultType   `json:"type"`
+	OmitEmptyValues *bool                                      `default:"false" json:"omitEmptyValues"`
+	Plain           *string                                    `json:"plain,omitempty"`
+}
+
+func (m MeshAccessLogItemFormatSpecTo2) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecTo2) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecTo2) GetJSON() []MeshAccessLogItemFormatSpecToDefaultJSON {
+	if m == nil {
+		return nil
+	}
+	return m.JSON
+}
+
+func (m *MeshAccessLogItemFormatSpecTo2) GetType() MeshAccessLogItemFormatSpecToDefaultType {
+	if m == nil {
+		return MeshAccessLogItemFormatSpecToDefaultType("")
+	}
+	return m.Type
+}
+
+func (m *MeshAccessLogItemFormatSpecTo2) GetOmitEmptyValues() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.OmitEmptyValues
+}
+
+func (m *MeshAccessLogItemFormatSpecTo2) GetPlain() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Plain
+}
+
+// #region class-body-meshaccesslogitemformatspecto2
+// #endregion class-body-meshaccesslogitemformatspecto2
+
+type MeshAccessLogItemFormatSpecToType string
+
+const (
+	MeshAccessLogItemFormatSpecToTypePlain MeshAccessLogItemFormatSpecToType = "Plain"
+	MeshAccessLogItemFormatSpecToTypeJSON  MeshAccessLogItemFormatSpecToType = "Json"
+)
+
+func (e MeshAccessLogItemFormatSpecToType) ToPointer() *MeshAccessLogItemFormatSpecToType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemFormatSpecToType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshAccessLogItemFormatSpecToJSON struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+func (m MeshAccessLogItemFormatSpecToJSON) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecToJSON) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecToJSON) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+func (m *MeshAccessLogItemFormatSpecToJSON) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+type MeshAccessLogItemFormatSpecTo1 struct {
+	Plain           *string                             `json:"plain,omitempty"`
+	Type            MeshAccessLogItemFormatSpecToType   `json:"type"`
+	JSON            []MeshAccessLogItemFormatSpecToJSON `json:"json,omitempty"`
+	OmitEmptyValues *bool                               `default:"false" json:"omitEmptyValues"`
+}
+
+func (m MeshAccessLogItemFormatSpecTo1) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecTo1) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecTo1) GetPlain() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Plain
+}
+
+func (m *MeshAccessLogItemFormatSpecTo1) GetType() MeshAccessLogItemFormatSpecToType {
+	if m == nil {
+		return MeshAccessLogItemFormatSpecToType("")
+	}
+	return m.Type
+}
+
+func (m *MeshAccessLogItemFormatSpecTo1) GetJSON() []MeshAccessLogItemFormatSpecToJSON {
+	if m == nil {
+		return nil
+	}
+	return m.JSON
+}
+
+func (m *MeshAccessLogItemFormatSpecTo1) GetOmitEmptyValues() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.OmitEmptyValues
+}
+
+// #region class-body-meshaccesslogitemformatspecto1
+// #endregion class-body-meshaccesslogitemformatspecto1
+
+type MeshAccessLogItemBackendsSpecToFormatType string
+
+const (
+	MeshAccessLogItemBackendsSpecToFormatTypeMeshAccessLogItemFormatSpecTo1 MeshAccessLogItemBackendsSpecToFormatType = "MeshAccessLogItem_format_spec_to_1"
+	MeshAccessLogItemBackendsSpecToFormatTypeMeshAccessLogItemFormatSpecTo2 MeshAccessLogItemBackendsSpecToFormatType = "MeshAccessLogItem_format_spec_to_2"
+)
+
+// MeshAccessLogItemBackendsSpecToFormat - Format of access logs. Placeholders available on
+// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+type MeshAccessLogItemBackendsSpecToFormat struct {
+	MeshAccessLogItemFormatSpecTo1 *MeshAccessLogItemFormatSpecTo1 `queryParam:"inline" union:"member"`
+	MeshAccessLogItemFormatSpecTo2 *MeshAccessLogItemFormatSpecTo2 `queryParam:"inline" union:"member"`
+
+	Type MeshAccessLogItemBackendsSpecToFormatType
+}
+
+func CreateMeshAccessLogItemBackendsSpecToFormatMeshAccessLogItemFormatSpecTo1(meshAccessLogItemFormatSpecTo1 MeshAccessLogItemFormatSpecTo1) MeshAccessLogItemBackendsSpecToFormat {
+	typ := MeshAccessLogItemBackendsSpecToFormatTypeMeshAccessLogItemFormatSpecTo1
+
+	return MeshAccessLogItemBackendsSpecToFormat{
+		MeshAccessLogItemFormatSpecTo1: &meshAccessLogItemFormatSpecTo1,
+		Type:                           typ,
+	}
+}
+
+func CreateMeshAccessLogItemBackendsSpecToFormatMeshAccessLogItemFormatSpecTo2(meshAccessLogItemFormatSpecTo2 MeshAccessLogItemFormatSpecTo2) MeshAccessLogItemBackendsSpecToFormat {
+	typ := MeshAccessLogItemBackendsSpecToFormatTypeMeshAccessLogItemFormatSpecTo2
+
+	return MeshAccessLogItemBackendsSpecToFormat{
+		MeshAccessLogItemFormatSpecTo2: &meshAccessLogItemFormatSpecTo2,
+		Type:                           typ,
+	}
+}
+
+func (u *MeshAccessLogItemBackendsSpecToFormat) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var meshAccessLogItemFormatSpecTo1 MeshAccessLogItemFormatSpecTo1 = MeshAccessLogItemFormatSpecTo1{}
+	if err := utils.UnmarshalJSON(data, &meshAccessLogItemFormatSpecTo1, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshAccessLogItemBackendsSpecToFormatTypeMeshAccessLogItemFormatSpecTo1,
+			Value: &meshAccessLogItemFormatSpecTo1,
+		})
+	}
+
+	var meshAccessLogItemFormatSpecTo2 MeshAccessLogItemFormatSpecTo2 = MeshAccessLogItemFormatSpecTo2{}
+	if err := utils.UnmarshalJSON(data, &meshAccessLogItemFormatSpecTo2, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshAccessLogItemBackendsSpecToFormatTypeMeshAccessLogItemFormatSpecTo2,
+			Value: &meshAccessLogItemFormatSpecTo2,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsSpecToFormat", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsSpecToFormat", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(MeshAccessLogItemBackendsSpecToFormatType)
+	switch best.Type {
+	case MeshAccessLogItemBackendsSpecToFormatTypeMeshAccessLogItemFormatSpecTo1:
+		u.MeshAccessLogItemFormatSpecTo1 = best.Value.(*MeshAccessLogItemFormatSpecTo1)
+		return nil
+	case MeshAccessLogItemBackendsSpecToFormatTypeMeshAccessLogItemFormatSpecTo2:
+		u.MeshAccessLogItemFormatSpecTo2 = best.Value.(*MeshAccessLogItemFormatSpecTo2)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsSpecToFormat", string(data))
+}
+
+func (u MeshAccessLogItemBackendsSpecToFormat) MarshalJSON() ([]byte, error) {
+	if u.MeshAccessLogItemFormatSpecTo1 != nil {
+		return utils.MarshalJSON(u.MeshAccessLogItemFormatSpecTo1, "", true)
+	}
+
+	if u.MeshAccessLogItemFormatSpecTo2 != nil {
+		return utils.MarshalJSON(u.MeshAccessLogItemFormatSpecTo2, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type MeshAccessLogItemBackendsSpecToFormat: all fields are null")
+}
+
+// MeshAccessLogItemBackendsSpecTCP - TCPBackend defines a TCP logging backend.
+type MeshAccessLogItemBackendsSpecTCP struct {
+	// Address of the TCP logging backend
+	Address string `json:"address"`
+	// Format of access logs. Placeholders available on
+	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+	Format *MeshAccessLogItemBackendsSpecToFormat `json:"format,omitempty"`
+}
+
+func (m MeshAccessLogItemBackendsSpecTCP) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemBackendsSpecTCP) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemBackendsSpecTCP) GetAddress() string {
+	if m == nil {
+		return ""
+	}
+	return m.Address
+}
+
+func (m *MeshAccessLogItemBackendsSpecTCP) GetFormat() *MeshAccessLogItemBackendsSpecToFormat {
+	if m == nil {
+		return nil
+	}
+	return m.Format
+}
+
+type MeshAccessLogItemBackendsSpecToType string
+
+const (
+	MeshAccessLogItemBackendsSpecToTypeTCP           MeshAccessLogItemBackendsSpecToType = "Tcp"
+	MeshAccessLogItemBackendsSpecToTypeFile          MeshAccessLogItemBackendsSpecToType = "File"
+	MeshAccessLogItemBackendsSpecToTypeOpenTelemetry MeshAccessLogItemBackendsSpecToType = "OpenTelemetry"
+)
+
+func (e MeshAccessLogItemBackendsSpecToType) ToPointer() *MeshAccessLogItemBackendsSpecToType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemBackendsSpecToType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Tcp", "File", "OpenTelemetry":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshAccessLogItemFormatSpecToDefaultBackends1JSON struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+func (m MeshAccessLogItemFormatSpecToDefaultBackends1JSON) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends1JSON) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends1JSON) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackends1JSON) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// #region class-body-meshaccesslogitemformatspectodefaultbackends1json
+// #endregion class-body-meshaccesslogitemformatspectodefaultbackends1json
+
+type MeshAccessLogItemFormatSpecToDefaultBackends1Type string
+
+const (
+	MeshAccessLogItemFormatSpecToDefaultBackends1TypePlain MeshAccessLogItemFormatSpecToDefaultBackends1Type = "Plain"
+	MeshAccessLogItemFormatSpecToDefaultBackends1TypeJSON  MeshAccessLogItemFormatSpecToDefaultBackends1Type = "Json"
+)
+
+func (e MeshAccessLogItemFormatSpecToDefaultBackends1Type) ToPointer() *MeshAccessLogItemFormatSpecToDefaultBackends1Type {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemFormatSpecToDefaultBackends1Type) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshAccessLogItemFormatSpecToDefault2 struct {
+	JSON            []MeshAccessLogItemFormatSpecToDefaultBackends1JSON `json:"json,omitempty"`
+	Type            MeshAccessLogItemFormatSpecToDefaultBackends1Type   `json:"type"`
+	OmitEmptyValues *bool                                               `default:"false" json:"omitEmptyValues"`
+	Plain           *string                                             `json:"plain,omitempty"`
+}
+
+func (m MeshAccessLogItemFormatSpecToDefault2) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefault2) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefault2) GetJSON() []MeshAccessLogItemFormatSpecToDefaultBackends1JSON {
+	if m == nil {
+		return nil
+	}
+	return m.JSON
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefault2) GetType() MeshAccessLogItemFormatSpecToDefaultBackends1Type {
+	if m == nil {
+		return MeshAccessLogItemFormatSpecToDefaultBackends1Type("")
+	}
+	return m.Type
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefault2) GetOmitEmptyValues() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.OmitEmptyValues
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefault2) GetPlain() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Plain
+}
+
+// #region class-body-meshaccesslogitemformatspectodefault2
+// #endregion class-body-meshaccesslogitemformatspectodefault2
+
+type MeshAccessLogItemFormatSpecToDefaultBackendsType string
+
+const (
+	MeshAccessLogItemFormatSpecToDefaultBackendsTypePlain MeshAccessLogItemFormatSpecToDefaultBackendsType = "Plain"
+	MeshAccessLogItemFormatSpecToDefaultBackendsTypeJSON  MeshAccessLogItemFormatSpecToDefaultBackendsType = "Json"
+)
+
+func (e MeshAccessLogItemFormatSpecToDefaultBackendsType) ToPointer() *MeshAccessLogItemFormatSpecToDefaultBackendsType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemFormatSpecToDefaultBackendsType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Plain", "Json":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshAccessLogItemFormatSpecToDefaultBackendsJSON struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+func (m MeshAccessLogItemFormatSpecToDefaultBackendsJSON) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackendsJSON) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackendsJSON) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefaultBackendsJSON) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+type MeshAccessLogItemFormatSpecToDefault1 struct {
+	Plain           *string                                            `json:"plain,omitempty"`
+	Type            MeshAccessLogItemFormatSpecToDefaultBackendsType   `json:"type"`
+	JSON            []MeshAccessLogItemFormatSpecToDefaultBackendsJSON `json:"json,omitempty"`
+	OmitEmptyValues *bool                                              `default:"false" json:"omitEmptyValues"`
+}
+
+func (m MeshAccessLogItemFormatSpecToDefault1) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefault1) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefault1) GetPlain() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Plain
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefault1) GetType() MeshAccessLogItemFormatSpecToDefaultBackendsType {
+	if m == nil {
+		return MeshAccessLogItemFormatSpecToDefaultBackendsType("")
+	}
+	return m.Type
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefault1) GetJSON() []MeshAccessLogItemFormatSpecToDefaultBackendsJSON {
+	if m == nil {
+		return nil
+	}
+	return m.JSON
+}
+
+func (m *MeshAccessLogItemFormatSpecToDefault1) GetOmitEmptyValues() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.OmitEmptyValues
+}
+
+// #region class-body-meshaccesslogitemformatspectodefault1
+// #endregion class-body-meshaccesslogitemformatspectodefault1
+
+type MeshAccessLogItemBackendsSpecToDefaultFormatType string
+
+const (
+	MeshAccessLogItemBackendsSpecToDefaultFormatTypeMeshAccessLogItemFormatSpecToDefault1 MeshAccessLogItemBackendsSpecToDefaultFormatType = "MeshAccessLogItem_format_spec_to_default_1"
+	MeshAccessLogItemBackendsSpecToDefaultFormatTypeMeshAccessLogItemFormatSpecToDefault2 MeshAccessLogItemBackendsSpecToDefaultFormatType = "MeshAccessLogItem_format_spec_to_default_2"
+)
+
+// MeshAccessLogItemBackendsSpecToDefaultFormat - Format of access logs. Placeholders available on
+// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+type MeshAccessLogItemBackendsSpecToDefaultFormat struct {
+	MeshAccessLogItemFormatSpecToDefault1 *MeshAccessLogItemFormatSpecToDefault1 `queryParam:"inline" union:"member"`
+	MeshAccessLogItemFormatSpecToDefault2 *MeshAccessLogItemFormatSpecToDefault2 `queryParam:"inline" union:"member"`
+
+	Type MeshAccessLogItemBackendsSpecToDefaultFormatType
+}
+
+func CreateMeshAccessLogItemBackendsSpecToDefaultFormatMeshAccessLogItemFormatSpecToDefault1(meshAccessLogItemFormatSpecToDefault1 MeshAccessLogItemFormatSpecToDefault1) MeshAccessLogItemBackendsSpecToDefaultFormat {
+	typ := MeshAccessLogItemBackendsSpecToDefaultFormatTypeMeshAccessLogItemFormatSpecToDefault1
+
+	return MeshAccessLogItemBackendsSpecToDefaultFormat{
+		MeshAccessLogItemFormatSpecToDefault1: &meshAccessLogItemFormatSpecToDefault1,
+		Type:                                  typ,
+	}
+}
+
+func CreateMeshAccessLogItemBackendsSpecToDefaultFormatMeshAccessLogItemFormatSpecToDefault2(meshAccessLogItemFormatSpecToDefault2 MeshAccessLogItemFormatSpecToDefault2) MeshAccessLogItemBackendsSpecToDefaultFormat {
+	typ := MeshAccessLogItemBackendsSpecToDefaultFormatTypeMeshAccessLogItemFormatSpecToDefault2
+
+	return MeshAccessLogItemBackendsSpecToDefaultFormat{
+		MeshAccessLogItemFormatSpecToDefault2: &meshAccessLogItemFormatSpecToDefault2,
+		Type:                                  typ,
+	}
+}
+
+func (u *MeshAccessLogItemBackendsSpecToDefaultFormat) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var meshAccessLogItemFormatSpecToDefault1 MeshAccessLogItemFormatSpecToDefault1 = MeshAccessLogItemFormatSpecToDefault1{}
+	if err := utils.UnmarshalJSON(data, &meshAccessLogItemFormatSpecToDefault1, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshAccessLogItemBackendsSpecToDefaultFormatTypeMeshAccessLogItemFormatSpecToDefault1,
+			Value: &meshAccessLogItemFormatSpecToDefault1,
+		})
+	}
+
+	var meshAccessLogItemFormatSpecToDefault2 MeshAccessLogItemFormatSpecToDefault2 = MeshAccessLogItemFormatSpecToDefault2{}
+	if err := utils.UnmarshalJSON(data, &meshAccessLogItemFormatSpecToDefault2, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshAccessLogItemBackendsSpecToDefaultFormatTypeMeshAccessLogItemFormatSpecToDefault2,
+			Value: &meshAccessLogItemFormatSpecToDefault2,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsSpecToDefaultFormat", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsSpecToDefaultFormat", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(MeshAccessLogItemBackendsSpecToDefaultFormatType)
+	switch best.Type {
+	case MeshAccessLogItemBackendsSpecToDefaultFormatTypeMeshAccessLogItemFormatSpecToDefault1:
+		u.MeshAccessLogItemFormatSpecToDefault1 = best.Value.(*MeshAccessLogItemFormatSpecToDefault1)
+		return nil
+	case MeshAccessLogItemBackendsSpecToDefaultFormatTypeMeshAccessLogItemFormatSpecToDefault2:
+		u.MeshAccessLogItemFormatSpecToDefault2 = best.Value.(*MeshAccessLogItemFormatSpecToDefault2)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackendsSpecToDefaultFormat", string(data))
+}
+
+func (u MeshAccessLogItemBackendsSpecToDefaultFormat) MarshalJSON() ([]byte, error) {
+	if u.MeshAccessLogItemFormatSpecToDefault1 != nil {
+		return utils.MarshalJSON(u.MeshAccessLogItemFormatSpecToDefault1, "", true)
+	}
+
+	if u.MeshAccessLogItemFormatSpecToDefault2 != nil {
+		return utils.MarshalJSON(u.MeshAccessLogItemFormatSpecToDefault2, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type MeshAccessLogItemBackendsSpecToDefaultFormat: all fields are null")
+}
+
+// MeshAccessLogItemBackendsSpecFile - FileBackend defines configuration for file based access logs
+type MeshAccessLogItemBackendsSpecFile struct {
+	// Format of access logs. Placeholders available on
+	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+	Format *MeshAccessLogItemBackendsSpecToDefaultFormat `json:"format,omitempty"`
+	// Path to a file that logs will be written to
+	Path string `json:"path"`
+}
+
+func (m MeshAccessLogItemBackendsSpecFile) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemBackendsSpecFile) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemBackendsSpecFile) GetFormat() *MeshAccessLogItemBackendsSpecToDefaultFormat {
+	if m == nil {
+		return nil
+	}
+	return m.Format
+}
+
+func (m *MeshAccessLogItemBackendsSpecFile) GetPath() string {
+	if m == nil {
+		return ""
+	}
+	return m.Path
+}
+
+type MeshAccessLogItemBackendsSpecAttributes struct {
+	// Key is the OpenTelemetry attribute name.
+	Key string `json:"key"`
+	// Value can contain Kuma placeholders.
+	Value string `json:"value"`
+}
+
+func (m MeshAccessLogItemBackendsSpecAttributes) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemBackendsSpecAttributes) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemBackendsSpecAttributes) GetKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.Key
+}
+
+func (m *MeshAccessLogItemBackendsSpecAttributes) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// MeshAccessLogItemBackendsSpecToKind - Kind of the backend resource.
+type MeshAccessLogItemBackendsSpecToKind string
+
+const (
+	MeshAccessLogItemBackendsSpecToKindMeshOpenTelemetryBackend MeshAccessLogItemBackendsSpecToKind = "MeshOpenTelemetryBackend"
+)
+
+func (e MeshAccessLogItemBackendsSpecToKind) ToPointer() *MeshAccessLogItemBackendsSpecToKind {
+	return &e
+}
+func (e *MeshAccessLogItemBackendsSpecToKind) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "MeshOpenTelemetryBackend":
+		*e = MeshAccessLogItemBackendsSpecToKind(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshAccessLogItemBackendsSpecToKind: %v", v)
+	}
+}
+
+// MeshAccessLogItemBackendsSpecBackendRef - BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+// defines the collector endpoint.
+type MeshAccessLogItemBackendsSpecBackendRef struct {
+	// Kind of the backend resource.
+	Kind MeshAccessLogItemBackendsSpecToKind `json:"kind"`
+	// Labels to match the referenced resource. When multiple resources match,
+	// the oldest by creation time wins.
+	Labels map[string]string `json:"labels,omitempty"`
+}
+
+func (m MeshAccessLogItemBackendsSpecBackendRef) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemBackendsSpecBackendRef) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemBackendsSpecBackendRef) GetKind() MeshAccessLogItemBackendsSpecToKind {
+	if m == nil {
+		return MeshAccessLogItemBackendsSpecToKind("")
+	}
+	return m.Kind
+}
+
+func (m *MeshAccessLogItemBackendsSpecBackendRef) GetLabels() map[string]string {
+	if m == nil {
+		return nil
+	}
+	return m.Labels
+}
+
+// MeshAccessLogItemBackendsSpecOpenTelemetry - Defines an OpenTelemetry logging backend.
+type MeshAccessLogItemBackendsSpecOpenTelemetry struct {
+	// Attributes defines custom OpenTelemetry attributes. Keys must be static
+	// OpenTelemetry attribute names. Values can contain placeholders available on
+	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+	Attributes []MeshAccessLogItemBackendsSpecAttributes `json:"attributes,omitempty"`
+	// BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+	// defines the collector endpoint.
+	BackendRef *MeshAccessLogItemBackendsSpecBackendRef `json:"backendRef,omitempty"`
+	// Body is a raw string or an OTLP any value as described at
+	// https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body
+	// It can contain placeholders available on
+	// https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
+	Body any `json:"body,omitempty"`
+}
+
+func (m MeshAccessLogItemBackendsSpecOpenTelemetry) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemBackendsSpecOpenTelemetry) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemBackendsSpecOpenTelemetry) GetAttributes() []MeshAccessLogItemBackendsSpecAttributes {
+	if m == nil {
+		return nil
+	}
+	return m.Attributes
+}
+
+func (m *MeshAccessLogItemBackendsSpecOpenTelemetry) GetBackendRef() *MeshAccessLogItemBackendsSpecBackendRef {
+	if m == nil {
+		return nil
+	}
+	return m.BackendRef
+}
+
+func (m *MeshAccessLogItemBackendsSpecOpenTelemetry) GetBody() any {
+	if m == nil {
+		return nil
+	}
+	return m.Body
+}
+
+type MeshAccessLogItemBackendsSpec1 struct {
+	// TCPBackend defines a TCP logging backend.
+	TCP  *MeshAccessLogItemBackendsSpecTCP   `json:"tcp,omitempty"`
+	Type MeshAccessLogItemBackendsSpecToType `json:"type"`
+	// FileBackend defines configuration for file based access logs
+	File *MeshAccessLogItemBackendsSpecFile `json:"file,omitempty"`
+	// Defines an OpenTelemetry logging backend.
+	OpenTelemetry *MeshAccessLogItemBackendsSpecOpenTelemetry `json:"openTelemetry,omitempty"`
+}
+
+func (m MeshAccessLogItemBackendsSpec1) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshAccessLogItemBackendsSpec1) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshAccessLogItemBackendsSpec1) GetTCP() *MeshAccessLogItemBackendsSpecTCP {
+	if m == nil {
+		return nil
+	}
+	return m.TCP
+}
+
+func (m *MeshAccessLogItemBackendsSpec1) GetType() MeshAccessLogItemBackendsSpecToType {
+	if m == nil {
+		return MeshAccessLogItemBackendsSpecToType("")
+	}
+	return m.Type
+}
+
+func (m *MeshAccessLogItemBackendsSpec1) GetFile() *MeshAccessLogItemBackendsSpecFile {
+	if m == nil {
+		return nil
+	}
+	return m.File
+}
+
+func (m *MeshAccessLogItemBackendsSpec1) GetOpenTelemetry() *MeshAccessLogItemBackendsSpecOpenTelemetry {
+	if m == nil {
+		return nil
+	}
+	return m.OpenTelemetry
+}
+
+// #region class-body-meshaccesslogitembackendsspec1
+// #endregion class-body-meshaccesslogitembackendsspec1
+
+type MeshAccessLogItemBackendsUnionType string
+
+const (
+	MeshAccessLogItemBackendsUnionTypeMeshAccessLogItemBackendsSpec1 MeshAccessLogItemBackendsUnionType = "MeshAccessLogItem_backends_spec_1"
+	MeshAccessLogItemBackendsUnionTypeMeshAccessLogItemBackendsSpec2 MeshAccessLogItemBackendsUnionType = "MeshAccessLogItem_backends_spec_2"
+	MeshAccessLogItemBackendsUnionTypeMeshAccessLogItemBackendsSpec3 MeshAccessLogItemBackendsUnionType = "MeshAccessLogItem_backends_spec_3"
+)
+
+type MeshAccessLogItemBackends struct {
+	MeshAccessLogItemBackendsSpec1 *MeshAccessLogItemBackendsSpec1 `queryParam:"inline" union:"member"`
+	MeshAccessLogItemBackendsSpec2 *MeshAccessLogItemBackendsSpec2 `queryParam:"inline" union:"member"`
+	MeshAccessLogItemBackendsSpec3 *MeshAccessLogItemBackendsSpec3 `queryParam:"inline" union:"member"`
+
+	Type MeshAccessLogItemBackendsUnionType
+}
+
+func CreateMeshAccessLogItemBackendsMeshAccessLogItemBackendsSpec1(meshAccessLogItemBackendsSpec1 MeshAccessLogItemBackendsSpec1) MeshAccessLogItemBackends {
+	typ := MeshAccessLogItemBackendsUnionTypeMeshAccessLogItemBackendsSpec1
+
+	return MeshAccessLogItemBackends{
+		MeshAccessLogItemBackendsSpec1: &meshAccessLogItemBackendsSpec1,
+		Type:                           typ,
+	}
+}
+
+func CreateMeshAccessLogItemBackendsMeshAccessLogItemBackendsSpec2(meshAccessLogItemBackendsSpec2 MeshAccessLogItemBackendsSpec2) MeshAccessLogItemBackends {
+	typ := MeshAccessLogItemBackendsUnionTypeMeshAccessLogItemBackendsSpec2
+
+	return MeshAccessLogItemBackends{
+		MeshAccessLogItemBackendsSpec2: &meshAccessLogItemBackendsSpec2,
+		Type:                           typ,
+	}
+}
+
+func CreateMeshAccessLogItemBackendsMeshAccessLogItemBackendsSpec3(meshAccessLogItemBackendsSpec3 MeshAccessLogItemBackendsSpec3) MeshAccessLogItemBackends {
+	typ := MeshAccessLogItemBackendsUnionTypeMeshAccessLogItemBackendsSpec3
+
+	return MeshAccessLogItemBackends{
+		MeshAccessLogItemBackendsSpec3: &meshAccessLogItemBackendsSpec3,
+		Type:                           typ,
+	}
+}
+
+func (u *MeshAccessLogItemBackends) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var meshAccessLogItemBackendsSpec1 MeshAccessLogItemBackendsSpec1 = MeshAccessLogItemBackendsSpec1{}
+	if err := utils.UnmarshalJSON(data, &meshAccessLogItemBackendsSpec1, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshAccessLogItemBackendsUnionTypeMeshAccessLogItemBackendsSpec1,
+			Value: &meshAccessLogItemBackendsSpec1,
+		})
+	}
+
+	var meshAccessLogItemBackendsSpec2 MeshAccessLogItemBackendsSpec2 = MeshAccessLogItemBackendsSpec2{}
+	if err := utils.UnmarshalJSON(data, &meshAccessLogItemBackendsSpec2, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshAccessLogItemBackendsUnionTypeMeshAccessLogItemBackendsSpec2,
+			Value: &meshAccessLogItemBackendsSpec2,
+		})
+	}
+
+	var meshAccessLogItemBackendsSpec3 MeshAccessLogItemBackendsSpec3 = MeshAccessLogItemBackendsSpec3{}
+	if err := utils.UnmarshalJSON(data, &meshAccessLogItemBackendsSpec3, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshAccessLogItemBackendsUnionTypeMeshAccessLogItemBackendsSpec3,
+			Value: &meshAccessLogItemBackendsSpec3,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackends", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackends", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(MeshAccessLogItemBackendsUnionType)
+	switch best.Type {
+	case MeshAccessLogItemBackendsUnionTypeMeshAccessLogItemBackendsSpec1:
+		u.MeshAccessLogItemBackendsSpec1 = best.Value.(*MeshAccessLogItemBackendsSpec1)
+		return nil
+	case MeshAccessLogItemBackendsUnionTypeMeshAccessLogItemBackendsSpec2:
+		u.MeshAccessLogItemBackendsSpec2 = best.Value.(*MeshAccessLogItemBackendsSpec2)
+		return nil
+	case MeshAccessLogItemBackendsUnionTypeMeshAccessLogItemBackendsSpec3:
+		u.MeshAccessLogItemBackendsSpec3 = best.Value.(*MeshAccessLogItemBackendsSpec3)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshAccessLogItemBackends", string(data))
+}
+
+func (u MeshAccessLogItemBackends) MarshalJSON() ([]byte, error) {
+	if u.MeshAccessLogItemBackendsSpec1 != nil {
+		return utils.MarshalJSON(u.MeshAccessLogItemBackendsSpec1, "", true)
+	}
+
+	if u.MeshAccessLogItemBackendsSpec2 != nil {
+		return utils.MarshalJSON(u.MeshAccessLogItemBackendsSpec2, "", true)
+	}
+
+	if u.MeshAccessLogItemBackendsSpec3 != nil {
+		return utils.MarshalJSON(u.MeshAccessLogItemBackendsSpec3, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type MeshAccessLogItemBackends: all fields are null")
+}
+
+// MeshAccessLogItemDefault - Default is a configuration specific to the group of destinations referenced in
+// 'targetRef'
+type MeshAccessLogItemDefault struct {
+	Backends []MeshAccessLogItemBackends `json:"backends,omitempty"`
+}
+
+func (m *MeshAccessLogItemDefault) GetBackends() []MeshAccessLogItemBackends {
+	if m == nil {
+		return nil
+	}
+	return m.Backends
+}
+
+// MeshAccessLogItemKind - Kind of the referenced resource
+type MeshAccessLogItemKind string
+
+const (
+	MeshAccessLogItemKindMesh                 MeshAccessLogItemKind = "Mesh"
+	MeshAccessLogItemKindMeshService          MeshAccessLogItemKind = "MeshService"
+	MeshAccessLogItemKindMeshExternalService  MeshAccessLogItemKind = "MeshExternalService"
+	MeshAccessLogItemKindMeshMultiZoneService MeshAccessLogItemKind = "MeshMultiZoneService"
+	MeshAccessLogItemKindMeshHTTPRoute        MeshAccessLogItemKind = "MeshHTTPRoute"
+)
+
+func (e MeshAccessLogItemKind) ToPointer() *MeshAccessLogItemKind {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Mesh", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshHTTPRoute":
+			return true
+		}
+	}
+	return false
+}
+
+// MeshAccessLogItemTargetRef - TargetRef is a reference to the resource that represents a group of
+// destinations.
+type MeshAccessLogItemTargetRef struct {
+	// Kind of the referenced resource
+	Kind MeshAccessLogItemKind `json:"kind"`
+	// Labels are used to select referenced real resources and to carry legacy
+	// service identity when a common TargetRef must still target old
+	// service-tag based paths.
+	Labels map[string]string `json:"labels,omitempty"`
+	// SectionName is used to target specific section of resource.
+	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
+	SectionName *string `json:"sectionName,omitempty"`
+}
+
+func (m *MeshAccessLogItemTargetRef) GetKind() MeshAccessLogItemKind {
+	if m == nil {
+		return MeshAccessLogItemKind("")
+	}
+	return m.Kind
+}
+
+func (m *MeshAccessLogItemTargetRef) GetLabels() map[string]string {
+	if m == nil {
+		return nil
+	}
+	return m.Labels
+}
+
+func (m *MeshAccessLogItemTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
 }
 
-func (m *MeshAccessLogItemSpecTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
-}
-
 type To struct {
 	// Default is a configuration specific to the group of destinations referenced in
 	// 'targetRef'
-	Default MeshAccessLogItemSpecDefault `json:"default"`
+	Default MeshAccessLogItemDefault `json:"default"`
 	// TargetRef is a reference to the resource that represents a group of
 	// destinations.
-	TargetRef MeshAccessLogItemSpecTargetRef `json:"targetRef"`
+	TargetRef MeshAccessLogItemTargetRef `json:"targetRef"`
 }
 
-func (t *To) GetDefault() MeshAccessLogItemSpecDefault {
+func (t *To) GetDefault() MeshAccessLogItemDefault {
 	if t == nil {
-		return MeshAccessLogItemSpecDefault{}
+		return MeshAccessLogItemDefault{}
 	}
 	return t.Default
 }
 
-func (t *To) GetTargetRef() MeshAccessLogItemSpecTargetRef {
+func (t *To) GetTargetRef() MeshAccessLogItemTargetRef {
 	if t == nil {
-		return MeshAccessLogItemSpecTargetRef{}
+		return MeshAccessLogItemTargetRef{}
 	}
 	return t.TargetRef
 }
 
 // Spec is the specification of the Kuma MeshAccessLog resource.
 type Spec struct {
-	// From list makes a match between clients and corresponding configurations
-	From []From `json:"from,omitempty"`
-	// Rules defines inbound access log configurations. Currently limited to
-	// selecting all inbound traffic, as L7 matching is not yet implemented.
+	// Rules defines inbound access log configurations.
 	Rules []MeshAccessLogItemRules `json:"rules,omitempty"`
 	// TargetRef is a reference to the resource the policy takes an effect on.
 	// The resource could be either a real store object or virtual resource
@@ -1565,13 +5827,6 @@ type Spec struct {
 	TargetRef *TargetRef `json:"targetRef,omitempty"`
 	// To list makes a match between the consumed services and corresponding configurations
 	To []To `json:"to,omitempty"`
-}
-
-func (s *Spec) GetFrom() []From {
-	if s == nil {
-		return nil
-	}
-	return s.From
 }
 
 func (s *Spec) GetRules() []MeshAccessLogItemRules {
@@ -1595,6 +5850,86 @@ func (s *Spec) GetTo() []To {
 	return s.To
 }
 
+// MeshAccessLogItemStatus - status of the condition, one of True, False, Unknown.
+type MeshAccessLogItemStatus string
+
+const (
+	MeshAccessLogItemStatusTrue    MeshAccessLogItemStatus = "True"
+	MeshAccessLogItemStatusFalse   MeshAccessLogItemStatus = "False"
+	MeshAccessLogItemStatusUnknown MeshAccessLogItemStatus = "Unknown"
+)
+
+func (e MeshAccessLogItemStatus) ToPointer() *MeshAccessLogItemStatus {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshAccessLogItemStatus) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "True", "False", "Unknown":
+			return true
+		}
+	}
+	return false
+}
+
+type Conditions struct {
+	// message is a human readable message indicating details about the transition.
+	// This may be an empty string.
+	Message string `json:"message"`
+	// reason contains a programmatic identifier indicating the reason for the condition's last transition.
+	// Producers of specific condition types may define expected values and meanings for this field,
+	// and whether the values are considered a guaranteed API.
+	// The value should be a CamelCase string.
+	// This field may not be empty.
+	Reason string `json:"reason"`
+	// status of the condition, one of True, False, Unknown.
+	Status MeshAccessLogItemStatus `json:"status"`
+	// type of condition in CamelCase or in foo.example.com/CamelCase.
+	Type string `json:"type"`
+}
+
+func (c *Conditions) GetMessage() string {
+	if c == nil {
+		return ""
+	}
+	return c.Message
+}
+
+func (c *Conditions) GetReason() string {
+	if c == nil {
+		return ""
+	}
+	return c.Reason
+}
+
+func (c *Conditions) GetStatus() MeshAccessLogItemStatus {
+	if c == nil {
+		return MeshAccessLogItemStatus("")
+	}
+	return c.Status
+}
+
+func (c *Conditions) GetType() string {
+	if c == nil {
+		return ""
+	}
+	return c.Type
+}
+
+// Status is the current status of the Kuma MeshAccessLog resource.
+type Status struct {
+	Conditions []Conditions `json:"conditions,omitempty"`
+}
+
+func (s *Status) GetConditions() []Conditions {
+	if s == nil {
+		return nil
+	}
+	return s.Conditions
+}
+
 // MeshAccessLogItem - MeshAccessLog configures access logging for traffic between services in the mesh. It allows you to capture and export request/response logs to various backends (file, TCP, or OpenTelemetry) for monitoring, debugging, and auditing purposes.
 type MeshAccessLogItem struct {
 	// the type of the resource
@@ -1613,6 +5948,8 @@ type MeshAccessLogItem struct {
 	CreationTime *time.Time `json:"creationTime,omitempty"`
 	// Time at which the resource was updated
 	ModificationTime *time.Time `json:"modificationTime,omitempty"`
+	// Status is the current status of the Kuma MeshAccessLog resource.
+	Status *Status `json:"status,omitempty"`
 }
 
 func (m MeshAccessLogItem) MarshalJSON() ([]byte, error) {
@@ -1680,6 +6017,13 @@ func (m *MeshAccessLogItem) GetModificationTime() *time.Time {
 		return nil
 	}
 	return m.ModificationTime
+}
+
+func (m *MeshAccessLogItem) GetStatus() *Status {
+	if m == nil {
+		return nil
+	}
+	return m.Status
 }
 
 // MeshAccessLogItemInput - MeshAccessLog configures access logging for traffic between services in the mesh. It allows you to capture and export request/response logs to various backends (file, TCP, or OpenTelemetry) for monitoring, debugging, and auditing purposes.

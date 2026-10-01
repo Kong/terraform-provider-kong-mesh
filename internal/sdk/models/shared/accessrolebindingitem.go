@@ -2,6 +2,11 @@
 
 package shared
 
+import (
+	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/utils"
+	"time"
+)
+
 type Subjects struct {
 	Name *string `json:"name,omitempty"`
 	Type *string `json:"type,omitempty"`
@@ -22,11 +27,42 @@ func (s *Subjects) GetType() *string {
 }
 
 type AccessRoleBindingItem struct {
-	Labels   map[string]string `json:"labels,omitempty"`
-	Name     string            `json:"name"`
-	Roles    []string          `json:"roles"`
-	Subjects []Subjects        `json:"subjects"`
-	Type     string            `json:"type"`
+	// Time at which the resource was created
+	CreationTime *time.Time `json:"creationTime,omitempty"`
+	// Kuma Resource Identifier (KRI) of the given resource
+	Kri    *string           `json:"kri,omitempty"`
+	Labels map[string]string `json:"labels,omitempty"`
+	// Time at which the resource was updated
+	ModificationTime *time.Time `json:"modificationTime,omitempty"`
+	Name             string     `json:"name"`
+	Roles            []string   `json:"roles"`
+	Subjects         []Subjects `json:"subjects"`
+	Type             string     `json:"type"`
+}
+
+func (a AccessRoleBindingItem) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(a, "", false)
+}
+
+func (a *AccessRoleBindingItem) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (a *AccessRoleBindingItem) GetCreationTime() *time.Time {
+	if a == nil {
+		return nil
+	}
+	return a.CreationTime
+}
+
+func (a *AccessRoleBindingItem) GetKri() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Kri
 }
 
 func (a *AccessRoleBindingItem) GetLabels() map[string]string {
@@ -34,6 +70,13 @@ func (a *AccessRoleBindingItem) GetLabels() map[string]string {
 		return nil
 	}
 	return a.Labels
+}
+
+func (a *AccessRoleBindingItem) GetModificationTime() *time.Time {
+	if a == nil {
+		return nil
+	}
+	return a.ModificationTime
 }
 
 func (a *AccessRoleBindingItem) GetName() string {
@@ -58,6 +101,49 @@ func (a *AccessRoleBindingItem) GetSubjects() []Subjects {
 }
 
 func (a *AccessRoleBindingItem) GetType() string {
+	if a == nil {
+		return ""
+	}
+	return a.Type
+}
+
+type AccessRoleBindingItemInput struct {
+	Labels   map[string]string `json:"labels,omitempty"`
+	Name     string            `json:"name"`
+	Roles    []string          `json:"roles"`
+	Subjects []Subjects        `json:"subjects"`
+	Type     string            `json:"type"`
+}
+
+func (a *AccessRoleBindingItemInput) GetLabels() map[string]string {
+	if a == nil {
+		return nil
+	}
+	return a.Labels
+}
+
+func (a *AccessRoleBindingItemInput) GetName() string {
+	if a == nil {
+		return ""
+	}
+	return a.Name
+}
+
+func (a *AccessRoleBindingItemInput) GetRoles() []string {
+	if a == nil {
+		return nil
+	}
+	return a.Roles
+}
+
+func (a *AccessRoleBindingItemInput) GetSubjects() []Subjects {
+	if a == nil {
+		return nil
+	}
+	return a.Subjects
+}
+
+func (a *AccessRoleBindingItemInput) GetType() string {
 	if a == nil {
 		return ""
 	}

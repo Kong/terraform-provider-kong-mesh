@@ -3,7 +3,6 @@
 package types
 
 type MeshTLSItemSpec struct {
-	From      []MeshTLSItemFrom           `tfsdk:"from"`
-	Rules     []MeshTLSItemRules          `tfsdk:"rules"`
-	TargetRef *MeshAccessLogItemTargetRef `tfsdk:"target_ref"`
+	Rules     []MeshTLSItemRules `tfsdk:"rules"`
+	TargetRef *TargetRef         `tfsdk:"target_ref"`
 }

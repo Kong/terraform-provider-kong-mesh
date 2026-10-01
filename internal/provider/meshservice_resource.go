@@ -28,6 +28,7 @@ import (
 	speakeasy_int32validators "github.com/kong/terraform-provider-kong-mesh/internal/validators/int32validators"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/stringvalidators"
+	"regexp"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -52,6 +53,7 @@ type MeshServiceResourceModel struct {
 	Mesh             types.String                   `tfsdk:"mesh"`
 	ModificationTime types.String                   `tfsdk:"modification_time"`
 	Name             types.String                   `tfsdk:"name"`
+	Snis             []tfTypes.Snis                 `tfsdk:"snis"`
 	Spec             *tfTypes.MeshServiceItemSpec   `tfsdk:"spec"`
 	Status           *tfTypes.MeshServiceItemStatus `tfsdk:"status"`
 	Type             types.String                   `tfsdk:"type"`
@@ -91,6 +93,10 @@ func (r *MeshServiceResource) Schema(ctx context.Context, req resource.SchemaReq
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
 				Description: `name of the mesh. Requires replacement if changed.`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(253),
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[0-9a-z-_.]*$`), "must match pattern "+regexp.MustCompile(`^[0-9a-z-_.]*$`).String()),
+				},
 			},
 			"modification_time": schema.StringAttribute{
 				Computed: true,
@@ -105,6 +111,33 @@ func (r *MeshServiceResource) Schema(ctx context.Context, req resource.SchemaReq
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
 				Description: `name of the MeshService. Requires replacement if changed.`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(253),
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
+				},
+			},
+			"snis": schema.ListNestedAttribute{
+				Computed: true,
+				PlanModifiers: []planmodifier.List{
+					custom_listplanmodifier.SupressZeroNullModifier(),
+					speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
+				},
+				NestedObject: schema.NestedAttributeObject{
+					PlanModifiers: []planmodifier.Object{
+						speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+					},
+					Attributes: map[string]schema.Attribute{
+						"port": schema.Int32Attribute{
+							Computed:    true,
+							Description: `The destination port this SNI corresponds to.`,
+						},
+						"sni": schema.StringAttribute{
+							Computed:    true,
+							Description: `The SNI string advertised by xDS for this port.`,
+						},
+					},
+				},
+				Description: `List of SNIs (Server Name Indication) advertised by xDS for this destination, one entry per port, sorted by port ascending. Present for MeshService, MeshMultiZoneService and MeshExternalService.`,
 			},
 			"spec": schema.SingleNestedAttribute{
 				Required: true,
@@ -122,9 +155,10 @@ func (r *MeshServiceResource) Schema(ctx context.Context, req resource.SchemaReq
 							Attributes: map[string]schema.Attribute{
 								"type": schema.StringAttribute{
 									Optional:    true,
-									Description: `possible known values include one of ["ServiceTag", "SpiffeID"]; Not Null`,
+									Description: `Not Null; must be "SpiffeID"`,
 									Validators: []validator.String{
 										speakeasy_stringvalidators.NotNull(),
+										stringvalidator.OneOf("SpiffeID"),
 									},
 								},
 								"value": schema.StringAttribute{
@@ -207,10 +241,6 @@ func (r *MeshServiceResource) Schema(ctx context.Context, req resource.SchemaReq
 										Optional: true,
 									},
 								},
-							},
-							"dataplane_tags": schema.MapAttribute{
-								Optional:    true,
-								ElementType: types.StringType,
 							},
 						},
 					},

@@ -3,5 +3,6 @@
 package types
 
 type Matches struct {
-	SpiffeID *MeshFaultInjectionItemSpiffeID `tfsdk:"spiffe_id"`
+	Sni      *Sni `tfsdk:"sni"`
+	SpiffeID *Sni `tfsdk:"spiffe_id"`
 }

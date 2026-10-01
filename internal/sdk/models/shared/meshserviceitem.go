@@ -34,26 +34,48 @@ func (e *MeshServiceItemType) UnmarshalJSON(data []byte) error {
 	}
 }
 
+type MeshServiceItemSnis struct {
+	// The destination port this SNI corresponds to.
+	Port int `json:"port"`
+	// The SNI string advertised by xDS for this port.
+	Sni string `json:"sni"`
+}
+
+func (m *MeshServiceItemSnis) GetPort() int {
+	if m == nil {
+		return 0
+	}
+	return m.Port
+}
+
+func (m *MeshServiceItemSnis) GetSni() string {
+	if m == nil {
+		return ""
+	}
+	return m.Sni
+}
+
 type MeshServiceItemSpecType string
 
 const (
-	MeshServiceItemSpecTypeServiceTag MeshServiceItemSpecType = "ServiceTag"
-	MeshServiceItemSpecTypeSpiffeID   MeshServiceItemSpecType = "SpiffeID"
+	MeshServiceItemSpecTypeSpiffeID MeshServiceItemSpecType = "SpiffeID"
 )
 
 func (e MeshServiceItemSpecType) ToPointer() *MeshServiceItemSpecType {
 	return &e
 }
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshServiceItemSpecType) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "ServiceTag", "SpiffeID":
-			return true
-		}
+func (e *MeshServiceItemSpecType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
 	}
-	return false
+	switch v {
+	case "SpiffeID":
+		*e = MeshServiceItemSpecType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshServiceItemSpecType: %v", v)
+	}
 }
 
 type Identities struct {
@@ -234,9 +256,8 @@ func (d *DataplaneRef) GetName() *string {
 }
 
 type MeshServiceItemSelector struct {
-	DataplaneLabels *DataplaneLabels  `json:"dataplaneLabels,omitempty"`
-	DataplaneRef    *DataplaneRef     `json:"dataplaneRef,omitempty"`
-	DataplaneTags   map[string]string `json:"dataplaneTags,omitempty"`
+	DataplaneLabels *DataplaneLabels `json:"dataplaneLabels,omitempty"`
+	DataplaneRef    *DataplaneRef    `json:"dataplaneRef,omitempty"`
 }
 
 func (m *MeshServiceItemSelector) GetDataplaneLabels() *DataplaneLabels {
@@ -251,13 +272,6 @@ func (m *MeshServiceItemSelector) GetDataplaneRef() *DataplaneRef {
 		return nil
 	}
 	return m.DataplaneRef
-}
-
-func (m *MeshServiceItemSelector) GetDataplaneTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.DataplaneTags
 }
 
 // State of MeshService. Available if there is at least one healthy endpoint. Otherwise, Unavailable.
@@ -506,6 +520,7 @@ type MeshServiceItemStatusStatus string
 const (
 	MeshServiceItemStatusStatusReady    MeshServiceItemStatusStatus = "Ready"
 	MeshServiceItemStatusStatusNotReady MeshServiceItemStatusStatus = "NotReady"
+	MeshServiceItemStatusStatusPending  MeshServiceItemStatusStatus = "Pending"
 )
 
 func (e MeshServiceItemStatusStatus) ToPointer() *MeshServiceItemStatusStatus {
@@ -516,7 +531,7 @@ func (e MeshServiceItemStatusStatus) ToPointer() *MeshServiceItemStatusStatus {
 func (e *MeshServiceItemStatusStatus) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Ready", "NotReady":
+		case "Ready", "NotReady", "Pending":
 			return true
 		}
 	}
@@ -598,6 +613,8 @@ type MeshServiceItem struct {
 	Mesh *string `default:"default" json:"mesh"`
 	// A unique identifier for this resource instance used by internal tooling and integrations. Typically derived from resource attributes and may be used for cross-references or indexing
 	Kri *string `json:"kri,omitempty"`
+	// List of SNIs (Server Name Indication) advertised by xDS for this destination, one entry per port, sorted by port ascending. Present for MeshService, MeshMultiZoneService and MeshExternalService.
+	Snis []MeshServiceItemSnis `json:"snis,omitempty"`
 	// Name of the Kuma resource
 	Name string `json:"name"`
 	// The labels to help identity resources
@@ -642,6 +659,13 @@ func (m *MeshServiceItem) GetKri() *string {
 		return nil
 	}
 	return m.Kri
+}
+
+func (m *MeshServiceItem) GetSnis() []MeshServiceItemSnis {
+	if m == nil {
+		return nil
+	}
+	return m.Snis
 }
 
 func (m *MeshServiceItem) GetName() string {

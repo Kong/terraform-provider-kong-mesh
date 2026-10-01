@@ -5,61 +5,6 @@ resource "kong-mesh_mesh_rate_limit" "my_meshratelimit" {
   mesh = "...my_mesh..."
   name = "...my_name..."
   spec = {
-    from = [
-      {
-        default = {
-          local = {
-            http = {
-              disabled = true
-              on_rate_limit = {
-                headers = {
-                  add = [
-                    {
-                      name  = "...my_name..."
-                      value = "...my_value..."
-                    }
-                  ]
-                  set = [
-                    {
-                      name  = "...my_name..."
-                      value = "...my_value..."
-                    }
-                  ]
-                }
-                status = 7
-              }
-              request_rate = {
-                interval = "...my_interval..."
-                num      = 6
-              }
-            }
-            tcp = {
-              connection_rate = {
-                interval = "...my_interval..."
-                num      = 1
-              }
-              disabled = true
-            }
-          }
-        }
-        target_ref = {
-          kind = "MeshHTTPRoute"
-          labels = {
-            key = "value"
-          }
-          mesh      = "...my_mesh..."
-          name      = "...my_name..."
-          namespace = "...my_namespace..."
-          proxy_types = [
-            "Gateway"
-          ]
-          section_name = "...my_section_name..."
-          tags = {
-            key = "value"
-          }
-        }
-      }
-    ]
     rules = [
       {
         default = {
@@ -97,23 +42,26 @@ resource "kong-mesh_mesh_rate_limit" "my_meshratelimit" {
             }
           }
         }
+        matches = [
+          {
+            sni = {
+              type  = "Exact"
+              value = "...my_value..."
+            }
+            spiffe_id = {
+              type  = "Exact"
+              value = "...my_value..."
+            }
+          }
+        ]
       }
     ]
     target_ref = {
-      kind = "MeshServiceSubset"
+      kind = "Dataplane"
       labels = {
         key = "value"
       }
-      mesh      = "...my_mesh..."
-      name      = "...my_name..."
-      namespace = "...my_namespace..."
-      proxy_types = [
-        "Gateway"
-      ]
       section_name = "...my_section_name..."
-      tags = {
-        key = "value"
-      }
     }
     to = [
       {
@@ -153,20 +101,11 @@ resource "kong-mesh_mesh_rate_limit" "my_meshratelimit" {
           }
         }
         target_ref = {
-          kind = "MeshServiceSubset"
+          kind = "MeshMultiZoneService"
           labels = {
             key = "value"
           }
-          mesh      = "...my_mesh..."
-          name      = "...my_name..."
-          namespace = "...my_namespace..."
-          proxy_types = [
-            "Gateway"
-          ]
           section_name = "...my_section_name..."
-          tags = {
-            key = "value"
-          }
         }
       }
     ]

@@ -4,23 +4,23 @@ package shared
 
 // MeshHTTPRouteList - List
 type MeshHTTPRouteList struct {
-	Items []MeshHTTPRouteItem `json:"items,omitempty"`
+	Items []MeshHTTPRouteItem `json:"items"`
 	// The total number of entities
-	Total *float64 `json:"total,omitempty"`
-	// URL to the next page
-	Next *string `json:"next,omitempty"`
+	Total float64 `json:"total"`
+	// URL to the next page, or null when this is the last page
+	Next *string `json:"next"`
 }
 
 func (m *MeshHTTPRouteList) GetItems() []MeshHTTPRouteItem {
 	if m == nil {
-		return nil
+		return []MeshHTTPRouteItem{}
 	}
 	return m.Items
 }
 
-func (m *MeshHTTPRouteList) GetTotal() *float64 {
+func (m *MeshHTTPRouteList) GetTotal() float64 {
 	if m == nil {
-		return nil
+		return 0.0
 	}
 	return m.Total
 }

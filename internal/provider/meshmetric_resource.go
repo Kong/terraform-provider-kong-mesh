@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
+	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -21,12 +22,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	custom_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
 	speakeasy_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
+	speakeasy_objectplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/objectplanmodifier"
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
 	speakeasy_int32validators "github.com/kong/terraform-provider-kong-mesh/internal/validators/int32validators"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/stringvalidators"
+	"regexp"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -52,6 +55,7 @@ type MeshMetricResourceModel struct {
 	ModificationTime types.String                  `tfsdk:"modification_time"`
 	Name             types.String                  `tfsdk:"name"`
 	Spec             *tfTypes.MeshMetricItemSpec   `tfsdk:"spec"`
+	Status           *tfTypes.Status               `tfsdk:"status"`
 	Type             types.String                  `tfsdk:"type"`
 	Warnings         []types.String                `tfsdk:"warnings"`
 }
@@ -89,6 +93,10 @@ func (r *MeshMetricResource) Schema(ctx context.Context, req resource.SchemaRequ
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
 				Description: `name of the mesh. Requires replacement if changed.`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(253),
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[0-9a-z-_.]*$`), "must match pattern "+regexp.MustCompile(`^[0-9a-z-_.]*$`).String()),
+				},
 			},
 			"modification_time": schema.StringAttribute{
 				Computed: true,
@@ -103,6 +111,10 @@ func (r *MeshMetricResource) Schema(ctx context.Context, req resource.SchemaRequ
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
 				Description: `name of the MeshMetric. Requires replacement if changed.`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(253),
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
+				},
 			},
 			"spec": schema.SingleNestedAttribute{
 				Required: true,
@@ -144,7 +156,8 @@ func (r *MeshMetricResource) Schema(ctx context.Context, req resource.SchemaRequ
 										},
 									},
 								},
-								Description: `Applications is a list of application that Dataplane Proxy will scrape`,
+								MarkdownDescription: `Applications is a list of applications that Dataplane Proxy will scrape.` + "\n" +
+									`Ignored on zone-proxy-only Dataplanes (zone ingress/egress exist without a co-located workload).`,
 							},
 							"backends": schema.ListNestedAttribute{
 								Computed: true,
@@ -157,62 +170,172 @@ func (r *MeshMetricResource) Schema(ctx context.Context, req resource.SchemaRequ
 										speakeasy_objectvalidators.NotNull(),
 									},
 									Attributes: map[string]schema.Attribute{
-										"open_telemetry": schema.SingleNestedAttribute{
+										"one": schema.SingleNestedAttribute{
 											Optional: true,
 											Attributes: map[string]schema.Attribute{
-												"endpoint": schema.StringAttribute{
+												"open_telemetry": schema.SingleNestedAttribute{
+													Optional: true,
+													Attributes: map[string]schema.Attribute{
+														"backend_ref": schema.SingleNestedAttribute{
+															Optional: true,
+															Attributes: map[string]schema.Attribute{
+																"kind": schema.StringAttribute{
+																	Optional:    true,
+																	Description: `Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"`,
+																	Validators: []validator.String{
+																		speakeasy_stringvalidators.NotNull(),
+																		stringvalidator.OneOf(
+																			"MeshOpenTelemetryBackend",
+																		),
+																	},
+																},
+																"labels": schema.MapAttribute{
+																	Optional:    true,
+																	ElementType: types.StringType,
+																	MarkdownDescription: `Labels to match the referenced resource. When multiple resources match,` + "\n" +
+																		`the oldest by creation time wins.`,
+																},
+															},
+															MarkdownDescription: `BackendRef is a reference to a MeshOpenTelemetryBackend resource that` + "\n" +
+																`defines the collector endpoint.`,
+														},
+														"refresh_interval": schema.StringAttribute{
+															Optional:    true,
+															Description: `RefreshInterval defines how frequent metrics should be pushed to collector`,
+														},
+													},
+													Description: `OpenTelemetry backend configuration`,
+												},
+												"prometheus": schema.SingleNestedAttribute{
+													Optional: true,
+													Attributes: map[string]schema.Attribute{
+														"client_id": schema.StringAttribute{
+															Optional:    true,
+															Description: `ClientId of the Prometheus backend. Needed when using MADS for DP discovery.`,
+														},
+														"path": schema.StringAttribute{
+															Computed:    true,
+															Optional:    true,
+															Default:     stringdefault.StaticString(`/metrics`),
+															Description: `Path on which a dataplane should expose HTTP endpoint with Prometheus metrics. Default: "/metrics"`,
+														},
+														"port": schema.Int32Attribute{
+															Computed:    true,
+															Optional:    true,
+															Default:     int32default.StaticInt32(5670),
+															Description: `Port on which a dataplane should expose HTTP endpoint with Prometheus metrics. Default: 5670`,
+														},
+														"tls": schema.SingleNestedAttribute{
+															Optional: true,
+															Attributes: map[string]schema.Attribute{
+																"mode": schema.StringAttribute{
+																	Computed:    true,
+																	Optional:    true,
+																	Default:     stringdefault.StaticString(`Disabled`),
+																	Description: `Configuration of TLS for Prometheus listener. possible known values include one of ["Disabled", "ProvidedTLS", "ActiveMTLSBackend"]; Default: "Disabled"`,
+																},
+															},
+															Description: `Configuration of TLS for prometheus listener.`,
+														},
+													},
+													Description: `Prometheus backend configuration.`,
+												},
+												"type": schema.StringAttribute{
 													Optional:    true,
-													Description: `Endpoint for OpenTelemetry collector. Not Null`,
+													Description: `Type of the backend that will be used to collect metrics. At the moment only Prometheus backend is available. possible known values include one of ["Prometheus", "OpenTelemetry"]; Not Null`,
 													Validators: []validator.String{
 														speakeasy_stringvalidators.NotNull(),
 													},
 												},
-												"refresh_interval": schema.StringAttribute{
-													Optional:    true,
-													Description: `RefreshInterval defines how frequent metrics should be pushed to collector`,
-												},
 											},
-											Description: `OpenTelemetry backend configuration`,
+											Validators: []validator.Object{
+												objectvalidator.ConflictsWith(path.Expressions{
+													path.MatchRelative().AtParent().AtName("two"),
+												}...),
+											},
 										},
-										"prometheus": schema.SingleNestedAttribute{
+										"two": schema.SingleNestedAttribute{
 											Optional: true,
 											Attributes: map[string]schema.Attribute{
-												"client_id": schema.StringAttribute{
-													Optional:    true,
-													Description: `ClientId of the Prometheus backend. Needed when using MADS for DP discovery.`,
-												},
-												"path": schema.StringAttribute{
-													Computed:    true,
-													Optional:    true,
-													Default:     stringdefault.StaticString(`/metrics`),
-													Description: `Path on which a dataplane should expose HTTP endpoint with Prometheus metrics. Default: "/metrics"`,
-												},
-												"port": schema.Int32Attribute{
-													Computed:    true,
-													Optional:    true,
-													Default:     int32default.StaticInt32(5670),
-													Description: `Port on which a dataplane should expose HTTP endpoint with Prometheus metrics. Default: 5670`,
-												},
-												"tls": schema.SingleNestedAttribute{
+												"open_telemetry": schema.SingleNestedAttribute{
 													Optional: true,
 													Attributes: map[string]schema.Attribute{
-														"mode": schema.StringAttribute{
-															Computed:    true,
+														"backend_ref": schema.SingleNestedAttribute{
+															Optional: true,
+															Attributes: map[string]schema.Attribute{
+																"kind": schema.StringAttribute{
+																	Optional:    true,
+																	Description: `Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"`,
+																	Validators: []validator.String{
+																		speakeasy_stringvalidators.NotNull(),
+																		stringvalidator.OneOf(
+																			"MeshOpenTelemetryBackend",
+																		),
+																	},
+																},
+																"labels": schema.MapAttribute{
+																	Optional:    true,
+																	ElementType: types.StringType,
+																	MarkdownDescription: `Labels to match the referenced resource. When multiple resources match,` + "\n" +
+																		`the oldest by creation time wins.`,
+																},
+															},
+															MarkdownDescription: `BackendRef is a reference to a MeshOpenTelemetryBackend resource that` + "\n" +
+																`defines the collector endpoint.`,
+														},
+														"refresh_interval": schema.StringAttribute{
 															Optional:    true,
-															Default:     stringdefault.StaticString(`Disabled`),
-															Description: `Configuration of TLS for Prometheus listener. possible known values include one of ["Disabled", "ProvidedTLS", "ActiveMTLSBackend"]; Default: "Disabled"`,
+															Description: `RefreshInterval defines how frequent metrics should be pushed to collector`,
 														},
 													},
-													Description: `Configuration of TLS for prometheus listener.`,
+													Description: `OpenTelemetry backend configuration`,
+												},
+												"prometheus": schema.SingleNestedAttribute{
+													Optional: true,
+													Attributes: map[string]schema.Attribute{
+														"client_id": schema.StringAttribute{
+															Optional:    true,
+															Description: `ClientId of the Prometheus backend. Needed when using MADS for DP discovery.`,
+														},
+														"path": schema.StringAttribute{
+															Computed:    true,
+															Optional:    true,
+															Default:     stringdefault.StaticString(`/metrics`),
+															Description: `Path on which a dataplane should expose HTTP endpoint with Prometheus metrics. Default: "/metrics"`,
+														},
+														"port": schema.Int32Attribute{
+															Computed:    true,
+															Optional:    true,
+															Default:     int32default.StaticInt32(5670),
+															Description: `Port on which a dataplane should expose HTTP endpoint with Prometheus metrics. Default: 5670`,
+														},
+														"tls": schema.SingleNestedAttribute{
+															Optional: true,
+															Attributes: map[string]schema.Attribute{
+																"mode": schema.StringAttribute{
+																	Computed:    true,
+																	Optional:    true,
+																	Default:     stringdefault.StaticString(`Disabled`),
+																	Description: `Configuration of TLS for Prometheus listener. possible known values include one of ["Disabled", "ProvidedTLS", "ActiveMTLSBackend"]; Default: "Disabled"`,
+																},
+															},
+															Description: `Configuration of TLS for prometheus listener.`,
+														},
+													},
+													Description: `Prometheus backend configuration.`,
+												},
+												"type": schema.StringAttribute{
+													Optional:    true,
+													Description: `Type of the backend that will be used to collect metrics. At the moment only Prometheus backend is available. possible known values include one of ["Prometheus", "OpenTelemetry"]; Not Null`,
+													Validators: []validator.String{
+														speakeasy_stringvalidators.NotNull(),
+													},
 												},
 											},
-											Description: `Prometheus backend configuration.`,
-										},
-										"type": schema.StringAttribute{
-											Optional:    true,
-											Description: `Type of the backend that will be used to collect metrics. At the moment only Prometheus backend is available. possible known values include one of ["Prometheus", "OpenTelemetry"]; Not Null`,
-											Validators: []validator.String{
-												speakeasy_stringvalidators.NotNull(),
+											Validators: []validator.Object{
+												objectvalidator.ConflictsWith(path.Expressions{
+													path.MatchRelative().AtParent().AtName("one"),
+												}...),
 											},
 										},
 									},
@@ -328,48 +451,19 @@ func (r *MeshMetricResource) Schema(ctx context.Context, req resource.SchemaRequ
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
 								Required:    true,
-								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
+								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "Dataplane"]`,
 							},
 							"labels": schema.MapAttribute{
 								Optional:    true,
 								ElementType: types.StringType,
-								MarkdownDescription: `Labels are used to select group of MeshServices that match labels. Either Labels or` + "\n" +
-									`Name and Namespace can be used.`,
-							},
-							"mesh": schema.StringAttribute{
-								Optional:    true,
-								Description: `Mesh is reserved for future use to identify cross mesh resources.`,
-							},
-							"name": schema.StringAttribute{
-								Optional: true,
-								MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `,` + "\n" +
-									`` + "`" + `MeshServiceSubset` + "`" + ` and ` + "`" + `MeshGatewayRoute` + "`" + ``,
-							},
-							"namespace": schema.StringAttribute{
-								Optional: true,
-								MarkdownDescription: `Namespace specifies the namespace of target resource. If empty only resources in policy namespace` + "\n" +
-									`will be targeted.`,
-							},
-							"proxy_types": schema.ListAttribute{
-								Computed: true,
-								Optional: true,
-								PlanModifiers: []planmodifier.List{
-									custom_listplanmodifier.SupressZeroNullModifier(),
-								},
-								ElementType: types.StringType,
-								MarkdownDescription: `ProxyTypes specifies the data plane types that are subject to the policy. When not specified,` + "\n" +
-									`all data plane types are targeted by the policy.`,
+								MarkdownDescription: `Labels are used to select referenced real resources and to carry legacy` + "\n" +
+									`service identity when a common TargetRef must still target old` + "\n" +
+									`service-tag based paths.`,
 							},
 							"section_name": schema.StringAttribute{
 								Optional: true,
 								MarkdownDescription: `SectionName is used to target specific section of resource.` + "\n" +
 									`For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.`,
-							},
-							"tags": schema.MapAttribute{
-								Optional:    true,
-								ElementType: types.StringType,
-								MarkdownDescription: `Tags used to select a subset of proxies by tags. Can only be used with kinds` + "\n" +
-									`` + "`" + `MeshSubset` + "`" + ` and ` + "`" + `MeshServiceSubset` + "`" + ``,
 							},
 						},
 						MarkdownDescription: `TargetRef is a reference to the resource the policy takes an effect on.` + "\n" +
@@ -378,6 +472,53 @@ func (r *MeshMetricResource) Schema(ctx context.Context, req resource.SchemaRequ
 					},
 				},
 				Description: `Spec is the specification of the Kuma MeshMetric resource.`,
+			},
+			"status": schema.SingleNestedAttribute{
+				Computed: true,
+				PlanModifiers: []planmodifier.Object{
+					speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+				},
+				Attributes: map[string]schema.Attribute{
+					"conditions": schema.ListNestedAttribute{
+						Computed: true,
+						PlanModifiers: []planmodifier.List{
+							custom_listplanmodifier.SupressZeroNullModifier(),
+							speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
+						},
+						NestedObject: schema.NestedAttributeObject{
+							PlanModifiers: []planmodifier.Object{
+								speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+							},
+							Attributes: map[string]schema.Attribute{
+								"message": schema.StringAttribute{
+									Computed: true,
+									MarkdownDescription: `message is a human readable message indicating details about the transition.` + "\n" +
+										`This may be an empty string.`,
+								},
+								"reason": schema.StringAttribute{
+									Computed: true,
+									MarkdownDescription: `reason contains a programmatic identifier indicating the reason for the condition's last transition.` + "\n" +
+										`Producers of specific condition types may define expected values and meanings for this field,` + "\n" +
+										`and whether the values are considered a guaranteed API.` + "\n" +
+										`The value should be a CamelCase string.` + "\n" +
+										`This field may not be empty.`,
+								},
+								"status": schema.StringAttribute{
+									Computed: true,
+									PlanModifiers: []planmodifier.String{
+										speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+									},
+									Description: `status of the condition, one of True, False, Unknown.`,
+								},
+								"type": schema.StringAttribute{
+									Computed:    true,
+									Description: `type of condition in CamelCase or in foo.example.com/CamelCase.`,
+								},
+							},
+						},
+					},
+				},
+				Description: `Status is the current status of the Kuma MeshMetric resource.`,
 			},
 			"type": schema.StringAttribute{
 				Required:    true,

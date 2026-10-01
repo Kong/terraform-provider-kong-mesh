@@ -62,32 +62,86 @@ func (r *MeshMetricResourceModel) RefreshFromSharedMeshMetricItem(ctx context.Co
 			for _, backendsItem := range resp.Spec.Default.Backends {
 				var backends tfTypes.MeshMetricItemBackends
 
-				if backendsItem.OpenTelemetry == nil {
-					backends.OpenTelemetry = nil
-				} else {
-					backends.OpenTelemetry = &tfTypes.OpenTelemetry{}
-					backends.OpenTelemetry.Endpoint = types.StringValue(backendsItem.OpenTelemetry.Endpoint)
-					backends.OpenTelemetry.RefreshInterval = types.StringPointerValue(backendsItem.OpenTelemetry.RefreshInterval)
-				}
-				if backendsItem.Prometheus == nil {
-					backends.Prometheus = nil
-				} else {
-					backends.Prometheus = &tfTypes.Prometheus{}
-					backends.Prometheus.ClientID = types.StringPointerValue(backendsItem.Prometheus.ClientID)
-					backends.Prometheus.Path = types.StringPointerValue(backendsItem.Prometheus.Path)
-					backends.Prometheus.Port = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(backendsItem.Prometheus.Port))
-					if backendsItem.Prometheus.TLS == nil {
-						backends.Prometheus.TLS = nil
+				if backendsItem.MeshMetricItemBackends1 != nil {
+					backends.One = &tfTypes.MeshMetricItemBackends1{}
+					if backendsItem.MeshMetricItemBackends1.OpenTelemetry == nil {
+						backends.One.OpenTelemetry = nil
 					} else {
-						backends.Prometheus.TLS = &tfTypes.MeshMetricItemTLS{}
-						if backendsItem.Prometheus.TLS.Mode != nil {
-							backends.Prometheus.TLS.Mode = types.StringValue(string(*backendsItem.Prometheus.TLS.Mode))
+						backends.One.OpenTelemetry = &tfTypes.MeshMetricItemBackendsOpenTelemetry{}
+						if backendsItem.MeshMetricItemBackends1.OpenTelemetry.BackendRef == nil {
+							backends.One.OpenTelemetry.BackendRef = nil
 						} else {
-							backends.Prometheus.TLS.Mode = types.StringNull()
+							backends.One.OpenTelemetry.BackendRef = &tfTypes.MeshAccessLogItemBackendsSpecRulesBackendRef{}
+							backends.One.OpenTelemetry.BackendRef.Kind = types.StringValue(string(backendsItem.MeshMetricItemBackends1.OpenTelemetry.BackendRef.Kind))
+							if len(backendsItem.MeshMetricItemBackends1.OpenTelemetry.BackendRef.Labels) > 0 {
+								backends.One.OpenTelemetry.BackendRef.Labels = make(map[string]types.String, len(backendsItem.MeshMetricItemBackends1.OpenTelemetry.BackendRef.Labels))
+								for key, value := range backendsItem.MeshMetricItemBackends1.OpenTelemetry.BackendRef.Labels {
+									backends.One.OpenTelemetry.BackendRef.Labels[key] = types.StringValue(value)
+								}
+							}
+						}
+						backends.One.OpenTelemetry.RefreshInterval = types.StringPointerValue(backendsItem.MeshMetricItemBackends1.OpenTelemetry.RefreshInterval)
+					}
+					if backendsItem.MeshMetricItemBackends1.Prometheus == nil {
+						backends.One.Prometheus = nil
+					} else {
+						backends.One.Prometheus = &tfTypes.Prometheus{}
+						backends.One.Prometheus.ClientID = types.StringPointerValue(backendsItem.MeshMetricItemBackends1.Prometheus.ClientID)
+						backends.One.Prometheus.Path = types.StringPointerValue(backendsItem.MeshMetricItemBackends1.Prometheus.Path)
+						backends.One.Prometheus.Port = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(backendsItem.MeshMetricItemBackends1.Prometheus.Port))
+						if backendsItem.MeshMetricItemBackends1.Prometheus.TLS == nil {
+							backends.One.Prometheus.TLS = nil
+						} else {
+							backends.One.Prometheus.TLS = &tfTypes.MeshServices{}
+							if backendsItem.MeshMetricItemBackends1.Prometheus.TLS.Mode != nil {
+								backends.One.Prometheus.TLS.Mode = types.StringValue(string(*backendsItem.MeshMetricItemBackends1.Prometheus.TLS.Mode))
+							} else {
+								backends.One.Prometheus.TLS.Mode = types.StringNull()
+							}
 						}
 					}
+					backends.One.Type = types.StringValue(string(backendsItem.MeshMetricItemBackends1.Type))
 				}
-				backends.Type = types.StringValue(string(backendsItem.Type))
+				if backendsItem.MeshMetricItemBackends2 != nil {
+					backends.Two = &tfTypes.MeshMetricItemBackends1{}
+					if backendsItem.MeshMetricItemBackends2.OpenTelemetry == nil {
+						backends.Two.OpenTelemetry = nil
+					} else {
+						backends.Two.OpenTelemetry = &tfTypes.MeshMetricItemBackendsOpenTelemetry{}
+						if backendsItem.MeshMetricItemBackends2.OpenTelemetry.BackendRef == nil {
+							backends.Two.OpenTelemetry.BackendRef = nil
+						} else {
+							backends.Two.OpenTelemetry.BackendRef = &tfTypes.MeshAccessLogItemBackendsSpecRulesBackendRef{}
+							backends.Two.OpenTelemetry.BackendRef.Kind = types.StringValue(string(backendsItem.MeshMetricItemBackends2.OpenTelemetry.BackendRef.Kind))
+							if len(backendsItem.MeshMetricItemBackends2.OpenTelemetry.BackendRef.Labels) > 0 {
+								backends.Two.OpenTelemetry.BackendRef.Labels = make(map[string]types.String, len(backendsItem.MeshMetricItemBackends2.OpenTelemetry.BackendRef.Labels))
+								for key1, value1 := range backendsItem.MeshMetricItemBackends2.OpenTelemetry.BackendRef.Labels {
+									backends.Two.OpenTelemetry.BackendRef.Labels[key1] = types.StringValue(value1)
+								}
+							}
+						}
+						backends.Two.OpenTelemetry.RefreshInterval = types.StringPointerValue(backendsItem.MeshMetricItemBackends2.OpenTelemetry.RefreshInterval)
+					}
+					if backendsItem.MeshMetricItemBackends2.Prometheus == nil {
+						backends.Two.Prometheus = nil
+					} else {
+						backends.Two.Prometheus = &tfTypes.Prometheus{}
+						backends.Two.Prometheus.ClientID = types.StringPointerValue(backendsItem.MeshMetricItemBackends2.Prometheus.ClientID)
+						backends.Two.Prometheus.Path = types.StringPointerValue(backendsItem.MeshMetricItemBackends2.Prometheus.Path)
+						backends.Two.Prometheus.Port = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(backendsItem.MeshMetricItemBackends2.Prometheus.Port))
+						if backendsItem.MeshMetricItemBackends2.Prometheus.TLS == nil {
+							backends.Two.Prometheus.TLS = nil
+						} else {
+							backends.Two.Prometheus.TLS = &tfTypes.MeshServices{}
+							if backendsItem.MeshMetricItemBackends2.Prometheus.TLS.Mode != nil {
+								backends.Two.Prometheus.TLS.Mode = types.StringValue(string(*backendsItem.MeshMetricItemBackends2.Prometheus.TLS.Mode))
+							} else {
+								backends.Two.Prometheus.TLS.Mode = types.StringNull()
+							}
+						}
+					}
+					backends.Two.Type = types.StringValue(string(backendsItem.MeshMetricItemBackends2.Type))
+				}
 
 				r.Spec.Default.Backends = append(r.Spec.Default.Backends, backends)
 			}
@@ -100,10 +154,10 @@ func (r *MeshMetricResourceModel) RefreshFromSharedMeshMetricItem(ctx context.Co
 					r.Spec.Default.Sidecar.Profiles = nil
 				} else {
 					r.Spec.Default.Sidecar.Profiles = &tfTypes.Profiles{}
-					r.Spec.Default.Sidecar.Profiles.AppendProfiles = []tfTypes.EnvVar{}
+					r.Spec.Default.Sidecar.Profiles.AppendProfiles = []tfTypes.MeshExternalServiceItemSpecTLSEnvVar{}
 
 					for _, appendProfilesItem := range resp.Spec.Default.Sidecar.Profiles.AppendProfiles {
-						var appendProfiles tfTypes.EnvVar
+						var appendProfiles tfTypes.MeshExternalServiceItemSpecTLSEnvVar
 
 						appendProfiles.Name = types.StringValue(string(appendProfilesItem.Name))
 
@@ -135,27 +189,31 @@ func (r *MeshMetricResourceModel) RefreshFromSharedMeshMetricItem(ctx context.Co
 		if resp.Spec.TargetRef == nil {
 			r.Spec.TargetRef = nil
 		} else {
-			r.Spec.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
+			r.Spec.TargetRef = &tfTypes.TargetRef{}
 			r.Spec.TargetRef.Kind = types.StringValue(string(resp.Spec.TargetRef.Kind))
 			if len(resp.Spec.TargetRef.Labels) > 0 {
 				r.Spec.TargetRef.Labels = make(map[string]types.String, len(resp.Spec.TargetRef.Labels))
-				for key, value := range resp.Spec.TargetRef.Labels {
-					r.Spec.TargetRef.Labels[key] = types.StringValue(value)
+				for key2, value2 := range resp.Spec.TargetRef.Labels {
+					r.Spec.TargetRef.Labels[key2] = types.StringValue(value2)
 				}
-			}
-			r.Spec.TargetRef.Mesh = types.StringPointerValue(resp.Spec.TargetRef.Mesh)
-			r.Spec.TargetRef.Name = types.StringPointerValue(resp.Spec.TargetRef.Name)
-			r.Spec.TargetRef.Namespace = types.StringPointerValue(resp.Spec.TargetRef.Namespace)
-			r.Spec.TargetRef.ProxyTypes = make([]types.String, 0, len(resp.Spec.TargetRef.ProxyTypes))
-			for _, v := range resp.Spec.TargetRef.ProxyTypes {
-				r.Spec.TargetRef.ProxyTypes = append(r.Spec.TargetRef.ProxyTypes, types.StringValue(string(v)))
 			}
 			r.Spec.TargetRef.SectionName = types.StringPointerValue(resp.Spec.TargetRef.SectionName)
-			if len(resp.Spec.TargetRef.Tags) > 0 {
-				r.Spec.TargetRef.Tags = make(map[string]types.String, len(resp.Spec.TargetRef.Tags))
-				for key1, value1 := range resp.Spec.TargetRef.Tags {
-					r.Spec.TargetRef.Tags[key1] = types.StringValue(value1)
-				}
+		}
+		if resp.Status == nil {
+			r.Status = nil
+		} else {
+			r.Status = &tfTypes.Status{}
+			r.Status.Conditions = []tfTypes.Conditions{}
+
+			for _, conditionsItem := range resp.Status.Conditions {
+				var conditions tfTypes.Conditions
+
+				conditions.Message = types.StringValue(conditionsItem.Message)
+				conditions.Reason = types.StringValue(conditionsItem.Reason)
+				conditions.Status = types.StringValue(string(conditionsItem.Status))
+				conditions.Type = types.StringValue(conditionsItem.Type)
+
+				r.Status.Conditions = append(r.Status.Conditions, conditions)
 			}
 		}
 		r.Type = types.StringValue(string(resp.Type))
@@ -273,68 +331,163 @@ func (r *MeshMetricResourceModel) ToSharedMeshMetricItemInput(ctx context.Contex
 			})
 		}
 		backends := make([]shared.MeshMetricItemBackends, 0, len(r.Spec.Default.Backends))
-		for backendsIndex := range r.Spec.Default.Backends {
-			var openTelemetry *shared.OpenTelemetry
-			if r.Spec.Default.Backends[backendsIndex].OpenTelemetry != nil {
-				var endpoint string
-				endpoint = r.Spec.Default.Backends[backendsIndex].OpenTelemetry.Endpoint.ValueString()
-
-				refreshInterval := new(string)
-				if !r.Spec.Default.Backends[backendsIndex].OpenTelemetry.RefreshInterval.IsUnknown() && !r.Spec.Default.Backends[backendsIndex].OpenTelemetry.RefreshInterval.IsNull() {
-					*refreshInterval = r.Spec.Default.Backends[backendsIndex].OpenTelemetry.RefreshInterval.ValueString()
-				} else {
-					refreshInterval = nil
-				}
-				openTelemetry = &shared.OpenTelemetry{
-					Endpoint:        endpoint,
-					RefreshInterval: refreshInterval,
-				}
-			}
-			var prometheus *shared.Prometheus
-			if r.Spec.Default.Backends[backendsIndex].Prometheus != nil {
-				clientID := new(string)
-				if !r.Spec.Default.Backends[backendsIndex].Prometheus.ClientID.IsUnknown() && !r.Spec.Default.Backends[backendsIndex].Prometheus.ClientID.IsNull() {
-					*clientID = r.Spec.Default.Backends[backendsIndex].Prometheus.ClientID.ValueString()
-				} else {
-					clientID = nil
-				}
-				path1 := new(string)
-				if !r.Spec.Default.Backends[backendsIndex].Prometheus.Path.IsUnknown() && !r.Spec.Default.Backends[backendsIndex].Prometheus.Path.IsNull() {
-					*path1 = r.Spec.Default.Backends[backendsIndex].Prometheus.Path.ValueString()
-				} else {
-					path1 = nil
-				}
-				port1 := new(int)
-				if !r.Spec.Default.Backends[backendsIndex].Prometheus.Port.IsUnknown() && !r.Spec.Default.Backends[backendsIndex].Prometheus.Port.IsNull() {
-					*port1 = int(r.Spec.Default.Backends[backendsIndex].Prometheus.Port.ValueInt32())
-				} else {
-					port1 = nil
-				}
-				var tls *shared.MeshMetricItemTLS
-				if r.Spec.Default.Backends[backendsIndex].Prometheus.TLS != nil {
-					mode := new(shared.MeshMetricItemMode)
-					if !r.Spec.Default.Backends[backendsIndex].Prometheus.TLS.Mode.IsUnknown() && !r.Spec.Default.Backends[backendsIndex].Prometheus.TLS.Mode.IsNull() {
-						*mode = shared.MeshMetricItemMode(r.Spec.Default.Backends[backendsIndex].Prometheus.TLS.Mode.ValueString())
+		for backendsItem := range r.Spec.Default.Backends {
+			if r.Spec.Default.Backends[backendsItem].One != nil {
+				var prometheus *shared.Prometheus
+				if r.Spec.Default.Backends[backendsItem].One.Prometheus != nil {
+					clientID := new(string)
+					if !r.Spec.Default.Backends[backendsItem].One.Prometheus.ClientID.IsUnknown() && !r.Spec.Default.Backends[backendsItem].One.Prometheus.ClientID.IsNull() {
+						*clientID = r.Spec.Default.Backends[backendsItem].One.Prometheus.ClientID.ValueString()
 					} else {
-						mode = nil
+						clientID = nil
 					}
-					tls = &shared.MeshMetricItemTLS{
-						Mode: mode,
+					path1 := new(string)
+					if !r.Spec.Default.Backends[backendsItem].One.Prometheus.Path.IsUnknown() && !r.Spec.Default.Backends[backendsItem].One.Prometheus.Path.IsNull() {
+						*path1 = r.Spec.Default.Backends[backendsItem].One.Prometheus.Path.ValueString()
+					} else {
+						path1 = nil
+					}
+					port1 := new(int)
+					if !r.Spec.Default.Backends[backendsItem].One.Prometheus.Port.IsUnknown() && !r.Spec.Default.Backends[backendsItem].One.Prometheus.Port.IsNull() {
+						*port1 = int(r.Spec.Default.Backends[backendsItem].One.Prometheus.Port.ValueInt32())
+					} else {
+						port1 = nil
+					}
+					var tls *shared.MeshMetricItemBackendsTLS
+					if r.Spec.Default.Backends[backendsItem].One.Prometheus.TLS != nil {
+						mode := new(shared.MeshMetricItemBackendsMode)
+						if !r.Spec.Default.Backends[backendsItem].One.Prometheus.TLS.Mode.IsUnknown() && !r.Spec.Default.Backends[backendsItem].One.Prometheus.TLS.Mode.IsNull() {
+							*mode = shared.MeshMetricItemBackendsMode(r.Spec.Default.Backends[backendsItem].One.Prometheus.TLS.Mode.ValueString())
+						} else {
+							mode = nil
+						}
+						tls = &shared.MeshMetricItemBackendsTLS{
+							Mode: mode,
+						}
+					}
+					prometheus = &shared.Prometheus{
+						ClientID: clientID,
+						Path:     path1,
+						Port:     port1,
+						TLS:      tls,
 					}
 				}
-				prometheus = &shared.Prometheus{
-					ClientID: clientID,
-					Path:     path1,
-					Port:     port1,
-					TLS:      tls,
+				typeVar1 := shared.BackendsType(r.Spec.Default.Backends[backendsItem].One.Type.ValueString())
+				var openTelemetry *shared.MeshMetricItemBackendsOpenTelemetry
+				if r.Spec.Default.Backends[backendsItem].One.OpenTelemetry != nil {
+					var backendRef *shared.BackendRef
+					if r.Spec.Default.Backends[backendsItem].One.OpenTelemetry.BackendRef != nil {
+						kind := shared.BackendsKind(r.Spec.Default.Backends[backendsItem].One.OpenTelemetry.BackendRef.Kind.ValueString())
+						labels1 := make(map[string]string)
+						for labelsKey := range r.Spec.Default.Backends[backendsItem].One.OpenTelemetry.BackendRef.Labels {
+							var labelsInst string
+							labelsInst = r.Spec.Default.Backends[backendsItem].One.OpenTelemetry.BackendRef.Labels[labelsKey].ValueString()
+
+							labels1[labelsKey] = labelsInst
+						}
+						backendRef = &shared.BackendRef{
+							Kind:   kind,
+							Labels: labels1,
+						}
+					}
+					refreshInterval := new(string)
+					if !r.Spec.Default.Backends[backendsItem].One.OpenTelemetry.RefreshInterval.IsUnknown() && !r.Spec.Default.Backends[backendsItem].One.OpenTelemetry.RefreshInterval.IsNull() {
+						*refreshInterval = r.Spec.Default.Backends[backendsItem].One.OpenTelemetry.RefreshInterval.ValueString()
+					} else {
+						refreshInterval = nil
+					}
+					openTelemetry = &shared.MeshMetricItemBackendsOpenTelemetry{
+						BackendRef:      backendRef,
+						RefreshInterval: refreshInterval,
+					}
 				}
+				meshMetricItemBackends1 := shared.MeshMetricItemBackends1{
+					Prometheus:    prometheus,
+					Type:          typeVar1,
+					OpenTelemetry: openTelemetry,
+				}
+				backends = append(backends, shared.MeshMetricItemBackends{
+					MeshMetricItemBackends1: &meshMetricItemBackends1,
+				})
 			}
-			type1 := shared.MeshMetricItemSpecType(r.Spec.Default.Backends[backendsIndex].Type.ValueString())
-			backends = append(backends, shared.MeshMetricItemBackends{
-				OpenTelemetry: openTelemetry,
-				Prometheus:    prometheus,
-				Type:          type1,
-			})
+			if r.Spec.Default.Backends[backendsItem].Two != nil {
+				var openTelemetry1 *shared.BackendsOpenTelemetry
+				if r.Spec.Default.Backends[backendsItem].Two.OpenTelemetry != nil {
+					var backendRef1 *shared.BackendsBackendRef
+					if r.Spec.Default.Backends[backendsItem].Two.OpenTelemetry.BackendRef != nil {
+						kind1 := shared.MeshMetricItemBackendsKind(r.Spec.Default.Backends[backendsItem].Two.OpenTelemetry.BackendRef.Kind.ValueString())
+						labels2 := make(map[string]string)
+						for labelsKey1 := range r.Spec.Default.Backends[backendsItem].Two.OpenTelemetry.BackendRef.Labels {
+							var labelsInst1 string
+							labelsInst1 = r.Spec.Default.Backends[backendsItem].Two.OpenTelemetry.BackendRef.Labels[labelsKey1].ValueString()
+
+							labels2[labelsKey1] = labelsInst1
+						}
+						backendRef1 = &shared.BackendsBackendRef{
+							Kind:   kind1,
+							Labels: labels2,
+						}
+					}
+					refreshInterval1 := new(string)
+					if !r.Spec.Default.Backends[backendsItem].Two.OpenTelemetry.RefreshInterval.IsUnknown() && !r.Spec.Default.Backends[backendsItem].Two.OpenTelemetry.RefreshInterval.IsNull() {
+						*refreshInterval1 = r.Spec.Default.Backends[backendsItem].Two.OpenTelemetry.RefreshInterval.ValueString()
+					} else {
+						refreshInterval1 = nil
+					}
+					openTelemetry1 = &shared.BackendsOpenTelemetry{
+						BackendRef:      backendRef1,
+						RefreshInterval: refreshInterval1,
+					}
+				}
+				typeVar2 := shared.MeshMetricItemBackendsType(r.Spec.Default.Backends[backendsItem].Two.Type.ValueString())
+				var prometheus1 *shared.BackendsPrometheus
+				if r.Spec.Default.Backends[backendsItem].Two.Prometheus != nil {
+					clientId1 := new(string)
+					if !r.Spec.Default.Backends[backendsItem].Two.Prometheus.ClientID.IsUnknown() && !r.Spec.Default.Backends[backendsItem].Two.Prometheus.ClientID.IsNull() {
+						*clientId1 = r.Spec.Default.Backends[backendsItem].Two.Prometheus.ClientID.ValueString()
+					} else {
+						clientId1 = nil
+					}
+					path2 := new(string)
+					if !r.Spec.Default.Backends[backendsItem].Two.Prometheus.Path.IsUnknown() && !r.Spec.Default.Backends[backendsItem].Two.Prometheus.Path.IsNull() {
+						*path2 = r.Spec.Default.Backends[backendsItem].Two.Prometheus.Path.ValueString()
+					} else {
+						path2 = nil
+					}
+					port2 := new(int)
+					if !r.Spec.Default.Backends[backendsItem].Two.Prometheus.Port.IsUnknown() && !r.Spec.Default.Backends[backendsItem].Two.Prometheus.Port.IsNull() {
+						*port2 = int(r.Spec.Default.Backends[backendsItem].Two.Prometheus.Port.ValueInt32())
+					} else {
+						port2 = nil
+					}
+					var tls1 *shared.BackendsTLS
+					if r.Spec.Default.Backends[backendsItem].Two.Prometheus.TLS != nil {
+						mode1 := new(shared.BackendsMode)
+						if !r.Spec.Default.Backends[backendsItem].Two.Prometheus.TLS.Mode.IsUnknown() && !r.Spec.Default.Backends[backendsItem].Two.Prometheus.TLS.Mode.IsNull() {
+							*mode1 = shared.BackendsMode(r.Spec.Default.Backends[backendsItem].Two.Prometheus.TLS.Mode.ValueString())
+						} else {
+							mode1 = nil
+						}
+						tls1 = &shared.BackendsTLS{
+							Mode: mode1,
+						}
+					}
+					prometheus1 = &shared.BackendsPrometheus{
+						ClientID: clientId1,
+						Path:     path2,
+						Port:     port2,
+						TLS:      tls1,
+					}
+				}
+				meshMetricItemBackends2 := shared.MeshMetricItemBackends2{
+					OpenTelemetry: openTelemetry1,
+					Type:          typeVar2,
+					Prometheus:    prometheus1,
+				}
+				backends = append(backends, shared.MeshMetricItemBackends{
+					MeshMetricItemBackends2: &meshMetricItemBackends2,
+				})
+			}
 		}
 		var sidecar *shared.Sidecar
 		if r.Spec.Default.Sidecar != nil {
@@ -358,10 +511,10 @@ func (r *MeshMetricResourceModel) ToSharedMeshMetricItemInput(ctx context.Contex
 					var match string
 					match = r.Spec.Default.Sidecar.Profiles.Exclude[excludeIndex].Match.ValueString()
 
-					type2 := shared.MeshMetricItemSpecDefaultType(r.Spec.Default.Sidecar.Profiles.Exclude[excludeIndex].Type.ValueString())
+					type1 := shared.MeshMetricItemSpecType(r.Spec.Default.Sidecar.Profiles.Exclude[excludeIndex].Type.ValueString())
 					exclude = append(exclude, shared.Exclude{
 						Match: match,
-						Type:  type2,
+						Type:  type1,
 					})
 				}
 				include := make([]shared.Include, 0, len(r.Spec.Default.Sidecar.Profiles.Include))
@@ -369,10 +522,10 @@ func (r *MeshMetricResourceModel) ToSharedMeshMetricItemInput(ctx context.Contex
 					var match1 string
 					match1 = r.Spec.Default.Sidecar.Profiles.Include[includeIndex].Match.ValueString()
 
-					type3 := shared.MeshMetricItemSpecDefaultSidecarType(r.Spec.Default.Sidecar.Profiles.Include[includeIndex].Type.ValueString())
+					type2 := shared.MeshMetricItemSpecDefaultType(r.Spec.Default.Sidecar.Profiles.Include[includeIndex].Type.ValueString())
 					include = append(include, shared.Include{
 						Match: match1,
-						Type:  type3,
+						Type:  type2,
 					})
 				}
 				profiles = &shared.Profiles{
@@ -394,35 +547,13 @@ func (r *MeshMetricResourceModel) ToSharedMeshMetricItemInput(ctx context.Contex
 	}
 	var targetRef *shared.MeshMetricItemTargetRef
 	if r.Spec.TargetRef != nil {
-		kind := shared.MeshMetricItemKind(r.Spec.TargetRef.Kind.ValueString())
-		labels1 := make(map[string]string)
-		for labelsKey := range r.Spec.TargetRef.Labels {
-			var labelsInst string
-			labelsInst = r.Spec.TargetRef.Labels[labelsKey].ValueString()
+		kind2 := shared.MeshMetricItemKind(r.Spec.TargetRef.Kind.ValueString())
+		labels3 := make(map[string]string)
+		for labelsKey2 := range r.Spec.TargetRef.Labels {
+			var labelsInst2 string
+			labelsInst2 = r.Spec.TargetRef.Labels[labelsKey2].ValueString()
 
-			labels1[labelsKey] = labelsInst
-		}
-		mesh1 := new(string)
-		if !r.Spec.TargetRef.Mesh.IsUnknown() && !r.Spec.TargetRef.Mesh.IsNull() {
-			*mesh1 = r.Spec.TargetRef.Mesh.ValueString()
-		} else {
-			mesh1 = nil
-		}
-		name3 := new(string)
-		if !r.Spec.TargetRef.Name.IsUnknown() && !r.Spec.TargetRef.Name.IsNull() {
-			*name3 = r.Spec.TargetRef.Name.ValueString()
-		} else {
-			name3 = nil
-		}
-		namespace := new(string)
-		if !r.Spec.TargetRef.Namespace.IsUnknown() && !r.Spec.TargetRef.Namespace.IsNull() {
-			*namespace = r.Spec.TargetRef.Namespace.ValueString()
-		} else {
-			namespace = nil
-		}
-		proxyTypes := make([]shared.MeshMetricItemProxyTypes, 0, len(r.Spec.TargetRef.ProxyTypes))
-		for _, proxyTypesItem := range r.Spec.TargetRef.ProxyTypes {
-			proxyTypes = append(proxyTypes, shared.MeshMetricItemProxyTypes(proxyTypesItem.ValueString()))
+			labels3[labelsKey2] = labelsInst2
 		}
 		sectionName := new(string)
 		if !r.Spec.TargetRef.SectionName.IsUnknown() && !r.Spec.TargetRef.SectionName.IsNull() {
@@ -430,22 +561,10 @@ func (r *MeshMetricResourceModel) ToSharedMeshMetricItemInput(ctx context.Contex
 		} else {
 			sectionName = nil
 		}
-		tags := make(map[string]string)
-		for tagsKey := range r.Spec.TargetRef.Tags {
-			var tagsInst string
-			tagsInst = r.Spec.TargetRef.Tags[tagsKey].ValueString()
-
-			tags[tagsKey] = tagsInst
-		}
 		targetRef = &shared.MeshMetricItemTargetRef{
-			Kind:        kind,
-			Labels:      labels1,
-			Mesh:        mesh1,
-			Name:        name3,
-			Namespace:   namespace,
-			ProxyTypes:  proxyTypes,
+			Kind:        kind2,
+			Labels:      labels3,
 			SectionName: sectionName,
-			Tags:        tags,
 		}
 	}
 	spec := shared.MeshMetricItemSpec{

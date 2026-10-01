@@ -5,24 +5,21 @@ package provider
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
+	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
-	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	speakeasy_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
-	custom_objectplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/objectplanmodifier"
+	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
-	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
+	"regexp"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -41,19 +38,14 @@ type MeshResource struct {
 
 // MeshResourceModel describes the resource data model.
 type MeshResourceModel struct {
-	Constraints                 *tfTypes.Constraints    `tfsdk:"constraints"`
-	Labels                      map[string]types.String `tfsdk:"labels"`
-	Logging                     *tfTypes.Logging        `tfsdk:"logging"`
-	MeshServices                *tfTypes.MeshServices   `tfsdk:"mesh_services"`
-	Metrics                     *tfTypes.Metrics        `tfsdk:"metrics"`
-	Mtls                        *tfTypes.Mtls           `tfsdk:"mtls"`
-	Name                        types.String            `tfsdk:"name"`
-	Networking                  *tfTypes.Networking     `tfsdk:"networking"`
-	Routing                     *tfTypes.Routing        `tfsdk:"routing"`
-	SkipCreatingInitialPolicies []types.String          `tfsdk:"skip_creating_initial_policies"`
-	Tracing                     *tfTypes.Tracing        `tfsdk:"tracing"`
-	Type                        types.String            `tfsdk:"type"`
-	Warnings                    []types.String          `tfsdk:"warnings"`
+	CreationTime     types.String                  `tfsdk:"creation_time"`
+	Kri              types.String                  `tfsdk:"kri"`
+	Labels           kumalabels.KumaLabelsMapValue `tfsdk:"labels"`
+	MeshServices     *tfTypes.MeshServices         `tfsdk:"mesh_services"`
+	ModificationTime types.String                  `tfsdk:"modification_time"`
+	Name             types.String                  `tfsdk:"name"`
+	Type             types.String                  `tfsdk:"type"`
+	Warnings         []types.String                `tfsdk:"warnings"`
 }
 
 func (r *MeshResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -64,1354 +56,43 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "Mesh Resource",
 		Attributes: map[string]schema.Attribute{
-			"constraints": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"dataplane_proxy": schema.SingleNestedAttribute{
-						Optional: true,
-						Attributes: map[string]schema.Attribute{
-							"requirements": schema.ListNestedAttribute{
-								Computed: true,
-								Optional: true,
-								NestedObject: schema.NestedAttributeObject{
-									Validators: []validator.Object{
-										speakeasy_objectvalidators.NotNull(),
-									},
-									Attributes: map[string]schema.Attribute{
-										"tags": schema.MapAttribute{
-											Optional:    true,
-											ElementType: types.StringType,
-											MarkdownDescription: `Tags defines set of required tags. You can specify '*' in value to` + "\n" +
-												`require non empty value of tag`,
-										},
-									},
-								},
-								MarkdownDescription: `Requirements defines a set of requirements that data plane proxies must` + "\n" +
-									`fulfill in order to join the mesh. A data plane proxy must fulfill at` + "\n" +
-									`least one requirement in order to join the mesh. Empty list of allowed` + "\n" +
-									`requirements means that any proxy that is not explicitly denied can join.`,
-							},
-							"restrictions": schema.ListNestedAttribute{
-								Computed: true,
-								Optional: true,
-								NestedObject: schema.NestedAttributeObject{
-									Validators: []validator.Object{
-										speakeasy_objectvalidators.NotNull(),
-									},
-									Attributes: map[string]schema.Attribute{
-										"tags": schema.MapAttribute{
-											Optional:    true,
-											ElementType: types.StringType,
-											MarkdownDescription: `Tags defines set of required tags. You can specify '*' in value to` + "\n" +
-												`require non empty value of tag`,
-										},
-									},
-								},
-								MarkdownDescription: `Restrictions defines a set of restrictions that data plane proxies cannot` + "\n" +
-									`fulfill in order to join the mesh. A data plane proxy cannot fulfill any` + "\n" +
-									`requirement in order to join the mesh.` + "\n" +
-									`Restrictions takes precedence over requirements.`,
-							},
-						},
-						MarkdownDescription: `DataplaneProxyMembership defines a set of requirements for data plane` + "\n" +
-							`proxies to be a member of the mesh.`,
-					},
+			"creation_time": schema.StringAttribute{
+				Computed: true,
+				PlanModifiers: []planmodifier.String{
+					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
-				Description: `Constraints that applies to the mesh and its entities`,
+				Description: `Time at which the resource was created`,
+			},
+			"kri": schema.StringAttribute{
+				Computed:    true,
+				Description: `Kuma Resource Identifier (KRI) of the given resource`,
 			},
 			"labels": schema.MapAttribute{
+				CustomType:  kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}},
+				Computed:    true,
 				Optional:    true,
+				Default:     kumalabels.EmptyKumaLabelsMapDefault{},
 				ElementType: types.StringType,
-			},
-			"logging": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"backends": schema.ListNestedAttribute{
-						Computed: true,
-						Optional: true,
-						NestedObject: schema.NestedAttributeObject{
-							Validators: []validator.Object{
-								speakeasy_objectvalidators.NotNull(),
-							},
-							Attributes: map[string]schema.Attribute{
-								"conf": schema.SingleNestedAttribute{
-									Optional: true,
-									Attributes: map[string]schema.Attribute{
-										"file_logging_backend_config": schema.SingleNestedAttribute{
-											Optional: true,
-											Attributes: map[string]schema.Attribute{
-												"path": schema.StringAttribute{
-													Optional:    true,
-													Description: `Path to a file that logs will be written to`,
-												},
-											},
-											Description: `FileLoggingBackendConfig defines configuration for file based access logs`,
-											Validators: []validator.Object{
-												objectvalidator.ConflictsWith(path.Expressions{
-													path.MatchRelative().AtParent().AtName("tcp_logging_backend_config"),
-												}...),
-											},
-										},
-										"tcp_logging_backend_config": schema.SingleNestedAttribute{
-											Optional: true,
-											Attributes: map[string]schema.Attribute{
-												"address": schema.StringAttribute{
-													Optional:    true,
-													Description: `Address to TCP service that will receive logs`,
-												},
-											},
-											Description: `TcpLoggingBackendConfig defines configuration for TCP based access logs`,
-											Validators: []validator.Object{
-												objectvalidator.ConflictsWith(path.Expressions{
-													path.MatchRelative().AtParent().AtName("file_logging_backend_config"),
-												}...),
-											},
-										},
-									},
-								},
-								"format": schema.StringAttribute{
-									Optional: true,
-									MarkdownDescription: `Format of access logs. Placeholders available on` + "\n" +
-										`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log`,
-								},
-								"name": schema.StringAttribute{
-									Optional: true,
-									MarkdownDescription: `Name of the backend, can be then used in Mesh.logging.defaultBackend or in` + "\n" +
-										`TrafficLogging`,
-								},
-								"type": schema.StringAttribute{
-									Optional:    true,
-									Description: `Type of the backend (Kuma ships with 'tcp' and 'file')`,
-								},
-							},
-						},
-						Description: `List of available logging backends`,
-					},
-					"default_backend": schema.StringAttribute{
-						Optional:    true,
-						Description: `Name of the default backend`,
-					},
-				},
-				MarkdownDescription: `Logging settings.` + "\n" +
-					`+optional`,
 			},
 			"mesh_services": schema.SingleNestedAttribute{
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
-					"mode": schema.SingleNestedAttribute{
-						Optional: true,
-						Attributes: map[string]schema.Attribute{
-							"integer": schema.Int64Attribute{
-								Optional: true,
-								Validators: []validator.Int64{
-									int64validator.ConflictsWith(path.Expressions{
-										path.MatchRelative().AtParent().AtName("str"),
-									}...),
-								},
-							},
-							"str": schema.StringAttribute{
-								Optional: true,
-								Validators: []validator.String{
-									stringvalidator.ConflictsWith(path.Expressions{
-										path.MatchRelative().AtParent().AtName("integer"),
-									}...),
-								},
-							},
-						},
-					},
-				},
-			},
-			"metrics": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"backends": schema.ListNestedAttribute{
-						Computed: true,
-						Optional: true,
-						NestedObject: schema.NestedAttributeObject{
-							Validators: []validator.Object{
-								speakeasy_objectvalidators.NotNull(),
-							},
-							Attributes: map[string]schema.Attribute{
-								"conf": schema.SingleNestedAttribute{
-									Optional: true,
-									Attributes: map[string]schema.Attribute{
-										"prometheus_metrics_backend_config": schema.SingleNestedAttribute{
-											Optional: true,
-											Attributes: map[string]schema.Attribute{
-												"aggregate": schema.ListNestedAttribute{
-													Computed: true,
-													Optional: true,
-													NestedObject: schema.NestedAttributeObject{
-														Validators: []validator.Object{
-															speakeasy_objectvalidators.NotNull(),
-														},
-														Attributes: map[string]schema.Attribute{
-															"address": schema.StringAttribute{
-																Optional:    true,
-																Description: `Address on which a service expose HTTP endpoint with Prometheus metrics.`,
-															},
-															"enabled": schema.BoolAttribute{
-																Optional: true,
-																MarkdownDescription: `If false then the application won't be scrapped. If nil, then it is treated` + "\n" +
-																	`as true and kuma-dp scrapes metrics from the service.`,
-															},
-															"name": schema.StringAttribute{
-																Optional:    true,
-																Description: `Name which identify given configuration.`,
-															},
-															"path": schema.StringAttribute{
-																Optional:    true,
-																Description: `Path on which a service expose HTTP endpoint with Prometheus metrics.`,
-															},
-															"port": schema.Int64Attribute{
-																Optional:    true,
-																Description: `Port on which a service expose HTTP endpoint with Prometheus metrics.`,
-															},
-														},
-													},
-													MarkdownDescription: `Map with the configuration of applications which metrics are going to be` + "\n" +
-														`scrapped by kuma-dp.`,
-												},
-												"envoy": schema.SingleNestedAttribute{
-													Optional: true,
-													Attributes: map[string]schema.Attribute{
-														"filter_regex": schema.StringAttribute{
-															Optional: true,
-															MarkdownDescription: `FilterRegex value that is going to be passed to Envoy for filtering` + "\n" +
-																`Envoy metrics.`,
-														},
-														"used_only": schema.BoolAttribute{
-															Optional: true,
-															MarkdownDescription: `If true then return metrics that Envoy has updated (counters incremented` + "\n" +
-																`at least once, gauges changed at least once, and histograms added to at` + "\n" +
-																`least once). If nil, then it is treated as false.`,
-														},
-													},
-													Description: `Configuration of Envoy's metrics.`,
-												},
-												"path": schema.StringAttribute{
-													Optional: true,
-													MarkdownDescription: `Path on which a dataplane should expose HTTP endpoint with Prometheus` + "\n" +
-														`metrics.`,
-												},
-												"port": schema.Int64Attribute{
-													Optional: true,
-													MarkdownDescription: `Port on which a dataplane should expose HTTP endpoint with Prometheus` + "\n" +
-														`metrics.`,
-												},
-												"skip_mtls": schema.BoolAttribute{
-													Optional: true,
-													MarkdownDescription: `If true then endpoints for scraping metrics won't require mTLS even if mTLS` + "\n" +
-														`is enabled in Mesh. If nil, then it is treated as false.`,
-												},
-												"tags": schema.MapAttribute{
-													Optional:    true,
-													ElementType: types.StringType,
-													MarkdownDescription: `Tags associated with an application this dataplane is deployed next to,` + "\n" +
-														`e.g. service=web, version=1.0.` + "\n" +
-														`` + "`" + `service` + "`" + ` tag is mandatory.`,
-												},
-												"tls": schema.SingleNestedAttribute{
-													Optional: true,
-													PlanModifiers: []planmodifier.Object{
-														custom_objectplanmodifier.SupressZeroNullModifier(),
-													},
-													Attributes: map[string]schema.Attribute{
-														"mode": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"integer": schema.Int64Attribute{
-																	Optional: true,
-																	Validators: []validator.Int64{
-																		int64validator.ConflictsWith(path.Expressions{
-																			path.MatchRelative().AtParent().AtName("str"),
-																		}...),
-																	},
-																},
-																"str": schema.StringAttribute{
-																	Optional: true,
-																	Validators: []validator.String{
-																		stringvalidator.ConflictsWith(path.Expressions{
-																			path.MatchRelative().AtParent().AtName("integer"),
-																		}...),
-																	},
-																},
-															},
-															MarkdownDescription: `mode defines how configured is the TLS for Prometheus.` + "\n" +
-																`Supported values, delegated, disabled, activeMTLSBackend. Default to` + "\n" +
-																`` + "`" + `activeMTLSBackend` + "`" + `.`,
-														},
-													},
-													Description: `Configuration of TLS for prometheus listener.`,
-												},
-											},
-											Description: `PrometheusMetricsBackendConfig defines configuration of Prometheus backend`,
-										},
-									},
-								},
-								"name": schema.StringAttribute{
-									Optional:    true,
-									Description: `Name of the backend, can be then used in Mesh.metrics.enabledBackend`,
-								},
-								"type": schema.StringAttribute{
-									Optional:    true,
-									Description: `Type of the backend (Kuma ships with 'prometheus')`,
-								},
-							},
-						},
-						Description: `List of available Metrics backends`,
-					},
-					"enabled_backend": schema.StringAttribute{
+					"mode": schema.StringAttribute{
 						Optional:    true,
-						Description: `Name of the enabled backend`,
+						Description: `possible known values include one of ["Disabled", "Everywhere", "ReachableBackends", "Exclusive"]`,
 					},
 				},
-				MarkdownDescription: `Configuration for metrics collected and exposed by dataplanes.` + "\n" +
+				MarkdownDescription: `Deprecated: ignored since 3.0, where every mesh behaves as Exclusive.` + "\n" +
+					`Kept only so pre-3.0 zones keep receiving the mode over KDS.` + "\n" +
 					`` + "\n" +
-					`Settings defined here become defaults for every dataplane in a given Mesh.` + "\n" +
-					`Additionally, it is also possible to further customize this configuration` + "\n" +
-					`for each dataplane individually using Dataplane resource.` + "\n" +
-					`+optional`,
+					`Deprecated: Marked as deprecated in api/mesh/v1alpha1/mesh.proto.`,
 			},
-			"mtls": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"backends": schema.ListNestedAttribute{
-						Computed: true,
-						Optional: true,
-						NestedObject: schema.NestedAttributeObject{
-							Validators: []validator.Object{
-								speakeasy_objectvalidators.NotNull(),
-							},
-							Attributes: map[string]schema.Attribute{
-								"conf": schema.SingleNestedAttribute{
-									Optional: true,
-									Attributes: map[string]schema.Attribute{
-										"acm_certificate_authority_config": schema.SingleNestedAttribute{
-											Optional: true,
-											Attributes: map[string]schema.Attribute{
-												"arn": schema.StringAttribute{
-													Optional: true,
-												},
-												"auth": schema.SingleNestedAttribute{
-													Optional: true,
-													Attributes: map[string]schema.Attribute{
-														"aws_credentials": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"access_key": schema.SingleNestedAttribute{
-																	Optional: true,
-																	Attributes: map[string]schema.Attribute{
-																		"data_source_file": schema.SingleNestedAttribute{
-																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"file": schema.StringAttribute{
-																					Optional: true,
-																					MarkdownDescription: `Data source is a path to a file.` + "\n" +
-																						`Deprecated, use other sources of a data.`,
-																				},
-																			},
-																			Validators: []validator.Object{
-																				objectvalidator.ConflictsWith(path.Expressions{
-																					path.MatchRelative().AtParent().AtName("data_source_inline"),
-																					path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																					path.MatchRelative().AtParent().AtName("data_source_secret"),
-																				}...),
-																			},
-																		},
-																		"data_source_inline": schema.SingleNestedAttribute{
-																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"inline": schema.StringAttribute{
-																					Optional:    true,
-																					Description: `Data source is inline bytes.`,
-																				},
-																			},
-																			Validators: []validator.Object{
-																				objectvalidator.ConflictsWith(path.Expressions{
-																					path.MatchRelative().AtParent().AtName("data_source_file"),
-																					path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																					path.MatchRelative().AtParent().AtName("data_source_secret"),
-																				}...),
-																			},
-																		},
-																		"data_source_inline_string": schema.SingleNestedAttribute{
-																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"inline_string": schema.StringAttribute{
-																					Optional:    true,
-																					Description: `Data source is inline string`,
-																				},
-																			},
-																			Validators: []validator.Object{
-																				objectvalidator.ConflictsWith(path.Expressions{
-																					path.MatchRelative().AtParent().AtName("data_source_file"),
-																					path.MatchRelative().AtParent().AtName("data_source_inline"),
-																					path.MatchRelative().AtParent().AtName("data_source_secret"),
-																				}...),
-																			},
-																		},
-																		"data_source_secret": schema.SingleNestedAttribute{
-																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"secret": schema.StringAttribute{
-																					Optional:    true,
-																					Description: `Data source is a secret with given Secret key.`,
-																				},
-																			},
-																			Validators: []validator.Object{
-																				objectvalidator.ConflictsWith(path.Expressions{
-																					path.MatchRelative().AtParent().AtName("data_source_file"),
-																					path.MatchRelative().AtParent().AtName("data_source_inline"),
-																					path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																				}...),
-																			},
-																		},
-																	},
-																},
-																"access_key_secret": schema.SingleNestedAttribute{
-																	Optional: true,
-																	Attributes: map[string]schema.Attribute{
-																		"data_source_file": schema.SingleNestedAttribute{
-																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"file": schema.StringAttribute{
-																					Optional: true,
-																					MarkdownDescription: `Data source is a path to a file.` + "\n" +
-																						`Deprecated, use other sources of a data.`,
-																				},
-																			},
-																			Validators: []validator.Object{
-																				objectvalidator.ConflictsWith(path.Expressions{
-																					path.MatchRelative().AtParent().AtName("data_source_inline"),
-																					path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																					path.MatchRelative().AtParent().AtName("data_source_secret"),
-																				}...),
-																			},
-																		},
-																		"data_source_inline": schema.SingleNestedAttribute{
-																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"inline": schema.StringAttribute{
-																					Optional:    true,
-																					Description: `Data source is inline bytes.`,
-																				},
-																			},
-																			Validators: []validator.Object{
-																				objectvalidator.ConflictsWith(path.Expressions{
-																					path.MatchRelative().AtParent().AtName("data_source_file"),
-																					path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																					path.MatchRelative().AtParent().AtName("data_source_secret"),
-																				}...),
-																			},
-																		},
-																		"data_source_inline_string": schema.SingleNestedAttribute{
-																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"inline_string": schema.StringAttribute{
-																					Optional:    true,
-																					Description: `Data source is inline string`,
-																				},
-																			},
-																			Validators: []validator.Object{
-																				objectvalidator.ConflictsWith(path.Expressions{
-																					path.MatchRelative().AtParent().AtName("data_source_file"),
-																					path.MatchRelative().AtParent().AtName("data_source_inline"),
-																					path.MatchRelative().AtParent().AtName("data_source_secret"),
-																				}...),
-																			},
-																		},
-																		"data_source_secret": schema.SingleNestedAttribute{
-																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"secret": schema.StringAttribute{
-																					Optional:    true,
-																					Description: `Data source is a secret with given Secret key.`,
-																				},
-																			},
-																			Validators: []validator.Object{
-																				objectvalidator.ConflictsWith(path.Expressions{
-																					path.MatchRelative().AtParent().AtName("data_source_file"),
-																					path.MatchRelative().AtParent().AtName("data_source_inline"),
-																					path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																				}...),
-																			},
-																		},
-																	},
-																},
-															},
-														},
-													},
-												},
-												"ca_cert": schema.SingleNestedAttribute{
-													Optional: true,
-													Attributes: map[string]schema.Attribute{
-														"data_source_file": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"file": schema.StringAttribute{
-																	Optional: true,
-																	MarkdownDescription: `Data source is a path to a file.` + "\n" +
-																		`Deprecated, use other sources of a data.`,
-																},
-															},
-															Validators: []validator.Object{
-																objectvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("data_source_inline"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																	path.MatchRelative().AtParent().AtName("data_source_secret"),
-																}...),
-															},
-														},
-														"data_source_inline": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"inline": schema.StringAttribute{
-																	Optional:    true,
-																	Description: `Data source is inline bytes.`,
-																},
-															},
-															Validators: []validator.Object{
-																objectvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("data_source_file"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																	path.MatchRelative().AtParent().AtName("data_source_secret"),
-																}...),
-															},
-														},
-														"data_source_inline_string": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"inline_string": schema.StringAttribute{
-																	Optional:    true,
-																	Description: `Data source is inline string`,
-																},
-															},
-															Validators: []validator.Object{
-																objectvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("data_source_file"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline"),
-																	path.MatchRelative().AtParent().AtName("data_source_secret"),
-																}...),
-															},
-														},
-														"data_source_secret": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"secret": schema.StringAttribute{
-																	Optional:    true,
-																	Description: `Data source is a secret with given Secret key.`,
-																},
-															},
-															Validators: []validator.Object{
-																objectvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("data_source_file"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																}...),
-															},
-														},
-													},
-												},
-												"common_name": schema.StringAttribute{
-													Optional: true,
-												},
-											},
-											Validators: []validator.Object{
-												objectvalidator.ConflictsWith(path.Expressions{
-													path.MatchRelative().AtParent().AtName("builtin_certificate_authority_config"),
-													path.MatchRelative().AtParent().AtName("cert_manager_certificate_authority_config"),
-													path.MatchRelative().AtParent().AtName("provided_certificate_authority_config"),
-													path.MatchRelative().AtParent().AtName("vault_certificate_authority_config"),
-												}...),
-											},
-										},
-										"builtin_certificate_authority_config": schema.SingleNestedAttribute{
-											Optional: true,
-											Attributes: map[string]schema.Attribute{
-												"ca_cert": schema.SingleNestedAttribute{
-													Optional: true,
-													Attributes: map[string]schema.Attribute{
-														"expiration": schema.StringAttribute{
-															Optional: true,
-														},
-														"rsa_bits": schema.Int64Attribute{
-															Optional: true,
-														},
-													},
-												},
-											},
-											Validators: []validator.Object{
-												objectvalidator.ConflictsWith(path.Expressions{
-													path.MatchRelative().AtParent().AtName("acm_certificate_authority_config"),
-													path.MatchRelative().AtParent().AtName("cert_manager_certificate_authority_config"),
-													path.MatchRelative().AtParent().AtName("provided_certificate_authority_config"),
-													path.MatchRelative().AtParent().AtName("vault_certificate_authority_config"),
-												}...),
-											},
-										},
-										"cert_manager_certificate_authority_config": schema.SingleNestedAttribute{
-											Optional: true,
-											Attributes: map[string]schema.Attribute{
-												"ca_cert": schema.SingleNestedAttribute{
-													Optional: true,
-													Attributes: map[string]schema.Attribute{
-														"data_source_file": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"file": schema.StringAttribute{
-																	Optional: true,
-																	MarkdownDescription: `Data source is a path to a file.` + "\n" +
-																		`Deprecated, use other sources of a data.`,
-																},
-															},
-															Validators: []validator.Object{
-																objectvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("data_source_inline"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																	path.MatchRelative().AtParent().AtName("data_source_secret"),
-																}...),
-															},
-														},
-														"data_source_inline": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"inline": schema.StringAttribute{
-																	Optional:    true,
-																	Description: `Data source is inline bytes.`,
-																},
-															},
-															Validators: []validator.Object{
-																objectvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("data_source_file"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																	path.MatchRelative().AtParent().AtName("data_source_secret"),
-																}...),
-															},
-														},
-														"data_source_inline_string": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"inline_string": schema.StringAttribute{
-																	Optional:    true,
-																	Description: `Data source is inline string`,
-																},
-															},
-															Validators: []validator.Object{
-																objectvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("data_source_file"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline"),
-																	path.MatchRelative().AtParent().AtName("data_source_secret"),
-																}...),
-															},
-														},
-														"data_source_secret": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"secret": schema.StringAttribute{
-																	Optional:    true,
-																	Description: `Data source is a secret with given Secret key.`,
-																},
-															},
-															Validators: []validator.Object{
-																objectvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("data_source_file"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																}...),
-															},
-														},
-													},
-												},
-												"common_name": schema.StringAttribute{
-													Optional: true,
-												},
-												"dns_names": schema.ListAttribute{
-													Computed:    true,
-													Optional:    true,
-													Default:     listdefault.StaticValue(types.ListValueMust(types.StringType, []attr.Value{})),
-													ElementType: types.StringType,
-													Description: `Default: []`,
-												},
-												"issuer_ref": schema.SingleNestedAttribute{
-													Optional: true,
-													Attributes: map[string]schema.Attribute{
-														"group": schema.StringAttribute{
-															Optional: true,
-														},
-														"kind": schema.StringAttribute{
-															Optional: true,
-														},
-														"name": schema.StringAttribute{
-															Optional: true,
-														},
-													},
-												},
-											},
-											Validators: []validator.Object{
-												objectvalidator.ConflictsWith(path.Expressions{
-													path.MatchRelative().AtParent().AtName("acm_certificate_authority_config"),
-													path.MatchRelative().AtParent().AtName("builtin_certificate_authority_config"),
-													path.MatchRelative().AtParent().AtName("provided_certificate_authority_config"),
-													path.MatchRelative().AtParent().AtName("vault_certificate_authority_config"),
-												}...),
-											},
-										},
-										"provided_certificate_authority_config": schema.SingleNestedAttribute{
-											Optional: true,
-											Attributes: map[string]schema.Attribute{
-												"cert": schema.SingleNestedAttribute{
-													Optional: true,
-													Attributes: map[string]schema.Attribute{
-														"data_source_file": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"file": schema.StringAttribute{
-																	Optional: true,
-																	MarkdownDescription: `Data source is a path to a file.` + "\n" +
-																		`Deprecated, use other sources of a data.`,
-																},
-															},
-															Validators: []validator.Object{
-																objectvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("data_source_inline"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																	path.MatchRelative().AtParent().AtName("data_source_secret"),
-																}...),
-															},
-														},
-														"data_source_inline": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"inline": schema.StringAttribute{
-																	Optional:    true,
-																	Description: `Data source is inline bytes.`,
-																},
-															},
-															Validators: []validator.Object{
-																objectvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("data_source_file"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																	path.MatchRelative().AtParent().AtName("data_source_secret"),
-																}...),
-															},
-														},
-														"data_source_inline_string": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"inline_string": schema.StringAttribute{
-																	Optional:    true,
-																	Description: `Data source is inline string`,
-																},
-															},
-															Validators: []validator.Object{
-																objectvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("data_source_file"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline"),
-																	path.MatchRelative().AtParent().AtName("data_source_secret"),
-																}...),
-															},
-														},
-														"data_source_secret": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"secret": schema.StringAttribute{
-																	Optional:    true,
-																	Description: `Data source is a secret with given Secret key.`,
-																},
-															},
-															Validators: []validator.Object{
-																objectvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("data_source_file"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																}...),
-															},
-														},
-													},
-												},
-												"key": schema.SingleNestedAttribute{
-													Optional: true,
-													Attributes: map[string]schema.Attribute{
-														"data_source_file": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"file": schema.StringAttribute{
-																	Optional: true,
-																	MarkdownDescription: `Data source is a path to a file.` + "\n" +
-																		`Deprecated, use other sources of a data.`,
-																},
-															},
-															Validators: []validator.Object{
-																objectvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("data_source_inline"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																	path.MatchRelative().AtParent().AtName("data_source_secret"),
-																}...),
-															},
-														},
-														"data_source_inline": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"inline": schema.StringAttribute{
-																	Optional:    true,
-																	Description: `Data source is inline bytes.`,
-																},
-															},
-															Validators: []validator.Object{
-																objectvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("data_source_file"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																	path.MatchRelative().AtParent().AtName("data_source_secret"),
-																}...),
-															},
-														},
-														"data_source_inline_string": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"inline_string": schema.StringAttribute{
-																	Optional:    true,
-																	Description: `Data source is inline string`,
-																},
-															},
-															Validators: []validator.Object{
-																objectvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("data_source_file"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline"),
-																	path.MatchRelative().AtParent().AtName("data_source_secret"),
-																}...),
-															},
-														},
-														"data_source_secret": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"secret": schema.StringAttribute{
-																	Optional:    true,
-																	Description: `Data source is a secret with given Secret key.`,
-																},
-															},
-															Validators: []validator.Object{
-																objectvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("data_source_file"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline"),
-																	path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																}...),
-															},
-														},
-													},
-												},
-											},
-											Validators: []validator.Object{
-												objectvalidator.ConflictsWith(path.Expressions{
-													path.MatchRelative().AtParent().AtName("acm_certificate_authority_config"),
-													path.MatchRelative().AtParent().AtName("builtin_certificate_authority_config"),
-													path.MatchRelative().AtParent().AtName("cert_manager_certificate_authority_config"),
-													path.MatchRelative().AtParent().AtName("vault_certificate_authority_config"),
-												}...),
-											},
-										},
-										"vault_certificate_authority_config": schema.SingleNestedAttribute{
-											Optional: true,
-											Attributes: map[string]schema.Attribute{
-												"vault_certificate_authority_config_from_cp": schema.SingleNestedAttribute{
-													Optional: true,
-													Attributes: map[string]schema.Attribute{
-														"from_cp": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"address": schema.StringAttribute{
-																	Optional: true,
-																},
-																"agent_address": schema.StringAttribute{
-																	Optional: true,
-																},
-																"auth": schema.SingleNestedAttribute{
-																	Optional: true,
-																	Attributes: map[string]schema.Attribute{
-																		"vault_certificate_authority_config_from_cp_auth_aws": schema.SingleNestedAttribute{
-																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"aws": schema.SingleNestedAttribute{
-																					Optional: true,
-																					Attributes: map[string]schema.Attribute{
-																						"iam_server_id_header": schema.StringAttribute{
-																							Optional: true,
-																						},
-																						"role": schema.StringAttribute{
-																							Optional: true,
-																						},
-																						"type": schema.SingleNestedAttribute{
-																							Optional: true,
-																							Attributes: map[string]schema.Attribute{
-																								"integer": schema.Int64Attribute{
-																									Optional: true,
-																									Validators: []validator.Int64{
-																										int64validator.ConflictsWith(path.Expressions{
-																											path.MatchRelative().AtParent().AtName("str"),
-																										}...),
-																									},
-																								},
-																								"str": schema.StringAttribute{
-																									Optional: true,
-																									Validators: []validator.String{
-																										stringvalidator.ConflictsWith(path.Expressions{
-																											path.MatchRelative().AtParent().AtName("integer"),
-																										}...),
-																									},
-																								},
-																							},
-																						},
-																					},
-																				},
-																			},
-																			Validators: []validator.Object{
-																				objectvalidator.ConflictsWith(path.Expressions{
-																					path.MatchRelative().AtParent().AtName("vault_certificate_authority_config_from_cp_auth_tls"),
-																					path.MatchRelative().AtParent().AtName("vault_certificate_authority_config_from_cp_auth_token"),
-																				}...),
-																			},
-																		},
-																		"vault_certificate_authority_config_from_cp_auth_tls": schema.SingleNestedAttribute{
-																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"tls": schema.SingleNestedAttribute{
-																					Optional: true,
-																					Attributes: map[string]schema.Attribute{
-																						"client_cert": schema.SingleNestedAttribute{
-																							Optional: true,
-																							Attributes: map[string]schema.Attribute{
-																								"data_source_file": schema.SingleNestedAttribute{
-																									Optional: true,
-																									Attributes: map[string]schema.Attribute{
-																										"file": schema.StringAttribute{
-																											Optional: true,
-																											MarkdownDescription: `Data source is a path to a file.` + "\n" +
-																												`Deprecated, use other sources of a data.`,
-																										},
-																									},
-																									Validators: []validator.Object{
-																										objectvalidator.ConflictsWith(path.Expressions{
-																											path.MatchRelative().AtParent().AtName("data_source_inline"),
-																											path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																											path.MatchRelative().AtParent().AtName("data_source_secret"),
-																										}...),
-																									},
-																								},
-																								"data_source_inline": schema.SingleNestedAttribute{
-																									Optional: true,
-																									Attributes: map[string]schema.Attribute{
-																										"inline": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Data source is inline bytes.`,
-																										},
-																									},
-																									Validators: []validator.Object{
-																										objectvalidator.ConflictsWith(path.Expressions{
-																											path.MatchRelative().AtParent().AtName("data_source_file"),
-																											path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																											path.MatchRelative().AtParent().AtName("data_source_secret"),
-																										}...),
-																									},
-																								},
-																								"data_source_inline_string": schema.SingleNestedAttribute{
-																									Optional: true,
-																									Attributes: map[string]schema.Attribute{
-																										"inline_string": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Data source is inline string`,
-																										},
-																									},
-																									Validators: []validator.Object{
-																										objectvalidator.ConflictsWith(path.Expressions{
-																											path.MatchRelative().AtParent().AtName("data_source_file"),
-																											path.MatchRelative().AtParent().AtName("data_source_inline"),
-																											path.MatchRelative().AtParent().AtName("data_source_secret"),
-																										}...),
-																									},
-																								},
-																								"data_source_secret": schema.SingleNestedAttribute{
-																									Optional: true,
-																									Attributes: map[string]schema.Attribute{
-																										"secret": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Data source is a secret with given Secret key.`,
-																										},
-																									},
-																									Validators: []validator.Object{
-																										objectvalidator.ConflictsWith(path.Expressions{
-																											path.MatchRelative().AtParent().AtName("data_source_file"),
-																											path.MatchRelative().AtParent().AtName("data_source_inline"),
-																											path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																										}...),
-																									},
-																								},
-																							},
-																						},
-																						"client_key": schema.SingleNestedAttribute{
-																							Optional: true,
-																							Attributes: map[string]schema.Attribute{
-																								"data_source_file": schema.SingleNestedAttribute{
-																									Optional: true,
-																									Attributes: map[string]schema.Attribute{
-																										"file": schema.StringAttribute{
-																											Optional: true,
-																											MarkdownDescription: `Data source is a path to a file.` + "\n" +
-																												`Deprecated, use other sources of a data.`,
-																										},
-																									},
-																									Validators: []validator.Object{
-																										objectvalidator.ConflictsWith(path.Expressions{
-																											path.MatchRelative().AtParent().AtName("data_source_inline"),
-																											path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																											path.MatchRelative().AtParent().AtName("data_source_secret"),
-																										}...),
-																									},
-																								},
-																								"data_source_inline": schema.SingleNestedAttribute{
-																									Optional: true,
-																									Attributes: map[string]schema.Attribute{
-																										"inline": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Data source is inline bytes.`,
-																										},
-																									},
-																									Validators: []validator.Object{
-																										objectvalidator.ConflictsWith(path.Expressions{
-																											path.MatchRelative().AtParent().AtName("data_source_file"),
-																											path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																											path.MatchRelative().AtParent().AtName("data_source_secret"),
-																										}...),
-																									},
-																								},
-																								"data_source_inline_string": schema.SingleNestedAttribute{
-																									Optional: true,
-																									Attributes: map[string]schema.Attribute{
-																										"inline_string": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Data source is inline string`,
-																										},
-																									},
-																									Validators: []validator.Object{
-																										objectvalidator.ConflictsWith(path.Expressions{
-																											path.MatchRelative().AtParent().AtName("data_source_file"),
-																											path.MatchRelative().AtParent().AtName("data_source_inline"),
-																											path.MatchRelative().AtParent().AtName("data_source_secret"),
-																										}...),
-																									},
-																								},
-																								"data_source_secret": schema.SingleNestedAttribute{
-																									Optional: true,
-																									Attributes: map[string]schema.Attribute{
-																										"secret": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Data source is a secret with given Secret key.`,
-																										},
-																									},
-																									Validators: []validator.Object{
-																										objectvalidator.ConflictsWith(path.Expressions{
-																											path.MatchRelative().AtParent().AtName("data_source_file"),
-																											path.MatchRelative().AtParent().AtName("data_source_inline"),
-																											path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																										}...),
-																									},
-																								},
-																							},
-																						},
-																					},
-																				},
-																			},
-																			Validators: []validator.Object{
-																				objectvalidator.ConflictsWith(path.Expressions{
-																					path.MatchRelative().AtParent().AtName("vault_certificate_authority_config_from_cp_auth_aws"),
-																					path.MatchRelative().AtParent().AtName("vault_certificate_authority_config_from_cp_auth_token"),
-																				}...),
-																			},
-																		},
-																		"vault_certificate_authority_config_from_cp_auth_token": schema.SingleNestedAttribute{
-																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"token": schema.SingleNestedAttribute{
-																					Optional: true,
-																					Attributes: map[string]schema.Attribute{
-																						"data_source_file": schema.SingleNestedAttribute{
-																							Optional: true,
-																							Attributes: map[string]schema.Attribute{
-																								"file": schema.StringAttribute{
-																									Optional: true,
-																									MarkdownDescription: `Data source is a path to a file.` + "\n" +
-																										`Deprecated, use other sources of a data.`,
-																								},
-																							},
-																							Validators: []validator.Object{
-																								objectvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("data_source_inline"),
-																									path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																									path.MatchRelative().AtParent().AtName("data_source_secret"),
-																								}...),
-																							},
-																						},
-																						"data_source_inline": schema.SingleNestedAttribute{
-																							Optional: true,
-																							Attributes: map[string]schema.Attribute{
-																								"inline": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Data source is inline bytes.`,
-																								},
-																							},
-																							Validators: []validator.Object{
-																								objectvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("data_source_file"),
-																									path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																									path.MatchRelative().AtParent().AtName("data_source_secret"),
-																								}...),
-																							},
-																						},
-																						"data_source_inline_string": schema.SingleNestedAttribute{
-																							Optional: true,
-																							Attributes: map[string]schema.Attribute{
-																								"inline_string": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Data source is inline string`,
-																								},
-																							},
-																							Validators: []validator.Object{
-																								objectvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("data_source_file"),
-																									path.MatchRelative().AtParent().AtName("data_source_inline"),
-																									path.MatchRelative().AtParent().AtName("data_source_secret"),
-																								}...),
-																							},
-																						},
-																						"data_source_secret": schema.SingleNestedAttribute{
-																							Optional: true,
-																							Attributes: map[string]schema.Attribute{
-																								"secret": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Data source is a secret with given Secret key.`,
-																								},
-																							},
-																							Validators: []validator.Object{
-																								objectvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("data_source_file"),
-																									path.MatchRelative().AtParent().AtName("data_source_inline"),
-																									path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																								}...),
-																							},
-																						},
-																					},
-																				},
-																			},
-																			Validators: []validator.Object{
-																				objectvalidator.ConflictsWith(path.Expressions{
-																					path.MatchRelative().AtParent().AtName("vault_certificate_authority_config_from_cp_auth_aws"),
-																					path.MatchRelative().AtParent().AtName("vault_certificate_authority_config_from_cp_auth_tls"),
-																				}...),
-																			},
-																		},
-																	},
-																},
-																"common_name": schema.StringAttribute{
-																	Optional: true,
-																},
-																"namespace": schema.StringAttribute{
-																	Optional: true,
-																},
-																"pki": schema.StringAttribute{
-																	Optional: true,
-																},
-																"role": schema.StringAttribute{
-																	Optional: true,
-																},
-																"tls": schema.SingleNestedAttribute{
-																	Optional: true,
-																	Attributes: map[string]schema.Attribute{
-																		"ca_cert": schema.SingleNestedAttribute{
-																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"data_source_file": schema.SingleNestedAttribute{
-																					Optional: true,
-																					Attributes: map[string]schema.Attribute{
-																						"file": schema.StringAttribute{
-																							Optional: true,
-																							MarkdownDescription: `Data source is a path to a file.` + "\n" +
-																								`Deprecated, use other sources of a data.`,
-																						},
-																					},
-																					Validators: []validator.Object{
-																						objectvalidator.ConflictsWith(path.Expressions{
-																							path.MatchRelative().AtParent().AtName("data_source_inline"),
-																							path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																							path.MatchRelative().AtParent().AtName("data_source_secret"),
-																						}...),
-																					},
-																				},
-																				"data_source_inline": schema.SingleNestedAttribute{
-																					Optional: true,
-																					Attributes: map[string]schema.Attribute{
-																						"inline": schema.StringAttribute{
-																							Optional:    true,
-																							Description: `Data source is inline bytes.`,
-																						},
-																					},
-																					Validators: []validator.Object{
-																						objectvalidator.ConflictsWith(path.Expressions{
-																							path.MatchRelative().AtParent().AtName("data_source_file"),
-																							path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																							path.MatchRelative().AtParent().AtName("data_source_secret"),
-																						}...),
-																					},
-																				},
-																				"data_source_inline_string": schema.SingleNestedAttribute{
-																					Optional: true,
-																					Attributes: map[string]schema.Attribute{
-																						"inline_string": schema.StringAttribute{
-																							Optional:    true,
-																							Description: `Data source is inline string`,
-																						},
-																					},
-																					Validators: []validator.Object{
-																						objectvalidator.ConflictsWith(path.Expressions{
-																							path.MatchRelative().AtParent().AtName("data_source_file"),
-																							path.MatchRelative().AtParent().AtName("data_source_inline"),
-																							path.MatchRelative().AtParent().AtName("data_source_secret"),
-																						}...),
-																					},
-																				},
-																				"data_source_secret": schema.SingleNestedAttribute{
-																					Optional: true,
-																					Attributes: map[string]schema.Attribute{
-																						"secret": schema.StringAttribute{
-																							Optional:    true,
-																							Description: `Data source is a secret with given Secret key.`,
-																						},
-																					},
-																					Validators: []validator.Object{
-																						objectvalidator.ConflictsWith(path.Expressions{
-																							path.MatchRelative().AtParent().AtName("data_source_file"),
-																							path.MatchRelative().AtParent().AtName("data_source_inline"),
-																							path.MatchRelative().AtParent().AtName("data_source_inline_string"),
-																						}...),
-																					},
-																				},
-																			},
-																		},
-																		"server_name": schema.StringAttribute{
-																			Optional: true,
-																		},
-																		"skip_verify": schema.BoolAttribute{
-																			Optional: true,
-																		},
-																	},
-																},
-															},
-														},
-													},
-												},
-											},
-											Validators: []validator.Object{
-												objectvalidator.ConflictsWith(path.Expressions{
-													path.MatchRelative().AtParent().AtName("acm_certificate_authority_config"),
-													path.MatchRelative().AtParent().AtName("builtin_certificate_authority_config"),
-													path.MatchRelative().AtParent().AtName("cert_manager_certificate_authority_config"),
-													path.MatchRelative().AtParent().AtName("provided_certificate_authority_config"),
-												}...),
-											},
-										},
-									},
-								},
-								"dp_cert": schema.SingleNestedAttribute{
-									Optional: true,
-									Attributes: map[string]schema.Attribute{
-										"request_timeout": schema.SingleNestedAttribute{
-											Optional: true,
-											Attributes: map[string]schema.Attribute{
-												"nanos": schema.Int64Attribute{
-													Optional: true,
-												},
-												"seconds": schema.Int64Attribute{
-													Optional: true,
-												},
-											},
-											Description: `Timeout on request to CA for DP certificate generation and retrieval`,
-										},
-										"rotation": schema.SingleNestedAttribute{
-											Optional: true,
-											Attributes: map[string]schema.Attribute{
-												"expiration": schema.StringAttribute{
-													Optional:    true,
-													Description: `Time after which generated certificate for Dataplane will expire`,
-												},
-											},
-											Description: `Rotation settings`,
-										},
-									},
-									Description: `Dataplane certificate settings`,
-								},
-								"mode": schema.SingleNestedAttribute{
-									Optional: true,
-									Attributes: map[string]schema.Attribute{
-										"integer": schema.Int64Attribute{
-											Optional: true,
-											Validators: []validator.Int64{
-												int64validator.ConflictsWith(path.Expressions{
-													path.MatchRelative().AtParent().AtName("str"),
-												}...),
-											},
-										},
-										"str": schema.StringAttribute{
-											Optional: true,
-											Validators: []validator.String{
-												stringvalidator.ConflictsWith(path.Expressions{
-													path.MatchRelative().AtParent().AtName("integer"),
-												}...),
-											},
-										},
-									},
-									MarkdownDescription: `Mode defines the behaviour of inbound listeners with regard to traffic` + "\n" +
-										`encryption`,
-								},
-								"name": schema.StringAttribute{
-									Optional:    true,
-									Description: `Name of the backend`,
-								},
-								"root_chain": schema.SingleNestedAttribute{
-									Optional: true,
-									Attributes: map[string]schema.Attribute{
-										"request_timeout": schema.SingleNestedAttribute{
-											Optional: true,
-											Attributes: map[string]schema.Attribute{
-												"nanos": schema.Int64Attribute{
-													Optional: true,
-												},
-												"seconds": schema.Int64Attribute{
-													Optional: true,
-												},
-											},
-											MarkdownDescription: `Timeout on request for to CA for root certificate chain.` + "\n" +
-												`If not specified, defaults to 10s.`,
-										},
-									},
-								},
-								"type": schema.StringAttribute{
-									Optional: true,
-									MarkdownDescription: `Type of the backend. Has to be one of the loaded plugins (Kuma ships with` + "\n" +
-										`builtin and provided)`,
-								},
-							},
-						},
-						Description: `List of available Certificate Authority backends`,
-					},
-					"enabled_backend": schema.StringAttribute{
-						Optional:    true,
-						Description: `Name of the enabled backend`,
-					},
-					"skip_validation": schema.BoolAttribute{
-						Optional:    true,
-						Description: `If enabled, skips CA validation.`,
-					},
+			"modification_time": schema.StringAttribute{
+				Computed: true,
+				PlanModifiers: []planmodifier.String{
+					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
-				MarkdownDescription: `mTLS settings.` + "\n" +
-					`+optional`,
+				Description: `Time at which the resource was updated`,
 			},
 			"name": schema.StringAttribute{
 				Required: true,
@@ -1419,150 +100,10 @@ func (r *MeshResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
 				Description: `name of the Mesh. Requires replacement if changed.`,
-			},
-			"networking": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"outbound": schema.SingleNestedAttribute{
-						Optional: true,
-						Attributes: map[string]schema.Attribute{
-							"passthrough": schema.BoolAttribute{
-								Optional:    true,
-								Description: `Control the passthrough cluster`,
-							},
-						},
-						Description: `Outbound settings`,
-					},
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(253),
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
 				},
-				Description: `Networking settings of the mesh`,
-			},
-			"routing": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"default_forbid_mesh_external_service_access": schema.BoolAttribute{
-						Optional: true,
-						MarkdownDescription: `If true, blocks traffic to MeshExternalServices.` + "\n" +
-							`Default: false`,
-					},
-					"locality_aware_load_balancing": schema.BoolAttribute{
-						Optional:    true,
-						Description: `Enable the Locality Aware Load Balancing`,
-					},
-					"zone_egress": schema.BoolAttribute{
-						Optional: true,
-						MarkdownDescription: `Enable routing traffic to services in other zone or external services` + "\n" +
-							`through ZoneEgress. Default: false`,
-					},
-				},
-				Description: `Routing settings of the mesh`,
-			},
-			"skip_creating_initial_policies": schema.ListAttribute{
-				Computed:    true,
-				Optional:    true,
-				Default:     listdefault.StaticValue(types.ListValueMust(types.StringType, []attr.Value{})),
-				ElementType: types.StringType,
-				MarkdownDescription: `List of policies to skip creating by default when the mesh is created.` + "\n" +
-					`e.g. TrafficPermission, MeshRetry, etc. An '*' can be used to skip all` + "\n" +
-					`policies.` + "\n" +
-					`Default: []`,
-			},
-			"tracing": schema.SingleNestedAttribute{
-				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"backends": schema.ListNestedAttribute{
-						Computed: true,
-						Optional: true,
-						NestedObject: schema.NestedAttributeObject{
-							Validators: []validator.Object{
-								speakeasy_objectvalidators.NotNull(),
-							},
-							Attributes: map[string]schema.Attribute{
-								"conf": schema.SingleNestedAttribute{
-									Optional: true,
-									Attributes: map[string]schema.Attribute{
-										"datadog_tracing_backend_config": schema.SingleNestedAttribute{
-											Optional: true,
-											Attributes: map[string]schema.Attribute{
-												"address": schema.StringAttribute{
-													Optional:    true,
-													Description: `Address of datadog collector.`,
-												},
-												"port": schema.Int64Attribute{
-													Optional:    true,
-													Description: `Port of datadog collector`,
-												},
-												"split_service": schema.BoolAttribute{
-													Optional: true,
-													MarkdownDescription: `Determines if datadog service name should be split based on traffic` + "\n" +
-														`direction and destination. For example, with ` + "`" + `splitService: true` + "`" + ` and a` + "\n" +
-														`` + "`" + `backend` + "`" + ` service that communicates with a couple of databases, you would` + "\n" +
-														`get service names like ` + "`" + `backend_INBOUND` + "`" + `, ` + "`" + `backend_OUTBOUND_db1` + "`" + `, and` + "\n" +
-														`` + "`" + `backend_OUTBOUND_db2` + "`" + ` in Datadog. Default: false`,
-												},
-											},
-											Validators: []validator.Object{
-												objectvalidator.ConflictsWith(path.Expressions{
-													path.MatchRelative().AtParent().AtName("zipkin_tracing_backend_config"),
-												}...),
-											},
-										},
-										"zipkin_tracing_backend_config": schema.SingleNestedAttribute{
-											Optional: true,
-											Attributes: map[string]schema.Attribute{
-												"api_version": schema.StringAttribute{
-													Optional: true,
-													MarkdownDescription: `Version of the API. values: httpJson, httpJsonV1, httpProto. Default:` + "\n" +
-														`httpJson see` + "\n" +
-														`https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/trace/v3/trace.proto#envoy-v3-api-enum-config-trace-v3-zipkinconfig-collectorendpointversion`,
-												},
-												"shared_span_context": schema.BoolAttribute{
-													Optional: true,
-													MarkdownDescription: `Determines whether client and server spans will share the same span` + "\n" +
-														`context. Default: true.` + "\n" +
-														`https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/trace/v3/zipkin.proto#config-trace-v3-zipkinconfig`,
-												},
-												"trace_id128bit": schema.BoolAttribute{
-													Optional:    true,
-													Description: `Generate 128bit traces. Default: false`,
-												},
-												"url": schema.StringAttribute{
-													Optional:    true,
-													Description: `Address of Zipkin collector.`,
-												},
-											},
-											Validators: []validator.Object{
-												objectvalidator.ConflictsWith(path.Expressions{
-													path.MatchRelative().AtParent().AtName("datadog_tracing_backend_config"),
-												}...),
-											},
-										},
-									},
-								},
-								"name": schema.StringAttribute{
-									Optional: true,
-									MarkdownDescription: `Name of the backend, can be then used in Mesh.tracing.defaultBackend or in` + "\n" +
-										`TrafficTrace`,
-								},
-								"sampling": schema.Float64Attribute{
-									Optional: true,
-									MarkdownDescription: `Percentage of traces that will be sent to the backend (range 0.0 - 100.0).` + "\n" +
-										`Empty value defaults to 100.0%`,
-								},
-								"type": schema.StringAttribute{
-									Optional:    true,
-									Description: `Type of the backend (Kuma ships with 'zipkin')`,
-								},
-							},
-						},
-						Description: `List of available tracing backends`,
-					},
-					"default_backend": schema.StringAttribute{
-						Optional:    true,
-						Description: `Name of the default backend`,
-					},
-				},
-				MarkdownDescription: `Tracing settings.` + "\n" +
-					`+optional`,
 			},
 			"type": schema.StringAttribute{
 				Required: true,
@@ -1648,6 +189,43 @@ func (r *MeshResource) Create(ctx context.Context, req resource.CreateRequest, r
 		return
 	}
 	resp.Diagnostics.Append(data.RefreshFromSharedMeshCreateOrUpdateSuccessResponse(ctx, res.MeshCreateOrUpdateSuccessResponse)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	request1, request1Diags := data.ToOperationsGetMeshRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.Mesh.GetMesh(ctx, *request1)
+	if err != nil {
+		resp.Diagnostics.AddError("failure to invoke API", err.Error())
+		if res1 != nil && res1.RawResponse != nil {
+			resp.Diagnostics.AddError("unexpected http request/response", debugResponse(res1.RawResponse))
+		}
+		return
+	}
+	if res1 == nil {
+		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res1))
+		return
+	}
+	if res1.StatusCode != 200 {
+		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res1.StatusCode), debugResponse(res1.RawResponse))
+		return
+	}
+	if !(res1.MeshItem != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
+		return
+	}
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshItem(ctx, res1.MeshItem)...)
 
 	if resp.Diagnostics.HasError() {
 		return
@@ -1765,6 +343,43 @@ func (r *MeshResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		return
 	}
 	resp.Diagnostics.Append(data.RefreshFromSharedMeshCreateOrUpdateSuccessResponse(ctx, res.MeshCreateOrUpdateSuccessResponse)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	request1, request1Diags := data.ToOperationsGetMeshRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.Mesh.GetMesh(ctx, *request1)
+	if err != nil {
+		resp.Diagnostics.AddError("failure to invoke API", err.Error())
+		if res1 != nil && res1.RawResponse != nil {
+			resp.Diagnostics.AddError("unexpected http request/response", debugResponse(res1.RawResponse))
+		}
+		return
+	}
+	if res1 == nil {
+		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res1))
+		return
+	}
+	if res1.StatusCode != 200 {
+		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res1.StatusCode), debugResponse(res1.RawResponse))
+		return
+	}
+	if !(res1.MeshItem != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
+		return
+	}
+	resp.Diagnostics.Append(data.RefreshFromSharedMeshItem(ctx, res1.MeshItem)...)
 
 	if resp.Diagnostics.HasError() {
 		return

@@ -5,50 +5,6 @@ resource "kong-mesh_mesh_fault_injection" "my_meshfaultinjection" {
   mesh = "...my_mesh..."
   name = "...my_name..."
   spec = {
-    from = [
-      {
-        default = {
-          http = [
-            {
-              abort = {
-                http_status = 1
-                percentage = {
-                  str = "...my_str..."
-                }
-              }
-              delay = {
-                percentage = {
-                  integer = 8
-                }
-                value = "...my_value..."
-              }
-              response_bandwidth = {
-                limit = "...my_limit..."
-                percentage = {
-                  str = "...my_str..."
-                }
-              }
-            }
-          ]
-        }
-        target_ref = {
-          kind = "MeshServiceSubset"
-          labels = {
-            key = "value"
-          }
-          mesh      = "...my_mesh..."
-          name      = "...my_name..."
-          namespace = "...my_namespace..."
-          proxy_types = [
-            "Gateway"
-          ]
-          section_name = "...my_section_name..."
-          tags = {
-            key = "value"
-          }
-        }
-      }
-    ]
     rules = [
       {
         default = {
@@ -77,6 +33,10 @@ resource "kong-mesh_mesh_fault_injection" "my_meshfaultinjection" {
         }
         matches = [
           {
+            sni = {
+              type  = "Exact"
+              value = "...my_value..."
+            }
             spiffe_id = {
               type  = "Exact"
               value = "...my_value..."
@@ -90,16 +50,7 @@ resource "kong-mesh_mesh_fault_injection" "my_meshfaultinjection" {
       labels = {
         key = "value"
       }
-      mesh      = "...my_mesh..."
-      name      = "...my_name..."
-      namespace = "...my_namespace..."
-      proxy_types = [
-        "Gateway"
-      ]
       section_name = "...my_section_name..."
-      tags = {
-        key = "value"
-      }
     }
     to = [
       {
@@ -128,20 +79,11 @@ resource "kong-mesh_mesh_fault_injection" "my_meshfaultinjection" {
           ]
         }
         target_ref = {
-          kind = "MeshGateway"
+          kind = "MeshService"
           labels = {
             key = "value"
           }
-          mesh      = "...my_mesh..."
-          name      = "...my_name..."
-          namespace = "...my_namespace..."
-          proxy_types = [
-            "Sidecar"
-          ]
           section_name = "...my_section_name..."
-          tags = {
-            key = "value"
-          }
         }
       }
     ]

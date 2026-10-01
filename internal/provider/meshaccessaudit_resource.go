@@ -5,7 +5,6 @@ package provider
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -16,9 +15,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	custom_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
 	speakeasy_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
+	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
+	"regexp"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -37,11 +38,14 @@ type MeshAccessAuditResource struct {
 
 // MeshAccessAuditResourceModel describes the resource data model.
 type MeshAccessAuditResourceModel struct {
-	Labels   map[string]types.String `tfsdk:"labels"`
-	Name     types.String            `tfsdk:"name"`
-	Rules    []tfTypes.Rules         `tfsdk:"rules"`
-	Type     types.String            `tfsdk:"type"`
-	Warnings []types.String          `tfsdk:"warnings"`
+	CreationTime     types.String            `tfsdk:"creation_time"`
+	Kri              types.String            `tfsdk:"kri"`
+	Labels           map[string]types.String `tfsdk:"labels"`
+	ModificationTime types.String            `tfsdk:"modification_time"`
+	Name             types.String            `tfsdk:"name"`
+	Rules            []tfTypes.Rules         `tfsdk:"rules"`
+	Type             types.String            `tfsdk:"type"`
+	Warnings         []types.String          `tfsdk:"warnings"`
 }
 
 func (r *MeshAccessAuditResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -52,13 +56,35 @@ func (r *MeshAccessAuditResource) Schema(ctx context.Context, req resource.Schem
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "MeshAccessAudit Resource",
 		Attributes: map[string]schema.Attribute{
+			"creation_time": schema.StringAttribute{
+				Computed: true,
+				PlanModifiers: []planmodifier.String{
+					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+				},
+				Description: `Time at which the resource was created`,
+			},
+			"kri": schema.StringAttribute{
+				Computed:    true,
+				Description: `Kuma Resource Identifier (KRI) of the given resource`,
+			},
 			"labels": schema.MapAttribute{
 				Optional:    true,
 				ElementType: types.StringType,
 			},
+			"modification_time": schema.StringAttribute{
+				Computed: true,
+				PlanModifiers: []planmodifier.String{
+					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+				},
+				Description: `Time at which the resource was updated`,
+			},
 			"name": schema.StringAttribute{
 				Required:    true,
 				Description: `name of the AccessAudit`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(253),
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
+				},
 			},
 			"rules": schema.ListNestedAttribute{
 				Optional: true,
@@ -70,34 +96,12 @@ func (r *MeshAccessAuditResource) Schema(ctx context.Context, req resource.Schem
 						speakeasy_objectvalidators.NotNull(),
 					},
 					Attributes: map[string]schema.Attribute{
-						"access": schema.ListNestedAttribute{
+						"access": schema.ListAttribute{
 							Optional: true,
 							PlanModifiers: []planmodifier.List{
 								custom_listplanmodifier.SupressZeroNullModifier(),
 							},
-							NestedObject: schema.NestedAttributeObject{
-								Validators: []validator.Object{
-									speakeasy_objectvalidators.NotNull(),
-								},
-								Attributes: map[string]schema.Attribute{
-									"integer": schema.Int64Attribute{
-										Optional: true,
-										Validators: []validator.Int64{
-											int64validator.ConflictsWith(path.Expressions{
-												path.MatchRelative().AtParent().AtName("str"),
-											}...),
-										},
-									},
-									"str": schema.StringAttribute{
-										Optional: true,
-										Validators: []validator.String{
-											stringvalidator.ConflictsWith(path.Expressions{
-												path.MatchRelative().AtParent().AtName("integer"),
-											}...),
-										},
-									},
-								},
-							},
+							ElementType: types.StringType,
 						},
 						"access_all": schema.BoolAttribute{
 							Optional: true,
@@ -199,6 +203,43 @@ func (r *MeshAccessAuditResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 	resp.Diagnostics.Append(data.RefreshFromSharedAccessAuditCreateOrUpdateSuccessResponse(ctx, res.AccessAuditCreateOrUpdateSuccessResponse)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	request1, request1Diags := data.ToOperationsGetAccessAuditRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.AccessAudit.GetAccessAudit(ctx, *request1)
+	if err != nil {
+		resp.Diagnostics.AddError("failure to invoke API", err.Error())
+		if res1 != nil && res1.RawResponse != nil {
+			resp.Diagnostics.AddError("unexpected http request/response", debugResponse(res1.RawResponse))
+		}
+		return
+	}
+	if res1 == nil {
+		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res1))
+		return
+	}
+	if res1.StatusCode != 200 {
+		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res1.StatusCode), debugResponse(res1.RawResponse))
+		return
+	}
+	if !(res1.AccessAuditItem != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
+		return
+	}
+	resp.Diagnostics.Append(data.RefreshFromSharedAccessAuditItem(ctx, res1.AccessAuditItem)...)
 
 	if resp.Diagnostics.HasError() {
 		return
@@ -316,6 +357,43 @@ func (r *MeshAccessAuditResource) Update(ctx context.Context, req resource.Updat
 		return
 	}
 	resp.Diagnostics.Append(data.RefreshFromSharedAccessAuditCreateOrUpdateSuccessResponse(ctx, res.AccessAuditCreateOrUpdateSuccessResponse)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	request1, request1Diags := data.ToOperationsGetAccessAuditRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.AccessAudit.GetAccessAudit(ctx, *request1)
+	if err != nil {
+		resp.Diagnostics.AddError("failure to invoke API", err.Error())
+		if res1 != nil && res1.RawResponse != nil {
+			resp.Diagnostics.AddError("unexpected http request/response", debugResponse(res1.RawResponse))
+		}
+		return
+	}
+	if res1 == nil {
+		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res1))
+		return
+	}
+	if res1.StatusCode != 200 {
+		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res1.StatusCode), debugResponse(res1.RawResponse))
+		return
+	}
+	if !(res1.AccessAuditItem != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
+		return
+	}
+	resp.Diagnostics.Append(data.RefreshFromSharedAccessAuditItem(ctx, res1.AccessAuditItem)...)
 
 	if resp.Diagnostics.HasError() {
 		return

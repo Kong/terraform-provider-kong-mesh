@@ -4,6 +4,7 @@ package shared
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/utils"
 	"time"
@@ -33,37 +34,162 @@ func (e *HostnameGeneratorItemType) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// Extension struct for a plugin configuration
-type Extension struct {
+// Other - An extension this control plane does not ship. Its configuration is not described here.
+type Other struct {
+	// Type of the extension.
+	Type string `json:"type"`
+	// Config freeform configuration for the extension.
+	Config any `default:"null" json:"config"`
+}
+
+func (o Other) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(o, "", false)
+}
+
+func (o *Other) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &o, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *Other) GetType() string {
+	if o == nil {
+		return ""
+	}
+	return o.Type
+}
+
+func (o *Other) GetConfig() any {
+	if o == nil {
+		return nil
+	}
+	return o.Config
+}
+
+type Route53 struct {
 	// Config freeform configuration for the extension.
 	Config any `default:"null" json:"config"`
 	// Type of the extension.
 	Type string `json:"type"`
 }
 
-func (e Extension) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(e, "", false)
+func (r Route53) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(r, "", false)
 }
 
-func (e *Extension) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &e, "", false, nil); err != nil {
+func (r *Route53) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &r, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (e *Extension) GetConfig() any {
-	if e == nil {
+func (r *Route53) GetConfig() any {
+	if r == nil {
 		return nil
 	}
-	return e.Config
+	return r.Config
 }
 
-func (e *Extension) GetType() string {
-	if e == nil {
+func (r *Route53) GetType() string {
+	if r == nil {
 		return ""
 	}
-	return e.Type
+	return r.Type
+}
+
+// #region class-body-route53
+// #endregion class-body-route53
+
+type ExtensionType string
+
+const (
+	ExtensionTypeRoute53 ExtensionType = "Route53"
+	ExtensionTypeOther   ExtensionType = "Other"
+)
+
+// Extension struct for a plugin configuration
+type Extension struct {
+	Route53 *Route53 `queryParam:"inline" union:"member"`
+	Other   *Other   `queryParam:"inline" union:"member"`
+
+	Type ExtensionType
+}
+
+func CreateExtensionRoute53(route53 Route53) Extension {
+	typ := ExtensionTypeRoute53
+
+	return Extension{
+		Route53: &route53,
+		Type:    typ,
+	}
+}
+
+func CreateExtensionOther(other Other) Extension {
+	typ := ExtensionTypeOther
+
+	return Extension{
+		Other: &other,
+		Type:  typ,
+	}
+}
+
+func (u *Extension) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var route53 Route53 = Route53{}
+	if err := utils.UnmarshalJSON(data, &route53, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  ExtensionTypeRoute53,
+			Value: &route53,
+		})
+	}
+
+	var other Other = Other{}
+	if err := utils.UnmarshalJSON(data, &other, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  ExtensionTypeOther,
+			Value: &other,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Extension", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Extension", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(ExtensionType)
+	switch best.Type {
+	case ExtensionTypeRoute53:
+		u.Route53 = best.Value.(*Route53)
+		return nil
+	case ExtensionTypeOther:
+		u.Other = best.Value.(*Other)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for Extension", string(data))
+}
+
+func (u Extension) MarshalJSON() ([]byte, error) {
+	if u.Route53 != nil {
+		return utils.MarshalJSON(u.Route53, "", true)
+	}
+
+	if u.Other != nil {
+		return utils.MarshalJSON(u.Other, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type Extension: all fields are null")
 }
 
 type MeshExternalService struct {

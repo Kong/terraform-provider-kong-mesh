@@ -26,6 +26,7 @@ import (
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/stringvalidators"
+	"regexp"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -89,6 +90,10 @@ func (r *MeshTrustResource) Schema(ctx context.Context, req resource.SchemaReque
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
 				Description: `name of the mesh. Requires replacement if changed.`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(253),
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[0-9a-z-_.]*$`), "must match pattern "+regexp.MustCompile(`^[0-9a-z-_.]*$`).String()),
+				},
 			},
 			"modification_time": schema.StringAttribute{
 				Computed: true,
@@ -103,6 +108,10 @@ func (r *MeshTrustResource) Schema(ctx context.Context, req resource.SchemaReque
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
 				Description: `name of the MeshTrust. Requires replacement if changed.`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(253),
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
+				},
 			},
 			"spec": schema.SingleNestedAttribute{
 				Required: true,
@@ -145,18 +154,6 @@ func (r *MeshTrustResource) Schema(ctx context.Context, req resource.SchemaReque
 						Validators: []validator.List{
 							listvalidator.SizeAtLeast(1),
 						},
-					},
-					"origin": schema.SingleNestedAttribute{
-						Optional: true,
-						Attributes: map[string]schema.Attribute{
-							"kri": schema.StringAttribute{
-								Optional:    true,
-								Description: `Resource identifier`,
-							},
-						},
-						MarkdownDescription: `Origin specifies whether the resource was created from a MeshIdentity.` + "\n" +
-							`` + "\n" +
-							`Deprecated: use Status.Origin instead`,
 					},
 					"trust_domain": schema.StringAttribute{
 						Required:    true,

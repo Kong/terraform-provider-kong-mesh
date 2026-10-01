@@ -113,7 +113,6 @@ type MeshProxyPatchItemSpecDefaultAppendModificationsClusterMatch struct {
 	// direct-access - resources generated for Direct Access functionality.
 	// ingress - resources generated for Zone Ingress.
 	// egress - resources generated for Zone Egress.
-	// gateway - resources generated for MeshGateway.
 	//
 	// The list is not complete, because policy plugins can introduce new resources.
 	// For example MeshTrace plugin can create Cluster with "mesh-trace" origin.
@@ -168,6 +167,14 @@ type Cluster struct {
 	// Operation to execute on matched cluster.
 	Operation Operation `json:"operation"`
 	// Value of xDS resource in YAML format to add or patch.
+	//
+	// Patch merges the value into the matched cluster, and repeated fields are
+	// appended to what the cluster already has. Circuit breaker thresholds are
+	// the exception: Envoy resolves them by routing priority and ignores every
+	// threshold after the first one of a given priority, so appending would be
+	// dead config. They are merged into the existing threshold with the same
+	// priority instead, and a value listing one priority twice keeps only the
+	// first entry.
 	Value *string `json:"value,omitempty"`
 }
 
@@ -283,7 +290,6 @@ type MeshProxyPatchItemMatch struct {
 	// direct-access - resources generated for Direct Access functionality.
 	// ingress - resources generated for Zone Ingress.
 	// egress - resources generated for Zone Egress.
-	// gateway - resources generated for MeshGateway.
 	//
 	// The list is not complete, because policy plugins can introduce new resources.
 	// For example MeshTrace plugin can create Cluster with "mesh-trace" origin.
@@ -467,7 +473,6 @@ type MeshProxyPatchItemSpecMatch struct {
 	// direct-access - resources generated for Direct Access functionality.
 	// ingress - resources generated for Zone Ingress.
 	// egress - resources generated for Zone Egress.
-	// gateway - resources generated for MeshGateway.
 	//
 	// The list is not complete, because policy plugins can introduce new resources.
 	// For example MeshTrace plugin can create Cluster with "mesh-trace" origin.
@@ -646,7 +651,6 @@ type MeshProxyPatchItemSpecDefaultMatch struct {
 	// direct-access - resources generated for Direct Access functionality.
 	// ingress - resources generated for Zone Ingress.
 	// egress - resources generated for Zone Egress.
-	// gateway - resources generated for MeshGateway.
 	//
 	// The list is not complete, because policy plugins can introduce new resources.
 	// For example MeshTrace plugin can create Cluster with "mesh-trace" origin.
@@ -829,7 +833,6 @@ type MeshProxyPatchItemSpecDefaultAppendModificationsMatch struct {
 	// direct-access - resources generated for Direct Access functionality.
 	// ingress - resources generated for Zone Ingress.
 	// egress - resources generated for Zone Egress.
-	// gateway - resources generated for MeshGateway.
 	//
 	// The list is not complete, because policy plugins can introduce new resources.
 	// For example MeshTrace plugin can create Cluster with "mesh-trace" origin.
@@ -993,15 +996,8 @@ func (m *MeshProxyPatchItemDefault) GetAppendModifications() []AppendModificatio
 type MeshProxyPatchItemKind string
 
 const (
-	MeshProxyPatchItemKindMesh                 MeshProxyPatchItemKind = "Mesh"
-	MeshProxyPatchItemKindMeshSubset           MeshProxyPatchItemKind = "MeshSubset"
-	MeshProxyPatchItemKindMeshGateway          MeshProxyPatchItemKind = "MeshGateway"
-	MeshProxyPatchItemKindMeshService          MeshProxyPatchItemKind = "MeshService"
-	MeshProxyPatchItemKindMeshExternalService  MeshProxyPatchItemKind = "MeshExternalService"
-	MeshProxyPatchItemKindMeshMultiZoneService MeshProxyPatchItemKind = "MeshMultiZoneService"
-	MeshProxyPatchItemKindMeshServiceSubset    MeshProxyPatchItemKind = "MeshServiceSubset"
-	MeshProxyPatchItemKindMeshHTTPRoute        MeshProxyPatchItemKind = "MeshHTTPRoute"
-	MeshProxyPatchItemKindDataplane            MeshProxyPatchItemKind = "Dataplane"
+	MeshProxyPatchItemKindMesh      MeshProxyPatchItemKind = "Mesh"
+	MeshProxyPatchItemKindDataplane MeshProxyPatchItemKind = "Dataplane"
 )
 
 func (e MeshProxyPatchItemKind) ToPointer() *MeshProxyPatchItemKind {
@@ -1012,29 +1008,7 @@ func (e MeshProxyPatchItemKind) ToPointer() *MeshProxyPatchItemKind {
 func (e *MeshProxyPatchItemKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshProxyPatchItemProxyTypes string
-
-const (
-	MeshProxyPatchItemProxyTypesSidecar MeshProxyPatchItemProxyTypes = "Sidecar"
-	MeshProxyPatchItemProxyTypesGateway MeshProxyPatchItemProxyTypes = "Gateway"
-)
-
-func (e MeshProxyPatchItemProxyTypes) ToPointer() *MeshProxyPatchItemProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshProxyPatchItemProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
+		case "Mesh", "Dataplane":
 			return true
 		}
 	}
@@ -1047,26 +1021,13 @@ func (e *MeshProxyPatchItemProxyTypes) IsExact() bool {
 type MeshProxyPatchItemTargetRef struct {
 	// Kind of the referenced resource
 	Kind MeshProxyPatchItemKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select referenced real resources and to carry legacy
+	// service identity when a common TargetRef must still target old
+	// service-tag based paths.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshProxyPatchItemProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
 }
 
 func (m *MeshProxyPatchItemTargetRef) GetKind() MeshProxyPatchItemKind {
@@ -1083,46 +1044,11 @@ func (m *MeshProxyPatchItemTargetRef) GetLabels() map[string]string {
 	return m.Labels
 }
 
-func (m *MeshProxyPatchItemTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshProxyPatchItemTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshProxyPatchItemTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
-func (m *MeshProxyPatchItemTargetRef) GetProxyTypes() []MeshProxyPatchItemProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
 func (m *MeshProxyPatchItemTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
-}
-
-func (m *MeshProxyPatchItemTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
 }
 
 // MeshProxyPatchItemSpec - Spec is the specification of the Kuma MeshProxyPatch resource.

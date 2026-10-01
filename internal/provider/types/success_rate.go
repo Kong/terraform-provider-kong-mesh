@@ -7,7 +7,7 @@ import (
 )
 
 type SuccessRate struct {
-	MinimumHosts            types.Int32 `tfsdk:"minimum_hosts"`
-	RequestVolume           types.Int32 `tfsdk:"request_volume"`
-	StandardDeviationFactor *Mode       `tfsdk:"standard_deviation_factor"`
+	MinimumHosts            types.Int32              `tfsdk:"minimum_hosts"`
+	RequestVolume           types.Int32              `tfsdk:"request_volume"`
+	StandardDeviationFactor *StandardDeviationFactor `tfsdk:"standard_deviation_factor"`
 }

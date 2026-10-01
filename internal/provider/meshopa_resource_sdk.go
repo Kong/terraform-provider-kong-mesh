@@ -49,9 +49,32 @@ func (r *MeshOPAResourceModel) RefreshFromSharedMeshOPAItem(ctx context.Context,
 				r.Spec.Default.AgentConfig = nil
 			} else {
 				r.Spec.Default.AgentConfig = &tfTypes.CaCert{}
-				r.Spec.Default.AgentConfig.Inline = types.StringPointerValue(resp.Spec.Default.AgentConfig.Inline)
-				r.Spec.Default.AgentConfig.InlineString = types.StringPointerValue(resp.Spec.Default.AgentConfig.InlineString)
-				r.Spec.Default.AgentConfig.Secret = types.StringPointerValue(resp.Spec.Default.AgentConfig.Secret)
+				if resp.Spec.Default.AgentConfig.EnvVar == nil {
+					r.Spec.Default.AgentConfig.EnvVar = nil
+				} else {
+					r.Spec.Default.AgentConfig.EnvVar = &tfTypes.MeshExternalServiceItemSpecTLSEnvVar{}
+					r.Spec.Default.AgentConfig.EnvVar.Name = types.StringValue(resp.Spec.Default.AgentConfig.EnvVar.Name)
+				}
+				if resp.Spec.Default.AgentConfig.File == nil {
+					r.Spec.Default.AgentConfig.File = nil
+				} else {
+					r.Spec.Default.AgentConfig.File = &tfTypes.MeshExternalServiceItemSpecTLSFile{}
+					r.Spec.Default.AgentConfig.File.Path = types.StringValue(resp.Spec.Default.AgentConfig.File.Path)
+				}
+				if resp.Spec.Default.AgentConfig.InsecureInline == nil {
+					r.Spec.Default.AgentConfig.InsecureInline = nil
+				} else {
+					r.Spec.Default.AgentConfig.InsecureInline = &tfTypes.MeshExternalServiceItemSpecTLSInsecureInline{}
+					r.Spec.Default.AgentConfig.InsecureInline.Value = types.StringValue(resp.Spec.Default.AgentConfig.InsecureInline.Value)
+				}
+				if resp.Spec.Default.AgentConfig.SecretRef == nil {
+					r.Spec.Default.AgentConfig.SecretRef = nil
+				} else {
+					r.Spec.Default.AgentConfig.SecretRef = &tfTypes.MeshExternalServiceItemSpecTLSSecretRef{}
+					r.Spec.Default.AgentConfig.SecretRef.Kind = types.StringValue(string(resp.Spec.Default.AgentConfig.SecretRef.Kind))
+					r.Spec.Default.AgentConfig.SecretRef.Name = types.StringValue(resp.Spec.Default.AgentConfig.SecretRef.Name)
+				}
+				r.Spec.Default.AgentConfig.Type = types.StringValue(string(resp.Spec.Default.AgentConfig.Type))
 			}
 			r.Spec.Default.AppendPolicies = []tfTypes.AppendPolicies{}
 
@@ -60,9 +83,32 @@ func (r *MeshOPAResourceModel) RefreshFromSharedMeshOPAItem(ctx context.Context,
 
 				appendPolicies.IgnoreDecision = types.BoolPointerValue(appendPoliciesItem.IgnoreDecision)
 				appendPolicies.Rego = &tfTypes.CaCert{}
-				appendPolicies.Rego.Inline = types.StringPointerValue(appendPoliciesItem.Rego.Inline)
-				appendPolicies.Rego.InlineString = types.StringPointerValue(appendPoliciesItem.Rego.InlineString)
-				appendPolicies.Rego.Secret = types.StringPointerValue(appendPoliciesItem.Rego.Secret)
+				if appendPoliciesItem.Rego.EnvVar == nil {
+					appendPolicies.Rego.EnvVar = nil
+				} else {
+					appendPolicies.Rego.EnvVar = &tfTypes.MeshExternalServiceItemSpecTLSEnvVar{}
+					appendPolicies.Rego.EnvVar.Name = types.StringValue(appendPoliciesItem.Rego.EnvVar.Name)
+				}
+				if appendPoliciesItem.Rego.File == nil {
+					appendPolicies.Rego.File = nil
+				} else {
+					appendPolicies.Rego.File = &tfTypes.MeshExternalServiceItemSpecTLSFile{}
+					appendPolicies.Rego.File.Path = types.StringValue(appendPoliciesItem.Rego.File.Path)
+				}
+				if appendPoliciesItem.Rego.InsecureInline == nil {
+					appendPolicies.Rego.InsecureInline = nil
+				} else {
+					appendPolicies.Rego.InsecureInline = &tfTypes.MeshExternalServiceItemSpecTLSInsecureInline{}
+					appendPolicies.Rego.InsecureInline.Value = types.StringValue(appendPoliciesItem.Rego.InsecureInline.Value)
+				}
+				if appendPoliciesItem.Rego.SecretRef == nil {
+					appendPolicies.Rego.SecretRef = nil
+				} else {
+					appendPolicies.Rego.SecretRef = &tfTypes.MeshExternalServiceItemSpecTLSSecretRef{}
+					appendPolicies.Rego.SecretRef.Kind = types.StringValue(string(appendPoliciesItem.Rego.SecretRef.Kind))
+					appendPolicies.Rego.SecretRef.Name = types.StringValue(appendPoliciesItem.Rego.SecretRef.Name)
+				}
+				appendPolicies.Rego.Type = types.StringValue(string(appendPoliciesItem.Rego.Type))
 
 				r.Spec.Default.AppendPolicies = append(r.Spec.Default.AppendPolicies, appendPolicies)
 			}
@@ -89,7 +135,7 @@ func (r *MeshOPAResourceModel) RefreshFromSharedMeshOPAItem(ctx context.Context,
 		if resp.Spec.TargetRef == nil {
 			r.Spec.TargetRef = nil
 		} else {
-			r.Spec.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
+			r.Spec.TargetRef = &tfTypes.TargetRef{}
 			r.Spec.TargetRef.Kind = types.StringValue(string(resp.Spec.TargetRef.Kind))
 			if len(resp.Spec.TargetRef.Labels) > 0 {
 				r.Spec.TargetRef.Labels = make(map[string]types.String, len(resp.Spec.TargetRef.Labels))
@@ -97,20 +143,7 @@ func (r *MeshOPAResourceModel) RefreshFromSharedMeshOPAItem(ctx context.Context,
 					r.Spec.TargetRef.Labels[key] = types.StringValue(value)
 				}
 			}
-			r.Spec.TargetRef.Mesh = types.StringPointerValue(resp.Spec.TargetRef.Mesh)
-			r.Spec.TargetRef.Name = types.StringPointerValue(resp.Spec.TargetRef.Name)
-			r.Spec.TargetRef.Namespace = types.StringPointerValue(resp.Spec.TargetRef.Namespace)
-			r.Spec.TargetRef.ProxyTypes = make([]types.String, 0, len(resp.Spec.TargetRef.ProxyTypes))
-			for _, v := range resp.Spec.TargetRef.ProxyTypes {
-				r.Spec.TargetRef.ProxyTypes = append(r.Spec.TargetRef.ProxyTypes, types.StringValue(string(v)))
-			}
 			r.Spec.TargetRef.SectionName = types.StringPointerValue(resp.Spec.TargetRef.SectionName)
-			if len(resp.Spec.TargetRef.Tags) > 0 {
-				r.Spec.TargetRef.Tags = make(map[string]types.String, len(resp.Spec.TargetRef.Tags))
-				for key1, value1 := range resp.Spec.TargetRef.Tags {
-					r.Spec.TargetRef.Tags[key1] = types.StringValue(value1)
-				}
-			}
 		}
 		r.Type = types.StringValue(string(resp.Type))
 	}
@@ -198,28 +231,51 @@ func (r *MeshOPAResourceModel) ToSharedMeshOPAItemInput(ctx context.Context) (*s
 	if r.Spec.Default != nil {
 		var agentConfig *shared.AgentConfig
 		if r.Spec.Default.AgentConfig != nil {
-			inline := new(string)
-			if !r.Spec.Default.AgentConfig.Inline.IsUnknown() && !r.Spec.Default.AgentConfig.Inline.IsNull() {
-				*inline = r.Spec.Default.AgentConfig.Inline.ValueString()
-			} else {
-				inline = nil
+			var envVar *shared.EnvVar
+			if r.Spec.Default.AgentConfig.EnvVar != nil {
+				var name1 string
+				name1 = r.Spec.Default.AgentConfig.EnvVar.Name.ValueString()
+
+				envVar = &shared.EnvVar{
+					Name: name1,
+				}
 			}
-			inlineString := new(string)
-			if !r.Spec.Default.AgentConfig.InlineString.IsUnknown() && !r.Spec.Default.AgentConfig.InlineString.IsNull() {
-				*inlineString = r.Spec.Default.AgentConfig.InlineString.ValueString()
-			} else {
-				inlineString = nil
+			var file *shared.File
+			if r.Spec.Default.AgentConfig.File != nil {
+				var path string
+				path = r.Spec.Default.AgentConfig.File.Path.ValueString()
+
+				file = &shared.File{
+					Path: path,
+				}
 			}
-			secret := new(string)
-			if !r.Spec.Default.AgentConfig.Secret.IsUnknown() && !r.Spec.Default.AgentConfig.Secret.IsNull() {
-				*secret = r.Spec.Default.AgentConfig.Secret.ValueString()
-			} else {
-				secret = nil
+			var insecureInline *shared.InsecureInline
+			if r.Spec.Default.AgentConfig.InsecureInline != nil {
+				var value string
+				value = r.Spec.Default.AgentConfig.InsecureInline.Value.ValueString()
+
+				insecureInline = &shared.InsecureInline{
+					Value: value,
+				}
 			}
+			var secretRef *shared.SecretRef
+			if r.Spec.Default.AgentConfig.SecretRef != nil {
+				kind := shared.MeshOPAItemSpecKind(r.Spec.Default.AgentConfig.SecretRef.Kind.ValueString())
+				var name2 string
+				name2 = r.Spec.Default.AgentConfig.SecretRef.Name.ValueString()
+
+				secretRef = &shared.SecretRef{
+					Kind: kind,
+					Name: name2,
+				}
+			}
+			typeVar1 := shared.MeshOPAItemSpecType(r.Spec.Default.AgentConfig.Type.ValueString())
 			agentConfig = &shared.AgentConfig{
-				Inline:       inline,
-				InlineString: inlineString,
-				Secret:       secret,
+				EnvVar:         envVar,
+				File:           file,
+				InsecureInline: insecureInline,
+				SecretRef:      secretRef,
+				Type:           typeVar1,
 			}
 		}
 		appendPolicies := make([]shared.AppendPolicies, 0, len(r.Spec.Default.AppendPolicies))
@@ -230,28 +286,51 @@ func (r *MeshOPAResourceModel) ToSharedMeshOPAItemInput(ctx context.Context) (*s
 			} else {
 				ignoreDecision = nil
 			}
-			inline1 := new(string)
-			if !r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.Inline.IsUnknown() && !r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.Inline.IsNull() {
-				*inline1 = r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.Inline.ValueString()
-			} else {
-				inline1 = nil
+			var envVar1 *shared.MeshOPAItemEnvVar
+			if r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.EnvVar != nil {
+				var name3 string
+				name3 = r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.EnvVar.Name.ValueString()
+
+				envVar1 = &shared.MeshOPAItemEnvVar{
+					Name: name3,
+				}
 			}
-			inlineString1 := new(string)
-			if !r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.InlineString.IsUnknown() && !r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.InlineString.IsNull() {
-				*inlineString1 = r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.InlineString.ValueString()
-			} else {
-				inlineString1 = nil
+			var file1 *shared.MeshOPAItemFile
+			if r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.File != nil {
+				var path1 string
+				path1 = r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.File.Path.ValueString()
+
+				file1 = &shared.MeshOPAItemFile{
+					Path: path1,
+				}
 			}
-			secret1 := new(string)
-			if !r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.Secret.IsUnknown() && !r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.Secret.IsNull() {
-				*secret1 = r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.Secret.ValueString()
-			} else {
-				secret1 = nil
+			var insecureInline1 *shared.MeshOPAItemInsecureInline
+			if r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.InsecureInline != nil {
+				var value1 string
+				value1 = r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.InsecureInline.Value.ValueString()
+
+				insecureInline1 = &shared.MeshOPAItemInsecureInline{
+					Value: value1,
+				}
 			}
+			var secretRef1 *shared.MeshOPAItemSecretRef
+			if r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.SecretRef != nil {
+				kind1 := shared.MeshOPAItemSpecDefaultKind(r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.SecretRef.Kind.ValueString())
+				var name4 string
+				name4 = r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.SecretRef.Name.ValueString()
+
+				secretRef1 = &shared.MeshOPAItemSecretRef{
+					Kind: kind1,
+					Name: name4,
+				}
+			}
+			typeVar2 := shared.MeshOPAItemSpecDefaultType(r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.Type.ValueString())
 			rego := shared.Rego{
-				Inline:       inline1,
-				InlineString: inlineString1,
-				Secret:       secret1,
+				EnvVar:         envVar1,
+				File:           file1,
+				InsecureInline: insecureInline1,
+				SecretRef:      secretRef1,
+				Type:           typeVar2,
 			}
 			appendPolicies = append(appendPolicies, shared.AppendPolicies{
 				IgnoreDecision: ignoreDecision,
@@ -312,7 +391,7 @@ func (r *MeshOPAResourceModel) ToSharedMeshOPAItemInput(ctx context.Context) (*s
 	}
 	var targetRef *shared.MeshOPAItemTargetRef
 	if r.Spec.TargetRef != nil {
-		kind := shared.MeshOPAItemKind(r.Spec.TargetRef.Kind.ValueString())
+		kind2 := shared.MeshOPAItemKind(r.Spec.TargetRef.Kind.ValueString())
 		labels1 := make(map[string]string)
 		for labelsKey := range r.Spec.TargetRef.Labels {
 			var labelsInst string
@@ -320,50 +399,16 @@ func (r *MeshOPAResourceModel) ToSharedMeshOPAItemInput(ctx context.Context) (*s
 
 			labels1[labelsKey] = labelsInst
 		}
-		mesh1 := new(string)
-		if !r.Spec.TargetRef.Mesh.IsUnknown() && !r.Spec.TargetRef.Mesh.IsNull() {
-			*mesh1 = r.Spec.TargetRef.Mesh.ValueString()
-		} else {
-			mesh1 = nil
-		}
-		name1 := new(string)
-		if !r.Spec.TargetRef.Name.IsUnknown() && !r.Spec.TargetRef.Name.IsNull() {
-			*name1 = r.Spec.TargetRef.Name.ValueString()
-		} else {
-			name1 = nil
-		}
-		namespace := new(string)
-		if !r.Spec.TargetRef.Namespace.IsUnknown() && !r.Spec.TargetRef.Namespace.IsNull() {
-			*namespace = r.Spec.TargetRef.Namespace.ValueString()
-		} else {
-			namespace = nil
-		}
-		proxyTypes := make([]shared.MeshOPAItemProxyTypes, 0, len(r.Spec.TargetRef.ProxyTypes))
-		for _, proxyTypesItem := range r.Spec.TargetRef.ProxyTypes {
-			proxyTypes = append(proxyTypes, shared.MeshOPAItemProxyTypes(proxyTypesItem.ValueString()))
-		}
 		sectionName := new(string)
 		if !r.Spec.TargetRef.SectionName.IsUnknown() && !r.Spec.TargetRef.SectionName.IsNull() {
 			*sectionName = r.Spec.TargetRef.SectionName.ValueString()
 		} else {
 			sectionName = nil
 		}
-		tags := make(map[string]string)
-		for tagsKey := range r.Spec.TargetRef.Tags {
-			var tagsInst string
-			tagsInst = r.Spec.TargetRef.Tags[tagsKey].ValueString()
-
-			tags[tagsKey] = tagsInst
-		}
 		targetRef = &shared.MeshOPAItemTargetRef{
-			Kind:        kind,
+			Kind:        kind2,
 			Labels:      labels1,
-			Mesh:        mesh1,
-			Name:        name1,
-			Namespace:   namespace,
-			ProxyTypes:  proxyTypes,
 			SectionName: sectionName,
-			Tags:        tags,
 		}
 	}
 	spec := shared.MeshOPAItemSpec{

@@ -2,6 +2,11 @@
 
 package types
 
+import (
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
+
 type MeshIdentityItemStatus struct {
-	Conditions []MeshExternalServiceItemConditions `tfsdk:"conditions"`
+	Conditions  []Conditions `tfsdk:"conditions"`
+	TrustDomain types.String `tfsdk:"trust_domain"`
 }

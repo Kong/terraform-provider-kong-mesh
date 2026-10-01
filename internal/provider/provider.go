@@ -150,8 +150,8 @@ func (p *KongMeshProvider) Resources(ctx context.Context) []func() resource.Reso
 		NewMeshCircuitBreakerResource,
 		NewMeshExternalServiceResource,
 		NewMeshFaultInjectionResource,
-		NewMeshGatewayResource,
-		NewMeshGlobalRateLimitResource,
+		NewMeshGlobalSecretResource,
+		NewMeshGlobalSecretAliasResource,
 		NewMeshHTTPRouteResource,
 		NewMeshHealthCheckResource,
 		NewMeshHostnameGeneratorResource,
@@ -160,6 +160,7 @@ func (p *KongMeshProvider) Resources(ctx context.Context) []func() resource.Reso
 		NewMeshMetricResource,
 		NewMeshMultiZoneServiceResource,
 		NewMeshOPAResource,
+		NewMeshOpenTelemetryBackendResource,
 		NewMeshPassthroughResource,
 		NewMeshProxyPatchResource,
 		NewMeshRateLimitResource,
@@ -173,8 +174,8 @@ func (p *KongMeshProvider) Resources(ctx context.Context) []func() resource.Reso
 		NewMeshTrafficPermissionResource,
 		NewMeshTrustResource,
 		NewMeshWorkloadResource,
-		NewMeshZoneEgressResource,
-		NewMeshZoneIngressResource,
+		NewMeshZoneResource,
+		NewMeshZoneAddressResource,
 	}
 }
 

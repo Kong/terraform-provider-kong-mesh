@@ -7,8 +7,7 @@ import (
 )
 
 type AccessRoleItemRulesTargetRef struct {
-	Kind types.String            `tfsdk:"kind"`
-	Mesh types.String            `tfsdk:"mesh"`
-	Name types.String            `tfsdk:"name"`
-	Tags map[string]types.String `tfsdk:"tags"`
+	Kind   types.String            `tfsdk:"kind"`
+	Labels map[string]types.String `tfsdk:"labels"`
+	Name   types.String            `tfsdk:"name"`
 }

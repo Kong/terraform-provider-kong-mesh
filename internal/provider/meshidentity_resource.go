@@ -8,6 +8,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -23,6 +25,7 @@ import (
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
+	"regexp"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -86,6 +89,10 @@ func (r *MeshIdentityResource) Schema(ctx context.Context, req resource.SchemaRe
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
 				Description: `name of the mesh. Requires replacement if changed.`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(253),
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[0-9a-z-_.]*$`), "must match pattern "+regexp.MustCompile(`^[0-9a-z-_.]*$`).String()),
+				},
 			},
 			"modification_time": schema.StringAttribute{
 				Computed: true,
@@ -100,6 +107,10 @@ func (r *MeshIdentityResource) Schema(ctx context.Context, req resource.SchemaRe
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
 				Description: `name of the MeshIdentity. Requires replacement if changed.`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(253),
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
+				},
 			},
 			"spec": schema.SingleNestedAttribute{
 				Required: true,
@@ -107,165 +118,803 @@ func (r *MeshIdentityResource) Schema(ctx context.Context, req resource.SchemaRe
 					"provider": schema.SingleNestedAttribute{
 						Optional: true,
 						Attributes: map[string]schema.Attribute{
-							"bundled": schema.SingleNestedAttribute{
+							"one": schema.SingleNestedAttribute{
 								Optional: true,
 								Attributes: map[string]schema.Attribute{
-									"autogenerate": schema.SingleNestedAttribute{
+									"bundled": schema.SingleNestedAttribute{
 										Optional: true,
 										Attributes: map[string]schema.Attribute{
-											"enabled": schema.BoolAttribute{
-												Optional: true,
-											},
-										},
-										Description: `Autogenerate configures the control plane to use self-signed certificates.`,
-									},
-									"ca": schema.SingleNestedAttribute{
-										Optional: true,
-										Attributes: map[string]schema.Attribute{
-											"certificate": schema.SingleNestedAttribute{
+											"autogenerate": schema.SingleNestedAttribute{
 												Optional: true,
 												Attributes: map[string]schema.Attribute{
-													"env_var": schema.SingleNestedAttribute{
+													"enabled": schema.BoolAttribute{
 														Optional: true,
-														Attributes: map[string]schema.Attribute{
-															"name": schema.StringAttribute{
-																Required: true,
-															},
-														},
-													},
-													"file": schema.SingleNestedAttribute{
-														Optional: true,
-														Attributes: map[string]schema.Attribute{
-															"path": schema.StringAttribute{
-																Required: true,
-															},
-														},
-													},
-													"insecure_inline": schema.SingleNestedAttribute{
-														Optional: true,
-														Attributes: map[string]schema.Attribute{
-															"value": schema.StringAttribute{
-																Required: true,
-															},
-														},
-													},
-													"secret_ref": schema.SingleNestedAttribute{
-														Optional: true,
-														Attributes: map[string]schema.Attribute{
-															"kind": schema.StringAttribute{
-																Required:    true,
-																Description: `must be "Secret"`,
-																Validators: []validator.String{
-																	stringvalidator.OneOf("Secret"),
-																},
-															},
-															"name": schema.StringAttribute{
-																Required: true,
-															},
-														},
-													},
-													"type": schema.StringAttribute{
-														Required:    true,
-														Description: `possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]`,
 													},
 												},
-												Description: `Certificate allows the user to specify a custom certificate.`,
+												Description: `Autogenerate configures the control plane to use self-signed certificates.`,
 											},
-											"private_key": schema.SingleNestedAttribute{
+											"ca": schema.SingleNestedAttribute{
 												Optional: true,
 												Attributes: map[string]schema.Attribute{
-													"env_var": schema.SingleNestedAttribute{
+													"certificate": schema.SingleNestedAttribute{
 														Optional: true,
 														Attributes: map[string]schema.Attribute{
-															"name": schema.StringAttribute{
-																Required: true,
-															},
-														},
-													},
-													"file": schema.SingleNestedAttribute{
-														Optional: true,
-														Attributes: map[string]schema.Attribute{
-															"path": schema.StringAttribute{
-																Required: true,
-															},
-														},
-													},
-													"insecure_inline": schema.SingleNestedAttribute{
-														Optional: true,
-														Attributes: map[string]schema.Attribute{
-															"value": schema.StringAttribute{
-																Required: true,
-															},
-														},
-													},
-													"secret_ref": schema.SingleNestedAttribute{
-														Optional: true,
-														Attributes: map[string]schema.Attribute{
-															"kind": schema.StringAttribute{
-																Required:    true,
-																Description: `must be "Secret"`,
-																Validators: []validator.String{
-																	stringvalidator.OneOf("Secret"),
+															"env_var": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"name": schema.StringAttribute{
+																		Required: true,
+																	},
 																},
 															},
-															"name": schema.StringAttribute{
-																Required: true,
+															"file": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"path": schema.StringAttribute{
+																		Required: true,
+																	},
+																},
+															},
+															"insecure_inline": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"value": schema.StringAttribute{
+																		Required: true,
+																	},
+																},
+															},
+															"secret_ref": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"kind": schema.StringAttribute{
+																		Required:    true,
+																		Description: `must be "Secret"`,
+																		Validators: []validator.String{
+																			stringvalidator.OneOf("Secret"),
+																		},
+																	},
+																	"name": schema.StringAttribute{
+																		Required: true,
+																	},
+																},
+															},
+															"type": schema.StringAttribute{
+																Required:    true,
+																Description: `possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]`,
 															},
 														},
+														Description: `Certificate allows the user to specify a custom certificate.`,
 													},
-													"type": schema.StringAttribute{
-														Required:    true,
-														Description: `possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]`,
+													"private_key": schema.SingleNestedAttribute{
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"env_var": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"name": schema.StringAttribute{
+																		Required: true,
+																	},
+																},
+															},
+															"file": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"path": schema.StringAttribute{
+																		Required: true,
+																	},
+																},
+															},
+															"insecure_inline": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"value": schema.StringAttribute{
+																		Required: true,
+																	},
+																},
+															},
+															"secret_ref": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"kind": schema.StringAttribute{
+																		Required:    true,
+																		Description: `must be "Secret"`,
+																		Validators: []validator.String{
+																			stringvalidator.OneOf("Secret"),
+																		},
+																	},
+																	"name": schema.StringAttribute{
+																		Required: true,
+																	},
+																},
+															},
+															"type": schema.StringAttribute{
+																Required:    true,
+																Description: `possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]`,
+															},
+														},
+														Description: `PrivateKey allows the user to specify a custom private key.`,
 													},
 												},
-												Description: `PrivateKey allows the user to specify a custom private key.`,
+												Description: `CA has configuration related to the CA`,
+											},
+											"certificate_parameters": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"expiry": schema.StringAttribute{
+														Optional: true,
+													},
+												},
+												Description: `CertificateParameters allows users to define certificate generation parameters.`,
+											},
+											"insecure_allow_self_signed": schema.BoolAttribute{
+												Optional:    true,
+												Description: `InsecureAllowSelfSigned allows users to enable the use of self-signed certificates.`,
+											},
+											"mesh_trust_creation": schema.StringAttribute{
+												Optional: true,
+												MarkdownDescription: `MeshTrustCreation defines whether a MeshTrust resource should be automatically created` + "\n" +
+													`from an existing MeshIdentity. If not defined, the control plane automatically generates a MeshTrust.` + "\n" +
+													`possible known values include one of ["Enabled", "Disabled"]`,
 											},
 										},
-										Description: `CA has configuration related to the CA`,
+										MarkdownDescription: `Bundled provides information about certificates that are generated by the control plane,` + "\n" +
+											`either autogenerated or provided by the user.`,
 									},
-									"certificate_parameters": schema.SingleNestedAttribute{
+									"extension": schema.SingleNestedAttribute{
 										Optional: true,
 										Attributes: map[string]schema.Attribute{
-											"expiry": schema.StringAttribute{
+											"acmpca": schema.SingleNestedAttribute{
 												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"config": schema.StringAttribute{
+														CustomType:  jsontypes.NormalizedType{},
+														Computed:    true,
+														Optional:    true,
+														Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
+													},
+													"name": schema.StringAttribute{
+														Required:    true,
+														Description: `Name is the name of the extension provider.`,
+													},
+												},
+												Validators: []validator.Object{
+													objectvalidator.ConflictsWith(path.Expressions{
+														path.MatchRelative().AtParent().AtName("other"),
+														path.MatchRelative().AtParent().AtName("certmanager"),
+														path.MatchRelative().AtParent().AtName("vault"),
+													}...),
+												},
+											},
+											"certmanager": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"config": schema.StringAttribute{
+														CustomType:  jsontypes.NormalizedType{},
+														Computed:    true,
+														Optional:    true,
+														Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
+													},
+													"name": schema.StringAttribute{
+														Required:    true,
+														Description: `Name is the name of the extension provider.`,
+													},
+												},
+												Validators: []validator.Object{
+													objectvalidator.ConflictsWith(path.Expressions{
+														path.MatchRelative().AtParent().AtName("other"),
+														path.MatchRelative().AtParent().AtName("acmpca"),
+														path.MatchRelative().AtParent().AtName("vault"),
+													}...),
+												},
+											},
+											"other": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"config": schema.StringAttribute{
+														CustomType:  jsontypes.NormalizedType{},
+														Computed:    true,
+														Optional:    true,
+														Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
+													},
+													"name": schema.StringAttribute{
+														Required:    true,
+														Description: `Name is the name of the extension provider.`,
+													},
+												},
+												Description: `An extension this control plane does not ship. Its configuration is not described here.`,
+												Validators: []validator.Object{
+													objectvalidator.ConflictsWith(path.Expressions{
+														path.MatchRelative().AtParent().AtName("acmpca"),
+														path.MatchRelative().AtParent().AtName("certmanager"),
+														path.MatchRelative().AtParent().AtName("vault"),
+													}...),
+												},
+											},
+											"vault": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"config": schema.StringAttribute{
+														CustomType:  jsontypes.NormalizedType{},
+														Computed:    true,
+														Optional:    true,
+														Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
+													},
+													"name": schema.StringAttribute{
+														Required:    true,
+														Description: `Name is the name of the extension provider.`,
+													},
+												},
+												Validators: []validator.Object{
+													objectvalidator.ConflictsWith(path.Expressions{
+														path.MatchRelative().AtParent().AtName("other"),
+														path.MatchRelative().AtParent().AtName("acmpca"),
+														path.MatchRelative().AtParent().AtName("certmanager"),
+													}...),
+												},
 											},
 										},
-										Description: `CertificateParameters allows users to define certificate generation parameters.`,
+										Description: `Extension indicates that custom provider is used.`,
 									},
-									"insecure_allow_self_signed": schema.BoolAttribute{
-										Optional:    true,
-										Description: `InsecureAllowSelfSigned allows users to enable the use of self-signed certificates.`,
-									},
-									"mesh_trust_creation": schema.StringAttribute{
+									"spire": schema.SingleNestedAttribute{
 										Optional: true,
-										MarkdownDescription: `MeshTrustCreation defines whether a MeshTrust resource should be automatically created` + "\n" +
-											`from an existing MeshIdentity. If not defined, the control plane automatically generates a MeshTrust.` + "\n" +
-											`possible known values include one of ["Enabled", "Disabled"]`,
+										Attributes: map[string]schema.Attribute{
+											"agent": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"timeout": schema.StringAttribute{
+														Optional: true,
+														MarkdownDescription: `Connection timeout to the socket exposed by Spire agent` + "\n" +
+															`Default 1 second.`,
+													},
+												},
+												Description: `Spire agent configuration`,
+											},
+										},
+										Description: `Spire indicates that SPIRE is used for certificate delivery.`,
+									},
+									"type": schema.StringAttribute{
+										Required:    true,
+										Description: `Type specifies the type of certificate provider. possible known values include one of ["Bundled", "Spire", "Extension"]`,
 									},
 								},
-								MarkdownDescription: `Bundled provides information about certificates that are generated by the control plane,` + "\n" +
-									`either autogenerated or provided by the user.`,
+								Validators: []validator.Object{
+									objectvalidator.ConflictsWith(path.Expressions{
+										path.MatchRelative().AtParent().AtName("two"),
+										path.MatchRelative().AtParent().AtName("three"),
+									}...),
+								},
 							},
-							"spire": schema.SingleNestedAttribute{
+							"three": schema.SingleNestedAttribute{
 								Optional: true,
 								Attributes: map[string]schema.Attribute{
-									"agent": schema.SingleNestedAttribute{
+									"bundled": schema.SingleNestedAttribute{
 										Optional: true,
 										Attributes: map[string]schema.Attribute{
-											"timeout": schema.StringAttribute{
+											"autogenerate": schema.SingleNestedAttribute{
 												Optional: true,
-												MarkdownDescription: `Connection timeout to the socket exposed by Spire agent` + "\n" +
-													`Default 1 second.`,
+												Attributes: map[string]schema.Attribute{
+													"enabled": schema.BoolAttribute{
+														Optional: true,
+													},
+												},
+												Description: `Autogenerate configures the control plane to use self-signed certificates.`,
+											},
+											"ca": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"certificate": schema.SingleNestedAttribute{
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"env_var": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"name": schema.StringAttribute{
+																		Required: true,
+																	},
+																},
+															},
+															"file": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"path": schema.StringAttribute{
+																		Required: true,
+																	},
+																},
+															},
+															"insecure_inline": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"value": schema.StringAttribute{
+																		Required: true,
+																	},
+																},
+															},
+															"secret_ref": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"kind": schema.StringAttribute{
+																		Required:    true,
+																		Description: `must be "Secret"`,
+																		Validators: []validator.String{
+																			stringvalidator.OneOf("Secret"),
+																		},
+																	},
+																	"name": schema.StringAttribute{
+																		Required: true,
+																	},
+																},
+															},
+															"type": schema.StringAttribute{
+																Required:    true,
+																Description: `possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]`,
+															},
+														},
+														Description: `Certificate allows the user to specify a custom certificate.`,
+													},
+													"private_key": schema.SingleNestedAttribute{
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"env_var": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"name": schema.StringAttribute{
+																		Required: true,
+																	},
+																},
+															},
+															"file": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"path": schema.StringAttribute{
+																		Required: true,
+																	},
+																},
+															},
+															"insecure_inline": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"value": schema.StringAttribute{
+																		Required: true,
+																	},
+																},
+															},
+															"secret_ref": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"kind": schema.StringAttribute{
+																		Required:    true,
+																		Description: `must be "Secret"`,
+																		Validators: []validator.String{
+																			stringvalidator.OneOf("Secret"),
+																		},
+																	},
+																	"name": schema.StringAttribute{
+																		Required: true,
+																	},
+																},
+															},
+															"type": schema.StringAttribute{
+																Required:    true,
+																Description: `possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]`,
+															},
+														},
+														Description: `PrivateKey allows the user to specify a custom private key.`,
+													},
+												},
+												Description: `CA has configuration related to the CA`,
+											},
+											"certificate_parameters": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"expiry": schema.StringAttribute{
+														Optional: true,
+													},
+												},
+												Description: `CertificateParameters allows users to define certificate generation parameters.`,
+											},
+											"insecure_allow_self_signed": schema.BoolAttribute{
+												Optional:    true,
+												Description: `InsecureAllowSelfSigned allows users to enable the use of self-signed certificates.`,
+											},
+											"mesh_trust_creation": schema.StringAttribute{
+												Optional: true,
+												MarkdownDescription: `MeshTrustCreation defines whether a MeshTrust resource should be automatically created` + "\n" +
+													`from an existing MeshIdentity. If not defined, the control plane automatically generates a MeshTrust.` + "\n" +
+													`possible known values include one of ["Enabled", "Disabled"]`,
 											},
 										},
-										Description: `Spire agent configuration`,
+										MarkdownDescription: `Bundled provides information about certificates that are generated by the control plane,` + "\n" +
+											`either autogenerated or provided by the user.`,
+									},
+									"extension": schema.SingleNestedAttribute{
+										Optional: true,
+										Attributes: map[string]schema.Attribute{
+											"acmpca": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"config": schema.StringAttribute{
+														CustomType:  jsontypes.NormalizedType{},
+														Computed:    true,
+														Optional:    true,
+														Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
+													},
+													"name": schema.StringAttribute{
+														Required:    true,
+														Description: `Name is the name of the extension provider.`,
+													},
+												},
+												Validators: []validator.Object{
+													objectvalidator.ConflictsWith(path.Expressions{
+														path.MatchRelative().AtParent().AtName("other"),
+														path.MatchRelative().AtParent().AtName("certmanager"),
+														path.MatchRelative().AtParent().AtName("vault"),
+													}...),
+												},
+											},
+											"certmanager": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"config": schema.StringAttribute{
+														CustomType:  jsontypes.NormalizedType{},
+														Computed:    true,
+														Optional:    true,
+														Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
+													},
+													"name": schema.StringAttribute{
+														Required:    true,
+														Description: `Name is the name of the extension provider.`,
+													},
+												},
+												Validators: []validator.Object{
+													objectvalidator.ConflictsWith(path.Expressions{
+														path.MatchRelative().AtParent().AtName("other"),
+														path.MatchRelative().AtParent().AtName("acmpca"),
+														path.MatchRelative().AtParent().AtName("vault"),
+													}...),
+												},
+											},
+											"other": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"config": schema.StringAttribute{
+														CustomType:  jsontypes.NormalizedType{},
+														Computed:    true,
+														Optional:    true,
+														Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
+													},
+													"name": schema.StringAttribute{
+														Required:    true,
+														Description: `Name is the name of the extension provider.`,
+													},
+												},
+												Description: `An extension this control plane does not ship. Its configuration is not described here.`,
+												Validators: []validator.Object{
+													objectvalidator.ConflictsWith(path.Expressions{
+														path.MatchRelative().AtParent().AtName("acmpca"),
+														path.MatchRelative().AtParent().AtName("certmanager"),
+														path.MatchRelative().AtParent().AtName("vault"),
+													}...),
+												},
+											},
+											"vault": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"config": schema.StringAttribute{
+														CustomType:  jsontypes.NormalizedType{},
+														Computed:    true,
+														Optional:    true,
+														Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
+													},
+													"name": schema.StringAttribute{
+														Required:    true,
+														Description: `Name is the name of the extension provider.`,
+													},
+												},
+												Validators: []validator.Object{
+													objectvalidator.ConflictsWith(path.Expressions{
+														path.MatchRelative().AtParent().AtName("other"),
+														path.MatchRelative().AtParent().AtName("acmpca"),
+														path.MatchRelative().AtParent().AtName("certmanager"),
+													}...),
+												},
+											},
+										},
+										Description: `Extension indicates that custom provider is used.`,
+									},
+									"spire": schema.SingleNestedAttribute{
+										Optional: true,
+										Attributes: map[string]schema.Attribute{
+											"agent": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"timeout": schema.StringAttribute{
+														Optional: true,
+														MarkdownDescription: `Connection timeout to the socket exposed by Spire agent` + "\n" +
+															`Default 1 second.`,
+													},
+												},
+												Description: `Spire agent configuration`,
+											},
+										},
+										Description: `Spire indicates that SPIRE is used for certificate delivery.`,
+									},
+									"type": schema.StringAttribute{
+										Required:    true,
+										Description: `Type specifies the type of certificate provider. possible known values include one of ["Bundled", "Spire", "Extension"]`,
 									},
 								},
-								Description: `Spire indicates that SPIRE is used for certificate delivery.`,
+								Validators: []validator.Object{
+									objectvalidator.ConflictsWith(path.Expressions{
+										path.MatchRelative().AtParent().AtName("one"),
+										path.MatchRelative().AtParent().AtName("two"),
+									}...),
+								},
 							},
-							"type": schema.StringAttribute{
-								Required:    true,
-								Description: `Type specifies the type of certificate provider. possible known values include one of ["Bundled", "Spire"]`,
+							"two": schema.SingleNestedAttribute{
+								Optional: true,
+								Attributes: map[string]schema.Attribute{
+									"bundled": schema.SingleNestedAttribute{
+										Optional: true,
+										Attributes: map[string]schema.Attribute{
+											"autogenerate": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"enabled": schema.BoolAttribute{
+														Optional: true,
+													},
+												},
+												Description: `Autogenerate configures the control plane to use self-signed certificates.`,
+											},
+											"ca": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"certificate": schema.SingleNestedAttribute{
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"env_var": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"name": schema.StringAttribute{
+																		Required: true,
+																	},
+																},
+															},
+															"file": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"path": schema.StringAttribute{
+																		Required: true,
+																	},
+																},
+															},
+															"insecure_inline": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"value": schema.StringAttribute{
+																		Required: true,
+																	},
+																},
+															},
+															"secret_ref": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"kind": schema.StringAttribute{
+																		Required:    true,
+																		Description: `must be "Secret"`,
+																		Validators: []validator.String{
+																			stringvalidator.OneOf("Secret"),
+																		},
+																	},
+																	"name": schema.StringAttribute{
+																		Required: true,
+																	},
+																},
+															},
+															"type": schema.StringAttribute{
+																Required:    true,
+																Description: `possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]`,
+															},
+														},
+														Description: `Certificate allows the user to specify a custom certificate.`,
+													},
+													"private_key": schema.SingleNestedAttribute{
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"env_var": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"name": schema.StringAttribute{
+																		Required: true,
+																	},
+																},
+															},
+															"file": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"path": schema.StringAttribute{
+																		Required: true,
+																	},
+																},
+															},
+															"insecure_inline": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"value": schema.StringAttribute{
+																		Required: true,
+																	},
+																},
+															},
+															"secret_ref": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"kind": schema.StringAttribute{
+																		Required:    true,
+																		Description: `must be "Secret"`,
+																		Validators: []validator.String{
+																			stringvalidator.OneOf("Secret"),
+																		},
+																	},
+																	"name": schema.StringAttribute{
+																		Required: true,
+																	},
+																},
+															},
+															"type": schema.StringAttribute{
+																Required:    true,
+																Description: `possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]`,
+															},
+														},
+														Description: `PrivateKey allows the user to specify a custom private key.`,
+													},
+												},
+												Description: `CA has configuration related to the CA`,
+											},
+											"certificate_parameters": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"expiry": schema.StringAttribute{
+														Optional: true,
+													},
+												},
+												Description: `CertificateParameters allows users to define certificate generation parameters.`,
+											},
+											"insecure_allow_self_signed": schema.BoolAttribute{
+												Optional:    true,
+												Description: `InsecureAllowSelfSigned allows users to enable the use of self-signed certificates.`,
+											},
+											"mesh_trust_creation": schema.StringAttribute{
+												Optional: true,
+												MarkdownDescription: `MeshTrustCreation defines whether a MeshTrust resource should be automatically created` + "\n" +
+													`from an existing MeshIdentity. If not defined, the control plane automatically generates a MeshTrust.` + "\n" +
+													`possible known values include one of ["Enabled", "Disabled"]`,
+											},
+										},
+										MarkdownDescription: `Bundled provides information about certificates that are generated by the control plane,` + "\n" +
+											`either autogenerated or provided by the user.`,
+									},
+									"extension": schema.SingleNestedAttribute{
+										Optional: true,
+										Attributes: map[string]schema.Attribute{
+											"acmpca": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"config": schema.StringAttribute{
+														CustomType:  jsontypes.NormalizedType{},
+														Computed:    true,
+														Optional:    true,
+														Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
+													},
+													"name": schema.StringAttribute{
+														Required:    true,
+														Description: `Name is the name of the extension provider.`,
+													},
+												},
+												Validators: []validator.Object{
+													objectvalidator.ConflictsWith(path.Expressions{
+														path.MatchRelative().AtParent().AtName("other"),
+														path.MatchRelative().AtParent().AtName("certmanager"),
+														path.MatchRelative().AtParent().AtName("vault"),
+													}...),
+												},
+											},
+											"certmanager": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"config": schema.StringAttribute{
+														CustomType:  jsontypes.NormalizedType{},
+														Computed:    true,
+														Optional:    true,
+														Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
+													},
+													"name": schema.StringAttribute{
+														Required:    true,
+														Description: `Name is the name of the extension provider.`,
+													},
+												},
+												Validators: []validator.Object{
+													objectvalidator.ConflictsWith(path.Expressions{
+														path.MatchRelative().AtParent().AtName("other"),
+														path.MatchRelative().AtParent().AtName("acmpca"),
+														path.MatchRelative().AtParent().AtName("vault"),
+													}...),
+												},
+											},
+											"other": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"config": schema.StringAttribute{
+														CustomType:  jsontypes.NormalizedType{},
+														Computed:    true,
+														Optional:    true,
+														Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
+													},
+													"name": schema.StringAttribute{
+														Required:    true,
+														Description: `Name is the name of the extension provider.`,
+													},
+												},
+												Description: `An extension this control plane does not ship. Its configuration is not described here.`,
+												Validators: []validator.Object{
+													objectvalidator.ConflictsWith(path.Expressions{
+														path.MatchRelative().AtParent().AtName("acmpca"),
+														path.MatchRelative().AtParent().AtName("certmanager"),
+														path.MatchRelative().AtParent().AtName("vault"),
+													}...),
+												},
+											},
+											"vault": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"config": schema.StringAttribute{
+														CustomType:  jsontypes.NormalizedType{},
+														Computed:    true,
+														Optional:    true,
+														Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
+													},
+													"name": schema.StringAttribute{
+														Required:    true,
+														Description: `Name is the name of the extension provider.`,
+													},
+												},
+												Validators: []validator.Object{
+													objectvalidator.ConflictsWith(path.Expressions{
+														path.MatchRelative().AtParent().AtName("other"),
+														path.MatchRelative().AtParent().AtName("acmpca"),
+														path.MatchRelative().AtParent().AtName("certmanager"),
+													}...),
+												},
+											},
+										},
+										Description: `Extension indicates that custom provider is used.`,
+									},
+									"spire": schema.SingleNestedAttribute{
+										Optional: true,
+										Attributes: map[string]schema.Attribute{
+											"agent": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"timeout": schema.StringAttribute{
+														Optional: true,
+														MarkdownDescription: `Connection timeout to the socket exposed by Spire agent` + "\n" +
+															`Default 1 second.`,
+													},
+												},
+												Description: `Spire agent configuration`,
+											},
+										},
+										Description: `Spire indicates that SPIRE is used for certificate delivery.`,
+									},
+									"type": schema.StringAttribute{
+										Required:    true,
+										Description: `Type specifies the type of certificate provider. possible known values include one of ["Bundled", "Spire", "Extension"]`,
+									},
+								},
+								Validators: []validator.Object{
+									objectvalidator.ConflictsWith(path.Expressions{
+										path.MatchRelative().AtParent().AtName("one"),
+										path.MatchRelative().AtParent().AtName("three"),
+									}...),
+								},
 							},
 						},
 					},
@@ -341,6 +990,15 @@ func (r *MeshIdentityResource) Schema(ctx context.Context, req resource.SchemaRe
 							},
 						},
 						Description: `Conditions is an array of hostname generator conditions.`,
+					},
+					"trust_domain": schema.StringAttribute{
+						Computed: true,
+						MarkdownDescription: `TrustDomain is the trust domain this identity issues certificates in. The` + "\n" +
+							`control plane renders ` + "`" + `spec.spiffeID.trustDomain` + "`" + ` once, when it first` + "\n" +
+							`initializes the identity, and then keeps issuing in the recorded value.` + "\n" +
+							`Templates such as ` + "`" + `{{ .Zone }}` + "`" + ` therefore stop following the zone name,` + "\n" +
+							`which would otherwise silently move every workload into a trust domain no` + "\n" +
+							`MeshTrust publishes yet.`,
 					},
 				},
 				Description: `Status is the current status of the Kuma MeshIdentity resource.`,

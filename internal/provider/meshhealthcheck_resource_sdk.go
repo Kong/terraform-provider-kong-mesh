@@ -44,7 +44,7 @@ func (r *MeshHealthCheckResourceModel) RefreshFromSharedMeshHealthCheckItem(ctx 
 		if resp.Spec.TargetRef == nil {
 			r.Spec.TargetRef = nil
 		} else {
-			r.Spec.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
+			r.Spec.TargetRef = &tfTypes.TargetRef{}
 			r.Spec.TargetRef.Kind = types.StringValue(string(resp.Spec.TargetRef.Kind))
 			if len(resp.Spec.TargetRef.Labels) > 0 {
 				r.Spec.TargetRef.Labels = make(map[string]types.String, len(resp.Spec.TargetRef.Labels))
@@ -52,20 +52,7 @@ func (r *MeshHealthCheckResourceModel) RefreshFromSharedMeshHealthCheckItem(ctx 
 					r.Spec.TargetRef.Labels[key] = types.StringValue(value)
 				}
 			}
-			r.Spec.TargetRef.Mesh = types.StringPointerValue(resp.Spec.TargetRef.Mesh)
-			r.Spec.TargetRef.Name = types.StringPointerValue(resp.Spec.TargetRef.Name)
-			r.Spec.TargetRef.Namespace = types.StringPointerValue(resp.Spec.TargetRef.Namespace)
-			r.Spec.TargetRef.ProxyTypes = make([]types.String, 0, len(resp.Spec.TargetRef.ProxyTypes))
-			for _, v := range resp.Spec.TargetRef.ProxyTypes {
-				r.Spec.TargetRef.ProxyTypes = append(r.Spec.TargetRef.ProxyTypes, types.StringValue(string(v)))
-			}
 			r.Spec.TargetRef.SectionName = types.StringPointerValue(resp.Spec.TargetRef.SectionName)
-			if len(resp.Spec.TargetRef.Tags) > 0 {
-				r.Spec.TargetRef.Tags = make(map[string]types.String, len(resp.Spec.TargetRef.Tags))
-				for key1, value1 := range resp.Spec.TargetRef.Tags {
-					r.Spec.TargetRef.Tags[key1] = types.StringValue(value1)
-				}
-			}
 		}
 		r.Spec.To = []tfTypes.MeshHealthCheckItemTo{}
 
@@ -87,15 +74,6 @@ func (r *MeshHealthCheckResourceModel) RefreshFromSharedMeshHealthCheckItem(ctx 
 					to.Default.Grpc.Disabled = types.BoolPointerValue(toItem.Default.Grpc.Disabled)
 					to.Default.Grpc.ServiceName = types.StringPointerValue(toItem.Default.Grpc.ServiceName)
 				}
-				if toItem.Default.HealthyPanicThreshold != nil {
-					to.Default.HealthyPanicThreshold = &tfTypes.Mode{}
-					if toItem.Default.HealthyPanicThreshold.Integer != nil {
-						to.Default.HealthyPanicThreshold.Integer = types.Int64PointerValue(toItem.Default.HealthyPanicThreshold.Integer)
-					}
-					if toItem.Default.HealthyPanicThreshold.Str != nil {
-						to.Default.HealthyPanicThreshold.Str = types.StringPointerValue(toItem.Default.HealthyPanicThreshold.Str)
-					}
-				}
 				to.Default.HealthyThreshold = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(toItem.Default.HealthyThreshold))
 				if toItem.Default.HTTP == nil {
 					to.Default.HTTP = nil
@@ -110,21 +88,21 @@ func (r *MeshHealthCheckResourceModel) RefreshFromSharedMeshHealthCheckItem(ctx 
 					if toItem.Default.HTTP.RequestHeadersToAdd == nil {
 						to.Default.HTTP.RequestHeadersToAdd = nil
 					} else {
-						to.Default.HTTP.RequestHeadersToAdd = &tfTypes.MeshGlobalRateLimitItemHeaders{}
-						to.Default.HTTP.RequestHeadersToAdd.Add = []tfTypes.MeshGlobalRateLimitItemAdd{}
+						to.Default.HTTP.RequestHeadersToAdd = &tfTypes.RequestHeadersToAdd{}
+						to.Default.HTTP.RequestHeadersToAdd.Add = []tfTypes.MeshHTTPRouteItemFiltersSpecToRulesDefaultBackendRefs1Add{}
 
 						for _, addItem := range toItem.Default.HTTP.RequestHeadersToAdd.Add {
-							var add tfTypes.MeshGlobalRateLimitItemAdd
+							var add tfTypes.MeshHTTPRouteItemFiltersSpecToRulesDefaultBackendRefs1Add
 
 							add.Name = types.StringValue(addItem.Name)
 							add.Value = types.StringValue(addItem.Value)
 
 							to.Default.HTTP.RequestHeadersToAdd.Add = append(to.Default.HTTP.RequestHeadersToAdd.Add, add)
 						}
-						to.Default.HTTP.RequestHeadersToAdd.Set = []tfTypes.MeshGlobalRateLimitItemAdd{}
+						to.Default.HTTP.RequestHeadersToAdd.Set = []tfTypes.MeshHTTPRouteItemFiltersSpecToRulesDefaultBackendRefs1Add{}
 
 						for _, setItem := range toItem.Default.HTTP.RequestHeadersToAdd.Set {
-							var set tfTypes.MeshGlobalRateLimitItemAdd
+							var set tfTypes.MeshHTTPRouteItemFiltersSpecToRulesDefaultBackendRefs1Add
 
 							set.Name = types.StringValue(setItem.Name)
 							set.Value = types.StringValue(setItem.Value)
@@ -153,28 +131,15 @@ func (r *MeshHealthCheckResourceModel) RefreshFromSharedMeshHealthCheckItem(ctx 
 				to.Default.Timeout = types.StringPointerValue(toItem.Default.Timeout)
 				to.Default.UnhealthyThreshold = types.Int32PointerValue(typeconvert.IntPointerToInt32Pointer(toItem.Default.UnhealthyThreshold))
 			}
-			to.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
+			to.TargetRef = &tfTypes.TargetRef{}
 			to.TargetRef.Kind = types.StringValue(string(toItem.TargetRef.Kind))
 			if len(toItem.TargetRef.Labels) > 0 {
 				to.TargetRef.Labels = make(map[string]types.String, len(toItem.TargetRef.Labels))
-				for key2, value2 := range toItem.TargetRef.Labels {
-					to.TargetRef.Labels[key2] = types.StringValue(value2)
+				for key1, value1 := range toItem.TargetRef.Labels {
+					to.TargetRef.Labels[key1] = types.StringValue(value1)
 				}
-			}
-			to.TargetRef.Mesh = types.StringPointerValue(toItem.TargetRef.Mesh)
-			to.TargetRef.Name = types.StringPointerValue(toItem.TargetRef.Name)
-			to.TargetRef.Namespace = types.StringPointerValue(toItem.TargetRef.Namespace)
-			to.TargetRef.ProxyTypes = make([]types.String, 0, len(toItem.TargetRef.ProxyTypes))
-			for _, v := range toItem.TargetRef.ProxyTypes {
-				to.TargetRef.ProxyTypes = append(to.TargetRef.ProxyTypes, types.StringValue(string(v)))
 			}
 			to.TargetRef.SectionName = types.StringPointerValue(toItem.TargetRef.SectionName)
-			if len(toItem.TargetRef.Tags) > 0 {
-				to.TargetRef.Tags = make(map[string]types.String, len(toItem.TargetRef.Tags))
-				for key3, value3 := range toItem.TargetRef.Tags {
-					to.TargetRef.Tags[key3] = types.StringValue(value3)
-				}
-			}
 
 			r.Spec.To = append(r.Spec.To, to)
 		}
@@ -270,50 +235,16 @@ func (r *MeshHealthCheckResourceModel) ToSharedMeshHealthCheckItemInput(ctx cont
 
 			labels1[labelsKey] = labelsInst
 		}
-		mesh1 := new(string)
-		if !r.Spec.TargetRef.Mesh.IsUnknown() && !r.Spec.TargetRef.Mesh.IsNull() {
-			*mesh1 = r.Spec.TargetRef.Mesh.ValueString()
-		} else {
-			mesh1 = nil
-		}
-		name1 := new(string)
-		if !r.Spec.TargetRef.Name.IsUnknown() && !r.Spec.TargetRef.Name.IsNull() {
-			*name1 = r.Spec.TargetRef.Name.ValueString()
-		} else {
-			name1 = nil
-		}
-		namespace := new(string)
-		if !r.Spec.TargetRef.Namespace.IsUnknown() && !r.Spec.TargetRef.Namespace.IsNull() {
-			*namespace = r.Spec.TargetRef.Namespace.ValueString()
-		} else {
-			namespace = nil
-		}
-		proxyTypes := make([]shared.MeshHealthCheckItemProxyTypes, 0, len(r.Spec.TargetRef.ProxyTypes))
-		for _, proxyTypesItem := range r.Spec.TargetRef.ProxyTypes {
-			proxyTypes = append(proxyTypes, shared.MeshHealthCheckItemProxyTypes(proxyTypesItem.ValueString()))
-		}
 		sectionName := new(string)
 		if !r.Spec.TargetRef.SectionName.IsUnknown() && !r.Spec.TargetRef.SectionName.IsNull() {
 			*sectionName = r.Spec.TargetRef.SectionName.ValueString()
 		} else {
 			sectionName = nil
 		}
-		tags := make(map[string]string)
-		for tagsKey := range r.Spec.TargetRef.Tags {
-			var tagsInst string
-			tagsInst = r.Spec.TargetRef.Tags[tagsKey].ValueString()
-
-			tags[tagsKey] = tagsInst
-		}
 		targetRef = &shared.MeshHealthCheckItemTargetRef{
 			Kind:        kind,
 			Labels:      labels1,
-			Mesh:        mesh1,
-			Name:        name1,
-			Namespace:   namespace,
-			ProxyTypes:  proxyTypes,
 			SectionName: sectionName,
-			Tags:        tags,
 		}
 	}
 	to := make([]shared.MeshHealthCheckItemTo, 0, len(r.Spec.To))
@@ -364,31 +295,6 @@ func (r *MeshHealthCheckResourceModel) ToSharedMeshHealthCheckItemInput(ctx cont
 					ServiceName: serviceName,
 				}
 			}
-			var healthyPanicThreshold *shared.HealthyPanicThreshold
-			if r.Spec.To[toIndex].Default.HealthyPanicThreshold != nil {
-				integer := new(int64)
-				if !r.Spec.To[toIndex].Default.HealthyPanicThreshold.Integer.IsUnknown() && !r.Spec.To[toIndex].Default.HealthyPanicThreshold.Integer.IsNull() {
-					*integer = r.Spec.To[toIndex].Default.HealthyPanicThreshold.Integer.ValueInt64()
-				} else {
-					integer = nil
-				}
-				if integer != nil {
-					healthyPanicThreshold = &shared.HealthyPanicThreshold{
-						Integer: integer,
-					}
-				}
-				str := new(string)
-				if !r.Spec.To[toIndex].Default.HealthyPanicThreshold.Str.IsUnknown() && !r.Spec.To[toIndex].Default.HealthyPanicThreshold.Str.IsNull() {
-					*str = r.Spec.To[toIndex].Default.HealthyPanicThreshold.Str.ValueString()
-				} else {
-					str = nil
-				}
-				if str != nil {
-					healthyPanicThreshold = &shared.HealthyPanicThreshold{
-						Str: str,
-					}
-				}
-			}
 			healthyThreshold := new(int)
 			if !r.Spec.To[toIndex].Default.HealthyThreshold.IsUnknown() && !r.Spec.To[toIndex].Default.HealthyThreshold.IsNull() {
 				*healthyThreshold = int(r.Spec.To[toIndex].Default.HealthyThreshold.ValueInt32())
@@ -417,27 +323,27 @@ func (r *MeshHealthCheckResourceModel) ToSharedMeshHealthCheckItemInput(ctx cont
 				if r.Spec.To[toIndex].Default.HTTP.RequestHeadersToAdd != nil {
 					add := make([]shared.Add, 0, len(r.Spec.To[toIndex].Default.HTTP.RequestHeadersToAdd.Add))
 					for addIndex := range r.Spec.To[toIndex].Default.HTTP.RequestHeadersToAdd.Add {
-						var name2 string
-						name2 = r.Spec.To[toIndex].Default.HTTP.RequestHeadersToAdd.Add[addIndex].Name.ValueString()
+						var name1 string
+						name1 = r.Spec.To[toIndex].Default.HTTP.RequestHeadersToAdd.Add[addIndex].Name.ValueString()
 
 						var value string
 						value = r.Spec.To[toIndex].Default.HTTP.RequestHeadersToAdd.Add[addIndex].Value.ValueString()
 
 						add = append(add, shared.Add{
-							Name:  name2,
+							Name:  name1,
 							Value: value,
 						})
 					}
 					set := make([]shared.Set, 0, len(r.Spec.To[toIndex].Default.HTTP.RequestHeadersToAdd.Set))
 					for setIndex := range r.Spec.To[toIndex].Default.HTTP.RequestHeadersToAdd.Set {
-						var name3 string
-						name3 = r.Spec.To[toIndex].Default.HTTP.RequestHeadersToAdd.Set[setIndex].Name.ValueString()
+						var name2 string
+						name2 = r.Spec.To[toIndex].Default.HTTP.RequestHeadersToAdd.Set[setIndex].Name.ValueString()
 
 						var value1 string
 						value1 = r.Spec.To[toIndex].Default.HTTP.RequestHeadersToAdd.Set[setIndex].Value.ValueString()
 
 						set = append(set, shared.Set{
-							Name:  name3,
+							Name:  name2,
 							Value: value1,
 						})
 					}
@@ -530,7 +436,6 @@ func (r *MeshHealthCheckResourceModel) ToSharedMeshHealthCheckItemInput(ctx cont
 				EventLogPath:                 eventLogPath,
 				FailTrafficOnPanic:           failTrafficOnPanic,
 				Grpc:                         grpc,
-				HealthyPanicThreshold:        healthyPanicThreshold,
 				HealthyThreshold:             healthyThreshold,
 				HTTP:                         http,
 				InitialJitter:                initialJitter,
@@ -552,50 +457,16 @@ func (r *MeshHealthCheckResourceModel) ToSharedMeshHealthCheckItemInput(ctx cont
 
 			labels2[labelsKey1] = labelsInst1
 		}
-		mesh2 := new(string)
-		if !r.Spec.To[toIndex].TargetRef.Mesh.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Mesh.IsNull() {
-			*mesh2 = r.Spec.To[toIndex].TargetRef.Mesh.ValueString()
-		} else {
-			mesh2 = nil
-		}
-		name4 := new(string)
-		if !r.Spec.To[toIndex].TargetRef.Name.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Name.IsNull() {
-			*name4 = r.Spec.To[toIndex].TargetRef.Name.ValueString()
-		} else {
-			name4 = nil
-		}
-		namespace1 := new(string)
-		if !r.Spec.To[toIndex].TargetRef.Namespace.IsUnknown() && !r.Spec.To[toIndex].TargetRef.Namespace.IsNull() {
-			*namespace1 = r.Spec.To[toIndex].TargetRef.Namespace.ValueString()
-		} else {
-			namespace1 = nil
-		}
-		proxyTypes1 := make([]shared.MeshHealthCheckItemSpecProxyTypes, 0, len(r.Spec.To[toIndex].TargetRef.ProxyTypes))
-		for _, proxyTypesItem1 := range r.Spec.To[toIndex].TargetRef.ProxyTypes {
-			proxyTypes1 = append(proxyTypes1, shared.MeshHealthCheckItemSpecProxyTypes(proxyTypesItem1.ValueString()))
-		}
 		sectionName1 := new(string)
 		if !r.Spec.To[toIndex].TargetRef.SectionName.IsUnknown() && !r.Spec.To[toIndex].TargetRef.SectionName.IsNull() {
 			*sectionName1 = r.Spec.To[toIndex].TargetRef.SectionName.ValueString()
 		} else {
 			sectionName1 = nil
 		}
-		tags1 := make(map[string]string)
-		for tagsKey1 := range r.Spec.To[toIndex].TargetRef.Tags {
-			var tagsInst1 string
-			tagsInst1 = r.Spec.To[toIndex].TargetRef.Tags[tagsKey1].ValueString()
-
-			tags1[tagsKey1] = tagsInst1
-		}
 		targetRef1 := shared.MeshHealthCheckItemSpecTargetRef{
 			Kind:        kind1,
 			Labels:      labels2,
-			Mesh:        mesh2,
-			Name:        name4,
-			Namespace:   namespace1,
-			ProxyTypes:  proxyTypes1,
 			SectionName: sectionName1,
-			Tags:        tags1,
 		}
 		to = append(to, shared.MeshHealthCheckItemTo{
 			Default:   defaultVar,

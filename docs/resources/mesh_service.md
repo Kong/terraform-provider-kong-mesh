@@ -45,9 +45,6 @@ resource "kong-mesh_mesh_service" "my_meshservice" {
       dataplane_ref = {
         name = "...my_name..."
       }
-      dataplane_tags = {
-        key = "value"
-      }
     }
     state = "Unavailable"
   }
@@ -74,6 +71,7 @@ resource "kong-mesh_mesh_service" "my_meshservice" {
 - `creation_time` (String) Time at which the resource was created
 - `kri` (String) A unique identifier for this resource instance used by internal tooling and integrations. Typically derived from resource attributes and may be used for cross-references or indexing
 - `modification_time` (String) Time at which the resource was updated
+- `snis` (Attributes List) List of SNIs (Server Name Indication) advertised by xDS for this destination, one entry per port, sorted by port ascending. Present for MeshService, MeshMultiZoneService and MeshExternalService. (see [below for nested schema](#nestedatt--snis))
 - `status` (Attributes) Status is the current status of the Kuma MeshService resource. (see [below for nested schema](#nestedatt--status))
 - `warnings` (List of String) warnings is a list of warning messages to return to the requesting Kuma API clients.
 Warning messages describe a problem the client making the API request should correct or be aware of.
@@ -95,7 +93,7 @@ possible known values include one of ["Available", "Unavailable"]; Default: "Una
 
 Optional:
 
-- `type` (String) possible known values include one of ["ServiceTag", "SpiffeID"]; Not Null
+- `type` (String) Not Null; must be "SpiffeID"
 - `value` (String) Not Null
 
 
@@ -126,7 +124,6 @@ Optional:
 
 - `dataplane_labels` (Attributes) (see [below for nested schema](#nestedatt--spec--selector--dataplane_labels))
 - `dataplane_ref` (Attributes) (see [below for nested schema](#nestedatt--spec--selector--dataplane_ref))
-- `dataplane_tags` (Map of String)
 
 <a id="nestedatt--spec--selector--dataplane_labels"></a>
 ### Nested Schema for `spec.selector.dataplane_labels`
@@ -144,6 +141,15 @@ Optional:
 - `name` (String)
 
 
+
+
+<a id="nestedatt--snis"></a>
+### Nested Schema for `snis`
+
+Read-Only:
+
+- `port` (Number) The destination port this SNI corresponds to.
+- `sni` (String) The SNI string advertised by xDS for this port.
 
 
 <a id="nestedatt--status"></a>

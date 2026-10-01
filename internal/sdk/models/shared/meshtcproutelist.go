@@ -4,23 +4,23 @@ package shared
 
 // MeshTCPRouteList - List
 type MeshTCPRouteList struct {
-	Items []MeshTCPRouteItem `json:"items,omitempty"`
+	Items []MeshTCPRouteItem `json:"items"`
 	// The total number of entities
-	Total *float64 `json:"total,omitempty"`
-	// URL to the next page
-	Next *string `json:"next,omitempty"`
+	Total float64 `json:"total"`
+	// URL to the next page, or null when this is the last page
+	Next *string `json:"next"`
 }
 
 func (m *MeshTCPRouteList) GetItems() []MeshTCPRouteItem {
 	if m == nil {
-		return nil
+		return []MeshTCPRouteItem{}
 	}
 	return m.Items
 }
 
-func (m *MeshTCPRouteList) GetTotal() *float64 {
+func (m *MeshTCPRouteList) GetTotal() float64 {
 	if m == nil {
-		return nil
+		return 0.0
 	}
 	return m.Total
 }

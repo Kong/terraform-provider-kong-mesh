@@ -4,23 +4,23 @@ package shared
 
 // MeshProxyPatchList - List
 type MeshProxyPatchList struct {
-	Items []MeshProxyPatchItem `json:"items,omitempty"`
+	Items []MeshProxyPatchItem `json:"items"`
 	// The total number of entities
-	Total *float64 `json:"total,omitempty"`
-	// URL to the next page
-	Next *string `json:"next,omitempty"`
+	Total float64 `json:"total"`
+	// URL to the next page, or null when this is the last page
+	Next *string `json:"next"`
 }
 
 func (m *MeshProxyPatchList) GetItems() []MeshProxyPatchItem {
 	if m == nil {
-		return nil
+		return []MeshProxyPatchItem{}
 	}
 	return m.Items
 }
 
-func (m *MeshProxyPatchList) GetTotal() *float64 {
+func (m *MeshProxyPatchList) GetTotal() float64 {
 	if m == nil {
-		return nil
+		return 0.0
 	}
 	return m.Total
 }

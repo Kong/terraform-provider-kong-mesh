@@ -13,7 +13,7 @@ type PutSecretRequest struct {
 	// name of the Secret
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 	// Put request
-	SecretItem shared.SecretItem `request:"mediaType=application/json"`
+	SecretItem shared.SecretItemInput `request:"mediaType=application/json"`
 }
 
 func (p *PutSecretRequest) GetMesh() string {
@@ -30,9 +30,9 @@ func (p *PutSecretRequest) GetName() string {
 	return p.Name
 }
 
-func (p *PutSecretRequest) GetSecretItem() shared.SecretItem {
+func (p *PutSecretRequest) GetSecretItem() shared.SecretItemInput {
 	if p == nil {
-		return shared.SecretItem{}
+		return shared.SecretItemInput{}
 	}
 	return p.SecretItem
 }

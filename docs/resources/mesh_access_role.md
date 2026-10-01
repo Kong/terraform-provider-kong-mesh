@@ -21,9 +21,7 @@ resource "kong-mesh_mesh_access_role" "my_meshaccessrole" {
   rules = [
     {
       access = [
-        {
-          str = "...my_str..."
-        }
+        "GENERATE_ZONE_TOKEN"
       ]
       mesh = "...my_mesh..."
       names = [
@@ -50,11 +48,10 @@ resource "kong-mesh_mesh_access_role" "my_meshaccessrole" {
           from = {
             target_ref = {
               kind = "...my_kind..."
-              mesh = "...my_mesh..."
-              name = "...my_name..."
-              tags = {
+              labels = {
                 key = "value"
               }
+              name = "...my_name..."
             }
           }
           selectors = {
@@ -69,20 +66,18 @@ resource "kong-mesh_mesh_access_role" "my_meshaccessrole" {
           }
           target_ref = {
             kind = "...my_kind..."
-            mesh = "...my_mesh..."
-            name = "...my_name..."
-            tags = {
+            labels = {
               key = "value"
             }
+            name = "...my_name..."
           }
           to = {
             target_ref = {
               kind = "...my_kind..."
-              mesh = "...my_mesh..."
-              name = "...my_name..."
-              tags = {
+              labels = {
                 key = "value"
               }
+              name = "...my_name..."
             }
           }
         }
@@ -108,6 +103,9 @@ resource "kong-mesh_mesh_access_role" "my_meshaccessrole" {
 
 ### Read-Only
 
+- `creation_time` (String) Time at which the resource was created
+- `kri` (String) Kuma Resource Identifier (KRI) of the given resource
+- `modification_time` (String) Time at which the resource was updated
 - `warnings` (List of String) warnings is a list of warning messages to return to the requesting Kuma API clients.
 Warning messages describe a problem the client making the API request should correct or be aware of.
 
@@ -116,20 +114,11 @@ Warning messages describe a problem the client making the API request should cor
 
 Optional:
 
-- `access` (Attributes List) (see [below for nested schema](#nestedatt--rules--access))
+- `access` (List of String)
 - `mesh` (String)
 - `names` (List of String)
 - `types` (List of String)
 - `when` (Attributes List) (see [below for nested schema](#nestedatt--rules--when))
-
-<a id="nestedatt--rules--access"></a>
-### Nested Schema for `rules.access`
-
-Optional:
-
-- `integer` (Number)
-- `str` (String)
-
 
 <a id="nestedatt--rules--when"></a>
 ### Nested Schema for `rules.when`
@@ -182,9 +171,8 @@ Optional:
 Optional:
 
 - `kind` (String)
-- `mesh` (String)
+- `labels` (Map of String)
 - `name` (String)
-- `tags` (Map of String)
 
 
 
@@ -210,9 +198,8 @@ Optional:
 Optional:
 
 - `kind` (String)
-- `mesh` (String)
+- `labels` (Map of String)
 - `name` (String)
-- `tags` (Map of String)
 
 
 <a id="nestedatt--rules--when--to"></a>
@@ -228,9 +215,8 @@ Optional:
 Optional:
 
 - `kind` (String)
-- `mesh` (String)
+- `labels` (Map of String)
 - `name` (String)
-- `tags` (Map of String)
 
 ## Import
 

@@ -40,11 +40,21 @@ func (r *MeshServiceResourceModel) RefreshFromSharedMeshServiceItem(ctx context.
 		r.Mesh = types.StringPointerValue(resp.Mesh)
 		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
+		r.Snis = []tfTypes.Snis{}
+
+		for _, snisItem := range resp.Snis {
+			var snis tfTypes.Snis
+
+			snis.Port = types.Int32Value(int32(snisItem.Port))
+			snis.Sni = types.StringValue(snisItem.Sni)
+
+			r.Snis = append(r.Snis, snis)
+		}
 		r.Spec = &tfTypes.MeshServiceItemSpec{}
-		r.Spec.Identities = []tfTypes.MeshFaultInjectionItemSpiffeID{}
+		r.Spec.Identities = []tfTypes.Sni{}
 
 		for _, identitiesItem := range resp.Spec.Identities {
-			var identities tfTypes.MeshFaultInjectionItemSpiffeID
+			var identities tfTypes.Sni
 
 			identities.Type = types.StringValue(string(identitiesItem.Type))
 			identities.Value = types.StringValue(identitiesItem.Value)
@@ -60,7 +70,7 @@ func (r *MeshServiceResourceModel) RefreshFromSharedMeshServiceItem(ctx context.
 			ports.Name = types.StringPointerValue(portsItem.Name)
 			ports.Port = types.Int32Value(int32(portsItem.Port))
 			if portsItem.TargetPort != nil {
-				ports.TargetPort = &tfTypes.Mode{}
+				ports.TargetPort = &tfTypes.StandardDeviationFactor{}
 				if portsItem.TargetPort.Integer != nil {
 					ports.TargetPort.Integer = types.Int64PointerValue(portsItem.TargetPort.Integer)
 				}
@@ -91,12 +101,6 @@ func (r *MeshServiceResourceModel) RefreshFromSharedMeshServiceItem(ctx context.
 			} else {
 				r.Spec.Selector.DataplaneRef = &tfTypes.DataplaneRef{}
 				r.Spec.Selector.DataplaneRef.Name = types.StringPointerValue(resp.Spec.Selector.DataplaneRef.Name)
-			}
-			if len(resp.Spec.Selector.DataplaneTags) > 0 {
-				r.Spec.Selector.DataplaneTags = make(map[string]types.String, len(resp.Spec.Selector.DataplaneTags))
-				for key1, value1 := range resp.Spec.Selector.DataplaneTags {
-					r.Spec.Selector.DataplaneTags[key1] = types.StringValue(value1)
-				}
 			}
 		}
 		if resp.Spec.State != nil {
@@ -137,10 +141,10 @@ func (r *MeshServiceResourceModel) RefreshFromSharedMeshServiceItem(ctx context.
 			for _, hostnameGeneratorsItem := range resp.Status.HostnameGenerators {
 				var hostnameGenerators tfTypes.HostnameGenerators
 
-				hostnameGenerators.Conditions = []tfTypes.MeshExternalServiceItemConditions{}
+				hostnameGenerators.Conditions = []tfTypes.Conditions{}
 
 				for _, conditionsItem := range hostnameGeneratorsItem.Conditions {
-					var conditions tfTypes.MeshExternalServiceItemConditions
+					var conditions tfTypes.Conditions
 
 					conditions.Message = types.StringValue(conditionsItem.Message)
 					conditions.Reason = types.StringValue(conditionsItem.Reason)
@@ -343,17 +347,9 @@ func (r *MeshServiceResourceModel) ToSharedMeshServiceItemInput(ctx context.Cont
 				Name: name2,
 			}
 		}
-		dataplaneTags := make(map[string]string)
-		for dataplaneTagsKey := range r.Spec.Selector.DataplaneTags {
-			var dataplaneTagsInst string
-			dataplaneTagsInst = r.Spec.Selector.DataplaneTags[dataplaneTagsKey].ValueString()
-
-			dataplaneTags[dataplaneTagsKey] = dataplaneTagsInst
-		}
 		selector = &shared.MeshServiceItemSelector{
 			DataplaneLabels: dataplaneLabels,
 			DataplaneRef:    dataplaneRef,
-			DataplaneTags:   dataplaneTags,
 		}
 	}
 	state := new(shared.State)

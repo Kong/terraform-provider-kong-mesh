@@ -7,7 +7,7 @@ import (
 )
 
 type MeshRateLimitItemHTTP struct {
-	Disabled    types.Bool                                  `tfsdk:"disabled"`
-	OnRateLimit *OnRateLimit                                `tfsdk:"on_rate_limit"`
-	RequestRate *MeshGlobalRateLimitItemSpecFromRequestRate `tfsdk:"request_rate"`
+	Disabled    types.Bool   `tfsdk:"disabled"`
+	OnRateLimit *OnRateLimit `tfsdk:"on_rate_limit"`
+	RequestRate *RequestRate `tfsdk:"request_rate"`
 }

@@ -119,20 +119,11 @@ resource "kong-mesh_mesh_proxy_patch" "my_meshproxypatch" {
       ]
     }
     target_ref = {
-      kind = "MeshExternalService"
+      kind = "Dataplane"
       labels = {
         key = "value"
       }
-      mesh      = "...my_mesh..."
-      name      = "...my_name..."
-      namespace = "...my_namespace..."
-      proxy_types = [
-        "Gateway"
-      ]
       section_name = "...my_section_name..."
-      tags = {
-        key = "value"
-      }
     }
   }
   type = "MeshProxyPatch"
@@ -206,6 +197,14 @@ resource (see [below for nested schema](#nestedatt--spec--default--append_modifi
 - `operation` (String) Operation to execute on matched cluster. possible known values include one of ["Add", "Remove", "Patch"]; Not Null
 - `value` (String) Value of xDS resource in YAML format to add or patch.
 
+Patch merges the value into the matched cluster, and repeated fields are
+appended to what the cluster already has. Circuit breaker thresholds are
+the exception: Envoy resolves them by routing priority and ignores every
+threshold after the first one of a given priority, so appending would be
+dead config. They are merged into the existing threshold with the same
+priority instead, and a value listing one priority twice keeps only the
+first entry.
+
 <a id="nestedatt--spec--default--append_modifications--cluster--json_patches"></a>
 ### Nested Schema for `spec.default.append_modifications.cluster.json_patches`
 
@@ -233,7 +232,6 @@ prometheus - resources generated when Prometheus metrics are enabled.
 direct-access - resources generated for Direct Access functionality.
 ingress - resources generated for Zone Ingress.
 egress - resources generated for Zone Egress.
-gateway - resources generated for MeshGateway.
 
 The list is not complete, because policy plugins can introduce new resources.
 For example MeshTrace plugin can create Cluster with "mesh-trace" origin.
@@ -280,7 +278,6 @@ prometheus - resources generated when Prometheus metrics are enabled.
 direct-access - resources generated for Direct Access functionality.
 ingress - resources generated for Zone Ingress.
 egress - resources generated for Zone Egress.
-gateway - resources generated for MeshGateway.
 
 The list is not complete, because policy plugins can introduce new resources.
 For example MeshTrace plugin can create Cluster with "mesh-trace" origin.
@@ -325,7 +322,6 @@ prometheus - resources generated when Prometheus metrics are enabled.
 direct-access - resources generated for Direct Access functionality.
 ingress - resources generated for Zone Ingress.
 egress - resources generated for Zone Egress.
-gateway - resources generated for MeshGateway.
 
 The list is not complete, because policy plugins can introduce new resources.
 For example MeshTrace plugin can create Cluster with "mesh-trace" origin.
@@ -373,7 +369,6 @@ prometheus - resources generated when Prometheus metrics are enabled.
 direct-access - resources generated for Direct Access functionality.
 ingress - resources generated for Zone Ingress.
 egress - resources generated for Zone Egress.
-gateway - resources generated for MeshGateway.
 
 The list is not complete, because policy plugins can introduce new resources.
 For example MeshTrace plugin can create Cluster with "mesh-trace" origin.
@@ -418,7 +413,6 @@ prometheus - resources generated when Prometheus metrics are enabled.
 direct-access - resources generated for Direct Access functionality.
 ingress - resources generated for Zone Ingress.
 egress - resources generated for Zone Egress.
-gateway - resources generated for MeshGateway.
 
 The list is not complete, because policy plugins can introduce new resources.
 For example MeshTrace plugin can create Cluster with "mesh-trace" origin.
@@ -433,23 +427,15 @@ For example MeshTrace plugin can create Cluster with "mesh-trace" origin.
 
 Required:
 
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "Dataplane"]
 
 Optional:
 
-- `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
-Name and Namespace can be used.
-- `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`,
-`MeshServiceSubset` and `MeshGatewayRoute`
-- `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-will be targeted.
-- `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-all data plane types are targeted by the policy.
+- `labels` (Map of String) Labels are used to select referenced real resources and to carry legacy
+service identity when a common TargetRef must still target old
+service-tag based paths.
 - `section_name` (String) SectionName is used to target specific section of resource.
 For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-- `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds
-`MeshSubset` and `MeshServiceSubset`
 
 ## Import
 

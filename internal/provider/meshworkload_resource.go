@@ -20,6 +20,7 @@ import (
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
+	"regexp"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -38,16 +39,16 @@ type MeshWorkloadResource struct {
 
 // MeshWorkloadResourceModel describes the resource data model.
 type MeshWorkloadResourceModel struct {
-	CreationTime     types.String                `tfsdk:"creation_time"`
-	Kri              types.String                `tfsdk:"kri"`
-	Labels           map[string]types.String     `tfsdk:"labels"`
-	Mesh             types.String                `tfsdk:"mesh"`
-	ModificationTime types.String                `tfsdk:"modification_time"`
-	Name             types.String                `tfsdk:"name"`
-	Spec             *tfTypes.Options            `tfsdk:"spec"`
-	Status           *tfTypes.WorkloadItemStatus `tfsdk:"status"`
-	Type             types.String                `tfsdk:"type"`
-	Warnings         []types.String              `tfsdk:"warnings"`
+	CreationTime     types.String                                                          `tfsdk:"creation_time"`
+	Kri              types.String                                                          `tfsdk:"kri"`
+	Labels           map[string]types.String                                               `tfsdk:"labels"`
+	Mesh             types.String                                                          `tfsdk:"mesh"`
+	ModificationTime types.String                                                          `tfsdk:"modification_time"`
+	Name             types.String                                                          `tfsdk:"name"`
+	Spec             *tfTypes.MeshLoadBalancingStrategyItemLoadBalancerSpecToDefaultRandom `tfsdk:"spec"`
+	Status           *tfTypes.WorkloadItemStatus                                           `tfsdk:"status"`
+	Type             types.String                                                          `tfsdk:"type"`
+	Warnings         []types.String                                                        `tfsdk:"warnings"`
 }
 
 func (r *MeshWorkloadResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -77,6 +78,10 @@ func (r *MeshWorkloadResource) Schema(ctx context.Context, req resource.SchemaRe
 			"mesh": schema.StringAttribute{
 				Required:    true,
 				Description: `name of the mesh`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(253),
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[0-9a-z-_.]*$`), "must match pattern "+regexp.MustCompile(`^[0-9a-z-_.]*$`).String()),
+				},
 			},
 			"modification_time": schema.StringAttribute{
 				Computed: true,
@@ -88,6 +93,10 @@ func (r *MeshWorkloadResource) Schema(ctx context.Context, req resource.SchemaRe
 			"name": schema.StringAttribute{
 				Required:    true,
 				Description: `name of the Workload`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(253),
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
+				},
 			},
 			"spec": schema.SingleNestedAttribute{
 				Required:    true,

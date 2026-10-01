@@ -37,15 +37,8 @@ func (e *MeshTCPRouteItemType) UnmarshalJSON(data []byte) error {
 type MeshTCPRouteItemKind string
 
 const (
-	MeshTCPRouteItemKindMesh                 MeshTCPRouteItemKind = "Mesh"
-	MeshTCPRouteItemKindMeshSubset           MeshTCPRouteItemKind = "MeshSubset"
-	MeshTCPRouteItemKindMeshGateway          MeshTCPRouteItemKind = "MeshGateway"
-	MeshTCPRouteItemKindMeshService          MeshTCPRouteItemKind = "MeshService"
-	MeshTCPRouteItemKindMeshExternalService  MeshTCPRouteItemKind = "MeshExternalService"
-	MeshTCPRouteItemKindMeshMultiZoneService MeshTCPRouteItemKind = "MeshMultiZoneService"
-	MeshTCPRouteItemKindMeshServiceSubset    MeshTCPRouteItemKind = "MeshServiceSubset"
-	MeshTCPRouteItemKindMeshHTTPRoute        MeshTCPRouteItemKind = "MeshHTTPRoute"
-	MeshTCPRouteItemKindDataplane            MeshTCPRouteItemKind = "Dataplane"
+	MeshTCPRouteItemKindMesh      MeshTCPRouteItemKind = "Mesh"
+	MeshTCPRouteItemKindDataplane MeshTCPRouteItemKind = "Dataplane"
 )
 
 func (e MeshTCPRouteItemKind) ToPointer() *MeshTCPRouteItemKind {
@@ -56,29 +49,7 @@ func (e MeshTCPRouteItemKind) ToPointer() *MeshTCPRouteItemKind {
 func (e *MeshTCPRouteItemKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshTCPRouteItemProxyTypes string
-
-const (
-	MeshTCPRouteItemProxyTypesSidecar MeshTCPRouteItemProxyTypes = "Sidecar"
-	MeshTCPRouteItemProxyTypesGateway MeshTCPRouteItemProxyTypes = "Gateway"
-)
-
-func (e MeshTCPRouteItemProxyTypes) ToPointer() *MeshTCPRouteItemProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshTCPRouteItemProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
+		case "Mesh", "Dataplane":
 			return true
 		}
 	}
@@ -91,26 +62,13 @@ func (e *MeshTCPRouteItemProxyTypes) IsExact() bool {
 type MeshTCPRouteItemTargetRef struct {
 	// Kind of the referenced resource
 	Kind MeshTCPRouteItemKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select referenced real resources and to carry legacy
+	// service identity when a common TargetRef must still target old
+	// service-tag based paths.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshTCPRouteItemProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
 }
 
 func (m *MeshTCPRouteItemTargetRef) GetKind() MeshTCPRouteItemKind {
@@ -127,34 +85,6 @@ func (m *MeshTCPRouteItemTargetRef) GetLabels() map[string]string {
 	return m.Labels
 }
 
-func (m *MeshTCPRouteItemTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshTCPRouteItemTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshTCPRouteItemTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
-func (m *MeshTCPRouteItemTargetRef) GetProxyTypes() []MeshTCPRouteItemProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
 func (m *MeshTCPRouteItemTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
@@ -162,26 +92,13 @@ func (m *MeshTCPRouteItemTargetRef) GetSectionName() *string {
 	return m.SectionName
 }
 
-func (m *MeshTCPRouteItemTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
-}
-
 // MeshTCPRouteItemSpecToKind - Kind of the referenced resource
 type MeshTCPRouteItemSpecToKind string
 
 const (
-	MeshTCPRouteItemSpecToKindMesh                 MeshTCPRouteItemSpecToKind = "Mesh"
-	MeshTCPRouteItemSpecToKindMeshSubset           MeshTCPRouteItemSpecToKind = "MeshSubset"
-	MeshTCPRouteItemSpecToKindMeshGateway          MeshTCPRouteItemSpecToKind = "MeshGateway"
 	MeshTCPRouteItemSpecToKindMeshService          MeshTCPRouteItemSpecToKind = "MeshService"
 	MeshTCPRouteItemSpecToKindMeshExternalService  MeshTCPRouteItemSpecToKind = "MeshExternalService"
 	MeshTCPRouteItemSpecToKindMeshMultiZoneService MeshTCPRouteItemSpecToKind = "MeshMultiZoneService"
-	MeshTCPRouteItemSpecToKindMeshServiceSubset    MeshTCPRouteItemSpecToKind = "MeshServiceSubset"
-	MeshTCPRouteItemSpecToKindMeshHTTPRoute        MeshTCPRouteItemSpecToKind = "MeshHTTPRoute"
-	MeshTCPRouteItemSpecToKindDataplane            MeshTCPRouteItemSpecToKind = "Dataplane"
 )
 
 func (e MeshTCPRouteItemSpecToKind) ToPointer() *MeshTCPRouteItemSpecToKind {
@@ -192,73 +109,25 @@ func (e MeshTCPRouteItemSpecToKind) ToPointer() *MeshTCPRouteItemSpecToKind {
 func (e *MeshTCPRouteItemSpecToKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+		case "MeshService", "MeshExternalService", "MeshMultiZoneService":
 			return true
 		}
 	}
 	return false
 }
 
-type MeshTCPRouteItemSpecToProxyTypes string
-
-const (
-	MeshTCPRouteItemSpecToProxyTypesSidecar MeshTCPRouteItemSpecToProxyTypes = "Sidecar"
-	MeshTCPRouteItemSpecToProxyTypesGateway MeshTCPRouteItemSpecToProxyTypes = "Gateway"
-)
-
-func (e MeshTCPRouteItemSpecToProxyTypes) ToPointer() *MeshTCPRouteItemSpecToProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshTCPRouteItemSpecToProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshTCPRouteItemBackendRefs - BackendRef defines where to forward traffic.
+// MeshTCPRouteItemBackendRefs - BackendRef defines the destination traffic is routed to.
 type MeshTCPRouteItemBackendRefs struct {
 	// Kind of the referenced resource
 	Kind MeshTCPRouteItemSpecToKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select the referenced real resource.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
 	// Port is only supported when this ref refers to a real MeshService object
 	Port *int `json:"port,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshTCPRouteItemSpecToProxyTypes `json:"proxyTypes,omitempty"`
-	// SectionName is used to target specific section of resource.
-	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
+	// SectionName is used to target a specific section of the resource.
+	// For example, you can target a port from MeshService.ports[] by its name.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags   map[string]string `json:"tags,omitempty"`
-	Weight *int64            `default:"1" json:"weight"`
-}
-
-func (m MeshTCPRouteItemBackendRefs) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(m, "", false)
-}
-
-func (m *MeshTCPRouteItemBackendRefs) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
-		return err
-	}
-	return nil
+	Weight      *int64  `json:"weight,omitempty"`
 }
 
 func (m *MeshTCPRouteItemBackendRefs) GetKind() MeshTCPRouteItemSpecToKind {
@@ -275,27 +144,6 @@ func (m *MeshTCPRouteItemBackendRefs) GetLabels() map[string]string {
 	return m.Labels
 }
 
-func (m *MeshTCPRouteItemBackendRefs) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshTCPRouteItemBackendRefs) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshTCPRouteItemBackendRefs) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
 func (m *MeshTCPRouteItemBackendRefs) GetPort() *int {
 	if m == nil {
 		return nil
@@ -303,25 +151,11 @@ func (m *MeshTCPRouteItemBackendRefs) GetPort() *int {
 	return m.Port
 }
 
-func (m *MeshTCPRouteItemBackendRefs) GetProxyTypes() []MeshTCPRouteItemSpecToProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
 func (m *MeshTCPRouteItemBackendRefs) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
-}
-
-func (m *MeshTCPRouteItemBackendRefs) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
 }
 
 func (m *MeshTCPRouteItemBackendRefs) GetWeight() *int64 {
@@ -362,14 +196,10 @@ type MeshTCPRouteItemSpecKind string
 
 const (
 	MeshTCPRouteItemSpecKindMesh                 MeshTCPRouteItemSpecKind = "Mesh"
-	MeshTCPRouteItemSpecKindMeshSubset           MeshTCPRouteItemSpecKind = "MeshSubset"
-	MeshTCPRouteItemSpecKindMeshGateway          MeshTCPRouteItemSpecKind = "MeshGateway"
 	MeshTCPRouteItemSpecKindMeshService          MeshTCPRouteItemSpecKind = "MeshService"
 	MeshTCPRouteItemSpecKindMeshExternalService  MeshTCPRouteItemSpecKind = "MeshExternalService"
 	MeshTCPRouteItemSpecKindMeshMultiZoneService MeshTCPRouteItemSpecKind = "MeshMultiZoneService"
-	MeshTCPRouteItemSpecKindMeshServiceSubset    MeshTCPRouteItemSpecKind = "MeshServiceSubset"
 	MeshTCPRouteItemSpecKindMeshHTTPRoute        MeshTCPRouteItemSpecKind = "MeshHTTPRoute"
-	MeshTCPRouteItemSpecKindDataplane            MeshTCPRouteItemSpecKind = "Dataplane"
 )
 
 func (e MeshTCPRouteItemSpecKind) ToPointer() *MeshTCPRouteItemSpecKind {
@@ -380,29 +210,7 @@ func (e MeshTCPRouteItemSpecKind) ToPointer() *MeshTCPRouteItemSpecKind {
 func (e *MeshTCPRouteItemSpecKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshTCPRouteItemSpecProxyTypes string
-
-const (
-	MeshTCPRouteItemSpecProxyTypesSidecar MeshTCPRouteItemSpecProxyTypes = "Sidecar"
-	MeshTCPRouteItemSpecProxyTypesGateway MeshTCPRouteItemSpecProxyTypes = "Gateway"
-)
-
-func (e MeshTCPRouteItemSpecProxyTypes) ToPointer() *MeshTCPRouteItemSpecProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshTCPRouteItemSpecProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
+		case "Mesh", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshHTTPRoute":
 			return true
 		}
 	}
@@ -414,26 +222,13 @@ func (e *MeshTCPRouteItemSpecProxyTypes) IsExact() bool {
 type MeshTCPRouteItemSpecTargetRef struct {
 	// Kind of the referenced resource
 	Kind MeshTCPRouteItemSpecKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select referenced real resources and to carry legacy
+	// service identity when a common TargetRef must still target old
+	// service-tag based paths.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshTCPRouteItemSpecProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
 }
 
 func (m *MeshTCPRouteItemSpecTargetRef) GetKind() MeshTCPRouteItemSpecKind {
@@ -450,46 +245,11 @@ func (m *MeshTCPRouteItemSpecTargetRef) GetLabels() map[string]string {
 	return m.Labels
 }
 
-func (m *MeshTCPRouteItemSpecTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshTCPRouteItemSpecTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshTCPRouteItemSpecTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
-func (m *MeshTCPRouteItemSpecTargetRef) GetProxyTypes() []MeshTCPRouteItemSpecProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
 func (m *MeshTCPRouteItemSpecTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
-}
-
-func (m *MeshTCPRouteItemSpecTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
 }
 
 type MeshTCPRouteItemTo struct {

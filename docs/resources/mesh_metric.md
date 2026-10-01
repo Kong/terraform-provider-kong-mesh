@@ -31,19 +31,26 @@ resource "kong-mesh_mesh_metric" "my_meshmetric" {
       ]
       backends = [
         {
-          open_telemetry = {
-            endpoint         = "...my_endpoint..."
-            refresh_interval = "...my_refresh_interval..."
-          }
-          prometheus = {
-            client_id = "...my_client_id..."
-            path      = "/metrics"
-            port      = 5670
-            tls = {
-              mode = "Disabled"
+          one = {
+            open_telemetry = {
+              backend_ref = {
+                kind = "MeshOpenTelemetryBackend"
+                labels = {
+                  key = "value"
+                }
+              }
+              refresh_interval = "...my_refresh_interval..."
             }
+            prometheus = {
+              client_id = "...my_client_id..."
+              path      = "/metrics"
+              port      = 5670
+              tls = {
+                mode = "Disabled"
+              }
+            }
+            type = "OpenTelemetry"
           }
-          type = "Prometheus"
         }
       ]
       sidecar = {
@@ -70,20 +77,11 @@ resource "kong-mesh_mesh_metric" "my_meshmetric" {
       }
     }
     target_ref = {
-      kind = "MeshSubset"
+      kind = "Mesh"
       labels = {
         key = "value"
       }
-      mesh      = "...my_mesh..."
-      name      = "...my_name..."
-      namespace = "...my_namespace..."
-      proxy_types = [
-        "Gateway"
-      ]
       section_name = "...my_section_name..."
-      tags = {
-        key = "value"
-      }
     }
   }
   type = "MeshMetric"
@@ -109,6 +107,7 @@ resource "kong-mesh_mesh_metric" "my_meshmetric" {
 - `creation_time` (String) Time at which the resource was created
 - `kri` (String) A unique identifier for this resource instance used by internal tooling and integrations. Typically derived from resource attributes and may be used for cross-references or indexing
 - `modification_time` (String) Time at which the resource was updated
+- `status` (Attributes) Status is the current status of the Kuma MeshMetric resource. (see [below for nested schema](#nestedatt--status))
 - `warnings` (List of String) warnings is a list of warning messages to return to the requesting Kuma API clients.
 Warning messages describe a problem the client making the API request should correct or be aware of.
 
@@ -127,7 +126,8 @@ defined in-place. (see [below for nested schema](#nestedatt--spec--target_ref))
 
 Optional:
 
-- `applications` (Attributes List) Applications is a list of application that Dataplane Proxy will scrape (see [below for nested schema](#nestedatt--spec--default--applications))
+- `applications` (Attributes List) Applications is a list of applications that Dataplane Proxy will scrape.
+Ignored on zone-proxy-only Dataplanes (zone ingress/egress exist without a co-located workload). (see [below for nested schema](#nestedatt--spec--default--applications))
 - `backends` (Attributes List) Backends list that will be used to collect metrics. (see [below for nested schema](#nestedatt--spec--default--backends))
 - `sidecar` (Attributes) Sidecar metrics collection configuration (see [below for nested schema](#nestedatt--spec--default--sidecar))
 
@@ -147,35 +147,104 @@ Optional:
 
 Optional:
 
-- `open_telemetry` (Attributes) OpenTelemetry backend configuration (see [below for nested schema](#nestedatt--spec--default--backends--open_telemetry))
-- `prometheus` (Attributes) Prometheus backend configuration. (see [below for nested schema](#nestedatt--spec--default--backends--prometheus))
-- `type` (String) Type of the backend that will be used to collect metrics. At the moment only Prometheus backend is available. possible known values include one of ["Prometheus", "OpenTelemetry"]; Not Null
+- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--default--backends--one))
+- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--default--backends--two))
 
-<a id="nestedatt--spec--default--backends--open_telemetry"></a>
-### Nested Schema for `spec.default.backends.open_telemetry`
+<a id="nestedatt--spec--default--backends--one"></a>
+### Nested Schema for `spec.default.backends.one`
 
 Optional:
 
-- `endpoint` (String) Endpoint for OpenTelemetry collector. Not Null
+- `open_telemetry` (Attributes) OpenTelemetry backend configuration (see [below for nested schema](#nestedatt--spec--default--backends--one--open_telemetry))
+- `prometheus` (Attributes) Prometheus backend configuration. (see [below for nested schema](#nestedatt--spec--default--backends--one--prometheus))
+- `type` (String) Type of the backend that will be used to collect metrics. At the moment only Prometheus backend is available. possible known values include one of ["Prometheus", "OpenTelemetry"]; Not Null
+
+<a id="nestedatt--spec--default--backends--one--open_telemetry"></a>
+### Nested Schema for `spec.default.backends.one.open_telemetry`
+
+Optional:
+
+- `backend_ref` (Attributes) BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+defines the collector endpoint. (see [below for nested schema](#nestedatt--spec--default--backends--one--open_telemetry--backend_ref))
 - `refresh_interval` (String) RefreshInterval defines how frequent metrics should be pushed to collector
 
+<a id="nestedatt--spec--default--backends--one--open_telemetry--backend_ref"></a>
+### Nested Schema for `spec.default.backends.one.open_telemetry.backend_ref`
 
-<a id="nestedatt--spec--default--backends--prometheus"></a>
-### Nested Schema for `spec.default.backends.prometheus`
+Optional:
+
+- `kind` (String) Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"
+- `labels` (Map of String) Labels to match the referenced resource. When multiple resources match,
+the oldest by creation time wins.
+
+
+
+<a id="nestedatt--spec--default--backends--one--prometheus"></a>
+### Nested Schema for `spec.default.backends.one.prometheus`
 
 Optional:
 
 - `client_id` (String) ClientId of the Prometheus backend. Needed when using MADS for DP discovery.
 - `path` (String) Path on which a dataplane should expose HTTP endpoint with Prometheus metrics. Default: "/metrics"
 - `port` (Number) Port on which a dataplane should expose HTTP endpoint with Prometheus metrics. Default: 5670
-- `tls` (Attributes) Configuration of TLS for prometheus listener. (see [below for nested schema](#nestedatt--spec--default--backends--prometheus--tls))
+- `tls` (Attributes) Configuration of TLS for prometheus listener. (see [below for nested schema](#nestedatt--spec--default--backends--one--prometheus--tls))
 
-<a id="nestedatt--spec--default--backends--prometheus--tls"></a>
-### Nested Schema for `spec.default.backends.prometheus.tls`
+<a id="nestedatt--spec--default--backends--one--prometheus--tls"></a>
+### Nested Schema for `spec.default.backends.one.prometheus.tls`
 
 Optional:
 
 - `mode` (String) Configuration of TLS for Prometheus listener. possible known values include one of ["Disabled", "ProvidedTLS", "ActiveMTLSBackend"]; Default: "Disabled"
+
+
+
+
+<a id="nestedatt--spec--default--backends--two"></a>
+### Nested Schema for `spec.default.backends.two`
+
+Optional:
+
+- `open_telemetry` (Attributes) OpenTelemetry backend configuration (see [below for nested schema](#nestedatt--spec--default--backends--two--open_telemetry))
+- `prometheus` (Attributes) Prometheus backend configuration. (see [below for nested schema](#nestedatt--spec--default--backends--two--prometheus))
+- `type` (String) Type of the backend that will be used to collect metrics. At the moment only Prometheus backend is available. possible known values include one of ["Prometheus", "OpenTelemetry"]; Not Null
+
+<a id="nestedatt--spec--default--backends--two--open_telemetry"></a>
+### Nested Schema for `spec.default.backends.two.open_telemetry`
+
+Optional:
+
+- `backend_ref` (Attributes) BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+defines the collector endpoint. (see [below for nested schema](#nestedatt--spec--default--backends--two--open_telemetry--backend_ref))
+- `refresh_interval` (String) RefreshInterval defines how frequent metrics should be pushed to collector
+
+<a id="nestedatt--spec--default--backends--two--open_telemetry--backend_ref"></a>
+### Nested Schema for `spec.default.backends.two.open_telemetry.backend_ref`
+
+Optional:
+
+- `kind` (String) Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"
+- `labels` (Map of String) Labels to match the referenced resource. When multiple resources match,
+the oldest by creation time wins.
+
+
+
+<a id="nestedatt--spec--default--backends--two--prometheus"></a>
+### Nested Schema for `spec.default.backends.two.prometheus`
+
+Optional:
+
+- `client_id` (String) ClientId of the Prometheus backend. Needed when using MADS for DP discovery.
+- `path` (String) Path on which a dataplane should expose HTTP endpoint with Prometheus metrics. Default: "/metrics"
+- `port` (Number) Port on which a dataplane should expose HTTP endpoint with Prometheus metrics. Default: 5670
+- `tls` (Attributes) Configuration of TLS for prometheus listener. (see [below for nested schema](#nestedatt--spec--default--backends--two--prometheus--tls))
+
+<a id="nestedatt--spec--default--backends--two--prometheus--tls"></a>
+### Nested Schema for `spec.default.backends.two.prometheus.tls`
+
+Optional:
+
+- `mode` (String) Configuration of TLS for Prometheus listener. possible known values include one of ["Disabled", "ProvidedTLS", "ActiveMTLSBackend"]; Default: "Disabled"
+
 
 
 
@@ -236,23 +305,39 @@ Optional:
 
 Required:
 
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "Dataplane"]
 
 Optional:
 
-- `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
-Name and Namespace can be used.
-- `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`,
-`MeshServiceSubset` and `MeshGatewayRoute`
-- `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-will be targeted.
-- `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-all data plane types are targeted by the policy.
+- `labels` (Map of String) Labels are used to select referenced real resources and to carry legacy
+service identity when a common TargetRef must still target old
+service-tag based paths.
 - `section_name` (String) SectionName is used to target specific section of resource.
 For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-- `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds
-`MeshSubset` and `MeshServiceSubset`
+
+
+
+<a id="nestedatt--status"></a>
+### Nested Schema for `status`
+
+Read-Only:
+
+- `conditions` (Attributes List) (see [below for nested schema](#nestedatt--status--conditions))
+
+<a id="nestedatt--status--conditions"></a>
+### Nested Schema for `status.conditions`
+
+Read-Only:
+
+- `message` (String) message is a human readable message indicating details about the transition.
+This may be an empty string.
+- `reason` (String) reason contains a programmatic identifier indicating the reason for the condition's last transition.
+Producers of specific condition types may define expected values and meanings for this field,
+and whether the values are considered a guaranteed API.
+The value should be a CamelCase string.
+This field may not be empty.
+- `status` (String) status of the condition, one of True, False, Unknown.
+- `type` (String) type of condition in CamelCase or in foo.example.com/CamelCase.
 
 ## Import
 
