@@ -22,8 +22,9 @@ resource "kong-mesh_mesh_external_service" "my_meshexternalservice" {
   spec = {
     endpoints = [
       {
-        address = "example.com"
-        port    = 9478
+        address  = "example.com"
+        port     = 9478
+        priority = 69
       }
     ]
     extension = {
@@ -42,17 +43,41 @@ resource "kong-mesh_mesh_external_service" "my_meshexternalservice" {
         ca_cert = {
           inline        = "...my_inline..."
           inline_string = "...my_inline_string..."
-          secret        = "...my_secret..."
+          insecure_inline = {
+            value = "...my_value..."
+          }
+          secret = "...my_secret..."
+          secret_ref = {
+            kind = "Secret"
+            name = "...my_name..."
+          }
+          type = "Secret"
         }
         client_cert = {
           inline        = "...my_inline..."
           inline_string = "...my_inline_string..."
-          secret        = "...my_secret..."
+          insecure_inline = {
+            value = "...my_value..."
+          }
+          secret = "...my_secret..."
+          secret_ref = {
+            kind = "Secret"
+            name = "...my_name..."
+          }
+          type = "InsecureInline"
         }
         client_key = {
           inline        = "...my_inline..."
           inline_string = "...my_inline_string..."
-          secret        = "...my_secret..."
+          insecure_inline = {
+            value = "...my_value..."
+          }
+          secret = "...my_secret..."
+          secret_ref = {
+            kind = "Secret"
+            name = "...my_name..."
+          }
+          type = "EnvVar"
         }
         mode        = "Secured"
         server_name = "...my_server_name..."
@@ -92,6 +117,7 @@ resource "kong-mesh_mesh_external_service" "my_meshexternalservice" {
 - `creation_time` (String) Time at which the resource was created
 - `kri` (String) A unique identifier for this resource instance used by internal tooling and integrations. Typically derived from resource attributes and may be used for cross-references or indexing
 - `modification_time` (String) Time at which the resource was updated
+- `snis` (Attributes List) List of SNIs (Server Name Indication) advertised by xDS for this destination, one entry per port, sorted by port ascending. Present for MeshService, MeshMultiZoneService and MeshExternalService. (see [below for nested schema](#nestedatt--snis))
 - `status` (Attributes) Status is the current status of the Kuma MeshExternalService resource. (see [below for nested schema](#nestedatt--status))
 - `warnings` (List of String) warnings is a list of warning messages to return to the requesting Kuma API clients.
 Warning messages describe a problem the client making the API request should correct or be aware of.
@@ -129,6 +155,9 @@ Optional:
 
 - `address` (String) Address defines an address to which a user want to send a request. Is possible to provide `domain`, `ip`. Not Null
 - `port` (Number) Port of the endpoint. Not Null
+- `priority` (Number) Priority maps to Envoy's priority levels to enable endpoint failover.
+Lower values have higher priority (0 is the default/primary).
+When the primary endpoints become unhealthy, traffic fails over to the next priority level.
 
 
 <a id="nestedatt--spec--extension"></a>
@@ -172,9 +201,29 @@ Optional:
 
 Optional:
 
-- `inline` (String) Data source is inline bytes.
-- `inline_string` (String) Data source is inline string`
-- `secret` (String) Data source is a secret with given Secret key.
+- `inline` (String) Inline is the legacy, base64-encoded form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
+- `inline_string` (String) InlineString is the legacy form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
+- `insecure_inline` (Attributes) InsecureInline is the data source value as plain text, used with `type: InsecureInline`. (see [below for nested schema](#nestedatt--spec--tls--verification--ca_cert--insecure_inline))
+- `secret` (String) Secret is the legacy form of `type: Secret` with `secretRef`, not read by 3.0.
+- `secret_ref` (Attributes) SecretRef references a Secret, used with `type: Secret`. (see [below for nested schema](#nestedatt--spec--tls--verification--ca_cert--secret_ref))
+- `type` (String) Type of the data source, one of `Secret` or `InsecureInline`. possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]
+
+<a id="nestedatt--spec--tls--verification--ca_cert--insecure_inline"></a>
+### Nested Schema for `spec.tls.verification.ca_cert.insecure_inline`
+
+Required:
+
+- `value` (String)
+
+
+<a id="nestedatt--spec--tls--verification--ca_cert--secret_ref"></a>
+### Nested Schema for `spec.tls.verification.ca_cert.secret_ref`
+
+Required:
+
+- `kind` (String) must be "Secret"
+- `name` (String)
+
 
 
 <a id="nestedatt--spec--tls--verification--client_cert"></a>
@@ -182,9 +231,29 @@ Optional:
 
 Optional:
 
-- `inline` (String) Data source is inline bytes.
-- `inline_string` (String) Data source is inline string`
-- `secret` (String) Data source is a secret with given Secret key.
+- `inline` (String) Inline is the legacy, base64-encoded form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
+- `inline_string` (String) InlineString is the legacy form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
+- `insecure_inline` (Attributes) InsecureInline is the data source value as plain text, used with `type: InsecureInline`. (see [below for nested schema](#nestedatt--spec--tls--verification--client_cert--insecure_inline))
+- `secret` (String) Secret is the legacy form of `type: Secret` with `secretRef`, not read by 3.0.
+- `secret_ref` (Attributes) SecretRef references a Secret, used with `type: Secret`. (see [below for nested schema](#nestedatt--spec--tls--verification--client_cert--secret_ref))
+- `type` (String) Type of the data source, one of `Secret` or `InsecureInline`. possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]
+
+<a id="nestedatt--spec--tls--verification--client_cert--insecure_inline"></a>
+### Nested Schema for `spec.tls.verification.client_cert.insecure_inline`
+
+Required:
+
+- `value` (String)
+
+
+<a id="nestedatt--spec--tls--verification--client_cert--secret_ref"></a>
+### Nested Schema for `spec.tls.verification.client_cert.secret_ref`
+
+Required:
+
+- `kind` (String) must be "Secret"
+- `name` (String)
+
 
 
 <a id="nestedatt--spec--tls--verification--client_key"></a>
@@ -192,9 +261,29 @@ Optional:
 
 Optional:
 
-- `inline` (String) Data source is inline bytes.
-- `inline_string` (String) Data source is inline string`
-- `secret` (String) Data source is a secret with given Secret key.
+- `inline` (String) Inline is the legacy, base64-encoded form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
+- `inline_string` (String) InlineString is the legacy form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
+- `insecure_inline` (Attributes) InsecureInline is the data source value as plain text, used with `type: InsecureInline`. (see [below for nested schema](#nestedatt--spec--tls--verification--client_key--insecure_inline))
+- `secret` (String) Secret is the legacy form of `type: Secret` with `secretRef`, not read by 3.0.
+- `secret_ref` (Attributes) SecretRef references a Secret, used with `type: Secret`. (see [below for nested schema](#nestedatt--spec--tls--verification--client_key--secret_ref))
+- `type` (String) Type of the data source, one of `Secret` or `InsecureInline`. possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]
+
+<a id="nestedatt--spec--tls--verification--client_key--insecure_inline"></a>
+### Nested Schema for `spec.tls.verification.client_key.insecure_inline`
+
+Required:
+
+- `value` (String)
+
+
+<a id="nestedatt--spec--tls--verification--client_key--secret_ref"></a>
+### Nested Schema for `spec.tls.verification.client_key.secret_ref`
+
+Required:
+
+- `kind` (String) must be "Secret"
+- `name` (String)
+
 
 
 <a id="nestedatt--spec--tls--verification--subject_alt_names"></a>
@@ -216,6 +305,15 @@ Optional:
 - `min` (String) Min defines minimum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`. possible known values include one of ["TLSAuto", "TLS10", "TLS11", "TLS12", "TLS13"]; Default: "TLSAuto"
 
 
+
+
+<a id="nestedatt--snis"></a>
+### Nested Schema for `snis`
+
+Read-Only:
+
+- `port` (Number) The destination port this SNI corresponds to.
+- `sni` (String) The SNI string advertised by xDS for this port.
 
 
 <a id="nestedatt--status"></a>

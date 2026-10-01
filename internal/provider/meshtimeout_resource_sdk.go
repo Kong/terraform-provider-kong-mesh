@@ -110,6 +110,28 @@ func (r *MeshTimeoutResourceModel) RefreshFromSharedMeshTimeoutItem(ctx context.
 				}
 				rules.Default.IdleTimeout = types.StringPointerValue(rulesItem.Default.IdleTimeout)
 			}
+			rules.Matches = []tfTypes.Matches{}
+
+			for _, matchesItem := range rulesItem.Matches {
+				var matches tfTypes.Matches
+
+				if matchesItem.Sni == nil {
+					matches.Sni = nil
+				} else {
+					matches.Sni = &tfTypes.Sni{}
+					matches.Sni.Type = types.StringValue(string(matchesItem.Sni.Type))
+					matches.Sni.Value = types.StringValue(matchesItem.Sni.Value)
+				}
+				if matchesItem.SpiffeID == nil {
+					matches.SpiffeID = nil
+				} else {
+					matches.SpiffeID = &tfTypes.Sni{}
+					matches.SpiffeID.Type = types.StringValue(string(matchesItem.SpiffeID.Type))
+					matches.SpiffeID.Value = types.StringValue(matchesItem.SpiffeID.Value)
+				}
+
+				rules.Matches = append(rules.Matches, matches)
+			}
 
 			r.Spec.Rules = append(r.Spec.Rules, rules)
 		}
@@ -450,8 +472,38 @@ func (r *MeshTimeoutResourceModel) ToSharedMeshTimeoutItemInput(ctx context.Cont
 				IdleTimeout:       idleTimeout1,
 			}
 		}
+		matches := make([]shared.MeshTimeoutItemMatches, 0, len(r.Spec.Rules[rulesIndex].Matches))
+		for matchesIndex := range r.Spec.Rules[rulesIndex].Matches {
+			var sni *shared.MeshTimeoutItemSni
+			if r.Spec.Rules[rulesIndex].Matches[matchesIndex].Sni != nil {
+				typeVar1 := shared.MeshTimeoutItemSpecType(r.Spec.Rules[rulesIndex].Matches[matchesIndex].Sni.Type.ValueString())
+				var value string
+				value = r.Spec.Rules[rulesIndex].Matches[matchesIndex].Sni.Value.ValueString()
+
+				sni = &shared.MeshTimeoutItemSni{
+					Type:  typeVar1,
+					Value: value,
+				}
+			}
+			var spiffeID *shared.MeshTimeoutItemSpiffeID
+			if r.Spec.Rules[rulesIndex].Matches[matchesIndex].SpiffeID != nil {
+				typeVar2 := shared.MeshTimeoutItemSpecRulesType(r.Spec.Rules[rulesIndex].Matches[matchesIndex].SpiffeID.Type.ValueString())
+				var value1 string
+				value1 = r.Spec.Rules[rulesIndex].Matches[matchesIndex].SpiffeID.Value.ValueString()
+
+				spiffeID = &shared.MeshTimeoutItemSpiffeID{
+					Type:  typeVar2,
+					Value: value1,
+				}
+			}
+			matches = append(matches, shared.MeshTimeoutItemMatches{
+				Sni:      sni,
+				SpiffeID: spiffeID,
+			})
+		}
 		rules = append(rules, shared.MeshTimeoutItemRules{
 			Default: default1,
+			Matches: matches,
 		})
 	}
 	var targetRef1 *shared.MeshTimeoutItemTargetRef

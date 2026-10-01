@@ -378,9 +378,123 @@ func (m *MeshTimeoutItemSpecDefault) GetIdleTimeout() *string {
 	return m.IdleTimeout
 }
 
+// MeshTimeoutItemSpecType - Type defines how to match traffic by SNI. Only `Exact` is supported.
+type MeshTimeoutItemSpecType string
+
+const (
+	MeshTimeoutItemSpecTypeExact MeshTimeoutItemSpecType = "Exact"
+)
+
+func (e MeshTimeoutItemSpecType) ToPointer() *MeshTimeoutItemSpecType {
+	return &e
+}
+func (e *MeshTimeoutItemSpecType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "Exact":
+		*e = MeshTimeoutItemSpecType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshTimeoutItemSpecType: %v", v)
+	}
+}
+
+// MeshTimeoutItemSni - SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+type MeshTimeoutItemSni struct {
+	// Type defines how to match traffic by SNI. Only `Exact` is supported.
+	Type MeshTimeoutItemSpecType `json:"type"`
+	// Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied
+	Value string `json:"value"`
+}
+
+func (m *MeshTimeoutItemSni) GetType() MeshTimeoutItemSpecType {
+	if m == nil {
+		return MeshTimeoutItemSpecType("")
+	}
+	return m.Type
+}
+
+func (m *MeshTimeoutItemSni) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// MeshTimeoutItemSpecRulesType - Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
+type MeshTimeoutItemSpecRulesType string
+
+const (
+	MeshTimeoutItemSpecRulesTypeExact  MeshTimeoutItemSpecRulesType = "Exact"
+	MeshTimeoutItemSpecRulesTypePrefix MeshTimeoutItemSpecRulesType = "Prefix"
+)
+
+func (e MeshTimeoutItemSpecRulesType) ToPointer() *MeshTimeoutItemSpecRulesType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshTimeoutItemSpecRulesType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Exact", "Prefix":
+			return true
+		}
+	}
+	return false
+}
+
+// MeshTimeoutItemSpiffeID - SpiffeID defines a matcher configuration for SpiffeID matching
+type MeshTimeoutItemSpiffeID struct {
+	// Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
+	Type MeshTimeoutItemSpecRulesType `json:"type"`
+	// Value is SpiffeID of a client that needs to match for the configuration to be applied
+	Value string `json:"value"`
+}
+
+func (m *MeshTimeoutItemSpiffeID) GetType() MeshTimeoutItemSpecRulesType {
+	if m == nil {
+		return MeshTimeoutItemSpecRulesType("")
+	}
+	return m.Type
+}
+
+func (m *MeshTimeoutItemSpiffeID) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+type MeshTimeoutItemMatches struct {
+	// SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+	Sni *MeshTimeoutItemSni `json:"sni,omitempty"`
+	// SpiffeID defines a matcher configuration for SpiffeID matching
+	SpiffeID *MeshTimeoutItemSpiffeID `json:"spiffeID,omitempty"`
+}
+
+func (m *MeshTimeoutItemMatches) GetSni() *MeshTimeoutItemSni {
+	if m == nil {
+		return nil
+	}
+	return m.Sni
+}
+
+func (m *MeshTimeoutItemMatches) GetSpiffeID() *MeshTimeoutItemSpiffeID {
+	if m == nil {
+		return nil
+	}
+	return m.SpiffeID
+}
+
 type MeshTimeoutItemRules struct {
 	// Default contains configuration of the inbound timeouts
 	Default *MeshTimeoutItemSpecDefault `json:"default,omitempty"`
+	// Matches define predicates for selecting traffic this configuration applies to.
+	Matches []MeshTimeoutItemMatches `json:"matches,omitempty"`
 }
 
 func (m *MeshTimeoutItemRules) GetDefault() *MeshTimeoutItemSpecDefault {
@@ -388,6 +502,13 @@ func (m *MeshTimeoutItemRules) GetDefault() *MeshTimeoutItemSpecDefault {
 		return nil
 	}
 	return m.Default
+}
+
+func (m *MeshTimeoutItemRules) GetMatches() []MeshTimeoutItemMatches {
+	if m == nil {
+		return nil
+	}
+	return m.Matches
 }
 
 // MeshTimeoutItemKind - Kind of the referenced resource
@@ -782,8 +903,8 @@ func (m *MeshTimeoutItemTo) GetTargetRef() MeshTimeoutItemSpecToTargetRef {
 type MeshTimeoutItemSpec struct {
 	// From list makes a match between clients and corresponding configurations
 	From []MeshTimeoutItemFrom `json:"from,omitempty"`
-	// Rules defines inbound timeout configurations. Currently limited to exactly one rule containing
-	// default timeouts that apply to all inbound traffic, as L7 matching is not yet implemented.
+	// Rules defines inbound timeout configurations. When matches are present, the rule is applied only
+	// to traffic selected by the given source and destination matchers.
 	Rules []MeshTimeoutItemRules `json:"rules,omitempty"`
 	// TargetRef is a reference to the resource the policy takes an effect on.
 	// The resource could be either a real store object or virtual resource

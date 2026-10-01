@@ -28,6 +28,12 @@ resource "kong-mesh_mesh_trace" "my_meshtrace" {
             url           = "...my_url..."
           }
           open_telemetry = {
+            backend_ref = {
+              kind = "MeshOpenTelemetryBackend"
+              labels = {
+                key = "value"
+              }
+            }
             endpoint = "otel-collector:4317"
           }
           type = "OpenTelemetry"
@@ -101,6 +107,7 @@ resource "kong-mesh_mesh_trace" "my_meshtrace" {
 - `creation_time` (String) Time at which the resource was created
 - `kri` (String) A unique identifier for this resource instance used by internal tooling and integrations. Typically derived from resource attributes and may be used for cross-references or indexing
 - `modification_time` (String) Time at which the resource was updated
+- `status` (Attributes) Status is the current status of the Kuma MeshTrace resource. (see [below for nested schema](#nestedatt--status))
 - `warnings` (List of String) warnings is a list of warning messages to return to the requesting Kuma API clients.
 Warning messages describe a problem the client making the API request should correct or be aware of.
 
@@ -161,7 +168,22 @@ Not Null
 
 Optional:
 
-- `endpoint` (String) Address of OpenTelemetry collector. Not Null
+- `backend_ref` (Attributes) BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+defines the collector endpoint. Mutually exclusive with Endpoint. (see [below for nested schema](#nestedatt--spec--default--backends--open_telemetry--backend_ref))
+- `endpoint` (String) Address of OpenTelemetry collector.
+
+Deprecated: use BackendRef instead.
+Default: ""
+
+<a id="nestedatt--spec--default--backends--open_telemetry--backend_ref"></a>
+### Nested Schema for `spec.default.backends.open_telemetry.backend_ref`
+
+Optional:
+
+- `kind` (String) Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"
+- `labels` (Map of String) Labels to match the referenced resource. When multiple resources match,
+the oldest by creation time wins.
+
 
 
 <a id="nestedatt--spec--default--backends--zipkin"></a>
@@ -280,6 +302,30 @@ all data plane types are targeted by the policy.
 For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 - `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds
 `MeshSubset` and `MeshServiceSubset`
+
+
+
+<a id="nestedatt--status"></a>
+### Nested Schema for `status`
+
+Read-Only:
+
+- `conditions` (Attributes List) (see [below for nested schema](#nestedatt--status--conditions))
+
+<a id="nestedatt--status--conditions"></a>
+### Nested Schema for `status.conditions`
+
+Read-Only:
+
+- `message` (String) message is a human readable message indicating details about the transition.
+This may be an empty string.
+- `reason` (String) reason contains a programmatic identifier indicating the reason for the condition's last transition.
+Producers of specific condition types may define expected values and meanings for this field,
+and whether the values are considered a guaranteed API.
+The value should be a CamelCase string.
+This field may not be empty.
+- `status` (String) status of the condition, one of True, False, Unknown.
+- `type` (String) type of condition in CamelCase or in foo.example.com/CamelCase.
 
 ## Import
 

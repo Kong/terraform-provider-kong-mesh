@@ -2,6 +2,11 @@
 
 package shared
 
+import (
+	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/utils"
+	"time"
+)
+
 type AvailableServices struct {
 	// instance of external service available from the zone
 	ExternalService *bool `json:"externalService,omitempty"`
@@ -110,8 +115,14 @@ type ZoneIngressItem struct {
 	// AvailableService contains tags that represent unique subset of
 	// endpoints
 	AvailableServices []AvailableServices `json:"availableServices"`
-	Labels            map[string]string   `json:"labels,omitempty"`
-	Name              string              `json:"name"`
+	// Time at which the resource was created
+	CreationTime *time.Time `json:"creationTime,omitempty"`
+	// Kuma Resource Identifier (KRI) of the given resource
+	Kri    *string           `json:"kri,omitempty"`
+	Labels map[string]string `json:"labels,omitempty"`
+	// Time at which the resource was updated
+	ModificationTime *time.Time `json:"modificationTime,omitempty"`
+	Name             string     `json:"name"`
 	// Networking defines the address and port of the Ingress to listen on.
 	// Additionally publicly advertised address and port could be specified.
 	Networking *ZoneIngressItemNetworking `json:"networking,omitempty"`
@@ -121,6 +132,17 @@ type ZoneIngressItem struct {
 	Zone *string `json:"zone,omitempty"`
 }
 
+func (z ZoneIngressItem) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(z, "", false)
+}
+
+func (z *ZoneIngressItem) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &z, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (z *ZoneIngressItem) GetAvailableServices() []AvailableServices {
 	if z == nil {
 		return nil
@@ -128,11 +150,32 @@ func (z *ZoneIngressItem) GetAvailableServices() []AvailableServices {
 	return z.AvailableServices
 }
 
+func (z *ZoneIngressItem) GetCreationTime() *time.Time {
+	if z == nil {
+		return nil
+	}
+	return z.CreationTime
+}
+
+func (z *ZoneIngressItem) GetKri() *string {
+	if z == nil {
+		return nil
+	}
+	return z.Kri
+}
+
 func (z *ZoneIngressItem) GetLabels() map[string]string {
 	if z == nil {
 		return nil
 	}
 	return z.Labels
+}
+
+func (z *ZoneIngressItem) GetModificationTime() *time.Time {
+	if z == nil {
+		return nil
+	}
+	return z.ModificationTime
 }
 
 func (z *ZoneIngressItem) GetName() string {
@@ -157,6 +200,63 @@ func (z *ZoneIngressItem) GetType() string {
 }
 
 func (z *ZoneIngressItem) GetZone() *string {
+	if z == nil {
+		return nil
+	}
+	return z.Zone
+}
+
+type ZoneIngressItemInput struct {
+	// AvailableService contains tags that represent unique subset of
+	// endpoints
+	AvailableServices []AvailableServices `json:"availableServices"`
+	Labels            map[string]string   `json:"labels,omitempty"`
+	Name              string              `json:"name"`
+	// Networking defines the address and port of the Ingress to listen on.
+	// Additionally publicly advertised address and port could be specified.
+	Networking *ZoneIngressItemNetworking `json:"networking,omitempty"`
+	Type       string                     `json:"type"`
+	// Zone field contains Zone name where ingress is serving, field will be
+	// automatically set by Global Kuma CP
+	Zone *string `json:"zone,omitempty"`
+}
+
+func (z *ZoneIngressItemInput) GetAvailableServices() []AvailableServices {
+	if z == nil {
+		return nil
+	}
+	return z.AvailableServices
+}
+
+func (z *ZoneIngressItemInput) GetLabels() map[string]string {
+	if z == nil {
+		return nil
+	}
+	return z.Labels
+}
+
+func (z *ZoneIngressItemInput) GetName() string {
+	if z == nil {
+		return ""
+	}
+	return z.Name
+}
+
+func (z *ZoneIngressItemInput) GetNetworking() *ZoneIngressItemNetworking {
+	if z == nil {
+		return nil
+	}
+	return z.Networking
+}
+
+func (z *ZoneIngressItemInput) GetType() string {
+	if z == nil {
+		return ""
+	}
+	return z.Type
+}
+
+func (z *ZoneIngressItemInput) GetZone() *string {
 	if z == nil {
 		return nil
 	}

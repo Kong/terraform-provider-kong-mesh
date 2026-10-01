@@ -206,6 +206,14 @@ resource (see [below for nested schema](#nestedatt--spec--default--append_modifi
 - `operation` (String) Operation to execute on matched cluster. possible known values include one of ["Add", "Remove", "Patch"]; Not Null
 - `value` (String) Value of xDS resource in YAML format to add or patch.
 
+Patch merges the value into the matched cluster, and repeated fields are
+appended to what the cluster already has. Circuit breaker thresholds are
+the exception: Envoy resolves them by routing priority and ignores every
+threshold after the first one of a given priority, so appending would be
+dead config. They are merged into the existing threshold with the same
+priority instead, and a value listing one priority twice keeps only the
+first entry.
+
 <a id="nestedatt--spec--default--append_modifications--cluster--json_patches"></a>
 ### Nested Schema for `spec.default.append_modifications.cluster.json_patches`
 

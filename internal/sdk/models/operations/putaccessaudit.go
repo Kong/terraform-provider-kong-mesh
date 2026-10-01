@@ -11,7 +11,7 @@ type PutAccessAuditRequest struct {
 	// name of the AccessAudit
 	Name string `pathParam:"style=simple,explode=false,name=name"`
 	// Put request
-	AccessAuditItem shared.AccessAuditItem `request:"mediaType=application/json"`
+	AccessAuditItem shared.AccessAuditItemInput `request:"mediaType=application/json"`
 }
 
 func (p *PutAccessAuditRequest) GetName() string {
@@ -21,9 +21,9 @@ func (p *PutAccessAuditRequest) GetName() string {
 	return p.Name
 }
 
-func (p *PutAccessAuditRequest) GetAccessAuditItem() shared.AccessAuditItem {
+func (p *PutAccessAuditRequest) GetAccessAuditItem() shared.AccessAuditItemInput {
 	if p == nil {
-		return shared.AccessAuditItem{}
+		return shared.AccessAuditItemInput{}
 	}
 	return p.AccessAuditItem
 }

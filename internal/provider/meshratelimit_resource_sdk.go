@@ -210,6 +210,28 @@ func (r *MeshRateLimitResourceModel) RefreshFromSharedMeshRateLimitItem(ctx cont
 					}
 				}
 			}
+			rules.Matches = []tfTypes.Matches{}
+
+			for _, matchesItem := range rulesItem.Matches {
+				var matches tfTypes.Matches
+
+				if matchesItem.Sni == nil {
+					matches.Sni = nil
+				} else {
+					matches.Sni = &tfTypes.Sni{}
+					matches.Sni.Type = types.StringValue(string(matchesItem.Sni.Type))
+					matches.Sni.Value = types.StringValue(matchesItem.Sni.Value)
+				}
+				if matchesItem.SpiffeID == nil {
+					matches.SpiffeID = nil
+				} else {
+					matches.SpiffeID = &tfTypes.Sni{}
+					matches.SpiffeID.Type = types.StringValue(string(matchesItem.SpiffeID.Type))
+					matches.SpiffeID.Value = types.StringValue(matchesItem.SpiffeID.Value)
+				}
+
+				rules.Matches = append(rules.Matches, matches)
+			}
 
 			r.Spec.Rules = append(r.Spec.Rules, rules)
 		}
@@ -704,8 +726,38 @@ func (r *MeshRateLimitResourceModel) ToSharedMeshRateLimitItemInput(ctx context.
 				Local: local1,
 			}
 		}
+		matches := make([]shared.MeshRateLimitItemMatches, 0, len(r.Spec.Rules[rulesIndex].Matches))
+		for matchesIndex := range r.Spec.Rules[rulesIndex].Matches {
+			var sni *shared.MeshRateLimitItemSni
+			if r.Spec.Rules[rulesIndex].Matches[matchesIndex].Sni != nil {
+				typeVar1 := shared.MeshRateLimitItemSpecType(r.Spec.Rules[rulesIndex].Matches[matchesIndex].Sni.Type.ValueString())
+				var value4 string
+				value4 = r.Spec.Rules[rulesIndex].Matches[matchesIndex].Sni.Value.ValueString()
+
+				sni = &shared.MeshRateLimitItemSni{
+					Type:  typeVar1,
+					Value: value4,
+				}
+			}
+			var spiffeID *shared.MeshRateLimitItemSpiffeID
+			if r.Spec.Rules[rulesIndex].Matches[matchesIndex].SpiffeID != nil {
+				typeVar2 := shared.MeshRateLimitItemSpecRulesType(r.Spec.Rules[rulesIndex].Matches[matchesIndex].SpiffeID.Type.ValueString())
+				var value5 string
+				value5 = r.Spec.Rules[rulesIndex].Matches[matchesIndex].SpiffeID.Value.ValueString()
+
+				spiffeID = &shared.MeshRateLimitItemSpiffeID{
+					Type:  typeVar2,
+					Value: value5,
+				}
+			}
+			matches = append(matches, shared.MeshRateLimitItemMatches{
+				Sni:      sni,
+				SpiffeID: spiffeID,
+			})
+		}
 		rules = append(rules, shared.MeshRateLimitItemRules{
 			Default: default1,
+			Matches: matches,
 		})
 	}
 	var targetRef1 *shared.MeshRateLimitItemTargetRef
@@ -787,12 +839,12 @@ func (r *MeshRateLimitResourceModel) ToSharedMeshRateLimitItemInput(ctx context.
 								var name7 string
 								name7 = r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Headers.Add[addIndex2].Name.ValueString()
 
-								var value4 string
-								value4 = r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Headers.Add[addIndex2].Value.ValueString()
+								var value6 string
+								value6 = r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Headers.Add[addIndex2].Value.ValueString()
 
 								add2 = append(add2, shared.MeshRateLimitItemSpecToAdd{
 									Name:  name7,
-									Value: value4,
+									Value: value6,
 								})
 							}
 							set2 := make([]shared.MeshRateLimitItemSpecToSet, 0, len(r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Headers.Set))
@@ -800,12 +852,12 @@ func (r *MeshRateLimitResourceModel) ToSharedMeshRateLimitItemInput(ctx context.
 								var name8 string
 								name8 = r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Headers.Set[setIndex2].Name.ValueString()
 
-								var value5 string
-								value5 = r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Headers.Set[setIndex2].Value.ValueString()
+								var value7 string
+								value7 = r.Spec.To[toIndex].Default.Local.HTTP.OnRateLimit.Headers.Set[setIndex2].Value.ValueString()
 
 								set2 = append(set2, shared.MeshRateLimitItemSpecToSet{
 									Name:  name8,
-									Value: value5,
+									Value: value7,
 								})
 							}
 							headers2 = &shared.MeshRateLimitItemSpecToHeaders{

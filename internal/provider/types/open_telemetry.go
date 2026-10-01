@@ -7,6 +7,7 @@ import (
 )
 
 type OpenTelemetry struct {
-	Endpoint        types.String `tfsdk:"endpoint"`
-	RefreshInterval types.String `tfsdk:"refresh_interval"`
+	BackendRef      *MeshAccessLogItemSpecFromBackendRef `tfsdk:"backend_ref"`
+	Endpoint        types.String                         `tfsdk:"endpoint"`
+	RefreshInterval types.String                         `tfsdk:"refresh_interval"`
 }

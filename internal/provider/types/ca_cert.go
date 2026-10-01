@@ -7,7 +7,10 @@ import (
 )
 
 type CaCert struct {
-	Inline       types.String `tfsdk:"inline"`
-	InlineString types.String `tfsdk:"inline_string"`
-	Secret       types.String `tfsdk:"secret"`
+	Inline         types.String    `tfsdk:"inline"`
+	InlineString   types.String    `tfsdk:"inline_string"`
+	InsecureInline *InsecureInline `tfsdk:"insecure_inline"`
+	Secret         types.String    `tfsdk:"secret"`
+	SecretRef      *SecretRef      `tfsdk:"secret_ref"`
+	Type           types.String    `tfsdk:"type"`
 }

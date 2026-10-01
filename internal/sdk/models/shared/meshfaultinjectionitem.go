@@ -979,20 +979,66 @@ func (m *MeshFaultInjectionItemSpecDefault) GetHTTP() []MeshFaultInjectionItemHT
 	return m.HTTP
 }
 
-// MeshFaultInjectionItemSpecType - Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
+// MeshFaultInjectionItemSpecType - Type defines how to match traffic by SNI. Only `Exact` is supported.
 type MeshFaultInjectionItemSpecType string
 
 const (
-	MeshFaultInjectionItemSpecTypeExact  MeshFaultInjectionItemSpecType = "Exact"
-	MeshFaultInjectionItemSpecTypePrefix MeshFaultInjectionItemSpecType = "Prefix"
+	MeshFaultInjectionItemSpecTypeExact MeshFaultInjectionItemSpecType = "Exact"
 )
 
 func (e MeshFaultInjectionItemSpecType) ToPointer() *MeshFaultInjectionItemSpecType {
 	return &e
 }
+func (e *MeshFaultInjectionItemSpecType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "Exact":
+		*e = MeshFaultInjectionItemSpecType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshFaultInjectionItemSpecType: %v", v)
+	}
+}
+
+// MeshFaultInjectionItemSni - SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+type MeshFaultInjectionItemSni struct {
+	// Type defines how to match traffic by SNI. Only `Exact` is supported.
+	Type MeshFaultInjectionItemSpecType `json:"type"`
+	// Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied
+	Value string `json:"value"`
+}
+
+func (m *MeshFaultInjectionItemSni) GetType() MeshFaultInjectionItemSpecType {
+	if m == nil {
+		return MeshFaultInjectionItemSpecType("")
+	}
+	return m.Type
+}
+
+func (m *MeshFaultInjectionItemSni) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// MeshFaultInjectionItemSpecRulesType - Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
+type MeshFaultInjectionItemSpecRulesType string
+
+const (
+	MeshFaultInjectionItemSpecRulesTypeExact  MeshFaultInjectionItemSpecRulesType = "Exact"
+	MeshFaultInjectionItemSpecRulesTypePrefix MeshFaultInjectionItemSpecRulesType = "Prefix"
+)
+
+func (e MeshFaultInjectionItemSpecRulesType) ToPointer() *MeshFaultInjectionItemSpecRulesType {
+	return &e
+}
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshFaultInjectionItemSpecType) IsExact() bool {
+func (e *MeshFaultInjectionItemSpecRulesType) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "Exact", "Prefix":
@@ -1005,14 +1051,14 @@ func (e *MeshFaultInjectionItemSpecType) IsExact() bool {
 // MeshFaultInjectionItemSpiffeID - SpiffeID defines a matcher configuration for SpiffeID matching
 type MeshFaultInjectionItemSpiffeID struct {
 	// Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
-	Type MeshFaultInjectionItemSpecType `json:"type"`
-	// Value is SpiffeId of a client that needs to match for the configuration to be applied
+	Type MeshFaultInjectionItemSpecRulesType `json:"type"`
+	// Value is SpiffeID of a client that needs to match for the configuration to be applied
 	Value string `json:"value"`
 }
 
-func (m *MeshFaultInjectionItemSpiffeID) GetType() MeshFaultInjectionItemSpecType {
+func (m *MeshFaultInjectionItemSpiffeID) GetType() MeshFaultInjectionItemSpecRulesType {
 	if m == nil {
-		return MeshFaultInjectionItemSpecType("")
+		return MeshFaultInjectionItemSpecRulesType("")
 	}
 	return m.Type
 }
@@ -1024,12 +1070,21 @@ func (m *MeshFaultInjectionItemSpiffeID) GetValue() string {
 	return m.Value
 }
 
-type Matches struct {
+type MeshFaultInjectionItemMatches struct {
+	// SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+	Sni *MeshFaultInjectionItemSni `json:"sni,omitempty"`
 	// SpiffeID defines a matcher configuration for SpiffeID matching
 	SpiffeID *MeshFaultInjectionItemSpiffeID `json:"spiffeID,omitempty"`
 }
 
-func (m *Matches) GetSpiffeID() *MeshFaultInjectionItemSpiffeID {
+func (m *MeshFaultInjectionItemMatches) GetSni() *MeshFaultInjectionItemSni {
+	if m == nil {
+		return nil
+	}
+	return m.Sni
+}
+
+func (m *MeshFaultInjectionItemMatches) GetSpiffeID() *MeshFaultInjectionItemSpiffeID {
 	if m == nil {
 		return nil
 	}
@@ -1040,7 +1095,7 @@ type MeshFaultInjectionItemRules struct {
 	// Default defines fault configuration
 	Default MeshFaultInjectionItemSpecDefault `json:"default"`
 	// Matches defines list of matches for which fault injection will be applied
-	Matches []Matches `json:"matches,omitempty"`
+	Matches []MeshFaultInjectionItemMatches `json:"matches,omitempty"`
 }
 
 func (m *MeshFaultInjectionItemRules) GetDefault() MeshFaultInjectionItemSpecDefault {
@@ -1050,7 +1105,7 @@ func (m *MeshFaultInjectionItemRules) GetDefault() MeshFaultInjectionItemSpecDef
 	return m.Default
 }
 
-func (m *MeshFaultInjectionItemRules) GetMatches() []Matches {
+func (m *MeshFaultInjectionItemRules) GetMatches() []MeshFaultInjectionItemMatches {
 	if m == nil {
 		return nil
 	}

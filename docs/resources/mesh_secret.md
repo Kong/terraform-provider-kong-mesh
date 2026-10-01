@@ -40,6 +40,8 @@ resource "kong-mesh_mesh_secret" "my_meshsecret" {
 
 ### Read-Only
 
+- `creation_time` (String) Time at which the resource was created
+- `modification_time` (String) Time at which the resource was updated
 - `warnings` (List of String) warnings is a list of warning messages to return to the requesting Kuma API clients.
 Warning messages describe a problem the client making the API request should correct or be aware of.
 

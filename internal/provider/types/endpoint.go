@@ -6,7 +6,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type MeshFaultInjectionItemSpiffeID struct {
-	Type  types.String `tfsdk:"type"`
-	Value types.String `tfsdk:"value"`
+type Endpoint struct {
+	Address types.String `tfsdk:"address"`
+	Path    types.String `tfsdk:"path"`
+	Port    types.Int32  `tfsdk:"port"`
 }

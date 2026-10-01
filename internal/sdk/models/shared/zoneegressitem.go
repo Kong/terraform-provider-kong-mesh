@@ -2,6 +2,11 @@
 
 package shared
 
+import (
+	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/utils"
+	"time"
+)
+
 // Admin contains configuration related to Envoy Admin API
 type Admin struct {
 	// Port on which Envoy Admin API server will be listening
@@ -47,8 +52,14 @@ func (z *ZoneEgressItemNetworking) GetPort() *int64 {
 }
 
 type ZoneEgressItem struct {
+	// Time at which the resource was created
+	CreationTime *time.Time `json:"creationTime,omitempty"`
+	// Kuma Resource Identifier (KRI) of the given resource
+	Kri    *string           `json:"kri,omitempty"`
 	Labels map[string]string `json:"labels,omitempty"`
-	Name   string            `json:"name"`
+	// Time at which the resource was updated
+	ModificationTime *time.Time `json:"modificationTime,omitempty"`
+	Name             string     `json:"name"`
 	// Networking defines the address and port of the Egress to listen on.
 	Networking *ZoneEgressItemNetworking `json:"networking,omitempty"`
 	Type       string                    `json:"type"`
@@ -57,11 +68,43 @@ type ZoneEgressItem struct {
 	Zone *string `json:"zone,omitempty"`
 }
 
+func (z ZoneEgressItem) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(z, "", false)
+}
+
+func (z *ZoneEgressItem) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &z, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (z *ZoneEgressItem) GetCreationTime() *time.Time {
+	if z == nil {
+		return nil
+	}
+	return z.CreationTime
+}
+
+func (z *ZoneEgressItem) GetKri() *string {
+	if z == nil {
+		return nil
+	}
+	return z.Kri
+}
+
 func (z *ZoneEgressItem) GetLabels() map[string]string {
 	if z == nil {
 		return nil
 	}
 	return z.Labels
+}
+
+func (z *ZoneEgressItem) GetModificationTime() *time.Time {
+	if z == nil {
+		return nil
+	}
+	return z.ModificationTime
 }
 
 func (z *ZoneEgressItem) GetName() string {
@@ -86,6 +129,52 @@ func (z *ZoneEgressItem) GetType() string {
 }
 
 func (z *ZoneEgressItem) GetZone() *string {
+	if z == nil {
+		return nil
+	}
+	return z.Zone
+}
+
+type ZoneEgressItemInput struct {
+	Labels map[string]string `json:"labels,omitempty"`
+	Name   string            `json:"name"`
+	// Networking defines the address and port of the Egress to listen on.
+	Networking *ZoneEgressItemNetworking `json:"networking,omitempty"`
+	Type       string                    `json:"type"`
+	// Zone field contains Zone name where egress is serving, field will be
+	// automatically set by Global Kuma CP
+	Zone *string `json:"zone,omitempty"`
+}
+
+func (z *ZoneEgressItemInput) GetLabels() map[string]string {
+	if z == nil {
+		return nil
+	}
+	return z.Labels
+}
+
+func (z *ZoneEgressItemInput) GetName() string {
+	if z == nil {
+		return ""
+	}
+	return z.Name
+}
+
+func (z *ZoneEgressItemInput) GetNetworking() *ZoneEgressItemNetworking {
+	if z == nil {
+		return nil
+	}
+	return z.Networking
+}
+
+func (z *ZoneEgressItemInput) GetType() string {
+	if z == nil {
+		return ""
+	}
+	return z.Type
+}
+
+func (z *ZoneEgressItemInput) GetZone() *string {
 	if z == nil {
 		return nil
 	}

@@ -452,8 +452,8 @@ func (e *MeshHTTPRouteItemSpecToRulesProxyTypes) IsExact() bool {
 	return false
 }
 
-// BackendRef defines where to forward traffic.
-type BackendRef struct {
+// MeshHTTPRouteItemBackendRef - BackendRef defines where to forward traffic.
+type MeshHTTPRouteItemBackendRef struct {
 	// Kind of the referenced resource
 	Kind MeshHTTPRouteItemSpecToRulesKind `json:"kind"`
 	// Labels are used to select group of MeshServices that match labels. Either Labels or
@@ -481,85 +481,85 @@ type BackendRef struct {
 	Weight *int64            `default:"1" json:"weight"`
 }
 
-func (b BackendRef) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(b, "", false)
+func (m MeshHTTPRouteItemBackendRef) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
 }
 
-func (b *BackendRef) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &b, "", false, nil); err != nil {
+func (m *MeshHTTPRouteItemBackendRef) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (b *BackendRef) GetKind() MeshHTTPRouteItemSpecToRulesKind {
-	if b == nil {
+func (m *MeshHTTPRouteItemBackendRef) GetKind() MeshHTTPRouteItemSpecToRulesKind {
+	if m == nil {
 		return MeshHTTPRouteItemSpecToRulesKind("")
 	}
-	return b.Kind
+	return m.Kind
 }
 
-func (b *BackendRef) GetLabels() map[string]string {
-	if b == nil {
+func (m *MeshHTTPRouteItemBackendRef) GetLabels() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return b.Labels
+	return m.Labels
 }
 
-func (b *BackendRef) GetMesh() *string {
-	if b == nil {
+func (m *MeshHTTPRouteItemBackendRef) GetMesh() *string {
+	if m == nil {
 		return nil
 	}
-	return b.Mesh
+	return m.Mesh
 }
 
-func (b *BackendRef) GetName() *string {
-	if b == nil {
+func (m *MeshHTTPRouteItemBackendRef) GetName() *string {
+	if m == nil {
 		return nil
 	}
-	return b.Name
+	return m.Name
 }
 
-func (b *BackendRef) GetNamespace() *string {
-	if b == nil {
+func (m *MeshHTTPRouteItemBackendRef) GetNamespace() *string {
+	if m == nil {
 		return nil
 	}
-	return b.Namespace
+	return m.Namespace
 }
 
-func (b *BackendRef) GetPort() *int {
-	if b == nil {
+func (m *MeshHTTPRouteItemBackendRef) GetPort() *int {
+	if m == nil {
 		return nil
 	}
-	return b.Port
+	return m.Port
 }
 
-func (b *BackendRef) GetProxyTypes() []MeshHTTPRouteItemSpecToRulesProxyTypes {
-	if b == nil {
+func (m *MeshHTTPRouteItemBackendRef) GetProxyTypes() []MeshHTTPRouteItemSpecToRulesProxyTypes {
+	if m == nil {
 		return nil
 	}
-	return b.ProxyTypes
+	return m.ProxyTypes
 }
 
-func (b *BackendRef) GetSectionName() *string {
-	if b == nil {
+func (m *MeshHTTPRouteItemBackendRef) GetSectionName() *string {
+	if m == nil {
 		return nil
 	}
-	return b.SectionName
+	return m.SectionName
 }
 
-func (b *BackendRef) GetTags() map[string]string {
-	if b == nil {
+func (m *MeshHTTPRouteItemBackendRef) GetTags() map[string]string {
+	if m == nil {
 		return nil
 	}
-	return b.Tags
+	return m.Tags
 }
 
-func (b *BackendRef) GetWeight() *int64 {
-	if b == nil {
+func (m *MeshHTTPRouteItemBackendRef) GetWeight() *int64 {
+	if m == nil {
 		return nil
 	}
-	return b.Weight
+	return m.Weight
 }
 
 type MeshHTTPRouteItemPercentageType string
@@ -655,15 +655,15 @@ func (u MeshHTTPRouteItemPercentage) MarshalJSON() ([]byte, error) {
 
 type RequestMirror struct {
 	// BackendRef defines where to forward traffic.
-	BackendRef BackendRef `json:"backendRef"`
+	BackendRef MeshHTTPRouteItemBackendRef `json:"backendRef"`
 	// Percentage of requests to mirror. If not specified, all requests
 	// to the target cluster will be mirrored.
 	Percentage *MeshHTTPRouteItemPercentage `json:"percentage,omitempty"`
 }
 
-func (r *RequestMirror) GetBackendRef() BackendRef {
+func (r *RequestMirror) GetBackendRef() MeshHTTPRouteItemBackendRef {
 	if r == nil {
-		return BackendRef{}
+		return MeshHTTPRouteItemBackendRef{}
 	}
 	return r.BackendRef
 }

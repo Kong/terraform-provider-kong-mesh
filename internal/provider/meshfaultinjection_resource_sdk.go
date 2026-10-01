@@ -193,10 +193,17 @@ func (r *MeshFaultInjectionResourceModel) RefreshFromSharedMeshFaultInjectionIte
 			for _, matchesItem := range rulesItem.Matches {
 				var matches tfTypes.Matches
 
+				if matchesItem.Sni == nil {
+					matches.Sni = nil
+				} else {
+					matches.Sni = &tfTypes.Sni{}
+					matches.Sni.Type = types.StringValue(string(matchesItem.Sni.Type))
+					matches.Sni.Value = types.StringValue(matchesItem.Sni.Value)
+				}
 				if matchesItem.SpiffeID == nil {
 					matches.SpiffeID = nil
 				} else {
-					matches.SpiffeID = &tfTypes.MeshFaultInjectionItemSpiffeID{}
+					matches.SpiffeID = &tfTypes.Sni{}
 					matches.SpiffeID.Type = types.StringValue(string(matchesItem.SpiffeID.Type))
 					matches.SpiffeID.Value = types.StringValue(matchesItem.SpiffeID.Value)
 				}
@@ -687,20 +694,32 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 		default1 := shared.MeshFaultInjectionItemSpecDefault{
 			HTTP: http1,
 		}
-		matches := make([]shared.Matches, 0, len(r.Spec.Rules[rulesIndex].Matches))
+		matches := make([]shared.MeshFaultInjectionItemMatches, 0, len(r.Spec.Rules[rulesIndex].Matches))
 		for matchesIndex := range r.Spec.Rules[rulesIndex].Matches {
-			var spiffeID *shared.MeshFaultInjectionItemSpiffeID
-			if r.Spec.Rules[rulesIndex].Matches[matchesIndex].SpiffeID != nil {
-				typeVar1 := shared.MeshFaultInjectionItemSpecType(r.Spec.Rules[rulesIndex].Matches[matchesIndex].SpiffeID.Type.ValueString())
+			var sni *shared.MeshFaultInjectionItemSni
+			if r.Spec.Rules[rulesIndex].Matches[matchesIndex].Sni != nil {
+				typeVar1 := shared.MeshFaultInjectionItemSpecType(r.Spec.Rules[rulesIndex].Matches[matchesIndex].Sni.Type.ValueString())
 				var value2 string
-				value2 = r.Spec.Rules[rulesIndex].Matches[matchesIndex].SpiffeID.Value.ValueString()
+				value2 = r.Spec.Rules[rulesIndex].Matches[matchesIndex].Sni.Value.ValueString()
 
-				spiffeID = &shared.MeshFaultInjectionItemSpiffeID{
+				sni = &shared.MeshFaultInjectionItemSni{
 					Type:  typeVar1,
 					Value: value2,
 				}
 			}
-			matches = append(matches, shared.Matches{
+			var spiffeID *shared.MeshFaultInjectionItemSpiffeID
+			if r.Spec.Rules[rulesIndex].Matches[matchesIndex].SpiffeID != nil {
+				typeVar2 := shared.MeshFaultInjectionItemSpecRulesType(r.Spec.Rules[rulesIndex].Matches[matchesIndex].SpiffeID.Type.ValueString())
+				var value3 string
+				value3 = r.Spec.Rules[rulesIndex].Matches[matchesIndex].SpiffeID.Value.ValueString()
+
+				spiffeID = &shared.MeshFaultInjectionItemSpiffeID{
+					Type:  typeVar2,
+					Value: value3,
+				}
+			}
+			matches = append(matches, shared.MeshFaultInjectionItemMatches{
+				Sni:      sni,
 				SpiffeID: spiffeID,
 			})
 		}
@@ -829,12 +848,12 @@ func (r *MeshFaultInjectionResourceModel) ToSharedMeshFaultInjectionItemInput(ct
 							Str: str7,
 						}
 					}
-					var value3 string
-					value3 = r.Spec.To[toIndex].Default.HTTP[httpIndex2].Delay.Value.ValueString()
+					var value4 string
+					value4 = r.Spec.To[toIndex].Default.HTTP[httpIndex2].Delay.Value.ValueString()
 
 					delay2 = &shared.MeshFaultInjectionItemSpecDelay{
 						Percentage: percentage7,
-						Value:      value3,
+						Value:      value4,
 					}
 				}
 				var responseBandwidth2 *shared.MeshFaultInjectionItemSpecResponseBandwidth

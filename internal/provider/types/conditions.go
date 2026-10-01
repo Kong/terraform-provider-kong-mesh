@@ -6,7 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type MeshExternalServiceItemConditions struct {
+type Conditions struct {
 	Message types.String `tfsdk:"message"`
 	Reason  types.String `tfsdk:"reason"`
 	Status  types.String `tfsdk:"status"`

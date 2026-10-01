@@ -286,7 +286,7 @@ func (r *MeshHTTPRouteResourceModel) RefreshFromSharedMeshHTTPRouteItem(ctx cont
 					if matchesItem.Path == nil {
 						matches.Path = nil
 					} else {
-						matches.Path = &tfTypes.MeshFaultInjectionItemSpiffeID{}
+						matches.Path = &tfTypes.Sni{}
 						matches.Path.Type = types.StringValue(string(matchesItem.Path.Type))
 						matches.Path.Value = types.StringValue(matchesItem.Path.Value)
 					}
@@ -645,7 +645,7 @@ func (r *MeshHTTPRouteResourceModel) ToSharedMeshHTTPRouteItemInput(ctx context.
 					} else {
 						weight1 = nil
 					}
-					backendRef := shared.BackendRef{
+					backendRef := shared.MeshHTTPRouteItemBackendRef{
 						Kind:        kind2,
 						Labels:      labels3,
 						Mesh:        mesh3,

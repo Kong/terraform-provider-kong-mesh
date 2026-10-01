@@ -630,9 +630,123 @@ func (m *MeshRateLimitItemSpecDefault) GetLocal() *MeshRateLimitItemLocal {
 	return m.Local
 }
 
+// MeshRateLimitItemSpecType - Type defines how to match traffic by SNI. Only `Exact` is supported.
+type MeshRateLimitItemSpecType string
+
+const (
+	MeshRateLimitItemSpecTypeExact MeshRateLimitItemSpecType = "Exact"
+)
+
+func (e MeshRateLimitItemSpecType) ToPointer() *MeshRateLimitItemSpecType {
+	return &e
+}
+func (e *MeshRateLimitItemSpecType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "Exact":
+		*e = MeshRateLimitItemSpecType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshRateLimitItemSpecType: %v", v)
+	}
+}
+
+// MeshRateLimitItemSni - SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+type MeshRateLimitItemSni struct {
+	// Type defines how to match traffic by SNI. Only `Exact` is supported.
+	Type MeshRateLimitItemSpecType `json:"type"`
+	// Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied
+	Value string `json:"value"`
+}
+
+func (m *MeshRateLimitItemSni) GetType() MeshRateLimitItemSpecType {
+	if m == nil {
+		return MeshRateLimitItemSpecType("")
+	}
+	return m.Type
+}
+
+func (m *MeshRateLimitItemSni) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// MeshRateLimitItemSpecRulesType - Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
+type MeshRateLimitItemSpecRulesType string
+
+const (
+	MeshRateLimitItemSpecRulesTypeExact  MeshRateLimitItemSpecRulesType = "Exact"
+	MeshRateLimitItemSpecRulesTypePrefix MeshRateLimitItemSpecRulesType = "Prefix"
+)
+
+func (e MeshRateLimitItemSpecRulesType) ToPointer() *MeshRateLimitItemSpecRulesType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshRateLimitItemSpecRulesType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Exact", "Prefix":
+			return true
+		}
+	}
+	return false
+}
+
+// MeshRateLimitItemSpiffeID - SpiffeID defines a matcher configuration for SpiffeID matching
+type MeshRateLimitItemSpiffeID struct {
+	// Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
+	Type MeshRateLimitItemSpecRulesType `json:"type"`
+	// Value is SpiffeID of a client that needs to match for the configuration to be applied
+	Value string `json:"value"`
+}
+
+func (m *MeshRateLimitItemSpiffeID) GetType() MeshRateLimitItemSpecRulesType {
+	if m == nil {
+		return MeshRateLimitItemSpecRulesType("")
+	}
+	return m.Type
+}
+
+func (m *MeshRateLimitItemSpiffeID) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+type MeshRateLimitItemMatches struct {
+	// SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+	Sni *MeshRateLimitItemSni `json:"sni,omitempty"`
+	// SpiffeID defines a matcher configuration for SpiffeID matching
+	SpiffeID *MeshRateLimitItemSpiffeID `json:"spiffeID,omitempty"`
+}
+
+func (m *MeshRateLimitItemMatches) GetSni() *MeshRateLimitItemSni {
+	if m == nil {
+		return nil
+	}
+	return m.Sni
+}
+
+func (m *MeshRateLimitItemMatches) GetSpiffeID() *MeshRateLimitItemSpiffeID {
+	if m == nil {
+		return nil
+	}
+	return m.SpiffeID
+}
+
 type MeshRateLimitItemRules struct {
 	// Default contains configuration of the inbound rate limits
 	Default *MeshRateLimitItemSpecDefault `json:"default,omitempty"`
+	// Matches define additional conditions for applying this rate limit rule.
+	Matches []MeshRateLimitItemMatches `json:"matches,omitempty"`
 }
 
 func (m *MeshRateLimitItemRules) GetDefault() *MeshRateLimitItemSpecDefault {
@@ -640,6 +754,13 @@ func (m *MeshRateLimitItemRules) GetDefault() *MeshRateLimitItemSpecDefault {
 		return nil
 	}
 	return m.Default
+}
+
+func (m *MeshRateLimitItemRules) GetMatches() []MeshRateLimitItemMatches {
+	if m == nil {
+		return nil
+	}
+	return m.Matches
 }
 
 // MeshRateLimitItemKind - Kind of the referenced resource
@@ -1160,8 +1281,7 @@ func (m *MeshRateLimitItemTo) GetTargetRef() MeshRateLimitItemSpecToTargetRef {
 type MeshRateLimitItemSpec struct {
 	// From list makes a match between clients and corresponding configurations
 	From []MeshRateLimitItemFrom `json:"from,omitempty"`
-	// Rules defines inbound rate limiting configurations. Currently limited to
-	// selecting all inbound traffic, as L7 matching is not yet implemented.
+	// Rules defines inbound rate limiting configurations.
 	Rules []MeshRateLimitItemRules `json:"rules,omitempty"`
 	// TargetRef is a reference to the resource the policy takes an effect on.
 	// The resource could be either a real store object or virtual resource

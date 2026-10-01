@@ -15,18 +15,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	custom_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
 	speakeasy_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
+	speakeasy_objectplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/objectplanmodifier"
 	custom_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/stringvalidators"
+	"regexp"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -52,6 +55,7 @@ type MeshAccessLogResourceModel struct {
 	ModificationTime types.String                  `tfsdk:"modification_time"`
 	Name             types.String                  `tfsdk:"name"`
 	Spec             *tfTypes.Spec                 `tfsdk:"spec"`
+	Status           *tfTypes.Status               `tfsdk:"status"`
 	Type             types.String                  `tfsdk:"type"`
 	Warnings         []types.String                `tfsdk:"warnings"`
 }
@@ -213,22 +217,47 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 																	Attributes: map[string]schema.Attribute{
 																		"key": schema.StringAttribute{
 																			Optional:    true,
-																			Description: `Not Null`,
+																			Description: `Key is the OpenTelemetry attribute name. Not Null`,
 																			Validators: []validator.String{
 																				speakeasy_stringvalidators.NotNull(),
+																				stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z]([a-z0-9]|[._][a-z0-9])*$`), "must match pattern "+regexp.MustCompile(`^[a-z]([a-z0-9]|[._][a-z0-9])*$`).String()),
 																			},
 																		},
 																		"value": schema.StringAttribute{
 																			Optional:    true,
-																			Description: `Not Null`,
+																			Description: `Value can contain Kuma placeholders. Not Null`,
 																			Validators: []validator.String{
 																				speakeasy_stringvalidators.NotNull(),
 																			},
 																		},
 																	},
 																},
-																MarkdownDescription: `Attributes can contain placeholders available on` + "\n" +
+																MarkdownDescription: `Attributes defines custom OpenTelemetry attributes. Keys must be static` + "\n" +
+																	`OpenTelemetry attribute names. Values can contain placeholders available on` + "\n" +
 																	`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
+															},
+															"backend_ref": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"kind": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"`,
+																		Validators: []validator.String{
+																			speakeasy_stringvalidators.NotNull(),
+																			stringvalidator.OneOf(
+																				"MeshOpenTelemetryBackend",
+																			),
+																		},
+																	},
+																	"labels": schema.MapAttribute{
+																		Optional:    true,
+																		ElementType: types.StringType,
+																		MarkdownDescription: `Labels to match the referenced resource. When multiple resources match,` + "\n" +
+																			`the oldest by creation time wins.`,
+																	},
+																},
+																MarkdownDescription: `BackendRef is a reference to a MeshOpenTelemetryBackend resource that` + "\n" +
+																	`defines the collector endpoint. Mutually exclusive with Endpoint.`,
 															},
 															"body": schema.StringAttribute{
 																CustomType: jsontypes.NormalizedType{},
@@ -244,12 +273,13 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 																	`Parsed as JSON.`,
 															},
 															"endpoint": schema.StringAttribute{
-																Optional:    true,
-																Description: `Endpoint of OpenTelemetry collector. An empty port defaults to 4317. Not Null`,
-																Validators: []validator.String{
-																	speakeasy_stringvalidators.NotNull(),
-																	stringvalidator.UTF8LengthAtLeast(1),
-																},
+																Computed: true,
+																Optional: true,
+																Default:  stringdefault.StaticString(``),
+																MarkdownDescription: `Endpoint of OpenTelemetry collector. An empty port defaults to 4317.` + "\n" +
+																	`` + "\n" +
+																	`Deprecated: use BackendRef instead.` + "\n" +
+																	`Default: ""`,
 															},
 														},
 														Description: `Defines an OpenTelemetry logging backend.`,
@@ -506,22 +536,47 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 																	Attributes: map[string]schema.Attribute{
 																		"key": schema.StringAttribute{
 																			Optional:    true,
-																			Description: `Not Null`,
+																			Description: `Key is the OpenTelemetry attribute name. Not Null`,
 																			Validators: []validator.String{
 																				speakeasy_stringvalidators.NotNull(),
+																				stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z]([a-z0-9]|[._][a-z0-9])*$`), "must match pattern "+regexp.MustCompile(`^[a-z]([a-z0-9]|[._][a-z0-9])*$`).String()),
 																			},
 																		},
 																		"value": schema.StringAttribute{
 																			Optional:    true,
-																			Description: `Not Null`,
+																			Description: `Value can contain Kuma placeholders. Not Null`,
 																			Validators: []validator.String{
 																				speakeasy_stringvalidators.NotNull(),
 																			},
 																		},
 																	},
 																},
-																MarkdownDescription: `Attributes can contain placeholders available on` + "\n" +
+																MarkdownDescription: `Attributes defines custom OpenTelemetry attributes. Keys must be static` + "\n" +
+																	`OpenTelemetry attribute names. Values can contain placeholders available on` + "\n" +
 																	`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
+															},
+															"backend_ref": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"kind": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"`,
+																		Validators: []validator.String{
+																			speakeasy_stringvalidators.NotNull(),
+																			stringvalidator.OneOf(
+																				"MeshOpenTelemetryBackend",
+																			),
+																		},
+																	},
+																	"labels": schema.MapAttribute{
+																		Optional:    true,
+																		ElementType: types.StringType,
+																		MarkdownDescription: `Labels to match the referenced resource. When multiple resources match,` + "\n" +
+																			`the oldest by creation time wins.`,
+																	},
+																},
+																MarkdownDescription: `BackendRef is a reference to a MeshOpenTelemetryBackend resource that` + "\n" +
+																	`defines the collector endpoint. Mutually exclusive with Endpoint.`,
 															},
 															"body": schema.StringAttribute{
 																CustomType: jsontypes.NormalizedType{},
@@ -534,12 +589,13 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 																	`Parsed as JSON.`,
 															},
 															"endpoint": schema.StringAttribute{
-																Optional:    true,
-																Description: `Endpoint of OpenTelemetry collector. An empty port defaults to 4317. Not Null`,
-																Validators: []validator.String{
-																	speakeasy_stringvalidators.NotNull(),
-																	stringvalidator.UTF8LengthAtLeast(1),
-																},
+																Computed: true,
+																Optional: true,
+																Default:  stringdefault.StaticString(``),
+																MarkdownDescription: `Endpoint of OpenTelemetry collector. An empty port defaults to 4317.` + "\n" +
+																	`` + "\n" +
+																	`Deprecated: use BackendRef instead.` + "\n" +
+																	`Default: ""`,
 															},
 														},
 														Description: `Defines an OpenTelemetry logging backend.`,
@@ -625,10 +681,67 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 										speakeasy_objectvalidators.NotNull(),
 									},
 								},
+								"matches": schema.ListNestedAttribute{
+									Computed: true,
+									Optional: true,
+									PlanModifiers: []planmodifier.List{
+										custom_listplanmodifier.SupressZeroNullModifier(),
+									},
+									NestedObject: schema.NestedAttributeObject{
+										Validators: []validator.Object{
+											speakeasy_objectvalidators.NotNull(),
+										},
+										Attributes: map[string]schema.Attribute{
+											"sni": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"type": schema.StringAttribute{
+														Optional:    true,
+														Description: `Type defines how to match traffic by SNI. Only ` + "`" + `Exact` + "`" + ` is supported. Not Null; must be "Exact"`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+															stringvalidator.OneOf("Exact"),
+														},
+													},
+													"value": schema.StringAttribute{
+														Optional:    true,
+														Description: `Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied. Not Null`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+														},
+													},
+												},
+												Description: `SNI defines a matcher configuration for matching by SNI value carried on the TLS connection`,
+											},
+											"spiffe_id": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"type": schema.StringAttribute{
+														Optional:    true,
+														Description: `Type defines how to match incoming traffic by SpiffeID. ` + "`" + `Exact` + "`" + ` or ` + "`" + `Prefix` + "`" + ` are allowed. possible known values include one of ["Exact", "Prefix"]; Not Null`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+														},
+													},
+													"value": schema.StringAttribute{
+														Optional:    true,
+														Description: `Value is SpiffeID of a client that needs to match for the configuration to be applied. Not Null`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
+														},
+													},
+												},
+												Description: `SpiffeID defines a matcher configuration for SpiffeID matching`,
+											},
+										},
+									},
+									MarkdownDescription: `Matches defines a list of conditions (by SpiffeID or SNI) that select the` + "\n" +
+										`traffic this rule applies to. Rules fire independently: a connection that` + "\n" +
+										`satisfies multiple rules is logged to every matching rule's backends.`,
+								},
 							},
 						},
-						MarkdownDescription: `Rules defines inbound access log configurations. Currently limited to` + "\n" +
-							`selecting all inbound traffic, as L7 matching is not yet implemented.`,
+						Description: `Rules defines inbound access log configurations.`,
 					},
 					"target_ref": schema.SingleNestedAttribute{
 						Optional: true,
@@ -789,22 +902,47 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 																	Attributes: map[string]schema.Attribute{
 																		"key": schema.StringAttribute{
 																			Optional:    true,
-																			Description: `Not Null`,
+																			Description: `Key is the OpenTelemetry attribute name. Not Null`,
 																			Validators: []validator.String{
 																				speakeasy_stringvalidators.NotNull(),
+																				stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z]([a-z0-9]|[._][a-z0-9])*$`), "must match pattern "+regexp.MustCompile(`^[a-z]([a-z0-9]|[._][a-z0-9])*$`).String()),
 																			},
 																		},
 																		"value": schema.StringAttribute{
 																			Optional:    true,
-																			Description: `Not Null`,
+																			Description: `Value can contain Kuma placeholders. Not Null`,
 																			Validators: []validator.String{
 																				speakeasy_stringvalidators.NotNull(),
 																			},
 																		},
 																	},
 																},
-																MarkdownDescription: `Attributes can contain placeholders available on` + "\n" +
+																MarkdownDescription: `Attributes defines custom OpenTelemetry attributes. Keys must be static` + "\n" +
+																	`OpenTelemetry attribute names. Values can contain placeholders available on` + "\n" +
 																	`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
+															},
+															"backend_ref": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"kind": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"`,
+																		Validators: []validator.String{
+																			speakeasy_stringvalidators.NotNull(),
+																			stringvalidator.OneOf(
+																				"MeshOpenTelemetryBackend",
+																			),
+																		},
+																	},
+																	"labels": schema.MapAttribute{
+																		Optional:    true,
+																		ElementType: types.StringType,
+																		MarkdownDescription: `Labels to match the referenced resource. When multiple resources match,` + "\n" +
+																			`the oldest by creation time wins.`,
+																	},
+																},
+																MarkdownDescription: `BackendRef is a reference to a MeshOpenTelemetryBackend resource that` + "\n" +
+																	`defines the collector endpoint. Mutually exclusive with Endpoint.`,
 															},
 															"body": schema.StringAttribute{
 																CustomType: jsontypes.NormalizedType{},
@@ -820,12 +958,13 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 																	`Parsed as JSON.`,
 															},
 															"endpoint": schema.StringAttribute{
-																Optional:    true,
-																Description: `Endpoint of OpenTelemetry collector. An empty port defaults to 4317. Not Null`,
-																Validators: []validator.String{
-																	speakeasy_stringvalidators.NotNull(),
-																	stringvalidator.UTF8LengthAtLeast(1),
-																},
+																Computed: true,
+																Optional: true,
+																Default:  stringdefault.StaticString(``),
+																MarkdownDescription: `Endpoint of OpenTelemetry collector. An empty port defaults to 4317.` + "\n" +
+																	`` + "\n" +
+																	`Deprecated: use BackendRef instead.` + "\n" +
+																	`Default: ""`,
 															},
 														},
 														Description: `Defines an OpenTelemetry logging backend.`,
@@ -978,6 +1117,53 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 					},
 				},
 				Description: `Spec is the specification of the Kuma MeshAccessLog resource.`,
+			},
+			"status": schema.SingleNestedAttribute{
+				Computed: true,
+				PlanModifiers: []planmodifier.Object{
+					speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+				},
+				Attributes: map[string]schema.Attribute{
+					"conditions": schema.ListNestedAttribute{
+						Computed: true,
+						PlanModifiers: []planmodifier.List{
+							custom_listplanmodifier.SupressZeroNullModifier(),
+							speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
+						},
+						NestedObject: schema.NestedAttributeObject{
+							PlanModifiers: []planmodifier.Object{
+								speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+							},
+							Attributes: map[string]schema.Attribute{
+								"message": schema.StringAttribute{
+									Computed: true,
+									MarkdownDescription: `message is a human readable message indicating details about the transition.` + "\n" +
+										`This may be an empty string.`,
+								},
+								"reason": schema.StringAttribute{
+									Computed: true,
+									MarkdownDescription: `reason contains a programmatic identifier indicating the reason for the condition's last transition.` + "\n" +
+										`Producers of specific condition types may define expected values and meanings for this field,` + "\n" +
+										`and whether the values are considered a guaranteed API.` + "\n" +
+										`The value should be a CamelCase string.` + "\n" +
+										`This field may not be empty.`,
+								},
+								"status": schema.StringAttribute{
+									Computed: true,
+									PlanModifiers: []planmodifier.String{
+										speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+									},
+									Description: `status of the condition, one of True, False, Unknown.`,
+								},
+								"type": schema.StringAttribute{
+									Computed:    true,
+									Description: `type of condition in CamelCase or in foo.example.com/CamelCase.`,
+								},
+							},
+						},
+					},
+				},
+				Description: `Status is the current status of the Kuma MeshAccessLog resource.`,
 			},
 			"type": schema.StringAttribute{
 				Required:    true,

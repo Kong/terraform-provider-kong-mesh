@@ -97,6 +97,18 @@ resource "kong-mesh_mesh_rate_limit" "my_meshratelimit" {
             }
           }
         }
+        matches = [
+          {
+            sni = {
+              type  = "Exact"
+              value = "...my_value..."
+            }
+            spiffe_id = {
+              type  = "Exact"
+              value = "...my_value..."
+            }
+          }
+        ]
       }
     ]
     target_ref = {

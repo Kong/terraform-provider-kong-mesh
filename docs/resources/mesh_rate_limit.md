@@ -112,6 +112,18 @@ resource "kong-mesh_mesh_rate_limit" "my_meshratelimit" {
             }
           }
         }
+        matches = [
+          {
+            sni = {
+              type  = "Exact"
+              value = "...my_value..."
+            }
+            spiffe_id = {
+              type  = "Exact"
+              value = "...my_value..."
+            }
+          }
+        ]
       }
     ]
     target_ref = {
@@ -218,8 +230,7 @@ Warning messages describe a problem the client making the API request should cor
 Optional:
 
 - `from` (Attributes List) From list makes a match between clients and corresponding configurations (see [below for nested schema](#nestedatt--spec--from))
-- `rules` (Attributes List) Rules defines inbound rate limiting configurations. Currently limited to
-selecting all inbound traffic, as L7 matching is not yet implemented. (see [below for nested schema](#nestedatt--spec--rules))
+- `rules` (Attributes List) Rules defines inbound rate limiting configurations. (see [below for nested schema](#nestedatt--spec--rules))
 - `target_ref` (Attributes) TargetRef is a reference to the resource the policy takes an effect on.
 The resource could be either a real store object or virtual resource
 defined inplace. (see [below for nested schema](#nestedatt--spec--target_ref))
@@ -361,6 +372,7 @@ For example, you can target port from MeshService.ports[] by its name. Only traf
 Optional:
 
 - `default` (Attributes) Default contains configuration of the inbound rate limits (see [below for nested schema](#nestedatt--spec--rules--default))
+- `matches` (Attributes List) Matches define additional conditions for applying this rate limit rule. (see [below for nested schema](#nestedatt--spec--rules--matches))
 
 <a id="nestedatt--spec--rules--default"></a>
 ### Nested Schema for `spec.rules.default`
@@ -456,6 +468,33 @@ or a number of connections).
 Not Null
 
 
+
+
+
+<a id="nestedatt--spec--rules--matches"></a>
+### Nested Schema for `spec.rules.matches`
+
+Optional:
+
+- `sni` (Attributes) SNI defines a matcher configuration for matching by SNI value carried on the TLS connection (see [below for nested schema](#nestedatt--spec--rules--matches--sni))
+- `spiffe_id` (Attributes) SpiffeID defines a matcher configuration for SpiffeID matching (see [below for nested schema](#nestedatt--spec--rules--matches--spiffe_id))
+
+<a id="nestedatt--spec--rules--matches--sni"></a>
+### Nested Schema for `spec.rules.matches.sni`
+
+Optional:
+
+- `type` (String) Type defines how to match traffic by SNI. Only `Exact` is supported. Not Null; must be "Exact"
+- `value` (String) Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied. Not Null
+
+
+<a id="nestedatt--spec--rules--matches--spiffe_id"></a>
+### Nested Schema for `spec.rules.matches.spiffe_id`
+
+Optional:
+
+- `type` (String) Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed. possible known values include one of ["Exact", "Prefix"]; Not Null
+- `value` (String) Value is SpiffeID of a client that needs to match for the configuration to be applied. Not Null
 
 
 

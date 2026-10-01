@@ -13,6 +13,12 @@ resource "kong-mesh_mesh_trace" "my_meshtrace" {
             url           = "...my_url..."
           }
           open_telemetry = {
+            backend_ref = {
+              kind = "MeshOpenTelemetryBackend"
+              labels = {
+                key = "value"
+              }
+            }
             endpoint = "otel-collector:4317"
           }
           type = "OpenTelemetry"

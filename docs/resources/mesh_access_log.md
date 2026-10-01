@@ -46,6 +46,12 @@ resource "kong-mesh_mesh_access_log" "my_meshaccesslog" {
                     value = "...my_value..."
                   }
                 ]
+                backend_ref = {
+                  kind = "MeshOpenTelemetryBackend"
+                  labels = {
+                    key = "value"
+                  }
+                }
                 body     = { "kvlistValue" : { "values" : [{ "key" : "mesh", "value" : { "stringValue" : "%KUMA_MESH%" } }] } }
                 endpoint = "otel-collector:4317"
               }
@@ -111,6 +117,12 @@ resource "kong-mesh_mesh_access_log" "my_meshaccesslog" {
                     value = "...my_value..."
                   }
                 ]
+                backend_ref = {
+                  kind = "MeshOpenTelemetryBackend"
+                  labels = {
+                    key = "value"
+                  }
+                }
                 body     = { "kvlistValue" : { "values" : [{ "key" : "mesh", "value" : { "stringValue" : "%KUMA_MESH%" } }] } }
                 endpoint = "otel-collector:4317"
               }
@@ -132,6 +144,18 @@ resource "kong-mesh_mesh_access_log" "my_meshaccesslog" {
             }
           ]
         }
+        matches = [
+          {
+            sni = {
+              type  = "Exact"
+              value = "...my_value..."
+            }
+            spiffe_id = {
+              type  = "Prefix"
+              value = "...my_value..."
+            }
+          }
+        ]
       }
     ]
     target_ref = {
@@ -176,6 +200,12 @@ resource "kong-mesh_mesh_access_log" "my_meshaccesslog" {
                     value = "...my_value..."
                   }
                 ]
+                backend_ref = {
+                  kind = "MeshOpenTelemetryBackend"
+                  labels = {
+                    key = "value"
+                  }
+                }
                 body     = { "kvlistValue" : { "values" : [{ "key" : "mesh", "value" : { "stringValue" : "%KUMA_MESH%" } }] } }
                 endpoint = "otel-collector:4317"
               }
@@ -239,6 +269,7 @@ resource "kong-mesh_mesh_access_log" "my_meshaccesslog" {
 - `creation_time` (String) Time at which the resource was created
 - `kri` (String) A unique identifier for this resource instance used by internal tooling and integrations. Typically derived from resource attributes and may be used for cross-references or indexing
 - `modification_time` (String) Time at which the resource was updated
+- `status` (Attributes) Status is the current status of the Kuma MeshAccessLog resource. (see [below for nested schema](#nestedatt--status))
 - `warnings` (List of String) warnings is a list of warning messages to return to the requesting Kuma API clients.
 Warning messages describe a problem the client making the API request should correct or be aware of.
 
@@ -248,8 +279,7 @@ Warning messages describe a problem the client making the API request should cor
 Optional:
 
 - `from` (Attributes List) From list makes a match between clients and corresponding configurations (see [below for nested schema](#nestedatt--spec--from))
-- `rules` (Attributes List) Rules defines inbound access log configurations. Currently limited to
-selecting all inbound traffic, as L7 matching is not yet implemented. (see [below for nested schema](#nestedatt--spec--rules))
+- `rules` (Attributes List) Rules defines inbound access log configurations. (see [below for nested schema](#nestedatt--spec--rules))
 - `target_ref` (Attributes) TargetRef is a reference to the resource the policy takes an effect on.
 The resource could be either a real store object or virtual resource
 defined in-place. (see [below for nested schema](#nestedatt--spec--target_ref))
@@ -319,22 +349,38 @@ Optional:
 
 Optional:
 
-- `attributes` (Attributes List) Attributes can contain placeholders available on
+- `attributes` (Attributes List) Attributes defines custom OpenTelemetry attributes. Keys must be static
+OpenTelemetry attribute names. Values can contain placeholders available on
 https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators (see [below for nested schema](#nestedatt--spec--from--default--backends--open_telemetry--attributes))
+- `backend_ref` (Attributes) BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+defines the collector endpoint. Mutually exclusive with Endpoint. (see [below for nested schema](#nestedatt--spec--from--default--backends--open_telemetry--backend_ref))
 - `body` (String) Body is a raw string or an OTLP any value as described at
 https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body
 It can contain placeholders available on
 https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
 Parsed as JSON.
-- `endpoint` (String) Endpoint of OpenTelemetry collector. An empty port defaults to 4317. Not Null
+- `endpoint` (String) Endpoint of OpenTelemetry collector. An empty port defaults to 4317.
+
+Deprecated: use BackendRef instead.
+Default: ""
 
 <a id="nestedatt--spec--from--default--backends--open_telemetry--attributes"></a>
 ### Nested Schema for `spec.from.default.backends.open_telemetry.attributes`
 
 Optional:
 
-- `key` (String) Not Null
-- `value` (String) Not Null
+- `key` (String) Key is the OpenTelemetry attribute name. Not Null
+- `value` (String) Value can contain Kuma placeholders. Not Null
+
+
+<a id="nestedatt--spec--from--default--backends--open_telemetry--backend_ref"></a>
+### Nested Schema for `spec.from.default.backends.open_telemetry.backend_ref`
+
+Optional:
+
+- `kind` (String) Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"
+- `labels` (Map of String) Labels to match the referenced resource. When multiple resources match,
+the oldest by creation time wins.
 
 
 
@@ -398,6 +444,9 @@ For example, you can target port from MeshService.ports[] by its name. Only traf
 Optional:
 
 - `default` (Attributes) Default contains configuration of the inbound access logging. Not Null (see [below for nested schema](#nestedatt--spec--rules--default))
+- `matches` (Attributes List) Matches defines a list of conditions (by SpiffeID or SNI) that select the
+traffic this rule applies to. Rules fire independently: a connection that
+satisfies multiple rules is logged to every matching rule's backends. (see [below for nested schema](#nestedatt--spec--rules--matches))
 
 <a id="nestedatt--spec--rules--default"></a>
 ### Nested Schema for `spec.rules.default`
@@ -451,22 +500,38 @@ Optional:
 
 Optional:
 
-- `attributes` (Attributes List) Attributes can contain placeholders available on
+- `attributes` (Attributes List) Attributes defines custom OpenTelemetry attributes. Keys must be static
+OpenTelemetry attribute names. Values can contain placeholders available on
 https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators (see [below for nested schema](#nestedatt--spec--rules--default--backends--open_telemetry--attributes))
+- `backend_ref` (Attributes) BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+defines the collector endpoint. Mutually exclusive with Endpoint. (see [below for nested schema](#nestedatt--spec--rules--default--backends--open_telemetry--backend_ref))
 - `body` (String) Body is a raw string or an OTLP any value as described at
 https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body
 It can contain placeholders available on
 https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
 Parsed as JSON.
-- `endpoint` (String) Endpoint of OpenTelemetry collector. An empty port defaults to 4317. Not Null
+- `endpoint` (String) Endpoint of OpenTelemetry collector. An empty port defaults to 4317.
+
+Deprecated: use BackendRef instead.
+Default: ""
 
 <a id="nestedatt--spec--rules--default--backends--open_telemetry--attributes"></a>
 ### Nested Schema for `spec.rules.default.backends.open_telemetry.attributes`
 
 Optional:
 
-- `key` (String) Not Null
-- `value` (String) Not Null
+- `key` (String) Key is the OpenTelemetry attribute name. Not Null
+- `value` (String) Value can contain Kuma placeholders. Not Null
+
+
+<a id="nestedatt--spec--rules--default--backends--open_telemetry--backend_ref"></a>
+### Nested Schema for `spec.rules.default.backends.open_telemetry.backend_ref`
+
+Optional:
+
+- `kind` (String) Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"
+- `labels` (Map of String) Labels to match the referenced resource. When multiple resources match,
+the oldest by creation time wins.
 
 
 
@@ -499,6 +564,33 @@ Optional:
 
 
 
+
+
+
+<a id="nestedatt--spec--rules--matches"></a>
+### Nested Schema for `spec.rules.matches`
+
+Optional:
+
+- `sni` (Attributes) SNI defines a matcher configuration for matching by SNI value carried on the TLS connection (see [below for nested schema](#nestedatt--spec--rules--matches--sni))
+- `spiffe_id` (Attributes) SpiffeID defines a matcher configuration for SpiffeID matching (see [below for nested schema](#nestedatt--spec--rules--matches--spiffe_id))
+
+<a id="nestedatt--spec--rules--matches--sni"></a>
+### Nested Schema for `spec.rules.matches.sni`
+
+Optional:
+
+- `type` (String) Type defines how to match traffic by SNI. Only `Exact` is supported. Not Null; must be "Exact"
+- `value` (String) Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied. Not Null
+
+
+<a id="nestedatt--spec--rules--matches--spiffe_id"></a>
+### Nested Schema for `spec.rules.matches.spiffe_id`
+
+Optional:
+
+- `type` (String) Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed. possible known values include one of ["Exact", "Prefix"]; Not Null
+- `value` (String) Value is SpiffeID of a client that needs to match for the configuration to be applied. Not Null
 
 
 
@@ -591,22 +683,38 @@ Optional:
 
 Optional:
 
-- `attributes` (Attributes List) Attributes can contain placeholders available on
+- `attributes` (Attributes List) Attributes defines custom OpenTelemetry attributes. Keys must be static
+OpenTelemetry attribute names. Values can contain placeholders available on
 https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators (see [below for nested schema](#nestedatt--spec--to--default--backends--open_telemetry--attributes))
+- `backend_ref` (Attributes) BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+defines the collector endpoint. Mutually exclusive with Endpoint. (see [below for nested schema](#nestedatt--spec--to--default--backends--open_telemetry--backend_ref))
 - `body` (String) Body is a raw string or an OTLP any value as described at
 https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body
 It can contain placeholders available on
 https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
 Parsed as JSON.
-- `endpoint` (String) Endpoint of OpenTelemetry collector. An empty port defaults to 4317. Not Null
+- `endpoint` (String) Endpoint of OpenTelemetry collector. An empty port defaults to 4317.
+
+Deprecated: use BackendRef instead.
+Default: ""
 
 <a id="nestedatt--spec--to--default--backends--open_telemetry--attributes"></a>
 ### Nested Schema for `spec.to.default.backends.open_telemetry.attributes`
 
 Optional:
 
-- `key` (String) Not Null
-- `value` (String) Not Null
+- `key` (String) Key is the OpenTelemetry attribute name. Not Null
+- `value` (String) Value can contain Kuma placeholders. Not Null
+
+
+<a id="nestedatt--spec--to--default--backends--open_telemetry--backend_ref"></a>
+### Nested Schema for `spec.to.default.backends.open_telemetry.backend_ref`
+
+Optional:
+
+- `kind` (String) Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"
+- `labels` (Map of String) Labels to match the referenced resource. When multiple resources match,
+the oldest by creation time wins.
 
 
 
@@ -661,6 +769,31 @@ all data plane types are targeted by the policy.
 For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 - `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds
 `MeshSubset` and `MeshServiceSubset`
+
+
+
+
+<a id="nestedatt--status"></a>
+### Nested Schema for `status`
+
+Read-Only:
+
+- `conditions` (Attributes List) (see [below for nested schema](#nestedatt--status--conditions))
+
+<a id="nestedatt--status--conditions"></a>
+### Nested Schema for `status.conditions`
+
+Read-Only:
+
+- `message` (String) message is a human readable message indicating details about the transition.
+This may be an empty string.
+- `reason` (String) reason contains a programmatic identifier indicating the reason for the condition's last transition.
+Producers of specific condition types may define expected values and meanings for this field,
+and whether the values are considered a guaranteed API.
+The value should be a CamelCase string.
+This field may not be empty.
+- `status` (String) status of the condition, one of True, False, Unknown.
+- `type` (String) type of condition in CamelCase or in foo.example.com/CamelCase.
 
 ## Import
 

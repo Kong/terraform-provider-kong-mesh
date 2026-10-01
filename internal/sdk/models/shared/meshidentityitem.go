@@ -67,15 +67,15 @@ func (m *MeshIdentityItemFile) GetPath() string {
 	return m.Path
 }
 
-type InsecureInline struct {
+type MeshIdentityItemInsecureInline struct {
 	Value string `json:"value"`
 }
 
-func (i *InsecureInline) GetValue() string {
-	if i == nil {
+func (m *MeshIdentityItemInsecureInline) GetValue() string {
+	if m == nil {
 		return ""
 	}
-	return i.Value
+	return m.Value
 }
 
 type MeshIdentityItemKind string
@@ -101,23 +101,23 @@ func (e *MeshIdentityItemKind) UnmarshalJSON(data []byte) error {
 	}
 }
 
-type SecretRef struct {
+type MeshIdentityItemSecretRef struct {
 	Kind MeshIdentityItemKind `json:"kind"`
 	Name string               `json:"name"`
 }
 
-func (s *SecretRef) GetKind() MeshIdentityItemKind {
-	if s == nil {
+func (m *MeshIdentityItemSecretRef) GetKind() MeshIdentityItemKind {
+	if m == nil {
 		return MeshIdentityItemKind("")
 	}
-	return s.Kind
+	return m.Kind
 }
 
-func (s *SecretRef) GetName() string {
-	if s == nil {
+func (m *MeshIdentityItemSecretRef) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return s.Name
+	return m.Name
 }
 
 type MeshIdentityItemSpecProviderBundledType string
@@ -148,8 +148,8 @@ func (e *MeshIdentityItemSpecProviderBundledType) IsExact() bool {
 type Certificate struct {
 	EnvVar         *EnvVar                                 `json:"envVar,omitempty"`
 	File           *MeshIdentityItemFile                   `json:"file,omitempty"`
-	InsecureInline *InsecureInline                         `json:"insecureInline,omitempty"`
-	SecretRef      *SecretRef                              `json:"secretRef,omitempty"`
+	InsecureInline *MeshIdentityItemInsecureInline         `json:"insecureInline,omitempty"`
+	SecretRef      *MeshIdentityItemSecretRef              `json:"secretRef,omitempty"`
 	Type           MeshIdentityItemSpecProviderBundledType `json:"type"`
 }
 
@@ -167,14 +167,14 @@ func (c *Certificate) GetFile() *MeshIdentityItemFile {
 	return c.File
 }
 
-func (c *Certificate) GetInsecureInline() *InsecureInline {
+func (c *Certificate) GetInsecureInline() *MeshIdentityItemInsecureInline {
 	if c == nil {
 		return nil
 	}
 	return c.InsecureInline
 }
 
-func (c *Certificate) GetSecretRef() *SecretRef {
+func (c *Certificate) GetSecretRef() *MeshIdentityItemSecretRef {
 	if c == nil {
 		return nil
 	}
@@ -210,11 +210,11 @@ func (m *MeshIdentityItemSpecFile) GetPath() string {
 	return m.Path
 }
 
-type MeshIdentityItemInsecureInline struct {
+type MeshIdentityItemSpecInsecureInline struct {
 	Value string `json:"value"`
 }
 
-func (m *MeshIdentityItemInsecureInline) GetValue() string {
+func (m *MeshIdentityItemSpecInsecureInline) GetValue() string {
 	if m == nil {
 		return ""
 	}
@@ -244,19 +244,19 @@ func (e *MeshIdentityItemSpecKind) UnmarshalJSON(data []byte) error {
 	}
 }
 
-type MeshIdentityItemSecretRef struct {
+type MeshIdentityItemSpecSecretRef struct {
 	Kind MeshIdentityItemSpecKind `json:"kind"`
 	Name string                   `json:"name"`
 }
 
-func (m *MeshIdentityItemSecretRef) GetKind() MeshIdentityItemSpecKind {
+func (m *MeshIdentityItemSpecSecretRef) GetKind() MeshIdentityItemSpecKind {
 	if m == nil {
 		return MeshIdentityItemSpecKind("")
 	}
 	return m.Kind
 }
 
-func (m *MeshIdentityItemSecretRef) GetName() string {
+func (m *MeshIdentityItemSpecSecretRef) GetName() string {
 	if m == nil {
 		return ""
 	}
@@ -289,11 +289,11 @@ func (e *MeshIdentityItemSpecProviderType) IsExact() bool {
 
 // PrivateKey allows the user to specify a custom private key.
 type PrivateKey struct {
-	EnvVar         *MeshIdentityItemEnvVar          `json:"envVar,omitempty"`
-	File           *MeshIdentityItemSpecFile        `json:"file,omitempty"`
-	InsecureInline *MeshIdentityItemInsecureInline  `json:"insecureInline,omitempty"`
-	SecretRef      *MeshIdentityItemSecretRef       `json:"secretRef,omitempty"`
-	Type           MeshIdentityItemSpecProviderType `json:"type"`
+	EnvVar         *MeshIdentityItemEnvVar             `json:"envVar,omitempty"`
+	File           *MeshIdentityItemSpecFile           `json:"file,omitempty"`
+	InsecureInline *MeshIdentityItemSpecInsecureInline `json:"insecureInline,omitempty"`
+	SecretRef      *MeshIdentityItemSpecSecretRef      `json:"secretRef,omitempty"`
+	Type           MeshIdentityItemSpecProviderType    `json:"type"`
 }
 
 func (p *PrivateKey) GetEnvVar() *MeshIdentityItemEnvVar {
@@ -310,14 +310,14 @@ func (p *PrivateKey) GetFile() *MeshIdentityItemSpecFile {
 	return p.File
 }
 
-func (p *PrivateKey) GetInsecureInline() *MeshIdentityItemInsecureInline {
+func (p *PrivateKey) GetInsecureInline() *MeshIdentityItemSpecInsecureInline {
 	if p == nil {
 		return nil
 	}
 	return p.InsecureInline
 }
 
-func (p *PrivateKey) GetSecretRef() *MeshIdentityItemSecretRef {
+func (p *PrivateKey) GetSecretRef() *MeshIdentityItemSpecSecretRef {
 	if p == nil {
 		return nil
 	}
@@ -440,6 +440,28 @@ func (b *Bundled) GetMeshTrustCreation() *MeshTrustCreation {
 	return b.MeshTrustCreation
 }
 
+// MeshIdentityItemExtension - Extension indicates that custom provider is used.
+type MeshIdentityItemExtension struct {
+	// Config is a freeform configuration for the extension.
+	Config any `json:"config,omitempty"`
+	// Name is the name of the extension provider.
+	Name string `json:"name"`
+}
+
+func (m *MeshIdentityItemExtension) GetConfig() any {
+	if m == nil {
+		return nil
+	}
+	return m.Config
+}
+
+func (m *MeshIdentityItemExtension) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
 // Agent - Spire agent configuration
 type Agent struct {
 	// Connection timeout to the socket exposed by Spire agent
@@ -471,8 +493,9 @@ func (s *Spire) GetAgent() *Agent {
 type MeshIdentityItemSpecType string
 
 const (
-	MeshIdentityItemSpecTypeBundled MeshIdentityItemSpecType = "Bundled"
-	MeshIdentityItemSpecTypeSpire   MeshIdentityItemSpecType = "Spire"
+	MeshIdentityItemSpecTypeBundled   MeshIdentityItemSpecType = "Bundled"
+	MeshIdentityItemSpecTypeSpire     MeshIdentityItemSpecType = "Spire"
+	MeshIdentityItemSpecTypeExtension MeshIdentityItemSpecType = "Extension"
 )
 
 func (e MeshIdentityItemSpecType) ToPointer() *MeshIdentityItemSpecType {
@@ -483,7 +506,7 @@ func (e MeshIdentityItemSpecType) ToPointer() *MeshIdentityItemSpecType {
 func (e *MeshIdentityItemSpecType) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Bundled", "Spire":
+		case "Bundled", "Spire", "Extension":
 			return true
 		}
 	}
@@ -494,6 +517,8 @@ type Provider struct {
 	// Bundled provides information about certificates that are generated by the control plane,
 	// either autogenerated or provided by the user.
 	Bundled *Bundled `json:"bundled,omitempty"`
+	// Extension indicates that custom provider is used.
+	Extension *MeshIdentityItemExtension `json:"extension,omitempty"`
 	// Spire indicates that SPIRE is used for certificate delivery.
 	Spire *Spire `json:"spire,omitempty"`
 	// Type specifies the type of certificate provider.
@@ -505,6 +530,13 @@ func (p *Provider) GetBundled() *Bundled {
 		return nil
 	}
 	return p.Bundled
+}
+
+func (p *Provider) GetExtension() *MeshIdentityItemExtension {
+	if p == nil {
+		return nil
+	}
+	return p.Extension
 }
 
 func (p *Provider) GetSpire() *Spire {
@@ -614,7 +646,7 @@ func (e *MeshIdentityItemStatusStatus) IsExact() bool {
 	return false
 }
 
-type Conditions struct {
+type MeshIdentityItemConditions struct {
 	// message is a human readable message indicating details about the transition.
 	// This may be an empty string.
 	Message string `json:"message"`
@@ -630,41 +662,41 @@ type Conditions struct {
 	Type string `json:"type"`
 }
 
-func (c *Conditions) GetMessage() string {
-	if c == nil {
+func (m *MeshIdentityItemConditions) GetMessage() string {
+	if m == nil {
 		return ""
 	}
-	return c.Message
+	return m.Message
 }
 
-func (c *Conditions) GetReason() string {
-	if c == nil {
+func (m *MeshIdentityItemConditions) GetReason() string {
+	if m == nil {
 		return ""
 	}
-	return c.Reason
+	return m.Reason
 }
 
-func (c *Conditions) GetStatus() MeshIdentityItemStatusStatus {
-	if c == nil {
+func (m *MeshIdentityItemConditions) GetStatus() MeshIdentityItemStatusStatus {
+	if m == nil {
 		return MeshIdentityItemStatusStatus("")
 	}
-	return c.Status
+	return m.Status
 }
 
-func (c *Conditions) GetType() string {
-	if c == nil {
+func (m *MeshIdentityItemConditions) GetType() string {
+	if m == nil {
 		return ""
 	}
-	return c.Type
+	return m.Type
 }
 
 // MeshIdentityItemStatus - Status is the current status of the Kuma MeshIdentity resource.
 type MeshIdentityItemStatus struct {
 	// Conditions is an array of hostname generator conditions.
-	Conditions []Conditions `json:"conditions,omitempty"`
+	Conditions []MeshIdentityItemConditions `json:"conditions,omitempty"`
 }
 
-func (m *MeshIdentityItemStatus) GetConditions() []Conditions {
+func (m *MeshIdentityItemStatus) GetConditions() []MeshIdentityItemConditions {
 	if m == nil {
 		return nil
 	}

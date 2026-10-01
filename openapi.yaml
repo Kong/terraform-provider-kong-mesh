@@ -3269,6 +3269,140 @@ paths:
           $ref: '#/components/responses/MeshMultiZoneServiceList'
       tags:
         - MeshMultiZoneService
+  '/meshes/{mesh}/meshopentelemetrybackends/{name}':
+    get:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshOpenTelemetryBackend#get
+        terraform-datasource: null
+      operationId: getMeshOpenTelemetryBackend
+      summary: Returns MeshOpenTelemetryBackend entity
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: path
+          description: name of the MeshOpenTelemetryBackend
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/MeshOpenTelemetryBackendItem'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+        - MeshOpenTelemetryBackend
+    put:
+      x-speakeasy-entity-operation:
+        terraform-resource: 'MeshOpenTelemetryBackend#create,update'
+        terraform-datasource: null
+      operationId: putMeshOpenTelemetryBackend
+      summary: Creates or Updates MeshOpenTelemetryBackend entity
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: path
+          description: name of the MeshOpenTelemetryBackend
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Put request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeshOpenTelemetryBackendItem'
+      responses:
+        '200':
+          $ref: '#/components/responses/MeshOpenTelemetryBackendCreateOrUpdateSuccessResponse'
+        '201':
+          $ref: '#/components/responses/MeshOpenTelemetryBackendCreateOrUpdateSuccessResponse'
+      tags:
+        - MeshOpenTelemetryBackend
+    delete:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshOpenTelemetryBackend#delete
+        terraform-datasource: null
+      operationId: deleteMeshOpenTelemetryBackend
+      summary: Deletes MeshOpenTelemetryBackend entity
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: path
+          description: name of the MeshOpenTelemetryBackend
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/MeshOpenTelemetryBackendDeleteSuccessResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+        - MeshOpenTelemetryBackend
+  '/meshes/{mesh}/meshopentelemetrybackends':
+    get:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshOpenTelemetryBackendList#get
+        terraform-datasource: null
+      operationId: getMeshOpenTelemetryBackendList
+      summary: Returns a list of MeshOpenTelemetryBackend in the mesh.
+      parameters:
+        - name: offset
+          in: query
+          description: offset in the list of entities
+          required: false
+          schema:
+            type: integer
+          example: 0
+        - name: size
+          in: query
+          description: the number of items per page
+          required: false
+          schema:
+            type: integer
+            default: 100
+            maximum: 1000
+            minimum: 1
+        - name: filter
+          in: query
+          description: 'filter by labels when multiple filters are present, they are ANDed'
+          required: false
+          schema:
+            type: object
+            properties:
+              key:
+                type: string
+              value:
+                type: string
+          example:
+            label.k8s.kuma.io/namespace: my-ns
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/MeshOpenTelemetryBackendList'
+      tags:
+        - MeshOpenTelemetryBackend
   '/meshes/{mesh}/meshservices/{name}':
     get:
       x-speakeasy-entity-operation:
@@ -3537,6 +3671,140 @@ paths:
           $ref: '#/components/responses/MeshTrustList'
       tags:
         - MeshTrust
+  '/meshes/{mesh}/meshzoneaddresses/{name}':
+    get:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshZoneAddress#get
+        terraform-datasource: null
+      operationId: getMeshZoneAddress
+      summary: Returns MeshZoneAddress entity
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: path
+          description: name of the MeshZoneAddress
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/MeshZoneAddressItem'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+        - MeshZoneAddress
+    put:
+      x-speakeasy-entity-operation:
+        terraform-resource: 'MeshZoneAddress#create,update'
+        terraform-datasource: null
+      operationId: putMeshZoneAddress
+      summary: Creates or Updates MeshZoneAddress entity
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: path
+          description: name of the MeshZoneAddress
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Put request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeshZoneAddressItem'
+      responses:
+        '200':
+          $ref: '#/components/responses/MeshZoneAddressCreateOrUpdateSuccessResponse'
+        '201':
+          $ref: '#/components/responses/MeshZoneAddressCreateOrUpdateSuccessResponse'
+      tags:
+        - MeshZoneAddress
+    delete:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshZoneAddress#delete
+        terraform-datasource: null
+      operationId: deleteMeshZoneAddress
+      summary: Deletes MeshZoneAddress entity
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: path
+          description: name of the MeshZoneAddress
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/MeshZoneAddressDeleteSuccessResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+        - MeshZoneAddress
+  '/meshes/{mesh}/meshzoneaddresses':
+    get:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshZoneAddressList#get
+        terraform-datasource: null
+      operationId: getMeshZoneAddressList
+      summary: Returns a list of MeshZoneAddress in the mesh.
+      parameters:
+        - name: offset
+          in: query
+          description: offset in the list of entities
+          required: false
+          schema:
+            type: integer
+          example: 0
+        - name: size
+          in: query
+          description: the number of items per page
+          required: false
+          schema:
+            type: integer
+            default: 100
+            maximum: 1000
+            minimum: 1
+        - name: filter
+          in: query
+          description: 'filter by labels when multiple filters are present, they are ANDed'
+          required: false
+          schema:
+            type: object
+            properties:
+              key:
+                type: string
+              value:
+                type: string
+          example:
+            label.k8s.kuma.io/namespace: my-ns
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/MeshZoneAddressList'
+      tags:
+        - MeshZoneAddress
   '/meshes/{mesh}/workloads/{name}':
     get:
       x-speakeasy-entity-operation:
@@ -4549,11 +4817,32 @@ components:
                   default: []
               x-speakeasy-param-computed: false
           x-speakeasy-param-computed: false
+        creationTime:
+          description: Time at which the resource was created
+          type: string
+          format: date-time
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
+        kri:
+          description: Kuma Resource Identifier (KRI) of the given resource
+          type: string
+          readOnly: true
+          x-speakeasy-param-computed: false
+          x-speakeasy-param-suppress-computed-diff: true
         labels:
           type: object
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
+            valueType: kumalabels.KumaLabelsMapValue
         logging:
           description: |-
             Logging settings.
@@ -4642,6 +4931,12 @@ components:
               type: string
               x-speakeasy-param-computed: false
           x-speakeasy-param-computed: false
+        modificationTime:
+          description: Time at which the resource was updated
+          type: string
+          format: date-time
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
         mtls:
           description: |-
             mTLS settings.
@@ -4957,15 +5252,19 @@ components:
                               properties:
                                 attributes:
                                   description: |-
-                                    Attributes can contain placeholders available on
+                                    Attributes defines custom OpenTelemetry attributes. Keys must be static
+                                    OpenTelemetry attribute names. Values can contain placeholders available on
                                     https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
                                   type: array
                                   items:
                                     properties:
                                       key:
+                                        description: Key is the OpenTelemetry attribute name.
                                         type: string
+                                        pattern: '^[a-z]([a-z0-9]|[._][a-z0-9])*$'
                                         x-speakeasy-param-computed: false
                                       value:
+                                        description: Value can contain Kuma placeholders.
                                         type: string
                                         x-speakeasy-param-computed: false
                                     required:
@@ -4976,6 +5275,29 @@ components:
                                     - key: mesh
                                       value: '%KUMA_MESH%'
                                   x-speakeasy-plan-modifiers: SupressZeroNullModifier
+                                backendRef:
+                                  description: |-
+                                    BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+                                    defines the collector endpoint. Mutually exclusive with Endpoint.
+                                  type: object
+                                  properties:
+                                    kind:
+                                      description: Kind of the backend resource.
+                                      type: string
+                                      enum:
+                                        - MeshOpenTelemetryBackend
+                                      x-speakeasy-param-computed: false
+                                    labels:
+                                      description: |-
+                                        Labels to match the referenced resource. When multiple resources match,
+                                        the oldest by creation time wins.
+                                      type: object
+                                      additionalProperties:
+                                        type: string
+                                      x-speakeasy-param-computed: false
+                                  required:
+                                    - kind
+                                  x-speakeasy-param-computed: false
                                 body:
                                   description: |-
                                     Body is a raw string or an OTLP any value as described at
@@ -4991,13 +5313,14 @@ components:
                                   x-kubernetes-preserve-unknown-fields: true
                                   x-speakeasy-plan-modifiers: ArbitraryJSONModifier
                                 endpoint:
-                                  description: Endpoint of OpenTelemetry collector. An empty port defaults to 4317.
+                                  description: |-
+                                    Endpoint of OpenTelemetry collector. An empty port defaults to 4317.
+
+                                    Deprecated: use BackendRef instead.
                                   type: string
                                   example: 'otel-collector:4317'
-                                  minLength: 1
+                                  default: ''
                                   x-speakeasy-param-computed: false
-                              required:
-                                - endpoint
                               x-speakeasy-param-computed: false
                             tcp:
                               description: TCPBackend defines a TCP logging backend.
@@ -5149,9 +5472,7 @@ components:
                 type: object
               x-speakeasy-plan-modifiers: SupressZeroNullModifier
             rules:
-              description: |-
-                Rules defines inbound access log configurations. Currently limited to
-                selecting all inbound traffic, as L7 matching is not yet implemented.
+              description: Rules defines inbound access log configurations.
               type: array
               items:
                 properties:
@@ -5226,15 +5547,19 @@ components:
                               properties:
                                 attributes:
                                   description: |-
-                                    Attributes can contain placeholders available on
+                                    Attributes defines custom OpenTelemetry attributes. Keys must be static
+                                    OpenTelemetry attribute names. Values can contain placeholders available on
                                     https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
                                   type: array
                                   items:
                                     properties:
                                       key:
+                                        description: Key is the OpenTelemetry attribute name.
                                         type: string
+                                        pattern: '^[a-z]([a-z0-9]|[._][a-z0-9])*$'
                                         x-speakeasy-param-computed: false
                                       value:
+                                        description: Value can contain Kuma placeholders.
                                         type: string
                                         x-speakeasy-param-computed: false
                                     required:
@@ -5245,6 +5570,29 @@ components:
                                     - key: mesh
                                       value: '%KUMA_MESH%'
                                   x-speakeasy-plan-modifiers: SupressZeroNullModifier
+                                backendRef:
+                                  description: |-
+                                    BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+                                    defines the collector endpoint. Mutually exclusive with Endpoint.
+                                  type: object
+                                  properties:
+                                    kind:
+                                      description: Kind of the backend resource.
+                                      type: string
+                                      enum:
+                                        - MeshOpenTelemetryBackend
+                                      x-speakeasy-param-computed: false
+                                    labels:
+                                      description: |-
+                                        Labels to match the referenced resource. When multiple resources match,
+                                        the oldest by creation time wins.
+                                      type: object
+                                      additionalProperties:
+                                        type: string
+                                      x-speakeasy-param-computed: false
+                                  required:
+                                    - kind
+                                  x-speakeasy-param-computed: false
                                 body:
                                   description: |-
                                     Body is a raw string or an OTLP any value as described at
@@ -5259,13 +5607,14 @@ components:
                                             stringValue: '%KUMA_MESH%'
                                   x-kubernetes-preserve-unknown-fields: true
                                 endpoint:
-                                  description: Endpoint of OpenTelemetry collector. An empty port defaults to 4317.
+                                  description: |-
+                                    Endpoint of OpenTelemetry collector. An empty port defaults to 4317.
+
+                                    Deprecated: use BackendRef instead.
                                   type: string
                                   example: 'otel-collector:4317'
-                                  minLength: 1
+                                  default: ''
                                   x-speakeasy-param-computed: false
-                              required:
-                                - endpoint
                               x-speakeasy-param-computed: false
                             tcp:
                               description: TCPBackend defines a TCP logging backend.
@@ -5337,6 +5686,54 @@ components:
                           type: object
                         x-speakeasy-plan-modifiers: SupressZeroNullModifier
                     x-speakeasy-param-computed: false
+                  matches:
+                    description: |-
+                      Matches defines a list of conditions (by SpiffeID or SNI) that select the
+                      traffic this rule applies to. Rules fire independently: a connection that
+                      satisfies multiple rules is logged to every matching rule's backends.
+                    type: array
+                    items:
+                      properties:
+                        sni:
+                          description: SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+                          type: object
+                          properties:
+                            type:
+                              description: Type defines how to match traffic by SNI. Only `Exact` is supported.
+                              type: string
+                              enum:
+                                - Exact
+                              x-speakeasy-param-computed: false
+                            value:
+                              description: Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied
+                              type: string
+                              x-speakeasy-param-computed: false
+                          required:
+                            - type
+                            - value
+                          x-speakeasy-param-computed: false
+                        spiffeID:
+                          description: SpiffeID defines a matcher configuration for SpiffeID matching
+                          type: object
+                          properties:
+                            type:
+                              description: Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
+                              type: string
+                              enum:
+                                - Exact
+                                - Prefix
+                              x-speakeasy-param-computed: false
+                              x-speakeasy-unknown-values: allow
+                            value:
+                              description: Value is SpiffeID of a client that needs to match for the configuration to be applied
+                              type: string
+                              x-speakeasy-param-computed: false
+                          required:
+                            - type
+                            - value
+                          x-speakeasy-param-computed: false
+                      type: object
+                    x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 required:
                   - default
                 type: object
@@ -5494,15 +5891,19 @@ components:
                               properties:
                                 attributes:
                                   description: |-
-                                    Attributes can contain placeholders available on
+                                    Attributes defines custom OpenTelemetry attributes. Keys must be static
+                                    OpenTelemetry attribute names. Values can contain placeholders available on
                                     https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
                                   type: array
                                   items:
                                     properties:
                                       key:
+                                        description: Key is the OpenTelemetry attribute name.
                                         type: string
+                                        pattern: '^[a-z]([a-z0-9]|[._][a-z0-9])*$'
                                         x-speakeasy-param-computed: false
                                       value:
+                                        description: Value can contain Kuma placeholders.
                                         type: string
                                         x-speakeasy-param-computed: false
                                     required:
@@ -5513,6 +5914,29 @@ components:
                                     - key: mesh
                                       value: '%KUMA_MESH%'
                                   x-speakeasy-plan-modifiers: SupressZeroNullModifier
+                                backendRef:
+                                  description: |-
+                                    BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+                                    defines the collector endpoint. Mutually exclusive with Endpoint.
+                                  type: object
+                                  properties:
+                                    kind:
+                                      description: Kind of the backend resource.
+                                      type: string
+                                      enum:
+                                        - MeshOpenTelemetryBackend
+                                      x-speakeasy-param-computed: false
+                                    labels:
+                                      description: |-
+                                        Labels to match the referenced resource. When multiple resources match,
+                                        the oldest by creation time wins.
+                                      type: object
+                                      additionalProperties:
+                                        type: string
+                                      x-speakeasy-param-computed: false
+                                  required:
+                                    - kind
+                                  x-speakeasy-param-computed: false
                                 body:
                                   description: |-
                                     Body is a raw string or an OTLP any value as described at
@@ -5528,13 +5952,14 @@ components:
                                   x-kubernetes-preserve-unknown-fields: true
                                   x-speakeasy-plan-modifiers: ArbitraryJSONModifier
                                 endpoint:
-                                  description: Endpoint of OpenTelemetry collector. An empty port defaults to 4317.
+                                  description: |-
+                                    Endpoint of OpenTelemetry collector. An empty port defaults to 4317.
+
+                                    Deprecated: use BackendRef instead.
                                   type: string
                                   example: 'otel-collector:4317'
-                                  minLength: 1
+                                  default: ''
                                   x-speakeasy-param-computed: false
-                              required:
-                                - endpoint
                               x-speakeasy-param-computed: false
                             tcp:
                               description: TCPBackend defines a TCP logging backend.
@@ -5698,6 +6123,56 @@ components:
           type: string
           format: date-time
           example: '0001-01-01T00:00:00Z'
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
+        status:
+          description: Status is the current status of the Kuma MeshAccessLog resource.
+          type: object
+          properties:
+            conditions:
+              type: array
+              items:
+                properties:
+                  message:
+                    description: |-
+                      message is a human readable message indicating details about the transition.
+                      This may be an empty string.
+                    type: string
+                    maxLength: 32768
+                    x-speakeasy-param-computed: false
+                  reason:
+                    description: |-
+                      reason contains a programmatic identifier indicating the reason for the condition's last transition.
+                      Producers of specific condition types may define expected values and meanings for this field,
+                      and whether the values are considered a guaranteed API.
+                      The value should be a CamelCase string.
+                      This field may not be empty.
+                    type: string
+                    maxLength: 1024
+                    minLength: 1
+                    pattern: '^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$'
+                    x-speakeasy-param-computed: false
+                  status:
+                    description: 'status of the condition, one of True, False, Unknown.'
+                    type: string
+                    enum:
+                      - 'True'
+                      - 'False'
+                      - Unknown
+                    x-speakeasy-unknown-values: allow
+                  type:
+                    description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                    type: string
+                    maxLength: 316
+                    pattern: '^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$'
+                    x-speakeasy-param-computed: false
+                required:
+                  - message
+                  - reason
+                  - status
+                  - type
+                type: object
+              x-speakeasy-plan-modifiers: SupressZeroNullModifier
           readOnly: true
           x-speakeasy-param-suppress-computed-diff: true
       required:
@@ -7155,6 +7630,24 @@ components:
                     type: array
                     items:
                       properties:
+                        sni:
+                          description: SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+                          type: object
+                          properties:
+                            type:
+                              description: Type defines how to match traffic by SNI. Only `Exact` is supported.
+                              type: string
+                              enum:
+                                - Exact
+                              x-speakeasy-param-computed: false
+                            value:
+                              description: Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied
+                              type: string
+                              x-speakeasy-param-computed: false
+                          required:
+                            - type
+                            - value
+                          x-speakeasy-param-computed: false
                         spiffeID:
                           description: SpiffeID defines a matcher configuration for SpiffeID matching
                           type: object
@@ -7168,7 +7661,7 @@ components:
                               x-speakeasy-param-computed: false
                               x-speakeasy-unknown-values: allow
                             value:
-                              description: Value is SpiffeId of a client that needs to match for the configuration to be applied
+                              description: Value is SpiffeID of a client that needs to match for the configuration to be applied
                               type: string
                               x-speakeasy-param-computed: false
                           required:
@@ -7555,6 +8048,18 @@ components:
                 x-speakeasy-param-computed: false
               default: []
           x-speakeasy-param-computed: false
+        creationTime:
+          description: Time at which the resource was created
+          type: string
+          format: date-time
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
+        kri:
+          description: Kuma Resource Identifier (KRI) of the given resource
+          type: string
+          readOnly: true
+          x-speakeasy-param-computed: false
+          x-speakeasy-param-suppress-computed-diff: true
         labels:
           type: object
           additionalProperties:
@@ -7573,6 +8078,12 @@ components:
           type: string
           x-speakeasy-param-computed: false
           x-speakeasy-param-force-new: true
+        modificationTime:
+          description: Time at which the resource was updated
+          type: string
+          format: date-time
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
         name:
           type: string
           x-speakeasy-param-computed: false
@@ -9654,7 +10165,9 @@ components:
               type: object
               properties:
                 applications:
-                  description: Applications is a list of application that Dataplane Proxy will scrape
+                  description: |-
+                    Applications is a list of applications that Dataplane Proxy will scrape.
+                    Ignored on zone-proxy-only Dataplanes (zone ingress/egress exist without a co-located workload).
                   type: array
                   items:
                     properties:
@@ -9689,16 +10202,41 @@ components:
                         description: OpenTelemetry backend configuration
                         type: object
                         properties:
+                          backendRef:
+                            description: |-
+                              BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+                              defines the collector endpoint. Mutually exclusive with Endpoint.
+                            type: object
+                            properties:
+                              kind:
+                                description: Kind of the backend resource.
+                                type: string
+                                enum:
+                                  - MeshOpenTelemetryBackend
+                                x-speakeasy-param-computed: false
+                              labels:
+                                description: |-
+                                  Labels to match the referenced resource. When multiple resources match,
+                                  the oldest by creation time wins.
+                                type: object
+                                additionalProperties:
+                                  type: string
+                                x-speakeasy-param-computed: false
+                            required:
+                              - kind
+                            x-speakeasy-param-computed: false
                           endpoint:
-                            description: Endpoint for OpenTelemetry collector
+                            description: |-
+                              Endpoint for OpenTelemetry collector.
+
+                              Deprecated: use BackendRef instead.
                             type: string
+                            default: ''
                             x-speakeasy-param-computed: false
                           refreshInterval:
                             description: RefreshInterval defines how frequent metrics should be pushed to collector
                             type: string
                             x-speakeasy-param-computed: false
-                        required:
-                          - endpoint
                         x-speakeasy-param-computed: false
                       prometheus:
                         description: Prometheus backend configuration.
@@ -9924,6 +10462,56 @@ components:
           type: string
           format: date-time
           example: '0001-01-01T00:00:00Z'
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
+        status:
+          description: Status is the current status of the Kuma MeshMetric resource.
+          type: object
+          properties:
+            conditions:
+              type: array
+              items:
+                properties:
+                  message:
+                    description: |-
+                      message is a human readable message indicating details about the transition.
+                      This may be an empty string.
+                    type: string
+                    maxLength: 32768
+                    x-speakeasy-param-computed: false
+                  reason:
+                    description: |-
+                      reason contains a programmatic identifier indicating the reason for the condition's last transition.
+                      Producers of specific condition types may define expected values and meanings for this field,
+                      and whether the values are considered a guaranteed API.
+                      The value should be a CamelCase string.
+                      This field may not be empty.
+                    type: string
+                    maxLength: 1024
+                    minLength: 1
+                    pattern: '^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$'
+                    x-speakeasy-param-computed: false
+                  status:
+                    description: 'status of the condition, one of True, False, Unknown.'
+                    type: string
+                    enum:
+                      - 'True'
+                      - 'False'
+                      - Unknown
+                    x-speakeasy-unknown-values: allow
+                  type:
+                    description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                    type: string
+                    maxLength: 316
+                    pattern: '^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$'
+                    x-speakeasy-param-computed: false
+                required:
+                  - message
+                  - reason
+                  - status
+                  - type
+                type: object
+              x-speakeasy-plan-modifiers: SupressZeroNullModifier
           readOnly: true
           x-speakeasy-param-suppress-computed-diff: true
       required:
@@ -10264,7 +10852,16 @@ components:
                             x-speakeasy-param-computed: false
                             x-speakeasy-unknown-values: allow
                           value:
-                            description: Value of xDS resource in YAML format to add or patch.
+                            description: |-
+                              Value of xDS resource in YAML format to add or patch.
+
+                              Patch merges the value into the matched cluster, and repeated fields are
+                              appended to what the cluster already has. Circuit breaker thresholds are
+                              the exception: Envoy resolves them by routing priority and ignores every
+                              threshold after the first one of a given priority, so appending would be
+                              dead config. They are merged into the existing threshold with the same
+                              priority instead, and a value listing one priority twice keeps only the
+                              first entry.
                             type: string
                             x-speakeasy-param-computed: false
                         required:
@@ -11005,9 +11602,7 @@ components:
                 type: object
               x-speakeasy-plan-modifiers: SupressZeroNullModifier
             rules:
-              description: |-
-                Rules defines inbound rate limiting configurations. Currently limited to
-                selecting all inbound traffic, as L7 matching is not yet implemented.
+              description: Rules defines inbound rate limiting configurations.
               type: array
               items:
                 properties:
@@ -11141,6 +11736,51 @@ components:
                             x-speakeasy-param-computed: false
                         x-speakeasy-param-computed: false
                     x-speakeasy-param-computed: false
+                  matches:
+                    description: Matches define additional conditions for applying this rate limit rule.
+                    type: array
+                    items:
+                      properties:
+                        sni:
+                          description: SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+                          type: object
+                          properties:
+                            type:
+                              description: Type defines how to match traffic by SNI. Only `Exact` is supported.
+                              type: string
+                              enum:
+                                - Exact
+                              x-speakeasy-param-computed: false
+                            value:
+                              description: Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied
+                              type: string
+                              x-speakeasy-param-computed: false
+                          required:
+                            - type
+                            - value
+                          x-speakeasy-param-computed: false
+                        spiffeID:
+                          description: SpiffeID defines a matcher configuration for SpiffeID matching
+                          type: object
+                          properties:
+                            type:
+                              description: Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
+                              type: string
+                              enum:
+                                - Exact
+                                - Prefix
+                              x-speakeasy-param-computed: false
+                              x-speakeasy-unknown-values: allow
+                            value:
+                              description: Value is SpiffeID of a client that needs to match for the configuration to be applied
+                              type: string
+                              x-speakeasy-param-computed: false
+                          required:
+                            - type
+                            - value
+                          x-speakeasy-param-computed: false
+                      type: object
+                    x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 type: object
               x-speakeasy-plan-modifiers: SupressZeroNullModifier
             targetRef:
@@ -12908,8 +13548,8 @@ components:
               x-speakeasy-plan-modifiers: SupressZeroNullModifier
             rules:
               description: |-
-                Rules defines inbound timeout configurations. Currently limited to exactly one rule containing
-                default timeouts that apply to all inbound traffic, as L7 matching is not yet implemented.
+                Rules defines inbound timeout configurations. When matches are present, the rule is applied only
+                to traffic selected by the given source and destination matchers.
               type: array
               items:
                 properties:
@@ -12971,6 +13611,51 @@ components:
                         type: string
                         x-speakeasy-param-computed: false
                     x-speakeasy-param-computed: false
+                  matches:
+                    description: Matches define predicates for selecting traffic this configuration applies to.
+                    type: array
+                    items:
+                      properties:
+                        sni:
+                          description: SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+                          type: object
+                          properties:
+                            type:
+                              description: Type defines how to match traffic by SNI. Only `Exact` is supported.
+                              type: string
+                              enum:
+                                - Exact
+                              x-speakeasy-param-computed: false
+                            value:
+                              description: Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied
+                              type: string
+                              x-speakeasy-param-computed: false
+                          required:
+                            - type
+                            - value
+                          x-speakeasy-param-computed: false
+                        spiffeID:
+                          description: SpiffeID defines a matcher configuration for SpiffeID matching
+                          type: object
+                          properties:
+                            type:
+                              description: Type defines how to match incoming traffic by SpiffeID. `Exact` or `Prefix` are allowed.
+                              type: string
+                              enum:
+                                - Exact
+                                - Prefix
+                              x-speakeasy-param-computed: false
+                              x-speakeasy-unknown-values: allow
+                            value:
+                              description: Value is SpiffeID of a client that needs to match for the configuration to be applied
+                              type: string
+                              x-speakeasy-param-computed: false
+                          required:
+                            - type
+                            - value
+                          x-speakeasy-param-computed: false
+                      type: object
+                    x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 type: object
               x-speakeasy-plan-modifiers: SupressZeroNullModifier
             targetRef:
@@ -13299,14 +13984,38 @@ components:
                         description: OpenTelemetry backend configuration.
                         type: object
                         properties:
+                          backendRef:
+                            description: |-
+                              BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+                              defines the collector endpoint. Mutually exclusive with Endpoint.
+                            type: object
+                            properties:
+                              kind:
+                                description: Kind of the backend resource.
+                                type: string
+                                enum:
+                                  - MeshOpenTelemetryBackend
+                                x-speakeasy-param-computed: false
+                              labels:
+                                description: |-
+                                  Labels to match the referenced resource. When multiple resources match,
+                                  the oldest by creation time wins.
+                                type: object
+                                additionalProperties:
+                                  type: string
+                                x-speakeasy-param-computed: false
+                            required:
+                              - kind
+                            x-speakeasy-param-computed: false
                           endpoint:
-                            description: Address of OpenTelemetry collector.
+                            description: |-
+                              Address of OpenTelemetry collector.
+
+                              Deprecated: use BackendRef instead.
                             type: string
                             example: 'otel-collector:4317'
-                            minLength: 1
+                            default: ''
                             x-speakeasy-param-computed: false
-                        required:
-                          - endpoint
                         x-speakeasy-param-computed: false
                       type:
                         type: string
@@ -13537,6 +14246,56 @@ components:
           example: '0001-01-01T00:00:00Z'
           readOnly: true
           x-speakeasy-param-suppress-computed-diff: true
+        status:
+          description: Status is the current status of the Kuma MeshTrace resource.
+          type: object
+          properties:
+            conditions:
+              type: array
+              items:
+                properties:
+                  message:
+                    description: |-
+                      message is a human readable message indicating details about the transition.
+                      This may be an empty string.
+                    type: string
+                    maxLength: 32768
+                    x-speakeasy-param-computed: false
+                  reason:
+                    description: |-
+                      reason contains a programmatic identifier indicating the reason for the condition's last transition.
+                      Producers of specific condition types may define expected values and meanings for this field,
+                      and whether the values are considered a guaranteed API.
+                      The value should be a CamelCase string.
+                      This field may not be empty.
+                    type: string
+                    maxLength: 1024
+                    minLength: 1
+                    pattern: '^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$'
+                    x-speakeasy-param-computed: false
+                  status:
+                    description: 'status of the condition, one of True, False, Unknown.'
+                    type: string
+                    enum:
+                      - 'True'
+                      - 'False'
+                      - Unknown
+                    x-speakeasy-unknown-values: allow
+                  type:
+                    description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                    type: string
+                    maxLength: 316
+                    pattern: '^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$'
+                    x-speakeasy-param-computed: false
+                required:
+                  - message
+                  - reason
+                  - status
+                  - type
+                type: object
+              x-speakeasy-plan-modifiers: SupressZeroNullModifier
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
       required:
         - type
         - name
@@ -13700,6 +14459,24 @@ components:
                         type: array
                         items:
                           properties:
+                            sni:
+                              description: SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+                              type: object
+                              properties:
+                                type:
+                                  description: Type defines how to match traffic by SNI. Only `Exact` is supported.
+                                  type: string
+                                  enum:
+                                    - Exact
+                                  x-speakeasy-param-computed: false
+                                value:
+                                  description: Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied
+                                  type: string
+                                  x-speakeasy-param-computed: false
+                              required:
+                                - type
+                                - value
+                              x-speakeasy-param-computed: false
                             spiffeID:
                               description: SpiffeID defines a matcher configuration for SpiffeID matching
                               type: object
@@ -13713,7 +14490,7 @@ components:
                                   x-speakeasy-param-computed: false
                                   x-speakeasy-unknown-values: allow
                                 value:
-                                  description: Value is SpiffeId of a client that needs to match for the configuration to be applied
+                                  description: Value is SpiffeID of a client that needs to match for the configuration to be applied
                                   type: string
                                   x-speakeasy-param-computed: false
                               required:
@@ -13729,6 +14506,24 @@ components:
                         type: array
                         items:
                           properties:
+                            sni:
+                              description: SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+                              type: object
+                              properties:
+                                type:
+                                  description: Type defines how to match traffic by SNI. Only `Exact` is supported.
+                                  type: string
+                                  enum:
+                                    - Exact
+                                  x-speakeasy-param-computed: false
+                                value:
+                                  description: Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied
+                                  type: string
+                                  x-speakeasy-param-computed: false
+                              required:
+                                - type
+                                - value
+                              x-speakeasy-param-computed: false
                             spiffeID:
                               description: SpiffeID defines a matcher configuration for SpiffeID matching
                               type: object
@@ -13742,7 +14537,7 @@ components:
                                   x-speakeasy-param-computed: false
                                   x-speakeasy-unknown-values: allow
                                 value:
-                                  description: Value is SpiffeId of a client that needs to match for the configuration to be applied
+                                  description: Value is SpiffeID of a client that needs to match for the configuration to be applied
                                   type: string
                                   x-speakeasy-param-computed: false
                               required:
@@ -13756,6 +14551,24 @@ components:
                         type: array
                         items:
                           properties:
+                            sni:
+                              description: SNI defines a matcher configuration for matching by SNI value carried on the TLS connection
+                              type: object
+                              properties:
+                                type:
+                                  description: Type defines how to match traffic by SNI. Only `Exact` is supported.
+                                  type: string
+                                  enum:
+                                    - Exact
+                                  x-speakeasy-param-computed: false
+                                value:
+                                  description: Value is the SNI carried on the TLS connection that needs to match for the configuration to be applied
+                                  type: string
+                                  x-speakeasy-param-computed: false
+                              required:
+                                - type
+                                - value
+                              x-speakeasy-param-computed: false
                             spiffeID:
                               description: SpiffeID defines a matcher configuration for SpiffeID matching
                               type: object
@@ -13769,7 +14582,7 @@ components:
                                   x-speakeasy-param-computed: false
                                   x-speakeasy-unknown-values: allow
                                 value:
-                                  description: Value is SpiffeId of a client that needs to match for the configuration to be applied
+                                  description: Value is SpiffeID of a client that needs to match for the configuration to be applied
                                   type: string
                                   x-speakeasy-param-computed: false
                               required:
@@ -13880,11 +14693,29 @@ components:
     ZoneEgressItem:
       type: object
       properties:
+        creationTime:
+          description: Time at which the resource was created
+          type: string
+          format: date-time
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
+        kri:
+          description: Kuma Resource Identifier (KRI) of the given resource
+          type: string
+          readOnly: true
+          x-speakeasy-param-computed: false
+          x-speakeasy-param-suppress-computed-diff: true
         labels:
           type: object
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+        modificationTime:
+          description: Time at which the resource was updated
+          type: string
+          format: date-time
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
         name:
           type: string
           x-speakeasy-param-computed: false
@@ -13955,11 +14786,29 @@ components:
           nullable: true
           x-speakeasy-param-computed: false
           x-speakeasy-plan-modifiers: SupressZeroNullModifier
+        creationTime:
+          description: Time at which the resource was created
+          type: string
+          format: date-time
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
+        kri:
+          description: Kuma Resource Identifier (KRI) of the given resource
+          type: string
+          readOnly: true
+          x-speakeasy-param-computed: false
+          x-speakeasy-param-suppress-computed-diff: true
         labels:
           type: object
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+        modificationTime:
+          description: Time at which the resource was updated
+          type: string
+          format: date-time
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
         name:
           type: string
           x-speakeasy-param-computed: false
@@ -14014,6 +14863,12 @@ components:
     SecretItem:
       type: object
       properties:
+        creationTime:
+          description: Time at which the resource was created
+          type: string
+          format: date-time
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
         data:
           description: Value of the secret
           type: string
@@ -14036,6 +14891,12 @@ components:
         mesh:
           type: string
           x-speakeasy-param-computed: false
+        modificationTime:
+          description: Time at which the resource was updated
+          type: string
+          format: date-time
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
         name:
           type: string
           x-speakeasy-param-computed: false
@@ -14172,6 +15033,30 @@ components:
           readOnly: true
           x-speakeasy-param-computed: false
           x-speakeasy-param-suppress-computed-diff: true
+        snis:
+          description: 'List of SNIs (Server Name Indication) advertised by xDS for this destination, one entry per port, sorted by port ascending. Present for MeshService, MeshMultiZoneService and MeshExternalService.'
+          type: array
+          items:
+            type: object
+            required:
+              - port
+              - sni
+            properties:
+              port:
+                description: The destination port this SNI corresponds to.
+                type: integer
+                format: int32
+                x-speakeasy-param-computed: false
+              sni:
+                description: The SNI string advertised by xDS for this port.
+                type: string
+                x-speakeasy-param-computed: false
+          example:
+            - port: 8080
+              sni: sni.extsvc.default.zone-east.kuma-system.myresource1.8080
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
+          x-speakeasy-plan-modifiers: SupressZeroNullModifier
         name:
           description: Name of the Kuma resource
           type: string
@@ -14213,6 +15098,16 @@ components:
                     format: int32
                     maximum: 65535
                     minimum: 1
+                    x-speakeasy-param-computed: false
+                  priority:
+                    description: |-
+                      Priority maps to Envoy's priority levels to enable endpoint failover.
+                      Lower values have higher priority (0 is the default/primary).
+                      When the primary endpoints become unhealthy, traffic fails over to the next priority level.
+                    type: integer
+                    format: int32
+                    maximum: 128
+                    minimum: 0
                     x-speakeasy-param-computed: false
                 required:
                   - address
@@ -14291,54 +15186,162 @@ components:
                       type: object
                       properties:
                         inline:
-                          description: Data source is inline bytes.
+                          description: 'Inline is the legacy, base64-encoded form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.'
                           type: string
                           format: byte
                           x-speakeasy-param-computed: false
                         inlineString:
-                          description: Data source is inline string`
+                          description: 'InlineString is the legacy form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.'
                           type: string
+                          x-speakeasy-param-computed: false
+                        insecureInline:
+                          description: 'InsecureInline is the data source value as plain text, used with `type: InsecureInline`.'
+                          type: object
+                          properties:
+                            value:
+                              type: string
+                              x-speakeasy-param-computed: false
+                          required:
+                            - value
                           x-speakeasy-param-computed: false
                         secret:
-                          description: Data source is a secret with given Secret key.
+                          description: 'Secret is the legacy form of `type: Secret` with `secretRef`, not read by 3.0.'
                           type: string
                           x-speakeasy-param-computed: false
+                        secretRef:
+                          description: 'SecretRef references a Secret, used with `type: Secret`.'
+                          type: object
+                          properties:
+                            kind:
+                              type: string
+                              enum:
+                                - Secret
+                              x-speakeasy-param-computed: false
+                            name:
+                              type: string
+                              x-speakeasy-param-computed: false
+                          required:
+                            - kind
+                            - name
+                          x-speakeasy-param-computed: false
+                        type:
+                          description: 'Type of the data source, one of `Secret` or `InsecureInline`.'
+                          type: string
+                          enum:
+                            - File
+                            - Secret
+                            - EnvVar
+                            - InsecureInline
+                          x-speakeasy-param-computed: false
+                          x-speakeasy-unknown-values: allow
                       x-speakeasy-param-computed: false
                     clientCert:
                       description: ClientCert defines a certificate of a client.
                       type: object
                       properties:
                         inline:
-                          description: Data source is inline bytes.
+                          description: 'Inline is the legacy, base64-encoded form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.'
                           type: string
                           format: byte
                           x-speakeasy-param-computed: false
                         inlineString:
-                          description: Data source is inline string`
+                          description: 'InlineString is the legacy form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.'
                           type: string
+                          x-speakeasy-param-computed: false
+                        insecureInline:
+                          description: 'InsecureInline is the data source value as plain text, used with `type: InsecureInline`.'
+                          type: object
+                          properties:
+                            value:
+                              type: string
+                              x-speakeasy-param-computed: false
+                          required:
+                            - value
                           x-speakeasy-param-computed: false
                         secret:
-                          description: Data source is a secret with given Secret key.
+                          description: 'Secret is the legacy form of `type: Secret` with `secretRef`, not read by 3.0.'
                           type: string
                           x-speakeasy-param-computed: false
+                        secretRef:
+                          description: 'SecretRef references a Secret, used with `type: Secret`.'
+                          type: object
+                          properties:
+                            kind:
+                              type: string
+                              enum:
+                                - Secret
+                              x-speakeasy-param-computed: false
+                            name:
+                              type: string
+                              x-speakeasy-param-computed: false
+                          required:
+                            - kind
+                            - name
+                          x-speakeasy-param-computed: false
+                        type:
+                          description: 'Type of the data source, one of `Secret` or `InsecureInline`.'
+                          type: string
+                          enum:
+                            - File
+                            - Secret
+                            - EnvVar
+                            - InsecureInline
+                          x-speakeasy-param-computed: false
+                          x-speakeasy-unknown-values: allow
                       x-speakeasy-param-computed: false
                     clientKey:
                       description: ClientKey defines a client private key.
                       type: object
                       properties:
                         inline:
-                          description: Data source is inline bytes.
+                          description: 'Inline is the legacy, base64-encoded form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.'
                           type: string
                           format: byte
                           x-speakeasy-param-computed: false
                         inlineString:
-                          description: Data source is inline string`
+                          description: 'InlineString is the legacy form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.'
                           type: string
+                          x-speakeasy-param-computed: false
+                        insecureInline:
+                          description: 'InsecureInline is the data source value as plain text, used with `type: InsecureInline`.'
+                          type: object
+                          properties:
+                            value:
+                              type: string
+                              x-speakeasy-param-computed: false
+                          required:
+                            - value
                           x-speakeasy-param-computed: false
                         secret:
-                          description: Data source is a secret with given Secret key.
+                          description: 'Secret is the legacy form of `type: Secret` with `secretRef`, not read by 3.0.'
                           type: string
                           x-speakeasy-param-computed: false
+                        secretRef:
+                          description: 'SecretRef references a Secret, used with `type: Secret`.'
+                          type: object
+                          properties:
+                            kind:
+                              type: string
+                              enum:
+                                - Secret
+                              x-speakeasy-param-computed: false
+                            name:
+                              type: string
+                              x-speakeasy-param-computed: false
+                          required:
+                            - kind
+                            - name
+                          x-speakeasy-param-computed: false
+                        type:
+                          description: 'Type of the data source, one of `Secret` or `InsecureInline`.'
+                          type: string
+                          enum:
+                            - File
+                            - Secret
+                            - EnvVar
+                            - InsecureInline
+                          x-speakeasy-param-computed: false
+                          x-speakeasy-unknown-values: allow
                       x-speakeasy-param-computed: false
                     mode:
                       description: 'Mode defines if proxy should skip verification, one of `SkipSAN`, `SkipCA`, `Secured`, `SkipAll`. Default `Secured`.'
@@ -14739,6 +15742,20 @@ components:
                       x-speakeasy-param-computed: false
                       x-speakeasy-unknown-values: allow
                   x-speakeasy-param-computed: false
+                extension:
+                  description: Extension indicates that custom provider is used.
+                  type: object
+                  properties:
+                    config:
+                      description: Config is a freeform configuration for the extension.
+                      x-kubernetes-preserve-unknown-fields: true
+                    name:
+                      description: Name is the name of the extension provider.
+                      type: string
+                      x-speakeasy-param-computed: false
+                  required:
+                    - name
+                  x-speakeasy-param-computed: false
                 spire:
                   description: Spire indicates that SPIRE is used for certificate delivery.
                   type: object
@@ -14761,6 +15778,7 @@ components:
                   enum:
                     - Bundled
                     - Spire
+                    - Extension
                   x-speakeasy-param-computed: false
                   x-speakeasy-unknown-values: allow
               required:
@@ -14887,6 +15905,30 @@ components:
           readOnly: true
           x-speakeasy-param-computed: false
           x-speakeasy-param-suppress-computed-diff: true
+        snis:
+          description: 'List of SNIs (Server Name Indication) advertised by xDS for this destination, one entry per port, sorted by port ascending. Present for MeshService, MeshMultiZoneService and MeshExternalService.'
+          type: array
+          items:
+            type: object
+            required:
+              - port
+              - sni
+            properties:
+              port:
+                description: The destination port this SNI corresponds to.
+                type: integer
+                format: int32
+                x-speakeasy-param-computed: false
+              sni:
+                description: The SNI string advertised by xDS for this port.
+                type: string
+                x-speakeasy-param-computed: false
+          example:
+            - port: 8080
+              sni: sni.mzsvc.default.zone-east.kuma-demo.myresource1.8080
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
+          x-speakeasy-plan-modifiers: SupressZeroNullModifier
         name:
           description: Name of the Kuma resource
           type: string
@@ -15146,6 +16188,215 @@ components:
         - type
         - name
         - spec
+    MeshOpenTelemetryBackendItem:
+      description: |-
+        MeshOpenTelemetryBackend defines a shared OTel collector endpoint for observability policies.
+        An empty spec is valid and represents the node-local default flow
+        (kuma-dp resolves the address at runtime using HOST_IP or 127.0.0.1).
+      type: object
+      properties:
+        type:
+          description: the type of the resource
+          type: string
+          enum:
+            - MeshOpenTelemetryBackend
+          x-speakeasy-param-computed: false
+        mesh:
+          description: Mesh is the name of the Kuma mesh this resource belongs to. It may be omitted for cluster-scoped resources.
+          type: string
+          default: default
+          x-speakeasy-param-computed: false
+          x-speakeasy-param-force-new: true
+        kri:
+          description: A unique identifier for this resource instance used by internal tooling and integrations. Typically derived from resource attributes and may be used for cross-references or indexing
+          type: string
+          example: kri_motb_default_zone-east_kuma-system_myresource1_
+          readOnly: true
+          x-speakeasy-param-computed: false
+          x-speakeasy-param-suppress-computed-diff: true
+        name:
+          description: Name of the Kuma resource
+          type: string
+          x-speakeasy-param-computed: false
+          x-speakeasy-param-force-new: true
+        labels:
+          description: The labels to help identity resources
+          type: object
+          additionalProperties:
+            type: string
+          x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
+            valueType: kumalabels.KumaLabelsMapValue
+        spec:
+          description: Spec is the specification of the Kuma MeshOpenTelemetryBackend resource.
+          type: object
+          properties:
+            endpoint:
+              description: |-
+                Endpoint optionally defines the OTel collector address and port.
+                When omitted, the CP defaults port to 4317 and leaves address empty;
+                kuma-dp resolves the address at runtime using HOST_IP or 127.0.0.1.
+              type: object
+              properties:
+                address:
+                  description: |-
+                    Address of the OTel collector (hostname or IP).
+                    When omitted, kuma-dp resolves it at runtime using HOST_IP or 127.0.0.1.
+                  type: string
+                  x-speakeasy-param-computed: false
+                path:
+                  description: |-
+                    Path is an optional base path prefix for HTTP endpoints.
+                    The CP appends signal-specific suffixes (/v1/traces, /v1/metrics, /v1/logs).
+                    Non-empty value is rejected by validation when protocol is grpc.
+                  type: string
+                  x-speakeasy-param-computed: false
+                port:
+                  description: Port of the OTel collector. Defaults to 4317 when omitted.
+                  type: integer
+                  format: int32
+                  x-speakeasy-param-computed: false
+              x-speakeasy-param-computed: false
+            env:
+              description: |-
+                Env controls whether standard OTEL exporter env vars participate in the
+                final exporter config for this backend.
+                Defaults to mode: Optional, precedence: EnvFirst, allowSignalOverrides: true
+                when omitted.
+              type: object
+              properties:
+                allowSignalOverrides:
+                  description: |-
+                    AllowSignalOverrides controls whether per-signal OTEL env vars
+                    (OTEL_EXPORTER_OTLP_TRACES_*, OTEL_EXPORTER_OTLP_METRICS_*,
+                    OTEL_EXPORTER_OTLP_LOGS_*) may diverge from the shared
+                    OTEL_EXPORTER_OTLP_* values.
+                    true (default): per-signal vars override the shared values for that
+                    signal.
+                    false: per-signal vars are ignored; the shared values apply to all
+                    signals. When per-signal overrides are dropped this way,
+                    SignalOverridesDisallowed appears in blockedReasons (a soft block -
+                    export still works via the shared config).
+                  type: boolean
+                  x-speakeasy-param-computed: false
+                mode:
+                  description: |-
+                    Mode controls whether OTEL env vars participate in the merge.
+                    Disabled: env vars are skipped entirely; only explicit backend fields and
+                    built-in defaults apply.
+                    Optional (default): env vars are used when present; absence is fine.
+                    Required: env vars must supply the missing fields - if any required field
+                    is missing the signal is blocked (state: missing, RequiredEnvMissing in
+                    blockedReasons) even when an explicit value or default could fill it.
+                  type: string
+                  default: Optional
+                  enum:
+                    - Disabled
+                    - Optional
+                    - Required
+                  x-speakeasy-param-computed: false
+                  x-speakeasy-unknown-values: allow
+                precedence:
+                  description: |-
+                    Precedence controls which source wins when both an explicit backend field
+                    and an env var are present for the same field.
+                    EnvFirst (default): env vars win; explicit backend fields fill gaps.
+                    ExplicitFirst: explicit backend fields win; env vars fill gaps.
+                    In either case, built-in defaults are the last fallback.
+                  type: string
+                  default: EnvFirst
+                  enum:
+                    - ExplicitFirst
+                    - EnvFirst
+                  x-speakeasy-param-computed: false
+                  x-speakeasy-unknown-values: allow
+              x-speakeasy-param-computed: false
+            protocol:
+              description: |-
+                Protocol selects gRPC or HTTP transport for the collector connection.
+                Defaults to grpc when omitted.
+              type: string
+              enum:
+                - grpc
+                - http
+              x-speakeasy-param-computed: false
+              x-speakeasy-unknown-values: allow
+          x-speakeasy-param-computed: false
+        creationTime:
+          description: Time at which the resource was created
+          type: string
+          format: date-time
+          example: '0001-01-01T00:00:00Z'
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
+        modificationTime:
+          description: Time at which the resource was updated
+          type: string
+          format: date-time
+          example: '0001-01-01T00:00:00Z'
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
+        status:
+          description: Status is the current status of the Kuma MeshOpenTelemetryBackend resource.
+          type: object
+          properties:
+            conditions:
+              type: array
+              items:
+                properties:
+                  message:
+                    description: |-
+                      message is a human readable message indicating details about the transition.
+                      This may be an empty string.
+                    type: string
+                    maxLength: 32768
+                    x-speakeasy-param-computed: false
+                  reason:
+                    description: |-
+                      reason contains a programmatic identifier indicating the reason for the condition's last transition.
+                      Producers of specific condition types may define expected values and meanings for this field,
+                      and whether the values are considered a guaranteed API.
+                      The value should be a CamelCase string.
+                      This field may not be empty.
+                    type: string
+                    maxLength: 1024
+                    minLength: 1
+                    pattern: '^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$'
+                    x-speakeasy-param-computed: false
+                  status:
+                    description: 'status of the condition, one of True, False, Unknown.'
+                    type: string
+                    enum:
+                      - 'True'
+                      - 'False'
+                      - Unknown
+                    x-speakeasy-unknown-values: allow
+                  type:
+                    description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                    type: string
+                    maxLength: 316
+                    pattern: '^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$'
+                    x-speakeasy-param-computed: false
+                required:
+                  - message
+                  - reason
+                  - status
+                  - type
+                type: object
+              x-speakeasy-plan-modifiers: SupressZeroNullModifier
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
+      required:
+        - type
+        - name
+        - spec
     MeshServiceItem:
       description: 'MeshService represents a service in the mesh with its connectivity and health information. It defines service endpoints by selecting data plane proxies through labels or direct references, configures service ports and protocols, tracks service availability and health status, and provides automatic VIP assignment and hostname generation for service discovery.'
       type: object
@@ -15169,6 +16420,30 @@ components:
           readOnly: true
           x-speakeasy-param-computed: false
           x-speakeasy-param-suppress-computed-diff: true
+        snis:
+          description: 'List of SNIs (Server Name Indication) advertised by xDS for this destination, one entry per port, sorted by port ascending. Present for MeshService, MeshMultiZoneService and MeshExternalService.'
+          type: array
+          items:
+            type: object
+            required:
+              - port
+              - sni
+            properties:
+              port:
+                description: The destination port this SNI corresponds to.
+                type: integer
+                format: int32
+                x-speakeasy-param-computed: false
+              sni:
+                description: The SNI string advertised by xDS for this port.
+                type: string
+                x-speakeasy-param-computed: false
+          example:
+            - port: 8080
+              sni: sni.msvc.default.zone-east.kuma-demo.myresource1.8080
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
+          x-speakeasy-plan-modifiers: SupressZeroNullModifier
         name:
           description: Name of the Kuma resource
           type: string
@@ -15549,6 +16824,87 @@ components:
                   type: string
                   x-speakeasy-param-computed: false
               x-speakeasy-param-computed: false
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
+      required:
+        - type
+        - name
+        - spec
+    MeshZoneAddressItem:
+      description: MeshZoneAddress holds the public address and port for a mesh-scoped zone ingress proxy.
+      type: object
+      properties:
+        type:
+          description: the type of the resource
+          type: string
+          enum:
+            - MeshZoneAddress
+          x-speakeasy-param-computed: false
+        mesh:
+          description: Mesh is the name of the Kuma mesh this resource belongs to. It may be omitted for cluster-scoped resources.
+          type: string
+          default: default
+          x-speakeasy-param-computed: false
+          x-speakeasy-param-force-new: true
+        kri:
+          description: A unique identifier for this resource instance used by internal tooling and integrations. Typically derived from resource attributes and may be used for cross-references or indexing
+          type: string
+          example: kri_mza_default_zone-east_kuma-demo_myresource1_
+          readOnly: true
+          x-speakeasy-param-computed: false
+          x-speakeasy-param-suppress-computed-diff: true
+        name:
+          description: Name of the Kuma resource
+          type: string
+          x-speakeasy-param-computed: false
+          x-speakeasy-param-force-new: true
+        labels:
+          description: The labels to help identity resources
+          type: object
+          additionalProperties:
+            type: string
+          x-speakeasy-param-computed: false
+          x-speakeasy-terraform-custom-default:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaDefinition: 'kumalabels.EmptyKumaLabelsMapDefault{}'
+          x-speakeasy-terraform-custom-type:
+            imports:
+              - github.com/Kong/shared-speakeasy/customtypes/kumalabels
+            schemaType: 'kumalabels.KumaLabelsMapType{MapType: types.MapType{ElemType: types.StringType}}'
+            valueType: kumalabels.KumaLabelsMapValue
+        spec:
+          description: Spec is the specification of the Kuma MeshZoneAddress resource.
+          type: object
+          properties:
+            address:
+              description: Address is the publicly reachable address of the zone ingress.
+              type: string
+              minLength: 1
+              x-speakeasy-param-computed: false
+            port:
+              description: Port is the publicly reachable port of the zone ingress.
+              type: integer
+              format: int32
+              maximum: 65535
+              minimum: 1
+              x-speakeasy-param-computed: false
+          required:
+            - address
+            - port
+          x-speakeasy-param-computed: false
+        creationTime:
+          description: Time at which the resource was created
+          type: string
+          format: date-time
+          example: '0001-01-01T00:00:00Z'
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
+        modificationTime:
+          description: Time at which the resource was updated
+          type: string
+          format: date-time
+          example: '0001-01-01T00:00:00Z'
           readOnly: true
           x-speakeasy-param-suppress-computed-diff: true
       required:
@@ -16719,64 +18075,26 @@ components:
         - type
         - name
         - spec
-    AccessAuditItem:
-      type: object
-      properties:
-        labels:
-          type: object
-          additionalProperties:
-            type: string
-          x-speakeasy-param-computed: false
-        name:
-          type: string
-          x-speakeasy-param-computed: false
-        rules:
-          type: array
-          items:
-            properties:
-              access:
-                type: array
-                items:
-                  oneOf:
-                    - type: string
-                    - type: integer
-                default: null
-                nullable: true
-                x-speakeasy-param-computed: false
-                x-speakeasy-plan-modifiers: SupressZeroNullModifier
-              accessAll:
-                type: boolean
-                x-speakeasy-param-computed: false
-              mesh:
-                type: string
-                x-speakeasy-param-computed: false
-              types:
-                type: array
-                items:
-                  type: string
-                default: null
-                nullable: true
-                x-speakeasy-param-computed: false
-                x-speakeasy-plan-modifiers: SupressZeroNullModifier
-            type: object
-          default: null
-          nullable: true
-          x-speakeasy-param-computed: false
-          x-speakeasy-plan-modifiers: SupressZeroNullModifier
-        type:
-          type: string
-          x-speakeasy-param-computed: false
-      required:
-        - type
-        - name
     AccessRoleItem:
       type: object
       properties:
+        creationTime:
+          description: Time at which the resource was created
+          type: string
+          format: date-time
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
         labels:
           type: object
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+        modificationTime:
+          description: Time at which the resource was updated
+          type: string
+          format: date-time
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
         name:
           type: string
           x-speakeasy-param-computed: false
@@ -16947,11 +18265,23 @@ components:
     AccessRoleBindingItem:
       type: object
       properties:
+        creationTime:
+          description: Time at which the resource was created
+          type: string
+          format: date-time
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
         labels:
           type: object
           additionalProperties:
             type: string
           x-speakeasy-param-computed: false
+        modificationTime:
+          description: Time at which the resource was updated
+          type: string
+          format: date-time
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
         name:
           type: string
           x-speakeasy-param-computed: false
@@ -16984,7 +18314,69 @@ components:
       required:
         - type
         - name
-    BaseError:
+    AccessAuditItem:
+      type: object
+      properties:
+        creationTime:
+          description: Time at which the resource was created
+          type: string
+          format: date-time
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
+        labels:
+          type: object
+          additionalProperties:
+            type: string
+          x-speakeasy-param-computed: false
+        modificationTime:
+          description: Time at which the resource was updated
+          type: string
+          format: date-time
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
+        name:
+          type: string
+          x-speakeasy-param-computed: false
+        rules:
+          type: array
+          items:
+            properties:
+              access:
+                type: array
+                items:
+                  oneOf:
+                    - type: string
+                    - type: integer
+                default: null
+                nullable: true
+                x-speakeasy-param-computed: false
+                x-speakeasy-plan-modifiers: SupressZeroNullModifier
+              accessAll:
+                type: boolean
+                x-speakeasy-param-computed: false
+              mesh:
+                type: string
+                x-speakeasy-param-computed: false
+              types:
+                type: array
+                items:
+                  type: string
+                default: null
+                nullable: true
+                x-speakeasy-param-computed: false
+                x-speakeasy-plan-modifiers: SupressZeroNullModifier
+            type: object
+          default: null
+          nullable: true
+          x-speakeasy-param-computed: false
+          x-speakeasy-plan-modifiers: SupressZeroNullModifier
+        type:
+          type: string
+          x-speakeasy-param-computed: false
+      required:
+        - type
+        - name
+    NotFoundError:
       description: standard error
       type: object
       properties:
@@ -16993,6 +18385,9 @@ components:
             The HTTP status code of the error. Useful when passing the response
             body to child properties in a frontend UI. Must be returned as an integer.
           type: integer
+          example: 404
+          enum:
+            - 404
           readOnly: true
           x-speakeasy-param-suppress-computed-diff: true
         title:
@@ -17001,11 +18396,13 @@ components:
             change between occurences of a problem, except for localization.
             Should be provided as "Sentence case" for direct use in the UI.
           type: string
+          example: Not Found
           readOnly: true
           x-speakeasy-param-suppress-computed-diff: true
         type:
           description: The error type.
           type: string
+          example: 'https://httpstatuses.com/404'
           readOnly: true
           x-speakeasy-param-suppress-computed-diff: true
         instance:
@@ -17014,6 +18411,7 @@ components:
             kong:trace:<correlation_id>. This helps us find the relevant logs
             when a customer reports an issue.
           type: string
+          example: 'kong:trace:1234567890'
           readOnly: true
           x-speakeasy-param-suppress-computed-diff: true
         detail:
@@ -17023,6 +18421,7 @@ components:
             what went wrong. Enclose variable values in square brackets. Should be
             provided as "Sentence case" for direct use in the UI.
           type: string
+          example: Not found
           readOnly: true
           x-speakeasy-param-suppress-computed-diff: true
       required:
@@ -17031,21 +18430,6 @@ components:
         - instance
         - detail
       title: Error
-    NotFoundError:
-      allOf:
-        - $ref: '#/components/schemas/BaseError'
-        - type: object
-          properties:
-            status:
-              example: 404
-            title:
-              example: Not Found
-            type:
-              example: 'https://httpstatuses.com/404'
-            instance:
-              example: 'kong:trace:1234567890'
-            detail:
-              example: Not found
   responses:
     MeshAccessLogItem:
       description: Successful response
@@ -18208,6 +19592,51 @@ components:
         application/json:
           schema:
             type: object
+    MeshOpenTelemetryBackendItem:
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MeshOpenTelemetryBackendItem'
+    MeshOpenTelemetryBackendList:
+      description: List
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MeshOpenTelemetryBackendItem'
+              total:
+                description: The total number of entities
+                type: number
+              next:
+                description: URL to the next page
+                type: string
+    MeshOpenTelemetryBackendCreateOrUpdateSuccessResponse:
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              warnings:
+                description: |
+                  warnings is a list of warning messages to return to the requesting Kuma API clients.
+                  Warning messages describe a problem the client making the API request should correct or be aware of.
+                type: array
+                items:
+                  type: string
+                readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
+    MeshOpenTelemetryBackendDeleteSuccessResponse:
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            type: object
     MeshServiceItem:
       description: Successful response
       content:
@@ -18293,6 +19722,51 @@ components:
                 readOnly: true
                 x-speakeasy-param-suppress-computed-diff: true
     MeshTrustDeleteSuccessResponse:
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            type: object
+    MeshZoneAddressItem:
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MeshZoneAddressItem'
+    MeshZoneAddressList:
+      description: List
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MeshZoneAddressItem'
+              total:
+                description: The total number of entities
+                type: number
+              next:
+                description: URL to the next page
+                type: string
+    MeshZoneAddressCreateOrUpdateSuccessResponse:
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              warnings:
+                description: |
+                  warnings is a list of warning messages to return to the requesting Kuma API clients.
+                  Warning messages describe a problem the client making the API request should correct or be aware of.
+                type: array
+                items:
+                  type: string
+                readOnly: true
+                x-speakeasy-param-suppress-computed-diff: true
+    MeshZoneAddressDeleteSuccessResponse:
       description: Successful response
       content:
         application/json:
@@ -18624,15 +20098,10 @@ security:
 x-speakeasy-retries:
   strategy: backoff
   backoff:
-    initialInterval: 100
-    maxInterval: 500
-    maxElapsedTime: 500
+    initialInterval: 500
+    maxInterval: 60000
+    maxElapsedTime: 3600000
+    exponent: 1.5
   statusCodes:
-    - 404
-    - 408
     - 429
-    - 500
-    - 502
-    - 503
-    - 504
   retryConnectionErrors: true
