@@ -2,6 +2,7 @@ name: Run Speakeasy on PR Open
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened]
     paths-ignore:
       - '.github/**'
       - 'examples/**'
@@ -21,12 +22,6 @@ jobs:
     env:
       REF: ${{ github.event.pull_request.head.ref || github.event.inputs.branch }}
     name: Run Speakeasy on PR Open
-    if: github.event.pull_request.head.ref == 'feat/platform-api-automated-update' ||
-      github.event.pull_request.head.ref == 'feat/platform-api-automated-update-mesh-v3' ||
-      github.event.pull_request.head.ref == 'mesh-v3' ||
-      github.event_name == 'workflow_dispatch' ||
-      github.actor == 'renovate[bot]' ||
-      github.actor == 'mend[bot]'
     runs-on: ubuntu-latest
     concurrency:
       group: speakeasy-${{ github.event.pull_request.number }}
