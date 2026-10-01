@@ -22,6 +22,8 @@ jobs:
       REF: ${{ github.event.pull_request.head.ref || github.event.inputs.branch }}
     name: Run Speakeasy on PR Open
     if: github.event.pull_request.head.ref == 'feat/platform-api-automated-update' ||
+      github.event.pull_request.head.ref == 'feat/platform-api-automated-update-mesh-v3' ||
+      github.event.pull_request.head.ref == 'mesh-v3' ||
       github.event_name == 'workflow_dispatch' ||
       github.actor == 'renovate[bot]' ||
       github.actor == 'mend[bot]'
@@ -31,7 +33,7 @@ jobs:
       cancel-in-progress: false
     steps:
       - name: Install Speakeasy
-        uses: mheap/setup-go-cli@fa9b01cdd4115eac636164f0de43bf7d51c82697 # v1
+        uses: mheap/setup-go-cli@fa9b01cdd4115eac636164f0de43bf7d51c82697 # v1.2.2
         with:
           owner: speakeasy-api
           repo: speakeasy
