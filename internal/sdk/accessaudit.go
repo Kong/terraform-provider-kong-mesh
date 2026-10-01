@@ -31,7 +31,7 @@ func newAccessAudit(rootSDK *KongMesh, sdkConfig config.SDKConfiguration, hooks 
 	}
 }
 
-// GetAccessAuditList - Returns a list of AccessAudit in the mesh.
+// GetAccessAuditList - Returns a list of AccessAudit.
 func (s *AccessAudit) GetAccessAuditList(ctx context.Context, request operations.GetAccessAuditListRequest, opts ...operations.Option) (*operations.GetAccessAuditListResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

@@ -8,24 +8,26 @@ resource "kong-mesh_mesh_trace" "my_meshtrace" {
     default = {
       backends = [
         {
-          datadog = {
-            split_service = false
-            url           = "...my_url..."
-          }
-          open_telemetry = {
-            backend_ref = {
-              kind = "MeshOpenTelemetryBackend"
-              labels = {
-                key = "value"
+          three = {
+            datadog = {
+              split_service = false
+              url           = "...my_url..."
+            }
+            open_telemetry = {
+              backend_ref = {
+                kind = "MeshOpenTelemetryBackend"
+                labels = {
+                  key = "value"
+                }
               }
             }
-          }
-          type = "OpenTelemetry"
-          zipkin = {
-            api_version         = "httpJson"
-            shared_span_context = true
-            trace_id128bit      = false
-            url                 = "...my_url..."
+            type = "Datadog"
+            zipkin = {
+              api_version         = "httpJson"
+              shared_span_context = true
+              trace_id128bit      = false
+              url                 = "...my_url..."
+            }
           }
         }
       ]
@@ -56,13 +58,7 @@ resource "kong-mesh_mesh_trace" "my_meshtrace" {
       labels = {
         key = "value"
       }
-      mesh         = "...my_mesh..."
-      name         = "...my_name..."
-      namespace    = "...my_namespace..."
       section_name = "...my_section_name..."
-      tags = {
-        key = "value"
-      }
     }
   }
   type = "MeshTrace"

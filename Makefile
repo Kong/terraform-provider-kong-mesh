@@ -3,7 +3,7 @@
 all: generate
 
 .PHONY: generate
-generate: generate-plan-modifiers speakeasy
+generate: clean-plan-modifiers speakeasy generate-plan-modifiers
 
 speakeasy: check-speakeasy
 	speakeasy run --skip-versioning --output console --minimal
@@ -48,6 +48,11 @@ acceptance:
 RESOURCE_PLAN_MODIFIER_VERSION := v0.0.15
 
 PLAN_MOD_CMD = $(if $(wildcard go.work),go run ../shared-speakeasy/generators/resource_plan_modifier,go run github.com/Kong/shared-speakeasy/generators/resource_plan_modifier@$(RESOURCE_PLAN_MODIFIER_VERSION))
+
+# plan modifiers are compiled by `speakeasy run`, so stale ones (removed or renamed resources) must go before it
+.PHONY: clean-plan-modifiers
+clean-plan-modifiers:
+	rm -f internal/provider/*_resource_plan_modify.go
 
 .PHONY: generate-plan-modifiers
 generate-plan-modifiers:

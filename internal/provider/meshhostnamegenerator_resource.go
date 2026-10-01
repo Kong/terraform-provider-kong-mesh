@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -18,6 +19,7 @@ import (
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
+	"regexp"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -80,6 +82,10 @@ func (r *MeshHostnameGeneratorResource) Schema(ctx context.Context, req resource
 			"name": schema.StringAttribute{
 				Required:    true,
 				Description: `name of the HostnameGenerator`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(253),
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
+				},
 			},
 			"spec": schema.SingleNestedAttribute{
 				Required: true,
@@ -87,14 +93,44 @@ func (r *MeshHostnameGeneratorResource) Schema(ctx context.Context, req resource
 					"extension": schema.SingleNestedAttribute{
 						Optional: true,
 						Attributes: map[string]schema.Attribute{
-							"config": schema.StringAttribute{
-								CustomType:  jsontypes.NormalizedType{},
-								Optional:    true,
-								Description: `Config freeform configuration for the extension. Parsed as JSON.`,
+							"other": schema.SingleNestedAttribute{
+								Optional: true,
+								Attributes: map[string]schema.Attribute{
+									"config": schema.StringAttribute{
+										CustomType:  jsontypes.NormalizedType{},
+										Optional:    true,
+										Description: `Config freeform configuration for the extension. Parsed as JSON.`,
+									},
+									"type": schema.StringAttribute{
+										Required:    true,
+										Description: `Type of the extension.`,
+									},
+								},
+								Description: `An extension this control plane does not ship. Its configuration is not described here.`,
+								Validators: []validator.Object{
+									objectvalidator.ConflictsWith(path.Expressions{
+										path.MatchRelative().AtParent().AtName("route53"),
+									}...),
+								},
 							},
-							"type": schema.StringAttribute{
-								Required:    true,
-								Description: `Type of the extension.`,
+							"route53": schema.SingleNestedAttribute{
+								Optional: true,
+								Attributes: map[string]schema.Attribute{
+									"config": schema.StringAttribute{
+										CustomType:  jsontypes.NormalizedType{},
+										Optional:    true,
+										Description: `Config freeform configuration for the extension. Parsed as JSON.`,
+									},
+									"type": schema.StringAttribute{
+										Required:    true,
+										Description: `Type of the extension.`,
+									},
+								},
+								Validators: []validator.Object{
+									objectvalidator.ConflictsWith(path.Expressions{
+										path.MatchRelative().AtParent().AtName("other"),
+									}...),
+								},
 							},
 						},
 						Description: `Extension struct for a plugin configuration`,

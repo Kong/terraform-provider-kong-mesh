@@ -48,17 +48,11 @@ resource "kong-mesh_mesh_traffic_permission" "my_meshtrafficpermission" {
       }
     ]
     target_ref = {
-      kind = "MeshHTTPRoute"
+      kind = "Dataplane"
       labels = {
         key = "value"
       }
-      mesh         = "...my_mesh..."
-      name         = "...my_name..."
-      namespace    = "...my_namespace..."
       section_name = "...my_section_name..."
-      tags = {
-        key = "value"
-      }
     }
   }
   type = "MeshTrafficPermission"

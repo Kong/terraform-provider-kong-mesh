@@ -167,6 +167,14 @@ type Cluster struct {
 	// Operation to execute on matched cluster.
 	Operation Operation `json:"operation"`
 	// Value of xDS resource in YAML format to add or patch.
+	//
+	// Patch merges the value into the matched cluster, and repeated fields are
+	// appended to what the cluster already has. Circuit breaker thresholds are
+	// the exception: Envoy resolves them by routing priority and ignores every
+	// threshold after the first one of a given priority, so appending would be
+	// dead config. They are merged into the existing threshold with the same
+	// priority instead, and a value listing one priority twice keeps only the
+	// first entry.
 	Value *string `json:"value,omitempty"`
 }
 
@@ -988,14 +996,8 @@ func (m *MeshProxyPatchItemDefault) GetAppendModifications() []AppendModificatio
 type MeshProxyPatchItemKind string
 
 const (
-	MeshProxyPatchItemKindMesh                 MeshProxyPatchItemKind = "Mesh"
-	MeshProxyPatchItemKindMeshSubset           MeshProxyPatchItemKind = "MeshSubset"
-	MeshProxyPatchItemKindMeshService          MeshProxyPatchItemKind = "MeshService"
-	MeshProxyPatchItemKindMeshExternalService  MeshProxyPatchItemKind = "MeshExternalService"
-	MeshProxyPatchItemKindMeshMultiZoneService MeshProxyPatchItemKind = "MeshMultiZoneService"
-	MeshProxyPatchItemKindMeshServiceSubset    MeshProxyPatchItemKind = "MeshServiceSubset"
-	MeshProxyPatchItemKindMeshHTTPRoute        MeshProxyPatchItemKind = "MeshHTTPRoute"
-	MeshProxyPatchItemKindDataplane            MeshProxyPatchItemKind = "Dataplane"
+	MeshProxyPatchItemKindMesh      MeshProxyPatchItemKind = "Mesh"
+	MeshProxyPatchItemKindDataplane MeshProxyPatchItemKind = "Dataplane"
 )
 
 func (e MeshProxyPatchItemKind) ToPointer() *MeshProxyPatchItemKind {
@@ -1006,7 +1008,7 @@ func (e MeshProxyPatchItemKind) ToPointer() *MeshProxyPatchItemKind {
 func (e *MeshProxyPatchItemKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+		case "Mesh", "Dataplane":
 			return true
 		}
 	}
@@ -1019,23 +1021,13 @@ func (e *MeshProxyPatchItemKind) IsExact() bool {
 type MeshProxyPatchItemTargetRef struct {
 	// Kind of the referenced resource
 	Kind MeshProxyPatchItemKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select referenced real resources and to carry legacy
+	// service identity when a common TargetRef must still target old
+	// service-tag based paths.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`
-	// and `MeshServiceSubset`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
 }
 
 func (m *MeshProxyPatchItemTargetRef) GetKind() MeshProxyPatchItemKind {
@@ -1052,39 +1044,11 @@ func (m *MeshProxyPatchItemTargetRef) GetLabels() map[string]string {
 	return m.Labels
 }
 
-func (m *MeshProxyPatchItemTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshProxyPatchItemTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshProxyPatchItemTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
 func (m *MeshProxyPatchItemTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
-}
-
-func (m *MeshProxyPatchItemTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
 }
 
 // MeshProxyPatchItemSpec - Spec is the specification of the Kuma MeshProxyPatch resource.

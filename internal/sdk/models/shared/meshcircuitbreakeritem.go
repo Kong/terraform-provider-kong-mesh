@@ -467,42 +467,42 @@ func (d *Detectors) GetTotalFailures() *TotalFailures {
 	return d.TotalFailures
 }
 
-type MeshCircuitBreakerItemSpecHealthyPanicThresholdType string
+type HealthyPanicThresholdType string
 
 const (
-	MeshCircuitBreakerItemSpecHealthyPanicThresholdTypeInteger MeshCircuitBreakerItemSpecHealthyPanicThresholdType = "integer"
-	MeshCircuitBreakerItemSpecHealthyPanicThresholdTypeStr     MeshCircuitBreakerItemSpecHealthyPanicThresholdType = "str"
+	HealthyPanicThresholdTypeInteger HealthyPanicThresholdType = "integer"
+	HealthyPanicThresholdTypeStr     HealthyPanicThresholdType = "str"
 )
 
-// MeshCircuitBreakerItemSpecHealthyPanicThreshold - Allows to configure panic threshold for Envoy cluster. If not specified,
+// HealthyPanicThreshold - Allows to configure panic threshold for Envoy cluster. If not specified,
 // the default is 50%. To disable panic mode, set to 0%.
 // Either int or decimal represented as string.
-type MeshCircuitBreakerItemSpecHealthyPanicThreshold struct {
+type HealthyPanicThreshold struct {
 	Integer *int64  `queryParam:"inline" union:"member"`
 	Str     *string `queryParam:"inline" union:"member"`
 
-	Type MeshCircuitBreakerItemSpecHealthyPanicThresholdType
+	Type HealthyPanicThresholdType
 }
 
-func CreateMeshCircuitBreakerItemSpecHealthyPanicThresholdInteger(integer int64) MeshCircuitBreakerItemSpecHealthyPanicThreshold {
-	typ := MeshCircuitBreakerItemSpecHealthyPanicThresholdTypeInteger
+func CreateHealthyPanicThresholdInteger(integer int64) HealthyPanicThreshold {
+	typ := HealthyPanicThresholdTypeInteger
 
-	return MeshCircuitBreakerItemSpecHealthyPanicThreshold{
+	return HealthyPanicThreshold{
 		Integer: &integer,
 		Type:    typ,
 	}
 }
 
-func CreateMeshCircuitBreakerItemSpecHealthyPanicThresholdStr(str string) MeshCircuitBreakerItemSpecHealthyPanicThreshold {
-	typ := MeshCircuitBreakerItemSpecHealthyPanicThresholdTypeStr
+func CreateHealthyPanicThresholdStr(str string) HealthyPanicThreshold {
+	typ := HealthyPanicThresholdTypeStr
 
-	return MeshCircuitBreakerItemSpecHealthyPanicThreshold{
+	return HealthyPanicThreshold{
 		Str:  &str,
 		Type: typ,
 	}
 }
 
-func (u *MeshCircuitBreakerItemSpecHealthyPanicThreshold) UnmarshalJSON(data []byte) error {
+func (u *HealthyPanicThreshold) UnmarshalJSON(data []byte) error {
 
 	var candidates []utils.UnionCandidate
 
@@ -510,7 +510,7 @@ func (u *MeshCircuitBreakerItemSpecHealthyPanicThreshold) UnmarshalJSON(data []b
 	var integer int64 = int64(0)
 	if err := utils.UnmarshalJSON(data, &integer, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshCircuitBreakerItemSpecHealthyPanicThresholdTypeInteger,
+			Type:  HealthyPanicThresholdTypeInteger,
 			Value: &integer,
 		})
 	}
@@ -518,36 +518,36 @@ func (u *MeshCircuitBreakerItemSpecHealthyPanicThreshold) UnmarshalJSON(data []b
 	var str string = ""
 	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshCircuitBreakerItemSpecHealthyPanicThresholdTypeStr,
+			Type:  HealthyPanicThresholdTypeStr,
 			Value: &str,
 		})
 	}
 
 	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshCircuitBreakerItemSpecHealthyPanicThreshold", string(data))
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for HealthyPanicThreshold", string(data))
 	}
 
 	// Pick the best candidate using multi-stage filtering
 	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshCircuitBreakerItemSpecHealthyPanicThreshold", string(data))
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for HealthyPanicThreshold", string(data))
 	}
 
 	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(MeshCircuitBreakerItemSpecHealthyPanicThresholdType)
+	u.Type = best.Type.(HealthyPanicThresholdType)
 	switch best.Type {
-	case MeshCircuitBreakerItemSpecHealthyPanicThresholdTypeInteger:
+	case HealthyPanicThresholdTypeInteger:
 		u.Integer = best.Value.(*int64)
 		return nil
-	case MeshCircuitBreakerItemSpecHealthyPanicThresholdTypeStr:
+	case HealthyPanicThresholdTypeStr:
 		u.Str = best.Value.(*string)
 		return nil
 	}
 
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshCircuitBreakerItemSpecHealthyPanicThreshold", string(data))
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for HealthyPanicThreshold", string(data))
 }
 
-func (u MeshCircuitBreakerItemSpecHealthyPanicThreshold) MarshalJSON() ([]byte, error) {
+func (u HealthyPanicThreshold) MarshalJSON() ([]byte, error) {
 	if u.Integer != nil {
 		return utils.MarshalJSON(u.Integer, "", true)
 	}
@@ -556,7 +556,7 @@ func (u MeshCircuitBreakerItemSpecHealthyPanicThreshold) MarshalJSON() ([]byte, 
 		return utils.MarshalJSON(u.Str, "", true)
 	}
 
-	return nil, errors.New("could not marshal union type MeshCircuitBreakerItemSpecHealthyPanicThreshold: all fields are null")
+	return nil, errors.New("could not marshal union type HealthyPanicThreshold: all fields are null")
 }
 
 // OutlierDetection contains the configuration of the process of dynamically
@@ -577,7 +577,7 @@ type OutlierDetection struct {
 	// Allows to configure panic threshold for Envoy cluster. If not specified,
 	// the default is 50%. To disable panic mode, set to 0%.
 	// Either int or decimal represented as string.
-	HealthyPanicThreshold *MeshCircuitBreakerItemSpecHealthyPanicThreshold `json:"healthyPanicThreshold,omitempty"`
+	HealthyPanicThreshold *HealthyPanicThreshold `json:"healthyPanicThreshold,omitempty"`
 	// The time interval between ejection analysis sweeps. This can result in
 	// both new ejections and hosts being returned to service.
 	Interval *string `json:"interval,omitempty"`
@@ -612,7 +612,7 @@ func (o *OutlierDetection) GetDisabled() *bool {
 	return o.Disabled
 }
 
-func (o *OutlierDetection) GetHealthyPanicThreshold() *MeshCircuitBreakerItemSpecHealthyPanicThreshold {
+func (o *OutlierDetection) GetHealthyPanicThreshold() *HealthyPanicThreshold {
 	if o == nil {
 		return nil
 	}
@@ -686,14 +686,8 @@ func (m *MeshCircuitBreakerItemRules) GetDefault() *MeshCircuitBreakerItemDefaul
 type MeshCircuitBreakerItemKind string
 
 const (
-	MeshCircuitBreakerItemKindMesh                 MeshCircuitBreakerItemKind = "Mesh"
-	MeshCircuitBreakerItemKindMeshSubset           MeshCircuitBreakerItemKind = "MeshSubset"
-	MeshCircuitBreakerItemKindMeshService          MeshCircuitBreakerItemKind = "MeshService"
-	MeshCircuitBreakerItemKindMeshExternalService  MeshCircuitBreakerItemKind = "MeshExternalService"
-	MeshCircuitBreakerItemKindMeshMultiZoneService MeshCircuitBreakerItemKind = "MeshMultiZoneService"
-	MeshCircuitBreakerItemKindMeshServiceSubset    MeshCircuitBreakerItemKind = "MeshServiceSubset"
-	MeshCircuitBreakerItemKindMeshHTTPRoute        MeshCircuitBreakerItemKind = "MeshHTTPRoute"
-	MeshCircuitBreakerItemKindDataplane            MeshCircuitBreakerItemKind = "Dataplane"
+	MeshCircuitBreakerItemKindMesh      MeshCircuitBreakerItemKind = "Mesh"
+	MeshCircuitBreakerItemKindDataplane MeshCircuitBreakerItemKind = "Dataplane"
 )
 
 func (e MeshCircuitBreakerItemKind) ToPointer() *MeshCircuitBreakerItemKind {
@@ -704,7 +698,7 @@ func (e MeshCircuitBreakerItemKind) ToPointer() *MeshCircuitBreakerItemKind {
 func (e *MeshCircuitBreakerItemKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+		case "Mesh", "Dataplane":
 			return true
 		}
 	}
@@ -717,23 +711,13 @@ func (e *MeshCircuitBreakerItemKind) IsExact() bool {
 type MeshCircuitBreakerItemTargetRef struct {
 	// Kind of the referenced resource
 	Kind MeshCircuitBreakerItemKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select referenced real resources and to carry legacy
+	// service identity when a common TargetRef must still target old
+	// service-tag based paths.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`
-	// and `MeshServiceSubset`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
 }
 
 func (m *MeshCircuitBreakerItemTargetRef) GetKind() MeshCircuitBreakerItemKind {
@@ -750,39 +734,11 @@ func (m *MeshCircuitBreakerItemTargetRef) GetLabels() map[string]string {
 	return m.Labels
 }
 
-func (m *MeshCircuitBreakerItemTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshCircuitBreakerItemTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshCircuitBreakerItemTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
 func (m *MeshCircuitBreakerItemTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
-}
-
-func (m *MeshCircuitBreakerItemTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
 }
 
 // MeshCircuitBreakerItemConnectionLimits - ConnectionLimits contains configuration of each circuit breaking limit,
@@ -1427,13 +1383,10 @@ type MeshCircuitBreakerItemSpecKind string
 
 const (
 	MeshCircuitBreakerItemSpecKindMesh                 MeshCircuitBreakerItemSpecKind = "Mesh"
-	MeshCircuitBreakerItemSpecKindMeshSubset           MeshCircuitBreakerItemSpecKind = "MeshSubset"
 	MeshCircuitBreakerItemSpecKindMeshService          MeshCircuitBreakerItemSpecKind = "MeshService"
 	MeshCircuitBreakerItemSpecKindMeshExternalService  MeshCircuitBreakerItemSpecKind = "MeshExternalService"
 	MeshCircuitBreakerItemSpecKindMeshMultiZoneService MeshCircuitBreakerItemSpecKind = "MeshMultiZoneService"
-	MeshCircuitBreakerItemSpecKindMeshServiceSubset    MeshCircuitBreakerItemSpecKind = "MeshServiceSubset"
 	MeshCircuitBreakerItemSpecKindMeshHTTPRoute        MeshCircuitBreakerItemSpecKind = "MeshHTTPRoute"
-	MeshCircuitBreakerItemSpecKindDataplane            MeshCircuitBreakerItemSpecKind = "Dataplane"
 )
 
 func (e MeshCircuitBreakerItemSpecKind) ToPointer() *MeshCircuitBreakerItemSpecKind {
@@ -1444,7 +1397,7 @@ func (e MeshCircuitBreakerItemSpecKind) ToPointer() *MeshCircuitBreakerItemSpecK
 func (e *MeshCircuitBreakerItemSpecKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+		case "Mesh", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshHTTPRoute":
 			return true
 		}
 	}
@@ -1456,23 +1409,13 @@ func (e *MeshCircuitBreakerItemSpecKind) IsExact() bool {
 type MeshCircuitBreakerItemSpecTargetRef struct {
 	// Kind of the referenced resource
 	Kind MeshCircuitBreakerItemSpecKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select referenced real resources and to carry legacy
+	// service identity when a common TargetRef must still target old
+	// service-tag based paths.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`
-	// and `MeshServiceSubset`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
 }
 
 func (m *MeshCircuitBreakerItemSpecTargetRef) GetKind() MeshCircuitBreakerItemSpecKind {
@@ -1489,39 +1432,11 @@ func (m *MeshCircuitBreakerItemSpecTargetRef) GetLabels() map[string]string {
 	return m.Labels
 }
 
-func (m *MeshCircuitBreakerItemSpecTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshCircuitBreakerItemSpecTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshCircuitBreakerItemSpecTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
 func (m *MeshCircuitBreakerItemSpecTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
-}
-
-func (m *MeshCircuitBreakerItemSpecTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
 }
 
 type MeshCircuitBreakerItemTo struct {

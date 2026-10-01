@@ -4,23 +4,23 @@ package shared
 
 // MeshOpenTelemetryBackendList - List
 type MeshOpenTelemetryBackendList struct {
-	Items []MeshOpenTelemetryBackendItem `json:"items,omitempty"`
+	Items []MeshOpenTelemetryBackendItem `json:"items"`
 	// The total number of entities
-	Total *float64 `json:"total,omitempty"`
-	// URL to the next page
-	Next *string `json:"next,omitempty"`
+	Total float64 `json:"total"`
+	// URL to the next page, or null when this is the last page
+	Next *string `json:"next"`
 }
 
 func (m *MeshOpenTelemetryBackendList) GetItems() []MeshOpenTelemetryBackendItem {
 	if m == nil {
-		return nil
+		return []MeshOpenTelemetryBackendItem{}
 	}
 	return m.Items
 }
 
-func (m *MeshOpenTelemetryBackendList) GetTotal() *float64 {
+func (m *MeshOpenTelemetryBackendList) GetTotal() float64 {
 	if m == nil {
-		return nil
+		return 0.0
 	}
 	return m.Total
 }

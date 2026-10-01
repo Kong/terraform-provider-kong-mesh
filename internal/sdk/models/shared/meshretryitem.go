@@ -37,14 +37,8 @@ func (e *MeshRetryItemType) UnmarshalJSON(data []byte) error {
 type MeshRetryItemKind string
 
 const (
-	MeshRetryItemKindMesh                 MeshRetryItemKind = "Mesh"
-	MeshRetryItemKindMeshSubset           MeshRetryItemKind = "MeshSubset"
-	MeshRetryItemKindMeshService          MeshRetryItemKind = "MeshService"
-	MeshRetryItemKindMeshExternalService  MeshRetryItemKind = "MeshExternalService"
-	MeshRetryItemKindMeshMultiZoneService MeshRetryItemKind = "MeshMultiZoneService"
-	MeshRetryItemKindMeshServiceSubset    MeshRetryItemKind = "MeshServiceSubset"
-	MeshRetryItemKindMeshHTTPRoute        MeshRetryItemKind = "MeshHTTPRoute"
-	MeshRetryItemKindDataplane            MeshRetryItemKind = "Dataplane"
+	MeshRetryItemKindMesh      MeshRetryItemKind = "Mesh"
+	MeshRetryItemKindDataplane MeshRetryItemKind = "Dataplane"
 )
 
 func (e MeshRetryItemKind) ToPointer() *MeshRetryItemKind {
@@ -55,7 +49,7 @@ func (e MeshRetryItemKind) ToPointer() *MeshRetryItemKind {
 func (e *MeshRetryItemKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+		case "Mesh", "Dataplane":
 			return true
 		}
 	}
@@ -68,23 +62,13 @@ func (e *MeshRetryItemKind) IsExact() bool {
 type MeshRetryItemTargetRef struct {
 	// Kind of the referenced resource
 	Kind MeshRetryItemKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select referenced real resources and to carry legacy
+	// service identity when a common TargetRef must still target old
+	// service-tag based paths.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`
-	// and `MeshServiceSubset`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
 }
 
 func (m *MeshRetryItemTargetRef) GetKind() MeshRetryItemKind {
@@ -101,39 +85,11 @@ func (m *MeshRetryItemTargetRef) GetLabels() map[string]string {
 	return m.Labels
 }
 
-func (m *MeshRetryItemTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshRetryItemTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshRetryItemTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
 func (m *MeshRetryItemTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
-}
-
-func (m *MeshRetryItemTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
 }
 
 // BackOff is a configuration of durations which will be used in an exponential
@@ -509,20 +465,9 @@ type RetriableRequestHeaders struct {
 	// as they will be handled with case insensitivity (See https://tools.ietf.org/html/rfc7230#section-3.2).
 	Name string `json:"name"`
 	// Type specifies how to match against the value of the header.
-	Type *MeshRetryItemSpecType `default:"Exact" json:"type"`
+	Type *MeshRetryItemSpecType `json:"type,omitempty"`
 	// Value is the value of HTTP Header to be matched.
 	Value *string `json:"value,omitempty"`
-}
-
-func (r RetriableRequestHeaders) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(r, "", false)
-}
-
-func (r *RetriableRequestHeaders) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &r, "", false, nil); err != nil {
-		return err
-	}
-	return nil
 }
 
 func (r *RetriableRequestHeaders) GetName() string {
@@ -579,20 +524,9 @@ type RetriableResponseHeaders struct {
 	// as they will be handled with case insensitivity (See https://tools.ietf.org/html/rfc7230#section-3.2).
 	Name string `json:"name"`
 	// Type specifies how to match against the value of the header.
-	Type *MeshRetryItemSpecToType `default:"Exact" json:"type"`
+	Type *MeshRetryItemSpecToType `json:"type,omitempty"`
 	// Value is the value of HTTP Header to be matched.
 	Value *string `json:"value,omitempty"`
-}
-
-func (r RetriableResponseHeaders) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(r, "", false)
-}
-
-func (r *RetriableResponseHeaders) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &r, "", false, nil); err != nil {
-		return err
-	}
-	return nil
 }
 
 func (r *RetriableResponseHeaders) GetName() string {
@@ -770,13 +704,10 @@ type MeshRetryItemSpecKind string
 
 const (
 	MeshRetryItemSpecKindMesh                 MeshRetryItemSpecKind = "Mesh"
-	MeshRetryItemSpecKindMeshSubset           MeshRetryItemSpecKind = "MeshSubset"
 	MeshRetryItemSpecKindMeshService          MeshRetryItemSpecKind = "MeshService"
 	MeshRetryItemSpecKindMeshExternalService  MeshRetryItemSpecKind = "MeshExternalService"
 	MeshRetryItemSpecKindMeshMultiZoneService MeshRetryItemSpecKind = "MeshMultiZoneService"
-	MeshRetryItemSpecKindMeshServiceSubset    MeshRetryItemSpecKind = "MeshServiceSubset"
 	MeshRetryItemSpecKindMeshHTTPRoute        MeshRetryItemSpecKind = "MeshHTTPRoute"
-	MeshRetryItemSpecKindDataplane            MeshRetryItemSpecKind = "Dataplane"
 )
 
 func (e MeshRetryItemSpecKind) ToPointer() *MeshRetryItemSpecKind {
@@ -787,7 +718,7 @@ func (e MeshRetryItemSpecKind) ToPointer() *MeshRetryItemSpecKind {
 func (e *MeshRetryItemSpecKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+		case "Mesh", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshHTTPRoute":
 			return true
 		}
 	}
@@ -799,23 +730,13 @@ func (e *MeshRetryItemSpecKind) IsExact() bool {
 type MeshRetryItemSpecTargetRef struct {
 	// Kind of the referenced resource
 	Kind MeshRetryItemSpecKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select referenced real resources and to carry legacy
+	// service identity when a common TargetRef must still target old
+	// service-tag based paths.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`
-	// and `MeshServiceSubset`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
 }
 
 func (m *MeshRetryItemSpecTargetRef) GetKind() MeshRetryItemSpecKind {
@@ -832,39 +753,11 @@ func (m *MeshRetryItemSpecTargetRef) GetLabels() map[string]string {
 	return m.Labels
 }
 
-func (m *MeshRetryItemSpecTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshRetryItemSpecTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshRetryItemSpecTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
 func (m *MeshRetryItemSpecTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
-}
-
-func (m *MeshRetryItemSpecTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
 }
 
 type MeshRetryItemTo struct {

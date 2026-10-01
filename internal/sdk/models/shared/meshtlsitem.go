@@ -214,14 +214,8 @@ func (m *MeshTLSItemRules) GetDefault() *MeshTLSItemDefault {
 type MeshTLSItemKind string
 
 const (
-	MeshTLSItemKindMesh                 MeshTLSItemKind = "Mesh"
-	MeshTLSItemKindMeshSubset           MeshTLSItemKind = "MeshSubset"
-	MeshTLSItemKindMeshService          MeshTLSItemKind = "MeshService"
-	MeshTLSItemKindMeshExternalService  MeshTLSItemKind = "MeshExternalService"
-	MeshTLSItemKindMeshMultiZoneService MeshTLSItemKind = "MeshMultiZoneService"
-	MeshTLSItemKindMeshServiceSubset    MeshTLSItemKind = "MeshServiceSubset"
-	MeshTLSItemKindMeshHTTPRoute        MeshTLSItemKind = "MeshHTTPRoute"
-	MeshTLSItemKindDataplane            MeshTLSItemKind = "Dataplane"
+	MeshTLSItemKindMesh      MeshTLSItemKind = "Mesh"
+	MeshTLSItemKindDataplane MeshTLSItemKind = "Dataplane"
 )
 
 func (e MeshTLSItemKind) ToPointer() *MeshTLSItemKind {
@@ -232,7 +226,7 @@ func (e MeshTLSItemKind) ToPointer() *MeshTLSItemKind {
 func (e *MeshTLSItemKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+		case "Mesh", "Dataplane":
 			return true
 		}
 	}
@@ -245,23 +239,13 @@ func (e *MeshTLSItemKind) IsExact() bool {
 type MeshTLSItemTargetRef struct {
 	// Kind of the referenced resource
 	Kind MeshTLSItemKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select referenced real resources and to carry legacy
+	// service identity when a common TargetRef must still target old
+	// service-tag based paths.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`
-	// and `MeshServiceSubset`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
 }
 
 func (m *MeshTLSItemTargetRef) GetKind() MeshTLSItemKind {
@@ -278,39 +262,11 @@ func (m *MeshTLSItemTargetRef) GetLabels() map[string]string {
 	return m.Labels
 }
 
-func (m *MeshTLSItemTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshTLSItemTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshTLSItemTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
 func (m *MeshTLSItemTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
-}
-
-func (m *MeshTLSItemTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
 }
 
 // MeshTLSItemSpec - Spec is the specification of the Kuma MeshTLS resource.

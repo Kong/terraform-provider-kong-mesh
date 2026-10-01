@@ -8,24 +8,24 @@ import (
 	"net/http"
 )
 
-// QueryParamFilter - filter by labels when multiple filters are present, they are ANDed
-type QueryParamFilter struct {
+// GetMeshCircuitBreakerListQueryParamFilter - filter by labels when multiple filters are present, they are ANDed
+type GetMeshCircuitBreakerListQueryParamFilter struct {
 	Key   *string `queryParam:"name=key"`
 	Value *string `queryParam:"name=value"`
 }
 
-func (q *QueryParamFilter) GetKey() *string {
-	if q == nil {
+func (g *GetMeshCircuitBreakerListQueryParamFilter) GetKey() *string {
+	if g == nil {
 		return nil
 	}
-	return q.Key
+	return g.Key
 }
 
-func (q *QueryParamFilter) GetValue() *string {
-	if q == nil {
+func (g *GetMeshCircuitBreakerListQueryParamFilter) GetValue() *string {
+	if g == nil {
 		return nil
 	}
-	return q.Value
+	return g.Value
 }
 
 type GetMeshCircuitBreakerListRequest struct {
@@ -34,7 +34,7 @@ type GetMeshCircuitBreakerListRequest struct {
 	// the number of items per page
 	Size *int64 `default:"100" queryParam:"style=form,explode=true,name=size"`
 	// filter by labels when multiple filters are present, they are ANDed
-	Filter *QueryParamFilter `queryParam:"style=form,explode=true,name=filter"`
+	Filter *GetMeshCircuitBreakerListQueryParamFilter `queryParam:"style=form,explode=true,name=filter"`
 	// name of the mesh
 	Mesh string `pathParam:"style=simple,explode=false,name=mesh"`
 }
@@ -64,7 +64,7 @@ func (g *GetMeshCircuitBreakerListRequest) GetSize() *int64 {
 	return g.Size
 }
 
-func (g *GetMeshCircuitBreakerListRequest) GetFilter() *QueryParamFilter {
+func (g *GetMeshCircuitBreakerListRequest) GetFilter() *GetMeshCircuitBreakerListQueryParamFilter {
 	if g == nil {
 		return nil
 	}

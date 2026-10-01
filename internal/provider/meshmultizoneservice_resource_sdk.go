@@ -124,10 +124,10 @@ func (r *MeshMultiZoneServiceResourceModel) RefreshFromSharedMeshMultiZoneServic
 
 				r.Status.HostnameGenerators = append(r.Status.HostnameGenerators, hostnameGenerators)
 			}
-			r.Status.MeshServices = []tfTypes.MeshServices{}
+			r.Status.MeshServices = []tfTypes.MeshMultiZoneServiceItemMeshServices{}
 
 			for _, meshServicesItem := range resp.Status.MeshServices {
-				var meshServices tfTypes.MeshServices
+				var meshServices tfTypes.MeshMultiZoneServiceItemMeshServices
 
 				meshServices.Mesh = types.StringValue(meshServicesItem.Mesh)
 				meshServices.Name = types.StringValue(meshServicesItem.Name)

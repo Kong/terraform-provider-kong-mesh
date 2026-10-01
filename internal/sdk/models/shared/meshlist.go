@@ -4,16 +4,16 @@ package shared
 
 // MeshList - List
 type MeshList struct {
-	Items []MeshItem `json:"items,omitempty"`
-	// URL to the next page
-	Next *string `json:"next,omitempty"`
+	Items []MeshItem `json:"items"`
+	// URL to the next page, or null when this is the last page
+	Next *string `json:"next"`
 	// The total number of entities
-	Total *float64 `json:"total,omitempty"`
+	Total float64 `json:"total"`
 }
 
 func (m *MeshList) GetItems() []MeshItem {
 	if m == nil {
-		return nil
+		return []MeshItem{}
 	}
 	return m.Items
 }
@@ -25,9 +25,9 @@ func (m *MeshList) GetNext() *string {
 	return m.Next
 }
 
-func (m *MeshList) GetTotal() *float64 {
+func (m *MeshList) GetTotal() float64 {
 	if m == nil {
-		return nil
+		return 0.0
 	}
 	return m.Total
 }

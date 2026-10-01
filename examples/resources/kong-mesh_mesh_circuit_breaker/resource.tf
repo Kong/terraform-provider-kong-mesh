@@ -52,17 +52,11 @@ resource "kong-mesh_mesh_circuit_breaker" "my_meshcircuitbreaker" {
       }
     ]
     target_ref = {
-      kind = "MeshSubset"
+      kind = "Mesh"
       labels = {
         key = "value"
       }
-      mesh         = "...my_mesh..."
-      name         = "...my_name..."
-      namespace    = "...my_namespace..."
       section_name = "...my_section_name..."
-      tags = {
-        key = "value"
-      }
     }
     to = [
       {
@@ -113,13 +107,7 @@ resource "kong-mesh_mesh_circuit_breaker" "my_meshcircuitbreaker" {
           labels = {
             key = "value"
           }
-          mesh         = "...my_mesh..."
-          name         = "...my_name..."
-          namespace    = "...my_namespace..."
           section_name = "...my_section_name..."
-          tags = {
-            key = "value"
-          }
         }
       }
     ]

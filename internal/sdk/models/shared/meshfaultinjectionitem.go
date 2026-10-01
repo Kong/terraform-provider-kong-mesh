@@ -564,14 +564,8 @@ func (m *MeshFaultInjectionItemRules) GetMatches() []MeshFaultInjectionItemMatch
 type MeshFaultInjectionItemKind string
 
 const (
-	MeshFaultInjectionItemKindMesh                 MeshFaultInjectionItemKind = "Mesh"
-	MeshFaultInjectionItemKindMeshSubset           MeshFaultInjectionItemKind = "MeshSubset"
-	MeshFaultInjectionItemKindMeshService          MeshFaultInjectionItemKind = "MeshService"
-	MeshFaultInjectionItemKindMeshExternalService  MeshFaultInjectionItemKind = "MeshExternalService"
-	MeshFaultInjectionItemKindMeshMultiZoneService MeshFaultInjectionItemKind = "MeshMultiZoneService"
-	MeshFaultInjectionItemKindMeshServiceSubset    MeshFaultInjectionItemKind = "MeshServiceSubset"
-	MeshFaultInjectionItemKindMeshHTTPRoute        MeshFaultInjectionItemKind = "MeshHTTPRoute"
-	MeshFaultInjectionItemKindDataplane            MeshFaultInjectionItemKind = "Dataplane"
+	MeshFaultInjectionItemKindMesh      MeshFaultInjectionItemKind = "Mesh"
+	MeshFaultInjectionItemKindDataplane MeshFaultInjectionItemKind = "Dataplane"
 )
 
 func (e MeshFaultInjectionItemKind) ToPointer() *MeshFaultInjectionItemKind {
@@ -582,7 +576,7 @@ func (e MeshFaultInjectionItemKind) ToPointer() *MeshFaultInjectionItemKind {
 func (e *MeshFaultInjectionItemKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+		case "Mesh", "Dataplane":
 			return true
 		}
 	}
@@ -595,23 +589,13 @@ func (e *MeshFaultInjectionItemKind) IsExact() bool {
 type MeshFaultInjectionItemTargetRef struct {
 	// Kind of the referenced resource
 	Kind MeshFaultInjectionItemKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select referenced real resources and to carry legacy
+	// service identity when a common TargetRef must still target old
+	// service-tag based paths.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`
-	// and `MeshServiceSubset`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
 }
 
 func (m *MeshFaultInjectionItemTargetRef) GetKind() MeshFaultInjectionItemKind {
@@ -628,39 +612,11 @@ func (m *MeshFaultInjectionItemTargetRef) GetLabels() map[string]string {
 	return m.Labels
 }
 
-func (m *MeshFaultInjectionItemTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshFaultInjectionItemTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshFaultInjectionItemTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
 func (m *MeshFaultInjectionItemTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
-}
-
-func (m *MeshFaultInjectionItemTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
 }
 
 type MeshFaultInjectionItemSpecToPercentageType string
@@ -1062,13 +1018,10 @@ type MeshFaultInjectionItemSpecKind string
 
 const (
 	MeshFaultInjectionItemSpecKindMesh                 MeshFaultInjectionItemSpecKind = "Mesh"
-	MeshFaultInjectionItemSpecKindMeshSubset           MeshFaultInjectionItemSpecKind = "MeshSubset"
 	MeshFaultInjectionItemSpecKindMeshService          MeshFaultInjectionItemSpecKind = "MeshService"
 	MeshFaultInjectionItemSpecKindMeshExternalService  MeshFaultInjectionItemSpecKind = "MeshExternalService"
 	MeshFaultInjectionItemSpecKindMeshMultiZoneService MeshFaultInjectionItemSpecKind = "MeshMultiZoneService"
-	MeshFaultInjectionItemSpecKindMeshServiceSubset    MeshFaultInjectionItemSpecKind = "MeshServiceSubset"
 	MeshFaultInjectionItemSpecKindMeshHTTPRoute        MeshFaultInjectionItemSpecKind = "MeshHTTPRoute"
-	MeshFaultInjectionItemSpecKindDataplane            MeshFaultInjectionItemSpecKind = "Dataplane"
 )
 
 func (e MeshFaultInjectionItemSpecKind) ToPointer() *MeshFaultInjectionItemSpecKind {
@@ -1079,7 +1032,7 @@ func (e MeshFaultInjectionItemSpecKind) ToPointer() *MeshFaultInjectionItemSpecK
 func (e *MeshFaultInjectionItemSpecKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+		case "Mesh", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshHTTPRoute":
 			return true
 		}
 	}
@@ -1091,23 +1044,13 @@ func (e *MeshFaultInjectionItemSpecKind) IsExact() bool {
 type MeshFaultInjectionItemSpecTargetRef struct {
 	// Kind of the referenced resource
 	Kind MeshFaultInjectionItemSpecKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select referenced real resources and to carry legacy
+	// service identity when a common TargetRef must still target old
+	// service-tag based paths.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`
-	// and `MeshServiceSubset`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
 }
 
 func (m *MeshFaultInjectionItemSpecTargetRef) GetKind() MeshFaultInjectionItemSpecKind {
@@ -1124,39 +1067,11 @@ func (m *MeshFaultInjectionItemSpecTargetRef) GetLabels() map[string]string {
 	return m.Labels
 }
 
-func (m *MeshFaultInjectionItemSpecTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshFaultInjectionItemSpecTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshFaultInjectionItemSpecTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
 func (m *MeshFaultInjectionItemSpecTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
-}
-
-func (m *MeshFaultInjectionItemSpecTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
 }
 
 type MeshFaultInjectionItemTo struct {

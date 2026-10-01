@@ -31,7 +31,7 @@ func newAccessRoleBinding(rootSDK *KongMesh, sdkConfig config.SDKConfiguration, 
 	}
 }
 
-// GetAccessRoleBindingList - Returns a list of AccessRoleBinding in the mesh.
+// GetAccessRoleBindingList - Returns a list of AccessRoleBinding.
 func (s *AccessRoleBinding) GetAccessRoleBindingList(ctx context.Context, request operations.GetAccessRoleBindingListRequest, opts ...operations.Option) (*operations.GetAccessRoleBindingListResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

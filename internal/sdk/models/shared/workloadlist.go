@@ -2,40 +2,25 @@
 
 package shared
 
-import (
-	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/utils"
-)
-
 // WorkloadList - List
 type WorkloadList struct {
 	Items []WorkloadItem `json:"items"`
 	// The total number of entities
-	Total *float64 `default:"null" json:"total"`
-	// URL to the next page
-	Next *string `default:"null" json:"next"`
-}
-
-func (w WorkloadList) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(w, "", false)
-}
-
-func (w *WorkloadList) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &w, "", false, nil); err != nil {
-		return err
-	}
-	return nil
+	Total float64 `json:"total"`
+	// URL to the next page, or null when this is the last page
+	Next *string `json:"next"`
 }
 
 func (w *WorkloadList) GetItems() []WorkloadItem {
 	if w == nil {
-		return nil
+		return []WorkloadItem{}
 	}
 	return w.Items
 }
 
-func (w *WorkloadList) GetTotal() *float64 {
+func (w *WorkloadList) GetTotal() float64 {
 	if w == nil {
-		return nil
+		return 0.0
 	}
 	return w.Total
 }

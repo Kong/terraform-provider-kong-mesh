@@ -7,7 +7,9 @@ import (
 )
 
 type CaCert struct {
-	Inline       types.String `tfsdk:"inline"`
-	InlineString types.String `tfsdk:"inline_string"`
-	Secret       types.String `tfsdk:"secret"`
+	EnvVar         *MeshExternalServiceItemSpecTLSEnvVar         `tfsdk:"env_var"`
+	File           *MeshExternalServiceItemSpecTLSFile           `tfsdk:"file"`
+	InsecureInline *MeshExternalServiceItemSpecTLSInsecureInline `tfsdk:"insecure_inline"`
+	SecretRef      *MeshExternalServiceItemSpecTLSSecretRef      `tfsdk:"secret_ref"`
+	Type           types.String                                  `tfsdk:"type"`
 }

@@ -10,50 +10,56 @@ resource "kong-mesh_mesh_access_log" "my_meshaccesslog" {
         default = {
           backends = [
             {
-              file = {
-                format = {
-                  json = [
+              one = {
+                file = {
+                  format = {
+                    two = {
+                      json = [
+                        {
+                          key   = "...my_key..."
+                          value = "...my_value..."
+                        }
+                      ]
+                      omit_empty_values = false
+                      plain             = "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%"
+                      type              = "Plain"
+                    }
+                  }
+                  path = "/tmp/access.log"
+                }
+                open_telemetry = {
+                  attributes = [
                     {
                       key   = "...my_key..."
                       value = "...my_value..."
                     }
                   ]
-                  omit_empty_values = false
-                  plain             = "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%"
-                  type              = "Json"
-                }
-                path = "/tmp/access.log"
-              }
-              open_telemetry = {
-                attributes = [
-                  {
-                    key   = "...my_key..."
-                    value = "...my_value..."
-                  }
-                ]
-                backend_ref = {
-                  kind = "MeshOpenTelemetryBackend"
-                  labels = {
-                    key = "value"
-                  }
-                }
-                body = { "kvlistValue" : { "values" : [{ "key" : "mesh", "value" : { "stringValue" : "%KUMA_MESH%" } }] } }
-              }
-              tcp = {
-                address = "127.0.0.1:5000"
-                format = {
-                  json = [
-                    {
-                      key   = "...my_key..."
-                      value = "...my_value..."
+                  backend_ref = {
+                    kind = "MeshOpenTelemetryBackend"
+                    labels = {
+                      key = "value"
                     }
-                  ]
-                  omit_empty_values = false
-                  plain             = "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%"
-                  type              = "Json"
+                  }
+                  body = { "kvlistValue" : { "values" : [{ "key" : "mesh", "value" : { "stringValue" : "%KUMA_MESH%" } }] } }
                 }
+                tcp = {
+                  address = "127.0.0.1:5000"
+                  format = {
+                    one = {
+                      json = [
+                        {
+                          key   = "...my_key..."
+                          value = "...my_value..."
+                        }
+                      ]
+                      omit_empty_values = false
+                      plain             = "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%"
+                      type              = "Json"
+                    }
+                  }
+                }
+                type = "OpenTelemetry"
               }
-              type = "OpenTelemetry"
             }
           ]
         }
@@ -72,82 +78,76 @@ resource "kong-mesh_mesh_access_log" "my_meshaccesslog" {
       }
     ]
     target_ref = {
-      kind = "MeshMultiZoneService"
+      kind = "Dataplane"
       labels = {
         key = "value"
       }
-      mesh         = "...my_mesh..."
-      name         = "...my_name..."
-      namespace    = "...my_namespace..."
       section_name = "...my_section_name..."
-      tags = {
-        key = "value"
-      }
     }
     to = [
       {
         default = {
           backends = [
             {
-              file = {
-                format = {
-                  json = [
+              one = {
+                file = {
+                  format = {
+                    two = {
+                      json = [
+                        {
+                          key   = "...my_key..."
+                          value = "...my_value..."
+                        }
+                      ]
+                      omit_empty_values = false
+                      plain             = "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%"
+                      type              = "Json"
+                    }
+                  }
+                  path = "/tmp/access.log"
+                }
+                open_telemetry = {
+                  attributes = [
                     {
                       key   = "...my_key..."
                       value = "...my_value..."
                     }
                   ]
-                  omit_empty_values = false
-                  plain             = "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%"
-                  type              = "Json"
-                }
-                path = "/tmp/access.log"
-              }
-              open_telemetry = {
-                attributes = [
-                  {
-                    key   = "...my_key..."
-                    value = "...my_value..."
-                  }
-                ]
-                backend_ref = {
-                  kind = "MeshOpenTelemetryBackend"
-                  labels = {
-                    key = "value"
-                  }
-                }
-                body = { "kvlistValue" : { "values" : [{ "key" : "mesh", "value" : { "stringValue" : "%KUMA_MESH%" } }] } }
-              }
-              tcp = {
-                address = "127.0.0.1:5000"
-                format = {
-                  json = [
-                    {
-                      key   = "...my_key..."
-                      value = "...my_value..."
+                  backend_ref = {
+                    kind = "MeshOpenTelemetryBackend"
+                    labels = {
+                      key = "value"
                     }
-                  ]
-                  omit_empty_values = false
-                  plain             = "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%"
-                  type              = "Json"
+                  }
+                  body = { "kvlistValue" : { "values" : [{ "key" : "mesh", "value" : { "stringValue" : "%KUMA_MESH%" } }] } }
                 }
+                tcp = {
+                  address = "127.0.0.1:5000"
+                  format = {
+                    two = {
+                      json = [
+                        {
+                          key   = "...my_key..."
+                          value = "...my_value..."
+                        }
+                      ]
+                      omit_empty_values = false
+                      plain             = "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%"
+                      type              = "Json"
+                    }
+                  }
+                }
+                type = "Tcp"
               }
-              type = "Tcp"
             }
           ]
         }
         target_ref = {
-          kind = "MeshMultiZoneService"
+          kind = "MeshExternalService"
           labels = {
             key = "value"
           }
-          mesh         = "...my_mesh..."
-          name         = "...my_name..."
-          namespace    = "...my_namespace..."
           section_name = "...my_section_name..."
-          tags = {
-            key = "value"
-          }
         }
       }
     ]

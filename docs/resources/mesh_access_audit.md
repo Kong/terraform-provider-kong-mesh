@@ -21,9 +21,7 @@ resource "kong-mesh_mesh_access_audit" "my_meshaccessaudit" {
   rules = [
     {
       access = [
-        {
-          str = "...my_str..."
-        }
+        "CREATE"
       ]
       access_all = true
       mesh       = "...my_mesh..."
@@ -62,18 +60,10 @@ Warning messages describe a problem the client making the API request should cor
 
 Optional:
 
-- `access` (Attributes List) (see [below for nested schema](#nestedatt--rules--access))
+- `access` (List of String)
 - `access_all` (Boolean)
 - `mesh` (String)
 - `types` (List of String)
-
-<a id="nestedatt--rules--access"></a>
-### Nested Schema for `rules.access`
-
-Optional:
-
-- `integer` (Number)
-- `str` (String)
 
 ## Import
 

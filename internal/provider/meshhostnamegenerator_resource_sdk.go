@@ -42,17 +42,28 @@ func (r *MeshHostnameGeneratorResourceModel) RefreshFromSharedHostnameGeneratorI
 		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
 		r.Spec = &tfTypes.HostnameGeneratorItemSpec{}
-		if resp.Spec.Extension == nil {
-			r.Spec.Extension = nil
-		} else {
+		if resp.Spec.Extension != nil {
 			r.Spec.Extension = &tfTypes.Extension{}
-			if resp.Spec.Extension.Config == nil {
-				r.Spec.Extension.Config = jsontypes.NewNormalizedNull()
-			} else {
-				configResult, _ := json.Marshal(resp.Spec.Extension.Config)
-				r.Spec.Extension.Config = jsontypes.NewNormalizedValue(string(configResult))
+			if resp.Spec.Extension.Other != nil {
+				r.Spec.Extension.Other = &tfTypes.Other{}
+				if resp.Spec.Extension.Other.Config == nil {
+					r.Spec.Extension.Other.Config = jsontypes.NewNormalizedNull()
+				} else {
+					configResult, _ := json.Marshal(resp.Spec.Extension.Other.Config)
+					r.Spec.Extension.Other.Config = jsontypes.NewNormalizedValue(string(configResult))
+				}
+				r.Spec.Extension.Other.Type = types.StringValue(resp.Spec.Extension.Other.Type)
 			}
-			r.Spec.Extension.Type = types.StringValue(resp.Spec.Extension.Type)
+			if resp.Spec.Extension.Route53 != nil {
+				r.Spec.Extension.Route53 = &tfTypes.Other{}
+				if resp.Spec.Extension.Route53.Config == nil {
+					r.Spec.Extension.Route53.Config = jsontypes.NewNormalizedNull()
+				} else {
+					configResult1, _ := json.Marshal(resp.Spec.Extension.Route53.Config)
+					r.Spec.Extension.Route53.Config = jsontypes.NewNormalizedValue(string(configResult1))
+				}
+				r.Spec.Extension.Route53.Type = types.StringValue(resp.Spec.Extension.Route53.Type)
+			}
 		}
 		if resp.Spec.Selector == nil {
 			r.Spec.Selector = nil
@@ -162,16 +173,43 @@ func (r *MeshHostnameGeneratorResourceModel) ToSharedHostnameGeneratorItemInput(
 	}
 	var extension *shared.Extension
 	if r.Spec.Extension != nil {
-		var config interface{}
-		if !r.Spec.Extension.Config.IsUnknown() && !r.Spec.Extension.Config.IsNull() {
-			_ = json.Unmarshal([]byte(r.Spec.Extension.Config.ValueString()), &config)
-		}
-		var typeVar1 string
-		typeVar1 = r.Spec.Extension.Type.ValueString()
+		var route53 *shared.Route53
+		if r.Spec.Extension.Route53 != nil {
+			var config interface{}
+			if !r.Spec.Extension.Route53.Config.IsUnknown() && !r.Spec.Extension.Route53.Config.IsNull() {
+				_ = json.Unmarshal([]byte(r.Spec.Extension.Route53.Config.ValueString()), &config)
+			}
+			var typeVar1 string
+			typeVar1 = r.Spec.Extension.Route53.Type.ValueString()
 
-		extension = &shared.Extension{
-			Config: config,
-			Type:   typeVar1,
+			route53 = &shared.Route53{
+				Config: config,
+				Type:   typeVar1,
+			}
+		}
+		if route53 != nil {
+			extension = &shared.Extension{
+				Route53: route53,
+			}
+		}
+		var other *shared.Other
+		if r.Spec.Extension.Other != nil {
+			var typeVar2 string
+			typeVar2 = r.Spec.Extension.Other.Type.ValueString()
+
+			var config1 interface{}
+			if !r.Spec.Extension.Other.Config.IsUnknown() && !r.Spec.Extension.Other.Config.IsNull() {
+				_ = json.Unmarshal([]byte(r.Spec.Extension.Other.Config.ValueString()), &config1)
+			}
+			other = &shared.Other{
+				Type:   typeVar2,
+				Config: config1,
+			}
+		}
+		if other != nil {
+			extension = &shared.Extension{
+				Other: other,
+			}
 		}
 	}
 	var selector *shared.Selector

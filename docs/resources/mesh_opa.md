@@ -22,17 +22,39 @@ resource "kong-mesh_mesh_opa" "my_meshopa" {
   spec = {
     default = {
       agent_config = {
-        inline        = "...my_inline..."
-        inline_string = "...my_inline_string..."
-        secret        = "...my_secret..."
+        env_var = {
+          name = "...my_name..."
+        }
+        file = {
+          path = "...my_path..."
+        }
+        insecure_inline = {
+          value = "...my_value..."
+        }
+        secret_ref = {
+          kind = "Secret"
+          name = "...my_name..."
+        }
+        type = "File"
       }
       append_policies = [
         {
           ignore_decision = true
           rego = {
-            inline        = "...my_inline..."
-            inline_string = "...my_inline_string..."
-            secret        = "...my_secret..."
+            env_var = {
+              name = "...my_name..."
+            }
+            file = {
+              path = "...my_path..."
+            }
+            insecure_inline = {
+              value = "...my_value..."
+            }
+            secret_ref = {
+              kind = "Secret"
+              name = "...my_name..."
+            }
+            type = "Secret"
           }
         }
       ]
@@ -51,13 +73,7 @@ resource "kong-mesh_mesh_opa" "my_meshopa" {
       labels = {
         key = "value"
       }
-      mesh         = "...my_mesh..."
-      name         = "...my_name..."
-      namespace    = "...my_namespace..."
       section_name = "...my_section_name..."
-      tags = {
-        key = "value"
-      }
     }
   }
   type = "MeshOPA"
@@ -108,11 +124,49 @@ Optional:
 <a id="nestedatt--spec--default--agent_config"></a>
 ### Nested Schema for `spec.default.agent_config`
 
+Required:
+
+- `type` (String) possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]
+
 Optional:
 
-- `inline` (String) Data source is inline bytes.
-- `inline_string` (String) Data source is inline string`
-- `secret` (String) Data source is a secret with given Secret key.
+- `env_var` (Attributes) (see [below for nested schema](#nestedatt--spec--default--agent_config--env_var))
+- `file` (Attributes) (see [below for nested schema](#nestedatt--spec--default--agent_config--file))
+- `insecure_inline` (Attributes) (see [below for nested schema](#nestedatt--spec--default--agent_config--insecure_inline))
+- `secret_ref` (Attributes) (see [below for nested schema](#nestedatt--spec--default--agent_config--secret_ref))
+
+<a id="nestedatt--spec--default--agent_config--env_var"></a>
+### Nested Schema for `spec.default.agent_config.env_var`
+
+Required:
+
+- `name` (String)
+
+
+<a id="nestedatt--spec--default--agent_config--file"></a>
+### Nested Schema for `spec.default.agent_config.file`
+
+Required:
+
+- `path` (String)
+
+
+<a id="nestedatt--spec--default--agent_config--insecure_inline"></a>
+### Nested Schema for `spec.default.agent_config.insecure_inline`
+
+Required:
+
+- `value` (String)
+
+
+<a id="nestedatt--spec--default--agent_config--secret_ref"></a>
+### Nested Schema for `spec.default.agent_config.secret_ref`
+
+Required:
+
+- `kind` (String) must be "Secret"
+- `name` (String)
+
 
 
 <a id="nestedatt--spec--default--append_policies"></a>
@@ -121,16 +175,51 @@ Optional:
 Optional:
 
 - `ignore_decision` (Boolean) If true, then policy won't be taken into account when making a decision.
-- `rego` (Attributes) OPA Policy written in Rego. Available values: secret, inline, inlineString. Not Null (see [below for nested schema](#nestedatt--spec--default--append_policies--rego))
+- `rego` (Attributes) OPA Policy written in Rego. Not Null (see [below for nested schema](#nestedatt--spec--default--append_policies--rego))
 
 <a id="nestedatt--spec--default--append_policies--rego"></a>
 ### Nested Schema for `spec.default.append_policies.rego`
 
 Optional:
 
-- `inline` (String) Data source is inline bytes.
-- `inline_string` (String) Data source is inline string`
-- `secret` (String) Data source is a secret with given Secret key.
+- `env_var` (Attributes) (see [below for nested schema](#nestedatt--spec--default--append_policies--rego--env_var))
+- `file` (Attributes) (see [below for nested schema](#nestedatt--spec--default--append_policies--rego--file))
+- `insecure_inline` (Attributes) (see [below for nested schema](#nestedatt--spec--default--append_policies--rego--insecure_inline))
+- `secret_ref` (Attributes) (see [below for nested schema](#nestedatt--spec--default--append_policies--rego--secret_ref))
+- `type` (String) possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]; Not Null
+
+<a id="nestedatt--spec--default--append_policies--rego--env_var"></a>
+### Nested Schema for `spec.default.append_policies.rego.env_var`
+
+Optional:
+
+- `name` (String) Not Null
+
+
+<a id="nestedatt--spec--default--append_policies--rego--file"></a>
+### Nested Schema for `spec.default.append_policies.rego.file`
+
+Optional:
+
+- `path` (String) Not Null
+
+
+<a id="nestedatt--spec--default--append_policies--rego--insecure_inline"></a>
+### Nested Schema for `spec.default.append_policies.rego.insecure_inline`
+
+Optional:
+
+- `value` (String) Not Null
+
+
+<a id="nestedatt--spec--default--append_policies--rego--secret_ref"></a>
+### Nested Schema for `spec.default.append_policies.rego.secret_ref`
+
+Optional:
+
+- `kind` (String) Not Null; must be "Secret"
+- `name` (String) Not Null
+
 
 
 
@@ -167,21 +256,15 @@ sent to the agent.
 
 Required:
 
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "Dataplane"]
 
 Optional:
 
-- `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
-Name and Namespace can be used.
-- `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`
-and `MeshServiceSubset`
-- `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-will be targeted.
+- `labels` (Map of String) Labels are used to select referenced real resources and to carry legacy
+service identity when a common TargetRef must still target old
+service-tag based paths.
 - `section_name` (String) SectionName is used to target specific section of resource.
 For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-- `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds
-`MeshSubset` and `MeshServiceSubset`
 
 ## Import
 

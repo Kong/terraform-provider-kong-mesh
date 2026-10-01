@@ -10,6 +10,7 @@ import (
 	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int32validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -27,6 +28,7 @@ import (
 	speakeasy_listvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/listvalidators"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/stringvalidators"
+	"regexp"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -89,6 +91,10 @@ func (r *MeshLoadBalancingStrategyResource) Schema(ctx context.Context, req reso
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
 				Description: `name of the mesh. Requires replacement if changed.`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(253),
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[0-9a-z-_.]*$`), "must match pattern "+regexp.MustCompile(`^[0-9a-z-_.]*$`).String()),
+				},
 			},
 			"modification_time": schema.StringAttribute{
 				Computed: true,
@@ -103,6 +109,10 @@ func (r *MeshLoadBalancingStrategyResource) Schema(ctx context.Context, req reso
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
 				Description: `name of the MeshLoadBalancingStrategy. Requires replacement if changed.`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(253),
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
+				},
 			},
 			"spec": schema.SingleNestedAttribute{
 				Required: true,
@@ -112,38 +122,19 @@ func (r *MeshLoadBalancingStrategyResource) Schema(ctx context.Context, req reso
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
 								Required:    true,
-								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
+								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "Dataplane"]`,
 							},
 							"labels": schema.MapAttribute{
 								Optional:    true,
 								ElementType: types.StringType,
-								MarkdownDescription: `Labels are used to select group of MeshServices that match labels. Either Labels or` + "\n" +
-									`Name and Namespace can be used.`,
-							},
-							"mesh": schema.StringAttribute{
-								Optional:    true,
-								Description: `Mesh is reserved for future use to identify cross mesh resources.`,
-							},
-							"name": schema.StringAttribute{
-								Optional: true,
-								MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `` + "\n" +
-									`and ` + "`" + `MeshServiceSubset` + "`" + ``,
-							},
-							"namespace": schema.StringAttribute{
-								Optional: true,
-								MarkdownDescription: `Namespace specifies the namespace of target resource. If empty only resources in policy namespace` + "\n" +
-									`will be targeted.`,
+								MarkdownDescription: `Labels are used to select referenced real resources and to carry legacy` + "\n" +
+									`service identity when a common TargetRef must still target old` + "\n" +
+									`service-tag based paths.`,
 							},
 							"section_name": schema.StringAttribute{
 								Optional: true,
 								MarkdownDescription: `SectionName is used to target specific section of resource.` + "\n" +
 									`For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.`,
-							},
-							"tags": schema.MapAttribute{
-								Optional:    true,
-								ElementType: types.StringType,
-								MarkdownDescription: `Tags used to select a subset of proxies by tags. Can only be used with kinds` + "\n" +
-									`` + "`" + `MeshSubset` + "`" + ` and ` + "`" + `MeshServiceSubset` + "`" + ``,
 							},
 						},
 						MarkdownDescription: `TargetRef is a reference to the resource the policy takes an effect on.` + "\n" +
@@ -175,93 +166,514 @@ func (r *MeshLoadBalancingStrategyResource) Schema(ctx context.Context, req reso
 													speakeasy_objectvalidators.NotNull(),
 												},
 												Attributes: map[string]schema.Attribute{
-													"connection": schema.SingleNestedAttribute{
+													"five": schema.SingleNestedAttribute{
 														Optional: true,
 														Attributes: map[string]schema.Attribute{
-															"source_ip": schema.BoolAttribute{
-																Optional:    true,
-																Description: `Hash on source IP address.`,
-															},
-														},
-													},
-													"cookie": schema.SingleNestedAttribute{
-														Optional: true,
-														Attributes: map[string]schema.Attribute{
-															"name": schema.StringAttribute{
-																Optional:    true,
-																Description: `The name of the cookie that will be used to obtain the hash key. Not Null`,
-																Validators: []validator.String{
-																	speakeasy_stringvalidators.NotNull(),
-																	stringvalidator.UTF8LengthAtLeast(1),
-																},
-															},
-															"path": schema.StringAttribute{
-																Optional:    true,
-																Description: `The name of the path for the cookie.`,
-															},
-															"ttl": schema.StringAttribute{
-																Optional:    true,
-																Description: `If specified, a cookie with the TTL will be generated if the cookie is not present.`,
-															},
-														},
-													},
-													"filter_state": schema.SingleNestedAttribute{
-														Optional: true,
-														Attributes: map[string]schema.Attribute{
-															"key": schema.StringAttribute{
+															"connection": schema.SingleNestedAttribute{
 																Optional: true,
-																MarkdownDescription: `The name of the Object in the per-request filterState, which is` + "\n" +
-																	`an Envoy::Hashable object. If there is no data associated with the key,` + "\n" +
-																	`or the stored object is not Envoy::Hashable, no hash will be produced.` + "\n" +
-																	`Not Null`,
-																Validators: []validator.String{
-																	speakeasy_stringvalidators.NotNull(),
-																	stringvalidator.UTF8LengthAtLeast(1),
+																Attributes: map[string]schema.Attribute{
+																	"source_ip": schema.BoolAttribute{
+																		Optional:    true,
+																		Description: `Hash on source IP address.`,
+																	},
 																},
 															},
-														},
-													},
-													"header": schema.SingleNestedAttribute{
-														Optional: true,
-														Attributes: map[string]schema.Attribute{
-															"name": schema.StringAttribute{
-																Optional:    true,
-																Description: `The name of the request header that will be used to obtain the hash key. Not Null`,
-																Validators: []validator.String{
-																	speakeasy_stringvalidators.NotNull(),
-																	stringvalidator.UTF8LengthAtLeast(1),
-																},
-															},
-														},
-													},
-													"query_parameter": schema.SingleNestedAttribute{
-														Optional: true,
-														Attributes: map[string]schema.Attribute{
-															"name": schema.StringAttribute{
+															"cookie": schema.SingleNestedAttribute{
 																Optional: true,
-																MarkdownDescription: `The name of the URL query parameter that will be used to obtain the hash key.` + "\n" +
-																	`If the parameter is not present, no hash will be produced. Query parameter names` + "\n" +
-																	`are case-sensitive.` + "\n" +
-																	`Not Null`,
+																Attributes: map[string]schema.Attribute{
+																	"name": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `The name of the cookie that will be used to obtain the hash key. Not Null`,
+																		Validators: []validator.String{
+																			speakeasy_stringvalidators.NotNull(),
+																			stringvalidator.UTF8LengthAtLeast(1),
+																		},
+																	},
+																	"path": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `The name of the path for the cookie.`,
+																	},
+																	"ttl": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `If specified, a cookie with the TTL will be generated if the cookie is not present.`,
+																	},
+																},
+															},
+															"filter_state": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"key": schema.StringAttribute{
+																		Optional: true,
+																		MarkdownDescription: `The name of the Object in the per-request filterState, which is` + "\n" +
+																			`an Envoy::Hashable object. If there is no data associated with the key,` + "\n" +
+																			`or the stored object is not Envoy::Hashable, no hash will be produced.` + "\n" +
+																			`Not Null`,
+																		Validators: []validator.String{
+																			speakeasy_stringvalidators.NotNull(),
+																			stringvalidator.UTF8LengthAtLeast(1),
+																		},
+																	},
+																},
+															},
+															"header": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"name": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `The name of the request header that will be used to obtain the hash key. Not Null`,
+																		Validators: []validator.String{
+																			speakeasy_stringvalidators.NotNull(),
+																			stringvalidator.UTF8LengthAtLeast(1),
+																		},
+																	},
+																},
+															},
+															"query_parameter": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"name": schema.StringAttribute{
+																		Optional: true,
+																		MarkdownDescription: `The name of the URL query parameter that will be used to obtain the hash key.` + "\n" +
+																			`If the parameter is not present, no hash will be produced. Query parameter names` + "\n" +
+																			`are case-sensitive.` + "\n" +
+																			`Not Null`,
+																		Validators: []validator.String{
+																			speakeasy_stringvalidators.NotNull(),
+																			stringvalidator.UTF8LengthAtLeast(1),
+																		},
+																	},
+																},
+															},
+															"terminal": schema.BoolAttribute{
+																Optional: true,
+																MarkdownDescription: `Terminal is a flag that short-circuits the hash computing. This field provides` + "\n" +
+																	`a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback` + "\n" +
+																	`to rest of the policy list”, it saves time when the terminal policy works.` + "\n" +
+																	`If true, and there is already a hash computed, ignore rest of the list of hash polices.`,
+															},
+															"type": schema.StringAttribute{
+																Optional:    true,
+																Description: `possible known values include one of ["Header", "Cookie", "Connection", "QueryParameter", "FilterState"]; Not Null`,
 																Validators: []validator.String{
 																	speakeasy_stringvalidators.NotNull(),
-																	stringvalidator.UTF8LengthAtLeast(1),
 																},
 															},
 														},
+														Validators: []validator.Object{
+															objectvalidator.ConflictsWith(path.Expressions{
+																path.MatchRelative().AtParent().AtName("one"),
+																path.MatchRelative().AtParent().AtName("two"),
+																path.MatchRelative().AtParent().AtName("three"),
+																path.MatchRelative().AtParent().AtName("four"),
+															}...),
+														},
 													},
-													"terminal": schema.BoolAttribute{
+													"four": schema.SingleNestedAttribute{
 														Optional: true,
-														MarkdownDescription: `Terminal is a flag that short-circuits the hash computing. This field provides` + "\n" +
-															`a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback` + "\n" +
-															`to rest of the policy list”, it saves time when the terminal policy works.` + "\n" +
-															`If true, and there is already a hash computed, ignore rest of the list of hash polices.`,
+														Attributes: map[string]schema.Attribute{
+															"connection": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"source_ip": schema.BoolAttribute{
+																		Optional:    true,
+																		Description: `Hash on source IP address.`,
+																	},
+																},
+															},
+															"cookie": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"name": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `The name of the cookie that will be used to obtain the hash key. Not Null`,
+																		Validators: []validator.String{
+																			speakeasy_stringvalidators.NotNull(),
+																			stringvalidator.UTF8LengthAtLeast(1),
+																		},
+																	},
+																	"path": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `The name of the path for the cookie.`,
+																	},
+																	"ttl": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `If specified, a cookie with the TTL will be generated if the cookie is not present.`,
+																	},
+																},
+															},
+															"filter_state": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"key": schema.StringAttribute{
+																		Optional: true,
+																		MarkdownDescription: `The name of the Object in the per-request filterState, which is` + "\n" +
+																			`an Envoy::Hashable object. If there is no data associated with the key,` + "\n" +
+																			`or the stored object is not Envoy::Hashable, no hash will be produced.` + "\n" +
+																			`Not Null`,
+																		Validators: []validator.String{
+																			speakeasy_stringvalidators.NotNull(),
+																			stringvalidator.UTF8LengthAtLeast(1),
+																		},
+																	},
+																},
+															},
+															"header": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"name": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `The name of the request header that will be used to obtain the hash key. Not Null`,
+																		Validators: []validator.String{
+																			speakeasy_stringvalidators.NotNull(),
+																			stringvalidator.UTF8LengthAtLeast(1),
+																		},
+																	},
+																},
+															},
+															"query_parameter": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"name": schema.StringAttribute{
+																		Optional: true,
+																		MarkdownDescription: `The name of the URL query parameter that will be used to obtain the hash key.` + "\n" +
+																			`If the parameter is not present, no hash will be produced. Query parameter names` + "\n" +
+																			`are case-sensitive.` + "\n" +
+																			`Not Null`,
+																		Validators: []validator.String{
+																			speakeasy_stringvalidators.NotNull(),
+																			stringvalidator.UTF8LengthAtLeast(1),
+																		},
+																	},
+																},
+															},
+															"terminal": schema.BoolAttribute{
+																Optional: true,
+																MarkdownDescription: `Terminal is a flag that short-circuits the hash computing. This field provides` + "\n" +
+																	`a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback` + "\n" +
+																	`to rest of the policy list”, it saves time when the terminal policy works.` + "\n" +
+																	`If true, and there is already a hash computed, ignore rest of the list of hash polices.`,
+															},
+															"type": schema.StringAttribute{
+																Optional:    true,
+																Description: `possible known values include one of ["Header", "Cookie", "Connection", "QueryParameter", "FilterState"]; Not Null`,
+																Validators: []validator.String{
+																	speakeasy_stringvalidators.NotNull(),
+																},
+															},
+														},
+														Validators: []validator.Object{
+															objectvalidator.ConflictsWith(path.Expressions{
+																path.MatchRelative().AtParent().AtName("one"),
+																path.MatchRelative().AtParent().AtName("two"),
+																path.MatchRelative().AtParent().AtName("three"),
+																path.MatchRelative().AtParent().AtName("five"),
+															}...),
+														},
 													},
-													"type": schema.StringAttribute{
-														Optional:    true,
-														Description: `possible known values include one of ["Header", "Cookie", "Connection", "SourceIP", "QueryParameter", "FilterState"]; Not Null`,
-														Validators: []validator.String{
-															speakeasy_stringvalidators.NotNull(),
+													"one": schema.SingleNestedAttribute{
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"connection": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"source_ip": schema.BoolAttribute{
+																		Optional:    true,
+																		Description: `Hash on source IP address.`,
+																	},
+																},
+															},
+															"cookie": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"name": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `The name of the cookie that will be used to obtain the hash key. Not Null`,
+																		Validators: []validator.String{
+																			speakeasy_stringvalidators.NotNull(),
+																			stringvalidator.UTF8LengthAtLeast(1),
+																		},
+																	},
+																	"path": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `The name of the path for the cookie.`,
+																	},
+																	"ttl": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `If specified, a cookie with the TTL will be generated if the cookie is not present.`,
+																	},
+																},
+															},
+															"filter_state": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"key": schema.StringAttribute{
+																		Optional: true,
+																		MarkdownDescription: `The name of the Object in the per-request filterState, which is` + "\n" +
+																			`an Envoy::Hashable object. If there is no data associated with the key,` + "\n" +
+																			`or the stored object is not Envoy::Hashable, no hash will be produced.` + "\n" +
+																			`Not Null`,
+																		Validators: []validator.String{
+																			speakeasy_stringvalidators.NotNull(),
+																			stringvalidator.UTF8LengthAtLeast(1),
+																		},
+																	},
+																},
+															},
+															"header": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"name": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `The name of the request header that will be used to obtain the hash key. Not Null`,
+																		Validators: []validator.String{
+																			speakeasy_stringvalidators.NotNull(),
+																			stringvalidator.UTF8LengthAtLeast(1),
+																		},
+																	},
+																},
+															},
+															"query_parameter": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"name": schema.StringAttribute{
+																		Optional: true,
+																		MarkdownDescription: `The name of the URL query parameter that will be used to obtain the hash key.` + "\n" +
+																			`If the parameter is not present, no hash will be produced. Query parameter names` + "\n" +
+																			`are case-sensitive.` + "\n" +
+																			`Not Null`,
+																		Validators: []validator.String{
+																			speakeasy_stringvalidators.NotNull(),
+																			stringvalidator.UTF8LengthAtLeast(1),
+																		},
+																	},
+																},
+															},
+															"terminal": schema.BoolAttribute{
+																Optional: true,
+																MarkdownDescription: `Terminal is a flag that short-circuits the hash computing. This field provides` + "\n" +
+																	`a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback` + "\n" +
+																	`to rest of the policy list”, it saves time when the terminal policy works.` + "\n" +
+																	`If true, and there is already a hash computed, ignore rest of the list of hash polices.`,
+															},
+															"type": schema.StringAttribute{
+																Optional:    true,
+																Description: `possible known values include one of ["Header", "Cookie", "Connection", "QueryParameter", "FilterState"]; Not Null`,
+																Validators: []validator.String{
+																	speakeasy_stringvalidators.NotNull(),
+																},
+															},
+														},
+														Validators: []validator.Object{
+															objectvalidator.ConflictsWith(path.Expressions{
+																path.MatchRelative().AtParent().AtName("two"),
+																path.MatchRelative().AtParent().AtName("three"),
+																path.MatchRelative().AtParent().AtName("four"),
+																path.MatchRelative().AtParent().AtName("five"),
+															}...),
+														},
+													},
+													"three": schema.SingleNestedAttribute{
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"connection": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"source_ip": schema.BoolAttribute{
+																		Optional:    true,
+																		Description: `Hash on source IP address.`,
+																	},
+																},
+															},
+															"cookie": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"name": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `The name of the cookie that will be used to obtain the hash key. Not Null`,
+																		Validators: []validator.String{
+																			speakeasy_stringvalidators.NotNull(),
+																			stringvalidator.UTF8LengthAtLeast(1),
+																		},
+																	},
+																	"path": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `The name of the path for the cookie.`,
+																	},
+																	"ttl": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `If specified, a cookie with the TTL will be generated if the cookie is not present.`,
+																	},
+																},
+															},
+															"filter_state": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"key": schema.StringAttribute{
+																		Optional: true,
+																		MarkdownDescription: `The name of the Object in the per-request filterState, which is` + "\n" +
+																			`an Envoy::Hashable object. If there is no data associated with the key,` + "\n" +
+																			`or the stored object is not Envoy::Hashable, no hash will be produced.` + "\n" +
+																			`Not Null`,
+																		Validators: []validator.String{
+																			speakeasy_stringvalidators.NotNull(),
+																			stringvalidator.UTF8LengthAtLeast(1),
+																		},
+																	},
+																},
+															},
+															"header": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"name": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `The name of the request header that will be used to obtain the hash key. Not Null`,
+																		Validators: []validator.String{
+																			speakeasy_stringvalidators.NotNull(),
+																			stringvalidator.UTF8LengthAtLeast(1),
+																		},
+																	},
+																},
+															},
+															"query_parameter": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"name": schema.StringAttribute{
+																		Optional: true,
+																		MarkdownDescription: `The name of the URL query parameter that will be used to obtain the hash key.` + "\n" +
+																			`If the parameter is not present, no hash will be produced. Query parameter names` + "\n" +
+																			`are case-sensitive.` + "\n" +
+																			`Not Null`,
+																		Validators: []validator.String{
+																			speakeasy_stringvalidators.NotNull(),
+																			stringvalidator.UTF8LengthAtLeast(1),
+																		},
+																	},
+																},
+															},
+															"terminal": schema.BoolAttribute{
+																Optional: true,
+																MarkdownDescription: `Terminal is a flag that short-circuits the hash computing. This field provides` + "\n" +
+																	`a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback` + "\n" +
+																	`to rest of the policy list”, it saves time when the terminal policy works.` + "\n" +
+																	`If true, and there is already a hash computed, ignore rest of the list of hash polices.`,
+															},
+															"type": schema.StringAttribute{
+																Optional:    true,
+																Description: `possible known values include one of ["Header", "Cookie", "Connection", "QueryParameter", "FilterState"]; Not Null`,
+																Validators: []validator.String{
+																	speakeasy_stringvalidators.NotNull(),
+																},
+															},
+														},
+														Validators: []validator.Object{
+															objectvalidator.ConflictsWith(path.Expressions{
+																path.MatchRelative().AtParent().AtName("one"),
+																path.MatchRelative().AtParent().AtName("two"),
+																path.MatchRelative().AtParent().AtName("four"),
+																path.MatchRelative().AtParent().AtName("five"),
+															}...),
+														},
+													},
+													"two": schema.SingleNestedAttribute{
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"connection": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"source_ip": schema.BoolAttribute{
+																		Optional:    true,
+																		Description: `Hash on source IP address.`,
+																	},
+																},
+															},
+															"cookie": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"name": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `The name of the cookie that will be used to obtain the hash key. Not Null`,
+																		Validators: []validator.String{
+																			speakeasy_stringvalidators.NotNull(),
+																			stringvalidator.UTF8LengthAtLeast(1),
+																		},
+																	},
+																	"path": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `The name of the path for the cookie.`,
+																	},
+																	"ttl": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `If specified, a cookie with the TTL will be generated if the cookie is not present.`,
+																	},
+																},
+															},
+															"filter_state": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"key": schema.StringAttribute{
+																		Optional: true,
+																		MarkdownDescription: `The name of the Object in the per-request filterState, which is` + "\n" +
+																			`an Envoy::Hashable object. If there is no data associated with the key,` + "\n" +
+																			`or the stored object is not Envoy::Hashable, no hash will be produced.` + "\n" +
+																			`Not Null`,
+																		Validators: []validator.String{
+																			speakeasy_stringvalidators.NotNull(),
+																			stringvalidator.UTF8LengthAtLeast(1),
+																		},
+																	},
+																},
+															},
+															"header": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"name": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `The name of the request header that will be used to obtain the hash key. Not Null`,
+																		Validators: []validator.String{
+																			speakeasy_stringvalidators.NotNull(),
+																			stringvalidator.UTF8LengthAtLeast(1),
+																		},
+																	},
+																},
+															},
+															"query_parameter": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"name": schema.StringAttribute{
+																		Optional: true,
+																		MarkdownDescription: `The name of the URL query parameter that will be used to obtain the hash key.` + "\n" +
+																			`If the parameter is not present, no hash will be produced. Query parameter names` + "\n" +
+																			`are case-sensitive.` + "\n" +
+																			`Not Null`,
+																		Validators: []validator.String{
+																			speakeasy_stringvalidators.NotNull(),
+																			stringvalidator.UTF8LengthAtLeast(1),
+																		},
+																	},
+																},
+															},
+															"terminal": schema.BoolAttribute{
+																Optional: true,
+																MarkdownDescription: `Terminal is a flag that short-circuits the hash computing. This field provides` + "\n" +
+																	`a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback` + "\n" +
+																	`to rest of the policy list”, it saves time when the terminal policy works.` + "\n" +
+																	`If true, and there is already a hash computed, ignore rest of the list of hash polices.`,
+															},
+															"type": schema.StringAttribute{
+																Optional:    true,
+																Description: `possible known values include one of ["Header", "Cookie", "Connection", "QueryParameter", "FilterState"]; Not Null`,
+																Validators: []validator.String{
+																	speakeasy_stringvalidators.NotNull(),
+																},
+															},
+														},
+														Validators: []validator.Object{
+															objectvalidator.ConflictsWith(path.Expressions{
+																path.MatchRelative().AtParent().AtName("one"),
+																path.MatchRelative().AtParent().AtName("three"),
+																path.MatchRelative().AtParent().AtName("four"),
+																path.MatchRelative().AtParent().AtName("five"),
+															}...),
 														},
 													},
 												},
@@ -274,116 +686,629 @@ func (r *MeshLoadBalancingStrategyResource) Schema(ctx context.Context, req reso
 										"load_balancer": schema.SingleNestedAttribute{
 											Optional: true,
 											Attributes: map[string]schema.Attribute{
-												"least_request": schema.SingleNestedAttribute{
+												"five": schema.SingleNestedAttribute{
 													Optional: true,
 													Attributes: map[string]schema.Attribute{
-														"active_request_bias": schema.SingleNestedAttribute{
+														"least_request": schema.SingleNestedAttribute{
 															Optional: true,
 															Attributes: map[string]schema.Attribute{
-																"integer": schema.Int64Attribute{
+																"active_request_bias": schema.SingleNestedAttribute{
 																	Optional: true,
-																	Validators: []validator.Int64{
-																		int64validator.ConflictsWith(path.Expressions{
-																			path.MatchRelative().AtParent().AtName("str"),
-																		}...),
+																	Attributes: map[string]schema.Attribute{
+																		"integer": schema.Int64Attribute{
+																			Optional: true,
+																			Validators: []validator.Int64{
+																				int64validator.ConflictsWith(path.Expressions{
+																					path.MatchRelative().AtParent().AtName("str"),
+																				}...),
+																			},
+																		},
+																		"str": schema.StringAttribute{
+																			Optional: true,
+																			Validators: []validator.String{
+																				stringvalidator.ConflictsWith(path.Expressions{
+																					path.MatchRelative().AtParent().AtName("integer"),
+																				}...),
+																			},
+																		},
+																	},
+																	MarkdownDescription: `ActiveRequestBias refers to dynamic weights applied when hosts have varying load` + "\n" +
+																		`balancing weights. A higher value here aggressively reduces the weight of endpoints` + "\n" +
+																		`that are currently handling active requests. In essence, the higher the ActiveRequestBias` + "\n" +
+																		`value, the more forcefully it reduces the load balancing weight of endpoints that are` + "\n" +
+																		`actively serving requests.`,
+																},
+																"choice_count": schema.Int32Attribute{
+																	Optional: true,
+																	MarkdownDescription: `ChoiceCount is the number of random healthy hosts from which the host with` + "\n" +
+																		`the fewest active requests will be chosen. Defaults to 2 so that Envoy performs` + "\n" +
+																		`two-choice selection if the field is not set.`,
+																	Validators: []validator.Int32{
+																		int32validator.AtLeast(2),
 																	},
 																},
-																"str": schema.StringAttribute{
+															},
+															MarkdownDescription: `LeastRequest selects N random available hosts as specified in 'choiceCount' (2 by default)` + "\n" +
+																`and picks the host which has the fewest active requests`,
+														},
+														"maglev": schema.SingleNestedAttribute{
+															Optional: true,
+															Attributes: map[string]schema.Attribute{
+																"table_size": schema.Int32Attribute{
 																	Optional: true,
-																	Validators: []validator.String{
-																		stringvalidator.ConflictsWith(path.Expressions{
-																			path.MatchRelative().AtParent().AtName("integer"),
-																		}...),
+																	MarkdownDescription: `The table size for Maglev hashing. Maglev aims for “minimal disruption”` + "\n" +
+																		`rather than an absolute guarantee. Minimal disruption means that when` + "\n" +
+																		`the set of upstream hosts change, a connection will likely be sent` + "\n" +
+																		`to the same upstream as it was before. Increasing the table size reduces` + "\n" +
+																		`the amount of disruption. The table size must be prime number limited to 5000011.` + "\n" +
+																		`If it is not specified, the default is 65537.`,
+																	Validators: []validator.Int32{
+																		int32validator.Between(1, 5000011),
 																	},
 																},
 															},
-															MarkdownDescription: `ActiveRequestBias refers to dynamic weights applied when hosts have varying load` + "\n" +
-																`balancing weights. A higher value here aggressively reduces the weight of endpoints` + "\n" +
-																`that are currently handling active requests. In essence, the higher the ActiveRequestBias` + "\n" +
-																`value, the more forcefully it reduces the load balancing weight of endpoints that are` + "\n" +
-																`actively serving requests.`,
+															MarkdownDescription: `Maglev implements consistent hashing to upstream hosts. Maglev can be used as` + "\n" +
+																`a drop in replacement for the ring hash load balancer any place in which` + "\n" +
+																`consistent hashing is desired.`,
 														},
-														"choice_count": schema.Int32Attribute{
+														"random": schema.SingleNestedAttribute{
 															Optional: true,
-															MarkdownDescription: `ChoiceCount is the number of random healthy hosts from which the host with` + "\n" +
-																`the fewest active requests will be chosen. Defaults to 2 so that Envoy performs` + "\n" +
-																`two-choice selection if the field is not set.`,
-															Validators: []validator.Int32{
-																int32validator.AtLeast(2),
+															MarkdownDescription: `Random selects a random available host. The random load balancer generally` + "\n" +
+																`performs better than round-robin if no health checking policy is configured.` + "\n" +
+																`Random selection avoids bias towards the host in the set that comes after a failed host.`,
+														},
+														"ring_hash": schema.SingleNestedAttribute{
+															Optional: true,
+															Attributes: map[string]schema.Attribute{
+																"hash_function": schema.StringAttribute{
+																	Optional: true,
+																	MarkdownDescription: `HashFunction is a function used to hash hosts onto the ketama ring.` + "\n" +
+																		`The value defaults to XX_HASH. Available values – XX_HASH, MURMUR_HASH_2.` + "\n" +
+																		`possible known values include one of ["XXHash", "MurmurHash2"]`,
+																},
+																"max_ring_size": schema.Int32Attribute{
+																	Optional: true,
+																	MarkdownDescription: `Maximum hash ring size. Defaults to 8M entries, and limited to 8M entries,` + "\n" +
+																		`but can be lowered to further constrain resource use.`,
+																	Validators: []validator.Int32{
+																		int32validator.Between(1, 8000000),
+																	},
+																},
+																"min_ring_size": schema.Int32Attribute{
+																	Optional: true,
+																	MarkdownDescription: `Minimum hash ring size. The larger the ring is (that is,` + "\n" +
+																		`the more hashes there are for each provided host) the better the request distribution` + "\n" +
+																		`will reflect the desired weights. Defaults to 1024 entries, and limited to 8M entries.`,
+																	Validators: []validator.Int32{
+																		int32validator.Between(1, 8000000),
+																	},
+																},
+															},
+															MarkdownDescription: `RingHash  implements consistent hashing to upstream hosts. Each host is mapped` + "\n" +
+																`onto a circle (the “ring”) by hashing its address; each request is then routed` + "\n" +
+																`to a host by hashing some property of the request, and finding the nearest` + "\n" +
+																`corresponding host clockwise around the ring.`,
+														},
+														"round_robin": schema.SingleNestedAttribute{
+															Optional: true,
+															MarkdownDescription: `RoundRobin is a load balancing algorithm that distributes requests` + "\n" +
+																`across available upstream hosts in round-robin order.`,
+														},
+														"type": schema.StringAttribute{
+															Optional:    true,
+															Description: `possible known values include one of ["RoundRobin", "LeastRequest", "RingHash", "Random", "Maglev"]; Not Null`,
+															Validators: []validator.String{
+																speakeasy_stringvalidators.NotNull(),
 															},
 														},
 													},
-													MarkdownDescription: `LeastRequest selects N random available hosts as specified in 'choiceCount' (2 by default)` + "\n" +
-														`and picks the host which has the fewest active requests`,
+													Validators: []validator.Object{
+														objectvalidator.ConflictsWith(path.Expressions{
+															path.MatchRelative().AtParent().AtName("one"),
+															path.MatchRelative().AtParent().AtName("two"),
+															path.MatchRelative().AtParent().AtName("three"),
+															path.MatchRelative().AtParent().AtName("four"),
+														}...),
+													},
 												},
-												"maglev": schema.SingleNestedAttribute{
+												"four": schema.SingleNestedAttribute{
 													Optional: true,
 													Attributes: map[string]schema.Attribute{
-														"table_size": schema.Int32Attribute{
+														"least_request": schema.SingleNestedAttribute{
 															Optional: true,
-															MarkdownDescription: `The table size for Maglev hashing. Maglev aims for “minimal disruption”` + "\n" +
-																`rather than an absolute guarantee. Minimal disruption means that when` + "\n" +
-																`the set of upstream hosts change, a connection will likely be sent` + "\n" +
-																`to the same upstream as it was before. Increasing the table size reduces` + "\n" +
-																`the amount of disruption. The table size must be prime number limited to 5000011.` + "\n" +
-																`If it is not specified, the default is 65537.`,
-															Validators: []validator.Int32{
-																int32validator.Between(1, 5000011),
+															Attributes: map[string]schema.Attribute{
+																"active_request_bias": schema.SingleNestedAttribute{
+																	Optional: true,
+																	Attributes: map[string]schema.Attribute{
+																		"integer": schema.Int64Attribute{
+																			Optional: true,
+																			Validators: []validator.Int64{
+																				int64validator.ConflictsWith(path.Expressions{
+																					path.MatchRelative().AtParent().AtName("str"),
+																				}...),
+																			},
+																		},
+																		"str": schema.StringAttribute{
+																			Optional: true,
+																			Validators: []validator.String{
+																				stringvalidator.ConflictsWith(path.Expressions{
+																					path.MatchRelative().AtParent().AtName("integer"),
+																				}...),
+																			},
+																		},
+																	},
+																	MarkdownDescription: `ActiveRequestBias refers to dynamic weights applied when hosts have varying load` + "\n" +
+																		`balancing weights. A higher value here aggressively reduces the weight of endpoints` + "\n" +
+																		`that are currently handling active requests. In essence, the higher the ActiveRequestBias` + "\n" +
+																		`value, the more forcefully it reduces the load balancing weight of endpoints that are` + "\n" +
+																		`actively serving requests.`,
+																},
+																"choice_count": schema.Int32Attribute{
+																	Optional: true,
+																	MarkdownDescription: `ChoiceCount is the number of random healthy hosts from which the host with` + "\n" +
+																		`the fewest active requests will be chosen. Defaults to 2 so that Envoy performs` + "\n" +
+																		`two-choice selection if the field is not set.`,
+																	Validators: []validator.Int32{
+																		int32validator.AtLeast(2),
+																	},
+																},
+															},
+															MarkdownDescription: `LeastRequest selects N random available hosts as specified in 'choiceCount' (2 by default)` + "\n" +
+																`and picks the host which has the fewest active requests`,
+														},
+														"maglev": schema.SingleNestedAttribute{
+															Optional: true,
+															Attributes: map[string]schema.Attribute{
+																"table_size": schema.Int32Attribute{
+																	Optional: true,
+																	MarkdownDescription: `The table size for Maglev hashing. Maglev aims for “minimal disruption”` + "\n" +
+																		`rather than an absolute guarantee. Minimal disruption means that when` + "\n" +
+																		`the set of upstream hosts change, a connection will likely be sent` + "\n" +
+																		`to the same upstream as it was before. Increasing the table size reduces` + "\n" +
+																		`the amount of disruption. The table size must be prime number limited to 5000011.` + "\n" +
+																		`If it is not specified, the default is 65537.`,
+																	Validators: []validator.Int32{
+																		int32validator.Between(1, 5000011),
+																	},
+																},
+															},
+															MarkdownDescription: `Maglev implements consistent hashing to upstream hosts. Maglev can be used as` + "\n" +
+																`a drop in replacement for the ring hash load balancer any place in which` + "\n" +
+																`consistent hashing is desired.`,
+														},
+														"random": schema.SingleNestedAttribute{
+															Optional: true,
+															MarkdownDescription: `Random selects a random available host. The random load balancer generally` + "\n" +
+																`performs better than round-robin if no health checking policy is configured.` + "\n" +
+																`Random selection avoids bias towards the host in the set that comes after a failed host.`,
+														},
+														"ring_hash": schema.SingleNestedAttribute{
+															Optional: true,
+															Attributes: map[string]schema.Attribute{
+																"hash_function": schema.StringAttribute{
+																	Optional: true,
+																	MarkdownDescription: `HashFunction is a function used to hash hosts onto the ketama ring.` + "\n" +
+																		`The value defaults to XX_HASH. Available values – XX_HASH, MURMUR_HASH_2.` + "\n" +
+																		`possible known values include one of ["XXHash", "MurmurHash2"]`,
+																},
+																"max_ring_size": schema.Int32Attribute{
+																	Optional: true,
+																	MarkdownDescription: `Maximum hash ring size. Defaults to 8M entries, and limited to 8M entries,` + "\n" +
+																		`but can be lowered to further constrain resource use.`,
+																	Validators: []validator.Int32{
+																		int32validator.Between(1, 8000000),
+																	},
+																},
+																"min_ring_size": schema.Int32Attribute{
+																	Optional: true,
+																	MarkdownDescription: `Minimum hash ring size. The larger the ring is (that is,` + "\n" +
+																		`the more hashes there are for each provided host) the better the request distribution` + "\n" +
+																		`will reflect the desired weights. Defaults to 1024 entries, and limited to 8M entries.`,
+																	Validators: []validator.Int32{
+																		int32validator.Between(1, 8000000),
+																	},
+																},
+															},
+															MarkdownDescription: `RingHash  implements consistent hashing to upstream hosts. Each host is mapped` + "\n" +
+																`onto a circle (the “ring”) by hashing its address; each request is then routed` + "\n" +
+																`to a host by hashing some property of the request, and finding the nearest` + "\n" +
+																`corresponding host clockwise around the ring.`,
+														},
+														"round_robin": schema.SingleNestedAttribute{
+															Optional: true,
+															MarkdownDescription: `RoundRobin is a load balancing algorithm that distributes requests` + "\n" +
+																`across available upstream hosts in round-robin order.`,
+														},
+														"type": schema.StringAttribute{
+															Optional:    true,
+															Description: `possible known values include one of ["RoundRobin", "LeastRequest", "RingHash", "Random", "Maglev"]; Not Null`,
+															Validators: []validator.String{
+																speakeasy_stringvalidators.NotNull(),
 															},
 														},
 													},
-													MarkdownDescription: `Maglev implements consistent hashing to upstream hosts. Maglev can be used as` + "\n" +
-														`a drop in replacement for the ring hash load balancer any place in which` + "\n" +
-														`consistent hashing is desired.`,
+													Validators: []validator.Object{
+														objectvalidator.ConflictsWith(path.Expressions{
+															path.MatchRelative().AtParent().AtName("one"),
+															path.MatchRelative().AtParent().AtName("two"),
+															path.MatchRelative().AtParent().AtName("three"),
+															path.MatchRelative().AtParent().AtName("five"),
+														}...),
+													},
 												},
-												"random": schema.SingleNestedAttribute{
-													Optional: true,
-													MarkdownDescription: `Random selects a random available host. The random load balancer generally` + "\n" +
-														`performs better than round-robin if no health checking policy is configured.` + "\n" +
-														`Random selection avoids bias towards the host in the set that comes after a failed host.`,
-												},
-												"ring_hash": schema.SingleNestedAttribute{
+												"one": schema.SingleNestedAttribute{
 													Optional: true,
 													Attributes: map[string]schema.Attribute{
-														"hash_function": schema.StringAttribute{
+														"least_request": schema.SingleNestedAttribute{
 															Optional: true,
-															MarkdownDescription: `HashFunction is a function used to hash hosts onto the ketama ring.` + "\n" +
-																`The value defaults to XX_HASH. Available values – XX_HASH, MURMUR_HASH_2.` + "\n" +
-																`possible known values include one of ["XXHash", "MurmurHash2"]`,
-														},
-														"max_ring_size": schema.Int32Attribute{
-															Optional: true,
-															MarkdownDescription: `Maximum hash ring size. Defaults to 8M entries, and limited to 8M entries,` + "\n" +
-																`but can be lowered to further constrain resource use.`,
-															Validators: []validator.Int32{
-																int32validator.Between(1, 8000000),
+															Attributes: map[string]schema.Attribute{
+																"active_request_bias": schema.SingleNestedAttribute{
+																	Optional: true,
+																	Attributes: map[string]schema.Attribute{
+																		"integer": schema.Int64Attribute{
+																			Optional: true,
+																			Validators: []validator.Int64{
+																				int64validator.ConflictsWith(path.Expressions{
+																					path.MatchRelative().AtParent().AtName("str"),
+																				}...),
+																			},
+																		},
+																		"str": schema.StringAttribute{
+																			Optional: true,
+																			Validators: []validator.String{
+																				stringvalidator.ConflictsWith(path.Expressions{
+																					path.MatchRelative().AtParent().AtName("integer"),
+																				}...),
+																			},
+																		},
+																	},
+																	MarkdownDescription: `ActiveRequestBias refers to dynamic weights applied when hosts have varying load` + "\n" +
+																		`balancing weights. A higher value here aggressively reduces the weight of endpoints` + "\n" +
+																		`that are currently handling active requests. In essence, the higher the ActiveRequestBias` + "\n" +
+																		`value, the more forcefully it reduces the load balancing weight of endpoints that are` + "\n" +
+																		`actively serving requests.`,
+																},
+																"choice_count": schema.Int32Attribute{
+																	Optional: true,
+																	MarkdownDescription: `ChoiceCount is the number of random healthy hosts from which the host with` + "\n" +
+																		`the fewest active requests will be chosen. Defaults to 2 so that Envoy performs` + "\n" +
+																		`two-choice selection if the field is not set.`,
+																	Validators: []validator.Int32{
+																		int32validator.AtLeast(2),
+																	},
+																},
 															},
+															MarkdownDescription: `LeastRequest selects N random available hosts as specified in 'choiceCount' (2 by default)` + "\n" +
+																`and picks the host which has the fewest active requests`,
 														},
-														"min_ring_size": schema.Int32Attribute{
+														"maglev": schema.SingleNestedAttribute{
 															Optional: true,
-															MarkdownDescription: `Minimum hash ring size. The larger the ring is (that is,` + "\n" +
-																`the more hashes there are for each provided host) the better the request distribution` + "\n" +
-																`will reflect the desired weights. Defaults to 1024 entries, and limited to 8M entries.`,
-															Validators: []validator.Int32{
-																int32validator.Between(1, 8000000),
+															Attributes: map[string]schema.Attribute{
+																"table_size": schema.Int32Attribute{
+																	Optional: true,
+																	MarkdownDescription: `The table size for Maglev hashing. Maglev aims for “minimal disruption”` + "\n" +
+																		`rather than an absolute guarantee. Minimal disruption means that when` + "\n" +
+																		`the set of upstream hosts change, a connection will likely be sent` + "\n" +
+																		`to the same upstream as it was before. Increasing the table size reduces` + "\n" +
+																		`the amount of disruption. The table size must be prime number limited to 5000011.` + "\n" +
+																		`If it is not specified, the default is 65537.`,
+																	Validators: []validator.Int32{
+																		int32validator.Between(1, 5000011),
+																	},
+																},
+															},
+															MarkdownDescription: `Maglev implements consistent hashing to upstream hosts. Maglev can be used as` + "\n" +
+																`a drop in replacement for the ring hash load balancer any place in which` + "\n" +
+																`consistent hashing is desired.`,
+														},
+														"random": schema.SingleNestedAttribute{
+															Optional: true,
+															MarkdownDescription: `Random selects a random available host. The random load balancer generally` + "\n" +
+																`performs better than round-robin if no health checking policy is configured.` + "\n" +
+																`Random selection avoids bias towards the host in the set that comes after a failed host.`,
+														},
+														"ring_hash": schema.SingleNestedAttribute{
+															Optional: true,
+															Attributes: map[string]schema.Attribute{
+																"hash_function": schema.StringAttribute{
+																	Optional: true,
+																	MarkdownDescription: `HashFunction is a function used to hash hosts onto the ketama ring.` + "\n" +
+																		`The value defaults to XX_HASH. Available values – XX_HASH, MURMUR_HASH_2.` + "\n" +
+																		`possible known values include one of ["XXHash", "MurmurHash2"]`,
+																},
+																"max_ring_size": schema.Int32Attribute{
+																	Optional: true,
+																	MarkdownDescription: `Maximum hash ring size. Defaults to 8M entries, and limited to 8M entries,` + "\n" +
+																		`but can be lowered to further constrain resource use.`,
+																	Validators: []validator.Int32{
+																		int32validator.Between(1, 8000000),
+																	},
+																},
+																"min_ring_size": schema.Int32Attribute{
+																	Optional: true,
+																	MarkdownDescription: `Minimum hash ring size. The larger the ring is (that is,` + "\n" +
+																		`the more hashes there are for each provided host) the better the request distribution` + "\n" +
+																		`will reflect the desired weights. Defaults to 1024 entries, and limited to 8M entries.`,
+																	Validators: []validator.Int32{
+																		int32validator.Between(1, 8000000),
+																	},
+																},
+															},
+															MarkdownDescription: `RingHash  implements consistent hashing to upstream hosts. Each host is mapped` + "\n" +
+																`onto a circle (the “ring”) by hashing its address; each request is then routed` + "\n" +
+																`to a host by hashing some property of the request, and finding the nearest` + "\n" +
+																`corresponding host clockwise around the ring.`,
+														},
+														"round_robin": schema.SingleNestedAttribute{
+															Optional: true,
+															MarkdownDescription: `RoundRobin is a load balancing algorithm that distributes requests` + "\n" +
+																`across available upstream hosts in round-robin order.`,
+														},
+														"type": schema.StringAttribute{
+															Optional:    true,
+															Description: `possible known values include one of ["RoundRobin", "LeastRequest", "RingHash", "Random", "Maglev"]; Not Null`,
+															Validators: []validator.String{
+																speakeasy_stringvalidators.NotNull(),
 															},
 														},
 													},
-													MarkdownDescription: `RingHash  implements consistent hashing to upstream hosts. Each host is mapped` + "\n" +
-														`onto a circle (the “ring”) by hashing its address; each request is then routed` + "\n" +
-														`to a host by hashing some property of the request, and finding the nearest` + "\n" +
-														`corresponding host clockwise around the ring.`,
+													Validators: []validator.Object{
+														objectvalidator.ConflictsWith(path.Expressions{
+															path.MatchRelative().AtParent().AtName("two"),
+															path.MatchRelative().AtParent().AtName("three"),
+															path.MatchRelative().AtParent().AtName("four"),
+															path.MatchRelative().AtParent().AtName("five"),
+														}...),
+													},
 												},
-												"round_robin": schema.SingleNestedAttribute{
+												"three": schema.SingleNestedAttribute{
 													Optional: true,
-													MarkdownDescription: `RoundRobin is a load balancing algorithm that distributes requests` + "\n" +
-														`across available upstream hosts in round-robin order.`,
+													Attributes: map[string]schema.Attribute{
+														"least_request": schema.SingleNestedAttribute{
+															Optional: true,
+															Attributes: map[string]schema.Attribute{
+																"active_request_bias": schema.SingleNestedAttribute{
+																	Optional: true,
+																	Attributes: map[string]schema.Attribute{
+																		"integer": schema.Int64Attribute{
+																			Optional: true,
+																			Validators: []validator.Int64{
+																				int64validator.ConflictsWith(path.Expressions{
+																					path.MatchRelative().AtParent().AtName("str"),
+																				}...),
+																			},
+																		},
+																		"str": schema.StringAttribute{
+																			Optional: true,
+																			Validators: []validator.String{
+																				stringvalidator.ConflictsWith(path.Expressions{
+																					path.MatchRelative().AtParent().AtName("integer"),
+																				}...),
+																			},
+																		},
+																	},
+																	MarkdownDescription: `ActiveRequestBias refers to dynamic weights applied when hosts have varying load` + "\n" +
+																		`balancing weights. A higher value here aggressively reduces the weight of endpoints` + "\n" +
+																		`that are currently handling active requests. In essence, the higher the ActiveRequestBias` + "\n" +
+																		`value, the more forcefully it reduces the load balancing weight of endpoints that are` + "\n" +
+																		`actively serving requests.`,
+																},
+																"choice_count": schema.Int32Attribute{
+																	Optional: true,
+																	MarkdownDescription: `ChoiceCount is the number of random healthy hosts from which the host with` + "\n" +
+																		`the fewest active requests will be chosen. Defaults to 2 so that Envoy performs` + "\n" +
+																		`two-choice selection if the field is not set.`,
+																	Validators: []validator.Int32{
+																		int32validator.AtLeast(2),
+																	},
+																},
+															},
+															MarkdownDescription: `LeastRequest selects N random available hosts as specified in 'choiceCount' (2 by default)` + "\n" +
+																`and picks the host which has the fewest active requests`,
+														},
+														"maglev": schema.SingleNestedAttribute{
+															Optional: true,
+															Attributes: map[string]schema.Attribute{
+																"table_size": schema.Int32Attribute{
+																	Optional: true,
+																	MarkdownDescription: `The table size for Maglev hashing. Maglev aims for “minimal disruption”` + "\n" +
+																		`rather than an absolute guarantee. Minimal disruption means that when` + "\n" +
+																		`the set of upstream hosts change, a connection will likely be sent` + "\n" +
+																		`to the same upstream as it was before. Increasing the table size reduces` + "\n" +
+																		`the amount of disruption. The table size must be prime number limited to 5000011.` + "\n" +
+																		`If it is not specified, the default is 65537.`,
+																	Validators: []validator.Int32{
+																		int32validator.Between(1, 5000011),
+																	},
+																},
+															},
+															MarkdownDescription: `Maglev implements consistent hashing to upstream hosts. Maglev can be used as` + "\n" +
+																`a drop in replacement for the ring hash load balancer any place in which` + "\n" +
+																`consistent hashing is desired.`,
+														},
+														"random": schema.SingleNestedAttribute{
+															Optional: true,
+															MarkdownDescription: `Random selects a random available host. The random load balancer generally` + "\n" +
+																`performs better than round-robin if no health checking policy is configured.` + "\n" +
+																`Random selection avoids bias towards the host in the set that comes after a failed host.`,
+														},
+														"ring_hash": schema.SingleNestedAttribute{
+															Optional: true,
+															Attributes: map[string]schema.Attribute{
+																"hash_function": schema.StringAttribute{
+																	Optional: true,
+																	MarkdownDescription: `HashFunction is a function used to hash hosts onto the ketama ring.` + "\n" +
+																		`The value defaults to XX_HASH. Available values – XX_HASH, MURMUR_HASH_2.` + "\n" +
+																		`possible known values include one of ["XXHash", "MurmurHash2"]`,
+																},
+																"max_ring_size": schema.Int32Attribute{
+																	Optional: true,
+																	MarkdownDescription: `Maximum hash ring size. Defaults to 8M entries, and limited to 8M entries,` + "\n" +
+																		`but can be lowered to further constrain resource use.`,
+																	Validators: []validator.Int32{
+																		int32validator.Between(1, 8000000),
+																	},
+																},
+																"min_ring_size": schema.Int32Attribute{
+																	Optional: true,
+																	MarkdownDescription: `Minimum hash ring size. The larger the ring is (that is,` + "\n" +
+																		`the more hashes there are for each provided host) the better the request distribution` + "\n" +
+																		`will reflect the desired weights. Defaults to 1024 entries, and limited to 8M entries.`,
+																	Validators: []validator.Int32{
+																		int32validator.Between(1, 8000000),
+																	},
+																},
+															},
+															MarkdownDescription: `RingHash  implements consistent hashing to upstream hosts. Each host is mapped` + "\n" +
+																`onto a circle (the “ring”) by hashing its address; each request is then routed` + "\n" +
+																`to a host by hashing some property of the request, and finding the nearest` + "\n" +
+																`corresponding host clockwise around the ring.`,
+														},
+														"round_robin": schema.SingleNestedAttribute{
+															Optional: true,
+															MarkdownDescription: `RoundRobin is a load balancing algorithm that distributes requests` + "\n" +
+																`across available upstream hosts in round-robin order.`,
+														},
+														"type": schema.StringAttribute{
+															Optional:    true,
+															Description: `possible known values include one of ["RoundRobin", "LeastRequest", "RingHash", "Random", "Maglev"]; Not Null`,
+															Validators: []validator.String{
+																speakeasy_stringvalidators.NotNull(),
+															},
+														},
+													},
+													Validators: []validator.Object{
+														objectvalidator.ConflictsWith(path.Expressions{
+															path.MatchRelative().AtParent().AtName("one"),
+															path.MatchRelative().AtParent().AtName("two"),
+															path.MatchRelative().AtParent().AtName("four"),
+															path.MatchRelative().AtParent().AtName("five"),
+														}...),
+													},
 												},
-												"type": schema.StringAttribute{
-													Optional:    true,
-													Description: `possible known values include one of ["RoundRobin", "LeastRequest", "RingHash", "Random", "Maglev"]; Not Null`,
-													Validators: []validator.String{
-														speakeasy_stringvalidators.NotNull(),
+												"two": schema.SingleNestedAttribute{
+													Optional: true,
+													Attributes: map[string]schema.Attribute{
+														"least_request": schema.SingleNestedAttribute{
+															Optional: true,
+															Attributes: map[string]schema.Attribute{
+																"active_request_bias": schema.SingleNestedAttribute{
+																	Optional: true,
+																	Attributes: map[string]schema.Attribute{
+																		"integer": schema.Int64Attribute{
+																			Optional: true,
+																			Validators: []validator.Int64{
+																				int64validator.ConflictsWith(path.Expressions{
+																					path.MatchRelative().AtParent().AtName("str"),
+																				}...),
+																			},
+																		},
+																		"str": schema.StringAttribute{
+																			Optional: true,
+																			Validators: []validator.String{
+																				stringvalidator.ConflictsWith(path.Expressions{
+																					path.MatchRelative().AtParent().AtName("integer"),
+																				}...),
+																			},
+																		},
+																	},
+																	MarkdownDescription: `ActiveRequestBias refers to dynamic weights applied when hosts have varying load` + "\n" +
+																		`balancing weights. A higher value here aggressively reduces the weight of endpoints` + "\n" +
+																		`that are currently handling active requests. In essence, the higher the ActiveRequestBias` + "\n" +
+																		`value, the more forcefully it reduces the load balancing weight of endpoints that are` + "\n" +
+																		`actively serving requests.`,
+																},
+																"choice_count": schema.Int32Attribute{
+																	Optional: true,
+																	MarkdownDescription: `ChoiceCount is the number of random healthy hosts from which the host with` + "\n" +
+																		`the fewest active requests will be chosen. Defaults to 2 so that Envoy performs` + "\n" +
+																		`two-choice selection if the field is not set.`,
+																	Validators: []validator.Int32{
+																		int32validator.AtLeast(2),
+																	},
+																},
+															},
+															MarkdownDescription: `LeastRequest selects N random available hosts as specified in 'choiceCount' (2 by default)` + "\n" +
+																`and picks the host which has the fewest active requests`,
+														},
+														"maglev": schema.SingleNestedAttribute{
+															Optional: true,
+															Attributes: map[string]schema.Attribute{
+																"table_size": schema.Int32Attribute{
+																	Optional: true,
+																	MarkdownDescription: `The table size for Maglev hashing. Maglev aims for “minimal disruption”` + "\n" +
+																		`rather than an absolute guarantee. Minimal disruption means that when` + "\n" +
+																		`the set of upstream hosts change, a connection will likely be sent` + "\n" +
+																		`to the same upstream as it was before. Increasing the table size reduces` + "\n" +
+																		`the amount of disruption. The table size must be prime number limited to 5000011.` + "\n" +
+																		`If it is not specified, the default is 65537.`,
+																	Validators: []validator.Int32{
+																		int32validator.Between(1, 5000011),
+																	},
+																},
+															},
+															MarkdownDescription: `Maglev implements consistent hashing to upstream hosts. Maglev can be used as` + "\n" +
+																`a drop in replacement for the ring hash load balancer any place in which` + "\n" +
+																`consistent hashing is desired.`,
+														},
+														"random": schema.SingleNestedAttribute{
+															Optional: true,
+															MarkdownDescription: `Random selects a random available host. The random load balancer generally` + "\n" +
+																`performs better than round-robin if no health checking policy is configured.` + "\n" +
+																`Random selection avoids bias towards the host in the set that comes after a failed host.`,
+														},
+														"ring_hash": schema.SingleNestedAttribute{
+															Optional: true,
+															Attributes: map[string]schema.Attribute{
+																"hash_function": schema.StringAttribute{
+																	Optional: true,
+																	MarkdownDescription: `HashFunction is a function used to hash hosts onto the ketama ring.` + "\n" +
+																		`The value defaults to XX_HASH. Available values – XX_HASH, MURMUR_HASH_2.` + "\n" +
+																		`possible known values include one of ["XXHash", "MurmurHash2"]`,
+																},
+																"max_ring_size": schema.Int32Attribute{
+																	Optional: true,
+																	MarkdownDescription: `Maximum hash ring size. Defaults to 8M entries, and limited to 8M entries,` + "\n" +
+																		`but can be lowered to further constrain resource use.`,
+																	Validators: []validator.Int32{
+																		int32validator.Between(1, 8000000),
+																	},
+																},
+																"min_ring_size": schema.Int32Attribute{
+																	Optional: true,
+																	MarkdownDescription: `Minimum hash ring size. The larger the ring is (that is,` + "\n" +
+																		`the more hashes there are for each provided host) the better the request distribution` + "\n" +
+																		`will reflect the desired weights. Defaults to 1024 entries, and limited to 8M entries.`,
+																	Validators: []validator.Int32{
+																		int32validator.Between(1, 8000000),
+																	},
+																},
+															},
+															MarkdownDescription: `RingHash  implements consistent hashing to upstream hosts. Each host is mapped` + "\n" +
+																`onto a circle (the “ring”) by hashing its address; each request is then routed` + "\n" +
+																`to a host by hashing some property of the request, and finding the nearest` + "\n" +
+																`corresponding host clockwise around the ring.`,
+														},
+														"round_robin": schema.SingleNestedAttribute{
+															Optional: true,
+															MarkdownDescription: `RoundRobin is a load balancing algorithm that distributes requests` + "\n" +
+																`across available upstream hosts in round-robin order.`,
+														},
+														"type": schema.StringAttribute{
+															Optional:    true,
+															Description: `possible known values include one of ["RoundRobin", "LeastRequest", "RingHash", "Random", "Maglev"]; Not Null`,
+															Validators: []validator.String{
+																speakeasy_stringvalidators.NotNull(),
+															},
+														},
+													},
+													Validators: []validator.Object{
+														objectvalidator.ConflictsWith(path.Expressions{
+															path.MatchRelative().AtParent().AtName("one"),
+															path.MatchRelative().AtParent().AtName("three"),
+															path.MatchRelative().AtParent().AtName("four"),
+															path.MatchRelative().AtParent().AtName("five"),
+														}...),
 													},
 												},
 											},
@@ -489,7 +1414,7 @@ func (r *MeshLoadBalancingStrategyResource) Schema(ctx context.Context, req reso
 														},
 													},
 													MarkdownDescription: `CrossZone defines locality aware load balancing priorities when dataplane proxies inside local zone` + "\n" +
-														`are unavailable`,
+														`are unavailable. Supported only for to[].targetRef.kind MeshMultiZoneService.`,
 												},
 												"disabled": schema.BoolAttribute{
 													Optional: true,
@@ -545,7 +1470,7 @@ func (r *MeshLoadBalancingStrategyResource) Schema(ctx context.Context, req reso
 									Attributes: map[string]schema.Attribute{
 										"kind": schema.StringAttribute{
 											Optional:    true,
-											Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null`,
+											Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshHTTPRoute"]; Not Null`,
 											Validators: []validator.String{
 												speakeasy_stringvalidators.NotNull(),
 											},
@@ -553,33 +1478,14 @@ func (r *MeshLoadBalancingStrategyResource) Schema(ctx context.Context, req reso
 										"labels": schema.MapAttribute{
 											Optional:    true,
 											ElementType: types.StringType,
-											MarkdownDescription: `Labels are used to select group of MeshServices that match labels. Either Labels or` + "\n" +
-												`Name and Namespace can be used.`,
-										},
-										"mesh": schema.StringAttribute{
-											Optional:    true,
-											Description: `Mesh is reserved for future use to identify cross mesh resources.`,
-										},
-										"name": schema.StringAttribute{
-											Optional: true,
-											MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `` + "\n" +
-												`and ` + "`" + `MeshServiceSubset` + "`" + ``,
-										},
-										"namespace": schema.StringAttribute{
-											Optional: true,
-											MarkdownDescription: `Namespace specifies the namespace of target resource. If empty only resources in policy namespace` + "\n" +
-												`will be targeted.`,
+											MarkdownDescription: `Labels are used to select referenced real resources and to carry legacy` + "\n" +
+												`service identity when a common TargetRef must still target old` + "\n" +
+												`service-tag based paths.`,
 										},
 										"section_name": schema.StringAttribute{
 											Optional: true,
 											MarkdownDescription: `SectionName is used to target specific section of resource.` + "\n" +
 												`For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.`,
-										},
-										"tags": schema.MapAttribute{
-											Optional:    true,
-											ElementType: types.StringType,
-											MarkdownDescription: `Tags used to select a subset of proxies by tags. Can only be used with kinds` + "\n" +
-												`` + "`" + `MeshSubset` + "`" + ` and ` + "`" + `MeshServiceSubset` + "`" + ``,
 										},
 									},
 									MarkdownDescription: `TargetRef is a reference to the resource that represents a group of` + "\n" +

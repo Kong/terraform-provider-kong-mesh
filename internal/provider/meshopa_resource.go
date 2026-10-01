@@ -23,6 +23,8 @@ import (
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
+	speakeasy_stringvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/stringvalidators"
+	"regexp"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -85,6 +87,10 @@ func (r *MeshOPAResource) Schema(ctx context.Context, req resource.SchemaRequest
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
 				Description: `name of the mesh. Requires replacement if changed.`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(253),
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[0-9a-z-_.]*$`), "must match pattern "+regexp.MustCompile(`^[0-9a-z-_.]*$`).String()),
+				},
 			},
 			"modification_time": schema.StringAttribute{
 				Computed: true,
@@ -99,6 +105,10 @@ func (r *MeshOPAResource) Schema(ctx context.Context, req resource.SchemaRequest
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
 				Description: `name of the MeshOPA. Requires replacement if changed.`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(253),
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
+				},
 			},
 			"spec": schema.SingleNestedAttribute{
 				Required: true,
@@ -109,17 +119,48 @@ func (r *MeshOPAResource) Schema(ctx context.Context, req resource.SchemaRequest
 							"agent_config": schema.SingleNestedAttribute{
 								Optional: true,
 								Attributes: map[string]schema.Attribute{
-									"inline": schema.StringAttribute{
-										Optional:    true,
-										Description: `Data source is inline bytes.`,
+									"env_var": schema.SingleNestedAttribute{
+										Optional: true,
+										Attributes: map[string]schema.Attribute{
+											"name": schema.StringAttribute{
+												Required: true,
+											},
+										},
 									},
-									"inline_string": schema.StringAttribute{
-										Optional:    true,
-										Description: `Data source is inline string` + "`" + ``,
+									"file": schema.SingleNestedAttribute{
+										Optional: true,
+										Attributes: map[string]schema.Attribute{
+											"path": schema.StringAttribute{
+												Required: true,
+											},
+										},
 									},
-									"secret": schema.StringAttribute{
-										Optional:    true,
-										Description: `Data source is a secret with given Secret key.`,
+									"insecure_inline": schema.SingleNestedAttribute{
+										Optional: true,
+										Attributes: map[string]schema.Attribute{
+											"value": schema.StringAttribute{
+												Required: true,
+											},
+										},
+									},
+									"secret_ref": schema.SingleNestedAttribute{
+										Optional: true,
+										Attributes: map[string]schema.Attribute{
+											"kind": schema.StringAttribute{
+												Required:    true,
+												Description: `must be "Secret"`,
+												Validators: []validator.String{
+													stringvalidator.OneOf("Secret"),
+												},
+											},
+											"name": schema.StringAttribute{
+												Required: true,
+											},
+										},
+									},
+									"type": schema.StringAttribute{
+										Required:    true,
+										Description: `possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]`,
 									},
 								},
 								Description: `AgentConfig defines bootstrap OPA agent configuration.`,
@@ -142,20 +183,71 @@ func (r *MeshOPAResource) Schema(ctx context.Context, req resource.SchemaRequest
 										"rego": schema.SingleNestedAttribute{
 											Optional: true,
 											Attributes: map[string]schema.Attribute{
-												"inline": schema.StringAttribute{
-													Optional:    true,
-													Description: `Data source is inline bytes.`,
+												"env_var": schema.SingleNestedAttribute{
+													Optional: true,
+													Attributes: map[string]schema.Attribute{
+														"name": schema.StringAttribute{
+															Optional:    true,
+															Description: `Not Null`,
+															Validators: []validator.String{
+																speakeasy_stringvalidators.NotNull(),
+															},
+														},
+													},
 												},
-												"inline_string": schema.StringAttribute{
-													Optional:    true,
-													Description: `Data source is inline string` + "`" + ``,
+												"file": schema.SingleNestedAttribute{
+													Optional: true,
+													Attributes: map[string]schema.Attribute{
+														"path": schema.StringAttribute{
+															Optional:    true,
+															Description: `Not Null`,
+															Validators: []validator.String{
+																speakeasy_stringvalidators.NotNull(),
+															},
+														},
+													},
 												},
-												"secret": schema.StringAttribute{
+												"insecure_inline": schema.SingleNestedAttribute{
+													Optional: true,
+													Attributes: map[string]schema.Attribute{
+														"value": schema.StringAttribute{
+															Optional:    true,
+															Description: `Not Null`,
+															Validators: []validator.String{
+																speakeasy_stringvalidators.NotNull(),
+															},
+														},
+													},
+												},
+												"secret_ref": schema.SingleNestedAttribute{
+													Optional: true,
+													Attributes: map[string]schema.Attribute{
+														"kind": schema.StringAttribute{
+															Optional:    true,
+															Description: `Not Null; must be "Secret"`,
+															Validators: []validator.String{
+																speakeasy_stringvalidators.NotNull(),
+																stringvalidator.OneOf("Secret"),
+															},
+														},
+														"name": schema.StringAttribute{
+															Optional:    true,
+															Description: `Not Null`,
+															Validators: []validator.String{
+																speakeasy_stringvalidators.NotNull(),
+															},
+														},
+													},
+												},
+												"type": schema.StringAttribute{
 													Optional:    true,
-													Description: `Data source is a secret with given Secret key.`,
+													Description: `possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]; Not Null`,
+													Validators: []validator.String{
+														speakeasy_stringvalidators.NotNull(),
+													},
 												},
 											},
-											Description: `OPA Policy written in Rego. Available values: secret, inline, inlineString. Not Null`,
+											Description: `OPA Policy written in Rego. Not Null`,
 											Validators: []validator.Object{
 												speakeasy_objectvalidators.NotNull(),
 											},
@@ -210,38 +302,19 @@ func (r *MeshOPAResource) Schema(ctx context.Context, req resource.SchemaRequest
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
 								Required:    true,
-								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
+								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "Dataplane"]`,
 							},
 							"labels": schema.MapAttribute{
 								Optional:    true,
 								ElementType: types.StringType,
-								MarkdownDescription: `Labels are used to select group of MeshServices that match labels. Either Labels or` + "\n" +
-									`Name and Namespace can be used.`,
-							},
-							"mesh": schema.StringAttribute{
-								Optional:    true,
-								Description: `Mesh is reserved for future use to identify cross mesh resources.`,
-							},
-							"name": schema.StringAttribute{
-								Optional: true,
-								MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `` + "\n" +
-									`and ` + "`" + `MeshServiceSubset` + "`" + ``,
-							},
-							"namespace": schema.StringAttribute{
-								Optional: true,
-								MarkdownDescription: `Namespace specifies the namespace of target resource. If empty only resources in policy namespace` + "\n" +
-									`will be targeted.`,
+								MarkdownDescription: `Labels are used to select referenced real resources and to carry legacy` + "\n" +
+									`service identity when a common TargetRef must still target old` + "\n" +
+									`service-tag based paths.`,
 							},
 							"section_name": schema.StringAttribute{
 								Optional: true,
 								MarkdownDescription: `SectionName is used to target specific section of resource.` + "\n" +
 									`For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.`,
-							},
-							"tags": schema.MapAttribute{
-								Optional:    true,
-								ElementType: types.StringType,
-								MarkdownDescription: `Tags used to select a subset of proxies by tags. Can only be used with kinds` + "\n" +
-									`` + "`" + `MeshSubset` + "`" + ` and ` + "`" + `MeshServiceSubset` + "`" + ``,
 							},
 						},
 						MarkdownDescription: `TargetRef is a reference to the resource the policy takes an effect on.` + "\n" +

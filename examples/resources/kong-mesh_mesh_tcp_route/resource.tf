@@ -10,13 +10,7 @@ resource "kong-mesh_mesh_tcp_route" "my_meshtcproute" {
       labels = {
         key = "value"
       }
-      mesh         = "...my_mesh..."
-      name         = "...my_name..."
-      namespace    = "...my_namespace..."
       section_name = "...my_section_name..."
-      tags = {
-        key = "value"
-      }
     }
     to = [
       {
@@ -25,19 +19,13 @@ resource "kong-mesh_mesh_tcp_route" "my_meshtcproute" {
             default = {
               backend_refs = [
                 {
-                  kind = "MeshService"
+                  kind = "MeshExternalService"
                   labels = {
                     key = "value"
                   }
-                  mesh         = "...my_mesh..."
-                  name         = "...my_name..."
-                  namespace    = "...my_namespace..."
                   port         = 6
                   section_name = "...my_section_name..."
-                  tags = {
-                    key = "value"
-                  }
-                  weight = 1
+                  weight       = 4274592322
                 }
               ]
             }
@@ -48,13 +36,7 @@ resource "kong-mesh_mesh_tcp_route" "my_meshtcproute" {
           labels = {
             key = "value"
           }
-          mesh         = "...my_mesh..."
-          name         = "...my_name..."
-          namespace    = "...my_namespace..."
           section_name = "...my_section_name..."
-          tags = {
-            key = "value"
-          }
         }
       }
     ]

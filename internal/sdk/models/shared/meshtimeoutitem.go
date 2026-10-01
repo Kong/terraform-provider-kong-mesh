@@ -263,14 +263,8 @@ func (m *MeshTimeoutItemRules) GetMatches() []MeshTimeoutItemMatches {
 type MeshTimeoutItemKind string
 
 const (
-	MeshTimeoutItemKindMesh                 MeshTimeoutItemKind = "Mesh"
-	MeshTimeoutItemKindMeshSubset           MeshTimeoutItemKind = "MeshSubset"
-	MeshTimeoutItemKindMeshService          MeshTimeoutItemKind = "MeshService"
-	MeshTimeoutItemKindMeshExternalService  MeshTimeoutItemKind = "MeshExternalService"
-	MeshTimeoutItemKindMeshMultiZoneService MeshTimeoutItemKind = "MeshMultiZoneService"
-	MeshTimeoutItemKindMeshServiceSubset    MeshTimeoutItemKind = "MeshServiceSubset"
-	MeshTimeoutItemKindMeshHTTPRoute        MeshTimeoutItemKind = "MeshHTTPRoute"
-	MeshTimeoutItemKindDataplane            MeshTimeoutItemKind = "Dataplane"
+	MeshTimeoutItemKindMesh      MeshTimeoutItemKind = "Mesh"
+	MeshTimeoutItemKindDataplane MeshTimeoutItemKind = "Dataplane"
 )
 
 func (e MeshTimeoutItemKind) ToPointer() *MeshTimeoutItemKind {
@@ -281,7 +275,7 @@ func (e MeshTimeoutItemKind) ToPointer() *MeshTimeoutItemKind {
 func (e *MeshTimeoutItemKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+		case "Mesh", "Dataplane":
 			return true
 		}
 	}
@@ -294,23 +288,13 @@ func (e *MeshTimeoutItemKind) IsExact() bool {
 type MeshTimeoutItemTargetRef struct {
 	// Kind of the referenced resource
 	Kind MeshTimeoutItemKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select referenced real resources and to carry legacy
+	// service identity when a common TargetRef must still target old
+	// service-tag based paths.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`
-	// and `MeshServiceSubset`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
 }
 
 func (m *MeshTimeoutItemTargetRef) GetKind() MeshTimeoutItemKind {
@@ -327,39 +311,11 @@ func (m *MeshTimeoutItemTargetRef) GetLabels() map[string]string {
 	return m.Labels
 }
 
-func (m *MeshTimeoutItemTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshTimeoutItemTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshTimeoutItemTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
 func (m *MeshTimeoutItemTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
-}
-
-func (m *MeshTimeoutItemTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
 }
 
 // MeshTimeoutItemSpecHTTP - Http provides configuration for HTTP specific timeouts
@@ -461,13 +417,10 @@ type MeshTimeoutItemSpecKind string
 
 const (
 	MeshTimeoutItemSpecKindMesh                 MeshTimeoutItemSpecKind = "Mesh"
-	MeshTimeoutItemSpecKindMeshSubset           MeshTimeoutItemSpecKind = "MeshSubset"
 	MeshTimeoutItemSpecKindMeshService          MeshTimeoutItemSpecKind = "MeshService"
 	MeshTimeoutItemSpecKindMeshExternalService  MeshTimeoutItemSpecKind = "MeshExternalService"
 	MeshTimeoutItemSpecKindMeshMultiZoneService MeshTimeoutItemSpecKind = "MeshMultiZoneService"
-	MeshTimeoutItemSpecKindMeshServiceSubset    MeshTimeoutItemSpecKind = "MeshServiceSubset"
 	MeshTimeoutItemSpecKindMeshHTTPRoute        MeshTimeoutItemSpecKind = "MeshHTTPRoute"
-	MeshTimeoutItemSpecKindDataplane            MeshTimeoutItemSpecKind = "Dataplane"
 )
 
 func (e MeshTimeoutItemSpecKind) ToPointer() *MeshTimeoutItemSpecKind {
@@ -478,7 +431,7 @@ func (e MeshTimeoutItemSpecKind) ToPointer() *MeshTimeoutItemSpecKind {
 func (e *MeshTimeoutItemSpecKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+		case "Mesh", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshHTTPRoute":
 			return true
 		}
 	}
@@ -490,23 +443,13 @@ func (e *MeshTimeoutItemSpecKind) IsExact() bool {
 type MeshTimeoutItemSpecTargetRef struct {
 	// Kind of the referenced resource
 	Kind MeshTimeoutItemSpecKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select referenced real resources and to carry legacy
+	// service identity when a common TargetRef must still target old
+	// service-tag based paths.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`
-	// and `MeshServiceSubset`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
 }
 
 func (m *MeshTimeoutItemSpecTargetRef) GetKind() MeshTimeoutItemSpecKind {
@@ -523,39 +466,11 @@ func (m *MeshTimeoutItemSpecTargetRef) GetLabels() map[string]string {
 	return m.Labels
 }
 
-func (m *MeshTimeoutItemSpecTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshTimeoutItemSpecTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshTimeoutItemSpecTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
 func (m *MeshTimeoutItemSpecTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
-}
-
-func (m *MeshTimeoutItemSpecTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
 }
 
 type MeshTimeoutItemTo struct {

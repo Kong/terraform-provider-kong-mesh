@@ -345,7 +345,7 @@ func (m *MeshMultiZoneServiceItemHostnameGenerators) GetHostnameGeneratorRef() M
 	return m.HostnameGeneratorRef
 }
 
-type MeshServices struct {
+type MeshMultiZoneServiceItemMeshServices struct {
 	Mesh string `json:"mesh"`
 	// Name is a core name of MeshService
 	Name      string `json:"name"`
@@ -353,28 +353,28 @@ type MeshServices struct {
 	Zone      string `json:"zone"`
 }
 
-func (m *MeshServices) GetMesh() string {
+func (m *MeshMultiZoneServiceItemMeshServices) GetMesh() string {
 	if m == nil {
 		return ""
 	}
 	return m.Mesh
 }
 
-func (m *MeshServices) GetName() string {
+func (m *MeshMultiZoneServiceItemMeshServices) GetName() string {
 	if m == nil {
 		return ""
 	}
 	return m.Name
 }
 
-func (m *MeshServices) GetNamespace() string {
+func (m *MeshMultiZoneServiceItemMeshServices) GetNamespace() string {
 	if m == nil {
 		return ""
 	}
 	return m.Namespace
 }
 
-func (m *MeshServices) GetZone() string {
+func (m *MeshMultiZoneServiceItemMeshServices) GetZone() string {
 	if m == nil {
 		return ""
 	}
@@ -401,7 +401,7 @@ type MeshMultiZoneServiceItemStatus struct {
 	// Status of hostnames generator applied on this resource
 	HostnameGenerators []MeshMultiZoneServiceItemHostnameGenerators `json:"hostnameGenerators,omitempty"`
 	// MeshServices is a list of matched MeshServices
-	MeshServices []MeshServices `json:"meshServices,omitempty"`
+	MeshServices []MeshMultiZoneServiceItemMeshServices `json:"meshServices,omitempty"`
 	// VIPs is a list of assigned Kuma VIPs.
 	Vips []Vips `json:"vips,omitempty"`
 }
@@ -427,7 +427,7 @@ func (m *MeshMultiZoneServiceItemStatus) GetHostnameGenerators() []MeshMultiZone
 	return m.HostnameGenerators
 }
 
-func (m *MeshMultiZoneServiceItemStatus) GetMeshServices() []MeshServices {
+func (m *MeshMultiZoneServiceItemStatus) GetMeshServices() []MeshMultiZoneServiceItemMeshServices {
 	if m == nil {
 		return nil
 	}

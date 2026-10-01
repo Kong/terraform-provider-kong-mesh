@@ -3,99 +3,39 @@
 package shared
 
 import (
-	"errors"
-	"fmt"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/utils"
 	"time"
 )
 
-type AccessRoleItemAccessType string
+type AccessRoleItemAccess string
 
 const (
-	AccessRoleItemAccessTypeStr     AccessRoleItemAccessType = "str"
-	AccessRoleItemAccessTypeInteger AccessRoleItemAccessType = "integer"
+	AccessRoleItemAccessCreate                   AccessRoleItemAccess = "CREATE"
+	AccessRoleItemAccessUpdate                   AccessRoleItemAccess = "UPDATE"
+	AccessRoleItemAccessDelete                   AccessRoleItemAccess = "DELETE"
+	AccessRoleItemAccessGenerateDataplaneToken   AccessRoleItemAccess = "GENERATE_DATAPLANE_TOKEN"
+	AccessRoleItemAccessGenerateUserToken        AccessRoleItemAccess = "GENERATE_USER_TOKEN"
+	AccessRoleItemAccessGenerateZoneCpToken      AccessRoleItemAccess = "GENERATE_ZONE_CP_TOKEN"
+	AccessRoleItemAccessGenerateZoneToken        AccessRoleItemAccess = "GENERATE_ZONE_TOKEN"
+	AccessRoleItemAccessViewConfigDump           AccessRoleItemAccess = "VIEW_CONFIG_DUMP"
+	AccessRoleItemAccessViewStats                AccessRoleItemAccess = "VIEW_STATS"
+	AccessRoleItemAccessViewClusters             AccessRoleItemAccess = "VIEW_CLUSTERS"
+	AccessRoleItemAccessViewControlPlaneMetadata AccessRoleItemAccess = "VIEW_CONTROL_PLANE_METADATA"
 )
 
-type AccessRoleItemAccess struct {
-	Str     *string `queryParam:"inline" union:"member"`
-	Integer *int64  `queryParam:"inline" union:"member"`
-
-	Type AccessRoleItemAccessType
+func (e AccessRoleItemAccess) ToPointer() *AccessRoleItemAccess {
+	return &e
 }
 
-func CreateAccessRoleItemAccessStr(str string) AccessRoleItemAccess {
-	typ := AccessRoleItemAccessTypeStr
-
-	return AccessRoleItemAccess{
-		Str:  &str,
-		Type: typ,
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *AccessRoleItemAccess) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "CREATE", "UPDATE", "DELETE", "GENERATE_DATAPLANE_TOKEN", "GENERATE_USER_TOKEN", "GENERATE_ZONE_CP_TOKEN", "GENERATE_ZONE_TOKEN", "VIEW_CONFIG_DUMP", "VIEW_STATS", "VIEW_CLUSTERS", "VIEW_CONTROL_PLANE_METADATA":
+			return true
+		}
 	}
-}
-
-func CreateAccessRoleItemAccessInteger(integer int64) AccessRoleItemAccess {
-	typ := AccessRoleItemAccessTypeInteger
-
-	return AccessRoleItemAccess{
-		Integer: &integer,
-		Type:    typ,
-	}
-}
-
-func (u *AccessRoleItemAccess) UnmarshalJSON(data []byte) error {
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var str string = ""
-	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  AccessRoleItemAccessTypeStr,
-			Value: &str,
-		})
-	}
-
-	var integer int64 = int64(0)
-	if err := utils.UnmarshalJSON(data, &integer, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  AccessRoleItemAccessTypeInteger,
-			Value: &integer,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for AccessRoleItemAccess", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for AccessRoleItemAccess", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(AccessRoleItemAccessType)
-	switch best.Type {
-	case AccessRoleItemAccessTypeStr:
-		u.Str = best.Value.(*string)
-		return nil
-	case AccessRoleItemAccessTypeInteger:
-		u.Integer = best.Value.(*int64)
-		return nil
-	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for AccessRoleItemAccess", string(data))
-}
-
-func (u AccessRoleItemAccess) MarshalJSON() ([]byte, error) {
-	if u.Str != nil {
-		return utils.MarshalJSON(u.Str, "", true)
-	}
-
-	if u.Integer != nil {
-		return utils.MarshalJSON(u.Integer, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type AccessRoleItemAccess: all fields are null")
+	return false
 }
 
 type Destinations struct {
@@ -143,9 +83,7 @@ func (d *DpToken) GetTags() []AccessRoleItemTags {
 type AccessRoleItemRulesTargetRef struct {
 	Kind   *string           `json:"kind,omitempty"`
 	Labels map[string]string `json:"labels,omitempty"`
-	Mesh   *string           `json:"mesh,omitempty"`
 	Name   *string           `json:"name,omitempty"`
-	Tags   map[string]string `json:"tags,omitempty"`
 }
 
 func (a *AccessRoleItemRulesTargetRef) GetKind() *string {
@@ -162,25 +100,11 @@ func (a *AccessRoleItemRulesTargetRef) GetLabels() map[string]string {
 	return a.Labels
 }
 
-func (a *AccessRoleItemRulesTargetRef) GetMesh() *string {
-	if a == nil {
-		return nil
-	}
-	return a.Mesh
-}
-
 func (a *AccessRoleItemRulesTargetRef) GetName() *string {
 	if a == nil {
 		return nil
 	}
 	return a.Name
-}
-
-func (a *AccessRoleItemRulesTargetRef) GetTags() map[string]string {
-	if a == nil {
-		return nil
-	}
-	return a.Tags
 }
 
 type From struct {
@@ -221,9 +145,7 @@ func (s *Sources) GetMatch() map[string]string {
 type AccessRoleItemTargetRef struct {
 	Kind   *string           `json:"kind,omitempty"`
 	Labels map[string]string `json:"labels,omitempty"`
-	Mesh   *string           `json:"mesh,omitempty"`
 	Name   *string           `json:"name,omitempty"`
-	Tags   map[string]string `json:"tags,omitempty"`
 }
 
 func (a *AccessRoleItemTargetRef) GetKind() *string {
@@ -240,13 +162,6 @@ func (a *AccessRoleItemTargetRef) GetLabels() map[string]string {
 	return a.Labels
 }
 
-func (a *AccessRoleItemTargetRef) GetMesh() *string {
-	if a == nil {
-		return nil
-	}
-	return a.Mesh
-}
-
 func (a *AccessRoleItemTargetRef) GetName() *string {
 	if a == nil {
 		return nil
@@ -254,19 +169,10 @@ func (a *AccessRoleItemTargetRef) GetName() *string {
 	return a.Name
 }
 
-func (a *AccessRoleItemTargetRef) GetTags() map[string]string {
-	if a == nil {
-		return nil
-	}
-	return a.Tags
-}
-
 type AccessRoleItemRulesWhenTargetRef struct {
 	Kind   *string           `json:"kind,omitempty"`
 	Labels map[string]string `json:"labels,omitempty"`
-	Mesh   *string           `json:"mesh,omitempty"`
 	Name   *string           `json:"name,omitempty"`
-	Tags   map[string]string `json:"tags,omitempty"`
 }
 
 func (a *AccessRoleItemRulesWhenTargetRef) GetKind() *string {
@@ -283,25 +189,11 @@ func (a *AccessRoleItemRulesWhenTargetRef) GetLabels() map[string]string {
 	return a.Labels
 }
 
-func (a *AccessRoleItemRulesWhenTargetRef) GetMesh() *string {
-	if a == nil {
-		return nil
-	}
-	return a.Mesh
-}
-
 func (a *AccessRoleItemRulesWhenTargetRef) GetName() *string {
 	if a == nil {
 		return nil
 	}
 	return a.Name
-}
-
-func (a *AccessRoleItemRulesWhenTargetRef) GetTags() map[string]string {
-	if a == nil {
-		return nil
-	}
-	return a.Tags
 }
 
 type AccessRoleItemTo struct {

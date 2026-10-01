@@ -20,17 +20,11 @@ resource "kong-mesh_mesh_tls" "my_meshtls" {
       }
     ]
     target_ref = {
-      kind = "MeshExternalService"
+      kind = "Mesh"
       labels = {
         key = "value"
       }
-      mesh         = "...my_mesh..."
-      name         = "...my_name..."
-      namespace    = "...my_namespace..."
       section_name = "...my_section_name..."
-      tags = {
-        key = "value"
-      }
     }
   }
   type = "MeshTLS"

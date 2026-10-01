@@ -7,6 +7,6 @@ import (
 )
 
 type LeastRequest struct {
-	ActiveRequestBias *AuthType   `tfsdk:"active_request_bias"`
-	ChoiceCount       types.Int32 `tfsdk:"choice_count"`
+	ActiveRequestBias *StandardDeviationFactor `tfsdk:"active_request_bias"`
+	ChoiceCount       types.Int32              `tfsdk:"choice_count"`
 }

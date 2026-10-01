@@ -31,7 +31,7 @@ func newAccessRole(rootSDK *KongMesh, sdkConfig config.SDKConfiguration, hooks *
 	}
 }
 
-// GetAccessRoleList - Returns a list of AccessRole in the mesh.
+// GetAccessRoleList - Returns a list of AccessRole.
 func (s *AccessRole) GetAccessRoleList(ctx context.Context, request operations.GetAccessRoleListRequest, opts ...operations.Option) (*operations.GetAccessRoleListResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

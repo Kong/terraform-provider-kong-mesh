@@ -58,23 +58,24 @@ func (m *MeshServiceItemSnis) GetSni() string {
 type MeshServiceItemSpecType string
 
 const (
-	MeshServiceItemSpecTypeServiceTag MeshServiceItemSpecType = "ServiceTag"
-	MeshServiceItemSpecTypeSpiffeID   MeshServiceItemSpecType = "SpiffeID"
+	MeshServiceItemSpecTypeSpiffeID MeshServiceItemSpecType = "SpiffeID"
 )
 
 func (e MeshServiceItemSpecType) ToPointer() *MeshServiceItemSpecType {
 	return &e
 }
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshServiceItemSpecType) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "ServiceTag", "SpiffeID":
-			return true
-		}
+func (e *MeshServiceItemSpecType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
 	}
-	return false
+	switch v {
+	case "SpiffeID":
+		*e = MeshServiceItemSpecType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshServiceItemSpecType: %v", v)
+	}
 }
 
 type Identities struct {
@@ -255,9 +256,8 @@ func (d *DataplaneRef) GetName() *string {
 }
 
 type MeshServiceItemSelector struct {
-	DataplaneLabels *DataplaneLabels  `json:"dataplaneLabels,omitempty"`
-	DataplaneRef    *DataplaneRef     `json:"dataplaneRef,omitempty"`
-	DataplaneTags   map[string]string `json:"dataplaneTags,omitempty"`
+	DataplaneLabels *DataplaneLabels `json:"dataplaneLabels,omitempty"`
+	DataplaneRef    *DataplaneRef    `json:"dataplaneRef,omitempty"`
 }
 
 func (m *MeshServiceItemSelector) GetDataplaneLabels() *DataplaneLabels {
@@ -272,13 +272,6 @@ func (m *MeshServiceItemSelector) GetDataplaneRef() *DataplaneRef {
 		return nil
 	}
 	return m.DataplaneRef
-}
-
-func (m *MeshServiceItemSelector) GetDataplaneTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.DataplaneTags
 }
 
 // State of MeshService. Available if there is at least one healthy endpoint. Otherwise, Unavailable.
@@ -527,6 +520,7 @@ type MeshServiceItemStatusStatus string
 const (
 	MeshServiceItemStatusStatusReady    MeshServiceItemStatusStatus = "Ready"
 	MeshServiceItemStatusStatusNotReady MeshServiceItemStatusStatus = "NotReady"
+	MeshServiceItemStatusStatusPending  MeshServiceItemStatusStatus = "Pending"
 )
 
 func (e MeshServiceItemStatusStatus) ToPointer() *MeshServiceItemStatusStatus {
@@ -537,7 +531,7 @@ func (e MeshServiceItemStatusStatus) ToPointer() *MeshServiceItemStatusStatus {
 func (e *MeshServiceItemStatusStatus) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Ready", "NotReady":
+		case "Ready", "NotReady", "Pending":
 			return true
 		}
 	}

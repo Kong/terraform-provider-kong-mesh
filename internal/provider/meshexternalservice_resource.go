@@ -31,6 +31,7 @@ import (
 	speakeasy_int32validators "github.com/kong/terraform-provider-kong-mesh/internal/validators/int32validators"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/stringvalidators"
+	"regexp"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -95,6 +96,10 @@ func (r *MeshExternalServiceResource) Schema(ctx context.Context, req resource.S
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
 				Description: `name of the mesh. Requires replacement if changed.`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(253),
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[0-9a-z-_.]*$`), "must match pattern "+regexp.MustCompile(`^[0-9a-z-_.]*$`).String()),
+				},
 			},
 			"modification_time": schema.StringAttribute{
 				Computed: true,
@@ -109,6 +114,10 @@ func (r *MeshExternalServiceResource) Schema(ctx context.Context, req resource.S
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
 				Description: `name of the MeshExternalService. Requires replacement if changed.`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(253),
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
+				},
 			},
 			"snis": schema.ListNestedAttribute{
 				Computed: true,
@@ -248,17 +257,48 @@ func (r *MeshExternalServiceResource) Schema(ctx context.Context, req resource.S
 									"ca_cert": schema.SingleNestedAttribute{
 										Optional: true,
 										Attributes: map[string]schema.Attribute{
-											"inline": schema.StringAttribute{
-												Optional:    true,
-												Description: `Data source is inline bytes.`,
+											"env_var": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"name": schema.StringAttribute{
+														Required: true,
+													},
+												},
 											},
-											"inline_string": schema.StringAttribute{
-												Optional:    true,
-												Description: `Data source is inline string` + "`" + ``,
+											"file": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"path": schema.StringAttribute{
+														Required: true,
+													},
+												},
 											},
-											"secret": schema.StringAttribute{
-												Optional:    true,
-												Description: `Data source is a secret with given Secret key.`,
+											"insecure_inline": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"value": schema.StringAttribute{
+														Required: true,
+													},
+												},
+											},
+											"secret_ref": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"kind": schema.StringAttribute{
+														Required:    true,
+														Description: `must be "Secret"`,
+														Validators: []validator.String{
+															stringvalidator.OneOf("Secret"),
+														},
+													},
+													"name": schema.StringAttribute{
+														Required: true,
+													},
+												},
+											},
+											"type": schema.StringAttribute{
+												Required:    true,
+												Description: `possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]`,
 											},
 										},
 										Description: `CaCert defines a certificate of CA.`,
@@ -266,17 +306,48 @@ func (r *MeshExternalServiceResource) Schema(ctx context.Context, req resource.S
 									"client_cert": schema.SingleNestedAttribute{
 										Optional: true,
 										Attributes: map[string]schema.Attribute{
-											"inline": schema.StringAttribute{
-												Optional:    true,
-												Description: `Data source is inline bytes.`,
+											"env_var": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"name": schema.StringAttribute{
+														Required: true,
+													},
+												},
 											},
-											"inline_string": schema.StringAttribute{
-												Optional:    true,
-												Description: `Data source is inline string` + "`" + ``,
+											"file": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"path": schema.StringAttribute{
+														Required: true,
+													},
+												},
 											},
-											"secret": schema.StringAttribute{
-												Optional:    true,
-												Description: `Data source is a secret with given Secret key.`,
+											"insecure_inline": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"value": schema.StringAttribute{
+														Required: true,
+													},
+												},
+											},
+											"secret_ref": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"kind": schema.StringAttribute{
+														Required:    true,
+														Description: `must be "Secret"`,
+														Validators: []validator.String{
+															stringvalidator.OneOf("Secret"),
+														},
+													},
+													"name": schema.StringAttribute{
+														Required: true,
+													},
+												},
+											},
+											"type": schema.StringAttribute{
+												Required:    true,
+												Description: `possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]`,
 											},
 										},
 										Description: `ClientCert defines a certificate of a client.`,
@@ -284,17 +355,48 @@ func (r *MeshExternalServiceResource) Schema(ctx context.Context, req resource.S
 									"client_key": schema.SingleNestedAttribute{
 										Optional: true,
 										Attributes: map[string]schema.Attribute{
-											"inline": schema.StringAttribute{
-												Optional:    true,
-												Description: `Data source is inline bytes.`,
+											"env_var": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"name": schema.StringAttribute{
+														Required: true,
+													},
+												},
 											},
-											"inline_string": schema.StringAttribute{
-												Optional:    true,
-												Description: `Data source is inline string` + "`" + ``,
+											"file": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"path": schema.StringAttribute{
+														Required: true,
+													},
+												},
 											},
-											"secret": schema.StringAttribute{
-												Optional:    true,
-												Description: `Data source is a secret with given Secret key.`,
+											"insecure_inline": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"value": schema.StringAttribute{
+														Required: true,
+													},
+												},
+											},
+											"secret_ref": schema.SingleNestedAttribute{
+												Optional: true,
+												Attributes: map[string]schema.Attribute{
+													"kind": schema.StringAttribute{
+														Required:    true,
+														Description: `must be "Secret"`,
+														Validators: []validator.String{
+															stringvalidator.OneOf("Secret"),
+														},
+													},
+													"name": schema.StringAttribute{
+														Required: true,
+													},
+												},
+											},
+											"type": schema.StringAttribute{
+												Required:    true,
+												Description: `possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]`,
 											},
 										},
 										Description: `ClientKey defines a client private key.`,

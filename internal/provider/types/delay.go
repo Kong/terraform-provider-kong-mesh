@@ -7,6 +7,6 @@ import (
 )
 
 type Delay struct {
-	Percentage *AuthType    `tfsdk:"percentage"`
-	Value      types.String `tfsdk:"value"`
+	Percentage *StandardDeviationFactor `tfsdk:"percentage"`
+	Value      types.String             `tfsdk:"value"`
 }

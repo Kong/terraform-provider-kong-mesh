@@ -389,14 +389,8 @@ func (m *MeshRateLimitItemRules) GetMatches() []MeshRateLimitItemMatches {
 type MeshRateLimitItemKind string
 
 const (
-	MeshRateLimitItemKindMesh                 MeshRateLimitItemKind = "Mesh"
-	MeshRateLimitItemKindMeshSubset           MeshRateLimitItemKind = "MeshSubset"
-	MeshRateLimitItemKindMeshService          MeshRateLimitItemKind = "MeshService"
-	MeshRateLimitItemKindMeshExternalService  MeshRateLimitItemKind = "MeshExternalService"
-	MeshRateLimitItemKindMeshMultiZoneService MeshRateLimitItemKind = "MeshMultiZoneService"
-	MeshRateLimitItemKindMeshServiceSubset    MeshRateLimitItemKind = "MeshServiceSubset"
-	MeshRateLimitItemKindMeshHTTPRoute        MeshRateLimitItemKind = "MeshHTTPRoute"
-	MeshRateLimitItemKindDataplane            MeshRateLimitItemKind = "Dataplane"
+	MeshRateLimitItemKindMesh      MeshRateLimitItemKind = "Mesh"
+	MeshRateLimitItemKindDataplane MeshRateLimitItemKind = "Dataplane"
 )
 
 func (e MeshRateLimitItemKind) ToPointer() *MeshRateLimitItemKind {
@@ -407,7 +401,7 @@ func (e MeshRateLimitItemKind) ToPointer() *MeshRateLimitItemKind {
 func (e *MeshRateLimitItemKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+		case "Mesh", "Dataplane":
 			return true
 		}
 	}
@@ -420,23 +414,13 @@ func (e *MeshRateLimitItemKind) IsExact() bool {
 type MeshRateLimitItemTargetRef struct {
 	// Kind of the referenced resource
 	Kind MeshRateLimitItemKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select referenced real resources and to carry legacy
+	// service identity when a common TargetRef must still target old
+	// service-tag based paths.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`
-	// and `MeshServiceSubset`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
 }
 
 func (m *MeshRateLimitItemTargetRef) GetKind() MeshRateLimitItemKind {
@@ -453,39 +437,11 @@ func (m *MeshRateLimitItemTargetRef) GetLabels() map[string]string {
 	return m.Labels
 }
 
-func (m *MeshRateLimitItemTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshRateLimitItemTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshRateLimitItemTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
 func (m *MeshRateLimitItemTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
-}
-
-func (m *MeshRateLimitItemTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
 }
 
 type MeshRateLimitItemSpecAdd struct {
@@ -713,13 +669,10 @@ type MeshRateLimitItemSpecKind string
 
 const (
 	MeshRateLimitItemSpecKindMesh                 MeshRateLimitItemSpecKind = "Mesh"
-	MeshRateLimitItemSpecKindMeshSubset           MeshRateLimitItemSpecKind = "MeshSubset"
 	MeshRateLimitItemSpecKindMeshService          MeshRateLimitItemSpecKind = "MeshService"
 	MeshRateLimitItemSpecKindMeshExternalService  MeshRateLimitItemSpecKind = "MeshExternalService"
 	MeshRateLimitItemSpecKindMeshMultiZoneService MeshRateLimitItemSpecKind = "MeshMultiZoneService"
-	MeshRateLimitItemSpecKindMeshServiceSubset    MeshRateLimitItemSpecKind = "MeshServiceSubset"
 	MeshRateLimitItemSpecKindMeshHTTPRoute        MeshRateLimitItemSpecKind = "MeshHTTPRoute"
-	MeshRateLimitItemSpecKindDataplane            MeshRateLimitItemSpecKind = "Dataplane"
 )
 
 func (e MeshRateLimitItemSpecKind) ToPointer() *MeshRateLimitItemSpecKind {
@@ -730,7 +683,7 @@ func (e MeshRateLimitItemSpecKind) ToPointer() *MeshRateLimitItemSpecKind {
 func (e *MeshRateLimitItemSpecKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+		case "Mesh", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshHTTPRoute":
 			return true
 		}
 	}
@@ -742,23 +695,13 @@ func (e *MeshRateLimitItemSpecKind) IsExact() bool {
 type MeshRateLimitItemSpecTargetRef struct {
 	// Kind of the referenced resource
 	Kind MeshRateLimitItemSpecKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select referenced real resources and to carry legacy
+	// service identity when a common TargetRef must still target old
+	// service-tag based paths.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`
-	// and `MeshServiceSubset`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
 }
 
 func (m *MeshRateLimitItemSpecTargetRef) GetKind() MeshRateLimitItemSpecKind {
@@ -775,39 +718,11 @@ func (m *MeshRateLimitItemSpecTargetRef) GetLabels() map[string]string {
 	return m.Labels
 }
 
-func (m *MeshRateLimitItemSpecTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshRateLimitItemSpecTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshRateLimitItemSpecTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
 func (m *MeshRateLimitItemSpecTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
-}
-
-func (m *MeshRateLimitItemSpecTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
 }
 
 type MeshRateLimitItemTo struct {

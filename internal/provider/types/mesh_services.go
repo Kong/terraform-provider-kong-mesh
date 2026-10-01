@@ -7,8 +7,5 @@ import (
 )
 
 type MeshServices struct {
-	Mesh      types.String `tfsdk:"mesh"`
-	Name      types.String `tfsdk:"name"`
-	Namespace types.String `tfsdk:"namespace"`
-	Zone      types.String `tfsdk:"zone"`
+	Mode types.String `tfsdk:"mode"`
 }

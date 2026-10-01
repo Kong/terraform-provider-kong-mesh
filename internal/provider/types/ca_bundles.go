@@ -7,6 +7,6 @@ import (
 )
 
 type CaBundles struct {
-	Pem  *InsecureInline `tfsdk:"pem"`
-	Type types.String    `tfsdk:"type"`
+	Pem  *MeshExternalServiceItemSpecTLSInsecureInline `tfsdk:"pem"`
+	Type types.String                                  `tfsdk:"type"`
 }
