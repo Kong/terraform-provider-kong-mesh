@@ -8,9 +8,9 @@ management:
   releaseVersion: 0.8.3
   configChecksum: b67f25f19b5d3d905733be0bc12527ce
 persistentEdits:
-  generation_id: 7a177a4f-c3a8-4be3-8d07-51fe46b05b48
-  pristine_commit_hash: 37242fbfbf54fa56d1c29b78774a8ee4e2308ca6
-  pristine_tree_hash: a881bf4de6c2ef23999a8b13a4ed63c061ca022e
+  generation_id: a88d52fb-50ed-4436-9526-c6a41602be8a
+  pristine_commit_hash: 66894fa36f4a949ba230b33f6cc7e70647e54162
+  pristine_tree_hash: 45a162e19705c86db0b8e2fa8c4d57eb988efd2f
 features:
   terraform:
     additionalDependencies: 0.1.0
@@ -2198,8 +2198,8 @@ trackedFiles:
     pristine_git_object: a614e37673d3ea81eabc6139236edfb22a15dc55
   internal/sdk/kongmesh.go:
     id: a3ff2dba35c0
-    last_write_checksum: sha1:322686557826a379f90fae0febb7dfe6b44186de
-    pristine_git_object: bb30b8ce1f60afd379d6746c2ea0efb553d65d73
+    last_write_checksum: sha1:1c5ef23529effe1e45d77ca6a673e25721f865da
+    pristine_git_object: 8c6179e9a95052371d51c4d675172659fbe7b704
   internal/sdk/mesh.go:
     id: c3f36614baba
     last_write_checksum: sha1:60d9ec55898dcc8c7fbb048a2abca1a2af6a0ab9
