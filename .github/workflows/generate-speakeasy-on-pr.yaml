@@ -3,9 +3,15 @@ name: Run Speakeasy on PR Open
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-    paths-ignore:
-      - '.github/**'
-      - 'examples/**'
+    # only inputs of `make generate`
+    paths:
+      - 'openapi.yaml'
+      - 'gen.yaml'
+      - '.speakeasy/workflow.yaml'
+      - 'Makefile'
+      - 'go.mod'
+      - 'go.sum'
+      - '.github/workflows/generate-speakeasy-on-pr.yaml'
   workflow_dispatch:
     inputs:
       branch:
