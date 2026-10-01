@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.9.0
+> Released on 2026/10/01
+>
+> - feat(resources): add `kong-mesh_mesh_open_telemetry_backend` resource for shared OTel collector config (#147)
+> - feat(resources): add `kong-mesh_mesh_zone_address` resource (#147)
+> - feat(resources): add `backend_ref` to MeshAccessLog, MeshMetric and MeshTrace OTel backends; `endpoint` is now optional and deprecated (#147)
+> - feat(resources): add `rules[].matches` (`spiffe_id`, `sni`) to MeshAccessLog, MeshRateLimit and MeshTimeout; add `sni` matching to MeshFaultInjection and MeshTrafficPermission (#147)
+> - feat(resources): add `endpoints[].priority` and new TLS cert forms (`type`, `secret_ref`, `insecure_inline`) to MeshExternalService (#147)
+> - feat(resources): add `Extension` provider type to MeshIdentity (#147)
+> - feat(resources): add computed `snis`, `status.conditions`, `kri`, `creation_time` and `modification_time` to several resources (#147)
+
+
 ## 0.8.3
 > Released on 2026/10/01
 >

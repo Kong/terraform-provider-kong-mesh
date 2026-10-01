@@ -5,12 +5,12 @@ management:
   docVersion: 2.0.0
   speakeasyVersion: 1.791.0
   generationVersion: 2.924.0
-  releaseVersion: 0.8.3
-  configChecksum: b67f25f19b5d3d905733be0bc12527ce
+  releaseVersion: 0.9.0
+  configChecksum: bcef6630df32f3c05d813ce2ef5e6943
 persistentEdits:
-  generation_id: a88d52fb-50ed-4436-9526-c6a41602be8a
-  pristine_commit_hash: 66894fa36f4a949ba230b33f6cc7e70647e54162
-  pristine_tree_hash: 45a162e19705c86db0b8e2fa8c4d57eb988efd2f
+  generation_id: 55ceeab8-eda7-409a-8080-4f63a491dba1
+  pristine_commit_hash: 20eb59ed45ad9b03867e2f7f393828c9d0569d4b
+  pristine_tree_hash: 60a65d3927772a1b20ea8cf5c990dfd224903878
 features:
   terraform:
     additionalDependencies: 0.1.0
@@ -34,8 +34,8 @@ trackedFiles:
     pristine_git_object: 8e707bb129af1da185ba30b4c289b0160819c437
   examples/provider/provider.tf:
     id: 954e955c0240
-    last_write_checksum: sha1:70b8c934e53fee53ae5e815efde7e4e8ad4e6a7c
-    pristine_git_object: ab52b814647452b65e7ac5c8439d070763da101f
+    last_write_checksum: sha1:5cd6b69029e291cbd70d0b63442f8e1c050ddc97
+    pristine_git_object: 28fc498281b3d863d71bf8b139121a154d0144a0
   examples/resources/kong-mesh_mesh/import-by-string-id.tf:
     id: 5703cf247414
     last_write_checksum: sha1:3e5defd972d611f0ffa2299752f3d010a4279b80
@@ -2198,8 +2198,8 @@ trackedFiles:
     pristine_git_object: a614e37673d3ea81eabc6139236edfb22a15dc55
   internal/sdk/kongmesh.go:
     id: a3ff2dba35c0
-    last_write_checksum: sha1:1c5ef23529effe1e45d77ca6a673e25721f865da
-    pristine_git_object: 8c6179e9a95052371d51c4d675172659fbe7b704
+    last_write_checksum: sha1:4c3c0d33d86ac68aae1a97727042c82fb0b162ce
+    pristine_git_object: 05d36db0ed09eb928daa778721082fb3756e6511
   internal/sdk/mesh.go:
     id: c3f36614baba
     last_write_checksum: sha1:60d9ec55898dcc8c7fbb048a2abca1a2af6a0ab9
