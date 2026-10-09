@@ -1,7 +1,10 @@
 package tests
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
+	"io"
 	"net"
 	"os"
 	"testing"
@@ -13,6 +16,7 @@ import (
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
+	tcexec "github.com/testcontainers/testcontainers-go/exec"
 	"github.com/testcontainers/testcontainers-go/wait"
 )
 
@@ -36,7 +40,6 @@ func TestMesh(t *testing.T) {
 		Cmd: []string{"run"},
 		Env: map[string]string{
 			"KUMA_MODE": "global",
-			"KUMA_API_SERVER_AUTHN_LOCALHOST_IS_ADMIN": "true",
 		},
 	}
 	if os.Getenv("RUNNER_DEBUG") == "1" {
@@ -53,10 +56,11 @@ func TestMesh(t *testing.T) {
 	defer testcontainers.CleanupContainer(t, cpContainer)
 	port, err := cpContainer.MappedPort(ctx, "5681/tcp")
 	require.NoError(t, err)
+	token := adminToken(t, cpContainer)
 
 	t.Run("create a mesh and modify labels on it", func(t *testing.T) {
 		serverURL := fmt.Sprintf("http://localhost:%d", port.Num())
-		builder := hclbuilder.NewWithProvider(hclbuilder.KongMesh, serverURL)
+		builder := newBuilder(serverURL, token)
 
 		meshName := "m1"
 		meshResourceName := "m1"
@@ -73,7 +77,7 @@ resource "kong-mesh_mesh" "%s" {
 
 	t.Run("create a policy and modify fields on it", func(t *testing.T) {
 		serverURL := fmt.Sprintf("http://localhost:%d", port.Num())
-		builder := hclbuilder.NewWithProvider(hclbuilder.KongMesh, serverURL)
+		builder := newBuilder(serverURL, token)
 
 		meshName := "policy-test-mesh"
 		meshResourceName := "test_mesh"
@@ -105,7 +109,7 @@ resource "kong-mesh_mesh_traffic_permission" "%s" {
 		mtpName := "allow-all"
 		serverURL := fmt.Sprintf("http://localhost:%d", port.Num())
 
-		builder := hclbuilder.NewWithProvider(hclbuilder.KongMesh, serverURL)
+		builder := newBuilder(serverURL, token)
 
 		mesh, _ := hclbuilder.FromString(fmt.Sprintf(`
 resource "kong-mesh_mesh" "%s" {
@@ -124,7 +128,7 @@ resource "kong-mesh_mesh_traffic_permission" "%s" {
 }
 `, policyResourceName, mtpName, meshName))
 
-		resource.ParallelTest(t, hclbuilder.NotImportedResourceWithRulesShouldError(providerFactory, builder, mesh, policy, func() { createAnMTP(t, "http://"+net.JoinHostPort("localhost", port.Port()), meshName, mtpName) }))
+		resource.ParallelTest(t, hclbuilder.NotImportedResourceWithRulesShouldError(providerFactory, builder, mesh, policy, func() { createAnMTP(t, "http://"+net.JoinHostPort("localhost", port.Port()), token, meshName, mtpName) }))
 	})
 
 	t.Run("should be able to store secrets", func(t *testing.T) {
@@ -132,7 +136,7 @@ resource "kong-mesh_mesh_traffic_permission" "%s" {
 		meshResourceName := "test_mesh"
 		serverURL := fmt.Sprintf("http://localhost:%d", port.Num())
 
-		builder := hclbuilder.NewWithProvider(hclbuilder.KongMesh, serverURL)
+		builder := newBuilder(serverURL, token)
 
 		mesh, _ := hclbuilder.FromString(fmt.Sprintf(`
 resource "kong-mesh_mesh" "%s" {
@@ -167,10 +171,35 @@ resource "kong-mesh_mesh_secret" "%s" {
 	})
 }
 
-func createAnMTP(t *testing.T, url string, meshName string, mtpName string) {
+// adminToken reads the admin user token from inside the container,
+// because only requests coming from the CP's loopback are treated as admin.
+func adminToken(t *testing.T, c testcontainers.Container) string {
+	t.Helper()
+	code, out, err := c.Exec(t.Context(), []string{"wget", "-qO-", "http://localhost:5681/global-secrets/admin-user-token"}, tcexec.Multiplexed())
+	require.NoError(t, err)
+	body, err := io.ReadAll(out)
+	require.NoError(t, err)
+	require.Equal(t, 0, code, string(body))
+	var secret struct {
+		Data string `json:"data"`
+	}
+	require.NoError(t, json.Unmarshal(body, &secret))
+	token, err := base64.StdEncoding.DecodeString(secret.Data)
+	require.NoError(t, err)
+	return string(token)
+}
+
+func newBuilder(serverURL string, token string) *hclbuilder.Builder {
+	builder := hclbuilder.NewWithProvider(hclbuilder.KongMesh, serverURL)
+	builder.SetAttribute(fmt.Sprintf("provider.%s.bearer_auth", hclbuilder.KongMesh), token)
+	return builder
+}
+
+func createAnMTP(t *testing.T, url string, token string, meshName string, mtpName string) {
 	ctx := t.Context()
 	opts := []sdk.SDKOption{
 		sdk.WithServerURL(url),
+		sdk.WithSecurity(shared.Security{BearerAuth: &token}),
 	}
 	client := sdk.New(opts...)
 	resp, err := client.MeshTrafficPermission.PutMeshTrafficPermission(ctx, operations.PutMeshTrafficPermissionRequest{
