@@ -2,10 +2,15 @@
 
 package types
 
+import (
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
+
 type LoadBalancer struct {
-	One   *LoadBalancer1 `queryParam:"inline" tfsdk:"one"`
-	Two   *LoadBalancer1 `queryParam:"inline" tfsdk:"two"`
-	Three *LoadBalancer1 `queryParam:"inline" tfsdk:"three"`
-	Four  *LoadBalancer1 `queryParam:"inline" tfsdk:"four"`
-	Five  *LoadBalancer1 `queryParam:"inline" tfsdk:"five"`
+	LeastRequest *LeastRequest                        `tfsdk:"least_request"`
+	Maglev       *Maglev                              `tfsdk:"maglev"`
+	Random       *MeshLoadBalancingStrategyItemRandom `tfsdk:"random"`
+	RingHash     *RingHash                            `tfsdk:"ring_hash"`
+	RoundRobin   *MeshLoadBalancingStrategyItemRandom `tfsdk:"round_robin"`
+	Type         types.String                         `tfsdk:"type"`
 }

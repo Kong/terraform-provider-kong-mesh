@@ -65,10 +65,10 @@ func (r *MeshTCPRouteResourceModel) RefreshFromSharedMeshTCPRouteItem(ctx contex
 				var rules tfTypes.MeshTCPRouteItemRules
 
 				rules.Default = &tfTypes.MeshTCPRouteItemDefault{}
-				rules.Default.BackendRefs = []tfTypes.MeshHTTPRouteItemFiltersSpecToRulesDefaultBackendRef{}
+				rules.Default.BackendRefs = []tfTypes.MeshHTTPRouteItemSpecBackendRef{}
 
 				for _, backendRefsItem := range rulesItem.Default.BackendRefs {
-					var backendRefs tfTypes.MeshHTTPRouteItemFiltersSpecToRulesDefaultBackendRef
+					var backendRefs tfTypes.MeshHTTPRouteItemSpecBackendRef
 
 					backendRefs.Kind = types.StringValue(string(backendRefsItem.Kind))
 					if len(backendRefsItem.Labels) > 0 {
@@ -133,6 +133,27 @@ func (r *MeshTCPRouteResourceModel) ToOperationsGetMeshTCPRouteRequest(ctx conte
 	out := operations.GetMeshTCPRouteRequest{
 		Mesh: mesh,
 		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshTCPRouteResourceModel) ToOperationsPostMeshTCPRouteRequest(ctx context.Context) (*operations.PostMeshTCPRouteRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	meshTCPRouteItem, meshTCPRouteItemDiags := r.ToSharedMeshTCPRouteItemInput(ctx)
+	diags.Append(meshTCPRouteItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PostMeshTCPRouteRequest{
+		Mesh:             mesh,
+		MeshTCPRouteItem: *meshTCPRouteItem,
 	}
 
 	return &out, diags

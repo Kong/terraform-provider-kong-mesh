@@ -108,6 +108,27 @@ func (r *MeshTrustResourceModel) ToOperationsGetMeshTrustRequest(ctx context.Con
 	return &out, diags
 }
 
+func (r *MeshTrustResourceModel) ToOperationsPostMeshTrustRequest(ctx context.Context) (*operations.PostMeshTrustRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	meshTrustItem, meshTrustItemDiags := r.ToSharedMeshTrustItemInput(ctx)
+	diags.Append(meshTrustItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PostMeshTrustRequest{
+		Mesh:          mesh,
+		MeshTrustItem: *meshTrustItem,
+	}
+
+	return &out, diags
+}
+
 func (r *MeshTrustResourceModel) ToOperationsPutMeshTrustRequest(ctx context.Context) (*operations.PutMeshTrustRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 

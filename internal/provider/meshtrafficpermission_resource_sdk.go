@@ -169,6 +169,27 @@ func (r *MeshTrafficPermissionResourceModel) ToOperationsGetMeshTrafficPermissio
 	return &out, diags
 }
 
+func (r *MeshTrafficPermissionResourceModel) ToOperationsPostMeshTrafficPermissionRequest(ctx context.Context) (*operations.PostMeshTrafficPermissionRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	meshTrafficPermissionItem, meshTrafficPermissionItemDiags := r.ToSharedMeshTrafficPermissionItemInput(ctx)
+	diags.Append(meshTrafficPermissionItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PostMeshTrafficPermissionRequest{
+		Mesh:                      mesh,
+		MeshTrafficPermissionItem: *meshTrafficPermissionItem,
+	}
+
+	return &out, diags
+}
+
 func (r *MeshTrafficPermissionResourceModel) ToOperationsPutMeshTrafficPermissionRequest(ctx context.Context) (*operations.PutMeshTrafficPermissionRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 

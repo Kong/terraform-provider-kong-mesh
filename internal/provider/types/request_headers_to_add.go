@@ -3,6 +3,6 @@
 package types
 
 type RequestHeadersToAdd struct {
-	Add []MeshHTTPRouteItemFiltersSpecToRulesDefaultBackendRefs1Add `tfsdk:"add"`
-	Set []MeshHTTPRouteItemFiltersSpecToRulesDefaultBackendRefs1Add `tfsdk:"set"`
+	Add []MeshHTTPRouteItemSpecToAdd `tfsdk:"add"`
+	Set []MeshHTTPRouteItemSpecToAdd `tfsdk:"set"`
 }

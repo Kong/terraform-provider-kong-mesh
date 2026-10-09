@@ -25,56 +25,50 @@ resource "kong-mesh_mesh_access_log" "my_meshaccesslog" {
         default = {
           backends = [
             {
-              one = {
-                file = {
-                  format = {
-                    two = {
-                      json = [
-                        {
-                          key   = "...my_key..."
-                          value = "...my_value..."
-                        }
-                      ]
-                      omit_empty_values = false
-                      plain             = "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%"
-                      type              = "Plain"
-                    }
-                  }
-                  path = "/tmp/access.log"
-                }
-                open_telemetry = {
-                  attributes = [
+              file = {
+                format = {
+                  json = [
                     {
                       key   = "...my_key..."
                       value = "...my_value..."
                     }
                   ]
-                  backend_ref = {
-                    kind = "MeshOpenTelemetryBackend"
-                    labels = {
-                      key = "value"
-                    }
-                  }
-                  body = { "kvlistValue" : { "values" : [{ "key" : "mesh", "value" : { "stringValue" : "%KUMA_MESH%" } }] } }
+                  omit_empty_values = false
+                  plain             = "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%"
+                  type              = "Json"
                 }
-                tcp = {
-                  address = "127.0.0.1:5000"
-                  format = {
-                    one = {
-                      json = [
-                        {
-                          key   = "...my_key..."
-                          value = "...my_value..."
-                        }
-                      ]
-                      omit_empty_values = false
-                      plain             = "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%"
-                      type              = "Json"
-                    }
-                  }
-                }
-                type = "OpenTelemetry"
+                path = "/tmp/access.log"
               }
+              open_telemetry = {
+                attributes = [
+                  {
+                    key   = "...my_key..."
+                    value = "...my_value..."
+                  }
+                ]
+                backend_ref = {
+                  kind = "MeshOpenTelemetryBackend"
+                  labels = {
+                    key = "value"
+                  }
+                }
+                body = { "kvlistValue" : { "values" : [{ "key" : "mesh", "value" : { "stringValue" : "%KUMA_MESH%" } }] } }
+              }
+              tcp = {
+                address = "127.0.0.1:5000"
+                format = {
+                  json = [
+                    {
+                      key   = "...my_key..."
+                      value = "...my_value..."
+                    }
+                  ]
+                  omit_empty_values = false
+                  plain             = "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%"
+                  type              = "Json"
+                }
+              }
+              type = "OpenTelemetry"
             }
           ]
         }
@@ -104,56 +98,50 @@ resource "kong-mesh_mesh_access_log" "my_meshaccesslog" {
         default = {
           backends = [
             {
-              one = {
-                file = {
-                  format = {
-                    two = {
-                      json = [
-                        {
-                          key   = "...my_key..."
-                          value = "...my_value..."
-                        }
-                      ]
-                      omit_empty_values = false
-                      plain             = "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%"
-                      type              = "Json"
-                    }
-                  }
-                  path = "/tmp/access.log"
-                }
-                open_telemetry = {
-                  attributes = [
+              file = {
+                format = {
+                  json = [
                     {
                       key   = "...my_key..."
                       value = "...my_value..."
                     }
                   ]
-                  backend_ref = {
-                    kind = "MeshOpenTelemetryBackend"
-                    labels = {
-                      key = "value"
-                    }
-                  }
-                  body = { "kvlistValue" : { "values" : [{ "key" : "mesh", "value" : { "stringValue" : "%KUMA_MESH%" } }] } }
+                  omit_empty_values = false
+                  plain             = "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%"
+                  type              = "Json"
                 }
-                tcp = {
-                  address = "127.0.0.1:5000"
-                  format = {
-                    two = {
-                      json = [
-                        {
-                          key   = "...my_key..."
-                          value = "...my_value..."
-                        }
-                      ]
-                      omit_empty_values = false
-                      plain             = "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%"
-                      type              = "Json"
-                    }
-                  }
-                }
-                type = "Tcp"
+                path = "/tmp/access.log"
               }
+              open_telemetry = {
+                attributes = [
+                  {
+                    key   = "...my_key..."
+                    value = "...my_value..."
+                  }
+                ]
+                backend_ref = {
+                  kind = "MeshOpenTelemetryBackend"
+                  labels = {
+                    key = "value"
+                  }
+                }
+                body = { "kvlistValue" : { "values" : [{ "key" : "mesh", "value" : { "stringValue" : "%KUMA_MESH%" } }] } }
+              }
+              tcp = {
+                address = "127.0.0.1:5000"
+                format = {
+                  json = [
+                    {
+                      key   = "...my_key..."
+                      value = "...my_value..."
+                    }
+                  ]
+                  omit_empty_values = false
+                  plain             = "[%START_TIME%] %KUMA_MESH% %UPSTREAM_HOST%"
+                  type              = "Json"
+                }
+              }
+              type = "Tcp"
             }
           ]
         }
@@ -177,7 +165,7 @@ resource "kong-mesh_mesh_access_log" "my_meshaccesslog" {
 ### Required
 
 - `mesh` (String) name of the mesh. Requires replacement if changed.
-- `name` (String) name of the MeshAccessLog. Requires replacement if changed.
+- `name` (String) Name of the Kuma resource. Requires replacement if changed.
 - `spec` (Attributes) Spec is the specification of the Kuma MeshAccessLog resource. (see [below for nested schema](#nestedatt--spec))
 - `type` (String) the type of the resource. must be "MeshAccessLog"
 
@@ -227,69 +215,32 @@ Optional:
 
 Optional:
 
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--rules--default--backends--one))
-- `three` (Attributes) (see [below for nested schema](#nestedatt--spec--rules--default--backends--three))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--rules--default--backends--two))
-
-<a id="nestedatt--spec--rules--default--backends--one"></a>
-### Nested Schema for `spec.rules.default.backends.one`
-
-Optional:
-
-- `file` (Attributes) FileBackend defines configuration for file based access logs (see [below for nested schema](#nestedatt--spec--rules--default--backends--one--file))
-- `open_telemetry` (Attributes) Defines an OpenTelemetry logging backend. (see [below for nested schema](#nestedatt--spec--rules--default--backends--one--open_telemetry))
-- `tcp` (Attributes) TCPBackend defines a TCP logging backend. (see [below for nested schema](#nestedatt--spec--rules--default--backends--one--tcp))
+- `file` (Attributes) FileBackend defines configuration for file based access logs (see [below for nested schema](#nestedatt--spec--rules--default--backends--file))
+- `open_telemetry` (Attributes) Defines an OpenTelemetry logging backend. (see [below for nested schema](#nestedatt--spec--rules--default--backends--open_telemetry))
+- `tcp` (Attributes) TCPBackend defines a TCP logging backend. (see [below for nested schema](#nestedatt--spec--rules--default--backends--tcp))
 - `type` (String) possible known values include one of ["Tcp", "File", "OpenTelemetry"]; Not Null
 
-<a id="nestedatt--spec--rules--default--backends--one--file"></a>
-### Nested Schema for `spec.rules.default.backends.one.file`
+<a id="nestedatt--spec--rules--default--backends--file"></a>
+### Nested Schema for `spec.rules.default.backends.file`
 
 Optional:
 
 - `format` (Attributes) Format of access logs. Placeholders available on
-https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators (see [below for nested schema](#nestedatt--spec--rules--default--backends--one--file--format))
+https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators (see [below for nested schema](#nestedatt--spec--rules--default--backends--file--format))
 - `path` (String) Path to a file that logs will be written to. Not Null
 
-<a id="nestedatt--spec--rules--default--backends--one--file--format"></a>
-### Nested Schema for `spec.rules.default.backends.one.file.format`
+<a id="nestedatt--spec--rules--default--backends--file--format"></a>
+### Nested Schema for `spec.rules.default.backends.file.format`
 
 Optional:
 
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--rules--default--backends--one--file--format--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--rules--default--backends--one--file--format--two))
-
-<a id="nestedatt--spec--rules--default--backends--one--file--format--one"></a>
-### Nested Schema for `spec.rules.default.backends.one.file.format.one`
-
-Optional:
-
-- `json` (Attributes List) (see [below for nested schema](#nestedatt--spec--rules--default--backends--one--file--format--one--json))
+- `json` (Attributes List) (see [below for nested schema](#nestedatt--spec--rules--default--backends--file--format--json))
 - `omit_empty_values` (Boolean) Default: false
 - `plain` (String)
 - `type` (String) possible known values include one of ["Plain", "Json"]; Not Null
 
-<a id="nestedatt--spec--rules--default--backends--one--file--format--one--json"></a>
-### Nested Schema for `spec.rules.default.backends.one.file.format.one.json`
-
-Optional:
-
-- `key` (String) Not Null
-- `value` (String) Not Null
-
-
-
-<a id="nestedatt--spec--rules--default--backends--one--file--format--two"></a>
-### Nested Schema for `spec.rules.default.backends.one.file.format.two`
-
-Optional:
-
-- `json` (Attributes List) (see [below for nested schema](#nestedatt--spec--rules--default--backends--one--file--format--two--json))
-- `omit_empty_values` (Boolean) Default: false
-- `plain` (String)
-- `type` (String) possible known values include one of ["Plain", "Json"]; Not Null
-
-<a id="nestedatt--spec--rules--default--backends--one--file--format--two--json"></a>
-### Nested Schema for `spec.rules.default.backends.one.file.format.two.json`
+<a id="nestedatt--spec--rules--default--backends--file--format--json"></a>
+### Nested Schema for `spec.rules.default.backends.file.format.json`
 
 Optional:
 
@@ -299,25 +250,24 @@ Optional:
 
 
 
-
-<a id="nestedatt--spec--rules--default--backends--one--open_telemetry"></a>
-### Nested Schema for `spec.rules.default.backends.one.open_telemetry`
+<a id="nestedatt--spec--rules--default--backends--open_telemetry"></a>
+### Nested Schema for `spec.rules.default.backends.open_telemetry`
 
 Optional:
 
 - `attributes` (Attributes List) Attributes defines custom OpenTelemetry attributes. Keys must be static
 OpenTelemetry attribute names. Values can contain placeholders available on
-https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators (see [below for nested schema](#nestedatt--spec--rules--default--backends--one--open_telemetry--attributes))
+https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators (see [below for nested schema](#nestedatt--spec--rules--default--backends--open_telemetry--attributes))
 - `backend_ref` (Attributes) BackendRef is a reference to a MeshOpenTelemetryBackend resource that
-defines the collector endpoint. (see [below for nested schema](#nestedatt--spec--rules--default--backends--one--open_telemetry--backend_ref))
+defines the collector endpoint. (see [below for nested schema](#nestedatt--spec--rules--default--backends--open_telemetry--backend_ref))
 - `body` (String) Body is a raw string or an OTLP any value as described at
 https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body
 It can contain placeholders available on
 https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
 Parsed as JSON.
 
-<a id="nestedatt--spec--rules--default--backends--one--open_telemetry--attributes"></a>
-### Nested Schema for `spec.rules.default.backends.one.open_telemetry.attributes`
+<a id="nestedatt--spec--rules--default--backends--open_telemetry--attributes"></a>
+### Nested Schema for `spec.rules.default.backends.open_telemetry.attributes`
 
 Optional:
 
@@ -325,8 +275,8 @@ Optional:
 - `value` (String) Value can contain Kuma placeholders. Not Null
 
 
-<a id="nestedatt--spec--rules--default--backends--one--open_telemetry--backend_ref"></a>
-### Nested Schema for `spec.rules.default.backends.one.open_telemetry.backend_ref`
+<a id="nestedatt--spec--rules--default--backends--open_telemetry--backend_ref"></a>
+### Nested Schema for `spec.rules.default.backends.open_telemetry.backend_ref`
 
 Optional:
 
@@ -336,392 +286,32 @@ the oldest by creation time wins.
 
 
 
-<a id="nestedatt--spec--rules--default--backends--one--tcp"></a>
-### Nested Schema for `spec.rules.default.backends.one.tcp`
+<a id="nestedatt--spec--rules--default--backends--tcp"></a>
+### Nested Schema for `spec.rules.default.backends.tcp`
 
 Optional:
 
 - `address` (String) Address of the TCP logging backend. Not Null
 - `format` (Attributes) Format of access logs. Placeholders available on
-https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators (see [below for nested schema](#nestedatt--spec--rules--default--backends--one--tcp--format))
+https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators (see [below for nested schema](#nestedatt--spec--rules--default--backends--tcp--format))
 
-<a id="nestedatt--spec--rules--default--backends--one--tcp--format"></a>
-### Nested Schema for `spec.rules.default.backends.one.tcp.format`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--rules--default--backends--one--tcp--format--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--rules--default--backends--one--tcp--format--two))
-
-<a id="nestedatt--spec--rules--default--backends--one--tcp--format--one"></a>
-### Nested Schema for `spec.rules.default.backends.one.tcp.format.one`
+<a id="nestedatt--spec--rules--default--backends--tcp--format"></a>
+### Nested Schema for `spec.rules.default.backends.tcp.format`
 
 Optional:
 
-- `json` (Attributes List) (see [below for nested schema](#nestedatt--spec--rules--default--backends--one--tcp--format--one--json))
+- `json` (Attributes List) (see [below for nested schema](#nestedatt--spec--rules--default--backends--tcp--format--json))
 - `omit_empty_values` (Boolean) Default: false
 - `plain` (String)
 - `type` (String) possible known values include one of ["Plain", "Json"]; Not Null
 
-<a id="nestedatt--spec--rules--default--backends--one--tcp--format--one--json"></a>
-### Nested Schema for `spec.rules.default.backends.one.tcp.format.one.json`
+<a id="nestedatt--spec--rules--default--backends--tcp--format--json"></a>
+### Nested Schema for `spec.rules.default.backends.tcp.format.json`
 
 Optional:
 
 - `key` (String) Not Null
 - `value` (String) Not Null
-
-
-
-<a id="nestedatt--spec--rules--default--backends--one--tcp--format--two"></a>
-### Nested Schema for `spec.rules.default.backends.one.tcp.format.two`
-
-Optional:
-
-- `json` (Attributes List) (see [below for nested schema](#nestedatt--spec--rules--default--backends--one--tcp--format--two--json))
-- `omit_empty_values` (Boolean) Default: false
-- `plain` (String)
-- `type` (String) possible known values include one of ["Plain", "Json"]; Not Null
-
-<a id="nestedatt--spec--rules--default--backends--one--tcp--format--two--json"></a>
-### Nested Schema for `spec.rules.default.backends.one.tcp.format.two.json`
-
-Optional:
-
-- `key` (String) Not Null
-- `value` (String) Not Null
-
-
-
-
-
-
-<a id="nestedatt--spec--rules--default--backends--three"></a>
-### Nested Schema for `spec.rules.default.backends.three`
-
-Optional:
-
-- `file` (Attributes) FileBackend defines configuration for file based access logs (see [below for nested schema](#nestedatt--spec--rules--default--backends--three--file))
-- `open_telemetry` (Attributes) Defines an OpenTelemetry logging backend. (see [below for nested schema](#nestedatt--spec--rules--default--backends--three--open_telemetry))
-- `tcp` (Attributes) TCPBackend defines a TCP logging backend. (see [below for nested schema](#nestedatt--spec--rules--default--backends--three--tcp))
-- `type` (String) possible known values include one of ["Tcp", "File", "OpenTelemetry"]; Not Null
-
-<a id="nestedatt--spec--rules--default--backends--three--file"></a>
-### Nested Schema for `spec.rules.default.backends.three.file`
-
-Optional:
-
-- `format` (Attributes) Format of access logs. Placeholders available on
-https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators (see [below for nested schema](#nestedatt--spec--rules--default--backends--three--file--format))
-- `path` (String) Path to a file that logs will be written to. Not Null
-
-<a id="nestedatt--spec--rules--default--backends--three--file--format"></a>
-### Nested Schema for `spec.rules.default.backends.three.file.format`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--rules--default--backends--three--file--format--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--rules--default--backends--three--file--format--two))
-
-<a id="nestedatt--spec--rules--default--backends--three--file--format--one"></a>
-### Nested Schema for `spec.rules.default.backends.three.file.format.one`
-
-Optional:
-
-- `json` (Attributes List) (see [below for nested schema](#nestedatt--spec--rules--default--backends--three--file--format--one--json))
-- `omit_empty_values` (Boolean) Default: false
-- `plain` (String)
-- `type` (String) possible known values include one of ["Plain", "Json"]; Not Null
-
-<a id="nestedatt--spec--rules--default--backends--three--file--format--one--json"></a>
-### Nested Schema for `spec.rules.default.backends.three.file.format.one.json`
-
-Optional:
-
-- `key` (String) Not Null
-- `value` (String) Not Null
-
-
-
-<a id="nestedatt--spec--rules--default--backends--three--file--format--two"></a>
-### Nested Schema for `spec.rules.default.backends.three.file.format.two`
-
-Optional:
-
-- `json` (Attributes List) (see [below for nested schema](#nestedatt--spec--rules--default--backends--three--file--format--two--json))
-- `omit_empty_values` (Boolean) Default: false
-- `plain` (String)
-- `type` (String) possible known values include one of ["Plain", "Json"]; Not Null
-
-<a id="nestedatt--spec--rules--default--backends--three--file--format--two--json"></a>
-### Nested Schema for `spec.rules.default.backends.three.file.format.two.json`
-
-Optional:
-
-- `key` (String) Not Null
-- `value` (String) Not Null
-
-
-
-
-
-<a id="nestedatt--spec--rules--default--backends--three--open_telemetry"></a>
-### Nested Schema for `spec.rules.default.backends.three.open_telemetry`
-
-Optional:
-
-- `attributes` (Attributes List) Attributes defines custom OpenTelemetry attributes. Keys must be static
-OpenTelemetry attribute names. Values can contain placeholders available on
-https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators (see [below for nested schema](#nestedatt--spec--rules--default--backends--three--open_telemetry--attributes))
-- `backend_ref` (Attributes) BackendRef is a reference to a MeshOpenTelemetryBackend resource that
-defines the collector endpoint. (see [below for nested schema](#nestedatt--spec--rules--default--backends--three--open_telemetry--backend_ref))
-- `body` (String) Body is a raw string or an OTLP any value as described at
-https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body
-It can contain placeholders available on
-https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-Parsed as JSON.
-
-<a id="nestedatt--spec--rules--default--backends--three--open_telemetry--attributes"></a>
-### Nested Schema for `spec.rules.default.backends.three.open_telemetry.attributes`
-
-Optional:
-
-- `key` (String) Key is the OpenTelemetry attribute name. Not Null
-- `value` (String) Value can contain Kuma placeholders. Not Null
-
-
-<a id="nestedatt--spec--rules--default--backends--three--open_telemetry--backend_ref"></a>
-### Nested Schema for `spec.rules.default.backends.three.open_telemetry.backend_ref`
-
-Optional:
-
-- `kind` (String) Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"
-- `labels` (Map of String) Labels to match the referenced resource. When multiple resources match,
-the oldest by creation time wins.
-
-
-
-<a id="nestedatt--spec--rules--default--backends--three--tcp"></a>
-### Nested Schema for `spec.rules.default.backends.three.tcp`
-
-Optional:
-
-- `address` (String) Address of the TCP logging backend. Not Null
-- `format` (Attributes) Format of access logs. Placeholders available on
-https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators (see [below for nested schema](#nestedatt--spec--rules--default--backends--three--tcp--format))
-
-<a id="nestedatt--spec--rules--default--backends--three--tcp--format"></a>
-### Nested Schema for `spec.rules.default.backends.three.tcp.format`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--rules--default--backends--three--tcp--format--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--rules--default--backends--three--tcp--format--two))
-
-<a id="nestedatt--spec--rules--default--backends--three--tcp--format--one"></a>
-### Nested Schema for `spec.rules.default.backends.three.tcp.format.one`
-
-Optional:
-
-- `json` (Attributes List) (see [below for nested schema](#nestedatt--spec--rules--default--backends--three--tcp--format--one--json))
-- `omit_empty_values` (Boolean) Default: false
-- `plain` (String)
-- `type` (String) possible known values include one of ["Plain", "Json"]; Not Null
-
-<a id="nestedatt--spec--rules--default--backends--three--tcp--format--one--json"></a>
-### Nested Schema for `spec.rules.default.backends.three.tcp.format.one.json`
-
-Optional:
-
-- `key` (String) Not Null
-- `value` (String) Not Null
-
-
-
-<a id="nestedatt--spec--rules--default--backends--three--tcp--format--two"></a>
-### Nested Schema for `spec.rules.default.backends.three.tcp.format.two`
-
-Optional:
-
-- `json` (Attributes List) (see [below for nested schema](#nestedatt--spec--rules--default--backends--three--tcp--format--two--json))
-- `omit_empty_values` (Boolean) Default: false
-- `plain` (String)
-- `type` (String) possible known values include one of ["Plain", "Json"]; Not Null
-
-<a id="nestedatt--spec--rules--default--backends--three--tcp--format--two--json"></a>
-### Nested Schema for `spec.rules.default.backends.three.tcp.format.two.json`
-
-Optional:
-
-- `key` (String) Not Null
-- `value` (String) Not Null
-
-
-
-
-
-
-<a id="nestedatt--spec--rules--default--backends--two"></a>
-### Nested Schema for `spec.rules.default.backends.two`
-
-Optional:
-
-- `file` (Attributes) FileBackend defines configuration for file based access logs (see [below for nested schema](#nestedatt--spec--rules--default--backends--two--file))
-- `open_telemetry` (Attributes) Defines an OpenTelemetry logging backend. (see [below for nested schema](#nestedatt--spec--rules--default--backends--two--open_telemetry))
-- `tcp` (Attributes) TCPBackend defines a TCP logging backend. (see [below for nested schema](#nestedatt--spec--rules--default--backends--two--tcp))
-- `type` (String) possible known values include one of ["Tcp", "File", "OpenTelemetry"]; Not Null
-
-<a id="nestedatt--spec--rules--default--backends--two--file"></a>
-### Nested Schema for `spec.rules.default.backends.two.file`
-
-Optional:
-
-- `format` (Attributes) Format of access logs. Placeholders available on
-https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators (see [below for nested schema](#nestedatt--spec--rules--default--backends--two--file--format))
-- `path` (String) Path to a file that logs will be written to. Not Null
-
-<a id="nestedatt--spec--rules--default--backends--two--file--format"></a>
-### Nested Schema for `spec.rules.default.backends.two.file.format`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--rules--default--backends--two--file--format--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--rules--default--backends--two--file--format--two))
-
-<a id="nestedatt--spec--rules--default--backends--two--file--format--one"></a>
-### Nested Schema for `spec.rules.default.backends.two.file.format.one`
-
-Optional:
-
-- `json` (Attributes List) (see [below for nested schema](#nestedatt--spec--rules--default--backends--two--file--format--one--json))
-- `omit_empty_values` (Boolean) Default: false
-- `plain` (String)
-- `type` (String) possible known values include one of ["Plain", "Json"]; Not Null
-
-<a id="nestedatt--spec--rules--default--backends--two--file--format--one--json"></a>
-### Nested Schema for `spec.rules.default.backends.two.file.format.one.json`
-
-Optional:
-
-- `key` (String) Not Null
-- `value` (String) Not Null
-
-
-
-<a id="nestedatt--spec--rules--default--backends--two--file--format--two"></a>
-### Nested Schema for `spec.rules.default.backends.two.file.format.two`
-
-Optional:
-
-- `json` (Attributes List) (see [below for nested schema](#nestedatt--spec--rules--default--backends--two--file--format--two--json))
-- `omit_empty_values` (Boolean) Default: false
-- `plain` (String)
-- `type` (String) possible known values include one of ["Plain", "Json"]; Not Null
-
-<a id="nestedatt--spec--rules--default--backends--two--file--format--two--json"></a>
-### Nested Schema for `spec.rules.default.backends.two.file.format.two.json`
-
-Optional:
-
-- `key` (String) Not Null
-- `value` (String) Not Null
-
-
-
-
-
-<a id="nestedatt--spec--rules--default--backends--two--open_telemetry"></a>
-### Nested Schema for `spec.rules.default.backends.two.open_telemetry`
-
-Optional:
-
-- `attributes` (Attributes List) Attributes defines custom OpenTelemetry attributes. Keys must be static
-OpenTelemetry attribute names. Values can contain placeholders available on
-https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators (see [below for nested schema](#nestedatt--spec--rules--default--backends--two--open_telemetry--attributes))
-- `backend_ref` (Attributes) BackendRef is a reference to a MeshOpenTelemetryBackend resource that
-defines the collector endpoint. (see [below for nested schema](#nestedatt--spec--rules--default--backends--two--open_telemetry--backend_ref))
-- `body` (String) Body is a raw string or an OTLP any value as described at
-https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body
-It can contain placeholders available on
-https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-Parsed as JSON.
-
-<a id="nestedatt--spec--rules--default--backends--two--open_telemetry--attributes"></a>
-### Nested Schema for `spec.rules.default.backends.two.open_telemetry.attributes`
-
-Optional:
-
-- `key` (String) Key is the OpenTelemetry attribute name. Not Null
-- `value` (String) Value can contain Kuma placeholders. Not Null
-
-
-<a id="nestedatt--spec--rules--default--backends--two--open_telemetry--backend_ref"></a>
-### Nested Schema for `spec.rules.default.backends.two.open_telemetry.backend_ref`
-
-Optional:
-
-- `kind` (String) Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"
-- `labels` (Map of String) Labels to match the referenced resource. When multiple resources match,
-the oldest by creation time wins.
-
-
-
-<a id="nestedatt--spec--rules--default--backends--two--tcp"></a>
-### Nested Schema for `spec.rules.default.backends.two.tcp`
-
-Optional:
-
-- `address` (String) Address of the TCP logging backend. Not Null
-- `format` (Attributes) Format of access logs. Placeholders available on
-https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators (see [below for nested schema](#nestedatt--spec--rules--default--backends--two--tcp--format))
-
-<a id="nestedatt--spec--rules--default--backends--two--tcp--format"></a>
-### Nested Schema for `spec.rules.default.backends.two.tcp.format`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--rules--default--backends--two--tcp--format--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--rules--default--backends--two--tcp--format--two))
-
-<a id="nestedatt--spec--rules--default--backends--two--tcp--format--one"></a>
-### Nested Schema for `spec.rules.default.backends.two.tcp.format.one`
-
-Optional:
-
-- `json` (Attributes List) (see [below for nested schema](#nestedatt--spec--rules--default--backends--two--tcp--format--one--json))
-- `omit_empty_values` (Boolean) Default: false
-- `plain` (String)
-- `type` (String) possible known values include one of ["Plain", "Json"]; Not Null
-
-<a id="nestedatt--spec--rules--default--backends--two--tcp--format--one--json"></a>
-### Nested Schema for `spec.rules.default.backends.two.tcp.format.one.json`
-
-Optional:
-
-- `key` (String) Not Null
-- `value` (String) Not Null
-
-
-
-<a id="nestedatt--spec--rules--default--backends--two--tcp--format--two"></a>
-### Nested Schema for `spec.rules.default.backends.two.tcp.format.two`
-
-Optional:
-
-- `json` (Attributes List) (see [below for nested schema](#nestedatt--spec--rules--default--backends--two--tcp--format--two--json))
-- `omit_empty_values` (Boolean) Default: false
-- `plain` (String)
-- `type` (String) possible known values include one of ["Plain", "Json"]; Not Null
-
-<a id="nestedatt--spec--rules--default--backends--two--tcp--format--two--json"></a>
-### Nested Schema for `spec.rules.default.backends.two.tcp.format.two.json`
-
-Optional:
-
-- `key` (String) Not Null
-- `value` (String) Not Null
-
-
 
 
 
@@ -796,69 +386,32 @@ Optional:
 
 Optional:
 
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--backends--one))
-- `three` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--backends--three))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--backends--two))
-
-<a id="nestedatt--spec--to--default--backends--one"></a>
-### Nested Schema for `spec.to.default.backends.one`
-
-Optional:
-
-- `file` (Attributes) FileBackend defines configuration for file based access logs (see [below for nested schema](#nestedatt--spec--to--default--backends--one--file))
-- `open_telemetry` (Attributes) Defines an OpenTelemetry logging backend. (see [below for nested schema](#nestedatt--spec--to--default--backends--one--open_telemetry))
-- `tcp` (Attributes) TCPBackend defines a TCP logging backend. (see [below for nested schema](#nestedatt--spec--to--default--backends--one--tcp))
+- `file` (Attributes) FileBackend defines configuration for file based access logs (see [below for nested schema](#nestedatt--spec--to--default--backends--file))
+- `open_telemetry` (Attributes) Defines an OpenTelemetry logging backend. (see [below for nested schema](#nestedatt--spec--to--default--backends--open_telemetry))
+- `tcp` (Attributes) TCPBackend defines a TCP logging backend. (see [below for nested schema](#nestedatt--spec--to--default--backends--tcp))
 - `type` (String) possible known values include one of ["Tcp", "File", "OpenTelemetry"]; Not Null
 
-<a id="nestedatt--spec--to--default--backends--one--file"></a>
-### Nested Schema for `spec.to.default.backends.one.file`
+<a id="nestedatt--spec--to--default--backends--file"></a>
+### Nested Schema for `spec.to.default.backends.file`
 
 Optional:
 
 - `format` (Attributes) Format of access logs. Placeholders available on
-https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators (see [below for nested schema](#nestedatt--spec--to--default--backends--one--file--format))
+https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators (see [below for nested schema](#nestedatt--spec--to--default--backends--file--format))
 - `path` (String) Path to a file that logs will be written to. Not Null
 
-<a id="nestedatt--spec--to--default--backends--one--file--format"></a>
-### Nested Schema for `spec.to.default.backends.one.file.format`
+<a id="nestedatt--spec--to--default--backends--file--format"></a>
+### Nested Schema for `spec.to.default.backends.file.format`
 
 Optional:
 
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--backends--one--file--format--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--backends--one--file--format--two))
-
-<a id="nestedatt--spec--to--default--backends--one--file--format--one"></a>
-### Nested Schema for `spec.to.default.backends.one.file.format.one`
-
-Optional:
-
-- `json` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--default--backends--one--file--format--one--json))
+- `json` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--default--backends--file--format--json))
 - `omit_empty_values` (Boolean) Default: false
 - `plain` (String)
 - `type` (String) possible known values include one of ["Plain", "Json"]; Not Null
 
-<a id="nestedatt--spec--to--default--backends--one--file--format--one--json"></a>
-### Nested Schema for `spec.to.default.backends.one.file.format.one.json`
-
-Optional:
-
-- `key` (String) Not Null
-- `value` (String) Not Null
-
-
-
-<a id="nestedatt--spec--to--default--backends--one--file--format--two"></a>
-### Nested Schema for `spec.to.default.backends.one.file.format.two`
-
-Optional:
-
-- `json` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--default--backends--one--file--format--two--json))
-- `omit_empty_values` (Boolean) Default: false
-- `plain` (String)
-- `type` (String) possible known values include one of ["Plain", "Json"]; Not Null
-
-<a id="nestedatt--spec--to--default--backends--one--file--format--two--json"></a>
-### Nested Schema for `spec.to.default.backends.one.file.format.two.json`
+<a id="nestedatt--spec--to--default--backends--file--format--json"></a>
+### Nested Schema for `spec.to.default.backends.file.format.json`
 
 Optional:
 
@@ -868,25 +421,24 @@ Optional:
 
 
 
-
-<a id="nestedatt--spec--to--default--backends--one--open_telemetry"></a>
-### Nested Schema for `spec.to.default.backends.one.open_telemetry`
+<a id="nestedatt--spec--to--default--backends--open_telemetry"></a>
+### Nested Schema for `spec.to.default.backends.open_telemetry`
 
 Optional:
 
 - `attributes` (Attributes List) Attributes defines custom OpenTelemetry attributes. Keys must be static
 OpenTelemetry attribute names. Values can contain placeholders available on
-https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators (see [below for nested schema](#nestedatt--spec--to--default--backends--one--open_telemetry--attributes))
+https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators (see [below for nested schema](#nestedatt--spec--to--default--backends--open_telemetry--attributes))
 - `backend_ref` (Attributes) BackendRef is a reference to a MeshOpenTelemetryBackend resource that
-defines the collector endpoint. (see [below for nested schema](#nestedatt--spec--to--default--backends--one--open_telemetry--backend_ref))
+defines the collector endpoint. (see [below for nested schema](#nestedatt--spec--to--default--backends--open_telemetry--backend_ref))
 - `body` (String) Body is a raw string or an OTLP any value as described at
 https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body
 It can contain placeholders available on
 https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
 Parsed as JSON.
 
-<a id="nestedatt--spec--to--default--backends--one--open_telemetry--attributes"></a>
-### Nested Schema for `spec.to.default.backends.one.open_telemetry.attributes`
+<a id="nestedatt--spec--to--default--backends--open_telemetry--attributes"></a>
+### Nested Schema for `spec.to.default.backends.open_telemetry.attributes`
 
 Optional:
 
@@ -894,8 +446,8 @@ Optional:
 - `value` (String) Value can contain Kuma placeholders. Not Null
 
 
-<a id="nestedatt--spec--to--default--backends--one--open_telemetry--backend_ref"></a>
-### Nested Schema for `spec.to.default.backends.one.open_telemetry.backend_ref`
+<a id="nestedatt--spec--to--default--backends--open_telemetry--backend_ref"></a>
+### Nested Schema for `spec.to.default.backends.open_telemetry.backend_ref`
 
 Optional:
 
@@ -905,392 +457,32 @@ the oldest by creation time wins.
 
 
 
-<a id="nestedatt--spec--to--default--backends--one--tcp"></a>
-### Nested Schema for `spec.to.default.backends.one.tcp`
+<a id="nestedatt--spec--to--default--backends--tcp"></a>
+### Nested Schema for `spec.to.default.backends.tcp`
 
 Optional:
 
 - `address` (String) Address of the TCP logging backend. Not Null
 - `format` (Attributes) Format of access logs. Placeholders available on
-https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators (see [below for nested schema](#nestedatt--spec--to--default--backends--one--tcp--format))
+https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators (see [below for nested schema](#nestedatt--spec--to--default--backends--tcp--format))
 
-<a id="nestedatt--spec--to--default--backends--one--tcp--format"></a>
-### Nested Schema for `spec.to.default.backends.one.tcp.format`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--backends--one--tcp--format--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--backends--one--tcp--format--two))
-
-<a id="nestedatt--spec--to--default--backends--one--tcp--format--one"></a>
-### Nested Schema for `spec.to.default.backends.one.tcp.format.one`
+<a id="nestedatt--spec--to--default--backends--tcp--format"></a>
+### Nested Schema for `spec.to.default.backends.tcp.format`
 
 Optional:
 
-- `json` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--default--backends--one--tcp--format--one--json))
+- `json` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--default--backends--tcp--format--json))
 - `omit_empty_values` (Boolean) Default: false
 - `plain` (String)
 - `type` (String) possible known values include one of ["Plain", "Json"]; Not Null
 
-<a id="nestedatt--spec--to--default--backends--one--tcp--format--one--json"></a>
-### Nested Schema for `spec.to.default.backends.one.tcp.format.one.json`
+<a id="nestedatt--spec--to--default--backends--tcp--format--json"></a>
+### Nested Schema for `spec.to.default.backends.tcp.format.json`
 
 Optional:
 
 - `key` (String) Not Null
 - `value` (String) Not Null
-
-
-
-<a id="nestedatt--spec--to--default--backends--one--tcp--format--two"></a>
-### Nested Schema for `spec.to.default.backends.one.tcp.format.two`
-
-Optional:
-
-- `json` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--default--backends--one--tcp--format--two--json))
-- `omit_empty_values` (Boolean) Default: false
-- `plain` (String)
-- `type` (String) possible known values include one of ["Plain", "Json"]; Not Null
-
-<a id="nestedatt--spec--to--default--backends--one--tcp--format--two--json"></a>
-### Nested Schema for `spec.to.default.backends.one.tcp.format.two.json`
-
-Optional:
-
-- `key` (String) Not Null
-- `value` (String) Not Null
-
-
-
-
-
-
-<a id="nestedatt--spec--to--default--backends--three"></a>
-### Nested Schema for `spec.to.default.backends.three`
-
-Optional:
-
-- `file` (Attributes) FileBackend defines configuration for file based access logs (see [below for nested schema](#nestedatt--spec--to--default--backends--three--file))
-- `open_telemetry` (Attributes) Defines an OpenTelemetry logging backend. (see [below for nested schema](#nestedatt--spec--to--default--backends--three--open_telemetry))
-- `tcp` (Attributes) TCPBackend defines a TCP logging backend. (see [below for nested schema](#nestedatt--spec--to--default--backends--three--tcp))
-- `type` (String) possible known values include one of ["Tcp", "File", "OpenTelemetry"]; Not Null
-
-<a id="nestedatt--spec--to--default--backends--three--file"></a>
-### Nested Schema for `spec.to.default.backends.three.file`
-
-Optional:
-
-- `format` (Attributes) Format of access logs. Placeholders available on
-https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators (see [below for nested schema](#nestedatt--spec--to--default--backends--three--file--format))
-- `path` (String) Path to a file that logs will be written to. Not Null
-
-<a id="nestedatt--spec--to--default--backends--three--file--format"></a>
-### Nested Schema for `spec.to.default.backends.three.file.format`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--backends--three--file--format--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--backends--three--file--format--two))
-
-<a id="nestedatt--spec--to--default--backends--three--file--format--one"></a>
-### Nested Schema for `spec.to.default.backends.three.file.format.one`
-
-Optional:
-
-- `json` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--default--backends--three--file--format--one--json))
-- `omit_empty_values` (Boolean) Default: false
-- `plain` (String)
-- `type` (String) possible known values include one of ["Plain", "Json"]; Not Null
-
-<a id="nestedatt--spec--to--default--backends--three--file--format--one--json"></a>
-### Nested Schema for `spec.to.default.backends.three.file.format.one.json`
-
-Optional:
-
-- `key` (String) Not Null
-- `value` (String) Not Null
-
-
-
-<a id="nestedatt--spec--to--default--backends--three--file--format--two"></a>
-### Nested Schema for `spec.to.default.backends.three.file.format.two`
-
-Optional:
-
-- `json` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--default--backends--three--file--format--two--json))
-- `omit_empty_values` (Boolean) Default: false
-- `plain` (String)
-- `type` (String) possible known values include one of ["Plain", "Json"]; Not Null
-
-<a id="nestedatt--spec--to--default--backends--three--file--format--two--json"></a>
-### Nested Schema for `spec.to.default.backends.three.file.format.two.json`
-
-Optional:
-
-- `key` (String) Not Null
-- `value` (String) Not Null
-
-
-
-
-
-<a id="nestedatt--spec--to--default--backends--three--open_telemetry"></a>
-### Nested Schema for `spec.to.default.backends.three.open_telemetry`
-
-Optional:
-
-- `attributes` (Attributes List) Attributes defines custom OpenTelemetry attributes. Keys must be static
-OpenTelemetry attribute names. Values can contain placeholders available on
-https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators (see [below for nested schema](#nestedatt--spec--to--default--backends--three--open_telemetry--attributes))
-- `backend_ref` (Attributes) BackendRef is a reference to a MeshOpenTelemetryBackend resource that
-defines the collector endpoint. (see [below for nested schema](#nestedatt--spec--to--default--backends--three--open_telemetry--backend_ref))
-- `body` (String) Body is a raw string or an OTLP any value as described at
-https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body
-It can contain placeholders available on
-https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-Parsed as JSON.
-
-<a id="nestedatt--spec--to--default--backends--three--open_telemetry--attributes"></a>
-### Nested Schema for `spec.to.default.backends.three.open_telemetry.attributes`
-
-Optional:
-
-- `key` (String) Key is the OpenTelemetry attribute name. Not Null
-- `value` (String) Value can contain Kuma placeholders. Not Null
-
-
-<a id="nestedatt--spec--to--default--backends--three--open_telemetry--backend_ref"></a>
-### Nested Schema for `spec.to.default.backends.three.open_telemetry.backend_ref`
-
-Optional:
-
-- `kind` (String) Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"
-- `labels` (Map of String) Labels to match the referenced resource. When multiple resources match,
-the oldest by creation time wins.
-
-
-
-<a id="nestedatt--spec--to--default--backends--three--tcp"></a>
-### Nested Schema for `spec.to.default.backends.three.tcp`
-
-Optional:
-
-- `address` (String) Address of the TCP logging backend. Not Null
-- `format` (Attributes) Format of access logs. Placeholders available on
-https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators (see [below for nested schema](#nestedatt--spec--to--default--backends--three--tcp--format))
-
-<a id="nestedatt--spec--to--default--backends--three--tcp--format"></a>
-### Nested Schema for `spec.to.default.backends.three.tcp.format`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--backends--three--tcp--format--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--backends--three--tcp--format--two))
-
-<a id="nestedatt--spec--to--default--backends--three--tcp--format--one"></a>
-### Nested Schema for `spec.to.default.backends.three.tcp.format.one`
-
-Optional:
-
-- `json` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--default--backends--three--tcp--format--one--json))
-- `omit_empty_values` (Boolean) Default: false
-- `plain` (String)
-- `type` (String) possible known values include one of ["Plain", "Json"]; Not Null
-
-<a id="nestedatt--spec--to--default--backends--three--tcp--format--one--json"></a>
-### Nested Schema for `spec.to.default.backends.three.tcp.format.one.json`
-
-Optional:
-
-- `key` (String) Not Null
-- `value` (String) Not Null
-
-
-
-<a id="nestedatt--spec--to--default--backends--three--tcp--format--two"></a>
-### Nested Schema for `spec.to.default.backends.three.tcp.format.two`
-
-Optional:
-
-- `json` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--default--backends--three--tcp--format--two--json))
-- `omit_empty_values` (Boolean) Default: false
-- `plain` (String)
-- `type` (String) possible known values include one of ["Plain", "Json"]; Not Null
-
-<a id="nestedatt--spec--to--default--backends--three--tcp--format--two--json"></a>
-### Nested Schema for `spec.to.default.backends.three.tcp.format.two.json`
-
-Optional:
-
-- `key` (String) Not Null
-- `value` (String) Not Null
-
-
-
-
-
-
-<a id="nestedatt--spec--to--default--backends--two"></a>
-### Nested Schema for `spec.to.default.backends.two`
-
-Optional:
-
-- `file` (Attributes) FileBackend defines configuration for file based access logs (see [below for nested schema](#nestedatt--spec--to--default--backends--two--file))
-- `open_telemetry` (Attributes) Defines an OpenTelemetry logging backend. (see [below for nested schema](#nestedatt--spec--to--default--backends--two--open_telemetry))
-- `tcp` (Attributes) TCPBackend defines a TCP logging backend. (see [below for nested schema](#nestedatt--spec--to--default--backends--two--tcp))
-- `type` (String) possible known values include one of ["Tcp", "File", "OpenTelemetry"]; Not Null
-
-<a id="nestedatt--spec--to--default--backends--two--file"></a>
-### Nested Schema for `spec.to.default.backends.two.file`
-
-Optional:
-
-- `format` (Attributes) Format of access logs. Placeholders available on
-https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators (see [below for nested schema](#nestedatt--spec--to--default--backends--two--file--format))
-- `path` (String) Path to a file that logs will be written to. Not Null
-
-<a id="nestedatt--spec--to--default--backends--two--file--format"></a>
-### Nested Schema for `spec.to.default.backends.two.file.format`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--backends--two--file--format--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--backends--two--file--format--two))
-
-<a id="nestedatt--spec--to--default--backends--two--file--format--one"></a>
-### Nested Schema for `spec.to.default.backends.two.file.format.one`
-
-Optional:
-
-- `json` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--default--backends--two--file--format--one--json))
-- `omit_empty_values` (Boolean) Default: false
-- `plain` (String)
-- `type` (String) possible known values include one of ["Plain", "Json"]; Not Null
-
-<a id="nestedatt--spec--to--default--backends--two--file--format--one--json"></a>
-### Nested Schema for `spec.to.default.backends.two.file.format.one.json`
-
-Optional:
-
-- `key` (String) Not Null
-- `value` (String) Not Null
-
-
-
-<a id="nestedatt--spec--to--default--backends--two--file--format--two"></a>
-### Nested Schema for `spec.to.default.backends.two.file.format.two`
-
-Optional:
-
-- `json` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--default--backends--two--file--format--two--json))
-- `omit_empty_values` (Boolean) Default: false
-- `plain` (String)
-- `type` (String) possible known values include one of ["Plain", "Json"]; Not Null
-
-<a id="nestedatt--spec--to--default--backends--two--file--format--two--json"></a>
-### Nested Schema for `spec.to.default.backends.two.file.format.two.json`
-
-Optional:
-
-- `key` (String) Not Null
-- `value` (String) Not Null
-
-
-
-
-
-<a id="nestedatt--spec--to--default--backends--two--open_telemetry"></a>
-### Nested Schema for `spec.to.default.backends.two.open_telemetry`
-
-Optional:
-
-- `attributes` (Attributes List) Attributes defines custom OpenTelemetry attributes. Keys must be static
-OpenTelemetry attribute names. Values can contain placeholders available on
-https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators (see [below for nested schema](#nestedatt--spec--to--default--backends--two--open_telemetry--attributes))
-- `backend_ref` (Attributes) BackendRef is a reference to a MeshOpenTelemetryBackend resource that
-defines the collector endpoint. (see [below for nested schema](#nestedatt--spec--to--default--backends--two--open_telemetry--backend_ref))
-- `body` (String) Body is a raw string or an OTLP any value as described at
-https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body
-It can contain placeholders available on
-https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
-Parsed as JSON.
-
-<a id="nestedatt--spec--to--default--backends--two--open_telemetry--attributes"></a>
-### Nested Schema for `spec.to.default.backends.two.open_telemetry.attributes`
-
-Optional:
-
-- `key` (String) Key is the OpenTelemetry attribute name. Not Null
-- `value` (String) Value can contain Kuma placeholders. Not Null
-
-
-<a id="nestedatt--spec--to--default--backends--two--open_telemetry--backend_ref"></a>
-### Nested Schema for `spec.to.default.backends.two.open_telemetry.backend_ref`
-
-Optional:
-
-- `kind` (String) Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"
-- `labels` (Map of String) Labels to match the referenced resource. When multiple resources match,
-the oldest by creation time wins.
-
-
-
-<a id="nestedatt--spec--to--default--backends--two--tcp"></a>
-### Nested Schema for `spec.to.default.backends.two.tcp`
-
-Optional:
-
-- `address` (String) Address of the TCP logging backend. Not Null
-- `format` (Attributes) Format of access logs. Placeholders available on
-https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators (see [below for nested schema](#nestedatt--spec--to--default--backends--two--tcp--format))
-
-<a id="nestedatt--spec--to--default--backends--two--tcp--format"></a>
-### Nested Schema for `spec.to.default.backends.two.tcp.format`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--backends--two--tcp--format--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--default--backends--two--tcp--format--two))
-
-<a id="nestedatt--spec--to--default--backends--two--tcp--format--one"></a>
-### Nested Schema for `spec.to.default.backends.two.tcp.format.one`
-
-Optional:
-
-- `json` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--default--backends--two--tcp--format--one--json))
-- `omit_empty_values` (Boolean) Default: false
-- `plain` (String)
-- `type` (String) possible known values include one of ["Plain", "Json"]; Not Null
-
-<a id="nestedatt--spec--to--default--backends--two--tcp--format--one--json"></a>
-### Nested Schema for `spec.to.default.backends.two.tcp.format.one.json`
-
-Optional:
-
-- `key` (String) Not Null
-- `value` (String) Not Null
-
-
-
-<a id="nestedatt--spec--to--default--backends--two--tcp--format--two"></a>
-### Nested Schema for `spec.to.default.backends.two.tcp.format.two`
-
-Optional:
-
-- `json` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--default--backends--two--tcp--format--two--json))
-- `omit_empty_values` (Boolean) Default: false
-- `plain` (String)
-- `type` (String) possible known values include one of ["Plain", "Json"]; Not Null
-
-<a id="nestedatt--spec--to--default--backends--two--tcp--format--two--json"></a>
-### Nested Schema for `spec.to.default.backends.two.tcp.format.two.json`
-
-Optional:
-
-- `key` (String) Not Null
-- `value` (String) Not Null
-
-
 
 
 

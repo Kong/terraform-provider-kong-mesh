@@ -281,6 +281,27 @@ func (r *MeshCircuitBreakerResourceModel) ToOperationsGetMeshCircuitBreakerReque
 	return &out, diags
 }
 
+func (r *MeshCircuitBreakerResourceModel) ToOperationsPostMeshCircuitBreakerRequest(ctx context.Context) (*operations.PostMeshCircuitBreakerRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	meshCircuitBreakerItem, meshCircuitBreakerItemDiags := r.ToSharedMeshCircuitBreakerItemInput(ctx)
+	diags.Append(meshCircuitBreakerItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PostMeshCircuitBreakerRequest{
+		Mesh:                   mesh,
+		MeshCircuitBreakerItem: *meshCircuitBreakerItem,
+	}
+
+	return &out, diags
+}
+
 func (r *MeshCircuitBreakerResourceModel) ToOperationsPutMeshCircuitBreakerRequest(ctx context.Context) (*operations.PutMeshCircuitBreakerRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 

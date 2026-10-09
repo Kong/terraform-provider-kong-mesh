@@ -2,8 +2,13 @@
 
 package types
 
+import (
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
+
 type MeshAccessLogItemSpecBackends struct {
-	One   *MeshAccessLogItemBackends1 `queryParam:"inline" tfsdk:"one"`
-	Two   *MeshAccessLogItemBackends1 `queryParam:"inline" tfsdk:"two"`
-	Three *MeshAccessLogItemBackends1 `queryParam:"inline" tfsdk:"three"`
+	File          *MeshAccessLogItemSpecFile          `tfsdk:"file"`
+	OpenTelemetry *MeshAccessLogItemSpecOpenTelemetry `tfsdk:"open_telemetry"`
+	TCP           *MeshAccessLogItemSpecTCP           `tfsdk:"tcp"`
+	Type          types.String                        `tfsdk:"type"`
 }

@@ -58,7 +58,7 @@ func (r *MeshOPAResourceModel) RefreshFromSharedMeshOPAItem(ctx context.Context,
 				if resp.Spec.Default.AgentConfig.File == nil {
 					r.Spec.Default.AgentConfig.File = nil
 				} else {
-					r.Spec.Default.AgentConfig.File = &tfTypes.MeshExternalServiceItemSpecTLSFile{}
+					r.Spec.Default.AgentConfig.File = &tfTypes.MeshExternalServiceItemFile{}
 					r.Spec.Default.AgentConfig.File.Path = types.StringValue(resp.Spec.Default.AgentConfig.File.Path)
 				}
 				if resp.Spec.Default.AgentConfig.InsecureInline == nil {
@@ -92,7 +92,7 @@ func (r *MeshOPAResourceModel) RefreshFromSharedMeshOPAItem(ctx context.Context,
 				if appendPoliciesItem.Rego.File == nil {
 					appendPolicies.Rego.File = nil
 				} else {
-					appendPolicies.Rego.File = &tfTypes.MeshExternalServiceItemSpecTLSFile{}
+					appendPolicies.Rego.File = &tfTypes.MeshExternalServiceItemFile{}
 					appendPolicies.Rego.File.Path = types.StringValue(appendPoliciesItem.Rego.File.Path)
 				}
 				if appendPoliciesItem.Rego.InsecureInline == nil {
@@ -180,6 +180,27 @@ func (r *MeshOPAResourceModel) ToOperationsGetMeshOPARequest(ctx context.Context
 	out := operations.GetMeshOPARequest{
 		Mesh: mesh,
 		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshOPAResourceModel) ToOperationsPostMeshOPARequest(ctx context.Context) (*operations.PostMeshOPARequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	meshOPAItem, meshOPAItemDiags := r.ToSharedMeshOPAItemInput(ctx)
+	diags.Append(meshOPAItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PostMeshOPARequest{
+		Mesh:        mesh,
+		MeshOPAItem: *meshOPAItem,
 	}
 
 	return &out, diags

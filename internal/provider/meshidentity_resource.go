@@ -106,7 +106,7 @@ func (r *MeshIdentityResource) Schema(ctx context.Context, req resource.SchemaRe
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
-				Description: `name of the MeshIdentity. Requires replacement if changed.`,
+				Description: `Name of the Kuma resource. Requires replacement if changed.`,
 				Validators: []validator.String{
 					stringvalidator.UTF8LengthAtMost(253),
 					stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
@@ -118,803 +118,260 @@ func (r *MeshIdentityResource) Schema(ctx context.Context, req resource.SchemaRe
 					"provider": schema.SingleNestedAttribute{
 						Optional: true,
 						Attributes: map[string]schema.Attribute{
-							"one": schema.SingleNestedAttribute{
+							"bundled": schema.SingleNestedAttribute{
 								Optional: true,
 								Attributes: map[string]schema.Attribute{
-									"bundled": schema.SingleNestedAttribute{
+									"autogenerate": schema.SingleNestedAttribute{
 										Optional: true,
 										Attributes: map[string]schema.Attribute{
-											"autogenerate": schema.SingleNestedAttribute{
+											"enabled": schema.BoolAttribute{
 												Optional: true,
-												Attributes: map[string]schema.Attribute{
-													"enabled": schema.BoolAttribute{
-														Optional: true,
-													},
-												},
-												Description: `Autogenerate configures the control plane to use self-signed certificates.`,
 											},
-											"ca": schema.SingleNestedAttribute{
+										},
+										Description: `Autogenerate configures the control plane to use self-signed certificates.`,
+									},
+									"ca": schema.SingleNestedAttribute{
+										Optional: true,
+										Attributes: map[string]schema.Attribute{
+											"certificate": schema.SingleNestedAttribute{
 												Optional: true,
 												Attributes: map[string]schema.Attribute{
-													"certificate": schema.SingleNestedAttribute{
+													"env_var": schema.SingleNestedAttribute{
 														Optional: true,
 														Attributes: map[string]schema.Attribute{
-															"env_var": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"name": schema.StringAttribute{
-																		Required: true,
-																	},
-																},
-															},
-															"file": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"path": schema.StringAttribute{
-																		Required: true,
-																	},
-																},
-															},
-															"insecure_inline": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"value": schema.StringAttribute{
-																		Required: true,
-																	},
-																},
-															},
-															"secret_ref": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"kind": schema.StringAttribute{
-																		Required:    true,
-																		Description: `must be "Secret"`,
-																		Validators: []validator.String{
-																			stringvalidator.OneOf("Secret"),
-																		},
-																	},
-																	"name": schema.StringAttribute{
-																		Required: true,
-																	},
-																},
-															},
-															"type": schema.StringAttribute{
-																Required:    true,
-																Description: `possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]`,
+															"name": schema.StringAttribute{
+																Required: true,
 															},
 														},
-														Description: `Certificate allows the user to specify a custom certificate.`,
 													},
-													"private_key": schema.SingleNestedAttribute{
+													"file": schema.SingleNestedAttribute{
 														Optional: true,
 														Attributes: map[string]schema.Attribute{
-															"env_var": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"name": schema.StringAttribute{
-																		Required: true,
-																	},
-																},
-															},
-															"file": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"path": schema.StringAttribute{
-																		Required: true,
-																	},
-																},
-															},
-															"insecure_inline": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"value": schema.StringAttribute{
-																		Required: true,
-																	},
-																},
-															},
-															"secret_ref": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"kind": schema.StringAttribute{
-																		Required:    true,
-																		Description: `must be "Secret"`,
-																		Validators: []validator.String{
-																			stringvalidator.OneOf("Secret"),
-																		},
-																	},
-																	"name": schema.StringAttribute{
-																		Required: true,
-																	},
-																},
-															},
-															"type": schema.StringAttribute{
-																Required:    true,
-																Description: `possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]`,
+															"path": schema.StringAttribute{
+																Required: true,
 															},
 														},
-														Description: `PrivateKey allows the user to specify a custom private key.`,
+													},
+													"insecure_inline": schema.SingleNestedAttribute{
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"value": schema.StringAttribute{
+																Required: true,
+															},
+														},
+													},
+													"secret_ref": schema.SingleNestedAttribute{
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"kind": schema.StringAttribute{
+																Required:    true,
+																Description: `must be "Secret"`,
+																Validators: []validator.String{
+																	stringvalidator.OneOf("Secret"),
+																},
+															},
+															"name": schema.StringAttribute{
+																Required: true,
+															},
+														},
+													},
+													"type": schema.StringAttribute{
+														Required:    true,
+														Description: `possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]`,
 													},
 												},
-												Description: `CA has configuration related to the CA`,
+												Description: `Certificate allows the user to specify a custom certificate.`,
 											},
-											"certificate_parameters": schema.SingleNestedAttribute{
+											"private_key": schema.SingleNestedAttribute{
 												Optional: true,
 												Attributes: map[string]schema.Attribute{
-													"expiry": schema.StringAttribute{
+													"env_var": schema.SingleNestedAttribute{
 														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"name": schema.StringAttribute{
+																Required: true,
+															},
+														},
+													},
+													"file": schema.SingleNestedAttribute{
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"path": schema.StringAttribute{
+																Required: true,
+															},
+														},
+													},
+													"insecure_inline": schema.SingleNestedAttribute{
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"value": schema.StringAttribute{
+																Required: true,
+															},
+														},
+													},
+													"secret_ref": schema.SingleNestedAttribute{
+														Optional: true,
+														Attributes: map[string]schema.Attribute{
+															"kind": schema.StringAttribute{
+																Required:    true,
+																Description: `must be "Secret"`,
+																Validators: []validator.String{
+																	stringvalidator.OneOf("Secret"),
+																},
+															},
+															"name": schema.StringAttribute{
+																Required: true,
+															},
+														},
+													},
+													"type": schema.StringAttribute{
+														Required:    true,
+														Description: `possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]`,
 													},
 												},
-												Description: `CertificateParameters allows users to define certificate generation parameters.`,
-											},
-											"insecure_allow_self_signed": schema.BoolAttribute{
-												Optional:    true,
-												Description: `InsecureAllowSelfSigned allows users to enable the use of self-signed certificates.`,
-											},
-											"mesh_trust_creation": schema.StringAttribute{
-												Optional: true,
-												MarkdownDescription: `MeshTrustCreation defines whether a MeshTrust resource should be automatically created` + "\n" +
-													`from an existing MeshIdentity. If not defined, the control plane automatically generates a MeshTrust.` + "\n" +
-													`possible known values include one of ["Enabled", "Disabled"]`,
+												Description: `PrivateKey allows the user to specify a custom private key.`,
 											},
 										},
-										MarkdownDescription: `Bundled provides information about certificates that are generated by the control plane,` + "\n" +
-											`either autogenerated or provided by the user.`,
+										Description: `CA has configuration related to the CA`,
 									},
-									"extension": schema.SingleNestedAttribute{
+									"certificate_parameters": schema.SingleNestedAttribute{
 										Optional: true,
 										Attributes: map[string]schema.Attribute{
-											"acmpca": schema.SingleNestedAttribute{
+											"expiry": schema.StringAttribute{
 												Optional: true,
-												Attributes: map[string]schema.Attribute{
-													"config": schema.StringAttribute{
-														CustomType:  jsontypes.NormalizedType{},
-														Computed:    true,
-														Optional:    true,
-														Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
-													},
-													"name": schema.StringAttribute{
-														Required:    true,
-														Description: `Name is the name of the extension provider.`,
-													},
-												},
-												Validators: []validator.Object{
-													objectvalidator.ConflictsWith(path.Expressions{
-														path.MatchRelative().AtParent().AtName("other"),
-														path.MatchRelative().AtParent().AtName("certmanager"),
-														path.MatchRelative().AtParent().AtName("vault"),
-													}...),
-												},
-											},
-											"certmanager": schema.SingleNestedAttribute{
-												Optional: true,
-												Attributes: map[string]schema.Attribute{
-													"config": schema.StringAttribute{
-														CustomType:  jsontypes.NormalizedType{},
-														Computed:    true,
-														Optional:    true,
-														Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
-													},
-													"name": schema.StringAttribute{
-														Required:    true,
-														Description: `Name is the name of the extension provider.`,
-													},
-												},
-												Validators: []validator.Object{
-													objectvalidator.ConflictsWith(path.Expressions{
-														path.MatchRelative().AtParent().AtName("other"),
-														path.MatchRelative().AtParent().AtName("acmpca"),
-														path.MatchRelative().AtParent().AtName("vault"),
-													}...),
-												},
-											},
-											"other": schema.SingleNestedAttribute{
-												Optional: true,
-												Attributes: map[string]schema.Attribute{
-													"config": schema.StringAttribute{
-														CustomType:  jsontypes.NormalizedType{},
-														Computed:    true,
-														Optional:    true,
-														Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
-													},
-													"name": schema.StringAttribute{
-														Required:    true,
-														Description: `Name is the name of the extension provider.`,
-													},
-												},
-												Description: `An extension this control plane does not ship. Its configuration is not described here.`,
-												Validators: []validator.Object{
-													objectvalidator.ConflictsWith(path.Expressions{
-														path.MatchRelative().AtParent().AtName("acmpca"),
-														path.MatchRelative().AtParent().AtName("certmanager"),
-														path.MatchRelative().AtParent().AtName("vault"),
-													}...),
-												},
-											},
-											"vault": schema.SingleNestedAttribute{
-												Optional: true,
-												Attributes: map[string]schema.Attribute{
-													"config": schema.StringAttribute{
-														CustomType:  jsontypes.NormalizedType{},
-														Computed:    true,
-														Optional:    true,
-														Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
-													},
-													"name": schema.StringAttribute{
-														Required:    true,
-														Description: `Name is the name of the extension provider.`,
-													},
-												},
-												Validators: []validator.Object{
-													objectvalidator.ConflictsWith(path.Expressions{
-														path.MatchRelative().AtParent().AtName("other"),
-														path.MatchRelative().AtParent().AtName("acmpca"),
-														path.MatchRelative().AtParent().AtName("certmanager"),
-													}...),
-												},
 											},
 										},
-										Description: `Extension indicates that custom provider is used.`,
+										Description: `CertificateParameters allows users to define certificate generation parameters.`,
 									},
-									"spire": schema.SingleNestedAttribute{
+									"insecure_allow_self_signed": schema.BoolAttribute{
+										Optional:    true,
+										Description: `InsecureAllowSelfSigned allows users to enable the use of self-signed certificates.`,
+									},
+									"mesh_trust_creation": schema.StringAttribute{
 										Optional: true,
-										Attributes: map[string]schema.Attribute{
-											"agent": schema.SingleNestedAttribute{
-												Optional: true,
-												Attributes: map[string]schema.Attribute{
-													"timeout": schema.StringAttribute{
-														Optional: true,
-														MarkdownDescription: `Connection timeout to the socket exposed by Spire agent` + "\n" +
-															`Default 1 second.`,
-													},
-												},
-												Description: `Spire agent configuration`,
-											},
-										},
-										Description: `Spire indicates that SPIRE is used for certificate delivery.`,
-									},
-									"type": schema.StringAttribute{
-										Required:    true,
-										Description: `Type specifies the type of certificate provider. possible known values include one of ["Bundled", "Spire", "Extension"]`,
+										MarkdownDescription: `MeshTrustCreation defines whether a MeshTrust resource should be automatically created` + "\n" +
+											`from an existing MeshIdentity. If not defined, the control plane automatically generates a MeshTrust.` + "\n" +
+											`possible known values include one of ["Enabled", "Disabled"]`,
 									},
 								},
-								Validators: []validator.Object{
-									objectvalidator.ConflictsWith(path.Expressions{
-										path.MatchRelative().AtParent().AtName("two"),
-										path.MatchRelative().AtParent().AtName("three"),
-									}...),
-								},
+								MarkdownDescription: `Bundled provides information about certificates that are generated by the control plane,` + "\n" +
+									`either autogenerated or provided by the user.`,
 							},
-							"three": schema.SingleNestedAttribute{
+							"extension": schema.SingleNestedAttribute{
 								Optional: true,
 								Attributes: map[string]schema.Attribute{
-									"bundled": schema.SingleNestedAttribute{
+									"acmpca": schema.SingleNestedAttribute{
 										Optional: true,
 										Attributes: map[string]schema.Attribute{
-											"autogenerate": schema.SingleNestedAttribute{
-												Optional: true,
-												Attributes: map[string]schema.Attribute{
-													"enabled": schema.BoolAttribute{
-														Optional: true,
-													},
-												},
-												Description: `Autogenerate configures the control plane to use self-signed certificates.`,
-											},
-											"ca": schema.SingleNestedAttribute{
-												Optional: true,
-												Attributes: map[string]schema.Attribute{
-													"certificate": schema.SingleNestedAttribute{
-														Optional: true,
-														Attributes: map[string]schema.Attribute{
-															"env_var": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"name": schema.StringAttribute{
-																		Required: true,
-																	},
-																},
-															},
-															"file": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"path": schema.StringAttribute{
-																		Required: true,
-																	},
-																},
-															},
-															"insecure_inline": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"value": schema.StringAttribute{
-																		Required: true,
-																	},
-																},
-															},
-															"secret_ref": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"kind": schema.StringAttribute{
-																		Required:    true,
-																		Description: `must be "Secret"`,
-																		Validators: []validator.String{
-																			stringvalidator.OneOf("Secret"),
-																		},
-																	},
-																	"name": schema.StringAttribute{
-																		Required: true,
-																	},
-																},
-															},
-															"type": schema.StringAttribute{
-																Required:    true,
-																Description: `possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]`,
-															},
-														},
-														Description: `Certificate allows the user to specify a custom certificate.`,
-													},
-													"private_key": schema.SingleNestedAttribute{
-														Optional: true,
-														Attributes: map[string]schema.Attribute{
-															"env_var": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"name": schema.StringAttribute{
-																		Required: true,
-																	},
-																},
-															},
-															"file": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"path": schema.StringAttribute{
-																		Required: true,
-																	},
-																},
-															},
-															"insecure_inline": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"value": schema.StringAttribute{
-																		Required: true,
-																	},
-																},
-															},
-															"secret_ref": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"kind": schema.StringAttribute{
-																		Required:    true,
-																		Description: `must be "Secret"`,
-																		Validators: []validator.String{
-																			stringvalidator.OneOf("Secret"),
-																		},
-																	},
-																	"name": schema.StringAttribute{
-																		Required: true,
-																	},
-																},
-															},
-															"type": schema.StringAttribute{
-																Required:    true,
-																Description: `possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]`,
-															},
-														},
-														Description: `PrivateKey allows the user to specify a custom private key.`,
-													},
-												},
-												Description: `CA has configuration related to the CA`,
-											},
-											"certificate_parameters": schema.SingleNestedAttribute{
-												Optional: true,
-												Attributes: map[string]schema.Attribute{
-													"expiry": schema.StringAttribute{
-														Optional: true,
-													},
-												},
-												Description: `CertificateParameters allows users to define certificate generation parameters.`,
-											},
-											"insecure_allow_self_signed": schema.BoolAttribute{
+											"config": schema.StringAttribute{
+												CustomType:  jsontypes.NormalizedType{},
+												Computed:    true,
 												Optional:    true,
-												Description: `InsecureAllowSelfSigned allows users to enable the use of self-signed certificates.`,
+												Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
 											},
-											"mesh_trust_creation": schema.StringAttribute{
-												Optional: true,
-												MarkdownDescription: `MeshTrustCreation defines whether a MeshTrust resource should be automatically created` + "\n" +
-													`from an existing MeshIdentity. If not defined, the control plane automatically generates a MeshTrust.` + "\n" +
-													`possible known values include one of ["Enabled", "Disabled"]`,
+											"name": schema.StringAttribute{
+												Required:    true,
+												Description: `Name is the name of the extension provider.`,
 											},
 										},
-										MarkdownDescription: `Bundled provides information about certificates that are generated by the control plane,` + "\n" +
-											`either autogenerated or provided by the user.`,
+										Validators: []validator.Object{
+											objectvalidator.ConflictsWith(path.Expressions{
+												path.MatchRelative().AtParent().AtName("other"),
+												path.MatchRelative().AtParent().AtName("certmanager"),
+												path.MatchRelative().AtParent().AtName("vault"),
+											}...),
+										},
 									},
-									"extension": schema.SingleNestedAttribute{
+									"certmanager": schema.SingleNestedAttribute{
 										Optional: true,
 										Attributes: map[string]schema.Attribute{
-											"acmpca": schema.SingleNestedAttribute{
-												Optional: true,
-												Attributes: map[string]schema.Attribute{
-													"config": schema.StringAttribute{
-														CustomType:  jsontypes.NormalizedType{},
-														Computed:    true,
-														Optional:    true,
-														Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
-													},
-													"name": schema.StringAttribute{
-														Required:    true,
-														Description: `Name is the name of the extension provider.`,
-													},
-												},
-												Validators: []validator.Object{
-													objectvalidator.ConflictsWith(path.Expressions{
-														path.MatchRelative().AtParent().AtName("other"),
-														path.MatchRelative().AtParent().AtName("certmanager"),
-														path.MatchRelative().AtParent().AtName("vault"),
-													}...),
-												},
+											"config": schema.StringAttribute{
+												CustomType:  jsontypes.NormalizedType{},
+												Computed:    true,
+												Optional:    true,
+												Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
 											},
-											"certmanager": schema.SingleNestedAttribute{
-												Optional: true,
-												Attributes: map[string]schema.Attribute{
-													"config": schema.StringAttribute{
-														CustomType:  jsontypes.NormalizedType{},
-														Computed:    true,
-														Optional:    true,
-														Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
-													},
-													"name": schema.StringAttribute{
-														Required:    true,
-														Description: `Name is the name of the extension provider.`,
-													},
-												},
-												Validators: []validator.Object{
-													objectvalidator.ConflictsWith(path.Expressions{
-														path.MatchRelative().AtParent().AtName("other"),
-														path.MatchRelative().AtParent().AtName("acmpca"),
-														path.MatchRelative().AtParent().AtName("vault"),
-													}...),
-												},
-											},
-											"other": schema.SingleNestedAttribute{
-												Optional: true,
-												Attributes: map[string]schema.Attribute{
-													"config": schema.StringAttribute{
-														CustomType:  jsontypes.NormalizedType{},
-														Computed:    true,
-														Optional:    true,
-														Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
-													},
-													"name": schema.StringAttribute{
-														Required:    true,
-														Description: `Name is the name of the extension provider.`,
-													},
-												},
-												Description: `An extension this control plane does not ship. Its configuration is not described here.`,
-												Validators: []validator.Object{
-													objectvalidator.ConflictsWith(path.Expressions{
-														path.MatchRelative().AtParent().AtName("acmpca"),
-														path.MatchRelative().AtParent().AtName("certmanager"),
-														path.MatchRelative().AtParent().AtName("vault"),
-													}...),
-												},
-											},
-											"vault": schema.SingleNestedAttribute{
-												Optional: true,
-												Attributes: map[string]schema.Attribute{
-													"config": schema.StringAttribute{
-														CustomType:  jsontypes.NormalizedType{},
-														Computed:    true,
-														Optional:    true,
-														Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
-													},
-													"name": schema.StringAttribute{
-														Required:    true,
-														Description: `Name is the name of the extension provider.`,
-													},
-												},
-												Validators: []validator.Object{
-													objectvalidator.ConflictsWith(path.Expressions{
-														path.MatchRelative().AtParent().AtName("other"),
-														path.MatchRelative().AtParent().AtName("acmpca"),
-														path.MatchRelative().AtParent().AtName("certmanager"),
-													}...),
-												},
+											"name": schema.StringAttribute{
+												Required:    true,
+												Description: `Name is the name of the extension provider.`,
 											},
 										},
-										Description: `Extension indicates that custom provider is used.`,
+										Validators: []validator.Object{
+											objectvalidator.ConflictsWith(path.Expressions{
+												path.MatchRelative().AtParent().AtName("other"),
+												path.MatchRelative().AtParent().AtName("acmpca"),
+												path.MatchRelative().AtParent().AtName("vault"),
+											}...),
+										},
 									},
-									"spire": schema.SingleNestedAttribute{
+									"other": schema.SingleNestedAttribute{
 										Optional: true,
 										Attributes: map[string]schema.Attribute{
-											"agent": schema.SingleNestedAttribute{
-												Optional: true,
-												Attributes: map[string]schema.Attribute{
-													"timeout": schema.StringAttribute{
-														Optional: true,
-														MarkdownDescription: `Connection timeout to the socket exposed by Spire agent` + "\n" +
-															`Default 1 second.`,
-													},
-												},
-												Description: `Spire agent configuration`,
+											"config": schema.StringAttribute{
+												CustomType:  jsontypes.NormalizedType{},
+												Computed:    true,
+												Optional:    true,
+												Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
+											},
+											"name": schema.StringAttribute{
+												Required:    true,
+												Description: `Name is the name of the extension provider.`,
 											},
 										},
-										Description: `Spire indicates that SPIRE is used for certificate delivery.`,
+										Description: `An extension this control plane does not ship. Its configuration is not described here.`,
+										Validators: []validator.Object{
+											objectvalidator.ConflictsWith(path.Expressions{
+												path.MatchRelative().AtParent().AtName("acmpca"),
+												path.MatchRelative().AtParent().AtName("certmanager"),
+												path.MatchRelative().AtParent().AtName("vault"),
+											}...),
+										},
 									},
-									"type": schema.StringAttribute{
-										Required:    true,
-										Description: `Type specifies the type of certificate provider. possible known values include one of ["Bundled", "Spire", "Extension"]`,
+									"vault": schema.SingleNestedAttribute{
+										Optional: true,
+										Attributes: map[string]schema.Attribute{
+											"config": schema.StringAttribute{
+												CustomType:  jsontypes.NormalizedType{},
+												Computed:    true,
+												Optional:    true,
+												Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
+											},
+											"name": schema.StringAttribute{
+												Required:    true,
+												Description: `Name is the name of the extension provider.`,
+											},
+										},
+										Validators: []validator.Object{
+											objectvalidator.ConflictsWith(path.Expressions{
+												path.MatchRelative().AtParent().AtName("other"),
+												path.MatchRelative().AtParent().AtName("acmpca"),
+												path.MatchRelative().AtParent().AtName("certmanager"),
+											}...),
+										},
 									},
 								},
-								Validators: []validator.Object{
-									objectvalidator.ConflictsWith(path.Expressions{
-										path.MatchRelative().AtParent().AtName("one"),
-										path.MatchRelative().AtParent().AtName("two"),
-									}...),
-								},
+								Description: `Extension indicates that custom provider is used.`,
 							},
-							"two": schema.SingleNestedAttribute{
+							"spire": schema.SingleNestedAttribute{
 								Optional: true,
 								Attributes: map[string]schema.Attribute{
-									"bundled": schema.SingleNestedAttribute{
+									"agent": schema.SingleNestedAttribute{
 										Optional: true,
 										Attributes: map[string]schema.Attribute{
-											"autogenerate": schema.SingleNestedAttribute{
+											"timeout": schema.StringAttribute{
 												Optional: true,
-												Attributes: map[string]schema.Attribute{
-													"enabled": schema.BoolAttribute{
-														Optional: true,
-													},
-												},
-												Description: `Autogenerate configures the control plane to use self-signed certificates.`,
-											},
-											"ca": schema.SingleNestedAttribute{
-												Optional: true,
-												Attributes: map[string]schema.Attribute{
-													"certificate": schema.SingleNestedAttribute{
-														Optional: true,
-														Attributes: map[string]schema.Attribute{
-															"env_var": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"name": schema.StringAttribute{
-																		Required: true,
-																	},
-																},
-															},
-															"file": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"path": schema.StringAttribute{
-																		Required: true,
-																	},
-																},
-															},
-															"insecure_inline": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"value": schema.StringAttribute{
-																		Required: true,
-																	},
-																},
-															},
-															"secret_ref": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"kind": schema.StringAttribute{
-																		Required:    true,
-																		Description: `must be "Secret"`,
-																		Validators: []validator.String{
-																			stringvalidator.OneOf("Secret"),
-																		},
-																	},
-																	"name": schema.StringAttribute{
-																		Required: true,
-																	},
-																},
-															},
-															"type": schema.StringAttribute{
-																Required:    true,
-																Description: `possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]`,
-															},
-														},
-														Description: `Certificate allows the user to specify a custom certificate.`,
-													},
-													"private_key": schema.SingleNestedAttribute{
-														Optional: true,
-														Attributes: map[string]schema.Attribute{
-															"env_var": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"name": schema.StringAttribute{
-																		Required: true,
-																	},
-																},
-															},
-															"file": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"path": schema.StringAttribute{
-																		Required: true,
-																	},
-																},
-															},
-															"insecure_inline": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"value": schema.StringAttribute{
-																		Required: true,
-																	},
-																},
-															},
-															"secret_ref": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"kind": schema.StringAttribute{
-																		Required:    true,
-																		Description: `must be "Secret"`,
-																		Validators: []validator.String{
-																			stringvalidator.OneOf("Secret"),
-																		},
-																	},
-																	"name": schema.StringAttribute{
-																		Required: true,
-																	},
-																},
-															},
-															"type": schema.StringAttribute{
-																Required:    true,
-																Description: `possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]`,
-															},
-														},
-														Description: `PrivateKey allows the user to specify a custom private key.`,
-													},
-												},
-												Description: `CA has configuration related to the CA`,
-											},
-											"certificate_parameters": schema.SingleNestedAttribute{
-												Optional: true,
-												Attributes: map[string]schema.Attribute{
-													"expiry": schema.StringAttribute{
-														Optional: true,
-													},
-												},
-												Description: `CertificateParameters allows users to define certificate generation parameters.`,
-											},
-											"insecure_allow_self_signed": schema.BoolAttribute{
-												Optional:    true,
-												Description: `InsecureAllowSelfSigned allows users to enable the use of self-signed certificates.`,
-											},
-											"mesh_trust_creation": schema.StringAttribute{
-												Optional: true,
-												MarkdownDescription: `MeshTrustCreation defines whether a MeshTrust resource should be automatically created` + "\n" +
-													`from an existing MeshIdentity. If not defined, the control plane automatically generates a MeshTrust.` + "\n" +
-													`possible known values include one of ["Enabled", "Disabled"]`,
+												MarkdownDescription: `Connection timeout to the socket exposed by Spire agent` + "\n" +
+													`Default 1 second.`,
 											},
 										},
-										MarkdownDescription: `Bundled provides information about certificates that are generated by the control plane,` + "\n" +
-											`either autogenerated or provided by the user.`,
-									},
-									"extension": schema.SingleNestedAttribute{
-										Optional: true,
-										Attributes: map[string]schema.Attribute{
-											"acmpca": schema.SingleNestedAttribute{
-												Optional: true,
-												Attributes: map[string]schema.Attribute{
-													"config": schema.StringAttribute{
-														CustomType:  jsontypes.NormalizedType{},
-														Computed:    true,
-														Optional:    true,
-														Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
-													},
-													"name": schema.StringAttribute{
-														Required:    true,
-														Description: `Name is the name of the extension provider.`,
-													},
-												},
-												Validators: []validator.Object{
-													objectvalidator.ConflictsWith(path.Expressions{
-														path.MatchRelative().AtParent().AtName("other"),
-														path.MatchRelative().AtParent().AtName("certmanager"),
-														path.MatchRelative().AtParent().AtName("vault"),
-													}...),
-												},
-											},
-											"certmanager": schema.SingleNestedAttribute{
-												Optional: true,
-												Attributes: map[string]schema.Attribute{
-													"config": schema.StringAttribute{
-														CustomType:  jsontypes.NormalizedType{},
-														Computed:    true,
-														Optional:    true,
-														Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
-													},
-													"name": schema.StringAttribute{
-														Required:    true,
-														Description: `Name is the name of the extension provider.`,
-													},
-												},
-												Validators: []validator.Object{
-													objectvalidator.ConflictsWith(path.Expressions{
-														path.MatchRelative().AtParent().AtName("other"),
-														path.MatchRelative().AtParent().AtName("acmpca"),
-														path.MatchRelative().AtParent().AtName("vault"),
-													}...),
-												},
-											},
-											"other": schema.SingleNestedAttribute{
-												Optional: true,
-												Attributes: map[string]schema.Attribute{
-													"config": schema.StringAttribute{
-														CustomType:  jsontypes.NormalizedType{},
-														Computed:    true,
-														Optional:    true,
-														Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
-													},
-													"name": schema.StringAttribute{
-														Required:    true,
-														Description: `Name is the name of the extension provider.`,
-													},
-												},
-												Description: `An extension this control plane does not ship. Its configuration is not described here.`,
-												Validators: []validator.Object{
-													objectvalidator.ConflictsWith(path.Expressions{
-														path.MatchRelative().AtParent().AtName("acmpca"),
-														path.MatchRelative().AtParent().AtName("certmanager"),
-														path.MatchRelative().AtParent().AtName("vault"),
-													}...),
-												},
-											},
-											"vault": schema.SingleNestedAttribute{
-												Optional: true,
-												Attributes: map[string]schema.Attribute{
-													"config": schema.StringAttribute{
-														CustomType:  jsontypes.NormalizedType{},
-														Computed:    true,
-														Optional:    true,
-														Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
-													},
-													"name": schema.StringAttribute{
-														Required:    true,
-														Description: `Name is the name of the extension provider.`,
-													},
-												},
-												Validators: []validator.Object{
-													objectvalidator.ConflictsWith(path.Expressions{
-														path.MatchRelative().AtParent().AtName("other"),
-														path.MatchRelative().AtParent().AtName("acmpca"),
-														path.MatchRelative().AtParent().AtName("certmanager"),
-													}...),
-												},
-											},
-										},
-										Description: `Extension indicates that custom provider is used.`,
-									},
-									"spire": schema.SingleNestedAttribute{
-										Optional: true,
-										Attributes: map[string]schema.Attribute{
-											"agent": schema.SingleNestedAttribute{
-												Optional: true,
-												Attributes: map[string]schema.Attribute{
-													"timeout": schema.StringAttribute{
-														Optional: true,
-														MarkdownDescription: `Connection timeout to the socket exposed by Spire agent` + "\n" +
-															`Default 1 second.`,
-													},
-												},
-												Description: `Spire agent configuration`,
-											},
-										},
-										Description: `Spire indicates that SPIRE is used for certificate delivery.`,
-									},
-									"type": schema.StringAttribute{
-										Required:    true,
-										Description: `Type specifies the type of certificate provider. possible known values include one of ["Bundled", "Spire", "Extension"]`,
+										Description: `Spire agent configuration`,
 									},
 								},
-								Validators: []validator.Object{
-									objectvalidator.ConflictsWith(path.Expressions{
-										path.MatchRelative().AtParent().AtName("one"),
-										path.MatchRelative().AtParent().AtName("three"),
-									}...),
-								},
+								Description: `Spire indicates that SPIRE is used for certificate delivery.`,
+							},
+							"type": schema.StringAttribute{
+								Required:    true,
+								Description: `Type specifies the type of certificate provider. possible known values include one of ["Bundled", "Spire", "Extension"]`,
 							},
 						},
 					},
@@ -1063,13 +520,13 @@ func (r *MeshIdentityResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
-	request, requestDiags := data.ToOperationsPutMeshIdentityRequest(ctx)
+	request, requestDiags := data.ToOperationsPostMeshIdentityRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshIdentity.PutMeshIdentity(ctx, *request)
+	res, err := r.client.MeshIdentity.PostMeshIdentity(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -1081,10 +538,14 @@ func (r *MeshIdentityResource) Create(ctx context.Context, req resource.CreateRe
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	switch res.StatusCode {
-	case 200, 201:
-		break
-	default:
+	if res.StatusCode == 409 {
+		resp.Diagnostics.AddError(
+			"Resource Already Exists",
+			"When creating this resource, the API indicated that this resource already exists. You can bring the existing resource under management using Terraform import functionality or retry with a unique configuration.",
+		)
+		return
+	}
+	if res.StatusCode != 201 {
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}

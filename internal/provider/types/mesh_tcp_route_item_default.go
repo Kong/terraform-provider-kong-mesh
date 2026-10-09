@@ -3,5 +3,5 @@
 package types
 
 type MeshTCPRouteItemDefault struct {
-	BackendRefs []MeshHTTPRouteItemFiltersSpecToRulesDefaultBackendRef `tfsdk:"backend_refs"`
+	BackendRefs []MeshHTTPRouteItemSpecBackendRef `tfsdk:"backend_refs"`
 }

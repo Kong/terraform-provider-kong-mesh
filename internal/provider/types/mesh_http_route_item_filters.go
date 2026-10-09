@@ -2,10 +2,15 @@
 
 package types
 
+import (
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
+
 type MeshHTTPRouteItemFilters struct {
-	One   *MeshHTTPRouteItemFilters1 `queryParam:"inline" tfsdk:"one"`
-	Two   *MeshHTTPRouteItemFilters1 `queryParam:"inline" tfsdk:"two"`
-	Three *MeshHTTPRouteItemFilters1 `queryParam:"inline" tfsdk:"three"`
-	Four  *MeshHTTPRouteItemFilters1 `queryParam:"inline" tfsdk:"four"`
-	Five  *MeshHTTPRouteItemFilters1 `queryParam:"inline" tfsdk:"five"`
+	RequestHeaderModifier  *MeshHTTPRouteItemRequestHeaderModifier `tfsdk:"request_header_modifier"`
+	RequestMirror          *MeshHTTPRouteItemRequestMirror         `tfsdk:"request_mirror"`
+	RequestRedirect        *MeshHTTPRouteItemRequestRedirect       `tfsdk:"request_redirect"`
+	ResponseHeaderModifier *MeshHTTPRouteItemRequestHeaderModifier `tfsdk:"response_header_modifier"`
+	Type                   types.String                            `tfsdk:"type"`
+	URLRewrite             *MeshHTTPRouteItemURLRewrite            `tfsdk:"url_rewrite"`
 }

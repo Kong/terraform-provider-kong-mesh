@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -110,7 +109,7 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
-				Description: `name of the MeshAccessLog. Requires replacement if changed.`,
+				Description: `Name of the Kuma resource. Requires replacement if changed.`,
 				Validators: []validator.String{
 					stringvalidator.UTF8LengthAtMost(253),
 					stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
@@ -144,142 +143,13 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 													speakeasy_objectvalidators.NotNull(),
 												},
 												Attributes: map[string]schema.Attribute{
-													"one": schema.SingleNestedAttribute{
+													"file": schema.SingleNestedAttribute{
 														Optional: true,
 														Attributes: map[string]schema.Attribute{
-															"file": schema.SingleNestedAttribute{
+															"format": schema.SingleNestedAttribute{
 																Optional: true,
 																Attributes: map[string]schema.Attribute{
-																	"format": schema.SingleNestedAttribute{
-																		Optional: true,
-																		Attributes: map[string]schema.Attribute{
-																			"one": schema.SingleNestedAttribute{
-																				Optional: true,
-																				Attributes: map[string]schema.Attribute{
-																					"json": schema.ListNestedAttribute{
-																						Computed: true,
-																						Optional: true,
-																						PlanModifiers: []planmodifier.List{
-																							custom_listplanmodifier.SupressZeroNullModifier(),
-																						},
-																						NestedObject: schema.NestedAttributeObject{
-																							Validators: []validator.Object{
-																								speakeasy_objectvalidators.NotNull(),
-																							},
-																							Attributes: map[string]schema.Attribute{
-																								"key": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																								"value": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																						},
-																					},
-																					"omit_empty_values": schema.BoolAttribute{
-																						Computed:    true,
-																						Optional:    true,
-																						Default:     booldefault.StaticBool(false),
-																						Description: `Default: false`,
-																					},
-																					"plain": schema.StringAttribute{
-																						Optional: true,
-																					},
-																					"type": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
-																					},
-																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("two"),
-																					}...),
-																				},
-																			},
-																			"two": schema.SingleNestedAttribute{
-																				Optional: true,
-																				Attributes: map[string]schema.Attribute{
-																					"json": schema.ListNestedAttribute{
-																						Computed: true,
-																						Optional: true,
-																						PlanModifiers: []planmodifier.List{
-																							custom_listplanmodifier.SupressZeroNullModifier(),
-																						},
-																						NestedObject: schema.NestedAttributeObject{
-																							Validators: []validator.Object{
-																								speakeasy_objectvalidators.NotNull(),
-																							},
-																							Attributes: map[string]schema.Attribute{
-																								"key": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																								"value": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																						},
-																					},
-																					"omit_empty_values": schema.BoolAttribute{
-																						Computed:    true,
-																						Optional:    true,
-																						Default:     booldefault.StaticBool(false),
-																						Description: `Default: false`,
-																					},
-																					"plain": schema.StringAttribute{
-																						Optional: true,
-																					},
-																					"type": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
-																					},
-																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("one"),
-																					}...),
-																				},
-																			},
-																		},
-																		MarkdownDescription: `Format of access logs. Placeholders available on` + "\n" +
-																			`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
-																	},
-																	"path": schema.StringAttribute{
-																		Optional:    true,
-																		Description: `Path to a file that logs will be written to. Not Null`,
-																		Validators: []validator.String{
-																			speakeasy_stringvalidators.NotNull(),
-																			stringvalidator.UTF8LengthAtLeast(1),
-																		},
-																	},
-																},
-																Description: `FileBackend defines configuration for file based access logs`,
-															},
-															"open_telemetry": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"attributes": schema.ListNestedAttribute{
+																	"json": schema.ListNestedAttribute{
 																		Computed: true,
 																		Optional: true,
 																		PlanModifiers: []planmodifier.List{
@@ -292,688 +162,138 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 																			Attributes: map[string]schema.Attribute{
 																				"key": schema.StringAttribute{
 																					Optional:    true,
-																					Description: `Key is the OpenTelemetry attribute name. Not Null`,
+																					Description: `Not Null`,
 																					Validators: []validator.String{
 																						speakeasy_stringvalidators.NotNull(),
-																						stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z]([a-z0-9]|[._][a-z0-9])*$`), "must match pattern "+regexp.MustCompile(`^[a-z]([a-z0-9]|[._][a-z0-9])*$`).String()),
 																					},
 																				},
 																				"value": schema.StringAttribute{
 																					Optional:    true,
-																					Description: `Value can contain Kuma placeholders. Not Null`,
+																					Description: `Not Null`,
 																					Validators: []validator.String{
 																						speakeasy_stringvalidators.NotNull(),
 																					},
 																				},
 																			},
 																		},
-																		MarkdownDescription: `Attributes defines custom OpenTelemetry attributes. Keys must be static` + "\n" +
-																			`OpenTelemetry attribute names. Values can contain placeholders available on` + "\n" +
-																			`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
 																	},
-																	"backend_ref": schema.SingleNestedAttribute{
-																		Optional: true,
-																		Attributes: map[string]schema.Attribute{
-																			"kind": schema.StringAttribute{
-																				Optional:    true,
-																				Description: `Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"`,
-																				Validators: []validator.String{
-																					speakeasy_stringvalidators.NotNull(),
-																					stringvalidator.OneOf(
-																						"MeshOpenTelemetryBackend",
-																					),
-																				},
-																			},
-																			"labels": schema.MapAttribute{
-																				Optional:    true,
-																				ElementType: types.StringType,
-																				MarkdownDescription: `Labels to match the referenced resource. When multiple resources match,` + "\n" +
-																					`the oldest by creation time wins.`,
-																			},
-																		},
-																		MarkdownDescription: `BackendRef is a reference to a MeshOpenTelemetryBackend resource that` + "\n" +
-																			`defines the collector endpoint.`,
-																	},
-																	"body": schema.StringAttribute{
-																		CustomType: jsontypes.NormalizedType{},
-																		Computed:   true,
-																		Optional:   true,
-																		MarkdownDescription: `Body is a raw string or an OTLP any value as described at` + "\n" +
-																			`https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body` + "\n" +
-																			`It can contain placeholders available on` + "\n" +
-																			`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators` + "\n" +
-																			`Parsed as JSON.`,
-																	},
-																},
-																Description: `Defines an OpenTelemetry logging backend.`,
-															},
-															"tcp": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"address": schema.StringAttribute{
+																	"omit_empty_values": schema.BoolAttribute{
+																		Computed:    true,
 																		Optional:    true,
-																		Description: `Address of the TCP logging backend. Not Null`,
+																		Default:     booldefault.StaticBool(false),
+																		Description: `Default: false`,
+																	},
+																	"plain": schema.StringAttribute{
+																		Optional: true,
+																	},
+																	"type": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
 																		Validators: []validator.String{
 																			speakeasy_stringvalidators.NotNull(),
-																			stringvalidator.UTF8LengthAtLeast(1),
 																		},
-																	},
-																	"format": schema.SingleNestedAttribute{
-																		Optional: true,
-																		Attributes: map[string]schema.Attribute{
-																			"one": schema.SingleNestedAttribute{
-																				Optional: true,
-																				Attributes: map[string]schema.Attribute{
-																					"json": schema.ListNestedAttribute{
-																						Computed: true,
-																						Optional: true,
-																						PlanModifiers: []planmodifier.List{
-																							custom_listplanmodifier.SupressZeroNullModifier(),
-																						},
-																						NestedObject: schema.NestedAttributeObject{
-																							Validators: []validator.Object{
-																								speakeasy_objectvalidators.NotNull(),
-																							},
-																							Attributes: map[string]schema.Attribute{
-																								"key": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																								"value": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																						},
-																					},
-																					"omit_empty_values": schema.BoolAttribute{
-																						Computed:    true,
-																						Optional:    true,
-																						Default:     booldefault.StaticBool(false),
-																						Description: `Default: false`,
-																					},
-																					"plain": schema.StringAttribute{
-																						Optional: true,
-																					},
-																					"type": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
-																					},
-																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("two"),
-																					}...),
-																				},
-																			},
-																			"two": schema.SingleNestedAttribute{
-																				Optional: true,
-																				Attributes: map[string]schema.Attribute{
-																					"json": schema.ListNestedAttribute{
-																						Computed: true,
-																						Optional: true,
-																						PlanModifiers: []planmodifier.List{
-																							custom_listplanmodifier.SupressZeroNullModifier(),
-																						},
-																						NestedObject: schema.NestedAttributeObject{
-																							Validators: []validator.Object{
-																								speakeasy_objectvalidators.NotNull(),
-																							},
-																							Attributes: map[string]schema.Attribute{
-																								"key": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																								"value": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																						},
-																					},
-																					"omit_empty_values": schema.BoolAttribute{
-																						Computed:    true,
-																						Optional:    true,
-																						Default:     booldefault.StaticBool(false),
-																						Description: `Default: false`,
-																					},
-																					"plain": schema.StringAttribute{
-																						Optional: true,
-																					},
-																					"type": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
-																					},
-																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("one"),
-																					}...),
-																				},
-																			},
-																		},
-																		MarkdownDescription: `Format of access logs. Placeholders available on` + "\n" +
-																			`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
 																	},
 																},
-																Description: `TCPBackend defines a TCP logging backend.`,
+																MarkdownDescription: `Format of access logs. Placeholders available on` + "\n" +
+																	`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
 															},
-															"type": schema.StringAttribute{
+															"path": schema.StringAttribute{
 																Optional:    true,
-																Description: `possible known values include one of ["Tcp", "File", "OpenTelemetry"]; Not Null`,
+																Description: `Path to a file that logs will be written to. Not Null`,
 																Validators: []validator.String{
 																	speakeasy_stringvalidators.NotNull(),
+																	stringvalidator.UTF8LengthAtLeast(1),
 																},
 															},
 														},
-														Validators: []validator.Object{
-															objectvalidator.ConflictsWith(path.Expressions{
-																path.MatchRelative().AtParent().AtName("two"),
-																path.MatchRelative().AtParent().AtName("three"),
-															}...),
-														},
+														Description: `FileBackend defines configuration for file based access logs`,
 													},
-													"three": schema.SingleNestedAttribute{
+													"open_telemetry": schema.SingleNestedAttribute{
 														Optional: true,
 														Attributes: map[string]schema.Attribute{
-															"file": schema.SingleNestedAttribute{
+															"attributes": schema.ListNestedAttribute{
+																Computed: true,
 																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"format": schema.SingleNestedAttribute{
-																		Optional: true,
-																		Attributes: map[string]schema.Attribute{
-																			"one": schema.SingleNestedAttribute{
-																				Optional: true,
-																				Attributes: map[string]schema.Attribute{
-																					"json": schema.ListNestedAttribute{
-																						Computed: true,
-																						Optional: true,
-																						PlanModifiers: []planmodifier.List{
-																							custom_listplanmodifier.SupressZeroNullModifier(),
-																						},
-																						NestedObject: schema.NestedAttributeObject{
-																							Validators: []validator.Object{
-																								speakeasy_objectvalidators.NotNull(),
-																							},
-																							Attributes: map[string]schema.Attribute{
-																								"key": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																								"value": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																						},
-																					},
-																					"omit_empty_values": schema.BoolAttribute{
-																						Computed:    true,
-																						Optional:    true,
-																						Default:     booldefault.StaticBool(false),
-																						Description: `Default: false`,
-																					},
-																					"plain": schema.StringAttribute{
-																						Optional: true,
-																					},
-																					"type": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
-																					},
-																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("two"),
-																					}...),
-																				},
-																			},
-																			"two": schema.SingleNestedAttribute{
-																				Optional: true,
-																				Attributes: map[string]schema.Attribute{
-																					"json": schema.ListNestedAttribute{
-																						Computed: true,
-																						Optional: true,
-																						PlanModifiers: []planmodifier.List{
-																							custom_listplanmodifier.SupressZeroNullModifier(),
-																						},
-																						NestedObject: schema.NestedAttributeObject{
-																							Validators: []validator.Object{
-																								speakeasy_objectvalidators.NotNull(),
-																							},
-																							Attributes: map[string]schema.Attribute{
-																								"key": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																								"value": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																						},
-																					},
-																					"omit_empty_values": schema.BoolAttribute{
-																						Computed:    true,
-																						Optional:    true,
-																						Default:     booldefault.StaticBool(false),
-																						Description: `Default: false`,
-																					},
-																					"plain": schema.StringAttribute{
-																						Optional: true,
-																					},
-																					"type": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
-																					},
-																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("one"),
-																					}...),
-																				},
+																PlanModifiers: []planmodifier.List{
+																	custom_listplanmodifier.SupressZeroNullModifier(),
+																},
+																NestedObject: schema.NestedAttributeObject{
+																	Validators: []validator.Object{
+																		speakeasy_objectvalidators.NotNull(),
+																	},
+																	Attributes: map[string]schema.Attribute{
+																		"key": schema.StringAttribute{
+																			Optional:    true,
+																			Description: `Key is the OpenTelemetry attribute name. Not Null`,
+																			Validators: []validator.String{
+																				speakeasy_stringvalidators.NotNull(),
+																				stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z]([a-z0-9]|[._][a-z0-9])*$`), "must match pattern "+regexp.MustCompile(`^[a-z]([a-z0-9]|[._][a-z0-9])*$`).String()),
 																			},
 																		},
-																		MarkdownDescription: `Format of access logs. Placeholders available on` + "\n" +
-																			`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
+																		"value": schema.StringAttribute{
+																			Optional:    true,
+																			Description: `Value can contain Kuma placeholders. Not Null`,
+																			Validators: []validator.String{
+																				speakeasy_stringvalidators.NotNull(),
+																			},
+																		},
 																	},
-																	"path": schema.StringAttribute{
+																},
+																MarkdownDescription: `Attributes defines custom OpenTelemetry attributes. Keys must be static` + "\n" +
+																	`OpenTelemetry attribute names. Values can contain placeholders available on` + "\n" +
+																	`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
+															},
+															"backend_ref": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"kind": schema.StringAttribute{
 																		Optional:    true,
-																		Description: `Path to a file that logs will be written to. Not Null`,
+																		Description: `Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"`,
 																		Validators: []validator.String{
 																			speakeasy_stringvalidators.NotNull(),
-																			stringvalidator.UTF8LengthAtLeast(1),
+																			stringvalidator.OneOf(
+																				"MeshOpenTelemetryBackend",
+																			),
 																		},
 																	},
-																},
-																Description: `FileBackend defines configuration for file based access logs`,
-															},
-															"open_telemetry": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"attributes": schema.ListNestedAttribute{
-																		Computed: true,
-																		Optional: true,
-																		PlanModifiers: []planmodifier.List{
-																			custom_listplanmodifier.SupressZeroNullModifier(),
-																		},
-																		NestedObject: schema.NestedAttributeObject{
-																			Validators: []validator.Object{
-																				speakeasy_objectvalidators.NotNull(),
-																			},
-																			Attributes: map[string]schema.Attribute{
-																				"key": schema.StringAttribute{
-																					Optional:    true,
-																					Description: `Key is the OpenTelemetry attribute name. Not Null`,
-																					Validators: []validator.String{
-																						speakeasy_stringvalidators.NotNull(),
-																						stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z]([a-z0-9]|[._][a-z0-9])*$`), "must match pattern "+regexp.MustCompile(`^[a-z]([a-z0-9]|[._][a-z0-9])*$`).String()),
-																					},
-																				},
-																				"value": schema.StringAttribute{
-																					Optional:    true,
-																					Description: `Value can contain Kuma placeholders. Not Null`,
-																					Validators: []validator.String{
-																						speakeasy_stringvalidators.NotNull(),
-																					},
-																				},
-																			},
-																		},
-																		MarkdownDescription: `Attributes defines custom OpenTelemetry attributes. Keys must be static` + "\n" +
-																			`OpenTelemetry attribute names. Values can contain placeholders available on` + "\n" +
-																			`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
-																	},
-																	"backend_ref": schema.SingleNestedAttribute{
-																		Optional: true,
-																		Attributes: map[string]schema.Attribute{
-																			"kind": schema.StringAttribute{
-																				Optional:    true,
-																				Description: `Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"`,
-																				Validators: []validator.String{
-																					speakeasy_stringvalidators.NotNull(),
-																					stringvalidator.OneOf(
-																						"MeshOpenTelemetryBackend",
-																					),
-																				},
-																			},
-																			"labels": schema.MapAttribute{
-																				Optional:    true,
-																				ElementType: types.StringType,
-																				MarkdownDescription: `Labels to match the referenced resource. When multiple resources match,` + "\n" +
-																					`the oldest by creation time wins.`,
-																			},
-																		},
-																		MarkdownDescription: `BackendRef is a reference to a MeshOpenTelemetryBackend resource that` + "\n" +
-																			`defines the collector endpoint.`,
-																	},
-																	"body": schema.StringAttribute{
-																		CustomType: jsontypes.NormalizedType{},
-																		Computed:   true,
-																		Optional:   true,
-																		MarkdownDescription: `Body is a raw string or an OTLP any value as described at` + "\n" +
-																			`https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body` + "\n" +
-																			`It can contain placeholders available on` + "\n" +
-																			`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators` + "\n" +
-																			`Parsed as JSON.`,
-																	},
-																},
-																Description: `Defines an OpenTelemetry logging backend.`,
-															},
-															"tcp": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"address": schema.StringAttribute{
+																	"labels": schema.MapAttribute{
 																		Optional:    true,
-																		Description: `Address of the TCP logging backend. Not Null`,
-																		Validators: []validator.String{
-																			speakeasy_stringvalidators.NotNull(),
-																			stringvalidator.UTF8LengthAtLeast(1),
-																		},
-																	},
-																	"format": schema.SingleNestedAttribute{
-																		Optional: true,
-																		Attributes: map[string]schema.Attribute{
-																			"one": schema.SingleNestedAttribute{
-																				Optional: true,
-																				Attributes: map[string]schema.Attribute{
-																					"json": schema.ListNestedAttribute{
-																						Computed: true,
-																						Optional: true,
-																						PlanModifiers: []planmodifier.List{
-																							custom_listplanmodifier.SupressZeroNullModifier(),
-																						},
-																						NestedObject: schema.NestedAttributeObject{
-																							Validators: []validator.Object{
-																								speakeasy_objectvalidators.NotNull(),
-																							},
-																							Attributes: map[string]schema.Attribute{
-																								"key": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																								"value": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																						},
-																					},
-																					"omit_empty_values": schema.BoolAttribute{
-																						Computed:    true,
-																						Optional:    true,
-																						Default:     booldefault.StaticBool(false),
-																						Description: `Default: false`,
-																					},
-																					"plain": schema.StringAttribute{
-																						Optional: true,
-																					},
-																					"type": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
-																					},
-																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("two"),
-																					}...),
-																				},
-																			},
-																			"two": schema.SingleNestedAttribute{
-																				Optional: true,
-																				Attributes: map[string]schema.Attribute{
-																					"json": schema.ListNestedAttribute{
-																						Computed: true,
-																						Optional: true,
-																						PlanModifiers: []planmodifier.List{
-																							custom_listplanmodifier.SupressZeroNullModifier(),
-																						},
-																						NestedObject: schema.NestedAttributeObject{
-																							Validators: []validator.Object{
-																								speakeasy_objectvalidators.NotNull(),
-																							},
-																							Attributes: map[string]schema.Attribute{
-																								"key": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																								"value": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																						},
-																					},
-																					"omit_empty_values": schema.BoolAttribute{
-																						Computed:    true,
-																						Optional:    true,
-																						Default:     booldefault.StaticBool(false),
-																						Description: `Default: false`,
-																					},
-																					"plain": schema.StringAttribute{
-																						Optional: true,
-																					},
-																					"type": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
-																					},
-																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("one"),
-																					}...),
-																				},
-																			},
-																		},
-																		MarkdownDescription: `Format of access logs. Placeholders available on` + "\n" +
-																			`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
+																		ElementType: types.StringType,
+																		MarkdownDescription: `Labels to match the referenced resource. When multiple resources match,` + "\n" +
+																			`the oldest by creation time wins.`,
 																	},
 																},
-																Description: `TCPBackend defines a TCP logging backend.`,
+																MarkdownDescription: `BackendRef is a reference to a MeshOpenTelemetryBackend resource that` + "\n" +
+																	`defines the collector endpoint.`,
 															},
-															"type": schema.StringAttribute{
-																Optional:    true,
-																Description: `possible known values include one of ["Tcp", "File", "OpenTelemetry"]; Not Null`,
-																Validators: []validator.String{
-																	speakeasy_stringvalidators.NotNull(),
-																},
+															"body": schema.StringAttribute{
+																CustomType: jsontypes.NormalizedType{},
+																Computed:   true,
+																Optional:   true,
+																MarkdownDescription: `Body is a raw string or an OTLP any value as described at` + "\n" +
+																	`https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body` + "\n" +
+																	`It can contain placeholders available on` + "\n" +
+																	`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators` + "\n" +
+																	`Parsed as JSON.`,
 															},
 														},
-														Validators: []validator.Object{
-															objectvalidator.ConflictsWith(path.Expressions{
-																path.MatchRelative().AtParent().AtName("one"),
-																path.MatchRelative().AtParent().AtName("two"),
-															}...),
-														},
+														Description: `Defines an OpenTelemetry logging backend.`,
 													},
-													"two": schema.SingleNestedAttribute{
+													"tcp": schema.SingleNestedAttribute{
 														Optional: true,
 														Attributes: map[string]schema.Attribute{
-															"file": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"format": schema.SingleNestedAttribute{
-																		Optional: true,
-																		Attributes: map[string]schema.Attribute{
-																			"one": schema.SingleNestedAttribute{
-																				Optional: true,
-																				Attributes: map[string]schema.Attribute{
-																					"json": schema.ListNestedAttribute{
-																						Computed: true,
-																						Optional: true,
-																						PlanModifiers: []planmodifier.List{
-																							custom_listplanmodifier.SupressZeroNullModifier(),
-																						},
-																						NestedObject: schema.NestedAttributeObject{
-																							Validators: []validator.Object{
-																								speakeasy_objectvalidators.NotNull(),
-																							},
-																							Attributes: map[string]schema.Attribute{
-																								"key": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																								"value": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																						},
-																					},
-																					"omit_empty_values": schema.BoolAttribute{
-																						Computed:    true,
-																						Optional:    true,
-																						Default:     booldefault.StaticBool(false),
-																						Description: `Default: false`,
-																					},
-																					"plain": schema.StringAttribute{
-																						Optional: true,
-																					},
-																					"type": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
-																					},
-																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("two"),
-																					}...),
-																				},
-																			},
-																			"two": schema.SingleNestedAttribute{
-																				Optional: true,
-																				Attributes: map[string]schema.Attribute{
-																					"json": schema.ListNestedAttribute{
-																						Computed: true,
-																						Optional: true,
-																						PlanModifiers: []planmodifier.List{
-																							custom_listplanmodifier.SupressZeroNullModifier(),
-																						},
-																						NestedObject: schema.NestedAttributeObject{
-																							Validators: []validator.Object{
-																								speakeasy_objectvalidators.NotNull(),
-																							},
-																							Attributes: map[string]schema.Attribute{
-																								"key": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																								"value": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																						},
-																					},
-																					"omit_empty_values": schema.BoolAttribute{
-																						Computed:    true,
-																						Optional:    true,
-																						Default:     booldefault.StaticBool(false),
-																						Description: `Default: false`,
-																					},
-																					"plain": schema.StringAttribute{
-																						Optional: true,
-																					},
-																					"type": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
-																					},
-																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("one"),
-																					}...),
-																				},
-																			},
-																		},
-																		MarkdownDescription: `Format of access logs. Placeholders available on` + "\n" +
-																			`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
-																	},
-																	"path": schema.StringAttribute{
-																		Optional:    true,
-																		Description: `Path to a file that logs will be written to. Not Null`,
-																		Validators: []validator.String{
-																			speakeasy_stringvalidators.NotNull(),
-																			stringvalidator.UTF8LengthAtLeast(1),
-																		},
-																	},
+															"address": schema.StringAttribute{
+																Optional:    true,
+																Description: `Address of the TCP logging backend. Not Null`,
+																Validators: []validator.String{
+																	speakeasy_stringvalidators.NotNull(),
+																	stringvalidator.UTF8LengthAtLeast(1),
 																},
-																Description: `FileBackend defines configuration for file based access logs`,
 															},
-															"open_telemetry": schema.SingleNestedAttribute{
+															"format": schema.SingleNestedAttribute{
 																Optional: true,
 																Attributes: map[string]schema.Attribute{
-																	"attributes": schema.ListNestedAttribute{
+																	"json": schema.ListNestedAttribute{
 																		Computed: true,
 																		Optional: true,
 																		PlanModifiers: []planmodifier.List{
@@ -986,203 +306,49 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 																			Attributes: map[string]schema.Attribute{
 																				"key": schema.StringAttribute{
 																					Optional:    true,
-																					Description: `Key is the OpenTelemetry attribute name. Not Null`,
+																					Description: `Not Null`,
 																					Validators: []validator.String{
 																						speakeasy_stringvalidators.NotNull(),
-																						stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z]([a-z0-9]|[._][a-z0-9])*$`), "must match pattern "+regexp.MustCompile(`^[a-z]([a-z0-9]|[._][a-z0-9])*$`).String()),
 																					},
 																				},
 																				"value": schema.StringAttribute{
 																					Optional:    true,
-																					Description: `Value can contain Kuma placeholders. Not Null`,
+																					Description: `Not Null`,
 																					Validators: []validator.String{
 																						speakeasy_stringvalidators.NotNull(),
 																					},
 																				},
 																			},
 																		},
-																		MarkdownDescription: `Attributes defines custom OpenTelemetry attributes. Keys must be static` + "\n" +
-																			`OpenTelemetry attribute names. Values can contain placeholders available on` + "\n" +
-																			`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
 																	},
-																	"backend_ref": schema.SingleNestedAttribute{
-																		Optional: true,
-																		Attributes: map[string]schema.Attribute{
-																			"kind": schema.StringAttribute{
-																				Optional:    true,
-																				Description: `Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"`,
-																				Validators: []validator.String{
-																					speakeasy_stringvalidators.NotNull(),
-																					stringvalidator.OneOf(
-																						"MeshOpenTelemetryBackend",
-																					),
-																				},
-																			},
-																			"labels": schema.MapAttribute{
-																				Optional:    true,
-																				ElementType: types.StringType,
-																				MarkdownDescription: `Labels to match the referenced resource. When multiple resources match,` + "\n" +
-																					`the oldest by creation time wins.`,
-																			},
-																		},
-																		MarkdownDescription: `BackendRef is a reference to a MeshOpenTelemetryBackend resource that` + "\n" +
-																			`defines the collector endpoint.`,
-																	},
-																	"body": schema.StringAttribute{
-																		CustomType: jsontypes.NormalizedType{},
-																		Computed:   true,
-																		Optional:   true,
-																		MarkdownDescription: `Body is a raw string or an OTLP any value as described at` + "\n" +
-																			`https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body` + "\n" +
-																			`It can contain placeholders available on` + "\n" +
-																			`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators` + "\n" +
-																			`Parsed as JSON.`,
-																	},
-																},
-																Description: `Defines an OpenTelemetry logging backend.`,
-															},
-															"tcp": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"address": schema.StringAttribute{
+																	"omit_empty_values": schema.BoolAttribute{
+																		Computed:    true,
 																		Optional:    true,
-																		Description: `Address of the TCP logging backend. Not Null`,
+																		Default:     booldefault.StaticBool(false),
+																		Description: `Default: false`,
+																	},
+																	"plain": schema.StringAttribute{
+																		Optional: true,
+																	},
+																	"type": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
 																		Validators: []validator.String{
 																			speakeasy_stringvalidators.NotNull(),
-																			stringvalidator.UTF8LengthAtLeast(1),
 																		},
 																	},
-																	"format": schema.SingleNestedAttribute{
-																		Optional: true,
-																		Attributes: map[string]schema.Attribute{
-																			"one": schema.SingleNestedAttribute{
-																				Optional: true,
-																				Attributes: map[string]schema.Attribute{
-																					"json": schema.ListNestedAttribute{
-																						Computed: true,
-																						Optional: true,
-																						PlanModifiers: []planmodifier.List{
-																							custom_listplanmodifier.SupressZeroNullModifier(),
-																						},
-																						NestedObject: schema.NestedAttributeObject{
-																							Validators: []validator.Object{
-																								speakeasy_objectvalidators.NotNull(),
-																							},
-																							Attributes: map[string]schema.Attribute{
-																								"key": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																								"value": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																						},
-																					},
-																					"omit_empty_values": schema.BoolAttribute{
-																						Computed:    true,
-																						Optional:    true,
-																						Default:     booldefault.StaticBool(false),
-																						Description: `Default: false`,
-																					},
-																					"plain": schema.StringAttribute{
-																						Optional: true,
-																					},
-																					"type": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
-																					},
-																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("two"),
-																					}...),
-																				},
-																			},
-																			"two": schema.SingleNestedAttribute{
-																				Optional: true,
-																				Attributes: map[string]schema.Attribute{
-																					"json": schema.ListNestedAttribute{
-																						Computed: true,
-																						Optional: true,
-																						PlanModifiers: []planmodifier.List{
-																							custom_listplanmodifier.SupressZeroNullModifier(),
-																						},
-																						NestedObject: schema.NestedAttributeObject{
-																							Validators: []validator.Object{
-																								speakeasy_objectvalidators.NotNull(),
-																							},
-																							Attributes: map[string]schema.Attribute{
-																								"key": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																								"value": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																						},
-																					},
-																					"omit_empty_values": schema.BoolAttribute{
-																						Computed:    true,
-																						Optional:    true,
-																						Default:     booldefault.StaticBool(false),
-																						Description: `Default: false`,
-																					},
-																					"plain": schema.StringAttribute{
-																						Optional: true,
-																					},
-																					"type": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
-																					},
-																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("one"),
-																					}...),
-																				},
-																			},
-																		},
-																		MarkdownDescription: `Format of access logs. Placeholders available on` + "\n" +
-																			`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
-																	},
 																},
-																Description: `TCPBackend defines a TCP logging backend.`,
-															},
-															"type": schema.StringAttribute{
-																Optional:    true,
-																Description: `possible known values include one of ["Tcp", "File", "OpenTelemetry"]; Not Null`,
-																Validators: []validator.String{
-																	speakeasy_stringvalidators.NotNull(),
-																},
+																MarkdownDescription: `Format of access logs. Placeholders available on` + "\n" +
+																	`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
 															},
 														},
-														Validators: []validator.Object{
-															objectvalidator.ConflictsWith(path.Expressions{
-																path.MatchRelative().AtParent().AtName("one"),
-																path.MatchRelative().AtParent().AtName("three"),
-															}...),
+														Description: `TCPBackend defines a TCP logging backend.`,
+													},
+													"type": schema.StringAttribute{
+														Optional:    true,
+														Description: `possible known values include one of ["Tcp", "File", "OpenTelemetry"]; Not Null`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
 														},
 													},
 												},
@@ -1305,142 +471,13 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 													speakeasy_objectvalidators.NotNull(),
 												},
 												Attributes: map[string]schema.Attribute{
-													"one": schema.SingleNestedAttribute{
+													"file": schema.SingleNestedAttribute{
 														Optional: true,
 														Attributes: map[string]schema.Attribute{
-															"file": schema.SingleNestedAttribute{
+															"format": schema.SingleNestedAttribute{
 																Optional: true,
 																Attributes: map[string]schema.Attribute{
-																	"format": schema.SingleNestedAttribute{
-																		Optional: true,
-																		Attributes: map[string]schema.Attribute{
-																			"one": schema.SingleNestedAttribute{
-																				Optional: true,
-																				Attributes: map[string]schema.Attribute{
-																					"json": schema.ListNestedAttribute{
-																						Computed: true,
-																						Optional: true,
-																						PlanModifiers: []planmodifier.List{
-																							custom_listplanmodifier.SupressZeroNullModifier(),
-																						},
-																						NestedObject: schema.NestedAttributeObject{
-																							Validators: []validator.Object{
-																								speakeasy_objectvalidators.NotNull(),
-																							},
-																							Attributes: map[string]schema.Attribute{
-																								"key": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																								"value": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																						},
-																					},
-																					"omit_empty_values": schema.BoolAttribute{
-																						Computed:    true,
-																						Optional:    true,
-																						Default:     booldefault.StaticBool(false),
-																						Description: `Default: false`,
-																					},
-																					"plain": schema.StringAttribute{
-																						Optional: true,
-																					},
-																					"type": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
-																					},
-																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("two"),
-																					}...),
-																				},
-																			},
-																			"two": schema.SingleNestedAttribute{
-																				Optional: true,
-																				Attributes: map[string]schema.Attribute{
-																					"json": schema.ListNestedAttribute{
-																						Computed: true,
-																						Optional: true,
-																						PlanModifiers: []planmodifier.List{
-																							custom_listplanmodifier.SupressZeroNullModifier(),
-																						},
-																						NestedObject: schema.NestedAttributeObject{
-																							Validators: []validator.Object{
-																								speakeasy_objectvalidators.NotNull(),
-																							},
-																							Attributes: map[string]schema.Attribute{
-																								"key": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																								"value": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																						},
-																					},
-																					"omit_empty_values": schema.BoolAttribute{
-																						Computed:    true,
-																						Optional:    true,
-																						Default:     booldefault.StaticBool(false),
-																						Description: `Default: false`,
-																					},
-																					"plain": schema.StringAttribute{
-																						Optional: true,
-																					},
-																					"type": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
-																					},
-																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("one"),
-																					}...),
-																				},
-																			},
-																		},
-																		MarkdownDescription: `Format of access logs. Placeholders available on` + "\n" +
-																			`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
-																	},
-																	"path": schema.StringAttribute{
-																		Optional:    true,
-																		Description: `Path to a file that logs will be written to. Not Null`,
-																		Validators: []validator.String{
-																			speakeasy_stringvalidators.NotNull(),
-																			stringvalidator.UTF8LengthAtLeast(1),
-																		},
-																	},
-																},
-																Description: `FileBackend defines configuration for file based access logs`,
-															},
-															"open_telemetry": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"attributes": schema.ListNestedAttribute{
+																	"json": schema.ListNestedAttribute{
 																		Computed: true,
 																		Optional: true,
 																		PlanModifiers: []planmodifier.List{
@@ -1453,694 +490,141 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 																			Attributes: map[string]schema.Attribute{
 																				"key": schema.StringAttribute{
 																					Optional:    true,
-																					Description: `Key is the OpenTelemetry attribute name. Not Null`,
+																					Description: `Not Null`,
 																					Validators: []validator.String{
 																						speakeasy_stringvalidators.NotNull(),
-																						stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z]([a-z0-9]|[._][a-z0-9])*$`), "must match pattern "+regexp.MustCompile(`^[a-z]([a-z0-9]|[._][a-z0-9])*$`).String()),
 																					},
 																				},
 																				"value": schema.StringAttribute{
 																					Optional:    true,
-																					Description: `Value can contain Kuma placeholders. Not Null`,
+																					Description: `Not Null`,
 																					Validators: []validator.String{
 																						speakeasy_stringvalidators.NotNull(),
 																					},
 																				},
 																			},
 																		},
-																		MarkdownDescription: `Attributes defines custom OpenTelemetry attributes. Keys must be static` + "\n" +
-																			`OpenTelemetry attribute names. Values can contain placeholders available on` + "\n" +
-																			`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
 																	},
-																	"backend_ref": schema.SingleNestedAttribute{
-																		Optional: true,
-																		Attributes: map[string]schema.Attribute{
-																			"kind": schema.StringAttribute{
-																				Optional:    true,
-																				Description: `Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"`,
-																				Validators: []validator.String{
-																					speakeasy_stringvalidators.NotNull(),
-																					stringvalidator.OneOf(
-																						"MeshOpenTelemetryBackend",
-																					),
-																				},
-																			},
-																			"labels": schema.MapAttribute{
-																				Optional:    true,
-																				ElementType: types.StringType,
-																				MarkdownDescription: `Labels to match the referenced resource. When multiple resources match,` + "\n" +
-																					`the oldest by creation time wins.`,
-																			},
-																		},
-																		MarkdownDescription: `BackendRef is a reference to a MeshOpenTelemetryBackend resource that` + "\n" +
-																			`defines the collector endpoint.`,
-																	},
-																	"body": schema.StringAttribute{
-																		CustomType: jsontypes.NormalizedType{},
-																		Computed:   true,
-																		Optional:   true,
-																		PlanModifiers: []planmodifier.String{
-																			custom_stringplanmodifier.ArbitraryJSONModifier(),
-																		},
-																		MarkdownDescription: `Body is a raw string or an OTLP any value as described at` + "\n" +
-																			`https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body` + "\n" +
-																			`It can contain placeholders available on` + "\n" +
-																			`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators` + "\n" +
-																			`Parsed as JSON.`,
-																	},
-																},
-																Description: `Defines an OpenTelemetry logging backend.`,
-															},
-															"tcp": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"address": schema.StringAttribute{
+																	"omit_empty_values": schema.BoolAttribute{
+																		Computed:    true,
 																		Optional:    true,
-																		Description: `Address of the TCP logging backend. Not Null`,
+																		Default:     booldefault.StaticBool(false),
+																		Description: `Default: false`,
+																	},
+																	"plain": schema.StringAttribute{
+																		Optional: true,
+																	},
+																	"type": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
 																		Validators: []validator.String{
 																			speakeasy_stringvalidators.NotNull(),
-																			stringvalidator.UTF8LengthAtLeast(1),
 																		},
-																	},
-																	"format": schema.SingleNestedAttribute{
-																		Optional: true,
-																		Attributes: map[string]schema.Attribute{
-																			"one": schema.SingleNestedAttribute{
-																				Optional: true,
-																				Attributes: map[string]schema.Attribute{
-																					"json": schema.ListNestedAttribute{
-																						Computed: true,
-																						Optional: true,
-																						PlanModifiers: []planmodifier.List{
-																							custom_listplanmodifier.SupressZeroNullModifier(),
-																						},
-																						NestedObject: schema.NestedAttributeObject{
-																							Validators: []validator.Object{
-																								speakeasy_objectvalidators.NotNull(),
-																							},
-																							Attributes: map[string]schema.Attribute{
-																								"key": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																								"value": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																						},
-																					},
-																					"omit_empty_values": schema.BoolAttribute{
-																						Computed:    true,
-																						Optional:    true,
-																						Default:     booldefault.StaticBool(false),
-																						Description: `Default: false`,
-																					},
-																					"plain": schema.StringAttribute{
-																						Optional: true,
-																					},
-																					"type": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
-																					},
-																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("two"),
-																					}...),
-																				},
-																			},
-																			"two": schema.SingleNestedAttribute{
-																				Optional: true,
-																				Attributes: map[string]schema.Attribute{
-																					"json": schema.ListNestedAttribute{
-																						Computed: true,
-																						Optional: true,
-																						PlanModifiers: []planmodifier.List{
-																							custom_listplanmodifier.SupressZeroNullModifier(),
-																						},
-																						NestedObject: schema.NestedAttributeObject{
-																							Validators: []validator.Object{
-																								speakeasy_objectvalidators.NotNull(),
-																							},
-																							Attributes: map[string]schema.Attribute{
-																								"key": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																								"value": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																						},
-																					},
-																					"omit_empty_values": schema.BoolAttribute{
-																						Computed:    true,
-																						Optional:    true,
-																						Default:     booldefault.StaticBool(false),
-																						Description: `Default: false`,
-																					},
-																					"plain": schema.StringAttribute{
-																						Optional: true,
-																					},
-																					"type": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
-																					},
-																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("one"),
-																					}...),
-																				},
-																			},
-																		},
-																		MarkdownDescription: `Format of access logs. Placeholders available on` + "\n" +
-																			`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
 																	},
 																},
-																Description: `TCPBackend defines a TCP logging backend.`,
+																MarkdownDescription: `Format of access logs. Placeholders available on` + "\n" +
+																	`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
 															},
-															"type": schema.StringAttribute{
+															"path": schema.StringAttribute{
 																Optional:    true,
-																Description: `possible known values include one of ["Tcp", "File", "OpenTelemetry"]; Not Null`,
+																Description: `Path to a file that logs will be written to. Not Null`,
 																Validators: []validator.String{
 																	speakeasy_stringvalidators.NotNull(),
+																	stringvalidator.UTF8LengthAtLeast(1),
 																},
 															},
 														},
-														Validators: []validator.Object{
-															objectvalidator.ConflictsWith(path.Expressions{
-																path.MatchRelative().AtParent().AtName("two"),
-																path.MatchRelative().AtParent().AtName("three"),
-															}...),
-														},
+														Description: `FileBackend defines configuration for file based access logs`,
 													},
-													"three": schema.SingleNestedAttribute{
+													"open_telemetry": schema.SingleNestedAttribute{
 														Optional: true,
 														Attributes: map[string]schema.Attribute{
-															"file": schema.SingleNestedAttribute{
+															"attributes": schema.ListNestedAttribute{
+																Computed: true,
 																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"format": schema.SingleNestedAttribute{
-																		Optional: true,
-																		Attributes: map[string]schema.Attribute{
-																			"one": schema.SingleNestedAttribute{
-																				Optional: true,
-																				Attributes: map[string]schema.Attribute{
-																					"json": schema.ListNestedAttribute{
-																						Computed: true,
-																						Optional: true,
-																						PlanModifiers: []planmodifier.List{
-																							custom_listplanmodifier.SupressZeroNullModifier(),
-																						},
-																						NestedObject: schema.NestedAttributeObject{
-																							Validators: []validator.Object{
-																								speakeasy_objectvalidators.NotNull(),
-																							},
-																							Attributes: map[string]schema.Attribute{
-																								"key": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																								"value": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																						},
-																					},
-																					"omit_empty_values": schema.BoolAttribute{
-																						Computed:    true,
-																						Optional:    true,
-																						Default:     booldefault.StaticBool(false),
-																						Description: `Default: false`,
-																					},
-																					"plain": schema.StringAttribute{
-																						Optional: true,
-																					},
-																					"type": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
-																					},
-																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("two"),
-																					}...),
-																				},
-																			},
-																			"two": schema.SingleNestedAttribute{
-																				Optional: true,
-																				Attributes: map[string]schema.Attribute{
-																					"json": schema.ListNestedAttribute{
-																						Computed: true,
-																						Optional: true,
-																						PlanModifiers: []planmodifier.List{
-																							custom_listplanmodifier.SupressZeroNullModifier(),
-																						},
-																						NestedObject: schema.NestedAttributeObject{
-																							Validators: []validator.Object{
-																								speakeasy_objectvalidators.NotNull(),
-																							},
-																							Attributes: map[string]schema.Attribute{
-																								"key": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																								"value": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																						},
-																					},
-																					"omit_empty_values": schema.BoolAttribute{
-																						Computed:    true,
-																						Optional:    true,
-																						Default:     booldefault.StaticBool(false),
-																						Description: `Default: false`,
-																					},
-																					"plain": schema.StringAttribute{
-																						Optional: true,
-																					},
-																					"type": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
-																					},
-																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("one"),
-																					}...),
-																				},
+																PlanModifiers: []planmodifier.List{
+																	custom_listplanmodifier.SupressZeroNullModifier(),
+																},
+																NestedObject: schema.NestedAttributeObject{
+																	Validators: []validator.Object{
+																		speakeasy_objectvalidators.NotNull(),
+																	},
+																	Attributes: map[string]schema.Attribute{
+																		"key": schema.StringAttribute{
+																			Optional:    true,
+																			Description: `Key is the OpenTelemetry attribute name. Not Null`,
+																			Validators: []validator.String{
+																				speakeasy_stringvalidators.NotNull(),
+																				stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z]([a-z0-9]|[._][a-z0-9])*$`), "must match pattern "+regexp.MustCompile(`^[a-z]([a-z0-9]|[._][a-z0-9])*$`).String()),
 																			},
 																		},
-																		MarkdownDescription: `Format of access logs. Placeholders available on` + "\n" +
-																			`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
+																		"value": schema.StringAttribute{
+																			Optional:    true,
+																			Description: `Value can contain Kuma placeholders. Not Null`,
+																			Validators: []validator.String{
+																				speakeasy_stringvalidators.NotNull(),
+																			},
+																		},
 																	},
-																	"path": schema.StringAttribute{
+																},
+																MarkdownDescription: `Attributes defines custom OpenTelemetry attributes. Keys must be static` + "\n" +
+																	`OpenTelemetry attribute names. Values can contain placeholders available on` + "\n" +
+																	`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
+															},
+															"backend_ref": schema.SingleNestedAttribute{
+																Optional: true,
+																Attributes: map[string]schema.Attribute{
+																	"kind": schema.StringAttribute{
 																		Optional:    true,
-																		Description: `Path to a file that logs will be written to. Not Null`,
+																		Description: `Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"`,
 																		Validators: []validator.String{
 																			speakeasy_stringvalidators.NotNull(),
-																			stringvalidator.UTF8LengthAtLeast(1),
+																			stringvalidator.OneOf(
+																				"MeshOpenTelemetryBackend",
+																			),
 																		},
 																	},
-																},
-																Description: `FileBackend defines configuration for file based access logs`,
-															},
-															"open_telemetry": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"attributes": schema.ListNestedAttribute{
-																		Computed: true,
-																		Optional: true,
-																		PlanModifiers: []planmodifier.List{
-																			custom_listplanmodifier.SupressZeroNullModifier(),
-																		},
-																		NestedObject: schema.NestedAttributeObject{
-																			Validators: []validator.Object{
-																				speakeasy_objectvalidators.NotNull(),
-																			},
-																			Attributes: map[string]schema.Attribute{
-																				"key": schema.StringAttribute{
-																					Optional:    true,
-																					Description: `Key is the OpenTelemetry attribute name. Not Null`,
-																					Validators: []validator.String{
-																						speakeasy_stringvalidators.NotNull(),
-																						stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z]([a-z0-9]|[._][a-z0-9])*$`), "must match pattern "+regexp.MustCompile(`^[a-z]([a-z0-9]|[._][a-z0-9])*$`).String()),
-																					},
-																				},
-																				"value": schema.StringAttribute{
-																					Optional:    true,
-																					Description: `Value can contain Kuma placeholders. Not Null`,
-																					Validators: []validator.String{
-																						speakeasy_stringvalidators.NotNull(),
-																					},
-																				},
-																			},
-																		},
-																		MarkdownDescription: `Attributes defines custom OpenTelemetry attributes. Keys must be static` + "\n" +
-																			`OpenTelemetry attribute names. Values can contain placeholders available on` + "\n" +
-																			`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
-																	},
-																	"backend_ref": schema.SingleNestedAttribute{
-																		Optional: true,
-																		Attributes: map[string]schema.Attribute{
-																			"kind": schema.StringAttribute{
-																				Optional:    true,
-																				Description: `Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"`,
-																				Validators: []validator.String{
-																					speakeasy_stringvalidators.NotNull(),
-																					stringvalidator.OneOf(
-																						"MeshOpenTelemetryBackend",
-																					),
-																				},
-																			},
-																			"labels": schema.MapAttribute{
-																				Optional:    true,
-																				ElementType: types.StringType,
-																				MarkdownDescription: `Labels to match the referenced resource. When multiple resources match,` + "\n" +
-																					`the oldest by creation time wins.`,
-																			},
-																		},
-																		MarkdownDescription: `BackendRef is a reference to a MeshOpenTelemetryBackend resource that` + "\n" +
-																			`defines the collector endpoint.`,
-																	},
-																	"body": schema.StringAttribute{
-																		CustomType: jsontypes.NormalizedType{},
-																		Computed:   true,
-																		Optional:   true,
-																		PlanModifiers: []planmodifier.String{
-																			custom_stringplanmodifier.ArbitraryJSONModifier(),
-																		},
-																		MarkdownDescription: `Body is a raw string or an OTLP any value as described at` + "\n" +
-																			`https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body` + "\n" +
-																			`It can contain placeholders available on` + "\n" +
-																			`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators` + "\n" +
-																			`Parsed as JSON.`,
-																	},
-																},
-																Description: `Defines an OpenTelemetry logging backend.`,
-															},
-															"tcp": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"address": schema.StringAttribute{
+																	"labels": schema.MapAttribute{
 																		Optional:    true,
-																		Description: `Address of the TCP logging backend. Not Null`,
-																		Validators: []validator.String{
-																			speakeasy_stringvalidators.NotNull(),
-																			stringvalidator.UTF8LengthAtLeast(1),
-																		},
-																	},
-																	"format": schema.SingleNestedAttribute{
-																		Optional: true,
-																		Attributes: map[string]schema.Attribute{
-																			"one": schema.SingleNestedAttribute{
-																				Optional: true,
-																				Attributes: map[string]schema.Attribute{
-																					"json": schema.ListNestedAttribute{
-																						Computed: true,
-																						Optional: true,
-																						PlanModifiers: []planmodifier.List{
-																							custom_listplanmodifier.SupressZeroNullModifier(),
-																						},
-																						NestedObject: schema.NestedAttributeObject{
-																							Validators: []validator.Object{
-																								speakeasy_objectvalidators.NotNull(),
-																							},
-																							Attributes: map[string]schema.Attribute{
-																								"key": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																								"value": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																						},
-																					},
-																					"omit_empty_values": schema.BoolAttribute{
-																						Computed:    true,
-																						Optional:    true,
-																						Default:     booldefault.StaticBool(false),
-																						Description: `Default: false`,
-																					},
-																					"plain": schema.StringAttribute{
-																						Optional: true,
-																					},
-																					"type": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
-																					},
-																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("two"),
-																					}...),
-																				},
-																			},
-																			"two": schema.SingleNestedAttribute{
-																				Optional: true,
-																				Attributes: map[string]schema.Attribute{
-																					"json": schema.ListNestedAttribute{
-																						Computed: true,
-																						Optional: true,
-																						PlanModifiers: []planmodifier.List{
-																							custom_listplanmodifier.SupressZeroNullModifier(),
-																						},
-																						NestedObject: schema.NestedAttributeObject{
-																							Validators: []validator.Object{
-																								speakeasy_objectvalidators.NotNull(),
-																							},
-																							Attributes: map[string]schema.Attribute{
-																								"key": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																								"value": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																						},
-																					},
-																					"omit_empty_values": schema.BoolAttribute{
-																						Computed:    true,
-																						Optional:    true,
-																						Default:     booldefault.StaticBool(false),
-																						Description: `Default: false`,
-																					},
-																					"plain": schema.StringAttribute{
-																						Optional: true,
-																					},
-																					"type": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
-																					},
-																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("one"),
-																					}...),
-																				},
-																			},
-																		},
-																		MarkdownDescription: `Format of access logs. Placeholders available on` + "\n" +
-																			`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
+																		ElementType: types.StringType,
+																		MarkdownDescription: `Labels to match the referenced resource. When multiple resources match,` + "\n" +
+																			`the oldest by creation time wins.`,
 																	},
 																},
-																Description: `TCPBackend defines a TCP logging backend.`,
+																MarkdownDescription: `BackendRef is a reference to a MeshOpenTelemetryBackend resource that` + "\n" +
+																	`defines the collector endpoint.`,
 															},
-															"type": schema.StringAttribute{
-																Optional:    true,
-																Description: `possible known values include one of ["Tcp", "File", "OpenTelemetry"]; Not Null`,
-																Validators: []validator.String{
-																	speakeasy_stringvalidators.NotNull(),
+															"body": schema.StringAttribute{
+																CustomType: jsontypes.NormalizedType{},
+																Computed:   true,
+																Optional:   true,
+																PlanModifiers: []planmodifier.String{
+																	custom_stringplanmodifier.ArbitraryJSONModifier(),
 																},
+																MarkdownDescription: `Body is a raw string or an OTLP any value as described at` + "\n" +
+																	`https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body` + "\n" +
+																	`It can contain placeholders available on` + "\n" +
+																	`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators` + "\n" +
+																	`Parsed as JSON.`,
 															},
 														},
-														Validators: []validator.Object{
-															objectvalidator.ConflictsWith(path.Expressions{
-																path.MatchRelative().AtParent().AtName("one"),
-																path.MatchRelative().AtParent().AtName("two"),
-															}...),
-														},
+														Description: `Defines an OpenTelemetry logging backend.`,
 													},
-													"two": schema.SingleNestedAttribute{
+													"tcp": schema.SingleNestedAttribute{
 														Optional: true,
 														Attributes: map[string]schema.Attribute{
-															"file": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"format": schema.SingleNestedAttribute{
-																		Optional: true,
-																		Attributes: map[string]schema.Attribute{
-																			"one": schema.SingleNestedAttribute{
-																				Optional: true,
-																				Attributes: map[string]schema.Attribute{
-																					"json": schema.ListNestedAttribute{
-																						Computed: true,
-																						Optional: true,
-																						PlanModifiers: []planmodifier.List{
-																							custom_listplanmodifier.SupressZeroNullModifier(),
-																						},
-																						NestedObject: schema.NestedAttributeObject{
-																							Validators: []validator.Object{
-																								speakeasy_objectvalidators.NotNull(),
-																							},
-																							Attributes: map[string]schema.Attribute{
-																								"key": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																								"value": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																						},
-																					},
-																					"omit_empty_values": schema.BoolAttribute{
-																						Computed:    true,
-																						Optional:    true,
-																						Default:     booldefault.StaticBool(false),
-																						Description: `Default: false`,
-																					},
-																					"plain": schema.StringAttribute{
-																						Optional: true,
-																					},
-																					"type": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
-																					},
-																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("two"),
-																					}...),
-																				},
-																			},
-																			"two": schema.SingleNestedAttribute{
-																				Optional: true,
-																				Attributes: map[string]schema.Attribute{
-																					"json": schema.ListNestedAttribute{
-																						Computed: true,
-																						Optional: true,
-																						PlanModifiers: []planmodifier.List{
-																							custom_listplanmodifier.SupressZeroNullModifier(),
-																						},
-																						NestedObject: schema.NestedAttributeObject{
-																							Validators: []validator.Object{
-																								speakeasy_objectvalidators.NotNull(),
-																							},
-																							Attributes: map[string]schema.Attribute{
-																								"key": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																								"value": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																						},
-																					},
-																					"omit_empty_values": schema.BoolAttribute{
-																						Computed:    true,
-																						Optional:    true,
-																						Default:     booldefault.StaticBool(false),
-																						Description: `Default: false`,
-																					},
-																					"plain": schema.StringAttribute{
-																						Optional: true,
-																					},
-																					"type": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
-																					},
-																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("one"),
-																					}...),
-																				},
-																			},
-																		},
-																		MarkdownDescription: `Format of access logs. Placeholders available on` + "\n" +
-																			`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
-																	},
-																	"path": schema.StringAttribute{
-																		Optional:    true,
-																		Description: `Path to a file that logs will be written to. Not Null`,
-																		Validators: []validator.String{
-																			speakeasy_stringvalidators.NotNull(),
-																			stringvalidator.UTF8LengthAtLeast(1),
-																		},
-																	},
+															"address": schema.StringAttribute{
+																Optional:    true,
+																Description: `Address of the TCP logging backend. Not Null`,
+																Validators: []validator.String{
+																	speakeasy_stringvalidators.NotNull(),
+																	stringvalidator.UTF8LengthAtLeast(1),
 																},
-																Description: `FileBackend defines configuration for file based access logs`,
 															},
-															"open_telemetry": schema.SingleNestedAttribute{
+															"format": schema.SingleNestedAttribute{
 																Optional: true,
 																Attributes: map[string]schema.Attribute{
-																	"attributes": schema.ListNestedAttribute{
+																	"json": schema.ListNestedAttribute{
 																		Computed: true,
 																		Optional: true,
 																		PlanModifiers: []planmodifier.List{
@@ -2153,206 +637,49 @@ func (r *MeshAccessLogResource) Schema(ctx context.Context, req resource.SchemaR
 																			Attributes: map[string]schema.Attribute{
 																				"key": schema.StringAttribute{
 																					Optional:    true,
-																					Description: `Key is the OpenTelemetry attribute name. Not Null`,
+																					Description: `Not Null`,
 																					Validators: []validator.String{
 																						speakeasy_stringvalidators.NotNull(),
-																						stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z]([a-z0-9]|[._][a-z0-9])*$`), "must match pattern "+regexp.MustCompile(`^[a-z]([a-z0-9]|[._][a-z0-9])*$`).String()),
 																					},
 																				},
 																				"value": schema.StringAttribute{
 																					Optional:    true,
-																					Description: `Value can contain Kuma placeholders. Not Null`,
+																					Description: `Not Null`,
 																					Validators: []validator.String{
 																						speakeasy_stringvalidators.NotNull(),
 																					},
 																				},
 																			},
 																		},
-																		MarkdownDescription: `Attributes defines custom OpenTelemetry attributes. Keys must be static` + "\n" +
-																			`OpenTelemetry attribute names. Values can contain placeholders available on` + "\n" +
-																			`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
 																	},
-																	"backend_ref": schema.SingleNestedAttribute{
-																		Optional: true,
-																		Attributes: map[string]schema.Attribute{
-																			"kind": schema.StringAttribute{
-																				Optional:    true,
-																				Description: `Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"`,
-																				Validators: []validator.String{
-																					speakeasy_stringvalidators.NotNull(),
-																					stringvalidator.OneOf(
-																						"MeshOpenTelemetryBackend",
-																					),
-																				},
-																			},
-																			"labels": schema.MapAttribute{
-																				Optional:    true,
-																				ElementType: types.StringType,
-																				MarkdownDescription: `Labels to match the referenced resource. When multiple resources match,` + "\n" +
-																					`the oldest by creation time wins.`,
-																			},
-																		},
-																		MarkdownDescription: `BackendRef is a reference to a MeshOpenTelemetryBackend resource that` + "\n" +
-																			`defines the collector endpoint.`,
-																	},
-																	"body": schema.StringAttribute{
-																		CustomType: jsontypes.NormalizedType{},
-																		Computed:   true,
-																		Optional:   true,
-																		PlanModifiers: []planmodifier.String{
-																			custom_stringplanmodifier.ArbitraryJSONModifier(),
-																		},
-																		MarkdownDescription: `Body is a raw string or an OTLP any value as described at` + "\n" +
-																			`https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-body` + "\n" +
-																			`It can contain placeholders available on` + "\n" +
-																			`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators` + "\n" +
-																			`Parsed as JSON.`,
-																	},
-																},
-																Description: `Defines an OpenTelemetry logging backend.`,
-															},
-															"tcp": schema.SingleNestedAttribute{
-																Optional: true,
-																Attributes: map[string]schema.Attribute{
-																	"address": schema.StringAttribute{
+																	"omit_empty_values": schema.BoolAttribute{
+																		Computed:    true,
 																		Optional:    true,
-																		Description: `Address of the TCP logging backend. Not Null`,
+																		Default:     booldefault.StaticBool(false),
+																		Description: `Default: false`,
+																	},
+																	"plain": schema.StringAttribute{
+																		Optional: true,
+																	},
+																	"type": schema.StringAttribute{
+																		Optional:    true,
+																		Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
 																		Validators: []validator.String{
 																			speakeasy_stringvalidators.NotNull(),
-																			stringvalidator.UTF8LengthAtLeast(1),
 																		},
 																	},
-																	"format": schema.SingleNestedAttribute{
-																		Optional: true,
-																		Attributes: map[string]schema.Attribute{
-																			"one": schema.SingleNestedAttribute{
-																				Optional: true,
-																				Attributes: map[string]schema.Attribute{
-																					"json": schema.ListNestedAttribute{
-																						Computed: true,
-																						Optional: true,
-																						PlanModifiers: []planmodifier.List{
-																							custom_listplanmodifier.SupressZeroNullModifier(),
-																						},
-																						NestedObject: schema.NestedAttributeObject{
-																							Validators: []validator.Object{
-																								speakeasy_objectvalidators.NotNull(),
-																							},
-																							Attributes: map[string]schema.Attribute{
-																								"key": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																								"value": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																						},
-																					},
-																					"omit_empty_values": schema.BoolAttribute{
-																						Computed:    true,
-																						Optional:    true,
-																						Default:     booldefault.StaticBool(false),
-																						Description: `Default: false`,
-																					},
-																					"plain": schema.StringAttribute{
-																						Optional: true,
-																					},
-																					"type": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
-																					},
-																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("two"),
-																					}...),
-																				},
-																			},
-																			"two": schema.SingleNestedAttribute{
-																				Optional: true,
-																				Attributes: map[string]schema.Attribute{
-																					"json": schema.ListNestedAttribute{
-																						Computed: true,
-																						Optional: true,
-																						PlanModifiers: []planmodifier.List{
-																							custom_listplanmodifier.SupressZeroNullModifier(),
-																						},
-																						NestedObject: schema.NestedAttributeObject{
-																							Validators: []validator.Object{
-																								speakeasy_objectvalidators.NotNull(),
-																							},
-																							Attributes: map[string]schema.Attribute{
-																								"key": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																								"value": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																						},
-																					},
-																					"omit_empty_values": schema.BoolAttribute{
-																						Computed:    true,
-																						Optional:    true,
-																						Default:     booldefault.StaticBool(false),
-																						Description: `Default: false`,
-																					},
-																					"plain": schema.StringAttribute{
-																						Optional: true,
-																					},
-																					"type": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `possible known values include one of ["Plain", "Json"]; Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
-																					},
-																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("one"),
-																					}...),
-																				},
-																			},
-																		},
-																		MarkdownDescription: `Format of access logs. Placeholders available on` + "\n" +
-																			`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
-																	},
 																},
-																Description: `TCPBackend defines a TCP logging backend.`,
-															},
-															"type": schema.StringAttribute{
-																Optional:    true,
-																Description: `possible known values include one of ["Tcp", "File", "OpenTelemetry"]; Not Null`,
-																Validators: []validator.String{
-																	speakeasy_stringvalidators.NotNull(),
-																},
+																MarkdownDescription: `Format of access logs. Placeholders available on` + "\n" +
+																	`https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators`,
 															},
 														},
-														Validators: []validator.Object{
-															objectvalidator.ConflictsWith(path.Expressions{
-																path.MatchRelative().AtParent().AtName("one"),
-																path.MatchRelative().AtParent().AtName("three"),
-															}...),
+														Description: `TCPBackend defines a TCP logging backend.`,
+													},
+													"type": schema.StringAttribute{
+														Optional:    true,
+														Description: `possible known values include one of ["Tcp", "File", "OpenTelemetry"]; Not Null`,
+														Validators: []validator.String{
+															speakeasy_stringvalidators.NotNull(),
 														},
 													},
 												},
@@ -2510,13 +837,13 @@ func (r *MeshAccessLogResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	request, requestDiags := data.ToOperationsPutMeshAccessLogRequest(ctx)
+	request, requestDiags := data.ToOperationsPostMeshAccessLogRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshAccessLog.PutMeshAccessLog(ctx, *request)
+	res, err := r.client.MeshAccessLog.PostMeshAccessLog(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -2528,10 +855,14 @@ func (r *MeshAccessLogResource) Create(ctx context.Context, req resource.CreateR
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	switch res.StatusCode {
-	case 200, 201:
-		break
-	default:
+	if res.StatusCode == 409 {
+		resp.Diagnostics.AddError(
+			"Resource Already Exists",
+			"When creating this resource, the API indicated that this resource already exists. You can bring the existing resource under management using Terraform import functionality or retry with a unique configuration.",
+		)
+		return
+	}
+	if res.StatusCode != 201 {
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}

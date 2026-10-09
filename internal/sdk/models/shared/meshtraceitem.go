@@ -34,115 +34,8 @@ func (e *MeshTraceItemType) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// MeshTraceItemBackendsSpecDefaultKind - Kind of the backend resource.
-type MeshTraceItemBackendsSpecDefaultKind string
-
-const (
-	MeshTraceItemBackendsSpecDefaultKindMeshOpenTelemetryBackend MeshTraceItemBackendsSpecDefaultKind = "MeshOpenTelemetryBackend"
-)
-
-func (e MeshTraceItemBackendsSpecDefaultKind) ToPointer() *MeshTraceItemBackendsSpecDefaultKind {
-	return &e
-}
-func (e *MeshTraceItemBackendsSpecDefaultKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "MeshOpenTelemetryBackend":
-		*e = MeshTraceItemBackendsSpecDefaultKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTraceItemBackendsSpecDefaultKind: %v", v)
-	}
-}
-
-// MeshTraceItemBackendsSpecDefaultBackendRef - BackendRef is a reference to a MeshOpenTelemetryBackend resource that
-// defines the collector endpoint.
-type MeshTraceItemBackendsSpecDefaultBackendRef struct {
-	// Kind of the backend resource.
-	Kind MeshTraceItemBackendsSpecDefaultKind `json:"kind"`
-	// Labels to match the referenced resource. When multiple resources match,
-	// the oldest by creation time wins.
-	Labels map[string]string `json:"labels,omitempty"`
-}
-
-func (m MeshTraceItemBackendsSpecDefaultBackendRef) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(m, "", false)
-}
-
-func (m *MeshTraceItemBackendsSpecDefaultBackendRef) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *MeshTraceItemBackendsSpecDefaultBackendRef) GetKind() MeshTraceItemBackendsSpecDefaultKind {
-	if m == nil {
-		return MeshTraceItemBackendsSpecDefaultKind("")
-	}
-	return m.Kind
-}
-
-func (m *MeshTraceItemBackendsSpecDefaultBackendRef) GetLabels() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Labels
-}
-
-// MeshTraceItemBackendsSpecDefaultOpenTelemetry - OpenTelemetry backend configuration.
-type MeshTraceItemBackendsSpecDefaultOpenTelemetry struct {
-	// BackendRef is a reference to a MeshOpenTelemetryBackend resource that
-	// defines the collector endpoint.
-	BackendRef *MeshTraceItemBackendsSpecDefaultBackendRef `json:"backendRef,omitempty"`
-}
-
-func (m MeshTraceItemBackendsSpecDefaultOpenTelemetry) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(m, "", false)
-}
-
-func (m *MeshTraceItemBackendsSpecDefaultOpenTelemetry) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *MeshTraceItemBackendsSpecDefaultOpenTelemetry) GetBackendRef() *MeshTraceItemBackendsSpecDefaultBackendRef {
-	if m == nil {
-		return nil
-	}
-	return m.BackendRef
-}
-
-type MeshTraceItemBackendsSpecDefaultType string
-
-const (
-	MeshTraceItemBackendsSpecDefaultTypeZipkin        MeshTraceItemBackendsSpecDefaultType = "Zipkin"
-	MeshTraceItemBackendsSpecDefaultTypeDatadog       MeshTraceItemBackendsSpecDefaultType = "Datadog"
-	MeshTraceItemBackendsSpecDefaultTypeOpenTelemetry MeshTraceItemBackendsSpecDefaultType = "OpenTelemetry"
-)
-
-func (e MeshTraceItemBackendsSpecDefaultType) ToPointer() *MeshTraceItemBackendsSpecDefaultType {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshTraceItemBackendsSpecDefaultType) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Zipkin", "Datadog", "OpenTelemetry":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshTraceItemBackendsDatadog - Datadog backend configuration.
-type MeshTraceItemBackendsDatadog struct {
+// Datadog backend configuration.
+type Datadog struct {
 	// Determines if datadog service name should be split based on traffic
 	// direction and destination. For example, with `splitService: true` and a
 	// `backend` service that communicates with a couple of databases, you would
@@ -154,450 +47,107 @@ type MeshTraceItemBackendsDatadog struct {
 	URL string `json:"url"`
 }
 
-func (m MeshTraceItemBackendsDatadog) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(m, "", false)
+func (d Datadog) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(d, "", false)
 }
 
-func (m *MeshTraceItemBackendsDatadog) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+func (d *Datadog) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &d, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (m *MeshTraceItemBackendsDatadog) GetSplitService() *bool {
-	if m == nil {
+func (d *Datadog) GetSplitService() *bool {
+	if d == nil {
 		return nil
 	}
-	return m.SplitService
+	return d.SplitService
 }
 
-func (m *MeshTraceItemBackendsDatadog) GetURL() string {
-	if m == nil {
+func (d *Datadog) GetURL() string {
+	if d == nil {
 		return ""
 	}
-	return m.URL
+	return d.URL
 }
 
-// MeshTraceItemBackendsAPIVersion - Version of the API.
-// https://github.com/envoyproxy/envoy/blob/v1.22.0/api/envoy/config/trace/v3/zipkin.proto#L66
-type MeshTraceItemBackendsAPIVersion string
+// MeshTraceItemSpecKind - Kind of the backend resource.
+type MeshTraceItemSpecKind string
 
 const (
-	MeshTraceItemBackendsAPIVersionHTTPJSON  MeshTraceItemBackendsAPIVersion = "httpJson"
-	MeshTraceItemBackendsAPIVersionHTTPProto MeshTraceItemBackendsAPIVersion = "httpProto"
+	MeshTraceItemSpecKindMeshOpenTelemetryBackend MeshTraceItemSpecKind = "MeshOpenTelemetryBackend"
 )
 
-func (e MeshTraceItemBackendsAPIVersion) ToPointer() *MeshTraceItemBackendsAPIVersion {
+func (e MeshTraceItemSpecKind) ToPointer() *MeshTraceItemSpecKind {
 	return &e
 }
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshTraceItemBackendsAPIVersion) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "httpJson", "httpProto":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshTraceItemBackendsZipkin - Zipkin backend configuration.
-type MeshTraceItemBackendsZipkin struct {
-	// Version of the API.
-	// https://github.com/envoyproxy/envoy/blob/v1.22.0/api/envoy/config/trace/v3/zipkin.proto#L66
-	APIVersion *MeshTraceItemBackendsAPIVersion `default:"httpJson" json:"apiVersion"`
-	// Determines whether client and server spans will share the same span
-	// context.
-	// https://github.com/envoyproxy/envoy/blob/v1.22.0/api/envoy/config/trace/v3/zipkin.proto#L63
-	SharedSpanContext *bool `default:"true" json:"sharedSpanContext"`
-	// Generate 128bit traces.
-	TraceId128bit *bool `default:"false" json:"traceId128bit"`
-	// Address of Zipkin collector.
-	URL string `json:"url"`
-}
-
-func (m MeshTraceItemBackendsZipkin) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(m, "", false)
-}
-
-func (m *MeshTraceItemBackendsZipkin) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *MeshTraceItemBackendsZipkin) GetAPIVersion() *MeshTraceItemBackendsAPIVersion {
-	if m == nil {
-		return nil
-	}
-	return m.APIVersion
-}
-
-func (m *MeshTraceItemBackendsZipkin) GetSharedSpanContext() *bool {
-	if m == nil {
-		return nil
-	}
-	return m.SharedSpanContext
-}
-
-func (m *MeshTraceItemBackendsZipkin) GetTraceId128bit() *bool {
-	if m == nil {
-		return nil
-	}
-	return m.TraceId128bit
-}
-
-func (m *MeshTraceItemBackendsZipkin) GetURL() string {
-	if m == nil {
-		return ""
-	}
-	return m.URL
-}
-
-type Backends3 struct {
-	// OpenTelemetry backend configuration.
-	OpenTelemetry *MeshTraceItemBackendsSpecDefaultOpenTelemetry `json:"openTelemetry,omitempty"`
-	Type          MeshTraceItemBackendsSpecDefaultType           `json:"type"`
-	// Datadog backend configuration.
-	Datadog *MeshTraceItemBackendsDatadog `json:"datadog,omitempty"`
-	// Zipkin backend configuration.
-	Zipkin *MeshTraceItemBackendsZipkin `json:"zipkin,omitempty"`
-}
-
-func (b Backends3) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(b, "", false)
-}
-
-func (b *Backends3) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &b, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (b *Backends3) GetOpenTelemetry() *MeshTraceItemBackendsSpecDefaultOpenTelemetry {
-	if b == nil {
-		return nil
-	}
-	return b.OpenTelemetry
-}
-
-func (b *Backends3) GetType() MeshTraceItemBackendsSpecDefaultType {
-	if b == nil {
-		return MeshTraceItemBackendsSpecDefaultType("")
-	}
-	return b.Type
-}
-
-func (b *Backends3) GetDatadog() *MeshTraceItemBackendsDatadog {
-	if b == nil {
-		return nil
-	}
-	return b.Datadog
-}
-
-func (b *Backends3) GetZipkin() *MeshTraceItemBackendsZipkin {
-	if b == nil {
-		return nil
-	}
-	return b.Zipkin
-}
-
-// #region class-body-backends3
-// #endregion class-body-backends3
-
-// BackendsDatadog - Datadog backend configuration.
-type BackendsDatadog struct {
-	// Determines if datadog service name should be split based on traffic
-	// direction and destination. For example, with `splitService: true` and a
-	// `backend` service that communicates with a couple of databases, you would
-	// get service names like `backend_INBOUND`, `backend_OUTBOUND_db1`, and
-	// `backend_OUTBOUND_db2` in Datadog.
-	SplitService *bool `default:"false" json:"splitService"`
-	// Address of Datadog collector, only host and port are allowed (no paths,
-	// fragments etc.)
-	URL string `json:"url"`
-}
-
-func (b BackendsDatadog) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(b, "", false)
-}
-
-func (b *BackendsDatadog) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &b, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (b *BackendsDatadog) GetSplitService() *bool {
-	if b == nil {
-		return nil
-	}
-	return b.SplitService
-}
-
-func (b *BackendsDatadog) GetURL() string {
-	if b == nil {
-		return ""
-	}
-	return b.URL
-}
-
-type MeshTraceItemBackendsSpecType string
-
-const (
-	MeshTraceItemBackendsSpecTypeZipkin        MeshTraceItemBackendsSpecType = "Zipkin"
-	MeshTraceItemBackendsSpecTypeDatadog       MeshTraceItemBackendsSpecType = "Datadog"
-	MeshTraceItemBackendsSpecTypeOpenTelemetry MeshTraceItemBackendsSpecType = "OpenTelemetry"
-)
-
-func (e MeshTraceItemBackendsSpecType) ToPointer() *MeshTraceItemBackendsSpecType {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshTraceItemBackendsSpecType) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Zipkin", "Datadog", "OpenTelemetry":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshTraceItemBackendsSpecKind - Kind of the backend resource.
-type MeshTraceItemBackendsSpecKind string
-
-const (
-	MeshTraceItemBackendsSpecKindMeshOpenTelemetryBackend MeshTraceItemBackendsSpecKind = "MeshOpenTelemetryBackend"
-)
-
-func (e MeshTraceItemBackendsSpecKind) ToPointer() *MeshTraceItemBackendsSpecKind {
-	return &e
-}
-func (e *MeshTraceItemBackendsSpecKind) UnmarshalJSON(data []byte) error {
+func (e *MeshTraceItemSpecKind) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	switch v {
 	case "MeshOpenTelemetryBackend":
-		*e = MeshTraceItemBackendsSpecKind(v)
+		*e = MeshTraceItemSpecKind(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for MeshTraceItemBackendsSpecKind: %v", v)
+		return fmt.Errorf("invalid value for MeshTraceItemSpecKind: %v", v)
 	}
 }
 
-// MeshTraceItemBackendsSpecBackendRef - BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+// MeshTraceItemBackendRef - BackendRef is a reference to a MeshOpenTelemetryBackend resource that
 // defines the collector endpoint.
-type MeshTraceItemBackendsSpecBackendRef struct {
+type MeshTraceItemBackendRef struct {
 	// Kind of the backend resource.
-	Kind MeshTraceItemBackendsSpecKind `json:"kind"`
+	Kind MeshTraceItemSpecKind `json:"kind"`
 	// Labels to match the referenced resource. When multiple resources match,
 	// the oldest by creation time wins.
 	Labels map[string]string `json:"labels,omitempty"`
 }
 
-func (m MeshTraceItemBackendsSpecBackendRef) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(m, "", false)
-}
-
-func (m *MeshTraceItemBackendsSpecBackendRef) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *MeshTraceItemBackendsSpecBackendRef) GetKind() MeshTraceItemBackendsSpecKind {
+func (m *MeshTraceItemBackendRef) GetKind() MeshTraceItemSpecKind {
 	if m == nil {
-		return MeshTraceItemBackendsSpecKind("")
+		return MeshTraceItemSpecKind("")
 	}
 	return m.Kind
 }
 
-func (m *MeshTraceItemBackendsSpecBackendRef) GetLabels() map[string]string {
+func (m *MeshTraceItemBackendRef) GetLabels() map[string]string {
 	if m == nil {
 		return nil
 	}
 	return m.Labels
 }
 
-// MeshTraceItemBackendsSpecOpenTelemetry - OpenTelemetry backend configuration.
-type MeshTraceItemBackendsSpecOpenTelemetry struct {
+// MeshTraceItemOpenTelemetry - OpenTelemetry backend configuration.
+type MeshTraceItemOpenTelemetry struct {
 	// BackendRef is a reference to a MeshOpenTelemetryBackend resource that
 	// defines the collector endpoint.
-	BackendRef *MeshTraceItemBackendsSpecBackendRef `json:"backendRef,omitempty"`
+	BackendRef *MeshTraceItemBackendRef `json:"backendRef,omitempty"`
 }
 
-func (m MeshTraceItemBackendsSpecOpenTelemetry) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(m, "", false)
-}
-
-func (m *MeshTraceItemBackendsSpecOpenTelemetry) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *MeshTraceItemBackendsSpecOpenTelemetry) GetBackendRef() *MeshTraceItemBackendsSpecBackendRef {
+func (m *MeshTraceItemOpenTelemetry) GetBackendRef() *MeshTraceItemBackendRef {
 	if m == nil {
 		return nil
 	}
 	return m.BackendRef
 }
 
-// BackendsAPIVersion - Version of the API.
-// https://github.com/envoyproxy/envoy/blob/v1.22.0/api/envoy/config/trace/v3/zipkin.proto#L66
-type BackendsAPIVersion string
+type MeshTraceItemSpecType string
 
 const (
-	BackendsAPIVersionHTTPJSON  BackendsAPIVersion = "httpJson"
-	BackendsAPIVersionHTTPProto BackendsAPIVersion = "httpProto"
+	MeshTraceItemSpecTypeZipkin        MeshTraceItemSpecType = "Zipkin"
+	MeshTraceItemSpecTypeDatadog       MeshTraceItemSpecType = "Datadog"
+	MeshTraceItemSpecTypeOpenTelemetry MeshTraceItemSpecType = "OpenTelemetry"
 )
 
-func (e BackendsAPIVersion) ToPointer() *BackendsAPIVersion {
+func (e MeshTraceItemSpecType) ToPointer() *MeshTraceItemSpecType {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *BackendsAPIVersion) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "httpJson", "httpProto":
-			return true
-		}
-	}
-	return false
-}
-
-// BackendsZipkin - Zipkin backend configuration.
-type BackendsZipkin struct {
-	// Version of the API.
-	// https://github.com/envoyproxy/envoy/blob/v1.22.0/api/envoy/config/trace/v3/zipkin.proto#L66
-	APIVersion *BackendsAPIVersion `default:"httpJson" json:"apiVersion"`
-	// Determines whether client and server spans will share the same span
-	// context.
-	// https://github.com/envoyproxy/envoy/blob/v1.22.0/api/envoy/config/trace/v3/zipkin.proto#L63
-	SharedSpanContext *bool `default:"true" json:"sharedSpanContext"`
-	// Generate 128bit traces.
-	TraceId128bit *bool `default:"false" json:"traceId128bit"`
-	// Address of Zipkin collector.
-	URL string `json:"url"`
-}
-
-func (b BackendsZipkin) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(b, "", false)
-}
-
-func (b *BackendsZipkin) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &b, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (b *BackendsZipkin) GetAPIVersion() *BackendsAPIVersion {
-	if b == nil {
-		return nil
-	}
-	return b.APIVersion
-}
-
-func (b *BackendsZipkin) GetSharedSpanContext() *bool {
-	if b == nil {
-		return nil
-	}
-	return b.SharedSpanContext
-}
-
-func (b *BackendsZipkin) GetTraceId128bit() *bool {
-	if b == nil {
-		return nil
-	}
-	return b.TraceId128bit
-}
-
-func (b *BackendsZipkin) GetURL() string {
-	if b == nil {
-		return ""
-	}
-	return b.URL
-}
-
-type Backends2 struct {
-	// Datadog backend configuration.
-	Datadog *BackendsDatadog              `json:"datadog,omitempty"`
-	Type    MeshTraceItemBackendsSpecType `json:"type"`
-	// OpenTelemetry backend configuration.
-	OpenTelemetry *MeshTraceItemBackendsSpecOpenTelemetry `json:"openTelemetry,omitempty"`
-	// Zipkin backend configuration.
-	Zipkin *BackendsZipkin `json:"zipkin,omitempty"`
-}
-
-func (b Backends2) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(b, "", false)
-}
-
-func (b *Backends2) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &b, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (b *Backends2) GetDatadog() *BackendsDatadog {
-	if b == nil {
-		return nil
-	}
-	return b.Datadog
-}
-
-func (b *Backends2) GetType() MeshTraceItemBackendsSpecType {
-	if b == nil {
-		return MeshTraceItemBackendsSpecType("")
-	}
-	return b.Type
-}
-
-func (b *Backends2) GetOpenTelemetry() *MeshTraceItemBackendsSpecOpenTelemetry {
-	if b == nil {
-		return nil
-	}
-	return b.OpenTelemetry
-}
-
-func (b *Backends2) GetZipkin() *BackendsZipkin {
-	if b == nil {
-		return nil
-	}
-	return b.Zipkin
-}
-
-// #region class-body-backends2
-// #endregion class-body-backends2
-
-type MeshTraceItemBackendsType string
-
-const (
-	MeshTraceItemBackendsTypeZipkin        MeshTraceItemBackendsType = "Zipkin"
-	MeshTraceItemBackendsTypeDatadog       MeshTraceItemBackendsType = "Datadog"
-	MeshTraceItemBackendsTypeOpenTelemetry MeshTraceItemBackendsType = "OpenTelemetry"
-)
-
-func (e MeshTraceItemBackendsType) ToPointer() *MeshTraceItemBackendsType {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshTraceItemBackendsType) IsExact() bool {
+func (e *MeshTraceItemSpecType) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "Zipkin", "Datadog", "OpenTelemetry":
@@ -685,294 +235,43 @@ func (z *Zipkin) GetURL() string {
 	return z.URL
 }
 
-// Datadog backend configuration.
-type Datadog struct {
-	// Determines if datadog service name should be split based on traffic
-	// direction and destination. For example, with `splitService: true` and a
-	// `backend` service that communicates with a couple of databases, you would
-	// get service names like `backend_INBOUND`, `backend_OUTBOUND_db1`, and
-	// `backend_OUTBOUND_db2` in Datadog.
-	SplitService *bool `default:"false" json:"splitService"`
-	// Address of Datadog collector, only host and port are allowed (no paths,
-	// fragments etc.)
-	URL string `json:"url"`
-}
-
-func (d Datadog) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(d, "", false)
-}
-
-func (d *Datadog) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &d, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (d *Datadog) GetSplitService() *bool {
-	if d == nil {
-		return nil
-	}
-	return d.SplitService
-}
-
-func (d *Datadog) GetURL() string {
-	if d == nil {
-		return ""
-	}
-	return d.URL
-}
-
-// MeshTraceItemBackendsKind - Kind of the backend resource.
-type MeshTraceItemBackendsKind string
-
-const (
-	MeshTraceItemBackendsKindMeshOpenTelemetryBackend MeshTraceItemBackendsKind = "MeshOpenTelemetryBackend"
-)
-
-func (e MeshTraceItemBackendsKind) ToPointer() *MeshTraceItemBackendsKind {
-	return &e
-}
-func (e *MeshTraceItemBackendsKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "MeshOpenTelemetryBackend":
-		*e = MeshTraceItemBackendsKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for MeshTraceItemBackendsKind: %v", v)
-	}
-}
-
-// MeshTraceItemBackendsBackendRef - BackendRef is a reference to a MeshOpenTelemetryBackend resource that
-// defines the collector endpoint.
-type MeshTraceItemBackendsBackendRef struct {
-	// Kind of the backend resource.
-	Kind MeshTraceItemBackendsKind `json:"kind"`
-	// Labels to match the referenced resource. When multiple resources match,
-	// the oldest by creation time wins.
-	Labels map[string]string `json:"labels,omitempty"`
-}
-
-func (m MeshTraceItemBackendsBackendRef) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(m, "", false)
-}
-
-func (m *MeshTraceItemBackendsBackendRef) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *MeshTraceItemBackendsBackendRef) GetKind() MeshTraceItemBackendsKind {
-	if m == nil {
-		return MeshTraceItemBackendsKind("")
-	}
-	return m.Kind
-}
-
-func (m *MeshTraceItemBackendsBackendRef) GetLabels() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Labels
-}
-
-// MeshTraceItemBackendsOpenTelemetry - OpenTelemetry backend configuration.
-type MeshTraceItemBackendsOpenTelemetry struct {
-	// BackendRef is a reference to a MeshOpenTelemetryBackend resource that
-	// defines the collector endpoint.
-	BackendRef *MeshTraceItemBackendsBackendRef `json:"backendRef,omitempty"`
-}
-
-func (m MeshTraceItemBackendsOpenTelemetry) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(m, "", false)
-}
-
-func (m *MeshTraceItemBackendsOpenTelemetry) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *MeshTraceItemBackendsOpenTelemetry) GetBackendRef() *MeshTraceItemBackendsBackendRef {
-	if m == nil {
-		return nil
-	}
-	return m.BackendRef
-}
-
-type Backends1 struct {
-	Type MeshTraceItemBackendsType `json:"type"`
-	// Zipkin backend configuration.
-	Zipkin *Zipkin `json:"zipkin,omitempty"`
+// MeshTraceItemBackends - Only one of zipkin, datadog or openTelemetry can be used.
+type MeshTraceItemBackends struct {
 	// Datadog backend configuration.
 	Datadog *Datadog `json:"datadog,omitempty"`
 	// OpenTelemetry backend configuration.
-	OpenTelemetry *MeshTraceItemBackendsOpenTelemetry `json:"openTelemetry,omitempty"`
+	OpenTelemetry *MeshTraceItemOpenTelemetry `json:"openTelemetry,omitempty"`
+	Type          MeshTraceItemSpecType       `json:"type"`
+	// Zipkin backend configuration.
+	Zipkin *Zipkin `json:"zipkin,omitempty"`
 }
 
-func (b Backends1) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(b, "", false)
-}
-
-func (b *Backends1) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &b, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (b *Backends1) GetType() MeshTraceItemBackendsType {
-	if b == nil {
-		return MeshTraceItemBackendsType("")
-	}
-	return b.Type
-}
-
-func (b *Backends1) GetZipkin() *Zipkin {
-	if b == nil {
+func (m *MeshTraceItemBackends) GetDatadog() *Datadog {
+	if m == nil {
 		return nil
 	}
-	return b.Zipkin
+	return m.Datadog
 }
 
-func (b *Backends1) GetDatadog() *Datadog {
-	if b == nil {
+func (m *MeshTraceItemBackends) GetOpenTelemetry() *MeshTraceItemOpenTelemetry {
+	if m == nil {
 		return nil
 	}
-	return b.Datadog
+	return m.OpenTelemetry
 }
 
-func (b *Backends1) GetOpenTelemetry() *MeshTraceItemBackendsOpenTelemetry {
-	if b == nil {
+func (m *MeshTraceItemBackends) GetType() MeshTraceItemSpecType {
+	if m == nil {
+		return MeshTraceItemSpecType("")
+	}
+	return m.Type
+}
+
+func (m *MeshTraceItemBackends) GetZipkin() *Zipkin {
+	if m == nil {
 		return nil
 	}
-	return b.OpenTelemetry
-}
-
-// #region class-body-backends1
-// #endregion class-body-backends1
-
-type MeshTraceItemBackendsUnionType string
-
-const (
-	MeshTraceItemBackendsUnionTypeBackends1 MeshTraceItemBackendsUnionType = "backends_1"
-	MeshTraceItemBackendsUnionTypeBackends2 MeshTraceItemBackendsUnionType = "backends_2"
-	MeshTraceItemBackendsUnionTypeBackends3 MeshTraceItemBackendsUnionType = "backends_3"
-)
-
-// MeshTraceItemBackends - Only one of zipkin, datadog or openTelemetry can be used.
-type MeshTraceItemBackends struct {
-	Backends1 *Backends1 `queryParam:"inline" union:"member"`
-	Backends2 *Backends2 `queryParam:"inline" union:"member"`
-	Backends3 *Backends3 `queryParam:"inline" union:"member"`
-
-	Type MeshTraceItemBackendsUnionType
-}
-
-func CreateMeshTraceItemBackendsBackends1(backends1 Backends1) MeshTraceItemBackends {
-	typ := MeshTraceItemBackendsUnionTypeBackends1
-
-	return MeshTraceItemBackends{
-		Backends1: &backends1,
-		Type:      typ,
-	}
-}
-
-func CreateMeshTraceItemBackendsBackends2(backends2 Backends2) MeshTraceItemBackends {
-	typ := MeshTraceItemBackendsUnionTypeBackends2
-
-	return MeshTraceItemBackends{
-		Backends2: &backends2,
-		Type:      typ,
-	}
-}
-
-func CreateMeshTraceItemBackendsBackends3(backends3 Backends3) MeshTraceItemBackends {
-	typ := MeshTraceItemBackendsUnionTypeBackends3
-
-	return MeshTraceItemBackends{
-		Backends3: &backends3,
-		Type:      typ,
-	}
-}
-
-func (u *MeshTraceItemBackends) UnmarshalJSON(data []byte) error {
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var backends1 Backends1 = Backends1{}
-	if err := utils.UnmarshalJSON(data, &backends1, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshTraceItemBackendsUnionTypeBackends1,
-			Value: &backends1,
-		})
-	}
-
-	var backends2 Backends2 = Backends2{}
-	if err := utils.UnmarshalJSON(data, &backends2, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshTraceItemBackendsUnionTypeBackends2,
-			Value: &backends2,
-		})
-	}
-
-	var backends3 Backends3 = Backends3{}
-	if err := utils.UnmarshalJSON(data, &backends3, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshTraceItemBackendsUnionTypeBackends3,
-			Value: &backends3,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshTraceItemBackends", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshTraceItemBackends", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(MeshTraceItemBackendsUnionType)
-	switch best.Type {
-	case MeshTraceItemBackendsUnionTypeBackends1:
-		u.Backends1 = best.Value.(*Backends1)
-		return nil
-	case MeshTraceItemBackendsUnionTypeBackends2:
-		u.Backends2 = best.Value.(*Backends2)
-		return nil
-	case MeshTraceItemBackendsUnionTypeBackends3:
-		u.Backends3 = best.Value.(*Backends3)
-		return nil
-	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshTraceItemBackends", string(data))
-}
-
-func (u MeshTraceItemBackends) MarshalJSON() ([]byte, error) {
-	if u.Backends1 != nil {
-		return utils.MarshalJSON(u.Backends1, "", true)
-	}
-
-	if u.Backends2 != nil {
-		return utils.MarshalJSON(u.Backends2, "", true)
-	}
-
-	if u.Backends3 != nil {
-		return utils.MarshalJSON(u.Backends3, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type MeshTraceItemBackends: all fields are null")
+	return m.Zipkin
 }
 
 type ClientType string

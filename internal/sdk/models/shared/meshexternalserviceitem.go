@@ -210,11 +210,11 @@ func (m *MeshExternalServiceItemSpecTLSEnvVar) GetName() string {
 	return m.Name
 }
 
-type MeshExternalServiceItemSpecTLSFile struct {
+type MeshExternalServiceItemFile struct {
 	Path string `json:"path"`
 }
 
-func (m *MeshExternalServiceItemSpecTLSFile) GetPath() string {
+func (m *MeshExternalServiceItemFile) GetPath() string {
 	if m == nil {
 		return ""
 	}
@@ -301,7 +301,7 @@ func (e *MeshExternalServiceItemSpecTLSType) IsExact() bool {
 // CaCert defines a certificate of CA.
 type CaCert struct {
 	EnvVar         *MeshExternalServiceItemSpecTLSEnvVar         `json:"envVar,omitempty"`
-	File           *MeshExternalServiceItemSpecTLSFile           `json:"file,omitempty"`
+	File           *MeshExternalServiceItemFile                  `json:"file,omitempty"`
 	InsecureInline *MeshExternalServiceItemSpecTLSInsecureInline `json:"insecureInline,omitempty"`
 	SecretRef      *MeshExternalServiceItemSpecTLSSecretRef      `json:"secretRef,omitempty"`
 	Type           MeshExternalServiceItemSpecTLSType            `json:"type"`
@@ -314,7 +314,7 @@ func (c *CaCert) GetEnvVar() *MeshExternalServiceItemSpecTLSEnvVar {
 	return c.EnvVar
 }
 
-func (c *CaCert) GetFile() *MeshExternalServiceItemSpecTLSFile {
+func (c *CaCert) GetFile() *MeshExternalServiceItemFile {
 	if c == nil {
 		return nil
 	}
@@ -353,11 +353,11 @@ func (m *MeshExternalServiceItemEnvVar) GetName() string {
 	return m.Name
 }
 
-type MeshExternalServiceItemFile struct {
+type MeshExternalServiceItemSpecFile struct {
 	Path string `json:"path"`
 }
 
-func (m *MeshExternalServiceItemFile) GetPath() string {
+func (m *MeshExternalServiceItemSpecFile) GetPath() string {
 	if m == nil {
 		return ""
 	}
@@ -444,7 +444,7 @@ func (e *MeshExternalServiceItemSpecTLSVerificationType) IsExact() bool {
 // ClientCert defines a certificate of a client.
 type ClientCert struct {
 	EnvVar         *MeshExternalServiceItemEnvVar                 `json:"envVar,omitempty"`
-	File           *MeshExternalServiceItemFile                   `json:"file,omitempty"`
+	File           *MeshExternalServiceItemSpecFile               `json:"file,omitempty"`
 	InsecureInline *MeshExternalServiceItemInsecureInline         `json:"insecureInline,omitempty"`
 	SecretRef      *MeshExternalServiceItemSecretRef              `json:"secretRef,omitempty"`
 	Type           MeshExternalServiceItemSpecTLSVerificationType `json:"type"`
@@ -457,7 +457,7 @@ func (c *ClientCert) GetEnvVar() *MeshExternalServiceItemEnvVar {
 	return c.EnvVar
 }
 
-func (c *ClientCert) GetFile() *MeshExternalServiceItemFile {
+func (c *ClientCert) GetFile() *MeshExternalServiceItemSpecFile {
 	if c == nil {
 		return nil
 	}
@@ -496,11 +496,11 @@ func (m *MeshExternalServiceItemSpecEnvVar) GetName() string {
 	return m.Name
 }
 
-type MeshExternalServiceItemSpecFile struct {
+type MeshExternalServiceItemSpecTLSFile struct {
 	Path string `json:"path"`
 }
 
-func (m *MeshExternalServiceItemSpecFile) GetPath() string {
+func (m *MeshExternalServiceItemSpecTLSFile) GetPath() string {
 	if m == nil {
 		return ""
 	}
@@ -587,7 +587,7 @@ func (e *MeshExternalServiceItemSpecTLSVerificationClientKeyType) IsExact() bool
 // ClientKey defines a client private key.
 type ClientKey struct {
 	EnvVar         *MeshExternalServiceItemSpecEnvVar                      `json:"envVar,omitempty"`
-	File           *MeshExternalServiceItemSpecFile                        `json:"file,omitempty"`
+	File           *MeshExternalServiceItemSpecTLSFile                     `json:"file,omitempty"`
 	InsecureInline *MeshExternalServiceItemSpecInsecureInline              `json:"insecureInline,omitempty"`
 	SecretRef      *MeshExternalServiceItemSpecSecretRef                   `json:"secretRef,omitempty"`
 	Type           MeshExternalServiceItemSpecTLSVerificationClientKeyType `json:"type"`
@@ -600,7 +600,7 @@ func (c *ClientKey) GetEnvVar() *MeshExternalServiceItemSpecEnvVar {
 	return c.EnvVar
 }
 
-func (c *ClientKey) GetFile() *MeshExternalServiceItemSpecFile {
+func (c *ClientKey) GetFile() *MeshExternalServiceItemSpecTLSFile {
 	if c == nil {
 		return nil
 	}

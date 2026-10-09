@@ -11,7 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/int32validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -110,7 +109,7 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
-				Description: `name of the MeshHTTPRoute. Requires replacement if changed.`,
+				Description: `Name of the Kuma resource. Requires replacement if changed.`,
 				Validators: []validator.String{
 					stringvalidator.UTF8LengthAtMost(253),
 					stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
@@ -199,2079 +198,340 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 																			speakeasy_objectvalidators.NotNull(),
 																		},
 																		Attributes: map[string]schema.Attribute{
-																			"five": schema.SingleNestedAttribute{
+																			"request_header_modifier": schema.SingleNestedAttribute{
 																				Optional: true,
 																				Attributes: map[string]schema.Attribute{
-																					"request_header_modifier": schema.SingleNestedAttribute{
+																					"add": schema.ListNestedAttribute{
+																						Computed: true,
 																						Optional: true,
-																						Attributes: map[string]schema.Attribute{
-																							"add": schema.ListNestedAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								NestedObject: schema.NestedAttributeObject{
-																									Validators: []validator.Object{
-																										speakeasy_objectvalidators.NotNull(),
-																									},
-																									Attributes: map[string]schema.Attribute{
-																										"name": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																												stringvalidator.UTF8LengthBetween(1, 256),
-																												stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																											},
-																										},
-																										"value": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																											},
-																										},
-																									},
-																								},
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
-																								},
+																						PlanModifiers: []planmodifier.List{
+																							custom_listplanmodifier.SupressZeroNullModifier(),
+																						},
+																						NestedObject: schema.NestedAttributeObject{
+																							Validators: []validator.Object{
+																								speakeasy_objectvalidators.NotNull(),
 																							},
-																							"remove": schema.ListAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								ElementType: types.StringType,
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
-																								},
-																							},
-																							"set": schema.ListNestedAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								NestedObject: schema.NestedAttributeObject{
-																									Validators: []validator.Object{
-																										speakeasy_objectvalidators.NotNull(),
-																									},
-																									Attributes: map[string]schema.Attribute{
-																										"name": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																												stringvalidator.UTF8LengthBetween(1, 256),
-																												stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																											},
-																										},
-																										"value": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																											},
-																										},
+																							Attributes: map[string]schema.Attribute{
+																								"name": schema.StringAttribute{
+																									Optional:    true,
+																									Description: `Not Null`,
+																									Validators: []validator.String{
+																										speakeasy_stringvalidators.NotNull(),
+																										stringvalidator.UTF8LengthBetween(1, 256),
+																										stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
 																									},
 																								},
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
+																								"value": schema.StringAttribute{
+																									Optional:    true,
+																									Description: `Not Null`,
+																									Validators: []validator.String{
+																										speakeasy_stringvalidators.NotNull(),
+																									},
 																								},
 																							},
 																						},
-																						MarkdownDescription: `Only one action is supported per header name.` + "\n" +
-																							`Configuration to set or add multiple values for a header must use RFC 7230` + "\n" +
-																							`header value formatting, separating each value with a comma.`,
-																					},
-																					"request_mirror": schema.SingleNestedAttribute{
-																						Optional: true,
-																						Attributes: map[string]schema.Attribute{
-																							"backend_ref": schema.SingleNestedAttribute{
-																								Optional: true,
-																								Attributes: map[string]schema.Attribute{
-																									"kind": schema.StringAttribute{
-																										Optional:    true,
-																										Description: `Kind of the referenced resource. possible known values include one of ["MeshService", "MeshExternalService", "MeshMultiZoneService"]; Not Null`,
-																										Validators: []validator.String{
-																											speakeasy_stringvalidators.NotNull(),
-																										},
-																									},
-																									"labels": schema.MapAttribute{
-																										Optional:    true,
-																										ElementType: types.StringType,
-																										Description: `Labels are used to select the referenced real resource.`,
-																									},
-																									"port": schema.Int32Attribute{
-																										Optional:    true,
-																										Description: `Port is only supported when this ref refers to a real MeshService object`,
-																									},
-																									"section_name": schema.StringAttribute{
-																										Optional: true,
-																										MarkdownDescription: `SectionName is used to target a specific section of the resource.` + "\n" +
-																											`For example, you can target a port from MeshService.ports[] by its name.`,
-																									},
-																									"weight": schema.Int64Attribute{
-																										Optional: true,
-																										Validators: []validator.Int64{
-																											int64validator.Between(0, 4294967295),
-																										},
-																									},
-																								},
-																								Description: `BackendRef defines the destination traffic is routed to. Not Null`,
-																								Validators: []validator.Object{
-																									speakeasy_objectvalidators.NotNull(),
-																								},
-																							},
-																							"percentage": schema.SingleNestedAttribute{
-																								Optional: true,
-																								Attributes: map[string]schema.Attribute{
-																									"integer": schema.Int64Attribute{
-																										Optional: true,
-																										Validators: []validator.Int64{
-																											int64validator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("str"),
-																											}...),
-																										},
-																									},
-																									"str": schema.StringAttribute{
-																										Optional: true,
-																										Validators: []validator.String{
-																											stringvalidator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("integer"),
-																											}...),
-																										},
-																									},
-																								},
-																								MarkdownDescription: `Percentage of requests to mirror. If not specified, all requests` + "\n" +
-																									`to the target cluster will be mirrored.`,
-																							},
+																						Validators: []validator.List{
+																							listvalidator.SizeAtMost(16),
 																						},
 																					},
-																					"request_redirect": schema.SingleNestedAttribute{
+																					"remove": schema.ListAttribute{
+																						Computed: true,
 																						Optional: true,
-																						Attributes: map[string]schema.Attribute{
-																							"hostname": schema.StringAttribute{
-																								Optional: true,
-																								MarkdownDescription: `PreciseHostname is the fully qualified domain name of a network host. This` + "\n" +
-																									`matches the RFC 1123 definition of a hostname with 1 notable exception that` + "\n" +
-																									`numeric IP addresses are not allowed.` + "\n" +
-																									`` + "\n" +
-																									`Note that as per RFC1035 and RFC1123, a *label* must consist of lower case` + "\n" +
-																									`alphanumeric characters or '-', and must start and end with an alphanumeric` + "\n" +
-																									`character. No other punctuation is allowed.`,
-																								Validators: []validator.String{
-																									stringvalidator.UTF8LengthBetween(1, 253),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
-																								},
-																							},
-																							"path": schema.SingleNestedAttribute{
-																								Optional: true,
-																								Attributes: map[string]schema.Attribute{
-																									"one": schema.SingleNestedAttribute{
-																										Optional: true,
-																										Attributes: map[string]schema.Attribute{
-																											"replace_full_path": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"replace_prefix_match": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"type": schema.StringAttribute{
-																												Optional:    true,
-																												Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																												Validators: []validator.String{
-																													speakeasy_stringvalidators.NotNull(),
-																												},
-																											},
-																										},
-																										Validators: []validator.Object{
-																											objectvalidator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("two"),
-																											}...),
-																										},
-																									},
-																									"two": schema.SingleNestedAttribute{
-																										Optional: true,
-																										Attributes: map[string]schema.Attribute{
-																											"replace_full_path": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"replace_prefix_match": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"type": schema.StringAttribute{
-																												Optional:    true,
-																												Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																												Validators: []validator.String{
-																													speakeasy_stringvalidators.NotNull(),
-																												},
-																											},
-																										},
-																										Validators: []validator.Object{
-																											objectvalidator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("one"),
-																											}...),
-																										},
-																									},
-																								},
-																								MarkdownDescription: `Path defines parameters used to modify the path of the incoming request.` + "\n" +
-																									`The modified path is then used to construct the location header.` + "\n" +
-																									`When empty, the request path is used as-is.`,
-																							},
-																							"port": schema.Int32Attribute{
-																								Optional: true,
-																								MarkdownDescription: `Port is the port to be used in the value of the ` + "`" + `Location` + "`" + `` + "\n" +
-																									`header in the response.` + "\n" +
-																									`When empty, port (if specified) of the request is used.`,
-																								Validators: []validator.Int32{
-																									int32validator.Between(1, 65535),
-																								},
-																							},
-																							"scheme": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `possible known values include one of ["http", "https"]`,
-																							},
-																							"status_code": schema.Int64Attribute{
-																								Computed:    true,
-																								Optional:    true,
-																								Default:     int64default.StaticInt64(302),
-																								Description: `StatusCode is the HTTP status code to be used in response. possible known values include one of [301, 302, 303, 307, 308]; Default: 302`,
-																							},
+																						PlanModifiers: []planmodifier.List{
+																							custom_listplanmodifier.SupressZeroNullModifier(),
+																						},
+																						ElementType: types.StringType,
+																						Validators: []validator.List{
+																							listvalidator.SizeAtMost(16),
 																						},
 																					},
-																					"response_header_modifier": schema.SingleNestedAttribute{
+																					"set": schema.ListNestedAttribute{
+																						Computed: true,
 																						Optional: true,
-																						Attributes: map[string]schema.Attribute{
-																							"add": schema.ListNestedAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								NestedObject: schema.NestedAttributeObject{
-																									Validators: []validator.Object{
-																										speakeasy_objectvalidators.NotNull(),
-																									},
-																									Attributes: map[string]schema.Attribute{
-																										"name": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																												stringvalidator.UTF8LengthBetween(1, 256),
-																												stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																											},
-																										},
-																										"value": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																											},
-																										},
-																									},
-																								},
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
-																								},
+																						PlanModifiers: []planmodifier.List{
+																							custom_listplanmodifier.SupressZeroNullModifier(),
+																						},
+																						NestedObject: schema.NestedAttributeObject{
+																							Validators: []validator.Object{
+																								speakeasy_objectvalidators.NotNull(),
 																							},
-																							"remove": schema.ListAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								ElementType: types.StringType,
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
-																								},
-																							},
-																							"set": schema.ListNestedAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								NestedObject: schema.NestedAttributeObject{
-																									Validators: []validator.Object{
-																										speakeasy_objectvalidators.NotNull(),
-																									},
-																									Attributes: map[string]schema.Attribute{
-																										"name": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																												stringvalidator.UTF8LengthBetween(1, 256),
-																												stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																											},
-																										},
-																										"value": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																											},
-																										},
+																							Attributes: map[string]schema.Attribute{
+																								"name": schema.StringAttribute{
+																									Optional:    true,
+																									Description: `Not Null`,
+																									Validators: []validator.String{
+																										speakeasy_stringvalidators.NotNull(),
+																										stringvalidator.UTF8LengthBetween(1, 256),
+																										stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
 																									},
 																								},
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
+																								"value": schema.StringAttribute{
+																									Optional:    true,
+																									Description: `Not Null`,
+																									Validators: []validator.String{
+																										speakeasy_stringvalidators.NotNull(),
+																									},
 																								},
 																							},
 																						},
-																						MarkdownDescription: `Only one action is supported per header name.` + "\n" +
-																							`Configuration to set or add multiple values for a header must use RFC 7230` + "\n" +
-																							`header value formatting, separating each value with a comma.`,
-																					},
-																					"type": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `possible known values include one of ["RequestHeaderModifier", "ResponseHeaderModifier", "RequestRedirect", "URLRewrite", "RequestMirror"]; Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
-																					},
-																					"url_rewrite": schema.SingleNestedAttribute{
-																						Optional: true,
-																						Attributes: map[string]schema.Attribute{
-																							"host_to_backend_hostname": schema.BoolAttribute{
-																								Optional:    true,
-																								Description: `HostToBackendHostname is not currently supported and must not be set.`,
-																							},
-																							"hostname": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Hostname is the value to be used to replace the host header value during forwarding.`,
-																								Validators: []validator.String{
-																									stringvalidator.UTF8LengthBetween(1, 253),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
-																								},
-																							},
-																							"path": schema.SingleNestedAttribute{
-																								Optional: true,
-																								Attributes: map[string]schema.Attribute{
-																									"one": schema.SingleNestedAttribute{
-																										Optional: true,
-																										Attributes: map[string]schema.Attribute{
-																											"replace_full_path": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"replace_prefix_match": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"type": schema.StringAttribute{
-																												Optional:    true,
-																												Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																												Validators: []validator.String{
-																													speakeasy_stringvalidators.NotNull(),
-																												},
-																											},
-																										},
-																										Validators: []validator.Object{
-																											objectvalidator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("two"),
-																											}...),
-																										},
-																									},
-																									"two": schema.SingleNestedAttribute{
-																										Optional: true,
-																										Attributes: map[string]schema.Attribute{
-																											"replace_full_path": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"replace_prefix_match": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"type": schema.StringAttribute{
-																												Optional:    true,
-																												Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																												Validators: []validator.String{
-																													speakeasy_stringvalidators.NotNull(),
-																												},
-																											},
-																										},
-																										Validators: []validator.Object{
-																											objectvalidator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("one"),
-																											}...),
-																										},
-																									},
-																								},
-																								Description: `Path defines a path rewrite.`,
-																							},
+																						Validators: []validator.List{
+																							listvalidator.SizeAtMost(16),
 																						},
 																					},
 																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("one"),
-																						path.MatchRelative().AtParent().AtName("two"),
-																						path.MatchRelative().AtParent().AtName("three"),
-																						path.MatchRelative().AtParent().AtName("four"),
-																					}...),
+																				MarkdownDescription: `Only one action is supported per header name.` + "\n" +
+																					`Configuration to set or add multiple values for a header must use RFC 7230` + "\n" +
+																					`header value formatting, separating each value with a comma.`,
+																			},
+																			"request_mirror": schema.SingleNestedAttribute{
+																				Optional: true,
+																				Attributes: map[string]schema.Attribute{
+																					"backend_ref": schema.SingleNestedAttribute{
+																						Optional: true,
+																						Attributes: map[string]schema.Attribute{
+																							"kind": schema.StringAttribute{
+																								Optional:    true,
+																								Description: `Kind of the referenced resource. possible known values include one of ["MeshService", "MeshExternalService", "MeshMultiZoneService"]; Not Null`,
+																								Validators: []validator.String{
+																									speakeasy_stringvalidators.NotNull(),
+																								},
+																							},
+																							"labels": schema.MapAttribute{
+																								Optional:    true,
+																								ElementType: types.StringType,
+																								Description: `Labels are used to select the referenced real resource.`,
+																							},
+																							"port": schema.Int32Attribute{
+																								Optional:    true,
+																								Description: `Port is only supported when this ref refers to a real MeshService object`,
+																							},
+																							"section_name": schema.StringAttribute{
+																								Optional: true,
+																								MarkdownDescription: `SectionName is used to target a specific section of the resource.` + "\n" +
+																									`For example, you can target a port from MeshService.ports[] by its name.`,
+																							},
+																							"weight": schema.Int64Attribute{
+																								Optional: true,
+																								Validators: []validator.Int64{
+																									int64validator.Between(0, 4294967295),
+																								},
+																							},
+																						},
+																						Description: `BackendRef defines the destination traffic is routed to. Not Null`,
+																						Validators: []validator.Object{
+																							speakeasy_objectvalidators.NotNull(),
+																						},
+																					},
+																					"percentage": schema.SingleNestedAttribute{
+																						Optional: true,
+																						Attributes: map[string]schema.Attribute{
+																							"integer": schema.Int64Attribute{
+																								Optional: true,
+																								Validators: []validator.Int64{
+																									int64validator.ConflictsWith(path.Expressions{
+																										path.MatchRelative().AtParent().AtName("str"),
+																									}...),
+																								},
+																							},
+																							"str": schema.StringAttribute{
+																								Optional: true,
+																								Validators: []validator.String{
+																									stringvalidator.ConflictsWith(path.Expressions{
+																										path.MatchRelative().AtParent().AtName("integer"),
+																									}...),
+																								},
+																							},
+																						},
+																						MarkdownDescription: `Percentage of requests to mirror. If not specified, all requests` + "\n" +
+																							`to the target cluster will be mirrored.`,
+																					},
 																				},
 																			},
-																			"four": schema.SingleNestedAttribute{
+																			"request_redirect": schema.SingleNestedAttribute{
 																				Optional: true,
 																				Attributes: map[string]schema.Attribute{
-																					"request_header_modifier": schema.SingleNestedAttribute{
+																					"hostname": schema.StringAttribute{
 																						Optional: true,
-																						Attributes: map[string]schema.Attribute{
-																							"add": schema.ListNestedAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								NestedObject: schema.NestedAttributeObject{
-																									Validators: []validator.Object{
-																										speakeasy_objectvalidators.NotNull(),
-																									},
-																									Attributes: map[string]schema.Attribute{
-																										"name": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																												stringvalidator.UTF8LengthBetween(1, 256),
-																												stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																											},
-																										},
-																										"value": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																											},
-																										},
-																									},
-																								},
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
-																								},
-																							},
-																							"remove": schema.ListAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								ElementType: types.StringType,
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
-																								},
-																							},
-																							"set": schema.ListNestedAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								NestedObject: schema.NestedAttributeObject{
-																									Validators: []validator.Object{
-																										speakeasy_objectvalidators.NotNull(),
-																									},
-																									Attributes: map[string]schema.Attribute{
-																										"name": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																												stringvalidator.UTF8LengthBetween(1, 256),
-																												stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																											},
-																										},
-																										"value": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																											},
-																										},
-																									},
-																								},
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
-																								},
-																							},
-																						},
-																						MarkdownDescription: `Only one action is supported per header name.` + "\n" +
-																							`Configuration to set or add multiple values for a header must use RFC 7230` + "\n" +
-																							`header value formatting, separating each value with a comma.`,
-																					},
-																					"request_mirror": schema.SingleNestedAttribute{
-																						Optional: true,
-																						Attributes: map[string]schema.Attribute{
-																							"backend_ref": schema.SingleNestedAttribute{
-																								Optional: true,
-																								Attributes: map[string]schema.Attribute{
-																									"kind": schema.StringAttribute{
-																										Optional:    true,
-																										Description: `Kind of the referenced resource. possible known values include one of ["MeshService", "MeshExternalService", "MeshMultiZoneService"]; Not Null`,
-																										Validators: []validator.String{
-																											speakeasy_stringvalidators.NotNull(),
-																										},
-																									},
-																									"labels": schema.MapAttribute{
-																										Optional:    true,
-																										ElementType: types.StringType,
-																										Description: `Labels are used to select the referenced real resource.`,
-																									},
-																									"port": schema.Int32Attribute{
-																										Optional:    true,
-																										Description: `Port is only supported when this ref refers to a real MeshService object`,
-																									},
-																									"section_name": schema.StringAttribute{
-																										Optional: true,
-																										MarkdownDescription: `SectionName is used to target a specific section of the resource.` + "\n" +
-																											`For example, you can target a port from MeshService.ports[] by its name.`,
-																									},
-																									"weight": schema.Int64Attribute{
-																										Optional: true,
-																										Validators: []validator.Int64{
-																											int64validator.Between(0, 4294967295),
-																										},
-																									},
-																								},
-																								Description: `BackendRef defines the destination traffic is routed to. Not Null`,
-																								Validators: []validator.Object{
-																									speakeasy_objectvalidators.NotNull(),
-																								},
-																							},
-																							"percentage": schema.SingleNestedAttribute{
-																								Optional: true,
-																								Attributes: map[string]schema.Attribute{
-																									"integer": schema.Int64Attribute{
-																										Optional: true,
-																										Validators: []validator.Int64{
-																											int64validator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("str"),
-																											}...),
-																										},
-																									},
-																									"str": schema.StringAttribute{
-																										Optional: true,
-																										Validators: []validator.String{
-																											stringvalidator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("integer"),
-																											}...),
-																										},
-																									},
-																								},
-																								MarkdownDescription: `Percentage of requests to mirror. If not specified, all requests` + "\n" +
-																									`to the target cluster will be mirrored.`,
-																							},
-																						},
-																					},
-																					"request_redirect": schema.SingleNestedAttribute{
-																						Optional: true,
-																						Attributes: map[string]schema.Attribute{
-																							"hostname": schema.StringAttribute{
-																								Optional: true,
-																								MarkdownDescription: `PreciseHostname is the fully qualified domain name of a network host. This` + "\n" +
-																									`matches the RFC 1123 definition of a hostname with 1 notable exception that` + "\n" +
-																									`numeric IP addresses are not allowed.` + "\n" +
-																									`` + "\n" +
-																									`Note that as per RFC1035 and RFC1123, a *label* must consist of lower case` + "\n" +
-																									`alphanumeric characters or '-', and must start and end with an alphanumeric` + "\n" +
-																									`character. No other punctuation is allowed.`,
-																								Validators: []validator.String{
-																									stringvalidator.UTF8LengthBetween(1, 253),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
-																								},
-																							},
-																							"path": schema.SingleNestedAttribute{
-																								Optional: true,
-																								Attributes: map[string]schema.Attribute{
-																									"one": schema.SingleNestedAttribute{
-																										Optional: true,
-																										Attributes: map[string]schema.Attribute{
-																											"replace_full_path": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"replace_prefix_match": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"type": schema.StringAttribute{
-																												Optional:    true,
-																												Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																												Validators: []validator.String{
-																													speakeasy_stringvalidators.NotNull(),
-																												},
-																											},
-																										},
-																										Validators: []validator.Object{
-																											objectvalidator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("two"),
-																											}...),
-																										},
-																									},
-																									"two": schema.SingleNestedAttribute{
-																										Optional: true,
-																										Attributes: map[string]schema.Attribute{
-																											"replace_full_path": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"replace_prefix_match": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"type": schema.StringAttribute{
-																												Optional:    true,
-																												Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																												Validators: []validator.String{
-																													speakeasy_stringvalidators.NotNull(),
-																												},
-																											},
-																										},
-																										Validators: []validator.Object{
-																											objectvalidator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("one"),
-																											}...),
-																										},
-																									},
-																								},
-																								MarkdownDescription: `Path defines parameters used to modify the path of the incoming request.` + "\n" +
-																									`The modified path is then used to construct the location header.` + "\n" +
-																									`When empty, the request path is used as-is.`,
-																							},
-																							"port": schema.Int32Attribute{
-																								Optional: true,
-																								MarkdownDescription: `Port is the port to be used in the value of the ` + "`" + `Location` + "`" + `` + "\n" +
-																									`header in the response.` + "\n" +
-																									`When empty, port (if specified) of the request is used.`,
-																								Validators: []validator.Int32{
-																									int32validator.Between(1, 65535),
-																								},
-																							},
-																							"scheme": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `possible known values include one of ["http", "https"]`,
-																							},
-																							"status_code": schema.Int64Attribute{
-																								Computed:    true,
-																								Optional:    true,
-																								Default:     int64default.StaticInt64(302),
-																								Description: `StatusCode is the HTTP status code to be used in response. possible known values include one of [301, 302, 303, 307, 308]; Default: 302`,
-																							},
-																						},
-																					},
-																					"response_header_modifier": schema.SingleNestedAttribute{
-																						Optional: true,
-																						Attributes: map[string]schema.Attribute{
-																							"add": schema.ListNestedAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								NestedObject: schema.NestedAttributeObject{
-																									Validators: []validator.Object{
-																										speakeasy_objectvalidators.NotNull(),
-																									},
-																									Attributes: map[string]schema.Attribute{
-																										"name": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																												stringvalidator.UTF8LengthBetween(1, 256),
-																												stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																											},
-																										},
-																										"value": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																											},
-																										},
-																									},
-																								},
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
-																								},
-																							},
-																							"remove": schema.ListAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								ElementType: types.StringType,
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
-																								},
-																							},
-																							"set": schema.ListNestedAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								NestedObject: schema.NestedAttributeObject{
-																									Validators: []validator.Object{
-																										speakeasy_objectvalidators.NotNull(),
-																									},
-																									Attributes: map[string]schema.Attribute{
-																										"name": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																												stringvalidator.UTF8LengthBetween(1, 256),
-																												stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																											},
-																										},
-																										"value": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																											},
-																										},
-																									},
-																								},
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
-																								},
-																							},
-																						},
-																						MarkdownDescription: `Only one action is supported per header name.` + "\n" +
-																							`Configuration to set or add multiple values for a header must use RFC 7230` + "\n" +
-																							`header value formatting, separating each value with a comma.`,
-																					},
-																					"type": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `possible known values include one of ["RequestHeaderModifier", "ResponseHeaderModifier", "RequestRedirect", "URLRewrite", "RequestMirror"]; Not Null`,
+																						MarkdownDescription: `PreciseHostname is the fully qualified domain name of a network host. This` + "\n" +
+																							`matches the RFC 1123 definition of a hostname with 1 notable exception that` + "\n" +
+																							`numeric IP addresses are not allowed.` + "\n" +
+																							`` + "\n" +
+																							`Note that as per RFC1035 and RFC1123, a *label* must consist of lower case` + "\n" +
+																							`alphanumeric characters or '-', and must start and end with an alphanumeric` + "\n" +
+																							`character. No other punctuation is allowed.`,
 																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
+																							stringvalidator.UTF8LengthBetween(1, 253),
+																							stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
 																						},
 																					},
-																					"url_rewrite": schema.SingleNestedAttribute{
+																					"path": schema.SingleNestedAttribute{
 																						Optional: true,
 																						Attributes: map[string]schema.Attribute{
-																							"host_to_backend_hostname": schema.BoolAttribute{
-																								Optional:    true,
-																								Description: `HostToBackendHostname is not currently supported and must not be set.`,
-																							},
-																							"hostname": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Hostname is the value to be used to replace the host header value during forwarding.`,
-																								Validators: []validator.String{
-																									stringvalidator.UTF8LengthBetween(1, 253),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
-																								},
-																							},
-																							"path": schema.SingleNestedAttribute{
+																							"replace_full_path": schema.StringAttribute{
 																								Optional: true,
-																								Attributes: map[string]schema.Attribute{
-																									"one": schema.SingleNestedAttribute{
-																										Optional: true,
-																										Attributes: map[string]schema.Attribute{
-																											"replace_full_path": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"replace_prefix_match": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"type": schema.StringAttribute{
-																												Optional:    true,
-																												Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																												Validators: []validator.String{
-																													speakeasy_stringvalidators.NotNull(),
-																												},
-																											},
-																										},
-																										Validators: []validator.Object{
-																											objectvalidator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("two"),
-																											}...),
-																										},
-																									},
-																									"two": schema.SingleNestedAttribute{
-																										Optional: true,
-																										Attributes: map[string]schema.Attribute{
-																											"replace_full_path": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"replace_prefix_match": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"type": schema.StringAttribute{
-																												Optional:    true,
-																												Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																												Validators: []validator.String{
-																													speakeasy_stringvalidators.NotNull(),
-																												},
-																											},
-																										},
-																										Validators: []validator.Object{
-																											objectvalidator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("one"),
-																											}...),
-																										},
-																									},
+																							},
+																							"replace_prefix_match": schema.StringAttribute{
+																								Optional: true,
+																							},
+																							"type": schema.StringAttribute{
+																								Optional:    true,
+																								Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
+																								Validators: []validator.String{
+																									speakeasy_stringvalidators.NotNull(),
 																								},
-																								Description: `Path defines a path rewrite.`,
 																							},
 																						},
+																						MarkdownDescription: `Path defines parameters used to modify the path of the incoming request.` + "\n" +
+																							`The modified path is then used to construct the location header.` + "\n" +
+																							`When empty, the request path is used as-is.`,
 																					},
-																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("one"),
-																						path.MatchRelative().AtParent().AtName("two"),
-																						path.MatchRelative().AtParent().AtName("three"),
-																						path.MatchRelative().AtParent().AtName("five"),
-																					}...),
+																					"port": schema.Int32Attribute{
+																						Optional: true,
+																						MarkdownDescription: `Port is the port to be used in the value of the ` + "`" + `Location` + "`" + `` + "\n" +
+																							`header in the response.` + "\n" +
+																							`When empty, port (if specified) of the request is used.`,
+																						Validators: []validator.Int32{
+																							int32validator.Between(1, 65535),
+																						},
+																					},
+																					"scheme": schema.StringAttribute{
+																						Optional:    true,
+																						Description: `possible known values include one of ["http", "https"]`,
+																					},
+																					"status_code": schema.Int64Attribute{
+																						Computed:    true,
+																						Optional:    true,
+																						Default:     int64default.StaticInt64(302),
+																						Description: `StatusCode is the HTTP status code to be used in response. possible known values include one of [301, 302, 303, 307, 308]; Default: 302`,
+																					},
 																				},
 																			},
-																			"one": schema.SingleNestedAttribute{
+																			"response_header_modifier": schema.SingleNestedAttribute{
 																				Optional: true,
 																				Attributes: map[string]schema.Attribute{
-																					"request_header_modifier": schema.SingleNestedAttribute{
+																					"add": schema.ListNestedAttribute{
+																						Computed: true,
 																						Optional: true,
-																						Attributes: map[string]schema.Attribute{
-																							"add": schema.ListNestedAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								NestedObject: schema.NestedAttributeObject{
-																									Validators: []validator.Object{
-																										speakeasy_objectvalidators.NotNull(),
-																									},
-																									Attributes: map[string]schema.Attribute{
-																										"name": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																												stringvalidator.UTF8LengthBetween(1, 256),
-																												stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																											},
-																										},
-																										"value": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																											},
-																										},
-																									},
-																								},
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
-																								},
+																						PlanModifiers: []planmodifier.List{
+																							custom_listplanmodifier.SupressZeroNullModifier(),
+																						},
+																						NestedObject: schema.NestedAttributeObject{
+																							Validators: []validator.Object{
+																								speakeasy_objectvalidators.NotNull(),
 																							},
-																							"remove": schema.ListAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								ElementType: types.StringType,
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
-																								},
-																							},
-																							"set": schema.ListNestedAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								NestedObject: schema.NestedAttributeObject{
-																									Validators: []validator.Object{
-																										speakeasy_objectvalidators.NotNull(),
-																									},
-																									Attributes: map[string]schema.Attribute{
-																										"name": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																												stringvalidator.UTF8LengthBetween(1, 256),
-																												stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																											},
-																										},
-																										"value": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																											},
-																										},
+																							Attributes: map[string]schema.Attribute{
+																								"name": schema.StringAttribute{
+																									Optional:    true,
+																									Description: `Not Null`,
+																									Validators: []validator.String{
+																										speakeasy_stringvalidators.NotNull(),
+																										stringvalidator.UTF8LengthBetween(1, 256),
+																										stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
 																									},
 																								},
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
+																								"value": schema.StringAttribute{
+																									Optional:    true,
+																									Description: `Not Null`,
+																									Validators: []validator.String{
+																										speakeasy_stringvalidators.NotNull(),
+																									},
 																								},
 																							},
 																						},
-																						MarkdownDescription: `Only one action is supported per header name.` + "\n" +
-																							`Configuration to set or add multiple values for a header must use RFC 7230` + "\n" +
-																							`header value formatting, separating each value with a comma.`,
-																					},
-																					"request_mirror": schema.SingleNestedAttribute{
-																						Optional: true,
-																						Attributes: map[string]schema.Attribute{
-																							"backend_ref": schema.SingleNestedAttribute{
-																								Optional: true,
-																								Attributes: map[string]schema.Attribute{
-																									"kind": schema.StringAttribute{
-																										Optional:    true,
-																										Description: `Kind of the referenced resource. possible known values include one of ["MeshService", "MeshExternalService", "MeshMultiZoneService"]; Not Null`,
-																										Validators: []validator.String{
-																											speakeasy_stringvalidators.NotNull(),
-																										},
-																									},
-																									"labels": schema.MapAttribute{
-																										Optional:    true,
-																										ElementType: types.StringType,
-																										Description: `Labels are used to select the referenced real resource.`,
-																									},
-																									"port": schema.Int32Attribute{
-																										Optional:    true,
-																										Description: `Port is only supported when this ref refers to a real MeshService object`,
-																									},
-																									"section_name": schema.StringAttribute{
-																										Optional: true,
-																										MarkdownDescription: `SectionName is used to target a specific section of the resource.` + "\n" +
-																											`For example, you can target a port from MeshService.ports[] by its name.`,
-																									},
-																									"weight": schema.Int64Attribute{
-																										Optional: true,
-																										Validators: []validator.Int64{
-																											int64validator.Between(0, 4294967295),
-																										},
-																									},
-																								},
-																								Description: `BackendRef defines the destination traffic is routed to. Not Null`,
-																								Validators: []validator.Object{
-																									speakeasy_objectvalidators.NotNull(),
-																								},
-																							},
-																							"percentage": schema.SingleNestedAttribute{
-																								Optional: true,
-																								Attributes: map[string]schema.Attribute{
-																									"integer": schema.Int64Attribute{
-																										Optional: true,
-																										Validators: []validator.Int64{
-																											int64validator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("str"),
-																											}...),
-																										},
-																									},
-																									"str": schema.StringAttribute{
-																										Optional: true,
-																										Validators: []validator.String{
-																											stringvalidator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("integer"),
-																											}...),
-																										},
-																									},
-																								},
-																								MarkdownDescription: `Percentage of requests to mirror. If not specified, all requests` + "\n" +
-																									`to the target cluster will be mirrored.`,
-																							},
+																						Validators: []validator.List{
+																							listvalidator.SizeAtMost(16),
 																						},
 																					},
-																					"request_redirect": schema.SingleNestedAttribute{
+																					"remove": schema.ListAttribute{
+																						Computed: true,
 																						Optional: true,
-																						Attributes: map[string]schema.Attribute{
-																							"hostname": schema.StringAttribute{
-																								Optional: true,
-																								MarkdownDescription: `PreciseHostname is the fully qualified domain name of a network host. This` + "\n" +
-																									`matches the RFC 1123 definition of a hostname with 1 notable exception that` + "\n" +
-																									`numeric IP addresses are not allowed.` + "\n" +
-																									`` + "\n" +
-																									`Note that as per RFC1035 and RFC1123, a *label* must consist of lower case` + "\n" +
-																									`alphanumeric characters or '-', and must start and end with an alphanumeric` + "\n" +
-																									`character. No other punctuation is allowed.`,
-																								Validators: []validator.String{
-																									stringvalidator.UTF8LengthBetween(1, 253),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
-																								},
-																							},
-																							"path": schema.SingleNestedAttribute{
-																								Optional: true,
-																								Attributes: map[string]schema.Attribute{
-																									"one": schema.SingleNestedAttribute{
-																										Optional: true,
-																										Attributes: map[string]schema.Attribute{
-																											"replace_full_path": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"replace_prefix_match": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"type": schema.StringAttribute{
-																												Optional:    true,
-																												Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																												Validators: []validator.String{
-																													speakeasy_stringvalidators.NotNull(),
-																												},
-																											},
-																										},
-																										Validators: []validator.Object{
-																											objectvalidator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("two"),
-																											}...),
-																										},
-																									},
-																									"two": schema.SingleNestedAttribute{
-																										Optional: true,
-																										Attributes: map[string]schema.Attribute{
-																											"replace_full_path": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"replace_prefix_match": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"type": schema.StringAttribute{
-																												Optional:    true,
-																												Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																												Validators: []validator.String{
-																													speakeasy_stringvalidators.NotNull(),
-																												},
-																											},
-																										},
-																										Validators: []validator.Object{
-																											objectvalidator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("one"),
-																											}...),
-																										},
-																									},
-																								},
-																								MarkdownDescription: `Path defines parameters used to modify the path of the incoming request.` + "\n" +
-																									`The modified path is then used to construct the location header.` + "\n" +
-																									`When empty, the request path is used as-is.`,
-																							},
-																							"port": schema.Int32Attribute{
-																								Optional: true,
-																								MarkdownDescription: `Port is the port to be used in the value of the ` + "`" + `Location` + "`" + `` + "\n" +
-																									`header in the response.` + "\n" +
-																									`When empty, port (if specified) of the request is used.`,
-																								Validators: []validator.Int32{
-																									int32validator.Between(1, 65535),
-																								},
-																							},
-																							"scheme": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `possible known values include one of ["http", "https"]`,
-																							},
-																							"status_code": schema.Int64Attribute{
-																								Computed:    true,
-																								Optional:    true,
-																								Default:     int64default.StaticInt64(302),
-																								Description: `StatusCode is the HTTP status code to be used in response. possible known values include one of [301, 302, 303, 307, 308]; Default: 302`,
-																							},
+																						PlanModifiers: []planmodifier.List{
+																							custom_listplanmodifier.SupressZeroNullModifier(),
+																						},
+																						ElementType: types.StringType,
+																						Validators: []validator.List{
+																							listvalidator.SizeAtMost(16),
 																						},
 																					},
-																					"response_header_modifier": schema.SingleNestedAttribute{
+																					"set": schema.ListNestedAttribute{
+																						Computed: true,
 																						Optional: true,
-																						Attributes: map[string]schema.Attribute{
-																							"add": schema.ListNestedAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								NestedObject: schema.NestedAttributeObject{
-																									Validators: []validator.Object{
-																										speakeasy_objectvalidators.NotNull(),
-																									},
-																									Attributes: map[string]schema.Attribute{
-																										"name": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																												stringvalidator.UTF8LengthBetween(1, 256),
-																												stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																											},
-																										},
-																										"value": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																											},
-																										},
-																									},
-																								},
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
-																								},
+																						PlanModifiers: []planmodifier.List{
+																							custom_listplanmodifier.SupressZeroNullModifier(),
+																						},
+																						NestedObject: schema.NestedAttributeObject{
+																							Validators: []validator.Object{
+																								speakeasy_objectvalidators.NotNull(),
 																							},
-																							"remove": schema.ListAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								ElementType: types.StringType,
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
-																								},
-																							},
-																							"set": schema.ListNestedAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								NestedObject: schema.NestedAttributeObject{
-																									Validators: []validator.Object{
-																										speakeasy_objectvalidators.NotNull(),
-																									},
-																									Attributes: map[string]schema.Attribute{
-																										"name": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																												stringvalidator.UTF8LengthBetween(1, 256),
-																												stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																											},
-																										},
-																										"value": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																											},
-																										},
+																							Attributes: map[string]schema.Attribute{
+																								"name": schema.StringAttribute{
+																									Optional:    true,
+																									Description: `Not Null`,
+																									Validators: []validator.String{
+																										speakeasy_stringvalidators.NotNull(),
+																										stringvalidator.UTF8LengthBetween(1, 256),
+																										stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
 																									},
 																								},
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
+																								"value": schema.StringAttribute{
+																									Optional:    true,
+																									Description: `Not Null`,
+																									Validators: []validator.String{
+																										speakeasy_stringvalidators.NotNull(),
+																									},
 																								},
 																							},
 																						},
-																						MarkdownDescription: `Only one action is supported per header name.` + "\n" +
-																							`Configuration to set or add multiple values for a header must use RFC 7230` + "\n" +
-																							`header value formatting, separating each value with a comma.`,
-																					},
-																					"type": schema.StringAttribute{
-																						Optional:    true,
-																						Description: `possible known values include one of ["RequestHeaderModifier", "ResponseHeaderModifier", "RequestRedirect", "URLRewrite", "RequestMirror"]; Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
-																					},
-																					"url_rewrite": schema.SingleNestedAttribute{
-																						Optional: true,
-																						Attributes: map[string]schema.Attribute{
-																							"host_to_backend_hostname": schema.BoolAttribute{
-																								Optional:    true,
-																								Description: `HostToBackendHostname is not currently supported and must not be set.`,
-																							},
-																							"hostname": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Hostname is the value to be used to replace the host header value during forwarding.`,
-																								Validators: []validator.String{
-																									stringvalidator.UTF8LengthBetween(1, 253),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
-																								},
-																							},
-																							"path": schema.SingleNestedAttribute{
-																								Optional: true,
-																								Attributes: map[string]schema.Attribute{
-																									"one": schema.SingleNestedAttribute{
-																										Optional: true,
-																										Attributes: map[string]schema.Attribute{
-																											"replace_full_path": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"replace_prefix_match": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"type": schema.StringAttribute{
-																												Optional:    true,
-																												Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																												Validators: []validator.String{
-																													speakeasy_stringvalidators.NotNull(),
-																												},
-																											},
-																										},
-																										Validators: []validator.Object{
-																											objectvalidator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("two"),
-																											}...),
-																										},
-																									},
-																									"two": schema.SingleNestedAttribute{
-																										Optional: true,
-																										Attributes: map[string]schema.Attribute{
-																											"replace_full_path": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"replace_prefix_match": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"type": schema.StringAttribute{
-																												Optional:    true,
-																												Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																												Validators: []validator.String{
-																													speakeasy_stringvalidators.NotNull(),
-																												},
-																											},
-																										},
-																										Validators: []validator.Object{
-																											objectvalidator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("one"),
-																											}...),
-																										},
-																									},
-																								},
-																								Description: `Path defines a path rewrite.`,
-																							},
+																						Validators: []validator.List{
+																							listvalidator.SizeAtMost(16),
 																						},
 																					},
 																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("two"),
-																						path.MatchRelative().AtParent().AtName("three"),
-																						path.MatchRelative().AtParent().AtName("four"),
-																						path.MatchRelative().AtParent().AtName("five"),
-																					}...),
+																				MarkdownDescription: `Only one action is supported per header name.` + "\n" +
+																					`Configuration to set or add multiple values for a header must use RFC 7230` + "\n" +
+																					`header value formatting, separating each value with a comma.`,
+																			},
+																			"type": schema.StringAttribute{
+																				Optional:    true,
+																				Description: `possible known values include one of ["RequestHeaderModifier", "ResponseHeaderModifier", "RequestRedirect", "URLRewrite", "RequestMirror"]; Not Null`,
+																				Validators: []validator.String{
+																					speakeasy_stringvalidators.NotNull(),
 																				},
 																			},
-																			"three": schema.SingleNestedAttribute{
+																			"url_rewrite": schema.SingleNestedAttribute{
 																				Optional: true,
 																				Attributes: map[string]schema.Attribute{
-																					"request_header_modifier": schema.SingleNestedAttribute{
-																						Optional: true,
-																						Attributes: map[string]schema.Attribute{
-																							"add": schema.ListNestedAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								NestedObject: schema.NestedAttributeObject{
-																									Validators: []validator.Object{
-																										speakeasy_objectvalidators.NotNull(),
-																									},
-																									Attributes: map[string]schema.Attribute{
-																										"name": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																												stringvalidator.UTF8LengthBetween(1, 256),
-																												stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																											},
-																										},
-																										"value": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																											},
-																										},
-																									},
-																								},
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
-																								},
-																							},
-																							"remove": schema.ListAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								ElementType: types.StringType,
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
-																								},
-																							},
-																							"set": schema.ListNestedAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								NestedObject: schema.NestedAttributeObject{
-																									Validators: []validator.Object{
-																										speakeasy_objectvalidators.NotNull(),
-																									},
-																									Attributes: map[string]schema.Attribute{
-																										"name": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																												stringvalidator.UTF8LengthBetween(1, 256),
-																												stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																											},
-																										},
-																										"value": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																											},
-																										},
-																									},
-																								},
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
-																								},
-																							},
-																						},
-																						MarkdownDescription: `Only one action is supported per header name.` + "\n" +
-																							`Configuration to set or add multiple values for a header must use RFC 7230` + "\n" +
-																							`header value formatting, separating each value with a comma.`,
-																					},
-																					"request_mirror": schema.SingleNestedAttribute{
-																						Optional: true,
-																						Attributes: map[string]schema.Attribute{
-																							"backend_ref": schema.SingleNestedAttribute{
-																								Optional: true,
-																								Attributes: map[string]schema.Attribute{
-																									"kind": schema.StringAttribute{
-																										Optional:    true,
-																										Description: `Kind of the referenced resource. possible known values include one of ["MeshService", "MeshExternalService", "MeshMultiZoneService"]; Not Null`,
-																										Validators: []validator.String{
-																											speakeasy_stringvalidators.NotNull(),
-																										},
-																									},
-																									"labels": schema.MapAttribute{
-																										Optional:    true,
-																										ElementType: types.StringType,
-																										Description: `Labels are used to select the referenced real resource.`,
-																									},
-																									"port": schema.Int32Attribute{
-																										Optional:    true,
-																										Description: `Port is only supported when this ref refers to a real MeshService object`,
-																									},
-																									"section_name": schema.StringAttribute{
-																										Optional: true,
-																										MarkdownDescription: `SectionName is used to target a specific section of the resource.` + "\n" +
-																											`For example, you can target a port from MeshService.ports[] by its name.`,
-																									},
-																									"weight": schema.Int64Attribute{
-																										Optional: true,
-																										Validators: []validator.Int64{
-																											int64validator.Between(0, 4294967295),
-																										},
-																									},
-																								},
-																								Description: `BackendRef defines the destination traffic is routed to. Not Null`,
-																								Validators: []validator.Object{
-																									speakeasy_objectvalidators.NotNull(),
-																								},
-																							},
-																							"percentage": schema.SingleNestedAttribute{
-																								Optional: true,
-																								Attributes: map[string]schema.Attribute{
-																									"integer": schema.Int64Attribute{
-																										Optional: true,
-																										Validators: []validator.Int64{
-																											int64validator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("str"),
-																											}...),
-																										},
-																									},
-																									"str": schema.StringAttribute{
-																										Optional: true,
-																										Validators: []validator.String{
-																											stringvalidator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("integer"),
-																											}...),
-																										},
-																									},
-																								},
-																								MarkdownDescription: `Percentage of requests to mirror. If not specified, all requests` + "\n" +
-																									`to the target cluster will be mirrored.`,
-																							},
-																						},
-																					},
-																					"request_redirect": schema.SingleNestedAttribute{
-																						Optional: true,
-																						Attributes: map[string]schema.Attribute{
-																							"hostname": schema.StringAttribute{
-																								Optional: true,
-																								MarkdownDescription: `PreciseHostname is the fully qualified domain name of a network host. This` + "\n" +
-																									`matches the RFC 1123 definition of a hostname with 1 notable exception that` + "\n" +
-																									`numeric IP addresses are not allowed.` + "\n" +
-																									`` + "\n" +
-																									`Note that as per RFC1035 and RFC1123, a *label* must consist of lower case` + "\n" +
-																									`alphanumeric characters or '-', and must start and end with an alphanumeric` + "\n" +
-																									`character. No other punctuation is allowed.`,
-																								Validators: []validator.String{
-																									stringvalidator.UTF8LengthBetween(1, 253),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
-																								},
-																							},
-																							"path": schema.SingleNestedAttribute{
-																								Optional: true,
-																								Attributes: map[string]schema.Attribute{
-																									"one": schema.SingleNestedAttribute{
-																										Optional: true,
-																										Attributes: map[string]schema.Attribute{
-																											"replace_full_path": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"replace_prefix_match": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"type": schema.StringAttribute{
-																												Optional:    true,
-																												Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																												Validators: []validator.String{
-																													speakeasy_stringvalidators.NotNull(),
-																												},
-																											},
-																										},
-																										Validators: []validator.Object{
-																											objectvalidator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("two"),
-																											}...),
-																										},
-																									},
-																									"two": schema.SingleNestedAttribute{
-																										Optional: true,
-																										Attributes: map[string]schema.Attribute{
-																											"replace_full_path": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"replace_prefix_match": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"type": schema.StringAttribute{
-																												Optional:    true,
-																												Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																												Validators: []validator.String{
-																													speakeasy_stringvalidators.NotNull(),
-																												},
-																											},
-																										},
-																										Validators: []validator.Object{
-																											objectvalidator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("one"),
-																											}...),
-																										},
-																									},
-																								},
-																								MarkdownDescription: `Path defines parameters used to modify the path of the incoming request.` + "\n" +
-																									`The modified path is then used to construct the location header.` + "\n" +
-																									`When empty, the request path is used as-is.`,
-																							},
-																							"port": schema.Int32Attribute{
-																								Optional: true,
-																								MarkdownDescription: `Port is the port to be used in the value of the ` + "`" + `Location` + "`" + `` + "\n" +
-																									`header in the response.` + "\n" +
-																									`When empty, port (if specified) of the request is used.`,
-																								Validators: []validator.Int32{
-																									int32validator.Between(1, 65535),
-																								},
-																							},
-																							"scheme": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `possible known values include one of ["http", "https"]`,
-																							},
-																							"status_code": schema.Int64Attribute{
-																								Computed:    true,
-																								Optional:    true,
-																								Default:     int64default.StaticInt64(302),
-																								Description: `StatusCode is the HTTP status code to be used in response. possible known values include one of [301, 302, 303, 307, 308]; Default: 302`,
-																							},
-																						},
-																					},
-																					"response_header_modifier": schema.SingleNestedAttribute{
-																						Optional: true,
-																						Attributes: map[string]schema.Attribute{
-																							"add": schema.ListNestedAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								NestedObject: schema.NestedAttributeObject{
-																									Validators: []validator.Object{
-																										speakeasy_objectvalidators.NotNull(),
-																									},
-																									Attributes: map[string]schema.Attribute{
-																										"name": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																												stringvalidator.UTF8LengthBetween(1, 256),
-																												stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																											},
-																										},
-																										"value": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																											},
-																										},
-																									},
-																								},
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
-																								},
-																							},
-																							"remove": schema.ListAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								ElementType: types.StringType,
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
-																								},
-																							},
-																							"set": schema.ListNestedAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								NestedObject: schema.NestedAttributeObject{
-																									Validators: []validator.Object{
-																										speakeasy_objectvalidators.NotNull(),
-																									},
-																									Attributes: map[string]schema.Attribute{
-																										"name": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																												stringvalidator.UTF8LengthBetween(1, 256),
-																												stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																											},
-																										},
-																										"value": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																											},
-																										},
-																									},
-																								},
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
-																								},
-																							},
-																						},
-																						MarkdownDescription: `Only one action is supported per header name.` + "\n" +
-																							`Configuration to set or add multiple values for a header must use RFC 7230` + "\n" +
-																							`header value formatting, separating each value with a comma.`,
-																					},
-																					"type": schema.StringAttribute{
+																					"host_to_backend_hostname": schema.BoolAttribute{
 																						Optional:    true,
-																						Description: `possible known values include one of ["RequestHeaderModifier", "ResponseHeaderModifier", "RequestRedirect", "URLRewrite", "RequestMirror"]; Not Null`,
-																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
-																						},
+																						Description: `HostToBackendHostname is not currently supported and must not be set.`,
 																					},
-																					"url_rewrite": schema.SingleNestedAttribute{
-																						Optional: true,
-																						Attributes: map[string]schema.Attribute{
-																							"host_to_backend_hostname": schema.BoolAttribute{
-																								Optional:    true,
-																								Description: `HostToBackendHostname is not currently supported and must not be set.`,
-																							},
-																							"hostname": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Hostname is the value to be used to replace the host header value during forwarding.`,
-																								Validators: []validator.String{
-																									stringvalidator.UTF8LengthBetween(1, 253),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
-																								},
-																							},
-																							"path": schema.SingleNestedAttribute{
-																								Optional: true,
-																								Attributes: map[string]schema.Attribute{
-																									"one": schema.SingleNestedAttribute{
-																										Optional: true,
-																										Attributes: map[string]schema.Attribute{
-																											"replace_full_path": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"replace_prefix_match": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"type": schema.StringAttribute{
-																												Optional:    true,
-																												Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																												Validators: []validator.String{
-																													speakeasy_stringvalidators.NotNull(),
-																												},
-																											},
-																										},
-																										Validators: []validator.Object{
-																											objectvalidator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("two"),
-																											}...),
-																										},
-																									},
-																									"two": schema.SingleNestedAttribute{
-																										Optional: true,
-																										Attributes: map[string]schema.Attribute{
-																											"replace_full_path": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"replace_prefix_match": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"type": schema.StringAttribute{
-																												Optional:    true,
-																												Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																												Validators: []validator.String{
-																													speakeasy_stringvalidators.NotNull(),
-																												},
-																											},
-																										},
-																										Validators: []validator.Object{
-																											objectvalidator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("one"),
-																											}...),
-																										},
-																									},
-																								},
-																								Description: `Path defines a path rewrite.`,
-																							},
-																						},
-																					},
-																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("one"),
-																						path.MatchRelative().AtParent().AtName("two"),
-																						path.MatchRelative().AtParent().AtName("four"),
-																						path.MatchRelative().AtParent().AtName("five"),
-																					}...),
-																				},
-																			},
-																			"two": schema.SingleNestedAttribute{
-																				Optional: true,
-																				Attributes: map[string]schema.Attribute{
-																					"request_header_modifier": schema.SingleNestedAttribute{
-																						Optional: true,
-																						Attributes: map[string]schema.Attribute{
-																							"add": schema.ListNestedAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								NestedObject: schema.NestedAttributeObject{
-																									Validators: []validator.Object{
-																										speakeasy_objectvalidators.NotNull(),
-																									},
-																									Attributes: map[string]schema.Attribute{
-																										"name": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																												stringvalidator.UTF8LengthBetween(1, 256),
-																												stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																											},
-																										},
-																										"value": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																											},
-																										},
-																									},
-																								},
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
-																								},
-																							},
-																							"remove": schema.ListAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								ElementType: types.StringType,
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
-																								},
-																							},
-																							"set": schema.ListNestedAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								NestedObject: schema.NestedAttributeObject{
-																									Validators: []validator.Object{
-																										speakeasy_objectvalidators.NotNull(),
-																									},
-																									Attributes: map[string]schema.Attribute{
-																										"name": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																												stringvalidator.UTF8LengthBetween(1, 256),
-																												stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																											},
-																										},
-																										"value": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																											},
-																										},
-																									},
-																								},
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
-																								},
-																							},
-																						},
-																						MarkdownDescription: `Only one action is supported per header name.` + "\n" +
-																							`Configuration to set or add multiple values for a header must use RFC 7230` + "\n" +
-																							`header value formatting, separating each value with a comma.`,
-																					},
-																					"request_mirror": schema.SingleNestedAttribute{
-																						Optional: true,
-																						Attributes: map[string]schema.Attribute{
-																							"backend_ref": schema.SingleNestedAttribute{
-																								Optional: true,
-																								Attributes: map[string]schema.Attribute{
-																									"kind": schema.StringAttribute{
-																										Optional:    true,
-																										Description: `Kind of the referenced resource. possible known values include one of ["MeshService", "MeshExternalService", "MeshMultiZoneService"]; Not Null`,
-																										Validators: []validator.String{
-																											speakeasy_stringvalidators.NotNull(),
-																										},
-																									},
-																									"labels": schema.MapAttribute{
-																										Optional:    true,
-																										ElementType: types.StringType,
-																										Description: `Labels are used to select the referenced real resource.`,
-																									},
-																									"port": schema.Int32Attribute{
-																										Optional:    true,
-																										Description: `Port is only supported when this ref refers to a real MeshService object`,
-																									},
-																									"section_name": schema.StringAttribute{
-																										Optional: true,
-																										MarkdownDescription: `SectionName is used to target a specific section of the resource.` + "\n" +
-																											`For example, you can target a port from MeshService.ports[] by its name.`,
-																									},
-																									"weight": schema.Int64Attribute{
-																										Optional: true,
-																										Validators: []validator.Int64{
-																											int64validator.Between(0, 4294967295),
-																										},
-																									},
-																								},
-																								Description: `BackendRef defines the destination traffic is routed to. Not Null`,
-																								Validators: []validator.Object{
-																									speakeasy_objectvalidators.NotNull(),
-																								},
-																							},
-																							"percentage": schema.SingleNestedAttribute{
-																								Optional: true,
-																								Attributes: map[string]schema.Attribute{
-																									"integer": schema.Int64Attribute{
-																										Optional: true,
-																										Validators: []validator.Int64{
-																											int64validator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("str"),
-																											}...),
-																										},
-																									},
-																									"str": schema.StringAttribute{
-																										Optional: true,
-																										Validators: []validator.String{
-																											stringvalidator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("integer"),
-																											}...),
-																										},
-																									},
-																								},
-																								MarkdownDescription: `Percentage of requests to mirror. If not specified, all requests` + "\n" +
-																									`to the target cluster will be mirrored.`,
-																							},
-																						},
-																					},
-																					"request_redirect": schema.SingleNestedAttribute{
-																						Optional: true,
-																						Attributes: map[string]schema.Attribute{
-																							"hostname": schema.StringAttribute{
-																								Optional: true,
-																								MarkdownDescription: `PreciseHostname is the fully qualified domain name of a network host. This` + "\n" +
-																									`matches the RFC 1123 definition of a hostname with 1 notable exception that` + "\n" +
-																									`numeric IP addresses are not allowed.` + "\n" +
-																									`` + "\n" +
-																									`Note that as per RFC1035 and RFC1123, a *label* must consist of lower case` + "\n" +
-																									`alphanumeric characters or '-', and must start and end with an alphanumeric` + "\n" +
-																									`character. No other punctuation is allowed.`,
-																								Validators: []validator.String{
-																									stringvalidator.UTF8LengthBetween(1, 253),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
-																								},
-																							},
-																							"path": schema.SingleNestedAttribute{
-																								Optional: true,
-																								Attributes: map[string]schema.Attribute{
-																									"one": schema.SingleNestedAttribute{
-																										Optional: true,
-																										Attributes: map[string]schema.Attribute{
-																											"replace_full_path": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"replace_prefix_match": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"type": schema.StringAttribute{
-																												Optional:    true,
-																												Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																												Validators: []validator.String{
-																													speakeasy_stringvalidators.NotNull(),
-																												},
-																											},
-																										},
-																										Validators: []validator.Object{
-																											objectvalidator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("two"),
-																											}...),
-																										},
-																									},
-																									"two": schema.SingleNestedAttribute{
-																										Optional: true,
-																										Attributes: map[string]schema.Attribute{
-																											"replace_full_path": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"replace_prefix_match": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"type": schema.StringAttribute{
-																												Optional:    true,
-																												Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																												Validators: []validator.String{
-																													speakeasy_stringvalidators.NotNull(),
-																												},
-																											},
-																										},
-																										Validators: []validator.Object{
-																											objectvalidator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("one"),
-																											}...),
-																										},
-																									},
-																								},
-																								MarkdownDescription: `Path defines parameters used to modify the path of the incoming request.` + "\n" +
-																									`The modified path is then used to construct the location header.` + "\n" +
-																									`When empty, the request path is used as-is.`,
-																							},
-																							"port": schema.Int32Attribute{
-																								Optional: true,
-																								MarkdownDescription: `Port is the port to be used in the value of the ` + "`" + `Location` + "`" + `` + "\n" +
-																									`header in the response.` + "\n" +
-																									`When empty, port (if specified) of the request is used.`,
-																								Validators: []validator.Int32{
-																									int32validator.Between(1, 65535),
-																								},
-																							},
-																							"scheme": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `possible known values include one of ["http", "https"]`,
-																							},
-																							"status_code": schema.Int64Attribute{
-																								Computed:    true,
-																								Optional:    true,
-																								Default:     int64default.StaticInt64(302),
-																								Description: `StatusCode is the HTTP status code to be used in response. possible known values include one of [301, 302, 303, 307, 308]; Default: 302`,
-																							},
-																						},
-																					},
-																					"response_header_modifier": schema.SingleNestedAttribute{
-																						Optional: true,
-																						Attributes: map[string]schema.Attribute{
-																							"add": schema.ListNestedAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								NestedObject: schema.NestedAttributeObject{
-																									Validators: []validator.Object{
-																										speakeasy_objectvalidators.NotNull(),
-																									},
-																									Attributes: map[string]schema.Attribute{
-																										"name": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																												stringvalidator.UTF8LengthBetween(1, 256),
-																												stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																											},
-																										},
-																										"value": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																											},
-																										},
-																									},
-																								},
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
-																								},
-																							},
-																							"remove": schema.ListAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								ElementType: types.StringType,
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
-																								},
-																							},
-																							"set": schema.ListNestedAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.List{
-																									custom_listplanmodifier.SupressZeroNullModifier(),
-																								},
-																								NestedObject: schema.NestedAttributeObject{
-																									Validators: []validator.Object{
-																										speakeasy_objectvalidators.NotNull(),
-																									},
-																									Attributes: map[string]schema.Attribute{
-																										"name": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																												stringvalidator.UTF8LengthBetween(1, 256),
-																												stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																											},
-																										},
-																										"value": schema.StringAttribute{
-																											Optional:    true,
-																											Description: `Not Null`,
-																											Validators: []validator.String{
-																												speakeasy_stringvalidators.NotNull(),
-																											},
-																										},
-																									},
-																								},
-																								Validators: []validator.List{
-																									listvalidator.SizeAtMost(16),
-																								},
-																							},
-																						},
-																						MarkdownDescription: `Only one action is supported per header name.` + "\n" +
-																							`Configuration to set or add multiple values for a header must use RFC 7230` + "\n" +
-																							`header value formatting, separating each value with a comma.`,
-																					},
-																					"type": schema.StringAttribute{
+																					"hostname": schema.StringAttribute{
 																						Optional:    true,
-																						Description: `possible known values include one of ["RequestHeaderModifier", "ResponseHeaderModifier", "RequestRedirect", "URLRewrite", "RequestMirror"]; Not Null`,
+																						Description: `Hostname is the value to be used to replace the host header value during forwarding.`,
 																						Validators: []validator.String{
-																							speakeasy_stringvalidators.NotNull(),
+																							stringvalidator.UTF8LengthBetween(1, 253),
+																							stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
 																						},
 																					},
-																					"url_rewrite": schema.SingleNestedAttribute{
+																					"path": schema.SingleNestedAttribute{
 																						Optional: true,
 																						Attributes: map[string]schema.Attribute{
-																							"host_to_backend_hostname": schema.BoolAttribute{
-																								Optional:    true,
-																								Description: `HostToBackendHostname is not currently supported and must not be set.`,
-																							},
-																							"hostname": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Hostname is the value to be used to replace the host header value during forwarding.`,
-																								Validators: []validator.String{
-																									stringvalidator.UTF8LengthBetween(1, 253),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
-																								},
-																							},
-																							"path": schema.SingleNestedAttribute{
+																							"replace_full_path": schema.StringAttribute{
 																								Optional: true,
-																								Attributes: map[string]schema.Attribute{
-																									"one": schema.SingleNestedAttribute{
-																										Optional: true,
-																										Attributes: map[string]schema.Attribute{
-																											"replace_full_path": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"replace_prefix_match": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"type": schema.StringAttribute{
-																												Optional:    true,
-																												Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																												Validators: []validator.String{
-																													speakeasy_stringvalidators.NotNull(),
-																												},
-																											},
-																										},
-																										Validators: []validator.Object{
-																											objectvalidator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("two"),
-																											}...),
-																										},
-																									},
-																									"two": schema.SingleNestedAttribute{
-																										Optional: true,
-																										Attributes: map[string]schema.Attribute{
-																											"replace_full_path": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"replace_prefix_match": schema.StringAttribute{
-																												Optional: true,
-																											},
-																											"type": schema.StringAttribute{
-																												Optional:    true,
-																												Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																												Validators: []validator.String{
-																													speakeasy_stringvalidators.NotNull(),
-																												},
-																											},
-																										},
-																										Validators: []validator.Object{
-																											objectvalidator.ConflictsWith(path.Expressions{
-																												path.MatchRelative().AtParent().AtName("one"),
-																											}...),
-																										},
-																									},
+																							},
+																							"replace_prefix_match": schema.StringAttribute{
+																								Optional: true,
+																							},
+																							"type": schema.StringAttribute{
+																								Optional:    true,
+																								Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
+																								Validators: []validator.String{
+																									speakeasy_stringvalidators.NotNull(),
 																								},
-																								Description: `Path defines a path rewrite.`,
 																							},
 																						},
+																						Description: `Path defines a path rewrite.`,
 																					},
-																				},
-																				Validators: []validator.Object{
-																					objectvalidator.ConflictsWith(path.Expressions{
-																						path.MatchRelative().AtParent().AtName("one"),
-																						path.MatchRelative().AtParent().AtName("three"),
-																						path.MatchRelative().AtParent().AtName("four"),
-																						path.MatchRelative().AtParent().AtName("five"),
-																					}...),
 																				},
 																			},
 																		},
@@ -2318,2079 +578,340 @@ func (r *MeshHTTPRouteResource) Schema(ctx context.Context, req resource.SchemaR
 																speakeasy_objectvalidators.NotNull(),
 															},
 															Attributes: map[string]schema.Attribute{
-																"five": schema.SingleNestedAttribute{
+																"request_header_modifier": schema.SingleNestedAttribute{
 																	Optional: true,
 																	Attributes: map[string]schema.Attribute{
-																		"request_header_modifier": schema.SingleNestedAttribute{
+																		"add": schema.ListNestedAttribute{
+																			Computed: true,
 																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"add": schema.ListNestedAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					NestedObject: schema.NestedAttributeObject{
-																						Validators: []validator.Object{
-																							speakeasy_objectvalidators.NotNull(),
-																						},
-																						Attributes: map[string]schema.Attribute{
-																							"name": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																									stringvalidator.UTF8LengthBetween(1, 256),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																								},
-																							},
-																							"value": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																								},
-																							},
-																						},
-																					},
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
-																					},
+																			PlanModifiers: []planmodifier.List{
+																				custom_listplanmodifier.SupressZeroNullModifier(),
+																			},
+																			NestedObject: schema.NestedAttributeObject{
+																				Validators: []validator.Object{
+																					speakeasy_objectvalidators.NotNull(),
 																				},
-																				"remove": schema.ListAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					ElementType: types.StringType,
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
-																					},
-																				},
-																				"set": schema.ListNestedAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					NestedObject: schema.NestedAttributeObject{
-																						Validators: []validator.Object{
-																							speakeasy_objectvalidators.NotNull(),
-																						},
-																						Attributes: map[string]schema.Attribute{
-																							"name": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																									stringvalidator.UTF8LengthBetween(1, 256),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																								},
-																							},
-																							"value": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																								},
-																							},
+																				Attributes: map[string]schema.Attribute{
+																					"name": schema.StringAttribute{
+																						Optional:    true,
+																						Description: `Not Null`,
+																						Validators: []validator.String{
+																							speakeasy_stringvalidators.NotNull(),
+																							stringvalidator.UTF8LengthBetween(1, 256),
+																							stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
 																						},
 																					},
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
+																					"value": schema.StringAttribute{
+																						Optional:    true,
+																						Description: `Not Null`,
+																						Validators: []validator.String{
+																							speakeasy_stringvalidators.NotNull(),
+																						},
 																					},
 																				},
 																			},
-																			MarkdownDescription: `Only one action is supported per header name.` + "\n" +
-																				`Configuration to set or add multiple values for a header must use RFC 7230` + "\n" +
-																				`header value formatting, separating each value with a comma.`,
-																		},
-																		"request_mirror": schema.SingleNestedAttribute{
-																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"backend_ref": schema.SingleNestedAttribute{
-																					Optional: true,
-																					Attributes: map[string]schema.Attribute{
-																						"kind": schema.StringAttribute{
-																							Optional:    true,
-																							Description: `Kind of the referenced resource. possible known values include one of ["MeshService", "MeshExternalService", "MeshMultiZoneService"]; Not Null`,
-																							Validators: []validator.String{
-																								speakeasy_stringvalidators.NotNull(),
-																							},
-																						},
-																						"labels": schema.MapAttribute{
-																							Optional:    true,
-																							ElementType: types.StringType,
-																							Description: `Labels are used to select the referenced real resource.`,
-																						},
-																						"port": schema.Int32Attribute{
-																							Optional:    true,
-																							Description: `Port is only supported when this ref refers to a real MeshService object`,
-																						},
-																						"section_name": schema.StringAttribute{
-																							Optional: true,
-																							MarkdownDescription: `SectionName is used to target a specific section of the resource.` + "\n" +
-																								`For example, you can target a port from MeshService.ports[] by its name.`,
-																						},
-																						"weight": schema.Int64Attribute{
-																							Optional: true,
-																							Validators: []validator.Int64{
-																								int64validator.Between(0, 4294967295),
-																							},
-																						},
-																					},
-																					Description: `BackendRef defines the destination traffic is routed to. Not Null`,
-																					Validators: []validator.Object{
-																						speakeasy_objectvalidators.NotNull(),
-																					},
-																				},
-																				"percentage": schema.SingleNestedAttribute{
-																					Optional: true,
-																					Attributes: map[string]schema.Attribute{
-																						"integer": schema.Int64Attribute{
-																							Optional: true,
-																							Validators: []validator.Int64{
-																								int64validator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("str"),
-																								}...),
-																							},
-																						},
-																						"str": schema.StringAttribute{
-																							Optional: true,
-																							Validators: []validator.String{
-																								stringvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("integer"),
-																								}...),
-																							},
-																						},
-																					},
-																					MarkdownDescription: `Percentage of requests to mirror. If not specified, all requests` + "\n" +
-																						`to the target cluster will be mirrored.`,
-																				},
+																			Validators: []validator.List{
+																				listvalidator.SizeAtMost(16),
 																			},
 																		},
-																		"request_redirect": schema.SingleNestedAttribute{
+																		"remove": schema.ListAttribute{
+																			Computed: true,
 																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"hostname": schema.StringAttribute{
-																					Optional: true,
-																					MarkdownDescription: `PreciseHostname is the fully qualified domain name of a network host. This` + "\n" +
-																						`matches the RFC 1123 definition of a hostname with 1 notable exception that` + "\n" +
-																						`numeric IP addresses are not allowed.` + "\n" +
-																						`` + "\n" +
-																						`Note that as per RFC1035 and RFC1123, a *label* must consist of lower case` + "\n" +
-																						`alphanumeric characters or '-', and must start and end with an alphanumeric` + "\n" +
-																						`character. No other punctuation is allowed.`,
-																					Validators: []validator.String{
-																						stringvalidator.UTF8LengthBetween(1, 253),
-																						stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
-																					},
-																				},
-																				"path": schema.SingleNestedAttribute{
-																					Optional: true,
-																					Attributes: map[string]schema.Attribute{
-																						"one": schema.SingleNestedAttribute{
-																							Optional: true,
-																							Attributes: map[string]schema.Attribute{
-																								"replace_full_path": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"replace_prefix_match": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"type": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																							Validators: []validator.Object{
-																								objectvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("two"),
-																								}...),
-																							},
-																						},
-																						"two": schema.SingleNestedAttribute{
-																							Optional: true,
-																							Attributes: map[string]schema.Attribute{
-																								"replace_full_path": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"replace_prefix_match": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"type": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																							Validators: []validator.Object{
-																								objectvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("one"),
-																								}...),
-																							},
-																						},
-																					},
-																					MarkdownDescription: `Path defines parameters used to modify the path of the incoming request.` + "\n" +
-																						`The modified path is then used to construct the location header.` + "\n" +
-																						`When empty, the request path is used as-is.`,
-																				},
-																				"port": schema.Int32Attribute{
-																					Optional: true,
-																					MarkdownDescription: `Port is the port to be used in the value of the ` + "`" + `Location` + "`" + `` + "\n" +
-																						`header in the response.` + "\n" +
-																						`When empty, port (if specified) of the request is used.`,
-																					Validators: []validator.Int32{
-																						int32validator.Between(1, 65535),
-																					},
-																				},
-																				"scheme": schema.StringAttribute{
-																					Optional:    true,
-																					Description: `possible known values include one of ["http", "https"]`,
-																				},
-																				"status_code": schema.Int64Attribute{
-																					Computed:    true,
-																					Optional:    true,
-																					Default:     int64default.StaticInt64(302),
-																					Description: `StatusCode is the HTTP status code to be used in response. possible known values include one of [301, 302, 303, 307, 308]; Default: 302`,
-																				},
+																			PlanModifiers: []planmodifier.List{
+																				custom_listplanmodifier.SupressZeroNullModifier(),
+																			},
+																			ElementType: types.StringType,
+																			Validators: []validator.List{
+																				listvalidator.SizeAtMost(16),
 																			},
 																		},
-																		"response_header_modifier": schema.SingleNestedAttribute{
+																		"set": schema.ListNestedAttribute{
+																			Computed: true,
 																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"add": schema.ListNestedAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					NestedObject: schema.NestedAttributeObject{
-																						Validators: []validator.Object{
-																							speakeasy_objectvalidators.NotNull(),
-																						},
-																						Attributes: map[string]schema.Attribute{
-																							"name": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																									stringvalidator.UTF8LengthBetween(1, 256),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																								},
-																							},
-																							"value": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																								},
-																							},
-																						},
-																					},
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
-																					},
+																			PlanModifiers: []planmodifier.List{
+																				custom_listplanmodifier.SupressZeroNullModifier(),
+																			},
+																			NestedObject: schema.NestedAttributeObject{
+																				Validators: []validator.Object{
+																					speakeasy_objectvalidators.NotNull(),
 																				},
-																				"remove": schema.ListAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					ElementType: types.StringType,
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
-																					},
-																				},
-																				"set": schema.ListNestedAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					NestedObject: schema.NestedAttributeObject{
-																						Validators: []validator.Object{
-																							speakeasy_objectvalidators.NotNull(),
-																						},
-																						Attributes: map[string]schema.Attribute{
-																							"name": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																									stringvalidator.UTF8LengthBetween(1, 256),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																								},
-																							},
-																							"value": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																								},
-																							},
+																				Attributes: map[string]schema.Attribute{
+																					"name": schema.StringAttribute{
+																						Optional:    true,
+																						Description: `Not Null`,
+																						Validators: []validator.String{
+																							speakeasy_stringvalidators.NotNull(),
+																							stringvalidator.UTF8LengthBetween(1, 256),
+																							stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
 																						},
 																					},
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
+																					"value": schema.StringAttribute{
+																						Optional:    true,
+																						Description: `Not Null`,
+																						Validators: []validator.String{
+																							speakeasy_stringvalidators.NotNull(),
+																						},
 																					},
 																				},
 																			},
-																			MarkdownDescription: `Only one action is supported per header name.` + "\n" +
-																				`Configuration to set or add multiple values for a header must use RFC 7230` + "\n" +
-																				`header value formatting, separating each value with a comma.`,
-																		},
-																		"type": schema.StringAttribute{
-																			Optional:    true,
-																			Description: `possible known values include one of ["RequestHeaderModifier", "ResponseHeaderModifier", "RequestRedirect", "URLRewrite", "RequestMirror"]; Not Null`,
-																			Validators: []validator.String{
-																				speakeasy_stringvalidators.NotNull(),
-																			},
-																		},
-																		"url_rewrite": schema.SingleNestedAttribute{
-																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"host_to_backend_hostname": schema.BoolAttribute{
-																					Optional:    true,
-																					Description: `HostToBackendHostname is not currently supported and must not be set.`,
-																				},
-																				"hostname": schema.StringAttribute{
-																					Optional:    true,
-																					Description: `Hostname is the value to be used to replace the host header value during forwarding.`,
-																					Validators: []validator.String{
-																						stringvalidator.UTF8LengthBetween(1, 253),
-																						stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
-																					},
-																				},
-																				"path": schema.SingleNestedAttribute{
-																					Optional: true,
-																					Attributes: map[string]schema.Attribute{
-																						"one": schema.SingleNestedAttribute{
-																							Optional: true,
-																							Attributes: map[string]schema.Attribute{
-																								"replace_full_path": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"replace_prefix_match": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"type": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																							Validators: []validator.Object{
-																								objectvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("two"),
-																								}...),
-																							},
-																						},
-																						"two": schema.SingleNestedAttribute{
-																							Optional: true,
-																							Attributes: map[string]schema.Attribute{
-																								"replace_full_path": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"replace_prefix_match": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"type": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																							Validators: []validator.Object{
-																								objectvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("one"),
-																								}...),
-																							},
-																						},
-																					},
-																					Description: `Path defines a path rewrite.`,
-																				},
+																			Validators: []validator.List{
+																				listvalidator.SizeAtMost(16),
 																			},
 																		},
 																	},
-																	Validators: []validator.Object{
-																		objectvalidator.ConflictsWith(path.Expressions{
-																			path.MatchRelative().AtParent().AtName("one"),
-																			path.MatchRelative().AtParent().AtName("two"),
-																			path.MatchRelative().AtParent().AtName("three"),
-																			path.MatchRelative().AtParent().AtName("four"),
-																		}...),
+																	MarkdownDescription: `Only one action is supported per header name.` + "\n" +
+																		`Configuration to set or add multiple values for a header must use RFC 7230` + "\n" +
+																		`header value formatting, separating each value with a comma.`,
+																},
+																"request_mirror": schema.SingleNestedAttribute{
+																	Optional: true,
+																	Attributes: map[string]schema.Attribute{
+																		"backend_ref": schema.SingleNestedAttribute{
+																			Optional: true,
+																			Attributes: map[string]schema.Attribute{
+																				"kind": schema.StringAttribute{
+																					Optional:    true,
+																					Description: `Kind of the referenced resource. possible known values include one of ["MeshService", "MeshExternalService", "MeshMultiZoneService"]; Not Null`,
+																					Validators: []validator.String{
+																						speakeasy_stringvalidators.NotNull(),
+																					},
+																				},
+																				"labels": schema.MapAttribute{
+																					Optional:    true,
+																					ElementType: types.StringType,
+																					Description: `Labels are used to select the referenced real resource.`,
+																				},
+																				"port": schema.Int32Attribute{
+																					Optional:    true,
+																					Description: `Port is only supported when this ref refers to a real MeshService object`,
+																				},
+																				"section_name": schema.StringAttribute{
+																					Optional: true,
+																					MarkdownDescription: `SectionName is used to target a specific section of the resource.` + "\n" +
+																						`For example, you can target a port from MeshService.ports[] by its name.`,
+																				},
+																				"weight": schema.Int64Attribute{
+																					Optional: true,
+																					Validators: []validator.Int64{
+																						int64validator.Between(0, 4294967295),
+																					},
+																				},
+																			},
+																			Description: `BackendRef defines the destination traffic is routed to. Not Null`,
+																			Validators: []validator.Object{
+																				speakeasy_objectvalidators.NotNull(),
+																			},
+																		},
+																		"percentage": schema.SingleNestedAttribute{
+																			Optional: true,
+																			Attributes: map[string]schema.Attribute{
+																				"integer": schema.Int64Attribute{
+																					Optional: true,
+																					Validators: []validator.Int64{
+																						int64validator.ConflictsWith(path.Expressions{
+																							path.MatchRelative().AtParent().AtName("str"),
+																						}...),
+																					},
+																				},
+																				"str": schema.StringAttribute{
+																					Optional: true,
+																					Validators: []validator.String{
+																						stringvalidator.ConflictsWith(path.Expressions{
+																							path.MatchRelative().AtParent().AtName("integer"),
+																						}...),
+																					},
+																				},
+																			},
+																			MarkdownDescription: `Percentage of requests to mirror. If not specified, all requests` + "\n" +
+																				`to the target cluster will be mirrored.`,
+																		},
 																	},
 																},
-																"four": schema.SingleNestedAttribute{
+																"request_redirect": schema.SingleNestedAttribute{
 																	Optional: true,
 																	Attributes: map[string]schema.Attribute{
-																		"request_header_modifier": schema.SingleNestedAttribute{
+																		"hostname": schema.StringAttribute{
 																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"add": schema.ListNestedAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					NestedObject: schema.NestedAttributeObject{
-																						Validators: []validator.Object{
-																							speakeasy_objectvalidators.NotNull(),
-																						},
-																						Attributes: map[string]schema.Attribute{
-																							"name": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																									stringvalidator.UTF8LengthBetween(1, 256),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																								},
-																							},
-																							"value": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																								},
-																							},
-																						},
-																					},
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
-																					},
-																				},
-																				"remove": schema.ListAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					ElementType: types.StringType,
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
-																					},
-																				},
-																				"set": schema.ListNestedAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					NestedObject: schema.NestedAttributeObject{
-																						Validators: []validator.Object{
-																							speakeasy_objectvalidators.NotNull(),
-																						},
-																						Attributes: map[string]schema.Attribute{
-																							"name": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																									stringvalidator.UTF8LengthBetween(1, 256),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																								},
-																							},
-																							"value": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																								},
-																							},
-																						},
-																					},
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
-																					},
-																				},
-																			},
-																			MarkdownDescription: `Only one action is supported per header name.` + "\n" +
-																				`Configuration to set or add multiple values for a header must use RFC 7230` + "\n" +
-																				`header value formatting, separating each value with a comma.`,
-																		},
-																		"request_mirror": schema.SingleNestedAttribute{
-																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"backend_ref": schema.SingleNestedAttribute{
-																					Optional: true,
-																					Attributes: map[string]schema.Attribute{
-																						"kind": schema.StringAttribute{
-																							Optional:    true,
-																							Description: `Kind of the referenced resource. possible known values include one of ["MeshService", "MeshExternalService", "MeshMultiZoneService"]; Not Null`,
-																							Validators: []validator.String{
-																								speakeasy_stringvalidators.NotNull(),
-																							},
-																						},
-																						"labels": schema.MapAttribute{
-																							Optional:    true,
-																							ElementType: types.StringType,
-																							Description: `Labels are used to select the referenced real resource.`,
-																						},
-																						"port": schema.Int32Attribute{
-																							Optional:    true,
-																							Description: `Port is only supported when this ref refers to a real MeshService object`,
-																						},
-																						"section_name": schema.StringAttribute{
-																							Optional: true,
-																							MarkdownDescription: `SectionName is used to target a specific section of the resource.` + "\n" +
-																								`For example, you can target a port from MeshService.ports[] by its name.`,
-																						},
-																						"weight": schema.Int64Attribute{
-																							Optional: true,
-																							Validators: []validator.Int64{
-																								int64validator.Between(0, 4294967295),
-																							},
-																						},
-																					},
-																					Description: `BackendRef defines the destination traffic is routed to. Not Null`,
-																					Validators: []validator.Object{
-																						speakeasy_objectvalidators.NotNull(),
-																					},
-																				},
-																				"percentage": schema.SingleNestedAttribute{
-																					Optional: true,
-																					Attributes: map[string]schema.Attribute{
-																						"integer": schema.Int64Attribute{
-																							Optional: true,
-																							Validators: []validator.Int64{
-																								int64validator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("str"),
-																								}...),
-																							},
-																						},
-																						"str": schema.StringAttribute{
-																							Optional: true,
-																							Validators: []validator.String{
-																								stringvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("integer"),
-																								}...),
-																							},
-																						},
-																					},
-																					MarkdownDescription: `Percentage of requests to mirror. If not specified, all requests` + "\n" +
-																						`to the target cluster will be mirrored.`,
-																				},
-																			},
-																		},
-																		"request_redirect": schema.SingleNestedAttribute{
-																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"hostname": schema.StringAttribute{
-																					Optional: true,
-																					MarkdownDescription: `PreciseHostname is the fully qualified domain name of a network host. This` + "\n" +
-																						`matches the RFC 1123 definition of a hostname with 1 notable exception that` + "\n" +
-																						`numeric IP addresses are not allowed.` + "\n" +
-																						`` + "\n" +
-																						`Note that as per RFC1035 and RFC1123, a *label* must consist of lower case` + "\n" +
-																						`alphanumeric characters or '-', and must start and end with an alphanumeric` + "\n" +
-																						`character. No other punctuation is allowed.`,
-																					Validators: []validator.String{
-																						stringvalidator.UTF8LengthBetween(1, 253),
-																						stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
-																					},
-																				},
-																				"path": schema.SingleNestedAttribute{
-																					Optional: true,
-																					Attributes: map[string]schema.Attribute{
-																						"one": schema.SingleNestedAttribute{
-																							Optional: true,
-																							Attributes: map[string]schema.Attribute{
-																								"replace_full_path": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"replace_prefix_match": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"type": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																							Validators: []validator.Object{
-																								objectvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("two"),
-																								}...),
-																							},
-																						},
-																						"two": schema.SingleNestedAttribute{
-																							Optional: true,
-																							Attributes: map[string]schema.Attribute{
-																								"replace_full_path": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"replace_prefix_match": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"type": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																							Validators: []validator.Object{
-																								objectvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("one"),
-																								}...),
-																							},
-																						},
-																					},
-																					MarkdownDescription: `Path defines parameters used to modify the path of the incoming request.` + "\n" +
-																						`The modified path is then used to construct the location header.` + "\n" +
-																						`When empty, the request path is used as-is.`,
-																				},
-																				"port": schema.Int32Attribute{
-																					Optional: true,
-																					MarkdownDescription: `Port is the port to be used in the value of the ` + "`" + `Location` + "`" + `` + "\n" +
-																						`header in the response.` + "\n" +
-																						`When empty, port (if specified) of the request is used.`,
-																					Validators: []validator.Int32{
-																						int32validator.Between(1, 65535),
-																					},
-																				},
-																				"scheme": schema.StringAttribute{
-																					Optional:    true,
-																					Description: `possible known values include one of ["http", "https"]`,
-																				},
-																				"status_code": schema.Int64Attribute{
-																					Computed:    true,
-																					Optional:    true,
-																					Default:     int64default.StaticInt64(302),
-																					Description: `StatusCode is the HTTP status code to be used in response. possible known values include one of [301, 302, 303, 307, 308]; Default: 302`,
-																				},
-																			},
-																		},
-																		"response_header_modifier": schema.SingleNestedAttribute{
-																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"add": schema.ListNestedAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					NestedObject: schema.NestedAttributeObject{
-																						Validators: []validator.Object{
-																							speakeasy_objectvalidators.NotNull(),
-																						},
-																						Attributes: map[string]schema.Attribute{
-																							"name": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																									stringvalidator.UTF8LengthBetween(1, 256),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																								},
-																							},
-																							"value": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																								},
-																							},
-																						},
-																					},
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
-																					},
-																				},
-																				"remove": schema.ListAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					ElementType: types.StringType,
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
-																					},
-																				},
-																				"set": schema.ListNestedAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					NestedObject: schema.NestedAttributeObject{
-																						Validators: []validator.Object{
-																							speakeasy_objectvalidators.NotNull(),
-																						},
-																						Attributes: map[string]schema.Attribute{
-																							"name": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																									stringvalidator.UTF8LengthBetween(1, 256),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																								},
-																							},
-																							"value": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																								},
-																							},
-																						},
-																					},
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
-																					},
-																				},
-																			},
-																			MarkdownDescription: `Only one action is supported per header name.` + "\n" +
-																				`Configuration to set or add multiple values for a header must use RFC 7230` + "\n" +
-																				`header value formatting, separating each value with a comma.`,
-																		},
-																		"type": schema.StringAttribute{
-																			Optional:    true,
-																			Description: `possible known values include one of ["RequestHeaderModifier", "ResponseHeaderModifier", "RequestRedirect", "URLRewrite", "RequestMirror"]; Not Null`,
+																			MarkdownDescription: `PreciseHostname is the fully qualified domain name of a network host. This` + "\n" +
+																				`matches the RFC 1123 definition of a hostname with 1 notable exception that` + "\n" +
+																				`numeric IP addresses are not allowed.` + "\n" +
+																				`` + "\n" +
+																				`Note that as per RFC1035 and RFC1123, a *label* must consist of lower case` + "\n" +
+																				`alphanumeric characters or '-', and must start and end with an alphanumeric` + "\n" +
+																				`character. No other punctuation is allowed.`,
 																			Validators: []validator.String{
-																				speakeasy_stringvalidators.NotNull(),
+																				stringvalidator.UTF8LengthBetween(1, 253),
+																				stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
 																			},
 																		},
-																		"url_rewrite": schema.SingleNestedAttribute{
+																		"path": schema.SingleNestedAttribute{
 																			Optional: true,
 																			Attributes: map[string]schema.Attribute{
-																				"host_to_backend_hostname": schema.BoolAttribute{
-																					Optional:    true,
-																					Description: `HostToBackendHostname is not currently supported and must not be set.`,
-																				},
-																				"hostname": schema.StringAttribute{
-																					Optional:    true,
-																					Description: `Hostname is the value to be used to replace the host header value during forwarding.`,
-																					Validators: []validator.String{
-																						stringvalidator.UTF8LengthBetween(1, 253),
-																						stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
-																					},
-																				},
-																				"path": schema.SingleNestedAttribute{
+																				"replace_full_path": schema.StringAttribute{
 																					Optional: true,
-																					Attributes: map[string]schema.Attribute{
-																						"one": schema.SingleNestedAttribute{
-																							Optional: true,
-																							Attributes: map[string]schema.Attribute{
-																								"replace_full_path": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"replace_prefix_match": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"type": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																							Validators: []validator.Object{
-																								objectvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("two"),
-																								}...),
-																							},
-																						},
-																						"two": schema.SingleNestedAttribute{
-																							Optional: true,
-																							Attributes: map[string]schema.Attribute{
-																								"replace_full_path": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"replace_prefix_match": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"type": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																							Validators: []validator.Object{
-																								objectvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("one"),
-																								}...),
-																							},
-																						},
+																				},
+																				"replace_prefix_match": schema.StringAttribute{
+																					Optional: true,
+																				},
+																				"type": schema.StringAttribute{
+																					Optional:    true,
+																					Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
+																					Validators: []validator.String{
+																						speakeasy_stringvalidators.NotNull(),
 																					},
-																					Description: `Path defines a path rewrite.`,
 																				},
 																			},
+																			MarkdownDescription: `Path defines parameters used to modify the path of the incoming request.` + "\n" +
+																				`The modified path is then used to construct the location header.` + "\n" +
+																				`When empty, the request path is used as-is.`,
 																		},
-																	},
-																	Validators: []validator.Object{
-																		objectvalidator.ConflictsWith(path.Expressions{
-																			path.MatchRelative().AtParent().AtName("one"),
-																			path.MatchRelative().AtParent().AtName("two"),
-																			path.MatchRelative().AtParent().AtName("three"),
-																			path.MatchRelative().AtParent().AtName("five"),
-																		}...),
+																		"port": schema.Int32Attribute{
+																			Optional: true,
+																			MarkdownDescription: `Port is the port to be used in the value of the ` + "`" + `Location` + "`" + `` + "\n" +
+																				`header in the response.` + "\n" +
+																				`When empty, port (if specified) of the request is used.`,
+																			Validators: []validator.Int32{
+																				int32validator.Between(1, 65535),
+																			},
+																		},
+																		"scheme": schema.StringAttribute{
+																			Optional:    true,
+																			Description: `possible known values include one of ["http", "https"]`,
+																		},
+																		"status_code": schema.Int64Attribute{
+																			Computed:    true,
+																			Optional:    true,
+																			Default:     int64default.StaticInt64(302),
+																			Description: `StatusCode is the HTTP status code to be used in response. possible known values include one of [301, 302, 303, 307, 308]; Default: 302`,
+																		},
 																	},
 																},
-																"one": schema.SingleNestedAttribute{
+																"response_header_modifier": schema.SingleNestedAttribute{
 																	Optional: true,
 																	Attributes: map[string]schema.Attribute{
-																		"request_header_modifier": schema.SingleNestedAttribute{
+																		"add": schema.ListNestedAttribute{
+																			Computed: true,
 																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"add": schema.ListNestedAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					NestedObject: schema.NestedAttributeObject{
-																						Validators: []validator.Object{
-																							speakeasy_objectvalidators.NotNull(),
-																						},
-																						Attributes: map[string]schema.Attribute{
-																							"name": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																									stringvalidator.UTF8LengthBetween(1, 256),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																								},
-																							},
-																							"value": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																								},
-																							},
-																						},
-																					},
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
-																					},
+																			PlanModifiers: []planmodifier.List{
+																				custom_listplanmodifier.SupressZeroNullModifier(),
+																			},
+																			NestedObject: schema.NestedAttributeObject{
+																				Validators: []validator.Object{
+																					speakeasy_objectvalidators.NotNull(),
 																				},
-																				"remove": schema.ListAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					ElementType: types.StringType,
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
-																					},
-																				},
-																				"set": schema.ListNestedAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					NestedObject: schema.NestedAttributeObject{
-																						Validators: []validator.Object{
-																							speakeasy_objectvalidators.NotNull(),
-																						},
-																						Attributes: map[string]schema.Attribute{
-																							"name": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																									stringvalidator.UTF8LengthBetween(1, 256),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																								},
-																							},
-																							"value": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																								},
-																							},
+																				Attributes: map[string]schema.Attribute{
+																					"name": schema.StringAttribute{
+																						Optional:    true,
+																						Description: `Not Null`,
+																						Validators: []validator.String{
+																							speakeasy_stringvalidators.NotNull(),
+																							stringvalidator.UTF8LengthBetween(1, 256),
+																							stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
 																						},
 																					},
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
+																					"value": schema.StringAttribute{
+																						Optional:    true,
+																						Description: `Not Null`,
+																						Validators: []validator.String{
+																							speakeasy_stringvalidators.NotNull(),
+																						},
 																					},
 																				},
 																			},
-																			MarkdownDescription: `Only one action is supported per header name.` + "\n" +
-																				`Configuration to set or add multiple values for a header must use RFC 7230` + "\n" +
-																				`header value formatting, separating each value with a comma.`,
-																		},
-																		"request_mirror": schema.SingleNestedAttribute{
-																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"backend_ref": schema.SingleNestedAttribute{
-																					Optional: true,
-																					Attributes: map[string]schema.Attribute{
-																						"kind": schema.StringAttribute{
-																							Optional:    true,
-																							Description: `Kind of the referenced resource. possible known values include one of ["MeshService", "MeshExternalService", "MeshMultiZoneService"]; Not Null`,
-																							Validators: []validator.String{
-																								speakeasy_stringvalidators.NotNull(),
-																							},
-																						},
-																						"labels": schema.MapAttribute{
-																							Optional:    true,
-																							ElementType: types.StringType,
-																							Description: `Labels are used to select the referenced real resource.`,
-																						},
-																						"port": schema.Int32Attribute{
-																							Optional:    true,
-																							Description: `Port is only supported when this ref refers to a real MeshService object`,
-																						},
-																						"section_name": schema.StringAttribute{
-																							Optional: true,
-																							MarkdownDescription: `SectionName is used to target a specific section of the resource.` + "\n" +
-																								`For example, you can target a port from MeshService.ports[] by its name.`,
-																						},
-																						"weight": schema.Int64Attribute{
-																							Optional: true,
-																							Validators: []validator.Int64{
-																								int64validator.Between(0, 4294967295),
-																							},
-																						},
-																					},
-																					Description: `BackendRef defines the destination traffic is routed to. Not Null`,
-																					Validators: []validator.Object{
-																						speakeasy_objectvalidators.NotNull(),
-																					},
-																				},
-																				"percentage": schema.SingleNestedAttribute{
-																					Optional: true,
-																					Attributes: map[string]schema.Attribute{
-																						"integer": schema.Int64Attribute{
-																							Optional: true,
-																							Validators: []validator.Int64{
-																								int64validator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("str"),
-																								}...),
-																							},
-																						},
-																						"str": schema.StringAttribute{
-																							Optional: true,
-																							Validators: []validator.String{
-																								stringvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("integer"),
-																								}...),
-																							},
-																						},
-																					},
-																					MarkdownDescription: `Percentage of requests to mirror. If not specified, all requests` + "\n" +
-																						`to the target cluster will be mirrored.`,
-																				},
+																			Validators: []validator.List{
+																				listvalidator.SizeAtMost(16),
 																			},
 																		},
-																		"request_redirect": schema.SingleNestedAttribute{
+																		"remove": schema.ListAttribute{
+																			Computed: true,
 																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"hostname": schema.StringAttribute{
-																					Optional: true,
-																					MarkdownDescription: `PreciseHostname is the fully qualified domain name of a network host. This` + "\n" +
-																						`matches the RFC 1123 definition of a hostname with 1 notable exception that` + "\n" +
-																						`numeric IP addresses are not allowed.` + "\n" +
-																						`` + "\n" +
-																						`Note that as per RFC1035 and RFC1123, a *label* must consist of lower case` + "\n" +
-																						`alphanumeric characters or '-', and must start and end with an alphanumeric` + "\n" +
-																						`character. No other punctuation is allowed.`,
-																					Validators: []validator.String{
-																						stringvalidator.UTF8LengthBetween(1, 253),
-																						stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
-																					},
-																				},
-																				"path": schema.SingleNestedAttribute{
-																					Optional: true,
-																					Attributes: map[string]schema.Attribute{
-																						"one": schema.SingleNestedAttribute{
-																							Optional: true,
-																							Attributes: map[string]schema.Attribute{
-																								"replace_full_path": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"replace_prefix_match": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"type": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																							Validators: []validator.Object{
-																								objectvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("two"),
-																								}...),
-																							},
-																						},
-																						"two": schema.SingleNestedAttribute{
-																							Optional: true,
-																							Attributes: map[string]schema.Attribute{
-																								"replace_full_path": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"replace_prefix_match": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"type": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																							Validators: []validator.Object{
-																								objectvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("one"),
-																								}...),
-																							},
-																						},
-																					},
-																					MarkdownDescription: `Path defines parameters used to modify the path of the incoming request.` + "\n" +
-																						`The modified path is then used to construct the location header.` + "\n" +
-																						`When empty, the request path is used as-is.`,
-																				},
-																				"port": schema.Int32Attribute{
-																					Optional: true,
-																					MarkdownDescription: `Port is the port to be used in the value of the ` + "`" + `Location` + "`" + `` + "\n" +
-																						`header in the response.` + "\n" +
-																						`When empty, port (if specified) of the request is used.`,
-																					Validators: []validator.Int32{
-																						int32validator.Between(1, 65535),
-																					},
-																				},
-																				"scheme": schema.StringAttribute{
-																					Optional:    true,
-																					Description: `possible known values include one of ["http", "https"]`,
-																				},
-																				"status_code": schema.Int64Attribute{
-																					Computed:    true,
-																					Optional:    true,
-																					Default:     int64default.StaticInt64(302),
-																					Description: `StatusCode is the HTTP status code to be used in response. possible known values include one of [301, 302, 303, 307, 308]; Default: 302`,
-																				},
+																			PlanModifiers: []planmodifier.List{
+																				custom_listplanmodifier.SupressZeroNullModifier(),
+																			},
+																			ElementType: types.StringType,
+																			Validators: []validator.List{
+																				listvalidator.SizeAtMost(16),
 																			},
 																		},
-																		"response_header_modifier": schema.SingleNestedAttribute{
+																		"set": schema.ListNestedAttribute{
+																			Computed: true,
 																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"add": schema.ListNestedAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					NestedObject: schema.NestedAttributeObject{
-																						Validators: []validator.Object{
-																							speakeasy_objectvalidators.NotNull(),
-																						},
-																						Attributes: map[string]schema.Attribute{
-																							"name": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																									stringvalidator.UTF8LengthBetween(1, 256),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																								},
-																							},
-																							"value": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																								},
-																							},
-																						},
-																					},
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
-																					},
+																			PlanModifiers: []planmodifier.List{
+																				custom_listplanmodifier.SupressZeroNullModifier(),
+																			},
+																			NestedObject: schema.NestedAttributeObject{
+																				Validators: []validator.Object{
+																					speakeasy_objectvalidators.NotNull(),
 																				},
-																				"remove": schema.ListAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					ElementType: types.StringType,
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
-																					},
-																				},
-																				"set": schema.ListNestedAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					NestedObject: schema.NestedAttributeObject{
-																						Validators: []validator.Object{
-																							speakeasy_objectvalidators.NotNull(),
-																						},
-																						Attributes: map[string]schema.Attribute{
-																							"name": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																									stringvalidator.UTF8LengthBetween(1, 256),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																								},
-																							},
-																							"value": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																								},
-																							},
+																				Attributes: map[string]schema.Attribute{
+																					"name": schema.StringAttribute{
+																						Optional:    true,
+																						Description: `Not Null`,
+																						Validators: []validator.String{
+																							speakeasy_stringvalidators.NotNull(),
+																							stringvalidator.UTF8LengthBetween(1, 256),
+																							stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
 																						},
 																					},
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
+																					"value": schema.StringAttribute{
+																						Optional:    true,
+																						Description: `Not Null`,
+																						Validators: []validator.String{
+																							speakeasy_stringvalidators.NotNull(),
+																						},
 																					},
 																				},
 																			},
-																			MarkdownDescription: `Only one action is supported per header name.` + "\n" +
-																				`Configuration to set or add multiple values for a header must use RFC 7230` + "\n" +
-																				`header value formatting, separating each value with a comma.`,
-																		},
-																		"type": schema.StringAttribute{
-																			Optional:    true,
-																			Description: `possible known values include one of ["RequestHeaderModifier", "ResponseHeaderModifier", "RequestRedirect", "URLRewrite", "RequestMirror"]; Not Null`,
-																			Validators: []validator.String{
-																				speakeasy_stringvalidators.NotNull(),
-																			},
-																		},
-																		"url_rewrite": schema.SingleNestedAttribute{
-																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"host_to_backend_hostname": schema.BoolAttribute{
-																					Optional:    true,
-																					Description: `HostToBackendHostname is not currently supported and must not be set.`,
-																				},
-																				"hostname": schema.StringAttribute{
-																					Optional:    true,
-																					Description: `Hostname is the value to be used to replace the host header value during forwarding.`,
-																					Validators: []validator.String{
-																						stringvalidator.UTF8LengthBetween(1, 253),
-																						stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
-																					},
-																				},
-																				"path": schema.SingleNestedAttribute{
-																					Optional: true,
-																					Attributes: map[string]schema.Attribute{
-																						"one": schema.SingleNestedAttribute{
-																							Optional: true,
-																							Attributes: map[string]schema.Attribute{
-																								"replace_full_path": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"replace_prefix_match": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"type": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																							Validators: []validator.Object{
-																								objectvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("two"),
-																								}...),
-																							},
-																						},
-																						"two": schema.SingleNestedAttribute{
-																							Optional: true,
-																							Attributes: map[string]schema.Attribute{
-																								"replace_full_path": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"replace_prefix_match": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"type": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																							Validators: []validator.Object{
-																								objectvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("one"),
-																								}...),
-																							},
-																						},
-																					},
-																					Description: `Path defines a path rewrite.`,
-																				},
+																			Validators: []validator.List{
+																				listvalidator.SizeAtMost(16),
 																			},
 																		},
 																	},
-																	Validators: []validator.Object{
-																		objectvalidator.ConflictsWith(path.Expressions{
-																			path.MatchRelative().AtParent().AtName("two"),
-																			path.MatchRelative().AtParent().AtName("three"),
-																			path.MatchRelative().AtParent().AtName("four"),
-																			path.MatchRelative().AtParent().AtName("five"),
-																		}...),
+																	MarkdownDescription: `Only one action is supported per header name.` + "\n" +
+																		`Configuration to set or add multiple values for a header must use RFC 7230` + "\n" +
+																		`header value formatting, separating each value with a comma.`,
+																},
+																"type": schema.StringAttribute{
+																	Optional:    true,
+																	Description: `possible known values include one of ["RequestHeaderModifier", "ResponseHeaderModifier", "RequestRedirect", "URLRewrite", "RequestMirror"]; Not Null`,
+																	Validators: []validator.String{
+																		speakeasy_stringvalidators.NotNull(),
 																	},
 																},
-																"three": schema.SingleNestedAttribute{
+																"url_rewrite": schema.SingleNestedAttribute{
 																	Optional: true,
 																	Attributes: map[string]schema.Attribute{
-																		"request_header_modifier": schema.SingleNestedAttribute{
-																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"add": schema.ListNestedAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					NestedObject: schema.NestedAttributeObject{
-																						Validators: []validator.Object{
-																							speakeasy_objectvalidators.NotNull(),
-																						},
-																						Attributes: map[string]schema.Attribute{
-																							"name": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																									stringvalidator.UTF8LengthBetween(1, 256),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																								},
-																							},
-																							"value": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																								},
-																							},
-																						},
-																					},
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
-																					},
-																				},
-																				"remove": schema.ListAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					ElementType: types.StringType,
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
-																					},
-																				},
-																				"set": schema.ListNestedAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					NestedObject: schema.NestedAttributeObject{
-																						Validators: []validator.Object{
-																							speakeasy_objectvalidators.NotNull(),
-																						},
-																						Attributes: map[string]schema.Attribute{
-																							"name": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																									stringvalidator.UTF8LengthBetween(1, 256),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																								},
-																							},
-																							"value": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																								},
-																							},
-																						},
-																					},
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
-																					},
-																				},
-																			},
-																			MarkdownDescription: `Only one action is supported per header name.` + "\n" +
-																				`Configuration to set or add multiple values for a header must use RFC 7230` + "\n" +
-																				`header value formatting, separating each value with a comma.`,
-																		},
-																		"request_mirror": schema.SingleNestedAttribute{
-																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"backend_ref": schema.SingleNestedAttribute{
-																					Optional: true,
-																					Attributes: map[string]schema.Attribute{
-																						"kind": schema.StringAttribute{
-																							Optional:    true,
-																							Description: `Kind of the referenced resource. possible known values include one of ["MeshService", "MeshExternalService", "MeshMultiZoneService"]; Not Null`,
-																							Validators: []validator.String{
-																								speakeasy_stringvalidators.NotNull(),
-																							},
-																						},
-																						"labels": schema.MapAttribute{
-																							Optional:    true,
-																							ElementType: types.StringType,
-																							Description: `Labels are used to select the referenced real resource.`,
-																						},
-																						"port": schema.Int32Attribute{
-																							Optional:    true,
-																							Description: `Port is only supported when this ref refers to a real MeshService object`,
-																						},
-																						"section_name": schema.StringAttribute{
-																							Optional: true,
-																							MarkdownDescription: `SectionName is used to target a specific section of the resource.` + "\n" +
-																								`For example, you can target a port from MeshService.ports[] by its name.`,
-																						},
-																						"weight": schema.Int64Attribute{
-																							Optional: true,
-																							Validators: []validator.Int64{
-																								int64validator.Between(0, 4294967295),
-																							},
-																						},
-																					},
-																					Description: `BackendRef defines the destination traffic is routed to. Not Null`,
-																					Validators: []validator.Object{
-																						speakeasy_objectvalidators.NotNull(),
-																					},
-																				},
-																				"percentage": schema.SingleNestedAttribute{
-																					Optional: true,
-																					Attributes: map[string]schema.Attribute{
-																						"integer": schema.Int64Attribute{
-																							Optional: true,
-																							Validators: []validator.Int64{
-																								int64validator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("str"),
-																								}...),
-																							},
-																						},
-																						"str": schema.StringAttribute{
-																							Optional: true,
-																							Validators: []validator.String{
-																								stringvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("integer"),
-																								}...),
-																							},
-																						},
-																					},
-																					MarkdownDescription: `Percentage of requests to mirror. If not specified, all requests` + "\n" +
-																						`to the target cluster will be mirrored.`,
-																				},
-																			},
-																		},
-																		"request_redirect": schema.SingleNestedAttribute{
-																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"hostname": schema.StringAttribute{
-																					Optional: true,
-																					MarkdownDescription: `PreciseHostname is the fully qualified domain name of a network host. This` + "\n" +
-																						`matches the RFC 1123 definition of a hostname with 1 notable exception that` + "\n" +
-																						`numeric IP addresses are not allowed.` + "\n" +
-																						`` + "\n" +
-																						`Note that as per RFC1035 and RFC1123, a *label* must consist of lower case` + "\n" +
-																						`alphanumeric characters or '-', and must start and end with an alphanumeric` + "\n" +
-																						`character. No other punctuation is allowed.`,
-																					Validators: []validator.String{
-																						stringvalidator.UTF8LengthBetween(1, 253),
-																						stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
-																					},
-																				},
-																				"path": schema.SingleNestedAttribute{
-																					Optional: true,
-																					Attributes: map[string]schema.Attribute{
-																						"one": schema.SingleNestedAttribute{
-																							Optional: true,
-																							Attributes: map[string]schema.Attribute{
-																								"replace_full_path": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"replace_prefix_match": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"type": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																							Validators: []validator.Object{
-																								objectvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("two"),
-																								}...),
-																							},
-																						},
-																						"two": schema.SingleNestedAttribute{
-																							Optional: true,
-																							Attributes: map[string]schema.Attribute{
-																								"replace_full_path": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"replace_prefix_match": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"type": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																							Validators: []validator.Object{
-																								objectvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("one"),
-																								}...),
-																							},
-																						},
-																					},
-																					MarkdownDescription: `Path defines parameters used to modify the path of the incoming request.` + "\n" +
-																						`The modified path is then used to construct the location header.` + "\n" +
-																						`When empty, the request path is used as-is.`,
-																				},
-																				"port": schema.Int32Attribute{
-																					Optional: true,
-																					MarkdownDescription: `Port is the port to be used in the value of the ` + "`" + `Location` + "`" + `` + "\n" +
-																						`header in the response.` + "\n" +
-																						`When empty, port (if specified) of the request is used.`,
-																					Validators: []validator.Int32{
-																						int32validator.Between(1, 65535),
-																					},
-																				},
-																				"scheme": schema.StringAttribute{
-																					Optional:    true,
-																					Description: `possible known values include one of ["http", "https"]`,
-																				},
-																				"status_code": schema.Int64Attribute{
-																					Computed:    true,
-																					Optional:    true,
-																					Default:     int64default.StaticInt64(302),
-																					Description: `StatusCode is the HTTP status code to be used in response. possible known values include one of [301, 302, 303, 307, 308]; Default: 302`,
-																				},
-																			},
-																		},
-																		"response_header_modifier": schema.SingleNestedAttribute{
-																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"add": schema.ListNestedAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					NestedObject: schema.NestedAttributeObject{
-																						Validators: []validator.Object{
-																							speakeasy_objectvalidators.NotNull(),
-																						},
-																						Attributes: map[string]schema.Attribute{
-																							"name": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																									stringvalidator.UTF8LengthBetween(1, 256),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																								},
-																							},
-																							"value": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																								},
-																							},
-																						},
-																					},
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
-																					},
-																				},
-																				"remove": schema.ListAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					ElementType: types.StringType,
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
-																					},
-																				},
-																				"set": schema.ListNestedAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					NestedObject: schema.NestedAttributeObject{
-																						Validators: []validator.Object{
-																							speakeasy_objectvalidators.NotNull(),
-																						},
-																						Attributes: map[string]schema.Attribute{
-																							"name": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																									stringvalidator.UTF8LengthBetween(1, 256),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																								},
-																							},
-																							"value": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																								},
-																							},
-																						},
-																					},
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
-																					},
-																				},
-																			},
-																			MarkdownDescription: `Only one action is supported per header name.` + "\n" +
-																				`Configuration to set or add multiple values for a header must use RFC 7230` + "\n" +
-																				`header value formatting, separating each value with a comma.`,
-																		},
-																		"type": schema.StringAttribute{
+																		"host_to_backend_hostname": schema.BoolAttribute{
 																			Optional:    true,
-																			Description: `possible known values include one of ["RequestHeaderModifier", "ResponseHeaderModifier", "RequestRedirect", "URLRewrite", "RequestMirror"]; Not Null`,
-																			Validators: []validator.String{
-																				speakeasy_stringvalidators.NotNull(),
-																			},
+																			Description: `HostToBackendHostname is not currently supported and must not be set.`,
 																		},
-																		"url_rewrite": schema.SingleNestedAttribute{
-																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"host_to_backend_hostname": schema.BoolAttribute{
-																					Optional:    true,
-																					Description: `HostToBackendHostname is not currently supported and must not be set.`,
-																				},
-																				"hostname": schema.StringAttribute{
-																					Optional:    true,
-																					Description: `Hostname is the value to be used to replace the host header value during forwarding.`,
-																					Validators: []validator.String{
-																						stringvalidator.UTF8LengthBetween(1, 253),
-																						stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
-																					},
-																				},
-																				"path": schema.SingleNestedAttribute{
-																					Optional: true,
-																					Attributes: map[string]schema.Attribute{
-																						"one": schema.SingleNestedAttribute{
-																							Optional: true,
-																							Attributes: map[string]schema.Attribute{
-																								"replace_full_path": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"replace_prefix_match": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"type": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																							Validators: []validator.Object{
-																								objectvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("two"),
-																								}...),
-																							},
-																						},
-																						"two": schema.SingleNestedAttribute{
-																							Optional: true,
-																							Attributes: map[string]schema.Attribute{
-																								"replace_full_path": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"replace_prefix_match": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"type": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																							Validators: []validator.Object{
-																								objectvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("one"),
-																								}...),
-																							},
-																						},
-																					},
-																					Description: `Path defines a path rewrite.`,
-																				},
-																			},
-																		},
-																	},
-																	Validators: []validator.Object{
-																		objectvalidator.ConflictsWith(path.Expressions{
-																			path.MatchRelative().AtParent().AtName("one"),
-																			path.MatchRelative().AtParent().AtName("two"),
-																			path.MatchRelative().AtParent().AtName("four"),
-																			path.MatchRelative().AtParent().AtName("five"),
-																		}...),
-																	},
-																},
-																"two": schema.SingleNestedAttribute{
-																	Optional: true,
-																	Attributes: map[string]schema.Attribute{
-																		"request_header_modifier": schema.SingleNestedAttribute{
-																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"add": schema.ListNestedAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					NestedObject: schema.NestedAttributeObject{
-																						Validators: []validator.Object{
-																							speakeasy_objectvalidators.NotNull(),
-																						},
-																						Attributes: map[string]schema.Attribute{
-																							"name": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																									stringvalidator.UTF8LengthBetween(1, 256),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																								},
-																							},
-																							"value": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																								},
-																							},
-																						},
-																					},
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
-																					},
-																				},
-																				"remove": schema.ListAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					ElementType: types.StringType,
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
-																					},
-																				},
-																				"set": schema.ListNestedAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					NestedObject: schema.NestedAttributeObject{
-																						Validators: []validator.Object{
-																							speakeasy_objectvalidators.NotNull(),
-																						},
-																						Attributes: map[string]schema.Attribute{
-																							"name": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																									stringvalidator.UTF8LengthBetween(1, 256),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																								},
-																							},
-																							"value": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																								},
-																							},
-																						},
-																					},
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
-																					},
-																				},
-																			},
-																			MarkdownDescription: `Only one action is supported per header name.` + "\n" +
-																				`Configuration to set or add multiple values for a header must use RFC 7230` + "\n" +
-																				`header value formatting, separating each value with a comma.`,
-																		},
-																		"request_mirror": schema.SingleNestedAttribute{
-																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"backend_ref": schema.SingleNestedAttribute{
-																					Optional: true,
-																					Attributes: map[string]schema.Attribute{
-																						"kind": schema.StringAttribute{
-																							Optional:    true,
-																							Description: `Kind of the referenced resource. possible known values include one of ["MeshService", "MeshExternalService", "MeshMultiZoneService"]; Not Null`,
-																							Validators: []validator.String{
-																								speakeasy_stringvalidators.NotNull(),
-																							},
-																						},
-																						"labels": schema.MapAttribute{
-																							Optional:    true,
-																							ElementType: types.StringType,
-																							Description: `Labels are used to select the referenced real resource.`,
-																						},
-																						"port": schema.Int32Attribute{
-																							Optional:    true,
-																							Description: `Port is only supported when this ref refers to a real MeshService object`,
-																						},
-																						"section_name": schema.StringAttribute{
-																							Optional: true,
-																							MarkdownDescription: `SectionName is used to target a specific section of the resource.` + "\n" +
-																								`For example, you can target a port from MeshService.ports[] by its name.`,
-																						},
-																						"weight": schema.Int64Attribute{
-																							Optional: true,
-																							Validators: []validator.Int64{
-																								int64validator.Between(0, 4294967295),
-																							},
-																						},
-																					},
-																					Description: `BackendRef defines the destination traffic is routed to. Not Null`,
-																					Validators: []validator.Object{
-																						speakeasy_objectvalidators.NotNull(),
-																					},
-																				},
-																				"percentage": schema.SingleNestedAttribute{
-																					Optional: true,
-																					Attributes: map[string]schema.Attribute{
-																						"integer": schema.Int64Attribute{
-																							Optional: true,
-																							Validators: []validator.Int64{
-																								int64validator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("str"),
-																								}...),
-																							},
-																						},
-																						"str": schema.StringAttribute{
-																							Optional: true,
-																							Validators: []validator.String{
-																								stringvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("integer"),
-																								}...),
-																							},
-																						},
-																					},
-																					MarkdownDescription: `Percentage of requests to mirror. If not specified, all requests` + "\n" +
-																						`to the target cluster will be mirrored.`,
-																				},
-																			},
-																		},
-																		"request_redirect": schema.SingleNestedAttribute{
-																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"hostname": schema.StringAttribute{
-																					Optional: true,
-																					MarkdownDescription: `PreciseHostname is the fully qualified domain name of a network host. This` + "\n" +
-																						`matches the RFC 1123 definition of a hostname with 1 notable exception that` + "\n" +
-																						`numeric IP addresses are not allowed.` + "\n" +
-																						`` + "\n" +
-																						`Note that as per RFC1035 and RFC1123, a *label* must consist of lower case` + "\n" +
-																						`alphanumeric characters or '-', and must start and end with an alphanumeric` + "\n" +
-																						`character. No other punctuation is allowed.`,
-																					Validators: []validator.String{
-																						stringvalidator.UTF8LengthBetween(1, 253),
-																						stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
-																					},
-																				},
-																				"path": schema.SingleNestedAttribute{
-																					Optional: true,
-																					Attributes: map[string]schema.Attribute{
-																						"one": schema.SingleNestedAttribute{
-																							Optional: true,
-																							Attributes: map[string]schema.Attribute{
-																								"replace_full_path": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"replace_prefix_match": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"type": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																							Validators: []validator.Object{
-																								objectvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("two"),
-																								}...),
-																							},
-																						},
-																						"two": schema.SingleNestedAttribute{
-																							Optional: true,
-																							Attributes: map[string]schema.Attribute{
-																								"replace_full_path": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"replace_prefix_match": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"type": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																							Validators: []validator.Object{
-																								objectvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("one"),
-																								}...),
-																							},
-																						},
-																					},
-																					MarkdownDescription: `Path defines parameters used to modify the path of the incoming request.` + "\n" +
-																						`The modified path is then used to construct the location header.` + "\n" +
-																						`When empty, the request path is used as-is.`,
-																				},
-																				"port": schema.Int32Attribute{
-																					Optional: true,
-																					MarkdownDescription: `Port is the port to be used in the value of the ` + "`" + `Location` + "`" + `` + "\n" +
-																						`header in the response.` + "\n" +
-																						`When empty, port (if specified) of the request is used.`,
-																					Validators: []validator.Int32{
-																						int32validator.Between(1, 65535),
-																					},
-																				},
-																				"scheme": schema.StringAttribute{
-																					Optional:    true,
-																					Description: `possible known values include one of ["http", "https"]`,
-																				},
-																				"status_code": schema.Int64Attribute{
-																					Computed:    true,
-																					Optional:    true,
-																					Default:     int64default.StaticInt64(302),
-																					Description: `StatusCode is the HTTP status code to be used in response. possible known values include one of [301, 302, 303, 307, 308]; Default: 302`,
-																				},
-																			},
-																		},
-																		"response_header_modifier": schema.SingleNestedAttribute{
-																			Optional: true,
-																			Attributes: map[string]schema.Attribute{
-																				"add": schema.ListNestedAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					NestedObject: schema.NestedAttributeObject{
-																						Validators: []validator.Object{
-																							speakeasy_objectvalidators.NotNull(),
-																						},
-																						Attributes: map[string]schema.Attribute{
-																							"name": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																									stringvalidator.UTF8LengthBetween(1, 256),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																								},
-																							},
-																							"value": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																								},
-																							},
-																						},
-																					},
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
-																					},
-																				},
-																				"remove": schema.ListAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					ElementType: types.StringType,
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
-																					},
-																				},
-																				"set": schema.ListNestedAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						custom_listplanmodifier.SupressZeroNullModifier(),
-																					},
-																					NestedObject: schema.NestedAttributeObject{
-																						Validators: []validator.Object{
-																							speakeasy_objectvalidators.NotNull(),
-																						},
-																						Attributes: map[string]schema.Attribute{
-																							"name": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																									stringvalidator.UTF8LengthBetween(1, 256),
-																									stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9!#$%&'*+\-.^_\x60|~]+$`).String()),
-																								},
-																							},
-																							"value": schema.StringAttribute{
-																								Optional:    true,
-																								Description: `Not Null`,
-																								Validators: []validator.String{
-																									speakeasy_stringvalidators.NotNull(),
-																								},
-																							},
-																						},
-																					},
-																					Validators: []validator.List{
-																						listvalidator.SizeAtMost(16),
-																					},
-																				},
-																			},
-																			MarkdownDescription: `Only one action is supported per header name.` + "\n" +
-																				`Configuration to set or add multiple values for a header must use RFC 7230` + "\n" +
-																				`header value formatting, separating each value with a comma.`,
-																		},
-																		"type": schema.StringAttribute{
+																		"hostname": schema.StringAttribute{
 																			Optional:    true,
-																			Description: `possible known values include one of ["RequestHeaderModifier", "ResponseHeaderModifier", "RequestRedirect", "URLRewrite", "RequestMirror"]; Not Null`,
+																			Description: `Hostname is the value to be used to replace the host header value during forwarding.`,
 																			Validators: []validator.String{
-																				speakeasy_stringvalidators.NotNull(),
+																				stringvalidator.UTF8LengthBetween(1, 253),
+																				stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
 																			},
 																		},
-																		"url_rewrite": schema.SingleNestedAttribute{
+																		"path": schema.SingleNestedAttribute{
 																			Optional: true,
 																			Attributes: map[string]schema.Attribute{
-																				"host_to_backend_hostname": schema.BoolAttribute{
-																					Optional:    true,
-																					Description: `HostToBackendHostname is not currently supported and must not be set.`,
-																				},
-																				"hostname": schema.StringAttribute{
-																					Optional:    true,
-																					Description: `Hostname is the value to be used to replace the host header value during forwarding.`,
-																					Validators: []validator.String{
-																						stringvalidator.UTF8LengthBetween(1, 253),
-																						stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
-																					},
-																				},
-																				"path": schema.SingleNestedAttribute{
+																				"replace_full_path": schema.StringAttribute{
 																					Optional: true,
-																					Attributes: map[string]schema.Attribute{
-																						"one": schema.SingleNestedAttribute{
-																							Optional: true,
-																							Attributes: map[string]schema.Attribute{
-																								"replace_full_path": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"replace_prefix_match": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"type": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																							Validators: []validator.Object{
-																								objectvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("two"),
-																								}...),
-																							},
-																						},
-																						"two": schema.SingleNestedAttribute{
-																							Optional: true,
-																							Attributes: map[string]schema.Attribute{
-																								"replace_full_path": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"replace_prefix_match": schema.StringAttribute{
-																									Optional: true,
-																								},
-																								"type": schema.StringAttribute{
-																									Optional:    true,
-																									Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
-																									Validators: []validator.String{
-																										speakeasy_stringvalidators.NotNull(),
-																									},
-																								},
-																							},
-																							Validators: []validator.Object{
-																								objectvalidator.ConflictsWith(path.Expressions{
-																									path.MatchRelative().AtParent().AtName("one"),
-																								}...),
-																							},
-																						},
+																				},
+																				"replace_prefix_match": schema.StringAttribute{
+																					Optional: true,
+																				},
+																				"type": schema.StringAttribute{
+																					Optional:    true,
+																					Description: `possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null`,
+																					Validators: []validator.String{
+																						speakeasy_stringvalidators.NotNull(),
 																					},
-																					Description: `Path defines a path rewrite.`,
 																				},
 																			},
+																			Description: `Path defines a path rewrite.`,
 																		},
-																	},
-																	Validators: []validator.Object{
-																		objectvalidator.ConflictsWith(path.Expressions{
-																			path.MatchRelative().AtParent().AtName("one"),
-																			path.MatchRelative().AtParent().AtName("three"),
-																			path.MatchRelative().AtParent().AtName("four"),
-																			path.MatchRelative().AtParent().AtName("five"),
-																		}...),
 																	},
 																},
 															},
@@ -4628,13 +1149,13 @@ func (r *MeshHTTPRouteResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	request, requestDiags := data.ToOperationsPutMeshHTTPRouteRequest(ctx)
+	request, requestDiags := data.ToOperationsPostMeshHTTPRouteRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshHTTPRoute.PutMeshHTTPRoute(ctx, *request)
+	res, err := r.client.MeshHTTPRoute.PostMeshHTTPRoute(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -4646,10 +1167,14 @@ func (r *MeshHTTPRouteResource) Create(ctx context.Context, req resource.CreateR
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	switch res.StatusCode {
-	case 200, 201:
-		break
-	default:
+	if res.StatusCode == 409 {
+		resp.Diagnostics.AddError(
+			"Resource Already Exists",
+			"When creating this resource, the API indicated that this resource already exists. You can bring the existing resource under management using Terraform import functionality or retry with a unique configuration.",
+		)
+		return
+	}
+	if res.StatusCode != 201 {
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}

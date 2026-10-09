@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
-	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -110,7 +109,7 @@ func (r *MeshMetricResource) Schema(ctx context.Context, req resource.SchemaRequ
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
-				Description: `name of the MeshMetric. Requires replacement if changed.`,
+				Description: `Name of the Kuma resource. Requires replacement if changed.`,
 				Validators: []validator.String{
 					stringvalidator.UTF8LengthAtMost(253),
 					stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
@@ -170,172 +169,78 @@ func (r *MeshMetricResource) Schema(ctx context.Context, req resource.SchemaRequ
 										speakeasy_objectvalidators.NotNull(),
 									},
 									Attributes: map[string]schema.Attribute{
-										"one": schema.SingleNestedAttribute{
+										"open_telemetry": schema.SingleNestedAttribute{
 											Optional: true,
 											Attributes: map[string]schema.Attribute{
-												"open_telemetry": schema.SingleNestedAttribute{
+												"backend_ref": schema.SingleNestedAttribute{
 													Optional: true,
 													Attributes: map[string]schema.Attribute{
-														"backend_ref": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"kind": schema.StringAttribute{
-																	Optional:    true,
-																	Description: `Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"`,
-																	Validators: []validator.String{
-																		speakeasy_stringvalidators.NotNull(),
-																		stringvalidator.OneOf(
-																			"MeshOpenTelemetryBackend",
-																		),
-																	},
-																},
-																"labels": schema.MapAttribute{
-																	Optional:    true,
-																	ElementType: types.StringType,
-																	MarkdownDescription: `Labels to match the referenced resource. When multiple resources match,` + "\n" +
-																		`the oldest by creation time wins.`,
-																},
-															},
-															MarkdownDescription: `BackendRef is a reference to a MeshOpenTelemetryBackend resource that` + "\n" +
-																`defines the collector endpoint.`,
-														},
-														"refresh_interval": schema.StringAttribute{
+														"kind": schema.StringAttribute{
 															Optional:    true,
-															Description: `RefreshInterval defines how frequent metrics should be pushed to collector`,
+															Description: `Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"`,
+															Validators: []validator.String{
+																speakeasy_stringvalidators.NotNull(),
+																stringvalidator.OneOf(
+																	"MeshOpenTelemetryBackend",
+																),
+															},
+														},
+														"labels": schema.MapAttribute{
+															Optional:    true,
+															ElementType: types.StringType,
+															MarkdownDescription: `Labels to match the referenced resource. When multiple resources match,` + "\n" +
+																`the oldest by creation time wins.`,
 														},
 													},
-													Description: `OpenTelemetry backend configuration`,
+													MarkdownDescription: `BackendRef is a reference to a MeshOpenTelemetryBackend resource that` + "\n" +
+														`defines the collector endpoint.`,
 												},
-												"prometheus": schema.SingleNestedAttribute{
-													Optional: true,
-													Attributes: map[string]schema.Attribute{
-														"client_id": schema.StringAttribute{
-															Optional:    true,
-															Description: `ClientId of the Prometheus backend. Needed when using MADS for DP discovery.`,
-														},
-														"path": schema.StringAttribute{
-															Computed:    true,
-															Optional:    true,
-															Default:     stringdefault.StaticString(`/metrics`),
-															Description: `Path on which a dataplane should expose HTTP endpoint with Prometheus metrics. Default: "/metrics"`,
-														},
-														"port": schema.Int32Attribute{
-															Computed:    true,
-															Optional:    true,
-															Default:     int32default.StaticInt32(5670),
-															Description: `Port on which a dataplane should expose HTTP endpoint with Prometheus metrics. Default: 5670`,
-														},
-														"tls": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"mode": schema.StringAttribute{
-																	Computed:    true,
-																	Optional:    true,
-																	Default:     stringdefault.StaticString(`Disabled`),
-																	Description: `Configuration of TLS for Prometheus listener. possible known values include one of ["Disabled", "ProvidedTLS", "ActiveMTLSBackend"]; Default: "Disabled"`,
-																},
-															},
-															Description: `Configuration of TLS for prometheus listener.`,
-														},
-													},
-													Description: `Prometheus backend configuration.`,
-												},
-												"type": schema.StringAttribute{
+												"refresh_interval": schema.StringAttribute{
 													Optional:    true,
-													Description: `Type of the backend that will be used to collect metrics. At the moment only Prometheus backend is available. possible known values include one of ["Prometheus", "OpenTelemetry"]; Not Null`,
-													Validators: []validator.String{
-														speakeasy_stringvalidators.NotNull(),
-													},
+													Description: `RefreshInterval defines how frequent metrics should be pushed to collector`,
 												},
 											},
-											Validators: []validator.Object{
-												objectvalidator.ConflictsWith(path.Expressions{
-													path.MatchRelative().AtParent().AtName("two"),
-												}...),
-											},
+											Description: `OpenTelemetry backend configuration`,
 										},
-										"two": schema.SingleNestedAttribute{
+										"prometheus": schema.SingleNestedAttribute{
 											Optional: true,
 											Attributes: map[string]schema.Attribute{
-												"open_telemetry": schema.SingleNestedAttribute{
-													Optional: true,
-													Attributes: map[string]schema.Attribute{
-														"backend_ref": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"kind": schema.StringAttribute{
-																	Optional:    true,
-																	Description: `Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"`,
-																	Validators: []validator.String{
-																		speakeasy_stringvalidators.NotNull(),
-																		stringvalidator.OneOf(
-																			"MeshOpenTelemetryBackend",
-																		),
-																	},
-																},
-																"labels": schema.MapAttribute{
-																	Optional:    true,
-																	ElementType: types.StringType,
-																	MarkdownDescription: `Labels to match the referenced resource. When multiple resources match,` + "\n" +
-																		`the oldest by creation time wins.`,
-																},
-															},
-															MarkdownDescription: `BackendRef is a reference to a MeshOpenTelemetryBackend resource that` + "\n" +
-																`defines the collector endpoint.`,
-														},
-														"refresh_interval": schema.StringAttribute{
-															Optional:    true,
-															Description: `RefreshInterval defines how frequent metrics should be pushed to collector`,
-														},
-													},
-													Description: `OpenTelemetry backend configuration`,
-												},
-												"prometheus": schema.SingleNestedAttribute{
-													Optional: true,
-													Attributes: map[string]schema.Attribute{
-														"client_id": schema.StringAttribute{
-															Optional:    true,
-															Description: `ClientId of the Prometheus backend. Needed when using MADS for DP discovery.`,
-														},
-														"path": schema.StringAttribute{
-															Computed:    true,
-															Optional:    true,
-															Default:     stringdefault.StaticString(`/metrics`),
-															Description: `Path on which a dataplane should expose HTTP endpoint with Prometheus metrics. Default: "/metrics"`,
-														},
-														"port": schema.Int32Attribute{
-															Computed:    true,
-															Optional:    true,
-															Default:     int32default.StaticInt32(5670),
-															Description: `Port on which a dataplane should expose HTTP endpoint with Prometheus metrics. Default: 5670`,
-														},
-														"tls": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"mode": schema.StringAttribute{
-																	Computed:    true,
-																	Optional:    true,
-																	Default:     stringdefault.StaticString(`Disabled`),
-																	Description: `Configuration of TLS for Prometheus listener. possible known values include one of ["Disabled", "ProvidedTLS", "ActiveMTLSBackend"]; Default: "Disabled"`,
-																},
-															},
-															Description: `Configuration of TLS for prometheus listener.`,
-														},
-													},
-													Description: `Prometheus backend configuration.`,
-												},
-												"type": schema.StringAttribute{
+												"client_id": schema.StringAttribute{
 													Optional:    true,
-													Description: `Type of the backend that will be used to collect metrics. At the moment only Prometheus backend is available. possible known values include one of ["Prometheus", "OpenTelemetry"]; Not Null`,
-													Validators: []validator.String{
-														speakeasy_stringvalidators.NotNull(),
+													Description: `ClientId of the Prometheus backend. Needed when using MADS for DP discovery.`,
+												},
+												"path": schema.StringAttribute{
+													Computed:    true,
+													Optional:    true,
+													Default:     stringdefault.StaticString(`/metrics`),
+													Description: `Path on which a dataplane should expose HTTP endpoint with Prometheus metrics. Default: "/metrics"`,
+												},
+												"port": schema.Int32Attribute{
+													Computed:    true,
+													Optional:    true,
+													Default:     int32default.StaticInt32(5670),
+													Description: `Port on which a dataplane should expose HTTP endpoint with Prometheus metrics. Default: 5670`,
+												},
+												"tls": schema.SingleNestedAttribute{
+													Optional: true,
+													Attributes: map[string]schema.Attribute{
+														"mode": schema.StringAttribute{
+															Computed:    true,
+															Optional:    true,
+															Default:     stringdefault.StaticString(`Disabled`),
+															Description: `Configuration of TLS for Prometheus listener. possible known values include one of ["Disabled", "ProvidedTLS", "ActiveMTLSBackend"]; Default: "Disabled"`,
+														},
 													},
+													Description: `Configuration of TLS for prometheus listener.`,
 												},
 											},
-											Validators: []validator.Object{
-												objectvalidator.ConflictsWith(path.Expressions{
-													path.MatchRelative().AtParent().AtName("one"),
-												}...),
+											Description: `Prometheus backend configuration.`,
+										},
+										"type": schema.StringAttribute{
+											Optional:    true,
+											Description: `Type of the backend that will be used to collect metrics. At the moment only Prometheus backend is available. possible known values include one of ["Prometheus", "OpenTelemetry"]; Not Null`,
+											Validators: []validator.String{
+												speakeasy_stringvalidators.NotNull(),
 											},
 										},
 									},
@@ -580,13 +485,13 @@ func (r *MeshMetricResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 
-	request, requestDiags := data.ToOperationsPutMeshMetricRequest(ctx)
+	request, requestDiags := data.ToOperationsPostMeshMetricRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshMetric.PutMeshMetric(ctx, *request)
+	res, err := r.client.MeshMetric.PostMeshMetric(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -598,10 +503,14 @@ func (r *MeshMetricResource) Create(ctx context.Context, req resource.CreateRequ
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	switch res.StatusCode {
-	case 200, 201:
-		break
-	default:
+	if res.StatusCode == 409 {
+		resp.Diagnostics.AddError(
+			"Resource Already Exists",
+			"When creating this resource, the API indicated that this resource already exists. You can bring the existing resource under management using Terraform import functionality or retry with a unique configuration.",
+		)
+		return
+	}
+	if res.StatusCode != 201 {
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}

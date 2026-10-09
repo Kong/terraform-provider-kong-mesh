@@ -18,7 +18,7 @@ paths:
   '/meshes/{mesh}/meshaccesslogs/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshAccessLog#get
+        terraform-resource: MeshAccessLog#read
         terraform-datasource: null
       operationId: getMeshAccessLog
       summary: Returns MeshAccessLog entity
@@ -44,7 +44,7 @@ paths:
         - MeshAccessLog
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshAccessLog#create,update'
+        terraform-resource: MeshAccessLog#update
         terraform-datasource: null
       operationId: putMeshAccessLog
       summary: Creates or Updates MeshAccessLog entity
@@ -102,9 +102,53 @@ paths:
       tags:
         - MeshAccessLog
   '/meshes/{mesh}/meshaccesslogs':
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshAccessLog#create
+        terraform-datasource: null
+      operationId: postMeshAccessLog
+      summary: Creates MeshAccessLog entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeshAccessLogItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/MeshAccessLogCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Parent mesh not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - MeshAccessLog
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshAccessLogList#get
+        terraform-resource: MeshAccessLogList#read
         terraform-datasource: null
       operationId: getMeshAccessLogList
       summary: Returns a list of MeshAccessLog in the mesh.
@@ -149,52 +193,10 @@ paths:
           $ref: '#/components/responses/MeshAccessLogList'
       tags:
         - MeshAccessLog
-  /meshaccesslogs:
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshAccessLogListAllMeshes#get
-        terraform-datasource: null
-      operationId: getMeshAccessLogListAllMeshes
-      summary: Returns a list of MeshAccessLog across all meshes.
-      parameters:
-        - name: offset
-          in: query
-          description: offset in the list of entities
-          required: false
-          schema:
-            type: integer
-            example: 0
-        - name: size
-          in: query
-          description: the number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 100
-            maximum: 1000
-            minimum: 1
-        - name: filter
-          in: query
-          description: 'filter by labels when multiple filters are present, they are ANDed'
-          required: false
-          schema:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
-          example:
-            label.k8s.kuma.io/namespace: my-ns
-      responses:
-        '200':
-          $ref: '#/components/responses/MeshAccessLogList'
-      tags:
-        - MeshAccessLog
   '/meshes/{mesh}/meshcircuitbreakers/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshCircuitBreaker#get
+        terraform-resource: MeshCircuitBreaker#read
         terraform-datasource: null
       operationId: getMeshCircuitBreaker
       summary: Returns MeshCircuitBreaker entity
@@ -220,7 +222,7 @@ paths:
         - MeshCircuitBreaker
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshCircuitBreaker#create,update'
+        terraform-resource: MeshCircuitBreaker#update
         terraform-datasource: null
       operationId: putMeshCircuitBreaker
       summary: Creates or Updates MeshCircuitBreaker entity
@@ -278,9 +280,53 @@ paths:
       tags:
         - MeshCircuitBreaker
   '/meshes/{mesh}/meshcircuitbreakers':
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshCircuitBreaker#create
+        terraform-datasource: null
+      operationId: postMeshCircuitBreaker
+      summary: Creates MeshCircuitBreaker entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeshCircuitBreakerItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/MeshCircuitBreakerCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Parent mesh not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - MeshCircuitBreaker
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshCircuitBreakerList#get
+        terraform-resource: MeshCircuitBreakerList#read
         terraform-datasource: null
       operationId: getMeshCircuitBreakerList
       summary: Returns a list of MeshCircuitBreaker in the mesh.
@@ -325,52 +371,10 @@ paths:
           $ref: '#/components/responses/MeshCircuitBreakerList'
       tags:
         - MeshCircuitBreaker
-  /meshcircuitbreakers:
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshCircuitBreakerListAllMeshes#get
-        terraform-datasource: null
-      operationId: getMeshCircuitBreakerListAllMeshes
-      summary: Returns a list of MeshCircuitBreaker across all meshes.
-      parameters:
-        - name: offset
-          in: query
-          description: offset in the list of entities
-          required: false
-          schema:
-            type: integer
-            example: 0
-        - name: size
-          in: query
-          description: the number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 100
-            maximum: 1000
-            minimum: 1
-        - name: filter
-          in: query
-          description: 'filter by labels when multiple filters are present, they are ANDed'
-          required: false
-          schema:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
-          example:
-            label.k8s.kuma.io/namespace: my-ns
-      responses:
-        '200':
-          $ref: '#/components/responses/MeshCircuitBreakerList'
-      tags:
-        - MeshCircuitBreaker
   '/meshes/{mesh}/meshfaultinjections/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshFaultInjection#get
+        terraform-resource: MeshFaultInjection#read
         terraform-datasource: null
       operationId: getMeshFaultInjection
       summary: Returns MeshFaultInjection entity
@@ -396,7 +400,7 @@ paths:
         - MeshFaultInjection
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshFaultInjection#create,update'
+        terraform-resource: MeshFaultInjection#update
         terraform-datasource: null
       operationId: putMeshFaultInjection
       summary: Creates or Updates MeshFaultInjection entity
@@ -454,9 +458,53 @@ paths:
       tags:
         - MeshFaultInjection
   '/meshes/{mesh}/meshfaultinjections':
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshFaultInjection#create
+        terraform-datasource: null
+      operationId: postMeshFaultInjection
+      summary: Creates MeshFaultInjection entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeshFaultInjectionItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/MeshFaultInjectionCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Parent mesh not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - MeshFaultInjection
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshFaultInjectionList#get
+        terraform-resource: MeshFaultInjectionList#read
         terraform-datasource: null
       operationId: getMeshFaultInjectionList
       summary: Returns a list of MeshFaultInjection in the mesh.
@@ -501,52 +549,10 @@ paths:
           $ref: '#/components/responses/MeshFaultInjectionList'
       tags:
         - MeshFaultInjection
-  /meshfaultinjections:
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshFaultInjectionListAllMeshes#get
-        terraform-datasource: null
-      operationId: getMeshFaultInjectionListAllMeshes
-      summary: Returns a list of MeshFaultInjection across all meshes.
-      parameters:
-        - name: offset
-          in: query
-          description: offset in the list of entities
-          required: false
-          schema:
-            type: integer
-            example: 0
-        - name: size
-          in: query
-          description: the number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 100
-            maximum: 1000
-            minimum: 1
-        - name: filter
-          in: query
-          description: 'filter by labels when multiple filters are present, they are ANDed'
-          required: false
-          schema:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
-          example:
-            label.k8s.kuma.io/namespace: my-ns
-      responses:
-        '200':
-          $ref: '#/components/responses/MeshFaultInjectionList'
-      tags:
-        - MeshFaultInjection
   '/meshes/{mesh}/meshhealthchecks/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshHealthCheck#get
+        terraform-resource: MeshHealthCheck#read
         terraform-datasource: null
       operationId: getMeshHealthCheck
       summary: Returns MeshHealthCheck entity
@@ -572,7 +578,7 @@ paths:
         - MeshHealthCheck
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshHealthCheck#create,update'
+        terraform-resource: MeshHealthCheck#update
         terraform-datasource: null
       operationId: putMeshHealthCheck
       summary: Creates or Updates MeshHealthCheck entity
@@ -630,9 +636,53 @@ paths:
       tags:
         - MeshHealthCheck
   '/meshes/{mesh}/meshhealthchecks':
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshHealthCheck#create
+        terraform-datasource: null
+      operationId: postMeshHealthCheck
+      summary: Creates MeshHealthCheck entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeshHealthCheckItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/MeshHealthCheckCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Parent mesh not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - MeshHealthCheck
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshHealthCheckList#get
+        terraform-resource: MeshHealthCheckList#read
         terraform-datasource: null
       operationId: getMeshHealthCheckList
       summary: Returns a list of MeshHealthCheck in the mesh.
@@ -677,52 +727,10 @@ paths:
           $ref: '#/components/responses/MeshHealthCheckList'
       tags:
         - MeshHealthCheck
-  /meshhealthchecks:
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshHealthCheckListAllMeshes#get
-        terraform-datasource: null
-      operationId: getMeshHealthCheckListAllMeshes
-      summary: Returns a list of MeshHealthCheck across all meshes.
-      parameters:
-        - name: offset
-          in: query
-          description: offset in the list of entities
-          required: false
-          schema:
-            type: integer
-            example: 0
-        - name: size
-          in: query
-          description: the number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 100
-            maximum: 1000
-            minimum: 1
-        - name: filter
-          in: query
-          description: 'filter by labels when multiple filters are present, they are ANDed'
-          required: false
-          schema:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
-          example:
-            label.k8s.kuma.io/namespace: my-ns
-      responses:
-        '200':
-          $ref: '#/components/responses/MeshHealthCheckList'
-      tags:
-        - MeshHealthCheck
   '/meshes/{mesh}/meshhttproutes/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshHTTPRoute#get
+        terraform-resource: MeshHTTPRoute#read
         terraform-datasource: null
       operationId: getMeshHTTPRoute
       summary: Returns MeshHTTPRoute entity
@@ -748,7 +756,7 @@ paths:
         - MeshHTTPRoute
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshHTTPRoute#create,update'
+        terraform-resource: MeshHTTPRoute#update
         terraform-datasource: null
       operationId: putMeshHTTPRoute
       summary: Creates or Updates MeshHTTPRoute entity
@@ -806,9 +814,53 @@ paths:
       tags:
         - MeshHTTPRoute
   '/meshes/{mesh}/meshhttproutes':
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshHTTPRoute#create
+        terraform-datasource: null
+      operationId: postMeshHTTPRoute
+      summary: Creates MeshHTTPRoute entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeshHTTPRouteItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/MeshHTTPRouteCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Parent mesh not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - MeshHTTPRoute
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshHTTPRouteList#get
+        terraform-resource: MeshHTTPRouteList#read
         terraform-datasource: null
       operationId: getMeshHTTPRouteList
       summary: Returns a list of MeshHTTPRoute in the mesh.
@@ -853,52 +905,10 @@ paths:
           $ref: '#/components/responses/MeshHTTPRouteList'
       tags:
         - MeshHTTPRoute
-  /meshhttproutes:
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshHTTPRouteListAllMeshes#get
-        terraform-datasource: null
-      operationId: getMeshHTTPRouteListAllMeshes
-      summary: Returns a list of MeshHTTPRoute across all meshes.
-      parameters:
-        - name: offset
-          in: query
-          description: offset in the list of entities
-          required: false
-          schema:
-            type: integer
-            example: 0
-        - name: size
-          in: query
-          description: the number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 100
-            maximum: 1000
-            minimum: 1
-        - name: filter
-          in: query
-          description: 'filter by labels when multiple filters are present, they are ANDed'
-          required: false
-          schema:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
-          example:
-            label.k8s.kuma.io/namespace: my-ns
-      responses:
-        '200':
-          $ref: '#/components/responses/MeshHTTPRouteList'
-      tags:
-        - MeshHTTPRoute
   '/meshes/{mesh}/meshloadbalancingstrategies/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshLoadBalancingStrategy#get
+        terraform-resource: MeshLoadBalancingStrategy#read
         terraform-datasource: null
       operationId: getMeshLoadBalancingStrategy
       summary: Returns MeshLoadBalancingStrategy entity
@@ -924,7 +934,7 @@ paths:
         - MeshLoadBalancingStrategy
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshLoadBalancingStrategy#create,update'
+        terraform-resource: MeshLoadBalancingStrategy#update
         terraform-datasource: null
       operationId: putMeshLoadBalancingStrategy
       summary: Creates or Updates MeshLoadBalancingStrategy entity
@@ -982,9 +992,53 @@ paths:
       tags:
         - MeshLoadBalancingStrategy
   '/meshes/{mesh}/meshloadbalancingstrategies':
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshLoadBalancingStrategy#create
+        terraform-datasource: null
+      operationId: postMeshLoadBalancingStrategy
+      summary: Creates MeshLoadBalancingStrategy entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeshLoadBalancingStrategyItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/MeshLoadBalancingStrategyCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Parent mesh not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - MeshLoadBalancingStrategy
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshLoadBalancingStrategyList#get
+        terraform-resource: MeshLoadBalancingStrategyList#read
         terraform-datasource: null
       operationId: getMeshLoadBalancingStrategyList
       summary: Returns a list of MeshLoadBalancingStrategy in the mesh.
@@ -1029,52 +1083,10 @@ paths:
           $ref: '#/components/responses/MeshLoadBalancingStrategyList'
       tags:
         - MeshLoadBalancingStrategy
-  /meshloadbalancingstrategies:
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshLoadBalancingStrategyListAllMeshes#get
-        terraform-datasource: null
-      operationId: getMeshLoadBalancingStrategyListAllMeshes
-      summary: Returns a list of MeshLoadBalancingStrategy across all meshes.
-      parameters:
-        - name: offset
-          in: query
-          description: offset in the list of entities
-          required: false
-          schema:
-            type: integer
-            example: 0
-        - name: size
-          in: query
-          description: the number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 100
-            maximum: 1000
-            minimum: 1
-        - name: filter
-          in: query
-          description: 'filter by labels when multiple filters are present, they are ANDed'
-          required: false
-          schema:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
-          example:
-            label.k8s.kuma.io/namespace: my-ns
-      responses:
-        '200':
-          $ref: '#/components/responses/MeshLoadBalancingStrategyList'
-      tags:
-        - MeshLoadBalancingStrategy
   '/meshes/{mesh}/meshmetrics/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshMetric#get
+        terraform-resource: MeshMetric#read
         terraform-datasource: null
       operationId: getMeshMetric
       summary: Returns MeshMetric entity
@@ -1100,7 +1112,7 @@ paths:
         - MeshMetric
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshMetric#create,update'
+        terraform-resource: MeshMetric#update
         terraform-datasource: null
       operationId: putMeshMetric
       summary: Creates or Updates MeshMetric entity
@@ -1158,9 +1170,53 @@ paths:
       tags:
         - MeshMetric
   '/meshes/{mesh}/meshmetrics':
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshMetric#create
+        terraform-datasource: null
+      operationId: postMeshMetric
+      summary: Creates MeshMetric entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeshMetricItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/MeshMetricCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Parent mesh not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - MeshMetric
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshMetricList#get
+        terraform-resource: MeshMetricList#read
         terraform-datasource: null
       operationId: getMeshMetricList
       summary: Returns a list of MeshMetric in the mesh.
@@ -1205,52 +1261,10 @@ paths:
           $ref: '#/components/responses/MeshMetricList'
       tags:
         - MeshMetric
-  /meshmetrics:
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshMetricListAllMeshes#get
-        terraform-datasource: null
-      operationId: getMeshMetricListAllMeshes
-      summary: Returns a list of MeshMetric across all meshes.
-      parameters:
-        - name: offset
-          in: query
-          description: offset in the list of entities
-          required: false
-          schema:
-            type: integer
-            example: 0
-        - name: size
-          in: query
-          description: the number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 100
-            maximum: 1000
-            minimum: 1
-        - name: filter
-          in: query
-          description: 'filter by labels when multiple filters are present, they are ANDed'
-          required: false
-          schema:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
-          example:
-            label.k8s.kuma.io/namespace: my-ns
-      responses:
-        '200':
-          $ref: '#/components/responses/MeshMetricList'
-      tags:
-        - MeshMetric
   '/meshes/{mesh}/meshpassthroughs/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshPassthrough#get
+        terraform-resource: MeshPassthrough#read
         terraform-datasource: null
       operationId: getMeshPassthrough
       summary: Returns MeshPassthrough entity
@@ -1276,7 +1290,7 @@ paths:
         - MeshPassthrough
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshPassthrough#create,update'
+        terraform-resource: MeshPassthrough#update
         terraform-datasource: null
       operationId: putMeshPassthrough
       summary: Creates or Updates MeshPassthrough entity
@@ -1334,9 +1348,53 @@ paths:
       tags:
         - MeshPassthrough
   '/meshes/{mesh}/meshpassthroughs':
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshPassthrough#create
+        terraform-datasource: null
+      operationId: postMeshPassthrough
+      summary: Creates MeshPassthrough entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeshPassthroughItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/MeshPassthroughCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Parent mesh not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - MeshPassthrough
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshPassthroughList#get
+        terraform-resource: MeshPassthroughList#read
         terraform-datasource: null
       operationId: getMeshPassthroughList
       summary: Returns a list of MeshPassthrough in the mesh.
@@ -1381,52 +1439,10 @@ paths:
           $ref: '#/components/responses/MeshPassthroughList'
       tags:
         - MeshPassthrough
-  /meshpassthroughs:
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshPassthroughListAllMeshes#get
-        terraform-datasource: null
-      operationId: getMeshPassthroughListAllMeshes
-      summary: Returns a list of MeshPassthrough across all meshes.
-      parameters:
-        - name: offset
-          in: query
-          description: offset in the list of entities
-          required: false
-          schema:
-            type: integer
-            example: 0
-        - name: size
-          in: query
-          description: the number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 100
-            maximum: 1000
-            minimum: 1
-        - name: filter
-          in: query
-          description: 'filter by labels when multiple filters are present, they are ANDed'
-          required: false
-          schema:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
-          example:
-            label.k8s.kuma.io/namespace: my-ns
-      responses:
-        '200':
-          $ref: '#/components/responses/MeshPassthroughList'
-      tags:
-        - MeshPassthrough
   '/meshes/{mesh}/meshproxypatches/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshProxyPatch#get
+        terraform-resource: MeshProxyPatch#read
         terraform-datasource: null
       operationId: getMeshProxyPatch
       summary: Returns MeshProxyPatch entity
@@ -1452,7 +1468,7 @@ paths:
         - MeshProxyPatch
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshProxyPatch#create,update'
+        terraform-resource: MeshProxyPatch#update
         terraform-datasource: null
       operationId: putMeshProxyPatch
       summary: Creates or Updates MeshProxyPatch entity
@@ -1510,9 +1526,53 @@ paths:
       tags:
         - MeshProxyPatch
   '/meshes/{mesh}/meshproxypatches':
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshProxyPatch#create
+        terraform-datasource: null
+      operationId: postMeshProxyPatch
+      summary: Creates MeshProxyPatch entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeshProxyPatchItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/MeshProxyPatchCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Parent mesh not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - MeshProxyPatch
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshProxyPatchList#get
+        terraform-resource: MeshProxyPatchList#read
         terraform-datasource: null
       operationId: getMeshProxyPatchList
       summary: Returns a list of MeshProxyPatch in the mesh.
@@ -1557,52 +1617,10 @@ paths:
           $ref: '#/components/responses/MeshProxyPatchList'
       tags:
         - MeshProxyPatch
-  /meshproxypatches:
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshProxyPatchListAllMeshes#get
-        terraform-datasource: null
-      operationId: getMeshProxyPatchListAllMeshes
-      summary: Returns a list of MeshProxyPatch across all meshes.
-      parameters:
-        - name: offset
-          in: query
-          description: offset in the list of entities
-          required: false
-          schema:
-            type: integer
-            example: 0
-        - name: size
-          in: query
-          description: the number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 100
-            maximum: 1000
-            minimum: 1
-        - name: filter
-          in: query
-          description: 'filter by labels when multiple filters are present, they are ANDed'
-          required: false
-          schema:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
-          example:
-            label.k8s.kuma.io/namespace: my-ns
-      responses:
-        '200':
-          $ref: '#/components/responses/MeshProxyPatchList'
-      tags:
-        - MeshProxyPatch
   '/meshes/{mesh}/meshratelimits/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshRateLimit#get
+        terraform-resource: MeshRateLimit#read
         terraform-datasource: null
       operationId: getMeshRateLimit
       summary: Returns MeshRateLimit entity
@@ -1628,7 +1646,7 @@ paths:
         - MeshRateLimit
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshRateLimit#create,update'
+        terraform-resource: MeshRateLimit#update
         terraform-datasource: null
       operationId: putMeshRateLimit
       summary: Creates or Updates MeshRateLimit entity
@@ -1686,9 +1704,53 @@ paths:
       tags:
         - MeshRateLimit
   '/meshes/{mesh}/meshratelimits':
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshRateLimit#create
+        terraform-datasource: null
+      operationId: postMeshRateLimit
+      summary: Creates MeshRateLimit entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeshRateLimitItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/MeshRateLimitCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Parent mesh not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - MeshRateLimit
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshRateLimitList#get
+        terraform-resource: MeshRateLimitList#read
         terraform-datasource: null
       operationId: getMeshRateLimitList
       summary: Returns a list of MeshRateLimit in the mesh.
@@ -1733,52 +1795,10 @@ paths:
           $ref: '#/components/responses/MeshRateLimitList'
       tags:
         - MeshRateLimit
-  /meshratelimits:
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshRateLimitListAllMeshes#get
-        terraform-datasource: null
-      operationId: getMeshRateLimitListAllMeshes
-      summary: Returns a list of MeshRateLimit across all meshes.
-      parameters:
-        - name: offset
-          in: query
-          description: offset in the list of entities
-          required: false
-          schema:
-            type: integer
-            example: 0
-        - name: size
-          in: query
-          description: the number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 100
-            maximum: 1000
-            minimum: 1
-        - name: filter
-          in: query
-          description: 'filter by labels when multiple filters are present, they are ANDed'
-          required: false
-          schema:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
-          example:
-            label.k8s.kuma.io/namespace: my-ns
-      responses:
-        '200':
-          $ref: '#/components/responses/MeshRateLimitList'
-      tags:
-        - MeshRateLimit
   '/meshes/{mesh}/meshretries/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshRetry#get
+        terraform-resource: MeshRetry#read
         terraform-datasource: null
       operationId: getMeshRetry
       summary: Returns MeshRetry entity
@@ -1804,7 +1824,7 @@ paths:
         - MeshRetry
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshRetry#create,update'
+        terraform-resource: MeshRetry#update
         terraform-datasource: null
       operationId: putMeshRetry
       summary: Creates or Updates MeshRetry entity
@@ -1862,9 +1882,53 @@ paths:
       tags:
         - MeshRetry
   '/meshes/{mesh}/meshretries':
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshRetry#create
+        terraform-datasource: null
+      operationId: postMeshRetry
+      summary: Creates MeshRetry entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeshRetryItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/MeshRetryCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Parent mesh not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - MeshRetry
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshRetryList#get
+        terraform-resource: MeshRetryList#read
         terraform-datasource: null
       operationId: getMeshRetryList
       summary: Returns a list of MeshRetry in the mesh.
@@ -1909,52 +1973,10 @@ paths:
           $ref: '#/components/responses/MeshRetryList'
       tags:
         - MeshRetry
-  /meshretries:
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshRetryListAllMeshes#get
-        terraform-datasource: null
-      operationId: getMeshRetryListAllMeshes
-      summary: Returns a list of MeshRetry across all meshes.
-      parameters:
-        - name: offset
-          in: query
-          description: offset in the list of entities
-          required: false
-          schema:
-            type: integer
-            example: 0
-        - name: size
-          in: query
-          description: the number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 100
-            maximum: 1000
-            minimum: 1
-        - name: filter
-          in: query
-          description: 'filter by labels when multiple filters are present, they are ANDed'
-          required: false
-          schema:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
-          example:
-            label.k8s.kuma.io/namespace: my-ns
-      responses:
-        '200':
-          $ref: '#/components/responses/MeshRetryList'
-      tags:
-        - MeshRetry
   '/meshes/{mesh}/meshtcproutes/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshTCPRoute#get
+        terraform-resource: MeshTCPRoute#read
         terraform-datasource: null
       operationId: getMeshTCPRoute
       summary: Returns MeshTCPRoute entity
@@ -1980,7 +2002,7 @@ paths:
         - MeshTCPRoute
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshTCPRoute#create,update'
+        terraform-resource: MeshTCPRoute#update
         terraform-datasource: null
       operationId: putMeshTCPRoute
       summary: Creates or Updates MeshTCPRoute entity
@@ -2038,9 +2060,53 @@ paths:
       tags:
         - MeshTCPRoute
   '/meshes/{mesh}/meshtcproutes':
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshTCPRoute#create
+        terraform-datasource: null
+      operationId: postMeshTCPRoute
+      summary: Creates MeshTCPRoute entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeshTCPRouteItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/MeshTCPRouteCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Parent mesh not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - MeshTCPRoute
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshTCPRouteList#get
+        terraform-resource: MeshTCPRouteList#read
         terraform-datasource: null
       operationId: getMeshTCPRouteList
       summary: Returns a list of MeshTCPRoute in the mesh.
@@ -2085,52 +2151,10 @@ paths:
           $ref: '#/components/responses/MeshTCPRouteList'
       tags:
         - MeshTCPRoute
-  /meshtcproutes:
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshTCPRouteListAllMeshes#get
-        terraform-datasource: null
-      operationId: getMeshTCPRouteListAllMeshes
-      summary: Returns a list of MeshTCPRoute across all meshes.
-      parameters:
-        - name: offset
-          in: query
-          description: offset in the list of entities
-          required: false
-          schema:
-            type: integer
-            example: 0
-        - name: size
-          in: query
-          description: the number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 100
-            maximum: 1000
-            minimum: 1
-        - name: filter
-          in: query
-          description: 'filter by labels when multiple filters are present, they are ANDed'
-          required: false
-          schema:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
-          example:
-            label.k8s.kuma.io/namespace: my-ns
-      responses:
-        '200':
-          $ref: '#/components/responses/MeshTCPRouteList'
-      tags:
-        - MeshTCPRoute
   '/meshes/{mesh}/meshtimeouts/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshTimeout#get
+        terraform-resource: MeshTimeout#read
         terraform-datasource: null
       operationId: getMeshTimeout
       summary: Returns MeshTimeout entity
@@ -2156,7 +2180,7 @@ paths:
         - MeshTimeout
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshTimeout#create,update'
+        terraform-resource: MeshTimeout#update
         terraform-datasource: null
       operationId: putMeshTimeout
       summary: Creates or Updates MeshTimeout entity
@@ -2214,9 +2238,53 @@ paths:
       tags:
         - MeshTimeout
   '/meshes/{mesh}/meshtimeouts':
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshTimeout#create
+        terraform-datasource: null
+      operationId: postMeshTimeout
+      summary: Creates MeshTimeout entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeshTimeoutItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/MeshTimeoutCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Parent mesh not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - MeshTimeout
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshTimeoutList#get
+        terraform-resource: MeshTimeoutList#read
         terraform-datasource: null
       operationId: getMeshTimeoutList
       summary: Returns a list of MeshTimeout in the mesh.
@@ -2261,52 +2329,10 @@ paths:
           $ref: '#/components/responses/MeshTimeoutList'
       tags:
         - MeshTimeout
-  /meshtimeouts:
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshTimeoutListAllMeshes#get
-        terraform-datasource: null
-      operationId: getMeshTimeoutListAllMeshes
-      summary: Returns a list of MeshTimeout across all meshes.
-      parameters:
-        - name: offset
-          in: query
-          description: offset in the list of entities
-          required: false
-          schema:
-            type: integer
-            example: 0
-        - name: size
-          in: query
-          description: the number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 100
-            maximum: 1000
-            minimum: 1
-        - name: filter
-          in: query
-          description: 'filter by labels when multiple filters are present, they are ANDed'
-          required: false
-          schema:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
-          example:
-            label.k8s.kuma.io/namespace: my-ns
-      responses:
-        '200':
-          $ref: '#/components/responses/MeshTimeoutList'
-      tags:
-        - MeshTimeout
   '/meshes/{mesh}/meshtlses/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshTLS#get
+        terraform-resource: MeshTLS#read
         terraform-datasource: null
       operationId: getMeshTLS
       summary: Returns MeshTLS entity
@@ -2332,7 +2358,7 @@ paths:
         - MeshTLS
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshTLS#create,update'
+        terraform-resource: MeshTLS#update
         terraform-datasource: null
       operationId: putMeshTLS
       summary: Creates or Updates MeshTLS entity
@@ -2390,9 +2416,53 @@ paths:
       tags:
         - MeshTLS
   '/meshes/{mesh}/meshtlses':
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshTLS#create
+        terraform-datasource: null
+      operationId: postMeshTLS
+      summary: Creates MeshTLS entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeshTLSItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/MeshTLSCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Parent mesh not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - MeshTLS
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshTLSList#get
+        terraform-resource: MeshTLSList#read
         terraform-datasource: null
       operationId: getMeshTLSList
       summary: Returns a list of MeshTLS in the mesh.
@@ -2437,52 +2507,10 @@ paths:
           $ref: '#/components/responses/MeshTLSList'
       tags:
         - MeshTLS
-  /meshtlses:
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshTLSListAllMeshes#get
-        terraform-datasource: null
-      operationId: getMeshTLSListAllMeshes
-      summary: Returns a list of MeshTLS across all meshes.
-      parameters:
-        - name: offset
-          in: query
-          description: offset in the list of entities
-          required: false
-          schema:
-            type: integer
-            example: 0
-        - name: size
-          in: query
-          description: the number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 100
-            maximum: 1000
-            minimum: 1
-        - name: filter
-          in: query
-          description: 'filter by labels when multiple filters are present, they are ANDed'
-          required: false
-          schema:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
-          example:
-            label.k8s.kuma.io/namespace: my-ns
-      responses:
-        '200':
-          $ref: '#/components/responses/MeshTLSList'
-      tags:
-        - MeshTLS
   '/meshes/{mesh}/meshtraces/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshTrace#get
+        terraform-resource: MeshTrace#read
         terraform-datasource: null
       operationId: getMeshTrace
       summary: Returns MeshTrace entity
@@ -2508,7 +2536,7 @@ paths:
         - MeshTrace
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshTrace#create,update'
+        terraform-resource: MeshTrace#update
         terraform-datasource: null
       operationId: putMeshTrace
       summary: Creates or Updates MeshTrace entity
@@ -2566,9 +2594,53 @@ paths:
       tags:
         - MeshTrace
   '/meshes/{mesh}/meshtraces':
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshTrace#create
+        terraform-datasource: null
+      operationId: postMeshTrace
+      summary: Creates MeshTrace entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeshTraceItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/MeshTraceCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Parent mesh not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - MeshTrace
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshTraceList#get
+        terraform-resource: MeshTraceList#read
         terraform-datasource: null
       operationId: getMeshTraceList
       summary: Returns a list of MeshTrace in the mesh.
@@ -2613,52 +2685,10 @@ paths:
           $ref: '#/components/responses/MeshTraceList'
       tags:
         - MeshTrace
-  /meshtraces:
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshTraceListAllMeshes#get
-        terraform-datasource: null
-      operationId: getMeshTraceListAllMeshes
-      summary: Returns a list of MeshTrace across all meshes.
-      parameters:
-        - name: offset
-          in: query
-          description: offset in the list of entities
-          required: false
-          schema:
-            type: integer
-            example: 0
-        - name: size
-          in: query
-          description: the number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 100
-            maximum: 1000
-            minimum: 1
-        - name: filter
-          in: query
-          description: 'filter by labels when multiple filters are present, they are ANDed'
-          required: false
-          schema:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
-          example:
-            label.k8s.kuma.io/namespace: my-ns
-      responses:
-        '200':
-          $ref: '#/components/responses/MeshTraceList'
-      tags:
-        - MeshTrace
   '/meshes/{mesh}/meshtrafficpermissions/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshTrafficPermission#get
+        terraform-resource: MeshTrafficPermission#read
         terraform-datasource: null
       operationId: getMeshTrafficPermission
       summary: Returns MeshTrafficPermission entity
@@ -2684,7 +2714,7 @@ paths:
         - MeshTrafficPermission
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshTrafficPermission#create,update'
+        terraform-resource: MeshTrafficPermission#update
         terraform-datasource: null
       operationId: putMeshTrafficPermission
       summary: Creates or Updates MeshTrafficPermission entity
@@ -2742,9 +2772,53 @@ paths:
       tags:
         - MeshTrafficPermission
   '/meshes/{mesh}/meshtrafficpermissions':
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshTrafficPermission#create
+        terraform-datasource: null
+      operationId: postMeshTrafficPermission
+      summary: Creates MeshTrafficPermission entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeshTrafficPermissionItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/MeshTrafficPermissionCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Parent mesh not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - MeshTrafficPermission
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshTrafficPermissionList#get
+        terraform-resource: MeshTrafficPermissionList#read
         terraform-datasource: null
       operationId: getMeshTrafficPermissionList
       summary: Returns a list of MeshTrafficPermission in the mesh.
@@ -2789,94 +2863,10 @@ paths:
           $ref: '#/components/responses/MeshTrafficPermissionList'
       tags:
         - MeshTrafficPermission
-  /meshtrafficpermissions:
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshTrafficPermissionListAllMeshes#get
-        terraform-datasource: null
-      operationId: getMeshTrafficPermissionListAllMeshes
-      summary: Returns a list of MeshTrafficPermission across all meshes.
-      parameters:
-        - name: offset
-          in: query
-          description: offset in the list of entities
-          required: false
-          schema:
-            type: integer
-            example: 0
-        - name: size
-          in: query
-          description: the number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 100
-            maximum: 1000
-            minimum: 1
-        - name: filter
-          in: query
-          description: 'filter by labels when multiple filters are present, they are ANDed'
-          required: false
-          schema:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
-          example:
-            label.k8s.kuma.io/namespace: my-ns
-      responses:
-        '200':
-          $ref: '#/components/responses/MeshTrafficPermissionList'
-      tags:
-        - MeshTrafficPermission
-  /dataplane-insights:
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshDataplaneInsightListAllMeshes#get
-        terraform-datasource: null
-      operationId: getDataplaneInsightListAllMeshes
-      summary: Returns a list of DataplaneInsight across all meshes.
-      parameters:
-        - name: offset
-          in: query
-          description: offset in the list of entities
-          required: false
-          schema:
-            type: integer
-            example: 0
-        - name: size
-          in: query
-          description: the number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 100
-            maximum: 1000
-            minimum: 1
-        - name: filter
-          in: query
-          description: 'filter by labels when multiple filters are present, they are ANDed'
-          required: false
-          schema:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
-          example:
-            label.k8s.kuma.io/namespace: my-ns
-      responses:
-        '200':
-          $ref: '#/components/responses/DataplaneInsightList'
-      tags:
-        - DataplaneInsight
   '/meshes/{mesh}/dataplane-insights':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshDataplaneInsightList#get
+        terraform-resource: MeshDataplaneInsightList#read
         terraform-datasource: null
       operationId: getDataplaneInsightList
       summary: Returns a list of DataplaneInsight in the mesh.
@@ -2924,7 +2914,7 @@ paths:
   '/meshes/{mesh}/dataplane-insights/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshDataplaneInsight#get
+        terraform-resource: MeshDataplaneInsight#read
         terraform-datasource: null
       operationId: getDataplaneInsight
       summary: Returns DataplaneInsight entity
@@ -2951,7 +2941,7 @@ paths:
   '/globalsecrets/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshGlobalSecret#get
+        terraform-resource: MeshGlobalSecret#read
         terraform-datasource: null
       operationId: getGlobalSecret
       summary: Returns GlobalSecret entity
@@ -2971,7 +2961,7 @@ paths:
         - GlobalSecret
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshGlobalSecret#create,update'
+        terraform-resource: MeshGlobalSecret#update
         terraform-datasource: null
       operationId: putGlobalSecret
       summary: Creates or Updates GlobalSecret entity
@@ -3017,9 +3007,40 @@ paths:
       tags:
         - GlobalSecret
   /globalsecrets:
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshGlobalSecret#create
+        terraform-datasource: null
+      operationId: postGlobalSecret
+      summary: Creates GlobalSecret entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GlobalSecretItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/GlobalSecretCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - GlobalSecret
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshGlobalSecretList#get
+        terraform-resource: MeshGlobalSecretList#read
         terraform-datasource: null
       operationId: getGlobalSecretList
       summary: Returns a list of GlobalSecret entities.
@@ -3048,7 +3069,7 @@ paths:
   '/global-secrets/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshGlobalSecretAlias#get
+        terraform-resource: MeshGlobalSecretAlias#read
         terraform-datasource: null
       operationId: getGlobalSecretAlias
       summary: Returns GlobalSecret entity
@@ -3068,7 +3089,7 @@ paths:
         - GlobalSecret
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshGlobalSecretAlias#create,update'
+        terraform-resource: MeshGlobalSecretAlias#update
         terraform-datasource: null
       operationId: putGlobalSecretAlias
       summary: Creates or Updates GlobalSecret entity
@@ -3114,9 +3135,40 @@ paths:
       tags:
         - GlobalSecret
   /global-secrets:
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshGlobalSecretAlias#create
+        terraform-datasource: null
+      operationId: postGlobalSecretAlias
+      summary: Creates GlobalSecret entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GlobalSecretItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/GlobalSecretCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - GlobalSecret
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshGlobalSecretListAlias#get
+        terraform-resource: MeshGlobalSecretListAlias#read
         terraform-datasource: null
       operationId: getGlobalSecretListAlias
       summary: Returns a list of GlobalSecret entities.
@@ -3145,7 +3197,7 @@ paths:
   /meshes:
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshList#get
+        terraform-resource: MeshList#read
         terraform-datasource: null
       operationId: getMeshList
       summary: Returns a list of Mesh.
@@ -3184,6 +3236,37 @@ paths:
           $ref: '#/components/responses/MeshList'
       tags:
         - Mesh
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: Mesh#create
+        terraform-datasource: null
+      operationId: postMesh
+      summary: Creates Mesh entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeshItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/MeshCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Mesh
   '/meshes/{name}':
     delete:
       x-speakeasy-entity-operation:
@@ -3207,7 +3290,7 @@ paths:
         - Mesh
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: Mesh#get
+        terraform-resource: Mesh#read
         terraform-datasource: null
       operationId: getMesh
       summary: Returns Mesh entity
@@ -3227,7 +3310,7 @@ paths:
         - Mesh
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'Mesh#create,update'
+        terraform-resource: Mesh#update
         terraform-datasource: null
       operationId: putMesh
       summary: Creates or Updates Mesh entity
@@ -3255,7 +3338,7 @@ paths:
   '/mesh-insights/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshInsight#get
+        terraform-resource: MeshInsight#read
         terraform-datasource: null
       operationId: getMeshInsight
       summary: Get the insight of a mesh
@@ -3279,7 +3362,7 @@ paths:
   /mesh-insights:
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshInsightList#get
+        terraform-resource: MeshInsightList#read
         terraform-datasource: null
       operationId: getMeshInsightList
       summary: List mesh insights
@@ -3307,7 +3390,7 @@ paths:
   '/meshes/{mesh}/secrets':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshSecretList#get
+        terraform-resource: MeshSecretList#read
         terraform-datasource: null
       operationId: getSecretList
       summary: Returns a list of Secret in the mesh.
@@ -3352,6 +3435,50 @@ paths:
           $ref: '#/components/responses/SecretList'
       tags:
         - Secret
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshSecret#create
+        terraform-datasource: null
+      operationId: postSecret
+      summary: Creates Secret entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SecretItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/SecretCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Parent mesh not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Secret
   '/meshes/{mesh}/secrets/{name}':
     delete:
       x-speakeasy-entity-operation:
@@ -3381,7 +3508,7 @@ paths:
         - Secret
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshSecret#get
+        terraform-resource: MeshSecret#read
         terraform-datasource: null
       operationId: getSecret
       summary: Returns Secret entity
@@ -3407,7 +3534,7 @@ paths:
         - Secret
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshSecret#create,update'
+        terraform-resource: MeshSecret#update
         terraform-datasource: null
       operationId: putSecret
       summary: Creates or Updates Secret entity
@@ -3438,52 +3565,10 @@ paths:
           $ref: '#/components/responses/SecretCreateOrUpdateSuccessResponse'
       tags:
         - Secret
-  /secrets:
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshSecretListAllMeshes#get
-        terraform-datasource: null
-      operationId: getSecretListAllMeshes
-      summary: Returns a list of Secret across all meshes.
-      parameters:
-        - name: offset
-          in: query
-          description: offset in the list of entities
-          required: false
-          schema:
-            type: integer
-            example: 0
-        - name: size
-          in: query
-          description: the number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 100
-            maximum: 1000
-            minimum: 1
-        - name: filter
-          in: query
-          description: 'filter by labels when multiple filters are present, they are ANDed'
-          required: false
-          schema:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
-          example:
-            label.k8s.kuma.io/namespace: my-ns
-      responses:
-        '200':
-          $ref: '#/components/responses/SecretList'
-      tags:
-        - Secret
   /zones:
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshZoneList#get
+        terraform-resource: MeshZoneList#read
         terraform-datasource: null
       operationId: getZoneList
       summary: Returns a list of Zone.
@@ -3522,6 +3607,37 @@ paths:
           $ref: '#/components/responses/ZoneList'
       tags:
         - Zone
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshZone#create
+        terraform-datasource: null
+      operationId: postZone
+      summary: Creates Zone entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZoneItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/ZoneCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Zone
   '/zones/{name}':
     delete:
       x-speakeasy-entity-operation:
@@ -3545,7 +3661,7 @@ paths:
         - Zone
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshZone#get
+        terraform-resource: MeshZone#read
         terraform-datasource: null
       operationId: getZone
       summary: Returns Zone entity
@@ -3565,7 +3681,7 @@ paths:
         - Zone
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshZone#create,update'
+        terraform-resource: MeshZone#update
         terraform-datasource: null
       operationId: putZone
       summary: Creates or Updates Zone entity
@@ -3593,7 +3709,7 @@ paths:
   /zone-insights:
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshZoneInsightList#get
+        terraform-resource: MeshZoneInsightList#read
         terraform-datasource: null
       operationId: getZoneInsightList
       summary: Returns a list of ZoneInsight.
@@ -3635,7 +3751,7 @@ paths:
   '/zone-insights/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshZoneInsight#get
+        terraform-resource: MeshZoneInsight#read
         terraform-datasource: null
       operationId: getZoneInsight
       summary: Returns ZoneInsight entity
@@ -3656,7 +3772,7 @@ paths:
   '/hostnamegenerators/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshHostnameGenerator#get
+        terraform-resource: MeshHostnameGenerator#read
         terraform-datasource: null
       operationId: getHostnameGenerator
       summary: Returns HostnameGenerator entity
@@ -3676,7 +3792,7 @@ paths:
         - HostnameGenerator
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshHostnameGenerator#create,update'
+        terraform-resource: MeshHostnameGenerator#update
         terraform-datasource: null
       operationId: putHostnameGenerator
       summary: Creates or Updates HostnameGenerator entity
@@ -3722,9 +3838,40 @@ paths:
       tags:
         - HostnameGenerator
   /hostnamegenerators:
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshHostnameGenerator#create
+        terraform-datasource: null
+      operationId: postHostnameGenerator
+      summary: Creates HostnameGenerator entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HostnameGeneratorItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/HostnameGeneratorCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - HostnameGenerator
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshHostnameGeneratorList#get
+        terraform-resource: MeshHostnameGeneratorList#read
         terraform-datasource: null
       operationId: getHostnameGeneratorList
       summary: Returns a list of HostnameGenerator.
@@ -3766,7 +3913,7 @@ paths:
   '/meshes/{mesh}/meshexternalservices/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshExternalService#get
+        terraform-resource: MeshExternalService#read
         terraform-datasource: null
       operationId: getMeshExternalService
       summary: Returns MeshExternalService entity
@@ -3792,7 +3939,7 @@ paths:
         - MeshExternalService
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshExternalService#create,update'
+        terraform-resource: MeshExternalService#update
         terraform-datasource: null
       operationId: putMeshExternalService
       summary: Creates or Updates MeshExternalService entity
@@ -3850,9 +3997,53 @@ paths:
       tags:
         - MeshExternalService
   '/meshes/{mesh}/meshexternalservices':
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshExternalService#create
+        terraform-datasource: null
+      operationId: postMeshExternalService
+      summary: Creates MeshExternalService entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeshExternalServiceItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/MeshExternalServiceCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Parent mesh not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - MeshExternalService
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshExternalServiceList#get
+        terraform-resource: MeshExternalServiceList#read
         terraform-datasource: null
       operationId: getMeshExternalServiceList
       summary: Returns a list of MeshExternalService in the mesh.
@@ -3897,52 +4088,10 @@ paths:
           $ref: '#/components/responses/MeshExternalServiceList'
       tags:
         - MeshExternalService
-  /meshexternalservices:
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshExternalServiceListAllMeshes#get
-        terraform-datasource: null
-      operationId: getMeshExternalServiceListAllMeshes
-      summary: Returns a list of MeshExternalService across all meshes.
-      parameters:
-        - name: offset
-          in: query
-          description: offset in the list of entities
-          required: false
-          schema:
-            type: integer
-            example: 0
-        - name: size
-          in: query
-          description: the number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 100
-            maximum: 1000
-            minimum: 1
-        - name: filter
-          in: query
-          description: 'filter by labels when multiple filters are present, they are ANDed'
-          required: false
-          schema:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
-          example:
-            label.k8s.kuma.io/namespace: my-ns
-      responses:
-        '200':
-          $ref: '#/components/responses/MeshExternalServiceList'
-      tags:
-        - MeshExternalService
   '/meshes/{mesh}/meshidentities/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshIdentity#get
+        terraform-resource: MeshIdentity#read
         terraform-datasource: null
       operationId: getMeshIdentity
       summary: Returns MeshIdentity entity
@@ -3968,7 +4117,7 @@ paths:
         - MeshIdentity
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshIdentity#create,update'
+        terraform-resource: MeshIdentity#update
         terraform-datasource: null
       operationId: putMeshIdentity
       summary: Creates or Updates MeshIdentity entity
@@ -4026,9 +4175,53 @@ paths:
       tags:
         - MeshIdentity
   '/meshes/{mesh}/meshidentities':
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshIdentity#create
+        terraform-datasource: null
+      operationId: postMeshIdentity
+      summary: Creates MeshIdentity entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeshIdentityItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/MeshIdentityCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Parent mesh not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - MeshIdentity
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshIdentityList#get
+        terraform-resource: MeshIdentityList#read
         terraform-datasource: null
       operationId: getMeshIdentityList
       summary: Returns a list of MeshIdentity in the mesh.
@@ -4073,52 +4266,10 @@ paths:
           $ref: '#/components/responses/MeshIdentityList'
       tags:
         - MeshIdentity
-  /meshidentities:
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshIdentityListAllMeshes#get
-        terraform-datasource: null
-      operationId: getMeshIdentityListAllMeshes
-      summary: Returns a list of MeshIdentity across all meshes.
-      parameters:
-        - name: offset
-          in: query
-          description: offset in the list of entities
-          required: false
-          schema:
-            type: integer
-            example: 0
-        - name: size
-          in: query
-          description: the number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 100
-            maximum: 1000
-            minimum: 1
-        - name: filter
-          in: query
-          description: 'filter by labels when multiple filters are present, they are ANDed'
-          required: false
-          schema:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
-          example:
-            label.k8s.kuma.io/namespace: my-ns
-      responses:
-        '200':
-          $ref: '#/components/responses/MeshIdentityList'
-      tags:
-        - MeshIdentity
   '/meshes/{mesh}/meshmultizoneservices/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshMultiZoneService#get
+        terraform-resource: MeshMultiZoneService#read
         terraform-datasource: null
       operationId: getMeshMultiZoneService
       summary: Returns MeshMultiZoneService entity
@@ -4144,7 +4295,7 @@ paths:
         - MeshMultiZoneService
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshMultiZoneService#create,update'
+        terraform-resource: MeshMultiZoneService#update
         terraform-datasource: null
       operationId: putMeshMultiZoneService
       summary: Creates or Updates MeshMultiZoneService entity
@@ -4202,9 +4353,53 @@ paths:
       tags:
         - MeshMultiZoneService
   '/meshes/{mesh}/meshmultizoneservices':
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshMultiZoneService#create
+        terraform-datasource: null
+      operationId: postMeshMultiZoneService
+      summary: Creates MeshMultiZoneService entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeshMultiZoneServiceItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/MeshMultiZoneServiceCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Parent mesh not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - MeshMultiZoneService
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshMultiZoneServiceList#get
+        terraform-resource: MeshMultiZoneServiceList#read
         terraform-datasource: null
       operationId: getMeshMultiZoneServiceList
       summary: Returns a list of MeshMultiZoneService in the mesh.
@@ -4249,52 +4444,10 @@ paths:
           $ref: '#/components/responses/MeshMultiZoneServiceList'
       tags:
         - MeshMultiZoneService
-  /meshmultizoneservices:
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshMultiZoneServiceListAllMeshes#get
-        terraform-datasource: null
-      operationId: getMeshMultiZoneServiceListAllMeshes
-      summary: Returns a list of MeshMultiZoneService across all meshes.
-      parameters:
-        - name: offset
-          in: query
-          description: offset in the list of entities
-          required: false
-          schema:
-            type: integer
-            example: 0
-        - name: size
-          in: query
-          description: the number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 100
-            maximum: 1000
-            minimum: 1
-        - name: filter
-          in: query
-          description: 'filter by labels when multiple filters are present, they are ANDed'
-          required: false
-          schema:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
-          example:
-            label.k8s.kuma.io/namespace: my-ns
-      responses:
-        '200':
-          $ref: '#/components/responses/MeshMultiZoneServiceList'
-      tags:
-        - MeshMultiZoneService
   '/meshes/{mesh}/meshopentelemetrybackends/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshOpenTelemetryBackend#get
+        terraform-resource: MeshOpenTelemetryBackend#read
         terraform-datasource: null
       operationId: getMeshOpenTelemetryBackend
       summary: Returns MeshOpenTelemetryBackend entity
@@ -4320,7 +4473,7 @@ paths:
         - MeshOpenTelemetryBackend
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshOpenTelemetryBackend#create,update'
+        terraform-resource: MeshOpenTelemetryBackend#update
         terraform-datasource: null
       operationId: putMeshOpenTelemetryBackend
       summary: Creates or Updates MeshOpenTelemetryBackend entity
@@ -4378,9 +4531,53 @@ paths:
       tags:
         - MeshOpenTelemetryBackend
   '/meshes/{mesh}/meshopentelemetrybackends':
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshOpenTelemetryBackend#create
+        terraform-datasource: null
+      operationId: postMeshOpenTelemetryBackend
+      summary: Creates MeshOpenTelemetryBackend entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeshOpenTelemetryBackendItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/MeshOpenTelemetryBackendCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Parent mesh not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - MeshOpenTelemetryBackend
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshOpenTelemetryBackendList#get
+        terraform-resource: MeshOpenTelemetryBackendList#read
         terraform-datasource: null
       operationId: getMeshOpenTelemetryBackendList
       summary: Returns a list of MeshOpenTelemetryBackend in the mesh.
@@ -4425,52 +4622,10 @@ paths:
           $ref: '#/components/responses/MeshOpenTelemetryBackendList'
       tags:
         - MeshOpenTelemetryBackend
-  /meshopentelemetrybackends:
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshOpenTelemetryBackendListAllMeshes#get
-        terraform-datasource: null
-      operationId: getMeshOpenTelemetryBackendListAllMeshes
-      summary: Returns a list of MeshOpenTelemetryBackend across all meshes.
-      parameters:
-        - name: offset
-          in: query
-          description: offset in the list of entities
-          required: false
-          schema:
-            type: integer
-            example: 0
-        - name: size
-          in: query
-          description: the number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 100
-            maximum: 1000
-            minimum: 1
-        - name: filter
-          in: query
-          description: 'filter by labels when multiple filters are present, they are ANDed'
-          required: false
-          schema:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
-          example:
-            label.k8s.kuma.io/namespace: my-ns
-      responses:
-        '200':
-          $ref: '#/components/responses/MeshOpenTelemetryBackendList'
-      tags:
-        - MeshOpenTelemetryBackend
   '/meshes/{mesh}/meshservices/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshService#get
+        terraform-resource: MeshService#read
         terraform-datasource: null
       operationId: getMeshService
       summary: Returns MeshService entity
@@ -4496,7 +4651,7 @@ paths:
         - MeshService
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshService#create,update'
+        terraform-resource: MeshService#update
         terraform-datasource: null
       operationId: putMeshService
       summary: Creates or Updates MeshService entity
@@ -4554,9 +4709,53 @@ paths:
       tags:
         - MeshService
   '/meshes/{mesh}/meshservices':
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshService#create
+        terraform-datasource: null
+      operationId: postMeshService
+      summary: Creates MeshService entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeshServiceItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/MeshServiceCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Parent mesh not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - MeshService
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshServiceList#get
+        terraform-resource: MeshServiceList#read
         terraform-datasource: null
       operationId: getMeshServiceList
       summary: Returns a list of MeshService in the mesh.
@@ -4601,52 +4800,10 @@ paths:
           $ref: '#/components/responses/MeshServiceList'
       tags:
         - MeshService
-  /meshservices:
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshServiceListAllMeshes#get
-        terraform-datasource: null
-      operationId: getMeshServiceListAllMeshes
-      summary: Returns a list of MeshService across all meshes.
-      parameters:
-        - name: offset
-          in: query
-          description: offset in the list of entities
-          required: false
-          schema:
-            type: integer
-            example: 0
-        - name: size
-          in: query
-          description: the number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 100
-            maximum: 1000
-            minimum: 1
-        - name: filter
-          in: query
-          description: 'filter by labels when multiple filters are present, they are ANDed'
-          required: false
-          schema:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
-          example:
-            label.k8s.kuma.io/namespace: my-ns
-      responses:
-        '200':
-          $ref: '#/components/responses/MeshServiceList'
-      tags:
-        - MeshService
   '/meshes/{mesh}/meshtrusts/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshTrust#get
+        terraform-resource: MeshTrust#read
         terraform-datasource: null
       operationId: getMeshTrust
       summary: Returns MeshTrust entity
@@ -4672,7 +4829,7 @@ paths:
         - MeshTrust
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshTrust#create,update'
+        terraform-resource: MeshTrust#update
         terraform-datasource: null
       operationId: putMeshTrust
       summary: Creates or Updates MeshTrust entity
@@ -4730,9 +4887,53 @@ paths:
       tags:
         - MeshTrust
   '/meshes/{mesh}/meshtrusts':
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshTrust#create
+        terraform-datasource: null
+      operationId: postMeshTrust
+      summary: Creates MeshTrust entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeshTrustItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/MeshTrustCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Parent mesh not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - MeshTrust
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshTrustList#get
+        terraform-resource: MeshTrustList#read
         terraform-datasource: null
       operationId: getMeshTrustList
       summary: Returns a list of MeshTrust in the mesh.
@@ -4777,52 +4978,10 @@ paths:
           $ref: '#/components/responses/MeshTrustList'
       tags:
         - MeshTrust
-  /meshtrusts:
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshTrustListAllMeshes#get
-        terraform-datasource: null
-      operationId: getMeshTrustListAllMeshes
-      summary: Returns a list of MeshTrust across all meshes.
-      parameters:
-        - name: offset
-          in: query
-          description: offset in the list of entities
-          required: false
-          schema:
-            type: integer
-            example: 0
-        - name: size
-          in: query
-          description: the number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 100
-            maximum: 1000
-            minimum: 1
-        - name: filter
-          in: query
-          description: 'filter by labels when multiple filters are present, they are ANDed'
-          required: false
-          schema:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
-          example:
-            label.k8s.kuma.io/namespace: my-ns
-      responses:
-        '200':
-          $ref: '#/components/responses/MeshTrustList'
-      tags:
-        - MeshTrust
   '/meshes/{mesh}/meshzoneaddresses/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshZoneAddress#get
+        terraform-resource: MeshZoneAddress#read
         terraform-datasource: null
       operationId: getMeshZoneAddress
       summary: Returns MeshZoneAddress entity
@@ -4848,7 +5007,7 @@ paths:
         - MeshZoneAddress
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshZoneAddress#create,update'
+        terraform-resource: MeshZoneAddress#update
         terraform-datasource: null
       operationId: putMeshZoneAddress
       summary: Creates or Updates MeshZoneAddress entity
@@ -4906,9 +5065,53 @@ paths:
       tags:
         - MeshZoneAddress
   '/meshes/{mesh}/meshzoneaddresses':
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshZoneAddress#create
+        terraform-datasource: null
+      operationId: postMeshZoneAddress
+      summary: Creates MeshZoneAddress entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeshZoneAddressItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/MeshZoneAddressCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Parent mesh not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - MeshZoneAddress
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshZoneAddressList#get
+        terraform-resource: MeshZoneAddressList#read
         terraform-datasource: null
       operationId: getMeshZoneAddressList
       summary: Returns a list of MeshZoneAddress in the mesh.
@@ -4953,52 +5156,10 @@ paths:
           $ref: '#/components/responses/MeshZoneAddressList'
       tags:
         - MeshZoneAddress
-  /meshzoneaddresses:
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshZoneAddressListAllMeshes#get
-        terraform-datasource: null
-      operationId: getMeshZoneAddressListAllMeshes
-      summary: Returns a list of MeshZoneAddress across all meshes.
-      parameters:
-        - name: offset
-          in: query
-          description: offset in the list of entities
-          required: false
-          schema:
-            type: integer
-            example: 0
-        - name: size
-          in: query
-          description: the number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 100
-            maximum: 1000
-            minimum: 1
-        - name: filter
-          in: query
-          description: 'filter by labels when multiple filters are present, they are ANDed'
-          required: false
-          schema:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
-          example:
-            label.k8s.kuma.io/namespace: my-ns
-      responses:
-        '200':
-          $ref: '#/components/responses/MeshZoneAddressList'
-      tags:
-        - MeshZoneAddress
   '/meshes/{mesh}/workloads/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshWorkload#get
+        terraform-resource: MeshWorkload#read
         terraform-datasource: null
       operationId: getWorkload
       summary: Returns Workload entity
@@ -5024,7 +5185,7 @@ paths:
         - Workload
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshWorkload#create,update'
+        terraform-resource: MeshWorkload#update
         terraform-datasource: null
       operationId: putWorkload
       summary: Creates or Updates Workload entity
@@ -5082,9 +5243,53 @@ paths:
       tags:
         - Workload
   '/meshes/{mesh}/workloads':
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshWorkload#create
+        terraform-datasource: null
+      operationId: postWorkload
+      summary: Creates Workload entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkloadItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/WorkloadCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Parent mesh not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Workload
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshWorkloadList#get
+        terraform-resource: MeshWorkloadList#read
         terraform-datasource: null
       operationId: getWorkloadList
       summary: Returns a list of Workload in the mesh.
@@ -5129,48 +5334,6 @@ paths:
           $ref: '#/components/responses/WorkloadList'
       tags:
         - Workload
-  /workloads:
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshWorkloadListAllMeshes#get
-        terraform-datasource: null
-      operationId: getWorkloadListAllMeshes
-      summary: Returns a list of Workload across all meshes.
-      parameters:
-        - name: offset
-          in: query
-          description: offset in the list of entities
-          required: false
-          schema:
-            type: integer
-            example: 0
-        - name: size
-          in: query
-          description: the number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 100
-            maximum: 1000
-            minimum: 1
-        - name: filter
-          in: query
-          description: 'filter by labels when multiple filters are present, they are ANDed'
-          required: false
-          schema:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
-          example:
-            label.k8s.kuma.io/namespace: my-ns
-      responses:
-        '200':
-          $ref: '#/components/responses/WorkloadList'
-      tags:
-        - Workload
   '/tenants/{id}':
     parameters:
       - name: id
@@ -5182,7 +5345,7 @@ paths:
     get:
       x-private: true
       x-speakeasy-entity-operation:
-        terraform-resource: MeshTenant#get
+        terraform-resource: MeshTenant#read
         terraform-datasource: null
       operationId: getTenant
       summary: Get the tenant
@@ -5221,7 +5384,7 @@ paths:
   '/meshes/{mesh}/meshopas/{name}':
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshOPA#get
+        terraform-resource: MeshOPA#read
         terraform-datasource: null
       operationId: getMeshOPA
       summary: Returns MeshOPA entity
@@ -5247,7 +5410,7 @@ paths:
         - MeshOPA
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshOPA#create,update'
+        terraform-resource: MeshOPA#update
         terraform-datasource: null
       operationId: putMeshOPA
       summary: Creates or Updates MeshOPA entity
@@ -5305,9 +5468,53 @@ paths:
       tags:
         - MeshOPA
   '/meshes/{mesh}/meshopas':
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshOPA#create
+        terraform-datasource: null
+      operationId: postMeshOPA
+      summary: Creates MeshOPA entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      parameters:
+        - name: mesh
+          in: path
+          description: name of the mesh
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeshOPAItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/MeshOPACreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Parent mesh not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - MeshOPA
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshOPAList#get
+        terraform-resource: MeshOPAList#read
         terraform-datasource: null
       operationId: getMeshOPAList
       summary: Returns a list of MeshOPA in the mesh.
@@ -5352,52 +5559,10 @@ paths:
           $ref: '#/components/responses/MeshOPAList'
       tags:
         - MeshOPA
-  /meshopas:
-    get:
-      x-speakeasy-entity-operation:
-        terraform-resource: MeshOPAListAllMeshes#get
-        terraform-datasource: null
-      operationId: getMeshOPAListAllMeshes
-      summary: Returns a list of MeshOPA across all meshes.
-      parameters:
-        - name: offset
-          in: query
-          description: offset in the list of entities
-          required: false
-          schema:
-            type: integer
-            example: 0
-        - name: size
-          in: query
-          description: the number of items per page
-          required: false
-          schema:
-            type: integer
-            default: 100
-            maximum: 1000
-            minimum: 1
-        - name: filter
-          in: query
-          description: 'filter by labels when multiple filters are present, they are ANDed'
-          required: false
-          schema:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
-          example:
-            label.k8s.kuma.io/namespace: my-ns
-      responses:
-        '200':
-          $ref: '#/components/responses/MeshOPAList'
-      tags:
-        - MeshOPA
   /accessaudits:
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshAccessAuditList#get
+        terraform-resource: MeshAccessAuditList#read
         terraform-datasource: null
       operationId: getAccessAuditList
       summary: Returns a list of AccessAudit.
@@ -5436,6 +5601,37 @@ paths:
           $ref: '#/components/responses/AccessAuditList'
       tags:
         - AccessAudit
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshAccessAudit#create
+        terraform-datasource: null
+      operationId: postAccessAudit
+      summary: Creates AccessAudit entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccessAuditItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/AccessAuditCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - AccessAudit
   '/accessaudits/{name}':
     delete:
       x-speakeasy-entity-operation:
@@ -5459,7 +5655,7 @@ paths:
         - AccessAudit
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshAccessAudit#get
+        terraform-resource: MeshAccessAudit#read
         terraform-datasource: null
       operationId: getAccessAudit
       summary: Returns AccessAudit entity
@@ -5479,7 +5675,7 @@ paths:
         - AccessAudit
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshAccessAudit#create,update'
+        terraform-resource: MeshAccessAudit#update
         terraform-datasource: null
       operationId: putAccessAudit
       summary: Creates or Updates AccessAudit entity
@@ -5507,7 +5703,7 @@ paths:
   /access-roles:
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshAccessRoleList#get
+        terraform-resource: MeshAccessRoleList#read
         terraform-datasource: null
       operationId: getAccessRoleList
       summary: Returns a list of AccessRole.
@@ -5546,6 +5742,37 @@ paths:
           $ref: '#/components/responses/AccessRoleList'
       tags:
         - AccessRole
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshAccessRole#create
+        terraform-datasource: null
+      operationId: postAccessRole
+      summary: Creates AccessRole entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccessRoleItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/AccessRoleCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - AccessRole
   '/access-roles/{name}':
     delete:
       x-speakeasy-entity-operation:
@@ -5569,7 +5796,7 @@ paths:
         - AccessRole
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshAccessRole#get
+        terraform-resource: MeshAccessRole#read
         terraform-datasource: null
       operationId: getAccessRole
       summary: Returns AccessRole entity
@@ -5589,7 +5816,7 @@ paths:
         - AccessRole
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshAccessRole#create,update'
+        terraform-resource: MeshAccessRole#update
         terraform-datasource: null
       operationId: putAccessRole
       summary: Creates or Updates AccessRole entity
@@ -5617,7 +5844,7 @@ paths:
   /access-role-bindings:
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshAccessRoleBindingList#get
+        terraform-resource: MeshAccessRoleBindingList#read
         terraform-datasource: null
       operationId: getAccessRoleBindingList
       summary: Returns a list of AccessRoleBinding.
@@ -5656,6 +5883,37 @@ paths:
           $ref: '#/components/responses/AccessRoleBindingList'
       tags:
         - AccessRoleBinding
+    post:
+      x-speakeasy-entity-operation:
+        terraform-resource: MeshAccessRoleBinding#create
+        terraform-datasource: null
+      operationId: postAccessRoleBinding
+      summary: Creates AccessRoleBinding entity
+      description: Creates a resource using the name in the body. An existing resource is never modified. Requires Kuma 3.0 or later.
+      requestBody:
+        description: Resource to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccessRoleBindingItem'
+      responses:
+        '201':
+          $ref: '#/components/responses/AccessRoleBindingCreateOrUpdateSuccessResponse'
+        '400':
+          description: Invalid resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: A resource with this identity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - AccessRoleBinding
   '/access-role-bindings/{name}':
     delete:
       x-speakeasy-entity-operation:
@@ -5679,7 +5937,7 @@ paths:
         - AccessRoleBinding
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshAccessRoleBinding#get
+        terraform-resource: MeshAccessRoleBinding#read
         terraform-datasource: null
       operationId: getAccessRoleBinding
       summary: Returns AccessRoleBinding entity
@@ -5699,7 +5957,7 @@ paths:
         - AccessRoleBinding
     put:
       x-speakeasy-entity-operation:
-        terraform-resource: 'MeshAccessRoleBinding#create,update'
+        terraform-resource: MeshAccessRoleBinding#update
         terraform-datasource: null
       operationId: putAccessRoleBinding
       summary: Creates or Updates AccessRoleBinding entity
@@ -5727,7 +5985,7 @@ paths:
   /license:
     get:
       x-speakeasy-entity-operation:
-        terraform-resource: MeshLicense#get
+        terraform-resource: MeshLicense#read
         terraform-datasource: null
       operationId: getLicense
       summary: Get License
@@ -5741,6 +5999,59 @@ paths:
         - License
 components:
   schemas:
+    Error:
+      description: |
+        Standard error. Follows the [AIP #193 - Errors](https://kong-aip.netlify.app/aip/193/) specification.
+      type: object
+      properties:
+        status:
+          description: The HTTP status code.
+          type: integer
+          example: 404
+        title:
+          description: |
+            A short, human-readable summary of the problem.
+            It **should not** change between occurrences of a problem, except for localization.
+            Should be provided as "Sentence case" for potential direct use in a UI
+          type: string
+          example: Not Found
+          x-speakeasy-param-computed: false
+        type:
+          description: |
+            A unique identifier for this error. When dereferenced it must provide human-readable documentation for the problem.
+          type: string
+          example: Not Found
+          x-speakeasy-param-computed: false
+        instance:
+          description: |
+            Used to return the correlation ID back to the user, in the format `<app>:trace:<correlation_id>`.
+          type: string
+          example: 'portal:trace:2287285207635123011'
+          x-speakeasy-param-computed: false
+        detail:
+          description: |
+            A human readable explanation specific to this occurrence of the problem.
+            This field may contain request/entity data to help the user understand what went wrong.
+            Enclose variable values in square brackets.
+            _Should_ be provided as "Sentence case" for direct use in a UI
+          type: string
+          example: The requested team was not found
+          x-speakeasy-param-computed: false
+        invalid_parameters:
+          description: |
+            All 400 errors **MUST** return an `invalid_parameters` key in the response.
+            Used to indicate which fields have invalid values when validated.
+          type: array
+          items:
+            $ref: '#/components/schemas/InvalidParameters'
+          x-speakeasy-plan-modifiers: SupressZeroNullModifier
+      required:
+        - status
+        - title
+        - instance
+        - type
+        - detail
+      title: Error
     Meta:
       type: object
       properties:
@@ -6015,17 +6326,6 @@ components:
                                     Format of access logs. Placeholders available on
                                     https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
                                   type: object
-                                  oneOf:
-                                    - properties:
-                                        plain: {}
-                                        type:
-                                          enum:
-                                            - Plain
-                                    - properties:
-                                        json: {}
-                                        type:
-                                          enum:
-                                            - Json
                                   properties:
                                     json:
                                       type: array
@@ -6155,17 +6455,6 @@ components:
                                     Format of access logs. Placeholders available on
                                     https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
                                   type: object
-                                  oneOf:
-                                    - properties:
-                                        plain: {}
-                                        type:
-                                          enum:
-                                            - Plain
-                                    - properties:
-                                        json: {}
-                                        type:
-                                          enum:
-                                            - Json
                                   properties:
                                     json:
                                       type: array
@@ -6219,22 +6508,6 @@ components:
                           required:
                             - type
                           type: object
-                          oneOf:
-                            - properties:
-                                tcp: {}
-                                type:
-                                  enum:
-                                    - Tcp
-                            - properties:
-                                file: {}
-                                type:
-                                  enum:
-                                    - File
-                            - properties:
-                                openTelemetry: {}
-                                type:
-                                  enum:
-                                    - OpenTelemetry
                         x-speakeasy-plan-modifiers: SupressZeroNullModifier
                     x-speakeasy-param-computed: false
                   matches:
@@ -6346,17 +6619,6 @@ components:
                                     Format of access logs. Placeholders available on
                                     https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
                                   type: object
-                                  oneOf:
-                                    - properties:
-                                        plain: {}
-                                        type:
-                                          enum:
-                                            - Plain
-                                    - properties:
-                                        json: {}
-                                        type:
-                                          enum:
-                                            - Json
                                   properties:
                                     json:
                                       type: array
@@ -6487,17 +6749,6 @@ components:
                                     Format of access logs. Placeholders available on
                                     https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators
                                   type: object
-                                  oneOf:
-                                    - properties:
-                                        plain: {}
-                                        type:
-                                          enum:
-                                            - Plain
-                                    - properties:
-                                        json: {}
-                                        type:
-                                          enum:
-                                            - Json
                                   properties:
                                     json:
                                       type: array
@@ -6551,22 +6802,6 @@ components:
                           required:
                             - type
                           type: object
-                          oneOf:
-                            - properties:
-                                tcp: {}
-                                type:
-                                  enum:
-                                    - Tcp
-                            - properties:
-                                file: {}
-                                type:
-                                  enum:
-                                    - File
-                            - properties:
-                                openTelemetry: {}
-                                type:
-                                  enum:
-                                    - OpenTelemetry
                         x-speakeasy-plan-modifiers: SupressZeroNullModifier
                     x-speakeasy-param-computed: false
                   targetRef:
@@ -8010,17 +8245,6 @@ components:
                                                 The modified path is then used to construct the location header.
                                                 When empty, the request path is used as-is.
                                               type: object
-                                              oneOf:
-                                                - properties:
-                                                    replaceFullPath: {}
-                                                    type:
-                                                      enum:
-                                                        - ReplaceFullPath
-                                                - properties:
-                                                    replacePrefixMatch: {}
-                                                    type:
-                                                      enum:
-                                                        - ReplacePrefixMatch
                                               properties:
                                                 replaceFullPath:
                                                   type: string
@@ -8153,17 +8377,6 @@ components:
                                             path:
                                               description: Path defines a path rewrite.
                                               type: object
-                                              oneOf:
-                                                - properties:
-                                                    replaceFullPath: {}
-                                                    type:
-                                                      enum:
-                                                        - ReplaceFullPath
-                                                - properties:
-                                                    replacePrefixMatch: {}
-                                                    type:
-                                                      enum:
-                                                        - ReplacePrefixMatch
                                               properties:
                                                 replaceFullPath:
                                                   type: string
@@ -8185,32 +8398,6 @@ components:
                                       required:
                                         - type
                                       type: object
-                                      oneOf:
-                                        - properties:
-                                            requestHeaderModifier: {}
-                                            type:
-                                              enum:
-                                                - RequestHeaderModifier
-                                        - properties:
-                                            responseHeaderModifier: {}
-                                            type:
-                                              enum:
-                                                - ResponseHeaderModifier
-                                        - properties:
-                                            requestRedirect: {}
-                                            type:
-                                              enum:
-                                                - RequestRedirect
-                                        - properties:
-                                            type:
-                                              enum:
-                                                - URLRewrite
-                                            urlRewrite: {}
-                                        - properties:
-                                            requestMirror: {}
-                                            type:
-                                              enum:
-                                                - RequestMirror
                                     x-speakeasy-plan-modifiers: SupressZeroNullModifier
                                   kind:
                                     description: Kind of the referenced resource
@@ -8385,17 +8572,6 @@ components:
                                           The modified path is then used to construct the location header.
                                           When empty, the request path is used as-is.
                                         type: object
-                                        oneOf:
-                                          - properties:
-                                              replaceFullPath: {}
-                                              type:
-                                                enum:
-                                                  - ReplaceFullPath
-                                          - properties:
-                                              replacePrefixMatch: {}
-                                              type:
-                                                enum:
-                                                  - ReplacePrefixMatch
                                         properties:
                                           replaceFullPath:
                                             type: string
@@ -8528,17 +8704,6 @@ components:
                                       path:
                                         description: Path defines a path rewrite.
                                         type: object
-                                        oneOf:
-                                          - properties:
-                                              replaceFullPath: {}
-                                              type:
-                                                enum:
-                                                  - ReplaceFullPath
-                                          - properties:
-                                              replacePrefixMatch: {}
-                                              type:
-                                                enum:
-                                                  - ReplacePrefixMatch
                                         properties:
                                           replaceFullPath:
                                             type: string
@@ -8560,32 +8725,6 @@ components:
                                 required:
                                   - type
                                 type: object
-                                oneOf:
-                                  - properties:
-                                      requestHeaderModifier: {}
-                                      type:
-                                        enum:
-                                          - RequestHeaderModifier
-                                  - properties:
-                                      responseHeaderModifier: {}
-                                      type:
-                                        enum:
-                                          - ResponseHeaderModifier
-                                  - properties:
-                                      requestRedirect: {}
-                                      type:
-                                        enum:
-                                          - RequestRedirect
-                                  - properties:
-                                      type:
-                                        enum:
-                                          - URLRewrite
-                                      urlRewrite: {}
-                                  - properties:
-                                      requestMirror: {}
-                                      type:
-                                        enum:
-                                          - RequestMirror
                               x-speakeasy-plan-modifiers: SupressZeroNullModifier
                           x-speakeasy-param-computed: false
                         matches:
@@ -9312,62 +9451,10 @@ components:
                           required:
                             - type
                           type: object
-                          oneOf:
-                            - properties:
-                                header: {}
-                                type:
-                                  enum:
-                                    - Header
-                            - properties:
-                                cookie: {}
-                                type:
-                                  enum:
-                                    - Cookie
-                            - properties:
-                                connection: {}
-                                type:
-                                  enum:
-                                    - Connection
-                            - properties:
-                                queryParameter: {}
-                                type:
-                                  enum:
-                                    - QueryParameter
-                            - properties:
-                                filterState: {}
-                                type:
-                                  enum:
-                                    - FilterState
                         x-speakeasy-plan-modifiers: SupressZeroNullModifier
                       loadBalancer:
                         description: LoadBalancer allows to specify load balancing algorithm.
                         type: object
-                        oneOf:
-                          - properties:
-                              roundRobin: {}
-                              type:
-                                enum:
-                                  - RoundRobin
-                          - properties:
-                              leastRequest: {}
-                              type:
-                                enum:
-                                  - LeastRequest
-                          - properties:
-                              ringHash: {}
-                              type:
-                                enum:
-                                  - RingHash
-                          - properties:
-                              random: {}
-                              type:
-                                enum:
-                                  - Random
-                          - properties:
-                              maglev: {}
-                              type:
-                                enum:
-                                  - Maglev
                         properties:
                           leastRequest:
                             description: |-
@@ -9816,17 +9903,6 @@ components:
                     required:
                       - type
                     type: object
-                    oneOf:
-                      - properties:
-                          prometheus: {}
-                          type:
-                            enum:
-                              - Prometheus
-                      - properties:
-                          openTelemetry: {}
-                          type:
-                            enum:
-                              - OpenTelemetry
                   x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sidecar:
                   description: Sidecar metrics collection configuration
@@ -12597,22 +12673,6 @@ components:
                     required:
                       - type
                     type: object
-                    oneOf:
-                      - properties:
-                          type:
-                            enum:
-                              - Zipkin
-                          zipkin: {}
-                      - properties:
-                          datadog: {}
-                          type:
-                            enum:
-                              - Datadog
-                      - properties:
-                          openTelemetry: {}
-                          type:
-                            enum:
-                              - OpenTelemetry
                   maxItems: 1
                   x-speakeasy-plan-modifiers: SupressZeroNullModifier
                 sampling:
@@ -14675,22 +14735,6 @@ components:
           properties:
             provider:
               type: object
-              oneOf:
-                - properties:
-                    bundled: {}
-                    type:
-                      enum:
-                        - Bundled
-                - properties:
-                    spire: {}
-                    type:
-                      enum:
-                        - Spire
-                - properties:
-                    extension: {}
-                    type:
-                      enum:
-                        - Extension
               properties:
                 bundled:
                   description: |-
@@ -16191,7 +16235,7 @@ components:
           type: string
           x-speakeasy-param-computed: false
         certificateParameters:
-          description: 'CertificateParameters for issued certificates (default: 24h).'
+          description: 'CertificateParameters for issued certificates (default: 120h, 5 days).'
           type: object
           properties:
             expiry:
@@ -16279,7 +16323,7 @@ components:
           type: object
           properties:
             expiry:
-              description: 'Expiry is the validity duration of issued workload certificates. Default: 24h.'
+              description: 'Expiry is the validity duration of issued workload certificates. Default: 120h (5 days).'
               type: string
               x-speakeasy-param-computed: false
           x-speakeasy-param-computed: false
@@ -16321,17 +16365,6 @@ components:
         connection:
           description: Connection configures how the control plane reaches the Vault server.
           type: object
-          oneOf:
-            - properties:
-                server: {}
-                type:
-                  enum:
-                    - Server
-            - properties:
-                agent: {}
-                type:
-                  enum:
-                    - Agent
           properties:
             agent:
               description: Agent connects to a local Vault Agent sidecar. Required when Type is Agent.
@@ -16430,22 +16463,6 @@ components:
                 auth:
                   description: Auth configures how the control plane authenticates to Vault.
                   type: object
-                  oneOf:
-                    - properties:
-                        token: {}
-                        type:
-                          enum:
-                            - Token
-                    - properties:
-                        tls: {}
-                        type:
-                          enum:
-                            - TLS
-                    - properties:
-                        aws: {}
-                        type:
-                          enum:
-                            - AWS
                   properties:
                     aws:
                       description: Aws authenticates using AWS IAM or EC2 metadata. Required when Type is AWS.
@@ -16774,7 +16791,7 @@ components:
               properties:
                 expiry:
                   description: |-
-                    Expiry is the lifetime of issued certificates (default: 24h).
+                    Expiry is the lifetime of issued certificates (default: 120h, 5 days).
                     Vault's PKI role max_ttl takes precedence: if it is shorter, the issued certificate is capped accordingly.
                   type: string
                   x-speakeasy-param-computed: false

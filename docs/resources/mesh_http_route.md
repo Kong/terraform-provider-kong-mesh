@@ -39,79 +39,73 @@ resource "kong-mesh_mesh_http_route" "my_meshhttproute" {
                 {
                   filters = [
                     {
-                      one = {
-                        request_header_modifier = {
-                          add = [
-                            {
-                              name  = "...my_name..."
-                              value = "...my_value..."
-                            }
-                          ]
-                          remove = [
-                            "..."
-                          ]
-                          set = [
-                            {
-                              name  = "...my_name..."
-                              value = "...my_value..."
-                            }
-                          ]
-                        }
-                        request_mirror = {
-                          backend_ref = {
-                            kind = "MeshExternalService"
-                            labels = {
-                              key = "value"
-                            }
-                            port         = 4
-                            section_name = "...my_section_name..."
-                            weight       = 300045084
+                      request_header_modifier = {
+                        add = [
+                          {
+                            name  = "...my_name..."
+                            value = "...my_value..."
                           }
-                          percentage = {
-                            str = "...my_str..."
+                        ]
+                        remove = [
+                          "..."
+                        ]
+                        set = [
+                          {
+                            name  = "...my_name..."
+                            value = "...my_value..."
                           }
-                        }
-                        request_redirect = {
-                          hostname = "...my_hostname..."
-                          path = {
-                            two = {
-                              replace_full_path    = "...my_replace_full_path..."
-                              replace_prefix_match = "...my_replace_prefix_match..."
-                              type                 = "ReplaceFullPath"
-                            }
+                        ]
+                      }
+                      request_mirror = {
+                        backend_ref = {
+                          kind = "MeshExternalService"
+                          labels = {
+                            key = "value"
                           }
-                          port        = 39396
-                          scheme      = "https"
-                          status_code = 302
+                          port         = 9
+                          section_name = "...my_section_name..."
+                          weight       = 1106520977
                         }
-                        response_header_modifier = {
-                          add = [
-                            {
-                              name  = "...my_name..."
-                              value = "...my_value..."
-                            }
-                          ]
-                          remove = [
-                            "..."
-                          ]
-                          set = [
-                            {
-                              name  = "...my_name..."
-                              value = "...my_value..."
-                            }
-                          ]
+                        percentage = {
+                          str = "...my_str..."
                         }
-                        type = "ResponseHeaderModifier"
-                        url_rewrite = {
-                          host_to_backend_hostname = false
-                          hostname                 = "...my_hostname..."
-                          path = {
-                            two = {
-                              replace_full_path    = "...my_replace_full_path..."
-                              replace_prefix_match = "...my_replace_prefix_match..."
-                              type                 = "ReplacePrefixMatch"
-                            }
+                      }
+                      request_redirect = {
+                        hostname = "...my_hostname..."
+                        path = {
+                          replace_full_path    = "...my_replace_full_path..."
+                          replace_prefix_match = "...my_replace_prefix_match..."
+                          type                 = "ReplacePrefixMatch"
+                        }
+                        port        = 28655
+                        scheme      = "http"
+                        status_code = 302
+                      }
+                      response_header_modifier = {
+                        add = [
+                          {
+                            name  = "...my_name..."
+                            value = "...my_value..."
                           }
+                        ]
+                        remove = [
+                          "..."
+                        ]
+                        set = [
+                          {
+                            name  = "...my_name..."
+                            value = "...my_value..."
+                          }
+                        ]
+                      }
+                      type = "RequestRedirect"
+                      url_rewrite = {
+                        host_to_backend_hostname = false
+                        hostname                 = "...my_hostname..."
+                        path = {
+                          replace_full_path    = "...my_replace_full_path..."
+                          replace_prefix_match = "...my_replace_prefix_match..."
+                          type                 = "ReplacePrefixMatch"
                         }
                       }
                     }
@@ -127,79 +121,73 @@ resource "kong-mesh_mesh_http_route" "my_meshhttproute" {
               ]
               filters = [
                 {
-                  five = {
-                    request_header_modifier = {
-                      add = [
-                        {
-                          name  = "...my_name..."
-                          value = "...my_value..."
-                        }
-                      ]
-                      remove = [
-                        "..."
-                      ]
-                      set = [
-                        {
-                          name  = "...my_name..."
-                          value = "...my_value..."
-                        }
-                      ]
-                    }
-                    request_mirror = {
-                      backend_ref = {
-                        kind = "MeshService"
-                        labels = {
-                          key = "value"
-                        }
-                        port         = 10
-                        section_name = "...my_section_name..."
-                        weight       = 3071501838
+                  request_header_modifier = {
+                    add = [
+                      {
+                        name  = "...my_name..."
+                        value = "...my_value..."
                       }
-                      percentage = {
-                        integer = 0
+                    ]
+                    remove = [
+                      "..."
+                    ]
+                    set = [
+                      {
+                        name  = "...my_name..."
+                        value = "...my_value..."
                       }
-                    }
-                    request_redirect = {
-                      hostname = "...my_hostname..."
-                      path = {
-                        one = {
-                          replace_full_path    = "...my_replace_full_path..."
-                          replace_prefix_match = "...my_replace_prefix_match..."
-                          type                 = "ReplaceFullPath"
-                        }
+                    ]
+                  }
+                  request_mirror = {
+                    backend_ref = {
+                      kind = "MeshService"
+                      labels = {
+                        key = "value"
                       }
-                      port        = 31753
-                      scheme      = "https"
-                      status_code = 302
+                      port         = 4
+                      section_name = "...my_section_name..."
+                      weight       = 871984813
                     }
-                    response_header_modifier = {
-                      add = [
-                        {
-                          name  = "...my_name..."
-                          value = "...my_value..."
-                        }
-                      ]
-                      remove = [
-                        "..."
-                      ]
-                      set = [
-                        {
-                          name  = "...my_name..."
-                          value = "...my_value..."
-                        }
-                      ]
+                    percentage = {
+                      str = "...my_str..."
                     }
-                    type = "RequestRedirect"
-                    url_rewrite = {
-                      host_to_backend_hostname = false
-                      hostname                 = "...my_hostname..."
-                      path = {
-                        one = {
-                          replace_full_path    = "...my_replace_full_path..."
-                          replace_prefix_match = "...my_replace_prefix_match..."
-                          type                 = "ReplaceFullPath"
-                        }
+                  }
+                  request_redirect = {
+                    hostname = "...my_hostname..."
+                    path = {
+                      replace_full_path    = "...my_replace_full_path..."
+                      replace_prefix_match = "...my_replace_prefix_match..."
+                      type                 = "ReplaceFullPath"
+                    }
+                    port        = 46600
+                    scheme      = "https"
+                    status_code = 302
+                  }
+                  response_header_modifier = {
+                    add = [
+                      {
+                        name  = "...my_name..."
+                        value = "...my_value..."
                       }
+                    ]
+                    remove = [
+                      "..."
+                    ]
+                    set = [
+                      {
+                        name  = "...my_name..."
+                        value = "...my_value..."
+                      }
+                    ]
+                  }
+                  type = "URLRewrite"
+                  url_rewrite = {
+                    host_to_backend_hostname = false
+                    hostname                 = "...my_hostname..."
+                    path = {
+                      replace_full_path    = "...my_replace_full_path..."
+                      replace_prefix_match = "...my_replace_prefix_match..."
+                      type                 = "ReplacePrefixMatch"
                     }
                   }
                 }
@@ -250,7 +238,7 @@ resource "kong-mesh_mesh_http_route" "my_meshhttproute" {
 ### Required
 
 - `mesh` (String) name of the mesh. Requires replacement if changed.
-- `name` (String) name of the MeshHTTPRoute. Requires replacement if changed.
+- `name` (String) Name of the Kuma resource. Requires replacement if changed.
 - `spec` (Attributes) Spec is the specification of the Kuma MeshHTTPRoute resource. (see [below for nested schema](#nestedatt--spec))
 - `type` (String) the type of the resource. must be "MeshHTTPRoute"
 
@@ -343,48 +331,28 @@ For example, you can target a port from MeshService.ports[] by its name.
 
 Optional:
 
-- `five` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--five))
-- `four` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--four))
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--one))
-- `three` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--three))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--two))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--five"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.five`
-
-Optional:
-
 - `request_header_modifier` (Attributes) Only one action is supported per header name.
 Configuration to set or add multiple values for a header must use RFC 7230
-header value formatting, separating each value with a comma. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--five--request_header_modifier))
-- `request_mirror` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--five--request_mirror))
-- `request_redirect` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--five--request_redirect))
+header value formatting, separating each value with a comma. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--request_header_modifier))
+- `request_mirror` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--request_mirror))
+- `request_redirect` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--request_redirect))
 - `response_header_modifier` (Attributes) Only one action is supported per header name.
 Configuration to set or add multiple values for a header must use RFC 7230
-header value formatting, separating each value with a comma. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--five--response_header_modifier))
+header value formatting, separating each value with a comma. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--response_header_modifier))
 - `type` (String) possible known values include one of ["RequestHeaderModifier", "ResponseHeaderModifier", "RequestRedirect", "URLRewrite", "RequestMirror"]; Not Null
-- `url_rewrite` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--five--url_rewrite))
+- `url_rewrite` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--url_rewrite))
 
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--five--request_header_modifier"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.five.request_header_modifier`
+<a id="nestedatt--spec--to--rules--default--backend_refs--filters--request_header_modifier"></a>
+### Nested Schema for `spec.to.rules.default.backend_refs.filters.request_header_modifier`
 
 Optional:
 
-- `add` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--five--request_header_modifier--add))
+- `add` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--request_header_modifier--add))
 - `remove` (List of String)
-- `set` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--five--request_header_modifier--set))
+- `set` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--request_header_modifier--set))
 
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--five--request_header_modifier--add"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.five.request_header_modifier.add`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--five--request_header_modifier--set"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.five.request_header_modifier.set`
+<a id="nestedatt--spec--to--rules--default--backend_refs--filters--request_header_modifier--add"></a>
+### Nested Schema for `spec.to.rules.default.backend_refs.filters.request_header_modifier.add`
 
 Optional:
 
@@ -392,18 +360,27 @@ Optional:
 - `value` (String) Not Null
 
 
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--five--request_mirror"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.five.request_mirror`
+<a id="nestedatt--spec--to--rules--default--backend_refs--filters--request_header_modifier--set"></a>
+### Nested Schema for `spec.to.rules.default.backend_refs.filters.request_header_modifier.set`
 
 Optional:
 
-- `backend_ref` (Attributes) BackendRef defines the destination traffic is routed to. Not Null (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--five--request_mirror--backend_ref))
+- `name` (String) Not Null
+- `value` (String) Not Null
+
+
+
+<a id="nestedatt--spec--to--rules--default--backend_refs--filters--request_mirror"></a>
+### Nested Schema for `spec.to.rules.default.backend_refs.filters.request_mirror`
+
+Optional:
+
+- `backend_ref` (Attributes) BackendRef defines the destination traffic is routed to. Not Null (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--request_mirror--backend_ref))
 - `percentage` (Attributes) Percentage of requests to mirror. If not specified, all requests
-to the target cluster will be mirrored. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--five--request_mirror--percentage))
+to the target cluster will be mirrored. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--request_mirror--percentage))
 
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--five--request_mirror--backend_ref"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.five.request_mirror.backend_ref`
+<a id="nestedatt--spec--to--rules--default--backend_refs--filters--request_mirror--backend_ref"></a>
+### Nested Schema for `spec.to.rules.default.backend_refs.filters.request_mirror.backend_ref`
 
 Optional:
 
@@ -415,8 +392,8 @@ For example, you can target a port from MeshService.ports[] by its name.
 - `weight` (Number)
 
 
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--five--request_mirror--percentage"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.five.request_mirror.percentage`
+<a id="nestedatt--spec--to--rules--default--backend_refs--filters--request_mirror--percentage"></a>
+### Nested Schema for `spec.to.rules.default.backend_refs.filters.request_mirror.percentage`
 
 Optional:
 
@@ -425,8 +402,8 @@ Optional:
 
 
 
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--five--request_redirect"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.five.request_redirect`
+<a id="nestedatt--spec--to--rules--default--backend_refs--filters--request_redirect"></a>
+### Nested Schema for `spec.to.rules.default.backend_refs.filters.request_redirect`
 
 Optional:
 
@@ -439,33 +416,15 @@ alphanumeric characters or '-', and must start and end with an alphanumeric
 character. No other punctuation is allowed.
 - `path` (Attributes) Path defines parameters used to modify the path of the incoming request.
 The modified path is then used to construct the location header.
-When empty, the request path is used as-is. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--five--request_redirect--path))
+When empty, the request path is used as-is. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--request_redirect--path))
 - `port` (Number) Port is the port to be used in the value of the `Location`
 header in the response.
 When empty, port (if specified) of the request is used.
 - `scheme` (String) possible known values include one of ["http", "https"]
 - `status_code` (Number) StatusCode is the HTTP status code to be used in response. possible known values include one of [301, 302, 303, 307, 308]; Default: 302
 
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--five--request_redirect--path"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.five.request_redirect.path`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--five--request_redirect--path--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--five--request_redirect--path--two))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--five--request_redirect--path--one"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.five.request_redirect.path.one`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--five--request_redirect--path--two"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.five.request_redirect.path.two`
+<a id="nestedatt--spec--to--rules--default--backend_refs--filters--request_redirect--path"></a>
+### Nested Schema for `spec.to.rules.default.backend_refs.filters.request_redirect.path`
 
 Optional:
 
@@ -475,27 +434,17 @@ Optional:
 
 
 
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--five--response_header_modifier"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.five.response_header_modifier`
+<a id="nestedatt--spec--to--rules--default--backend_refs--filters--response_header_modifier"></a>
+### Nested Schema for `spec.to.rules.default.backend_refs.filters.response_header_modifier`
 
 Optional:
 
-- `add` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--five--response_header_modifier--add))
+- `add` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--response_header_modifier--add))
 - `remove` (List of String)
-- `set` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--five--response_header_modifier--set))
+- `set` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--response_header_modifier--set))
 
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--five--response_header_modifier--add"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.five.response_header_modifier.add`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--five--response_header_modifier--set"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.five.response_header_modifier.set`
+<a id="nestedatt--spec--to--rules--default--backend_refs--filters--response_header_modifier--add"></a>
+### Nested Schema for `spec.to.rules.default.backend_refs.filters.response_header_modifier.add`
 
 Optional:
 
@@ -503,824 +452,33 @@ Optional:
 - `value` (String) Not Null
 
 
+<a id="nestedatt--spec--to--rules--default--backend_refs--filters--response_header_modifier--set"></a>
+### Nested Schema for `spec.to.rules.default.backend_refs.filters.response_header_modifier.set`
 
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--five--url_rewrite"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.five.url_rewrite`
+Optional:
+
+- `name` (String) Not Null
+- `value` (String) Not Null
+
+
+
+<a id="nestedatt--spec--to--rules--default--backend_refs--filters--url_rewrite"></a>
+### Nested Schema for `spec.to.rules.default.backend_refs.filters.url_rewrite`
 
 Optional:
 
 - `host_to_backend_hostname` (Boolean) HostToBackendHostname is not currently supported and must not be set.
 - `hostname` (String) Hostname is the value to be used to replace the host header value during forwarding.
-- `path` (Attributes) Path defines a path rewrite. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--five--url_rewrite--path))
+- `path` (Attributes) Path defines a path rewrite. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--url_rewrite--path))
 
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--five--url_rewrite--path"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.five.url_rewrite.path`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--five--url_rewrite--path--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--five--url_rewrite--path--two))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--five--url_rewrite--path--one"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.five.url_rewrite.path.one`
+<a id="nestedatt--spec--to--rules--default--backend_refs--filters--url_rewrite--path"></a>
+### Nested Schema for `spec.to.rules.default.backend_refs.filters.url_rewrite.path`
 
 Optional:
 
 - `replace_full_path` (String)
 - `replace_prefix_match` (String)
 - `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--five--url_rewrite--path--two"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.five.url_rewrite.path.two`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--four"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.four`
-
-Optional:
-
-- `request_header_modifier` (Attributes) Only one action is supported per header name.
-Configuration to set or add multiple values for a header must use RFC 7230
-header value formatting, separating each value with a comma. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--four--request_header_modifier))
-- `request_mirror` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--four--request_mirror))
-- `request_redirect` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--four--request_redirect))
-- `response_header_modifier` (Attributes) Only one action is supported per header name.
-Configuration to set or add multiple values for a header must use RFC 7230
-header value formatting, separating each value with a comma. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--four--response_header_modifier))
-- `type` (String) possible known values include one of ["RequestHeaderModifier", "ResponseHeaderModifier", "RequestRedirect", "URLRewrite", "RequestMirror"]; Not Null
-- `url_rewrite` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--four--url_rewrite))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--four--request_header_modifier"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.four.request_header_modifier`
-
-Optional:
-
-- `add` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--four--request_header_modifier--add))
-- `remove` (List of String)
-- `set` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--four--request_header_modifier--set))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--four--request_header_modifier--add"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.four.request_header_modifier.add`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--four--request_header_modifier--set"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.four.request_header_modifier.set`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--four--request_mirror"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.four.request_mirror`
-
-Optional:
-
-- `backend_ref` (Attributes) BackendRef defines the destination traffic is routed to. Not Null (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--four--request_mirror--backend_ref))
-- `percentage` (Attributes) Percentage of requests to mirror. If not specified, all requests
-to the target cluster will be mirrored. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--four--request_mirror--percentage))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--four--request_mirror--backend_ref"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.four.request_mirror.backend_ref`
-
-Optional:
-
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["MeshService", "MeshExternalService", "MeshMultiZoneService"]; Not Null
-- `labels` (Map of String) Labels are used to select the referenced real resource.
-- `port` (Number) Port is only supported when this ref refers to a real MeshService object
-- `section_name` (String) SectionName is used to target a specific section of the resource.
-For example, you can target a port from MeshService.ports[] by its name.
-- `weight` (Number)
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--four--request_mirror--percentage"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.four.request_mirror.percentage`
-
-Optional:
-
-- `integer` (Number)
-- `str` (String)
-
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--four--request_redirect"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.four.request_redirect`
-
-Optional:
-
-- `hostname` (String) PreciseHostname is the fully qualified domain name of a network host. This
-matches the RFC 1123 definition of a hostname with 1 notable exception that
-numeric IP addresses are not allowed.
-
-Note that as per RFC1035 and RFC1123, a *label* must consist of lower case
-alphanumeric characters or '-', and must start and end with an alphanumeric
-character. No other punctuation is allowed.
-- `path` (Attributes) Path defines parameters used to modify the path of the incoming request.
-The modified path is then used to construct the location header.
-When empty, the request path is used as-is. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--four--request_redirect--path))
-- `port` (Number) Port is the port to be used in the value of the `Location`
-header in the response.
-When empty, port (if specified) of the request is used.
-- `scheme` (String) possible known values include one of ["http", "https"]
-- `status_code` (Number) StatusCode is the HTTP status code to be used in response. possible known values include one of [301, 302, 303, 307, 308]; Default: 302
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--four--request_redirect--path"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.four.request_redirect.path`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--four--request_redirect--path--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--four--request_redirect--path--two))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--four--request_redirect--path--one"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.four.request_redirect.path.one`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--four--request_redirect--path--two"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.four.request_redirect.path.two`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--four--response_header_modifier"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.four.response_header_modifier`
-
-Optional:
-
-- `add` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--four--response_header_modifier--add))
-- `remove` (List of String)
-- `set` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--four--response_header_modifier--set))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--four--response_header_modifier--add"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.four.response_header_modifier.add`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--four--response_header_modifier--set"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.four.response_header_modifier.set`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--four--url_rewrite"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.four.url_rewrite`
-
-Optional:
-
-- `host_to_backend_hostname` (Boolean) HostToBackendHostname is not currently supported and must not be set.
-- `hostname` (String) Hostname is the value to be used to replace the host header value during forwarding.
-- `path` (Attributes) Path defines a path rewrite. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--four--url_rewrite--path))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--four--url_rewrite--path"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.four.url_rewrite.path`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--four--url_rewrite--path--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--four--url_rewrite--path--two))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--four--url_rewrite--path--one"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.four.url_rewrite.path.one`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--four--url_rewrite--path--two"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.four.url_rewrite.path.two`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--one"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.one`
-
-Optional:
-
-- `request_header_modifier` (Attributes) Only one action is supported per header name.
-Configuration to set or add multiple values for a header must use RFC 7230
-header value formatting, separating each value with a comma. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--one--request_header_modifier))
-- `request_mirror` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--one--request_mirror))
-- `request_redirect` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--one--request_redirect))
-- `response_header_modifier` (Attributes) Only one action is supported per header name.
-Configuration to set or add multiple values for a header must use RFC 7230
-header value formatting, separating each value with a comma. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--one--response_header_modifier))
-- `type` (String) possible known values include one of ["RequestHeaderModifier", "ResponseHeaderModifier", "RequestRedirect", "URLRewrite", "RequestMirror"]; Not Null
-- `url_rewrite` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--one--url_rewrite))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--one--request_header_modifier"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.one.request_header_modifier`
-
-Optional:
-
-- `add` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--one--request_header_modifier--add))
-- `remove` (List of String)
-- `set` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--one--request_header_modifier--set))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--one--request_header_modifier--add"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.one.request_header_modifier.add`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--one--request_header_modifier--set"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.one.request_header_modifier.set`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--one--request_mirror"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.one.request_mirror`
-
-Optional:
-
-- `backend_ref` (Attributes) BackendRef defines the destination traffic is routed to. Not Null (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--one--request_mirror--backend_ref))
-- `percentage` (Attributes) Percentage of requests to mirror. If not specified, all requests
-to the target cluster will be mirrored. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--one--request_mirror--percentage))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--one--request_mirror--backend_ref"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.one.request_mirror.backend_ref`
-
-Optional:
-
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["MeshService", "MeshExternalService", "MeshMultiZoneService"]; Not Null
-- `labels` (Map of String) Labels are used to select the referenced real resource.
-- `port` (Number) Port is only supported when this ref refers to a real MeshService object
-- `section_name` (String) SectionName is used to target a specific section of the resource.
-For example, you can target a port from MeshService.ports[] by its name.
-- `weight` (Number)
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--one--request_mirror--percentage"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.one.request_mirror.percentage`
-
-Optional:
-
-- `integer` (Number)
-- `str` (String)
-
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--one--request_redirect"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.one.request_redirect`
-
-Optional:
-
-- `hostname` (String) PreciseHostname is the fully qualified domain name of a network host. This
-matches the RFC 1123 definition of a hostname with 1 notable exception that
-numeric IP addresses are not allowed.
-
-Note that as per RFC1035 and RFC1123, a *label* must consist of lower case
-alphanumeric characters or '-', and must start and end with an alphanumeric
-character. No other punctuation is allowed.
-- `path` (Attributes) Path defines parameters used to modify the path of the incoming request.
-The modified path is then used to construct the location header.
-When empty, the request path is used as-is. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--one--request_redirect--path))
-- `port` (Number) Port is the port to be used in the value of the `Location`
-header in the response.
-When empty, port (if specified) of the request is used.
-- `scheme` (String) possible known values include one of ["http", "https"]
-- `status_code` (Number) StatusCode is the HTTP status code to be used in response. possible known values include one of [301, 302, 303, 307, 308]; Default: 302
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--one--request_redirect--path"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.one.request_redirect.path`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--one--request_redirect--path--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--one--request_redirect--path--two))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--one--request_redirect--path--one"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.one.request_redirect.path.one`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--one--request_redirect--path--two"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.one.request_redirect.path.two`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--one--response_header_modifier"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.one.response_header_modifier`
-
-Optional:
-
-- `add` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--one--response_header_modifier--add))
-- `remove` (List of String)
-- `set` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--one--response_header_modifier--set))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--one--response_header_modifier--add"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.one.response_header_modifier.add`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--one--response_header_modifier--set"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.one.response_header_modifier.set`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--one--url_rewrite"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.one.url_rewrite`
-
-Optional:
-
-- `host_to_backend_hostname` (Boolean) HostToBackendHostname is not currently supported and must not be set.
-- `hostname` (String) Hostname is the value to be used to replace the host header value during forwarding.
-- `path` (Attributes) Path defines a path rewrite. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--one--url_rewrite--path))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--one--url_rewrite--path"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.one.url_rewrite.path`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--one--url_rewrite--path--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--one--url_rewrite--path--two))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--one--url_rewrite--path--one"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.one.url_rewrite.path.one`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--one--url_rewrite--path--two"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.one.url_rewrite.path.two`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--three"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.three`
-
-Optional:
-
-- `request_header_modifier` (Attributes) Only one action is supported per header name.
-Configuration to set or add multiple values for a header must use RFC 7230
-header value formatting, separating each value with a comma. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--three--request_header_modifier))
-- `request_mirror` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--three--request_mirror))
-- `request_redirect` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--three--request_redirect))
-- `response_header_modifier` (Attributes) Only one action is supported per header name.
-Configuration to set or add multiple values for a header must use RFC 7230
-header value formatting, separating each value with a comma. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--three--response_header_modifier))
-- `type` (String) possible known values include one of ["RequestHeaderModifier", "ResponseHeaderModifier", "RequestRedirect", "URLRewrite", "RequestMirror"]; Not Null
-- `url_rewrite` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--three--url_rewrite))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--three--request_header_modifier"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.three.request_header_modifier`
-
-Optional:
-
-- `add` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--three--request_header_modifier--add))
-- `remove` (List of String)
-- `set` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--three--request_header_modifier--set))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--three--request_header_modifier--add"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.three.request_header_modifier.add`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--three--request_header_modifier--set"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.three.request_header_modifier.set`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--three--request_mirror"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.three.request_mirror`
-
-Optional:
-
-- `backend_ref` (Attributes) BackendRef defines the destination traffic is routed to. Not Null (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--three--request_mirror--backend_ref))
-- `percentage` (Attributes) Percentage of requests to mirror. If not specified, all requests
-to the target cluster will be mirrored. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--three--request_mirror--percentage))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--three--request_mirror--backend_ref"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.three.request_mirror.backend_ref`
-
-Optional:
-
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["MeshService", "MeshExternalService", "MeshMultiZoneService"]; Not Null
-- `labels` (Map of String) Labels are used to select the referenced real resource.
-- `port` (Number) Port is only supported when this ref refers to a real MeshService object
-- `section_name` (String) SectionName is used to target a specific section of the resource.
-For example, you can target a port from MeshService.ports[] by its name.
-- `weight` (Number)
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--three--request_mirror--percentage"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.three.request_mirror.percentage`
-
-Optional:
-
-- `integer` (Number)
-- `str` (String)
-
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--three--request_redirect"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.three.request_redirect`
-
-Optional:
-
-- `hostname` (String) PreciseHostname is the fully qualified domain name of a network host. This
-matches the RFC 1123 definition of a hostname with 1 notable exception that
-numeric IP addresses are not allowed.
-
-Note that as per RFC1035 and RFC1123, a *label* must consist of lower case
-alphanumeric characters or '-', and must start and end with an alphanumeric
-character. No other punctuation is allowed.
-- `path` (Attributes) Path defines parameters used to modify the path of the incoming request.
-The modified path is then used to construct the location header.
-When empty, the request path is used as-is. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--three--request_redirect--path))
-- `port` (Number) Port is the port to be used in the value of the `Location`
-header in the response.
-When empty, port (if specified) of the request is used.
-- `scheme` (String) possible known values include one of ["http", "https"]
-- `status_code` (Number) StatusCode is the HTTP status code to be used in response. possible known values include one of [301, 302, 303, 307, 308]; Default: 302
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--three--request_redirect--path"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.three.request_redirect.path`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--three--request_redirect--path--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--three--request_redirect--path--two))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--three--request_redirect--path--one"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.three.request_redirect.path.one`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--three--request_redirect--path--two"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.three.request_redirect.path.two`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--three--response_header_modifier"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.three.response_header_modifier`
-
-Optional:
-
-- `add` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--three--response_header_modifier--add))
-- `remove` (List of String)
-- `set` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--three--response_header_modifier--set))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--three--response_header_modifier--add"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.three.response_header_modifier.add`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--three--response_header_modifier--set"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.three.response_header_modifier.set`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--three--url_rewrite"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.three.url_rewrite`
-
-Optional:
-
-- `host_to_backend_hostname` (Boolean) HostToBackendHostname is not currently supported and must not be set.
-- `hostname` (String) Hostname is the value to be used to replace the host header value during forwarding.
-- `path` (Attributes) Path defines a path rewrite. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--three--url_rewrite--path))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--three--url_rewrite--path"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.three.url_rewrite.path`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--three--url_rewrite--path--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--three--url_rewrite--path--two))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--three--url_rewrite--path--one"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.three.url_rewrite.path.one`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--three--url_rewrite--path--two"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.three.url_rewrite.path.two`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--two"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.two`
-
-Optional:
-
-- `request_header_modifier` (Attributes) Only one action is supported per header name.
-Configuration to set or add multiple values for a header must use RFC 7230
-header value formatting, separating each value with a comma. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--two--request_header_modifier))
-- `request_mirror` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--two--request_mirror))
-- `request_redirect` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--two--request_redirect))
-- `response_header_modifier` (Attributes) Only one action is supported per header name.
-Configuration to set or add multiple values for a header must use RFC 7230
-header value formatting, separating each value with a comma. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--two--response_header_modifier))
-- `type` (String) possible known values include one of ["RequestHeaderModifier", "ResponseHeaderModifier", "RequestRedirect", "URLRewrite", "RequestMirror"]; Not Null
-- `url_rewrite` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--two--url_rewrite))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--two--request_header_modifier"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.two.request_header_modifier`
-
-Optional:
-
-- `add` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--two--request_header_modifier--add))
-- `remove` (List of String)
-- `set` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--two--request_header_modifier--set))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--two--request_header_modifier--add"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.two.request_header_modifier.add`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--two--request_header_modifier--set"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.two.request_header_modifier.set`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--two--request_mirror"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.two.request_mirror`
-
-Optional:
-
-- `backend_ref` (Attributes) BackendRef defines the destination traffic is routed to. Not Null (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--two--request_mirror--backend_ref))
-- `percentage` (Attributes) Percentage of requests to mirror. If not specified, all requests
-to the target cluster will be mirrored. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--two--request_mirror--percentage))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--two--request_mirror--backend_ref"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.two.request_mirror.backend_ref`
-
-Optional:
-
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["MeshService", "MeshExternalService", "MeshMultiZoneService"]; Not Null
-- `labels` (Map of String) Labels are used to select the referenced real resource.
-- `port` (Number) Port is only supported when this ref refers to a real MeshService object
-- `section_name` (String) SectionName is used to target a specific section of the resource.
-For example, you can target a port from MeshService.ports[] by its name.
-- `weight` (Number)
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--two--request_mirror--percentage"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.two.request_mirror.percentage`
-
-Optional:
-
-- `integer` (Number)
-- `str` (String)
-
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--two--request_redirect"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.two.request_redirect`
-
-Optional:
-
-- `hostname` (String) PreciseHostname is the fully qualified domain name of a network host. This
-matches the RFC 1123 definition of a hostname with 1 notable exception that
-numeric IP addresses are not allowed.
-
-Note that as per RFC1035 and RFC1123, a *label* must consist of lower case
-alphanumeric characters or '-', and must start and end with an alphanumeric
-character. No other punctuation is allowed.
-- `path` (Attributes) Path defines parameters used to modify the path of the incoming request.
-The modified path is then used to construct the location header.
-When empty, the request path is used as-is. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--two--request_redirect--path))
-- `port` (Number) Port is the port to be used in the value of the `Location`
-header in the response.
-When empty, port (if specified) of the request is used.
-- `scheme` (String) possible known values include one of ["http", "https"]
-- `status_code` (Number) StatusCode is the HTTP status code to be used in response. possible known values include one of [301, 302, 303, 307, 308]; Default: 302
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--two--request_redirect--path"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.two.request_redirect.path`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--two--request_redirect--path--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--two--request_redirect--path--two))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--two--request_redirect--path--one"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.two.request_redirect.path.one`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--two--request_redirect--path--two"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.two.request_redirect.path.two`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--two--response_header_modifier"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.two.response_header_modifier`
-
-Optional:
-
-- `add` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--two--response_header_modifier--add))
-- `remove` (List of String)
-- `set` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--two--response_header_modifier--set))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--two--response_header_modifier--add"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.two.response_header_modifier.add`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--two--response_header_modifier--set"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.two.response_header_modifier.set`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--two--url_rewrite"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.two.url_rewrite`
-
-Optional:
-
-- `host_to_backend_hostname` (Boolean) HostToBackendHostname is not currently supported and must not be set.
-- `hostname` (String) Hostname is the value to be used to replace the host header value during forwarding.
-- `path` (Attributes) Path defines a path rewrite. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--two--url_rewrite--path))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--two--url_rewrite--path"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.two.url_rewrite.path`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--two--url_rewrite--path--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--two--url_rewrite--path--two))
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--two--url_rewrite--path--one"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.two.url_rewrite.path.one`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--backend_refs--filters--two--url_rewrite--path--two"></a>
-### Nested Schema for `spec.to.rules.default.backend_refs.filters.two.url_rewrite.path.two`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
 
 
 
@@ -1331,48 +489,28 @@ Optional:
 
 Optional:
 
-- `five` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--five))
-- `four` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--four))
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--one))
-- `three` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--three))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--two))
-
-<a id="nestedatt--spec--to--rules--default--filters--five"></a>
-### Nested Schema for `spec.to.rules.default.filters.five`
-
-Optional:
-
 - `request_header_modifier` (Attributes) Only one action is supported per header name.
 Configuration to set or add multiple values for a header must use RFC 7230
-header value formatting, separating each value with a comma. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--five--request_header_modifier))
-- `request_mirror` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--five--request_mirror))
-- `request_redirect` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--five--request_redirect))
+header value formatting, separating each value with a comma. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--request_header_modifier))
+- `request_mirror` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--request_mirror))
+- `request_redirect` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--request_redirect))
 - `response_header_modifier` (Attributes) Only one action is supported per header name.
 Configuration to set or add multiple values for a header must use RFC 7230
-header value formatting, separating each value with a comma. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--five--response_header_modifier))
+header value formatting, separating each value with a comma. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--response_header_modifier))
 - `type` (String) possible known values include one of ["RequestHeaderModifier", "ResponseHeaderModifier", "RequestRedirect", "URLRewrite", "RequestMirror"]; Not Null
-- `url_rewrite` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--five--url_rewrite))
+- `url_rewrite` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--url_rewrite))
 
-<a id="nestedatt--spec--to--rules--default--filters--five--request_header_modifier"></a>
-### Nested Schema for `spec.to.rules.default.filters.five.request_header_modifier`
+<a id="nestedatt--spec--to--rules--default--filters--request_header_modifier"></a>
+### Nested Schema for `spec.to.rules.default.filters.request_header_modifier`
 
 Optional:
 
-- `add` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--five--request_header_modifier--add))
+- `add` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--request_header_modifier--add))
 - `remove` (List of String)
-- `set` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--five--request_header_modifier--set))
+- `set` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--request_header_modifier--set))
 
-<a id="nestedatt--spec--to--rules--default--filters--five--request_header_modifier--add"></a>
-### Nested Schema for `spec.to.rules.default.filters.five.request_header_modifier.add`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--filters--five--request_header_modifier--set"></a>
-### Nested Schema for `spec.to.rules.default.filters.five.request_header_modifier.set`
+<a id="nestedatt--spec--to--rules--default--filters--request_header_modifier--add"></a>
+### Nested Schema for `spec.to.rules.default.filters.request_header_modifier.add`
 
 Optional:
 
@@ -1380,18 +518,27 @@ Optional:
 - `value` (String) Not Null
 
 
-
-<a id="nestedatt--spec--to--rules--default--filters--five--request_mirror"></a>
-### Nested Schema for `spec.to.rules.default.filters.five.request_mirror`
+<a id="nestedatt--spec--to--rules--default--filters--request_header_modifier--set"></a>
+### Nested Schema for `spec.to.rules.default.filters.request_header_modifier.set`
 
 Optional:
 
-- `backend_ref` (Attributes) BackendRef defines the destination traffic is routed to. Not Null (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--five--request_mirror--backend_ref))
+- `name` (String) Not Null
+- `value` (String) Not Null
+
+
+
+<a id="nestedatt--spec--to--rules--default--filters--request_mirror"></a>
+### Nested Schema for `spec.to.rules.default.filters.request_mirror`
+
+Optional:
+
+- `backend_ref` (Attributes) BackendRef defines the destination traffic is routed to. Not Null (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--request_mirror--backend_ref))
 - `percentage` (Attributes) Percentage of requests to mirror. If not specified, all requests
-to the target cluster will be mirrored. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--five--request_mirror--percentage))
+to the target cluster will be mirrored. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--request_mirror--percentage))
 
-<a id="nestedatt--spec--to--rules--default--filters--five--request_mirror--backend_ref"></a>
-### Nested Schema for `spec.to.rules.default.filters.five.request_mirror.backend_ref`
+<a id="nestedatt--spec--to--rules--default--filters--request_mirror--backend_ref"></a>
+### Nested Schema for `spec.to.rules.default.filters.request_mirror.backend_ref`
 
 Optional:
 
@@ -1403,8 +550,8 @@ For example, you can target a port from MeshService.ports[] by its name.
 - `weight` (Number)
 
 
-<a id="nestedatt--spec--to--rules--default--filters--five--request_mirror--percentage"></a>
-### Nested Schema for `spec.to.rules.default.filters.five.request_mirror.percentage`
+<a id="nestedatt--spec--to--rules--default--filters--request_mirror--percentage"></a>
+### Nested Schema for `spec.to.rules.default.filters.request_mirror.percentage`
 
 Optional:
 
@@ -1413,8 +560,8 @@ Optional:
 
 
 
-<a id="nestedatt--spec--to--rules--default--filters--five--request_redirect"></a>
-### Nested Schema for `spec.to.rules.default.filters.five.request_redirect`
+<a id="nestedatt--spec--to--rules--default--filters--request_redirect"></a>
+### Nested Schema for `spec.to.rules.default.filters.request_redirect`
 
 Optional:
 
@@ -1427,33 +574,15 @@ alphanumeric characters or '-', and must start and end with an alphanumeric
 character. No other punctuation is allowed.
 - `path` (Attributes) Path defines parameters used to modify the path of the incoming request.
 The modified path is then used to construct the location header.
-When empty, the request path is used as-is. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--five--request_redirect--path))
+When empty, the request path is used as-is. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--request_redirect--path))
 - `port` (Number) Port is the port to be used in the value of the `Location`
 header in the response.
 When empty, port (if specified) of the request is used.
 - `scheme` (String) possible known values include one of ["http", "https"]
 - `status_code` (Number) StatusCode is the HTTP status code to be used in response. possible known values include one of [301, 302, 303, 307, 308]; Default: 302
 
-<a id="nestedatt--spec--to--rules--default--filters--five--request_redirect--path"></a>
-### Nested Schema for `spec.to.rules.default.filters.five.request_redirect.path`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--five--request_redirect--path--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--five--request_redirect--path--two))
-
-<a id="nestedatt--spec--to--rules--default--filters--five--request_redirect--path--one"></a>
-### Nested Schema for `spec.to.rules.default.filters.five.request_redirect.path.one`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--filters--five--request_redirect--path--two"></a>
-### Nested Schema for `spec.to.rules.default.filters.five.request_redirect.path.two`
+<a id="nestedatt--spec--to--rules--default--filters--request_redirect--path"></a>
+### Nested Schema for `spec.to.rules.default.filters.request_redirect.path`
 
 Optional:
 
@@ -1463,27 +592,17 @@ Optional:
 
 
 
-
-<a id="nestedatt--spec--to--rules--default--filters--five--response_header_modifier"></a>
-### Nested Schema for `spec.to.rules.default.filters.five.response_header_modifier`
+<a id="nestedatt--spec--to--rules--default--filters--response_header_modifier"></a>
+### Nested Schema for `spec.to.rules.default.filters.response_header_modifier`
 
 Optional:
 
-- `add` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--five--response_header_modifier--add))
+- `add` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--response_header_modifier--add))
 - `remove` (List of String)
-- `set` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--five--response_header_modifier--set))
+- `set` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--response_header_modifier--set))
 
-<a id="nestedatt--spec--to--rules--default--filters--five--response_header_modifier--add"></a>
-### Nested Schema for `spec.to.rules.default.filters.five.response_header_modifier.add`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--filters--five--response_header_modifier--set"></a>
-### Nested Schema for `spec.to.rules.default.filters.five.response_header_modifier.set`
+<a id="nestedatt--spec--to--rules--default--filters--response_header_modifier--add"></a>
+### Nested Schema for `spec.to.rules.default.filters.response_header_modifier.add`
 
 Optional:
 
@@ -1491,824 +610,33 @@ Optional:
 - `value` (String) Not Null
 
 
+<a id="nestedatt--spec--to--rules--default--filters--response_header_modifier--set"></a>
+### Nested Schema for `spec.to.rules.default.filters.response_header_modifier.set`
 
-<a id="nestedatt--spec--to--rules--default--filters--five--url_rewrite"></a>
-### Nested Schema for `spec.to.rules.default.filters.five.url_rewrite`
+Optional:
+
+- `name` (String) Not Null
+- `value` (String) Not Null
+
+
+
+<a id="nestedatt--spec--to--rules--default--filters--url_rewrite"></a>
+### Nested Schema for `spec.to.rules.default.filters.url_rewrite`
 
 Optional:
 
 - `host_to_backend_hostname` (Boolean) HostToBackendHostname is not currently supported and must not be set.
 - `hostname` (String) Hostname is the value to be used to replace the host header value during forwarding.
-- `path` (Attributes) Path defines a path rewrite. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--five--url_rewrite--path))
+- `path` (Attributes) Path defines a path rewrite. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--url_rewrite--path))
 
-<a id="nestedatt--spec--to--rules--default--filters--five--url_rewrite--path"></a>
-### Nested Schema for `spec.to.rules.default.filters.five.url_rewrite.path`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--five--url_rewrite--path--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--five--url_rewrite--path--two))
-
-<a id="nestedatt--spec--to--rules--default--filters--five--url_rewrite--path--one"></a>
-### Nested Schema for `spec.to.rules.default.filters.five.url_rewrite.path.one`
+<a id="nestedatt--spec--to--rules--default--filters--url_rewrite--path"></a>
+### Nested Schema for `spec.to.rules.default.filters.url_rewrite.path`
 
 Optional:
 
 - `replace_full_path` (String)
 - `replace_prefix_match` (String)
 - `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--filters--five--url_rewrite--path--two"></a>
-### Nested Schema for `spec.to.rules.default.filters.five.url_rewrite.path.two`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-
-
-
-<a id="nestedatt--spec--to--rules--default--filters--four"></a>
-### Nested Schema for `spec.to.rules.default.filters.four`
-
-Optional:
-
-- `request_header_modifier` (Attributes) Only one action is supported per header name.
-Configuration to set or add multiple values for a header must use RFC 7230
-header value formatting, separating each value with a comma. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--four--request_header_modifier))
-- `request_mirror` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--four--request_mirror))
-- `request_redirect` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--four--request_redirect))
-- `response_header_modifier` (Attributes) Only one action is supported per header name.
-Configuration to set or add multiple values for a header must use RFC 7230
-header value formatting, separating each value with a comma. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--four--response_header_modifier))
-- `type` (String) possible known values include one of ["RequestHeaderModifier", "ResponseHeaderModifier", "RequestRedirect", "URLRewrite", "RequestMirror"]; Not Null
-- `url_rewrite` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--four--url_rewrite))
-
-<a id="nestedatt--spec--to--rules--default--filters--four--request_header_modifier"></a>
-### Nested Schema for `spec.to.rules.default.filters.four.request_header_modifier`
-
-Optional:
-
-- `add` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--four--request_header_modifier--add))
-- `remove` (List of String)
-- `set` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--four--request_header_modifier--set))
-
-<a id="nestedatt--spec--to--rules--default--filters--four--request_header_modifier--add"></a>
-### Nested Schema for `spec.to.rules.default.filters.four.request_header_modifier.add`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--filters--four--request_header_modifier--set"></a>
-### Nested Schema for `spec.to.rules.default.filters.four.request_header_modifier.set`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-
-<a id="nestedatt--spec--to--rules--default--filters--four--request_mirror"></a>
-### Nested Schema for `spec.to.rules.default.filters.four.request_mirror`
-
-Optional:
-
-- `backend_ref` (Attributes) BackendRef defines the destination traffic is routed to. Not Null (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--four--request_mirror--backend_ref))
-- `percentage` (Attributes) Percentage of requests to mirror. If not specified, all requests
-to the target cluster will be mirrored. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--four--request_mirror--percentage))
-
-<a id="nestedatt--spec--to--rules--default--filters--four--request_mirror--backend_ref"></a>
-### Nested Schema for `spec.to.rules.default.filters.four.request_mirror.backend_ref`
-
-Optional:
-
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["MeshService", "MeshExternalService", "MeshMultiZoneService"]; Not Null
-- `labels` (Map of String) Labels are used to select the referenced real resource.
-- `port` (Number) Port is only supported when this ref refers to a real MeshService object
-- `section_name` (String) SectionName is used to target a specific section of the resource.
-For example, you can target a port from MeshService.ports[] by its name.
-- `weight` (Number)
-
-
-<a id="nestedatt--spec--to--rules--default--filters--four--request_mirror--percentage"></a>
-### Nested Schema for `spec.to.rules.default.filters.four.request_mirror.percentage`
-
-Optional:
-
-- `integer` (Number)
-- `str` (String)
-
-
-
-<a id="nestedatt--spec--to--rules--default--filters--four--request_redirect"></a>
-### Nested Schema for `spec.to.rules.default.filters.four.request_redirect`
-
-Optional:
-
-- `hostname` (String) PreciseHostname is the fully qualified domain name of a network host. This
-matches the RFC 1123 definition of a hostname with 1 notable exception that
-numeric IP addresses are not allowed.
-
-Note that as per RFC1035 and RFC1123, a *label* must consist of lower case
-alphanumeric characters or '-', and must start and end with an alphanumeric
-character. No other punctuation is allowed.
-- `path` (Attributes) Path defines parameters used to modify the path of the incoming request.
-The modified path is then used to construct the location header.
-When empty, the request path is used as-is. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--four--request_redirect--path))
-- `port` (Number) Port is the port to be used in the value of the `Location`
-header in the response.
-When empty, port (if specified) of the request is used.
-- `scheme` (String) possible known values include one of ["http", "https"]
-- `status_code` (Number) StatusCode is the HTTP status code to be used in response. possible known values include one of [301, 302, 303, 307, 308]; Default: 302
-
-<a id="nestedatt--spec--to--rules--default--filters--four--request_redirect--path"></a>
-### Nested Schema for `spec.to.rules.default.filters.four.request_redirect.path`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--four--request_redirect--path--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--four--request_redirect--path--two))
-
-<a id="nestedatt--spec--to--rules--default--filters--four--request_redirect--path--one"></a>
-### Nested Schema for `spec.to.rules.default.filters.four.request_redirect.path.one`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--filters--four--request_redirect--path--two"></a>
-### Nested Schema for `spec.to.rules.default.filters.four.request_redirect.path.two`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-
-
-<a id="nestedatt--spec--to--rules--default--filters--four--response_header_modifier"></a>
-### Nested Schema for `spec.to.rules.default.filters.four.response_header_modifier`
-
-Optional:
-
-- `add` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--four--response_header_modifier--add))
-- `remove` (List of String)
-- `set` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--four--response_header_modifier--set))
-
-<a id="nestedatt--spec--to--rules--default--filters--four--response_header_modifier--add"></a>
-### Nested Schema for `spec.to.rules.default.filters.four.response_header_modifier.add`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--filters--four--response_header_modifier--set"></a>
-### Nested Schema for `spec.to.rules.default.filters.four.response_header_modifier.set`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-
-<a id="nestedatt--spec--to--rules--default--filters--four--url_rewrite"></a>
-### Nested Schema for `spec.to.rules.default.filters.four.url_rewrite`
-
-Optional:
-
-- `host_to_backend_hostname` (Boolean) HostToBackendHostname is not currently supported and must not be set.
-- `hostname` (String) Hostname is the value to be used to replace the host header value during forwarding.
-- `path` (Attributes) Path defines a path rewrite. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--four--url_rewrite--path))
-
-<a id="nestedatt--spec--to--rules--default--filters--four--url_rewrite--path"></a>
-### Nested Schema for `spec.to.rules.default.filters.four.url_rewrite.path`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--four--url_rewrite--path--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--four--url_rewrite--path--two))
-
-<a id="nestedatt--spec--to--rules--default--filters--four--url_rewrite--path--one"></a>
-### Nested Schema for `spec.to.rules.default.filters.four.url_rewrite.path.one`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--filters--four--url_rewrite--path--two"></a>
-### Nested Schema for `spec.to.rules.default.filters.four.url_rewrite.path.two`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-
-
-
-<a id="nestedatt--spec--to--rules--default--filters--one"></a>
-### Nested Schema for `spec.to.rules.default.filters.one`
-
-Optional:
-
-- `request_header_modifier` (Attributes) Only one action is supported per header name.
-Configuration to set or add multiple values for a header must use RFC 7230
-header value formatting, separating each value with a comma. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--one--request_header_modifier))
-- `request_mirror` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--one--request_mirror))
-- `request_redirect` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--one--request_redirect))
-- `response_header_modifier` (Attributes) Only one action is supported per header name.
-Configuration to set or add multiple values for a header must use RFC 7230
-header value formatting, separating each value with a comma. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--one--response_header_modifier))
-- `type` (String) possible known values include one of ["RequestHeaderModifier", "ResponseHeaderModifier", "RequestRedirect", "URLRewrite", "RequestMirror"]; Not Null
-- `url_rewrite` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--one--url_rewrite))
-
-<a id="nestedatt--spec--to--rules--default--filters--one--request_header_modifier"></a>
-### Nested Schema for `spec.to.rules.default.filters.one.request_header_modifier`
-
-Optional:
-
-- `add` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--one--request_header_modifier--add))
-- `remove` (List of String)
-- `set` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--one--request_header_modifier--set))
-
-<a id="nestedatt--spec--to--rules--default--filters--one--request_header_modifier--add"></a>
-### Nested Schema for `spec.to.rules.default.filters.one.request_header_modifier.add`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--filters--one--request_header_modifier--set"></a>
-### Nested Schema for `spec.to.rules.default.filters.one.request_header_modifier.set`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-
-<a id="nestedatt--spec--to--rules--default--filters--one--request_mirror"></a>
-### Nested Schema for `spec.to.rules.default.filters.one.request_mirror`
-
-Optional:
-
-- `backend_ref` (Attributes) BackendRef defines the destination traffic is routed to. Not Null (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--one--request_mirror--backend_ref))
-- `percentage` (Attributes) Percentage of requests to mirror. If not specified, all requests
-to the target cluster will be mirrored. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--one--request_mirror--percentage))
-
-<a id="nestedatt--spec--to--rules--default--filters--one--request_mirror--backend_ref"></a>
-### Nested Schema for `spec.to.rules.default.filters.one.request_mirror.backend_ref`
-
-Optional:
-
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["MeshService", "MeshExternalService", "MeshMultiZoneService"]; Not Null
-- `labels` (Map of String) Labels are used to select the referenced real resource.
-- `port` (Number) Port is only supported when this ref refers to a real MeshService object
-- `section_name` (String) SectionName is used to target a specific section of the resource.
-For example, you can target a port from MeshService.ports[] by its name.
-- `weight` (Number)
-
-
-<a id="nestedatt--spec--to--rules--default--filters--one--request_mirror--percentage"></a>
-### Nested Schema for `spec.to.rules.default.filters.one.request_mirror.percentage`
-
-Optional:
-
-- `integer` (Number)
-- `str` (String)
-
-
-
-<a id="nestedatt--spec--to--rules--default--filters--one--request_redirect"></a>
-### Nested Schema for `spec.to.rules.default.filters.one.request_redirect`
-
-Optional:
-
-- `hostname` (String) PreciseHostname is the fully qualified domain name of a network host. This
-matches the RFC 1123 definition of a hostname with 1 notable exception that
-numeric IP addresses are not allowed.
-
-Note that as per RFC1035 and RFC1123, a *label* must consist of lower case
-alphanumeric characters or '-', and must start and end with an alphanumeric
-character. No other punctuation is allowed.
-- `path` (Attributes) Path defines parameters used to modify the path of the incoming request.
-The modified path is then used to construct the location header.
-When empty, the request path is used as-is. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--one--request_redirect--path))
-- `port` (Number) Port is the port to be used in the value of the `Location`
-header in the response.
-When empty, port (if specified) of the request is used.
-- `scheme` (String) possible known values include one of ["http", "https"]
-- `status_code` (Number) StatusCode is the HTTP status code to be used in response. possible known values include one of [301, 302, 303, 307, 308]; Default: 302
-
-<a id="nestedatt--spec--to--rules--default--filters--one--request_redirect--path"></a>
-### Nested Schema for `spec.to.rules.default.filters.one.request_redirect.path`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--one--request_redirect--path--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--one--request_redirect--path--two))
-
-<a id="nestedatt--spec--to--rules--default--filters--one--request_redirect--path--one"></a>
-### Nested Schema for `spec.to.rules.default.filters.one.request_redirect.path.one`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--filters--one--request_redirect--path--two"></a>
-### Nested Schema for `spec.to.rules.default.filters.one.request_redirect.path.two`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-
-
-<a id="nestedatt--spec--to--rules--default--filters--one--response_header_modifier"></a>
-### Nested Schema for `spec.to.rules.default.filters.one.response_header_modifier`
-
-Optional:
-
-- `add` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--one--response_header_modifier--add))
-- `remove` (List of String)
-- `set` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--one--response_header_modifier--set))
-
-<a id="nestedatt--spec--to--rules--default--filters--one--response_header_modifier--add"></a>
-### Nested Schema for `spec.to.rules.default.filters.one.response_header_modifier.add`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--filters--one--response_header_modifier--set"></a>
-### Nested Schema for `spec.to.rules.default.filters.one.response_header_modifier.set`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-
-<a id="nestedatt--spec--to--rules--default--filters--one--url_rewrite"></a>
-### Nested Schema for `spec.to.rules.default.filters.one.url_rewrite`
-
-Optional:
-
-- `host_to_backend_hostname` (Boolean) HostToBackendHostname is not currently supported and must not be set.
-- `hostname` (String) Hostname is the value to be used to replace the host header value during forwarding.
-- `path` (Attributes) Path defines a path rewrite. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--one--url_rewrite--path))
-
-<a id="nestedatt--spec--to--rules--default--filters--one--url_rewrite--path"></a>
-### Nested Schema for `spec.to.rules.default.filters.one.url_rewrite.path`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--one--url_rewrite--path--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--one--url_rewrite--path--two))
-
-<a id="nestedatt--spec--to--rules--default--filters--one--url_rewrite--path--one"></a>
-### Nested Schema for `spec.to.rules.default.filters.one.url_rewrite.path.one`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--filters--one--url_rewrite--path--two"></a>
-### Nested Schema for `spec.to.rules.default.filters.one.url_rewrite.path.two`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-
-
-
-<a id="nestedatt--spec--to--rules--default--filters--three"></a>
-### Nested Schema for `spec.to.rules.default.filters.three`
-
-Optional:
-
-- `request_header_modifier` (Attributes) Only one action is supported per header name.
-Configuration to set or add multiple values for a header must use RFC 7230
-header value formatting, separating each value with a comma. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--three--request_header_modifier))
-- `request_mirror` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--three--request_mirror))
-- `request_redirect` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--three--request_redirect))
-- `response_header_modifier` (Attributes) Only one action is supported per header name.
-Configuration to set or add multiple values for a header must use RFC 7230
-header value formatting, separating each value with a comma. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--three--response_header_modifier))
-- `type` (String) possible known values include one of ["RequestHeaderModifier", "ResponseHeaderModifier", "RequestRedirect", "URLRewrite", "RequestMirror"]; Not Null
-- `url_rewrite` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--three--url_rewrite))
-
-<a id="nestedatt--spec--to--rules--default--filters--three--request_header_modifier"></a>
-### Nested Schema for `spec.to.rules.default.filters.three.request_header_modifier`
-
-Optional:
-
-- `add` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--three--request_header_modifier--add))
-- `remove` (List of String)
-- `set` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--three--request_header_modifier--set))
-
-<a id="nestedatt--spec--to--rules--default--filters--three--request_header_modifier--add"></a>
-### Nested Schema for `spec.to.rules.default.filters.three.request_header_modifier.add`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--filters--three--request_header_modifier--set"></a>
-### Nested Schema for `spec.to.rules.default.filters.three.request_header_modifier.set`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-
-<a id="nestedatt--spec--to--rules--default--filters--three--request_mirror"></a>
-### Nested Schema for `spec.to.rules.default.filters.three.request_mirror`
-
-Optional:
-
-- `backend_ref` (Attributes) BackendRef defines the destination traffic is routed to. Not Null (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--three--request_mirror--backend_ref))
-- `percentage` (Attributes) Percentage of requests to mirror. If not specified, all requests
-to the target cluster will be mirrored. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--three--request_mirror--percentage))
-
-<a id="nestedatt--spec--to--rules--default--filters--three--request_mirror--backend_ref"></a>
-### Nested Schema for `spec.to.rules.default.filters.three.request_mirror.backend_ref`
-
-Optional:
-
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["MeshService", "MeshExternalService", "MeshMultiZoneService"]; Not Null
-- `labels` (Map of String) Labels are used to select the referenced real resource.
-- `port` (Number) Port is only supported when this ref refers to a real MeshService object
-- `section_name` (String) SectionName is used to target a specific section of the resource.
-For example, you can target a port from MeshService.ports[] by its name.
-- `weight` (Number)
-
-
-<a id="nestedatt--spec--to--rules--default--filters--three--request_mirror--percentage"></a>
-### Nested Schema for `spec.to.rules.default.filters.three.request_mirror.percentage`
-
-Optional:
-
-- `integer` (Number)
-- `str` (String)
-
-
-
-<a id="nestedatt--spec--to--rules--default--filters--three--request_redirect"></a>
-### Nested Schema for `spec.to.rules.default.filters.three.request_redirect`
-
-Optional:
-
-- `hostname` (String) PreciseHostname is the fully qualified domain name of a network host. This
-matches the RFC 1123 definition of a hostname with 1 notable exception that
-numeric IP addresses are not allowed.
-
-Note that as per RFC1035 and RFC1123, a *label* must consist of lower case
-alphanumeric characters or '-', and must start and end with an alphanumeric
-character. No other punctuation is allowed.
-- `path` (Attributes) Path defines parameters used to modify the path of the incoming request.
-The modified path is then used to construct the location header.
-When empty, the request path is used as-is. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--three--request_redirect--path))
-- `port` (Number) Port is the port to be used in the value of the `Location`
-header in the response.
-When empty, port (if specified) of the request is used.
-- `scheme` (String) possible known values include one of ["http", "https"]
-- `status_code` (Number) StatusCode is the HTTP status code to be used in response. possible known values include one of [301, 302, 303, 307, 308]; Default: 302
-
-<a id="nestedatt--spec--to--rules--default--filters--three--request_redirect--path"></a>
-### Nested Schema for `spec.to.rules.default.filters.three.request_redirect.path`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--three--request_redirect--path--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--three--request_redirect--path--two))
-
-<a id="nestedatt--spec--to--rules--default--filters--three--request_redirect--path--one"></a>
-### Nested Schema for `spec.to.rules.default.filters.three.request_redirect.path.one`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--filters--three--request_redirect--path--two"></a>
-### Nested Schema for `spec.to.rules.default.filters.three.request_redirect.path.two`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-
-
-<a id="nestedatt--spec--to--rules--default--filters--three--response_header_modifier"></a>
-### Nested Schema for `spec.to.rules.default.filters.three.response_header_modifier`
-
-Optional:
-
-- `add` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--three--response_header_modifier--add))
-- `remove` (List of String)
-- `set` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--three--response_header_modifier--set))
-
-<a id="nestedatt--spec--to--rules--default--filters--three--response_header_modifier--add"></a>
-### Nested Schema for `spec.to.rules.default.filters.three.response_header_modifier.add`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--filters--three--response_header_modifier--set"></a>
-### Nested Schema for `spec.to.rules.default.filters.three.response_header_modifier.set`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-
-<a id="nestedatt--spec--to--rules--default--filters--three--url_rewrite"></a>
-### Nested Schema for `spec.to.rules.default.filters.three.url_rewrite`
-
-Optional:
-
-- `host_to_backend_hostname` (Boolean) HostToBackendHostname is not currently supported and must not be set.
-- `hostname` (String) Hostname is the value to be used to replace the host header value during forwarding.
-- `path` (Attributes) Path defines a path rewrite. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--three--url_rewrite--path))
-
-<a id="nestedatt--spec--to--rules--default--filters--three--url_rewrite--path"></a>
-### Nested Schema for `spec.to.rules.default.filters.three.url_rewrite.path`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--three--url_rewrite--path--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--three--url_rewrite--path--two))
-
-<a id="nestedatt--spec--to--rules--default--filters--three--url_rewrite--path--one"></a>
-### Nested Schema for `spec.to.rules.default.filters.three.url_rewrite.path.one`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--filters--three--url_rewrite--path--two"></a>
-### Nested Schema for `spec.to.rules.default.filters.three.url_rewrite.path.two`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-
-
-
-<a id="nestedatt--spec--to--rules--default--filters--two"></a>
-### Nested Schema for `spec.to.rules.default.filters.two`
-
-Optional:
-
-- `request_header_modifier` (Attributes) Only one action is supported per header name.
-Configuration to set or add multiple values for a header must use RFC 7230
-header value formatting, separating each value with a comma. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--two--request_header_modifier))
-- `request_mirror` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--two--request_mirror))
-- `request_redirect` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--two--request_redirect))
-- `response_header_modifier` (Attributes) Only one action is supported per header name.
-Configuration to set or add multiple values for a header must use RFC 7230
-header value formatting, separating each value with a comma. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--two--response_header_modifier))
-- `type` (String) possible known values include one of ["RequestHeaderModifier", "ResponseHeaderModifier", "RequestRedirect", "URLRewrite", "RequestMirror"]; Not Null
-- `url_rewrite` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--two--url_rewrite))
-
-<a id="nestedatt--spec--to--rules--default--filters--two--request_header_modifier"></a>
-### Nested Schema for `spec.to.rules.default.filters.two.request_header_modifier`
-
-Optional:
-
-- `add` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--two--request_header_modifier--add))
-- `remove` (List of String)
-- `set` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--two--request_header_modifier--set))
-
-<a id="nestedatt--spec--to--rules--default--filters--two--request_header_modifier--add"></a>
-### Nested Schema for `spec.to.rules.default.filters.two.request_header_modifier.add`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--filters--two--request_header_modifier--set"></a>
-### Nested Schema for `spec.to.rules.default.filters.two.request_header_modifier.set`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-
-<a id="nestedatt--spec--to--rules--default--filters--two--request_mirror"></a>
-### Nested Schema for `spec.to.rules.default.filters.two.request_mirror`
-
-Optional:
-
-- `backend_ref` (Attributes) BackendRef defines the destination traffic is routed to. Not Null (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--two--request_mirror--backend_ref))
-- `percentage` (Attributes) Percentage of requests to mirror. If not specified, all requests
-to the target cluster will be mirrored. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--two--request_mirror--percentage))
-
-<a id="nestedatt--spec--to--rules--default--filters--two--request_mirror--backend_ref"></a>
-### Nested Schema for `spec.to.rules.default.filters.two.request_mirror.backend_ref`
-
-Optional:
-
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["MeshService", "MeshExternalService", "MeshMultiZoneService"]; Not Null
-- `labels` (Map of String) Labels are used to select the referenced real resource.
-- `port` (Number) Port is only supported when this ref refers to a real MeshService object
-- `section_name` (String) SectionName is used to target a specific section of the resource.
-For example, you can target a port from MeshService.ports[] by its name.
-- `weight` (Number)
-
-
-<a id="nestedatt--spec--to--rules--default--filters--two--request_mirror--percentage"></a>
-### Nested Schema for `spec.to.rules.default.filters.two.request_mirror.percentage`
-
-Optional:
-
-- `integer` (Number)
-- `str` (String)
-
-
-
-<a id="nestedatt--spec--to--rules--default--filters--two--request_redirect"></a>
-### Nested Schema for `spec.to.rules.default.filters.two.request_redirect`
-
-Optional:
-
-- `hostname` (String) PreciseHostname is the fully qualified domain name of a network host. This
-matches the RFC 1123 definition of a hostname with 1 notable exception that
-numeric IP addresses are not allowed.
-
-Note that as per RFC1035 and RFC1123, a *label* must consist of lower case
-alphanumeric characters or '-', and must start and end with an alphanumeric
-character. No other punctuation is allowed.
-- `path` (Attributes) Path defines parameters used to modify the path of the incoming request.
-The modified path is then used to construct the location header.
-When empty, the request path is used as-is. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--two--request_redirect--path))
-- `port` (Number) Port is the port to be used in the value of the `Location`
-header in the response.
-When empty, port (if specified) of the request is used.
-- `scheme` (String) possible known values include one of ["http", "https"]
-- `status_code` (Number) StatusCode is the HTTP status code to be used in response. possible known values include one of [301, 302, 303, 307, 308]; Default: 302
-
-<a id="nestedatt--spec--to--rules--default--filters--two--request_redirect--path"></a>
-### Nested Schema for `spec.to.rules.default.filters.two.request_redirect.path`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--two--request_redirect--path--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--two--request_redirect--path--two))
-
-<a id="nestedatt--spec--to--rules--default--filters--two--request_redirect--path--one"></a>
-### Nested Schema for `spec.to.rules.default.filters.two.request_redirect.path.one`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--filters--two--request_redirect--path--two"></a>
-### Nested Schema for `spec.to.rules.default.filters.two.request_redirect.path.two`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-
-
-<a id="nestedatt--spec--to--rules--default--filters--two--response_header_modifier"></a>
-### Nested Schema for `spec.to.rules.default.filters.two.response_header_modifier`
-
-Optional:
-
-- `add` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--two--response_header_modifier--add))
-- `remove` (List of String)
-- `set` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--two--response_header_modifier--set))
-
-<a id="nestedatt--spec--to--rules--default--filters--two--response_header_modifier--add"></a>
-### Nested Schema for `spec.to.rules.default.filters.two.response_header_modifier.add`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--filters--two--response_header_modifier--set"></a>
-### Nested Schema for `spec.to.rules.default.filters.two.response_header_modifier.set`
-
-Optional:
-
-- `name` (String) Not Null
-- `value` (String) Not Null
-
-
-
-<a id="nestedatt--spec--to--rules--default--filters--two--url_rewrite"></a>
-### Nested Schema for `spec.to.rules.default.filters.two.url_rewrite`
-
-Optional:
-
-- `host_to_backend_hostname` (Boolean) HostToBackendHostname is not currently supported and must not be set.
-- `hostname` (String) Hostname is the value to be used to replace the host header value during forwarding.
-- `path` (Attributes) Path defines a path rewrite. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--two--url_rewrite--path))
-
-<a id="nestedatt--spec--to--rules--default--filters--two--url_rewrite--path"></a>
-### Nested Schema for `spec.to.rules.default.filters.two.url_rewrite.path`
-
-Optional:
-
-- `one` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--two--url_rewrite--path--one))
-- `two` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--two--url_rewrite--path--two))
-
-<a id="nestedatt--spec--to--rules--default--filters--two--url_rewrite--path--one"></a>
-### Nested Schema for `spec.to.rules.default.filters.two.url_rewrite.path.one`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
-<a id="nestedatt--spec--to--rules--default--filters--two--url_rewrite--path--two"></a>
-### Nested Schema for `spec.to.rules.default.filters.two.url_rewrite.path.two`
-
-Optional:
-
-- `replace_full_path` (String)
-- `replace_prefix_match` (String)
-- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
-
-
 
 
 

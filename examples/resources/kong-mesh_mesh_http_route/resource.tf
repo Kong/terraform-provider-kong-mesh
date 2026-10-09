@@ -24,79 +24,73 @@ resource "kong-mesh_mesh_http_route" "my_meshhttproute" {
                 {
                   filters = [
                     {
-                      one = {
-                        request_header_modifier = {
-                          add = [
-                            {
-                              name  = "...my_name..."
-                              value = "...my_value..."
-                            }
-                          ]
-                          remove = [
-                            "..."
-                          ]
-                          set = [
-                            {
-                              name  = "...my_name..."
-                              value = "...my_value..."
-                            }
-                          ]
-                        }
-                        request_mirror = {
-                          backend_ref = {
-                            kind = "MeshExternalService"
-                            labels = {
-                              key = "value"
-                            }
-                            port         = 4
-                            section_name = "...my_section_name..."
-                            weight       = 300045084
+                      request_header_modifier = {
+                        add = [
+                          {
+                            name  = "...my_name..."
+                            value = "...my_value..."
                           }
-                          percentage = {
-                            str = "...my_str..."
+                        ]
+                        remove = [
+                          "..."
+                        ]
+                        set = [
+                          {
+                            name  = "...my_name..."
+                            value = "...my_value..."
                           }
-                        }
-                        request_redirect = {
-                          hostname = "...my_hostname..."
-                          path = {
-                            two = {
-                              replace_full_path    = "...my_replace_full_path..."
-                              replace_prefix_match = "...my_replace_prefix_match..."
-                              type                 = "ReplaceFullPath"
-                            }
+                        ]
+                      }
+                      request_mirror = {
+                        backend_ref = {
+                          kind = "MeshExternalService"
+                          labels = {
+                            key = "value"
                           }
-                          port        = 39396
-                          scheme      = "https"
-                          status_code = 302
+                          port         = 9
+                          section_name = "...my_section_name..."
+                          weight       = 1106520977
                         }
-                        response_header_modifier = {
-                          add = [
-                            {
-                              name  = "...my_name..."
-                              value = "...my_value..."
-                            }
-                          ]
-                          remove = [
-                            "..."
-                          ]
-                          set = [
-                            {
-                              name  = "...my_name..."
-                              value = "...my_value..."
-                            }
-                          ]
+                        percentage = {
+                          str = "...my_str..."
                         }
-                        type = "ResponseHeaderModifier"
-                        url_rewrite = {
-                          host_to_backend_hostname = false
-                          hostname                 = "...my_hostname..."
-                          path = {
-                            two = {
-                              replace_full_path    = "...my_replace_full_path..."
-                              replace_prefix_match = "...my_replace_prefix_match..."
-                              type                 = "ReplacePrefixMatch"
-                            }
+                      }
+                      request_redirect = {
+                        hostname = "...my_hostname..."
+                        path = {
+                          replace_full_path    = "...my_replace_full_path..."
+                          replace_prefix_match = "...my_replace_prefix_match..."
+                          type                 = "ReplacePrefixMatch"
+                        }
+                        port        = 28655
+                        scheme      = "http"
+                        status_code = 302
+                      }
+                      response_header_modifier = {
+                        add = [
+                          {
+                            name  = "...my_name..."
+                            value = "...my_value..."
                           }
+                        ]
+                        remove = [
+                          "..."
+                        ]
+                        set = [
+                          {
+                            name  = "...my_name..."
+                            value = "...my_value..."
+                          }
+                        ]
+                      }
+                      type = "RequestRedirect"
+                      url_rewrite = {
+                        host_to_backend_hostname = false
+                        hostname                 = "...my_hostname..."
+                        path = {
+                          replace_full_path    = "...my_replace_full_path..."
+                          replace_prefix_match = "...my_replace_prefix_match..."
+                          type                 = "ReplacePrefixMatch"
                         }
                       }
                     }
@@ -112,79 +106,73 @@ resource "kong-mesh_mesh_http_route" "my_meshhttproute" {
               ]
               filters = [
                 {
-                  five = {
-                    request_header_modifier = {
-                      add = [
-                        {
-                          name  = "...my_name..."
-                          value = "...my_value..."
-                        }
-                      ]
-                      remove = [
-                        "..."
-                      ]
-                      set = [
-                        {
-                          name  = "...my_name..."
-                          value = "...my_value..."
-                        }
-                      ]
-                    }
-                    request_mirror = {
-                      backend_ref = {
-                        kind = "MeshService"
-                        labels = {
-                          key = "value"
-                        }
-                        port         = 10
-                        section_name = "...my_section_name..."
-                        weight       = 3071501838
+                  request_header_modifier = {
+                    add = [
+                      {
+                        name  = "...my_name..."
+                        value = "...my_value..."
                       }
-                      percentage = {
-                        integer = 0
+                    ]
+                    remove = [
+                      "..."
+                    ]
+                    set = [
+                      {
+                        name  = "...my_name..."
+                        value = "...my_value..."
                       }
-                    }
-                    request_redirect = {
-                      hostname = "...my_hostname..."
-                      path = {
-                        one = {
-                          replace_full_path    = "...my_replace_full_path..."
-                          replace_prefix_match = "...my_replace_prefix_match..."
-                          type                 = "ReplaceFullPath"
-                        }
+                    ]
+                  }
+                  request_mirror = {
+                    backend_ref = {
+                      kind = "MeshService"
+                      labels = {
+                        key = "value"
                       }
-                      port        = 31753
-                      scheme      = "https"
-                      status_code = 302
+                      port         = 4
+                      section_name = "...my_section_name..."
+                      weight       = 871984813
                     }
-                    response_header_modifier = {
-                      add = [
-                        {
-                          name  = "...my_name..."
-                          value = "...my_value..."
-                        }
-                      ]
-                      remove = [
-                        "..."
-                      ]
-                      set = [
-                        {
-                          name  = "...my_name..."
-                          value = "...my_value..."
-                        }
-                      ]
+                    percentage = {
+                      str = "...my_str..."
                     }
-                    type = "RequestRedirect"
-                    url_rewrite = {
-                      host_to_backend_hostname = false
-                      hostname                 = "...my_hostname..."
-                      path = {
-                        one = {
-                          replace_full_path    = "...my_replace_full_path..."
-                          replace_prefix_match = "...my_replace_prefix_match..."
-                          type                 = "ReplaceFullPath"
-                        }
+                  }
+                  request_redirect = {
+                    hostname = "...my_hostname..."
+                    path = {
+                      replace_full_path    = "...my_replace_full_path..."
+                      replace_prefix_match = "...my_replace_prefix_match..."
+                      type                 = "ReplaceFullPath"
+                    }
+                    port        = 46600
+                    scheme      = "https"
+                    status_code = 302
+                  }
+                  response_header_modifier = {
+                    add = [
+                      {
+                        name  = "...my_name..."
+                        value = "...my_value..."
                       }
+                    ]
+                    remove = [
+                      "..."
+                    ]
+                    set = [
+                      {
+                        name  = "...my_name..."
+                        value = "...my_value..."
+                      }
+                    ]
+                  }
+                  type = "URLRewrite"
+                  url_rewrite = {
+                    host_to_backend_hostname = false
+                    hostname                 = "...my_hostname..."
+                    path = {
+                      replace_full_path    = "...my_replace_full_path..."
+                      replace_prefix_match = "...my_replace_prefix_match..."
+                      type                 = "ReplacePrefixMatch"
                     }
                   }
                 }

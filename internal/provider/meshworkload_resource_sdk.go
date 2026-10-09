@@ -40,7 +40,7 @@ func (r *MeshWorkloadResourceModel) RefreshFromSharedWorkloadItem(ctx context.Co
 		r.Mesh = types.StringPointerValue(resp.Mesh)
 		r.ModificationTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.ModificationTime))
 		r.Name = types.StringValue(resp.Name)
-		r.Spec = &tfTypes.MeshLoadBalancingStrategyItemLoadBalancerSpecToDefaultRandom{}
+		r.Spec = &tfTypes.MeshLoadBalancingStrategyItemRandom{}
 		if resp.Status == nil {
 			r.Status = nil
 		} else {
@@ -89,6 +89,27 @@ func (r *MeshWorkloadResourceModel) ToOperationsGetWorkloadRequest(ctx context.C
 	out := operations.GetWorkloadRequest{
 		Mesh: mesh,
 		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshWorkloadResourceModel) ToOperationsPostWorkloadRequest(ctx context.Context) (*operations.PostWorkloadRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	workloadItem, workloadItemDiags := r.ToSharedWorkloadItemInput(ctx)
+	diags.Append(workloadItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PostWorkloadRequest{
+		Mesh:         mesh,
+		WorkloadItem: *workloadItem,
 	}
 
 	return &out, diags

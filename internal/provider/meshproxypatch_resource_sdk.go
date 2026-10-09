@@ -277,6 +277,27 @@ func (r *MeshProxyPatchResourceModel) ToOperationsGetMeshProxyPatchRequest(ctx c
 	return &out, diags
 }
 
+func (r *MeshProxyPatchResourceModel) ToOperationsPostMeshProxyPatchRequest(ctx context.Context) (*operations.PostMeshProxyPatchRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	meshProxyPatchItem, meshProxyPatchItemDiags := r.ToSharedMeshProxyPatchItemInput(ctx)
+	diags.Append(meshProxyPatchItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PostMeshProxyPatchRequest{
+		Mesh:               mesh,
+		MeshProxyPatchItem: *meshProxyPatchItem,
+	}
+
+	return &out, diags
+}
+
 func (r *MeshProxyPatchResourceModel) ToOperationsPutMeshProxyPatchRequest(ctx context.Context) (*operations.PutMeshProxyPatchRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 

@@ -111,7 +111,7 @@ func (r *MeshExternalServiceResourceModel) RefreshFromSharedMeshExternalServiceI
 					if resp.Spec.TLS.Verification.CaCert.File == nil {
 						r.Spec.TLS.Verification.CaCert.File = nil
 					} else {
-						r.Spec.TLS.Verification.CaCert.File = &tfTypes.MeshExternalServiceItemSpecTLSFile{}
+						r.Spec.TLS.Verification.CaCert.File = &tfTypes.MeshExternalServiceItemFile{}
 						r.Spec.TLS.Verification.CaCert.File.Path = types.StringValue(resp.Spec.TLS.Verification.CaCert.File.Path)
 					}
 					if resp.Spec.TLS.Verification.CaCert.InsecureInline == nil {
@@ -142,7 +142,7 @@ func (r *MeshExternalServiceResourceModel) RefreshFromSharedMeshExternalServiceI
 					if resp.Spec.TLS.Verification.ClientCert.File == nil {
 						r.Spec.TLS.Verification.ClientCert.File = nil
 					} else {
-						r.Spec.TLS.Verification.ClientCert.File = &tfTypes.MeshExternalServiceItemSpecTLSFile{}
+						r.Spec.TLS.Verification.ClientCert.File = &tfTypes.MeshExternalServiceItemFile{}
 						r.Spec.TLS.Verification.ClientCert.File.Path = types.StringValue(resp.Spec.TLS.Verification.ClientCert.File.Path)
 					}
 					if resp.Spec.TLS.Verification.ClientCert.InsecureInline == nil {
@@ -173,7 +173,7 @@ func (r *MeshExternalServiceResourceModel) RefreshFromSharedMeshExternalServiceI
 					if resp.Spec.TLS.Verification.ClientKey.File == nil {
 						r.Spec.TLS.Verification.ClientKey.File = nil
 					} else {
-						r.Spec.TLS.Verification.ClientKey.File = &tfTypes.MeshExternalServiceItemSpecTLSFile{}
+						r.Spec.TLS.Verification.ClientKey.File = &tfTypes.MeshExternalServiceItemFile{}
 						r.Spec.TLS.Verification.ClientKey.File.Path = types.StringValue(resp.Spec.TLS.Verification.ClientKey.File.Path)
 					}
 					if resp.Spec.TLS.Verification.ClientKey.InsecureInline == nil {
@@ -317,6 +317,27 @@ func (r *MeshExternalServiceResourceModel) ToOperationsGetMeshExternalServiceReq
 	return &out, diags
 }
 
+func (r *MeshExternalServiceResourceModel) ToOperationsPostMeshExternalServiceRequest(ctx context.Context) (*operations.PostMeshExternalServiceRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	meshExternalServiceItem, meshExternalServiceItemDiags := r.ToSharedMeshExternalServiceItemInput(ctx)
+	diags.Append(meshExternalServiceItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PostMeshExternalServiceRequest{
+		Mesh:                    mesh,
+		MeshExternalServiceItem: *meshExternalServiceItem,
+	}
+
+	return &out, diags
+}
+
 func (r *MeshExternalServiceResourceModel) ToOperationsPutMeshExternalServiceRequest(ctx context.Context) (*operations.PutMeshExternalServiceRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -440,12 +461,12 @@ func (r *MeshExternalServiceResourceModel) ToSharedMeshExternalServiceItemInput(
 						Name: name1,
 					}
 				}
-				var file *shared.MeshExternalServiceItemSpecTLSFile
+				var file *shared.MeshExternalServiceItemFile
 				if r.Spec.TLS.Verification.CaCert.File != nil {
 					var path string
 					path = r.Spec.TLS.Verification.CaCert.File.Path.ValueString()
 
-					file = &shared.MeshExternalServiceItemSpecTLSFile{
+					file = &shared.MeshExternalServiceItemFile{
 						Path: path,
 					}
 				}
@@ -489,12 +510,12 @@ func (r *MeshExternalServiceResourceModel) ToSharedMeshExternalServiceItemInput(
 						Name: name3,
 					}
 				}
-				var file1 *shared.MeshExternalServiceItemFile
+				var file1 *shared.MeshExternalServiceItemSpecFile
 				if r.Spec.TLS.Verification.ClientCert.File != nil {
 					var path1 string
 					path1 = r.Spec.TLS.Verification.ClientCert.File.Path.ValueString()
 
-					file1 = &shared.MeshExternalServiceItemFile{
+					file1 = &shared.MeshExternalServiceItemSpecFile{
 						Path: path1,
 					}
 				}
@@ -538,12 +559,12 @@ func (r *MeshExternalServiceResourceModel) ToSharedMeshExternalServiceItemInput(
 						Name: name5,
 					}
 				}
-				var file2 *shared.MeshExternalServiceItemSpecFile
+				var file2 *shared.MeshExternalServiceItemSpecTLSFile
 				if r.Spec.TLS.Verification.ClientKey.File != nil {
 					var path2 string
 					path2 = r.Spec.TLS.Verification.ClientKey.File.Path.ValueString()
 
-					file2 = &shared.MeshExternalServiceItemSpecFile{
+					file2 = &shared.MeshExternalServiceItemSpecTLSFile{
 						Path: path2,
 					}
 				}
