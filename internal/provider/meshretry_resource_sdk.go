@@ -237,6 +237,27 @@ func (r *MeshRetryResourceModel) ToOperationsGetMeshRetryRequest(ctx context.Con
 	return &out, diags
 }
 
+func (r *MeshRetryResourceModel) ToOperationsPostMeshRetryRequest(ctx context.Context) (*operations.PostMeshRetryRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	meshRetryItem, meshRetryItemDiags := r.ToSharedMeshRetryItemInput(ctx)
+	diags.Append(meshRetryItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PostMeshRetryRequest{
+		Mesh:          mesh,
+		MeshRetryItem: *meshRetryItem,
+	}
+
+	return &out, diags
+}
+
 func (r *MeshRetryResourceModel) ToOperationsPutMeshRetryRequest(ctx context.Context) (*operations.PutMeshRetryRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 

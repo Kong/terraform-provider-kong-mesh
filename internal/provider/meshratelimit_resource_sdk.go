@@ -67,20 +67,20 @@ func (r *MeshRateLimitResourceModel) RefreshFromSharedMeshRateLimitItem(ctx cont
 								rules.Default.Local.HTTP.OnRateLimit.Headers = nil
 							} else {
 								rules.Default.Local.HTTP.OnRateLimit.Headers = &tfTypes.RequestHeadersToAdd{}
-								rules.Default.Local.HTTP.OnRateLimit.Headers.Add = []tfTypes.MeshHTTPRouteItemFiltersSpecToRulesDefaultBackendRefs1Add{}
+								rules.Default.Local.HTTP.OnRateLimit.Headers.Add = []tfTypes.MeshHTTPRouteItemSpecToAdd{}
 
 								for _, addItem := range rulesItem.Default.Local.HTTP.OnRateLimit.Headers.Add {
-									var add tfTypes.MeshHTTPRouteItemFiltersSpecToRulesDefaultBackendRefs1Add
+									var add tfTypes.MeshHTTPRouteItemSpecToAdd
 
 									add.Name = types.StringValue(addItem.Name)
 									add.Value = types.StringValue(addItem.Value)
 
 									rules.Default.Local.HTTP.OnRateLimit.Headers.Add = append(rules.Default.Local.HTTP.OnRateLimit.Headers.Add, add)
 								}
-								rules.Default.Local.HTTP.OnRateLimit.Headers.Set = []tfTypes.MeshHTTPRouteItemFiltersSpecToRulesDefaultBackendRefs1Add{}
+								rules.Default.Local.HTTP.OnRateLimit.Headers.Set = []tfTypes.MeshHTTPRouteItemSpecToAdd{}
 
 								for _, setItem := range rulesItem.Default.Local.HTTP.OnRateLimit.Headers.Set {
-									var set tfTypes.MeshHTTPRouteItemFiltersSpecToRulesDefaultBackendRefs1Add
+									var set tfTypes.MeshHTTPRouteItemSpecToAdd
 
 									set.Name = types.StringValue(setItem.Name)
 									set.Value = types.StringValue(setItem.Value)
@@ -177,20 +177,20 @@ func (r *MeshRateLimitResourceModel) RefreshFromSharedMeshRateLimitItem(ctx cont
 								to.Default.Local.HTTP.OnRateLimit.Headers = nil
 							} else {
 								to.Default.Local.HTTP.OnRateLimit.Headers = &tfTypes.RequestHeadersToAdd{}
-								to.Default.Local.HTTP.OnRateLimit.Headers.Add = []tfTypes.MeshHTTPRouteItemFiltersSpecToRulesDefaultBackendRefs1Add{}
+								to.Default.Local.HTTP.OnRateLimit.Headers.Add = []tfTypes.MeshHTTPRouteItemSpecToAdd{}
 
 								for _, addItem1 := range toItem.Default.Local.HTTP.OnRateLimit.Headers.Add {
-									var add1 tfTypes.MeshHTTPRouteItemFiltersSpecToRulesDefaultBackendRefs1Add
+									var add1 tfTypes.MeshHTTPRouteItemSpecToAdd
 
 									add1.Name = types.StringValue(addItem1.Name)
 									add1.Value = types.StringValue(addItem1.Value)
 
 									to.Default.Local.HTTP.OnRateLimit.Headers.Add = append(to.Default.Local.HTTP.OnRateLimit.Headers.Add, add1)
 								}
-								to.Default.Local.HTTP.OnRateLimit.Headers.Set = []tfTypes.MeshHTTPRouteItemFiltersSpecToRulesDefaultBackendRefs1Add{}
+								to.Default.Local.HTTP.OnRateLimit.Headers.Set = []tfTypes.MeshHTTPRouteItemSpecToAdd{}
 
 								for _, setItem1 := range toItem.Default.Local.HTTP.OnRateLimit.Headers.Set {
-									var set1 tfTypes.MeshHTTPRouteItemFiltersSpecToRulesDefaultBackendRefs1Add
+									var set1 tfTypes.MeshHTTPRouteItemSpecToAdd
 
 									set1.Name = types.StringValue(setItem1.Name)
 									set1.Value = types.StringValue(setItem1.Value)
@@ -270,6 +270,27 @@ func (r *MeshRateLimitResourceModel) ToOperationsGetMeshRateLimitRequest(ctx con
 	out := operations.GetMeshRateLimitRequest{
 		Mesh: mesh,
 		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshRateLimitResourceModel) ToOperationsPostMeshRateLimitRequest(ctx context.Context) (*operations.PostMeshRateLimitRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	meshRateLimitItem, meshRateLimitItemDiags := r.ToSharedMeshRateLimitItemInput(ctx)
+	diags.Append(meshRateLimitItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PostMeshRateLimitRequest{
+		Mesh:              mesh,
+		MeshRateLimitItem: *meshRateLimitItem,
 	}
 
 	return &out, diags

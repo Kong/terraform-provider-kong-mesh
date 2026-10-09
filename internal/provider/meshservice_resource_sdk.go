@@ -218,6 +218,27 @@ func (r *MeshServiceResourceModel) ToOperationsGetMeshServiceRequest(ctx context
 	return &out, diags
 }
 
+func (r *MeshServiceResourceModel) ToOperationsPostMeshServiceRequest(ctx context.Context) (*operations.PostMeshServiceRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	meshServiceItem, meshServiceItemDiags := r.ToSharedMeshServiceItemInput(ctx)
+	diags.Append(meshServiceItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PostMeshServiceRequest{
+		Mesh:            mesh,
+		MeshServiceItem: *meshServiceItem,
+	}
+
+	return &out, diags
+}
+
 func (r *MeshServiceResourceModel) ToOperationsPutMeshServiceRequest(ctx context.Context) (*operations.PutMeshServiceRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 

@@ -253,6 +253,27 @@ func (r *MeshFaultInjectionResourceModel) ToOperationsGetMeshFaultInjectionReque
 	return &out, diags
 }
 
+func (r *MeshFaultInjectionResourceModel) ToOperationsPostMeshFaultInjectionRequest(ctx context.Context) (*operations.PostMeshFaultInjectionRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	meshFaultInjectionItem, meshFaultInjectionItemDiags := r.ToSharedMeshFaultInjectionItemInput(ctx)
+	diags.Append(meshFaultInjectionItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PostMeshFaultInjectionRequest{
+		Mesh:                   mesh,
+		MeshFaultInjectionItem: *meshFaultInjectionItem,
+	}
+
+	return &out, diags
+}
+
 func (r *MeshFaultInjectionResourceModel) ToOperationsPutMeshFaultInjectionRequest(ctx context.Context) (*operations.PutMeshFaultInjectionRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 

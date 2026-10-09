@@ -175,6 +175,27 @@ func (r *MeshTimeoutResourceModel) ToOperationsGetMeshTimeoutRequest(ctx context
 	return &out, diags
 }
 
+func (r *MeshTimeoutResourceModel) ToOperationsPostMeshTimeoutRequest(ctx context.Context) (*operations.PostMeshTimeoutRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	meshTimeoutItem, meshTimeoutItemDiags := r.ToSharedMeshTimeoutItemInput(ctx)
+	diags.Append(meshTimeoutItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PostMeshTimeoutRequest{
+		Mesh:            mesh,
+		MeshTimeoutItem: *meshTimeoutItem,
+	}
+
+	return &out, diags
+}
+
 func (r *MeshTimeoutResourceModel) ToOperationsPutMeshTimeoutRequest(ctx context.Context) (*operations.PutMeshTimeoutRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 

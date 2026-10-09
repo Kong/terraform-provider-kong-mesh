@@ -10,7 +10,6 @@ import (
 	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -111,7 +110,7 @@ func (r *MeshTraceResource) Schema(ctx context.Context, req resource.SchemaReque
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
-				Description: `name of the MeshTrace. Requires replacement if changed.`,
+				Description: `Name of the Kuma resource. Requires replacement if changed.`,
 				Validators: []validator.String{
 					stringvalidator.UTF8LengthAtMost(253),
 					stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
@@ -134,332 +133,103 @@ func (r *MeshTraceResource) Schema(ctx context.Context, req resource.SchemaReque
 										speakeasy_objectvalidators.NotNull(),
 									},
 									Attributes: map[string]schema.Attribute{
-										"one": schema.SingleNestedAttribute{
+										"datadog": schema.SingleNestedAttribute{
 											Optional: true,
 											Attributes: map[string]schema.Attribute{
-												"datadog": schema.SingleNestedAttribute{
+												"split_service": schema.BoolAttribute{
+													Computed: true,
 													Optional: true,
-													Attributes: map[string]schema.Attribute{
-														"split_service": schema.BoolAttribute{
-															Computed: true,
-															Optional: true,
-															Default:  booldefault.StaticBool(false),
-															MarkdownDescription: `Determines if datadog service name should be split based on traffic` + "\n" +
-																`direction and destination. For example, with ` + "`" + `splitService: true` + "`" + ` and a` + "\n" +
-																`` + "`" + `backend` + "`" + ` service that communicates with a couple of databases, you would` + "\n" +
-																`get service names like ` + "`" + `backend_INBOUND` + "`" + `, ` + "`" + `backend_OUTBOUND_db1` + "`" + `, and` + "\n" +
-																`` + "`" + `backend_OUTBOUND_db2` + "`" + ` in Datadog.` + "\n" +
-																`Default: false`,
-														},
-														"url": schema.StringAttribute{
-															Optional: true,
-															MarkdownDescription: `Address of Datadog collector, only host and port are allowed (no paths,` + "\n" +
-																`fragments etc.)` + "\n" +
-																`Not Null`,
-															Validators: []validator.String{
-																speakeasy_stringvalidators.NotNull(),
-															},
-														},
-													},
-													Description: `Datadog backend configuration.`,
+													Default:  booldefault.StaticBool(false),
+													MarkdownDescription: `Determines if datadog service name should be split based on traffic` + "\n" +
+														`direction and destination. For example, with ` + "`" + `splitService: true` + "`" + ` and a` + "\n" +
+														`` + "`" + `backend` + "`" + ` service that communicates with a couple of databases, you would` + "\n" +
+														`get service names like ` + "`" + `backend_INBOUND` + "`" + `, ` + "`" + `backend_OUTBOUND_db1` + "`" + `, and` + "\n" +
+														`` + "`" + `backend_OUTBOUND_db2` + "`" + ` in Datadog.` + "\n" +
+														`Default: false`,
 												},
-												"open_telemetry": schema.SingleNestedAttribute{
+												"url": schema.StringAttribute{
 													Optional: true,
-													Attributes: map[string]schema.Attribute{
-														"backend_ref": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"kind": schema.StringAttribute{
-																	Optional:    true,
-																	Description: `Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"`,
-																	Validators: []validator.String{
-																		speakeasy_stringvalidators.NotNull(),
-																		stringvalidator.OneOf(
-																			"MeshOpenTelemetryBackend",
-																		),
-																	},
-																},
-																"labels": schema.MapAttribute{
-																	Optional:    true,
-																	ElementType: types.StringType,
-																	MarkdownDescription: `Labels to match the referenced resource. When multiple resources match,` + "\n" +
-																		`the oldest by creation time wins.`,
-																},
-															},
-															MarkdownDescription: `BackendRef is a reference to a MeshOpenTelemetryBackend resource that` + "\n" +
-																`defines the collector endpoint.`,
-														},
-													},
-													Description: `OpenTelemetry backend configuration.`,
-												},
-												"type": schema.StringAttribute{
-													Optional:    true,
-													Description: `possible known values include one of ["Zipkin", "Datadog", "OpenTelemetry"]; Not Null`,
+													MarkdownDescription: `Address of Datadog collector, only host and port are allowed (no paths,` + "\n" +
+														`fragments etc.)` + "\n" +
+														`Not Null`,
 													Validators: []validator.String{
 														speakeasy_stringvalidators.NotNull(),
 													},
 												},
-												"zipkin": schema.SingleNestedAttribute{
+											},
+											Description: `Datadog backend configuration.`,
+										},
+										"open_telemetry": schema.SingleNestedAttribute{
+											Optional: true,
+											Attributes: map[string]schema.Attribute{
+												"backend_ref": schema.SingleNestedAttribute{
 													Optional: true,
 													Attributes: map[string]schema.Attribute{
-														"api_version": schema.StringAttribute{
-															Computed: true,
-															Optional: true,
-															Default:  stringdefault.StaticString(`httpJson`),
-															MarkdownDescription: `Version of the API.` + "\n" +
-																`https://github.com/envoyproxy/envoy/blob/v1.22.0/api/envoy/config/trace/v3/zipkin.proto#L66` + "\n" +
-																`possible known values include one of ["httpJson", "httpProto"]; Default: "httpJson"`,
-														},
-														"shared_span_context": schema.BoolAttribute{
-															Computed: true,
-															Optional: true,
-															Default:  booldefault.StaticBool(true),
-															MarkdownDescription: `Determines whether client and server spans will share the same span` + "\n" +
-																`context.` + "\n" +
-																`https://github.com/envoyproxy/envoy/blob/v1.22.0/api/envoy/config/trace/v3/zipkin.proto#L63` + "\n" +
-																`Default: true`,
-														},
-														"trace_id128bit": schema.BoolAttribute{
-															Computed:    true,
+														"kind": schema.StringAttribute{
 															Optional:    true,
-															Default:     booldefault.StaticBool(false),
-															Description: `Generate 128bit traces. Default: false`,
-														},
-														"url": schema.StringAttribute{
-															Optional:    true,
-															Description: `Address of Zipkin collector. Not Null`,
+															Description: `Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"`,
 															Validators: []validator.String{
 																speakeasy_stringvalidators.NotNull(),
+																stringvalidator.OneOf(
+																	"MeshOpenTelemetryBackend",
+																),
 															},
 														},
+														"labels": schema.MapAttribute{
+															Optional:    true,
+															ElementType: types.StringType,
+															MarkdownDescription: `Labels to match the referenced resource. When multiple resources match,` + "\n" +
+																`the oldest by creation time wins.`,
+														},
 													},
-													Description: `Zipkin backend configuration.`,
+													MarkdownDescription: `BackendRef is a reference to a MeshOpenTelemetryBackend resource that` + "\n" +
+														`defines the collector endpoint.`,
 												},
 											},
-											Validators: []validator.Object{
-												objectvalidator.ConflictsWith(path.Expressions{
-													path.MatchRelative().AtParent().AtName("two"),
-													path.MatchRelative().AtParent().AtName("three"),
-												}...),
+											Description: `OpenTelemetry backend configuration.`,
+										},
+										"type": schema.StringAttribute{
+											Optional:    true,
+											Description: `possible known values include one of ["Zipkin", "Datadog", "OpenTelemetry"]; Not Null`,
+											Validators: []validator.String{
+												speakeasy_stringvalidators.NotNull(),
 											},
 										},
-										"three": schema.SingleNestedAttribute{
+										"zipkin": schema.SingleNestedAttribute{
 											Optional: true,
 											Attributes: map[string]schema.Attribute{
-												"datadog": schema.SingleNestedAttribute{
+												"api_version": schema.StringAttribute{
+													Computed: true,
 													Optional: true,
-													Attributes: map[string]schema.Attribute{
-														"split_service": schema.BoolAttribute{
-															Computed: true,
-															Optional: true,
-															Default:  booldefault.StaticBool(false),
-															MarkdownDescription: `Determines if datadog service name should be split based on traffic` + "\n" +
-																`direction and destination. For example, with ` + "`" + `splitService: true` + "`" + ` and a` + "\n" +
-																`` + "`" + `backend` + "`" + ` service that communicates with a couple of databases, you would` + "\n" +
-																`get service names like ` + "`" + `backend_INBOUND` + "`" + `, ` + "`" + `backend_OUTBOUND_db1` + "`" + `, and` + "\n" +
-																`` + "`" + `backend_OUTBOUND_db2` + "`" + ` in Datadog.` + "\n" +
-																`Default: false`,
-														},
-														"url": schema.StringAttribute{
-															Optional: true,
-															MarkdownDescription: `Address of Datadog collector, only host and port are allowed (no paths,` + "\n" +
-																`fragments etc.)` + "\n" +
-																`Not Null`,
-															Validators: []validator.String{
-																speakeasy_stringvalidators.NotNull(),
-															},
-														},
-													},
-													Description: `Datadog backend configuration.`,
+													Default:  stringdefault.StaticString(`httpJson`),
+													MarkdownDescription: `Version of the API.` + "\n" +
+														`https://github.com/envoyproxy/envoy/blob/v1.22.0/api/envoy/config/trace/v3/zipkin.proto#L66` + "\n" +
+														`possible known values include one of ["httpJson", "httpProto"]; Default: "httpJson"`,
 												},
-												"open_telemetry": schema.SingleNestedAttribute{
+												"shared_span_context": schema.BoolAttribute{
+													Computed: true,
 													Optional: true,
-													Attributes: map[string]schema.Attribute{
-														"backend_ref": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"kind": schema.StringAttribute{
-																	Optional:    true,
-																	Description: `Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"`,
-																	Validators: []validator.String{
-																		speakeasy_stringvalidators.NotNull(),
-																		stringvalidator.OneOf(
-																			"MeshOpenTelemetryBackend",
-																		),
-																	},
-																},
-																"labels": schema.MapAttribute{
-																	Optional:    true,
-																	ElementType: types.StringType,
-																	MarkdownDescription: `Labels to match the referenced resource. When multiple resources match,` + "\n" +
-																		`the oldest by creation time wins.`,
-																},
-															},
-															MarkdownDescription: `BackendRef is a reference to a MeshOpenTelemetryBackend resource that` + "\n" +
-																`defines the collector endpoint.`,
-														},
-													},
-													Description: `OpenTelemetry backend configuration.`,
+													Default:  booldefault.StaticBool(true),
+													MarkdownDescription: `Determines whether client and server spans will share the same span` + "\n" +
+														`context.` + "\n" +
+														`https://github.com/envoyproxy/envoy/blob/v1.22.0/api/envoy/config/trace/v3/zipkin.proto#L63` + "\n" +
+														`Default: true`,
 												},
-												"type": schema.StringAttribute{
+												"trace_id128bit": schema.BoolAttribute{
+													Computed:    true,
 													Optional:    true,
-													Description: `possible known values include one of ["Zipkin", "Datadog", "OpenTelemetry"]; Not Null`,
+													Default:     booldefault.StaticBool(false),
+													Description: `Generate 128bit traces. Default: false`,
+												},
+												"url": schema.StringAttribute{
+													Optional:    true,
+													Description: `Address of Zipkin collector. Not Null`,
 													Validators: []validator.String{
 														speakeasy_stringvalidators.NotNull(),
 													},
 												},
-												"zipkin": schema.SingleNestedAttribute{
-													Optional: true,
-													Attributes: map[string]schema.Attribute{
-														"api_version": schema.StringAttribute{
-															Computed: true,
-															Optional: true,
-															Default:  stringdefault.StaticString(`httpJson`),
-															MarkdownDescription: `Version of the API.` + "\n" +
-																`https://github.com/envoyproxy/envoy/blob/v1.22.0/api/envoy/config/trace/v3/zipkin.proto#L66` + "\n" +
-																`possible known values include one of ["httpJson", "httpProto"]; Default: "httpJson"`,
-														},
-														"shared_span_context": schema.BoolAttribute{
-															Computed: true,
-															Optional: true,
-															Default:  booldefault.StaticBool(true),
-															MarkdownDescription: `Determines whether client and server spans will share the same span` + "\n" +
-																`context.` + "\n" +
-																`https://github.com/envoyproxy/envoy/blob/v1.22.0/api/envoy/config/trace/v3/zipkin.proto#L63` + "\n" +
-																`Default: true`,
-														},
-														"trace_id128bit": schema.BoolAttribute{
-															Computed:    true,
-															Optional:    true,
-															Default:     booldefault.StaticBool(false),
-															Description: `Generate 128bit traces. Default: false`,
-														},
-														"url": schema.StringAttribute{
-															Optional:    true,
-															Description: `Address of Zipkin collector. Not Null`,
-															Validators: []validator.String{
-																speakeasy_stringvalidators.NotNull(),
-															},
-														},
-													},
-													Description: `Zipkin backend configuration.`,
-												},
 											},
-											Validators: []validator.Object{
-												objectvalidator.ConflictsWith(path.Expressions{
-													path.MatchRelative().AtParent().AtName("one"),
-													path.MatchRelative().AtParent().AtName("two"),
-												}...),
-											},
-										},
-										"two": schema.SingleNestedAttribute{
-											Optional: true,
-											Attributes: map[string]schema.Attribute{
-												"datadog": schema.SingleNestedAttribute{
-													Optional: true,
-													Attributes: map[string]schema.Attribute{
-														"split_service": schema.BoolAttribute{
-															Computed: true,
-															Optional: true,
-															Default:  booldefault.StaticBool(false),
-															MarkdownDescription: `Determines if datadog service name should be split based on traffic` + "\n" +
-																`direction and destination. For example, with ` + "`" + `splitService: true` + "`" + ` and a` + "\n" +
-																`` + "`" + `backend` + "`" + ` service that communicates with a couple of databases, you would` + "\n" +
-																`get service names like ` + "`" + `backend_INBOUND` + "`" + `, ` + "`" + `backend_OUTBOUND_db1` + "`" + `, and` + "\n" +
-																`` + "`" + `backend_OUTBOUND_db2` + "`" + ` in Datadog.` + "\n" +
-																`Default: false`,
-														},
-														"url": schema.StringAttribute{
-															Optional: true,
-															MarkdownDescription: `Address of Datadog collector, only host and port are allowed (no paths,` + "\n" +
-																`fragments etc.)` + "\n" +
-																`Not Null`,
-															Validators: []validator.String{
-																speakeasy_stringvalidators.NotNull(),
-															},
-														},
-													},
-													Description: `Datadog backend configuration.`,
-												},
-												"open_telemetry": schema.SingleNestedAttribute{
-													Optional: true,
-													Attributes: map[string]schema.Attribute{
-														"backend_ref": schema.SingleNestedAttribute{
-															Optional: true,
-															Attributes: map[string]schema.Attribute{
-																"kind": schema.StringAttribute{
-																	Optional:    true,
-																	Description: `Kind of the backend resource. Not Null; must be "MeshOpenTelemetryBackend"`,
-																	Validators: []validator.String{
-																		speakeasy_stringvalidators.NotNull(),
-																		stringvalidator.OneOf(
-																			"MeshOpenTelemetryBackend",
-																		),
-																	},
-																},
-																"labels": schema.MapAttribute{
-																	Optional:    true,
-																	ElementType: types.StringType,
-																	MarkdownDescription: `Labels to match the referenced resource. When multiple resources match,` + "\n" +
-																		`the oldest by creation time wins.`,
-																},
-															},
-															MarkdownDescription: `BackendRef is a reference to a MeshOpenTelemetryBackend resource that` + "\n" +
-																`defines the collector endpoint.`,
-														},
-													},
-													Description: `OpenTelemetry backend configuration.`,
-												},
-												"type": schema.StringAttribute{
-													Optional:    true,
-													Description: `possible known values include one of ["Zipkin", "Datadog", "OpenTelemetry"]; Not Null`,
-													Validators: []validator.String{
-														speakeasy_stringvalidators.NotNull(),
-													},
-												},
-												"zipkin": schema.SingleNestedAttribute{
-													Optional: true,
-													Attributes: map[string]schema.Attribute{
-														"api_version": schema.StringAttribute{
-															Computed: true,
-															Optional: true,
-															Default:  stringdefault.StaticString(`httpJson`),
-															MarkdownDescription: `Version of the API.` + "\n" +
-																`https://github.com/envoyproxy/envoy/blob/v1.22.0/api/envoy/config/trace/v3/zipkin.proto#L66` + "\n" +
-																`possible known values include one of ["httpJson", "httpProto"]; Default: "httpJson"`,
-														},
-														"shared_span_context": schema.BoolAttribute{
-															Computed: true,
-															Optional: true,
-															Default:  booldefault.StaticBool(true),
-															MarkdownDescription: `Determines whether client and server spans will share the same span` + "\n" +
-																`context.` + "\n" +
-																`https://github.com/envoyproxy/envoy/blob/v1.22.0/api/envoy/config/trace/v3/zipkin.proto#L63` + "\n" +
-																`Default: true`,
-														},
-														"trace_id128bit": schema.BoolAttribute{
-															Computed:    true,
-															Optional:    true,
-															Default:     booldefault.StaticBool(false),
-															Description: `Generate 128bit traces. Default: false`,
-														},
-														"url": schema.StringAttribute{
-															Optional:    true,
-															Description: `Address of Zipkin collector. Not Null`,
-															Validators: []validator.String{
-																speakeasy_stringvalidators.NotNull(),
-															},
-														},
-													},
-													Description: `Zipkin backend configuration.`,
-												},
-											},
-											Validators: []validator.Object{
-												objectvalidator.ConflictsWith(path.Expressions{
-													path.MatchRelative().AtParent().AtName("one"),
-													path.MatchRelative().AtParent().AtName("three"),
-												}...),
-											},
+											Description: `Zipkin backend configuration.`,
 										},
 									},
 								},
@@ -747,13 +517,13 @@ func (r *MeshTraceResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
-	request, requestDiags := data.ToOperationsPutMeshTraceRequest(ctx)
+	request, requestDiags := data.ToOperationsPostMeshTraceRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshTrace.PutMeshTrace(ctx, *request)
+	res, err := r.client.MeshTrace.PostMeshTrace(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -765,10 +535,14 @@ func (r *MeshTraceResource) Create(ctx context.Context, req resource.CreateReque
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	switch res.StatusCode {
-	case 200, 201:
-		break
-	default:
+	if res.StatusCode == 409 {
+		resp.Diagnostics.AddError(
+			"Resource Already Exists",
+			"When creating this resource, the API indicated that this resource already exists. You can bring the existing resource under management using Terraform import functionality or retry with a unique configuration.",
+		)
+		return
+	}
+	if res.StatusCode != 201 {
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}

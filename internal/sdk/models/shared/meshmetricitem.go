@@ -4,7 +4,6 @@ package shared
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/utils"
 	"time"
@@ -84,137 +83,92 @@ func (a *Applications) GetPort() int {
 	return a.Port
 }
 
-// MeshMetricItemBackendsKind - Kind of the backend resource.
-type MeshMetricItemBackendsKind string
+// MeshMetricItemSpecKind - Kind of the backend resource.
+type MeshMetricItemSpecKind string
 
 const (
-	MeshMetricItemBackendsKindMeshOpenTelemetryBackend MeshMetricItemBackendsKind = "MeshOpenTelemetryBackend"
+	MeshMetricItemSpecKindMeshOpenTelemetryBackend MeshMetricItemSpecKind = "MeshOpenTelemetryBackend"
 )
 
-func (e MeshMetricItemBackendsKind) ToPointer() *MeshMetricItemBackendsKind {
+func (e MeshMetricItemSpecKind) ToPointer() *MeshMetricItemSpecKind {
 	return &e
 }
-func (e *MeshMetricItemBackendsKind) UnmarshalJSON(data []byte) error {
+func (e *MeshMetricItemSpecKind) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	switch v {
 	case "MeshOpenTelemetryBackend":
-		*e = MeshMetricItemBackendsKind(v)
+		*e = MeshMetricItemSpecKind(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for MeshMetricItemBackendsKind: %v", v)
+		return fmt.Errorf("invalid value for MeshMetricItemSpecKind: %v", v)
 	}
 }
 
-// BackendsBackendRef - BackendRef is a reference to a MeshOpenTelemetryBackend resource that
+// BackendRef is a reference to a MeshOpenTelemetryBackend resource that
 // defines the collector endpoint.
-type BackendsBackendRef struct {
+type BackendRef struct {
 	// Kind of the backend resource.
-	Kind MeshMetricItemBackendsKind `json:"kind"`
+	Kind MeshMetricItemSpecKind `json:"kind"`
 	// Labels to match the referenced resource. When multiple resources match,
 	// the oldest by creation time wins.
 	Labels map[string]string `json:"labels,omitempty"`
 }
 
-func (b BackendsBackendRef) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(b, "", false)
-}
-
-func (b *BackendsBackendRef) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &b, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (b *BackendsBackendRef) GetKind() MeshMetricItemBackendsKind {
+func (b *BackendRef) GetKind() MeshMetricItemSpecKind {
 	if b == nil {
-		return MeshMetricItemBackendsKind("")
+		return MeshMetricItemSpecKind("")
 	}
 	return b.Kind
 }
 
-func (b *BackendsBackendRef) GetLabels() map[string]string {
+func (b *BackendRef) GetLabels() map[string]string {
 	if b == nil {
 		return nil
 	}
 	return b.Labels
 }
 
-// BackendsOpenTelemetry - OpenTelemetry backend configuration
-type BackendsOpenTelemetry struct {
+// MeshMetricItemOpenTelemetry - OpenTelemetry backend configuration
+type MeshMetricItemOpenTelemetry struct {
 	// BackendRef is a reference to a MeshOpenTelemetryBackend resource that
 	// defines the collector endpoint.
-	BackendRef *BackendsBackendRef `json:"backendRef,omitempty"`
+	BackendRef *BackendRef `json:"backendRef,omitempty"`
 	// RefreshInterval defines how frequent metrics should be pushed to collector
 	RefreshInterval *string `json:"refreshInterval,omitempty"`
 }
 
-func (b BackendsOpenTelemetry) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(b, "", false)
-}
-
-func (b *BackendsOpenTelemetry) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &b, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (b *BackendsOpenTelemetry) GetBackendRef() *BackendsBackendRef {
-	if b == nil {
+func (m *MeshMetricItemOpenTelemetry) GetBackendRef() *BackendRef {
+	if m == nil {
 		return nil
 	}
-	return b.BackendRef
+	return m.BackendRef
 }
 
-func (b *BackendsOpenTelemetry) GetRefreshInterval() *string {
-	if b == nil {
+func (m *MeshMetricItemOpenTelemetry) GetRefreshInterval() *string {
+	if m == nil {
 		return nil
 	}
-	return b.RefreshInterval
+	return m.RefreshInterval
 }
 
-// MeshMetricItemBackendsType - Type of the backend that will be used to collect metrics. At the moment only Prometheus backend is available.
-type MeshMetricItemBackendsType string
+// MeshMetricItemMode - Configuration of TLS for Prometheus listener.
+type MeshMetricItemMode string
 
 const (
-	MeshMetricItemBackendsTypePrometheus    MeshMetricItemBackendsType = "Prometheus"
-	MeshMetricItemBackendsTypeOpenTelemetry MeshMetricItemBackendsType = "OpenTelemetry"
+	MeshMetricItemModeDisabled          MeshMetricItemMode = "Disabled"
+	MeshMetricItemModeProvidedTLS       MeshMetricItemMode = "ProvidedTLS"
+	MeshMetricItemModeActiveMtlsBackend MeshMetricItemMode = "ActiveMTLSBackend"
 )
 
-func (e MeshMetricItemBackendsType) ToPointer() *MeshMetricItemBackendsType {
+func (e MeshMetricItemMode) ToPointer() *MeshMetricItemMode {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshMetricItemBackendsType) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Prometheus", "OpenTelemetry":
-			return true
-		}
-	}
-	return false
-}
-
-// BackendsMode - Configuration of TLS for Prometheus listener.
-type BackendsMode string
-
-const (
-	BackendsModeDisabled          BackendsMode = "Disabled"
-	BackendsModeProvidedTLS       BackendsMode = "ProvidedTLS"
-	BackendsModeActiveMtlsBackend BackendsMode = "ActiveMTLSBackend"
-)
-
-func (e BackendsMode) ToPointer() *BackendsMode {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *BackendsMode) IsExact() bool {
+func (e *MeshMetricItemMode) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "Disabled", "ProvidedTLS", "ActiveMTLSBackend":
@@ -224,167 +178,24 @@ func (e *BackendsMode) IsExact() bool {
 	return false
 }
 
-// BackendsTLS - Configuration of TLS for prometheus listener.
-type BackendsTLS struct {
+// MeshMetricItemTLS - Configuration of TLS for prometheus listener.
+type MeshMetricItemTLS struct {
 	// Configuration of TLS for Prometheus listener.
-	Mode *BackendsMode `default:"Disabled" json:"mode"`
+	Mode *MeshMetricItemMode `default:"Disabled" json:"mode"`
 }
 
-func (b BackendsTLS) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(b, "", false)
-}
-
-func (b *BackendsTLS) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &b, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (b *BackendsTLS) GetMode() *BackendsMode {
-	if b == nil {
-		return nil
-	}
-	return b.Mode
-}
-
-// BackendsPrometheus - Prometheus backend configuration.
-type BackendsPrometheus struct {
-	// ClientId of the Prometheus backend. Needed when using MADS for DP discovery.
-	ClientID *string `json:"clientId,omitempty"`
-	// Path on which a dataplane should expose HTTP endpoint with Prometheus metrics.
-	Path *string `default:"/metrics" json:"path"`
-	// Port on which a dataplane should expose HTTP endpoint with Prometheus metrics.
-	Port *int `default:"5670" json:"port"`
-	// Configuration of TLS for prometheus listener.
-	TLS *BackendsTLS `json:"tls,omitempty"`
-}
-
-func (b BackendsPrometheus) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(b, "", false)
-}
-
-func (b *BackendsPrometheus) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &b, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (b *BackendsPrometheus) GetClientID() *string {
-	if b == nil {
-		return nil
-	}
-	return b.ClientID
-}
-
-func (b *BackendsPrometheus) GetPath() *string {
-	if b == nil {
-		return nil
-	}
-	return b.Path
-}
-
-func (b *BackendsPrometheus) GetPort() *int {
-	if b == nil {
-		return nil
-	}
-	return b.Port
-}
-
-func (b *BackendsPrometheus) GetTLS() *BackendsTLS {
-	if b == nil {
-		return nil
-	}
-	return b.TLS
-}
-
-type MeshMetricItemBackends2 struct {
-	// OpenTelemetry backend configuration
-	OpenTelemetry *BackendsOpenTelemetry `json:"openTelemetry,omitempty"`
-	// Type of the backend that will be used to collect metrics. At the moment only Prometheus backend is available.
-	Type MeshMetricItemBackendsType `json:"type"`
-	// Prometheus backend configuration.
-	Prometheus *BackendsPrometheus `json:"prometheus,omitempty"`
-}
-
-func (m MeshMetricItemBackends2) MarshalJSON() ([]byte, error) {
+func (m MeshMetricItemTLS) MarshalJSON() ([]byte, error) {
 	return utils.MarshalJSON(m, "", false)
 }
 
-func (m *MeshMetricItemBackends2) UnmarshalJSON(data []byte) error {
+func (m *MeshMetricItemTLS) UnmarshalJSON(data []byte) error {
 	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (m *MeshMetricItemBackends2) GetOpenTelemetry() *BackendsOpenTelemetry {
-	if m == nil {
-		return nil
-	}
-	return m.OpenTelemetry
-}
-
-func (m *MeshMetricItemBackends2) GetType() MeshMetricItemBackendsType {
-	if m == nil {
-		return MeshMetricItemBackendsType("")
-	}
-	return m.Type
-}
-
-func (m *MeshMetricItemBackends2) GetPrometheus() *BackendsPrometheus {
-	if m == nil {
-		return nil
-	}
-	return m.Prometheus
-}
-
-// #region class-body-meshmetricitembackends2
-// #endregion class-body-meshmetricitembackends2
-
-// MeshMetricItemBackendsMode - Configuration of TLS for Prometheus listener.
-type MeshMetricItemBackendsMode string
-
-const (
-	MeshMetricItemBackendsModeDisabled          MeshMetricItemBackendsMode = "Disabled"
-	MeshMetricItemBackendsModeProvidedTLS       MeshMetricItemBackendsMode = "ProvidedTLS"
-	MeshMetricItemBackendsModeActiveMtlsBackend MeshMetricItemBackendsMode = "ActiveMTLSBackend"
-)
-
-func (e MeshMetricItemBackendsMode) ToPointer() *MeshMetricItemBackendsMode {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshMetricItemBackendsMode) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Disabled", "ProvidedTLS", "ActiveMTLSBackend":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshMetricItemBackendsTLS - Configuration of TLS for prometheus listener.
-type MeshMetricItemBackendsTLS struct {
-	// Configuration of TLS for Prometheus listener.
-	Mode *MeshMetricItemBackendsMode `default:"Disabled" json:"mode"`
-}
-
-func (m MeshMetricItemBackendsTLS) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(m, "", false)
-}
-
-func (m *MeshMetricItemBackendsTLS) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *MeshMetricItemBackendsTLS) GetMode() *MeshMetricItemBackendsMode {
+func (m *MeshMetricItemTLS) GetMode() *MeshMetricItemMode {
 	if m == nil {
 		return nil
 	}
@@ -400,7 +211,7 @@ type Prometheus struct {
 	// Port on which a dataplane should expose HTTP endpoint with Prometheus metrics.
 	Port *int `default:"5670" json:"port"`
 	// Configuration of TLS for prometheus listener.
-	TLS *MeshMetricItemBackendsTLS `json:"tls,omitempty"`
+	TLS *MeshMetricItemTLS `json:"tls,omitempty"`
 }
 
 func (p Prometheus) MarshalJSON() ([]byte, error) {
@@ -435,27 +246,27 @@ func (p *Prometheus) GetPort() *int {
 	return p.Port
 }
 
-func (p *Prometheus) GetTLS() *MeshMetricItemBackendsTLS {
+func (p *Prometheus) GetTLS() *MeshMetricItemTLS {
 	if p == nil {
 		return nil
 	}
 	return p.TLS
 }
 
-// BackendsType - Type of the backend that will be used to collect metrics. At the moment only Prometheus backend is available.
-type BackendsType string
+// MeshMetricItemSpecType - Type of the backend that will be used to collect metrics. At the moment only Prometheus backend is available.
+type MeshMetricItemSpecType string
 
 const (
-	BackendsTypePrometheus    BackendsType = "Prometheus"
-	BackendsTypeOpenTelemetry BackendsType = "OpenTelemetry"
+	MeshMetricItemSpecTypePrometheus    MeshMetricItemSpecType = "Prometheus"
+	MeshMetricItemSpecTypeOpenTelemetry MeshMetricItemSpecType = "OpenTelemetry"
 )
 
-func (e BackendsType) ToPointer() *BackendsType {
+func (e MeshMetricItemSpecType) ToPointer() *MeshMetricItemSpecType {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *BackendsType) IsExact() bool {
+func (e *MeshMetricItemSpecType) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "Prometheus", "OpenTelemetry":
@@ -465,230 +276,34 @@ func (e *BackendsType) IsExact() bool {
 	return false
 }
 
-// BackendsKind - Kind of the backend resource.
-type BackendsKind string
-
-const (
-	BackendsKindMeshOpenTelemetryBackend BackendsKind = "MeshOpenTelemetryBackend"
-)
-
-func (e BackendsKind) ToPointer() *BackendsKind {
-	return &e
-}
-func (e *BackendsKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "MeshOpenTelemetryBackend":
-		*e = BackendsKind(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for BackendsKind: %v", v)
-	}
-}
-
-// BackendRef is a reference to a MeshOpenTelemetryBackend resource that
-// defines the collector endpoint.
-type BackendRef struct {
-	// Kind of the backend resource.
-	Kind BackendsKind `json:"kind"`
-	// Labels to match the referenced resource. When multiple resources match,
-	// the oldest by creation time wins.
-	Labels map[string]string `json:"labels,omitempty"`
-}
-
-func (b BackendRef) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(b, "", false)
-}
-
-func (b *BackendRef) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &b, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (b *BackendRef) GetKind() BackendsKind {
-	if b == nil {
-		return BackendsKind("")
-	}
-	return b.Kind
-}
-
-func (b *BackendRef) GetLabels() map[string]string {
-	if b == nil {
-		return nil
-	}
-	return b.Labels
-}
-
-// MeshMetricItemBackendsOpenTelemetry - OpenTelemetry backend configuration
-type MeshMetricItemBackendsOpenTelemetry struct {
-	// BackendRef is a reference to a MeshOpenTelemetryBackend resource that
-	// defines the collector endpoint.
-	BackendRef *BackendRef `json:"backendRef,omitempty"`
-	// RefreshInterval defines how frequent metrics should be pushed to collector
-	RefreshInterval *string `json:"refreshInterval,omitempty"`
-}
-
-func (m MeshMetricItemBackendsOpenTelemetry) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(m, "", false)
-}
-
-func (m *MeshMetricItemBackendsOpenTelemetry) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *MeshMetricItemBackendsOpenTelemetry) GetBackendRef() *BackendRef {
-	if m == nil {
-		return nil
-	}
-	return m.BackendRef
-}
-
-func (m *MeshMetricItemBackendsOpenTelemetry) GetRefreshInterval() *string {
-	if m == nil {
-		return nil
-	}
-	return m.RefreshInterval
-}
-
-type MeshMetricItemBackends1 struct {
+type MeshMetricItemBackends struct {
+	// OpenTelemetry backend configuration
+	OpenTelemetry *MeshMetricItemOpenTelemetry `json:"openTelemetry,omitempty"`
 	// Prometheus backend configuration.
 	Prometheus *Prometheus `json:"prometheus,omitempty"`
 	// Type of the backend that will be used to collect metrics. At the moment only Prometheus backend is available.
-	Type BackendsType `json:"type"`
-	// OpenTelemetry backend configuration
-	OpenTelemetry *MeshMetricItemBackendsOpenTelemetry `json:"openTelemetry,omitempty"`
+	Type MeshMetricItemSpecType `json:"type"`
 }
 
-func (m MeshMetricItemBackends1) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(m, "", false)
-}
-
-func (m *MeshMetricItemBackends1) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *MeshMetricItemBackends1) GetPrometheus() *Prometheus {
-	if m == nil {
-		return nil
-	}
-	return m.Prometheus
-}
-
-func (m *MeshMetricItemBackends1) GetType() BackendsType {
-	if m == nil {
-		return BackendsType("")
-	}
-	return m.Type
-}
-
-func (m *MeshMetricItemBackends1) GetOpenTelemetry() *MeshMetricItemBackendsOpenTelemetry {
+func (m *MeshMetricItemBackends) GetOpenTelemetry() *MeshMetricItemOpenTelemetry {
 	if m == nil {
 		return nil
 	}
 	return m.OpenTelemetry
 }
 
-// #region class-body-meshmetricitembackends1
-// #endregion class-body-meshmetricitembackends1
-
-type MeshMetricItemBackendsUnionType string
-
-const (
-	MeshMetricItemBackendsUnionTypeMeshMetricItemBackends1 MeshMetricItemBackendsUnionType = "MeshMetricItem_backends_1"
-	MeshMetricItemBackendsUnionTypeMeshMetricItemBackends2 MeshMetricItemBackendsUnionType = "MeshMetricItem_backends_2"
-)
-
-type MeshMetricItemBackends struct {
-	MeshMetricItemBackends1 *MeshMetricItemBackends1 `queryParam:"inline" union:"member"`
-	MeshMetricItemBackends2 *MeshMetricItemBackends2 `queryParam:"inline" union:"member"`
-
-	Type MeshMetricItemBackendsUnionType
-}
-
-func CreateMeshMetricItemBackendsMeshMetricItemBackends1(meshMetricItemBackends1 MeshMetricItemBackends1) MeshMetricItemBackends {
-	typ := MeshMetricItemBackendsUnionTypeMeshMetricItemBackends1
-
-	return MeshMetricItemBackends{
-		MeshMetricItemBackends1: &meshMetricItemBackends1,
-		Type:                    typ,
-	}
-}
-
-func CreateMeshMetricItemBackendsMeshMetricItemBackends2(meshMetricItemBackends2 MeshMetricItemBackends2) MeshMetricItemBackends {
-	typ := MeshMetricItemBackendsUnionTypeMeshMetricItemBackends2
-
-	return MeshMetricItemBackends{
-		MeshMetricItemBackends2: &meshMetricItemBackends2,
-		Type:                    typ,
-	}
-}
-
-func (u *MeshMetricItemBackends) UnmarshalJSON(data []byte) error {
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var meshMetricItemBackends1 MeshMetricItemBackends1 = MeshMetricItemBackends1{}
-	if err := utils.UnmarshalJSON(data, &meshMetricItemBackends1, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshMetricItemBackendsUnionTypeMeshMetricItemBackends1,
-			Value: &meshMetricItemBackends1,
-		})
-	}
-
-	var meshMetricItemBackends2 MeshMetricItemBackends2 = MeshMetricItemBackends2{}
-	if err := utils.UnmarshalJSON(data, &meshMetricItemBackends2, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshMetricItemBackendsUnionTypeMeshMetricItemBackends2,
-			Value: &meshMetricItemBackends2,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshMetricItemBackends", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshMetricItemBackends", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(MeshMetricItemBackendsUnionType)
-	switch best.Type {
-	case MeshMetricItemBackendsUnionTypeMeshMetricItemBackends1:
-		u.MeshMetricItemBackends1 = best.Value.(*MeshMetricItemBackends1)
-		return nil
-	case MeshMetricItemBackendsUnionTypeMeshMetricItemBackends2:
-		u.MeshMetricItemBackends2 = best.Value.(*MeshMetricItemBackends2)
+func (m *MeshMetricItemBackends) GetPrometheus() *Prometheus {
+	if m == nil {
 		return nil
 	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshMetricItemBackends", string(data))
+	return m.Prometheus
 }
 
-func (u MeshMetricItemBackends) MarshalJSON() ([]byte, error) {
-	if u.MeshMetricItemBackends1 != nil {
-		return utils.MarshalJSON(u.MeshMetricItemBackends1, "", true)
+func (m *MeshMetricItemBackends) GetType() MeshMetricItemSpecType {
+	if m == nil {
+		return MeshMetricItemSpecType("")
 	}
-
-	if u.MeshMetricItemBackends2 != nil {
-		return utils.MarshalJSON(u.MeshMetricItemBackends2, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type MeshMetricItemBackends: all fields are null")
+	return m.Type
 }
 
 // Name of the predefined profile, one of: all, basic, none
@@ -727,52 +342,6 @@ func (a *AppendProfiles) GetName() Name {
 	return a.Name
 }
 
-// MeshMetricItemSpecType - Type defined the type of selector, one of: prefix, regex, exact
-type MeshMetricItemSpecType string
-
-const (
-	MeshMetricItemSpecTypePrefix   MeshMetricItemSpecType = "Prefix"
-	MeshMetricItemSpecTypeRegex    MeshMetricItemSpecType = "Regex"
-	MeshMetricItemSpecTypeExact    MeshMetricItemSpecType = "Exact"
-	MeshMetricItemSpecTypeContains MeshMetricItemSpecType = "Contains"
-)
-
-func (e MeshMetricItemSpecType) ToPointer() *MeshMetricItemSpecType {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshMetricItemSpecType) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Prefix", "Regex", "Exact", "Contains":
-			return true
-		}
-	}
-	return false
-}
-
-type Exclude struct {
-	// Match is the value used to match using particular Type
-	Match string `json:"match"`
-	// Type defined the type of selector, one of: prefix, regex, exact
-	Type MeshMetricItemSpecType `json:"type"`
-}
-
-func (e *Exclude) GetMatch() string {
-	if e == nil {
-		return ""
-	}
-	return e.Match
-}
-
-func (e *Exclude) GetType() MeshMetricItemSpecType {
-	if e == nil {
-		return MeshMetricItemSpecType("")
-	}
-	return e.Type
-}
-
 // MeshMetricItemSpecDefaultType - Type defined the type of selector, one of: prefix, regex, exact
 type MeshMetricItemSpecDefaultType string
 
@@ -798,11 +367,57 @@ func (e *MeshMetricItemSpecDefaultType) IsExact() bool {
 	return false
 }
 
-type Include struct {
+type Exclude struct {
 	// Match is the value used to match using particular Type
 	Match string `json:"match"`
 	// Type defined the type of selector, one of: prefix, regex, exact
 	Type MeshMetricItemSpecDefaultType `json:"type"`
+}
+
+func (e *Exclude) GetMatch() string {
+	if e == nil {
+		return ""
+	}
+	return e.Match
+}
+
+func (e *Exclude) GetType() MeshMetricItemSpecDefaultType {
+	if e == nil {
+		return MeshMetricItemSpecDefaultType("")
+	}
+	return e.Type
+}
+
+// MeshMetricItemSpecDefaultSidecarType - Type defined the type of selector, one of: prefix, regex, exact
+type MeshMetricItemSpecDefaultSidecarType string
+
+const (
+	MeshMetricItemSpecDefaultSidecarTypePrefix   MeshMetricItemSpecDefaultSidecarType = "Prefix"
+	MeshMetricItemSpecDefaultSidecarTypeRegex    MeshMetricItemSpecDefaultSidecarType = "Regex"
+	MeshMetricItemSpecDefaultSidecarTypeExact    MeshMetricItemSpecDefaultSidecarType = "Exact"
+	MeshMetricItemSpecDefaultSidecarTypeContains MeshMetricItemSpecDefaultSidecarType = "Contains"
+)
+
+func (e MeshMetricItemSpecDefaultSidecarType) ToPointer() *MeshMetricItemSpecDefaultSidecarType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshMetricItemSpecDefaultSidecarType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "Prefix", "Regex", "Exact", "Contains":
+			return true
+		}
+	}
+	return false
+}
+
+type Include struct {
+	// Match is the value used to match using particular Type
+	Match string `json:"match"`
+	// Type defined the type of selector, one of: prefix, regex, exact
+	Type MeshMetricItemSpecDefaultSidecarType `json:"type"`
 }
 
 func (i *Include) GetMatch() string {
@@ -812,9 +427,9 @@ func (i *Include) GetMatch() string {
 	return i.Match
 }
 
-func (i *Include) GetType() MeshMetricItemSpecDefaultType {
+func (i *Include) GetType() MeshMetricItemSpecDefaultSidecarType {
 	if i == nil {
-		return MeshMetricItemSpecDefaultType("")
+		return MeshMetricItemSpecDefaultSidecarType("")
 	}
 	return i.Type
 }

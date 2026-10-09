@@ -137,7 +137,7 @@ resource "kong-mesh_mesh_circuit_breaker" "my_meshcircuitbreaker" {
 ### Required
 
 - `mesh` (String) name of the mesh. Requires replacement if changed.
-- `name` (String) name of the MeshCircuitBreaker. Requires replacement if changed.
+- `name` (String) Name of the Kuma resource. Requires replacement if changed.
 - `spec` (Attributes) Spec is the specification of the Kuma MeshCircuitBreaker resource. (see [below for nested schema](#nestedatt--spec))
 - `type` (String) the type of the resource. must be "MeshCircuitBreaker"
 

@@ -167,13 +167,13 @@ func (r *MeshAccessRoleBindingResource) Create(ctx context.Context, req resource
 		return
 	}
 
-	request, requestDiags := data.ToOperationsPutAccessRoleBindingRequest(ctx)
+	request, requestDiags := data.ToSharedAccessRoleBindingItemInput(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.AccessRoleBinding.PutAccessRoleBinding(ctx, *request)
+	res, err := r.client.AccessRoleBinding.PostAccessRoleBinding(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -185,10 +185,14 @@ func (r *MeshAccessRoleBindingResource) Create(ctx context.Context, req resource
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	switch res.StatusCode {
-	case 200, 201:
-		break
-	default:
+	if res.StatusCode == 409 {
+		resp.Diagnostics.AddError(
+			"Resource Already Exists",
+			"When creating this resource, the API indicated that this resource already exists. You can bring the existing resource under management using Terraform import functionality or retry with a unique configuration.",
+		)
+		return
+	}
+	if res.StatusCode != 201 {
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}

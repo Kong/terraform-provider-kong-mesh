@@ -50,128 +50,43 @@ func (r *MeshTraceResourceModel) RefreshFromSharedMeshTraceItem(ctx context.Cont
 			for _, backendsItem := range resp.Spec.Default.Backends {
 				var backends tfTypes.MeshTraceItemBackends
 
-				if backendsItem.Backends1 != nil {
-					backends.One = &tfTypes.Backends1{}
-					if backendsItem.Backends1.Datadog == nil {
-						backends.One.Datadog = nil
+				if backendsItem.Datadog == nil {
+					backends.Datadog = nil
+				} else {
+					backends.Datadog = &tfTypes.Datadog{}
+					backends.Datadog.SplitService = types.BoolPointerValue(backendsItem.Datadog.SplitService)
+					backends.Datadog.URL = types.StringValue(backendsItem.Datadog.URL)
+				}
+				if backendsItem.OpenTelemetry == nil {
+					backends.OpenTelemetry = nil
+				} else {
+					backends.OpenTelemetry = &tfTypes.MeshTraceItemOpenTelemetry{}
+					if backendsItem.OpenTelemetry.BackendRef == nil {
+						backends.OpenTelemetry.BackendRef = nil
 					} else {
-						backends.One.Datadog = &tfTypes.Datadog{}
-						backends.One.Datadog.SplitService = types.BoolPointerValue(backendsItem.Backends1.Datadog.SplitService)
-						backends.One.Datadog.URL = types.StringValue(backendsItem.Backends1.Datadog.URL)
-					}
-					if backendsItem.Backends1.OpenTelemetry == nil {
-						backends.One.OpenTelemetry = nil
-					} else {
-						backends.One.OpenTelemetry = &tfTypes.MeshTraceItemBackendsOpenTelemetry{}
-						if backendsItem.Backends1.OpenTelemetry.BackendRef == nil {
-							backends.One.OpenTelemetry.BackendRef = nil
-						} else {
-							backends.One.OpenTelemetry.BackendRef = &tfTypes.MeshAccessLogItemBackendsSpecRulesBackendRef{}
-							backends.One.OpenTelemetry.BackendRef.Kind = types.StringValue(string(backendsItem.Backends1.OpenTelemetry.BackendRef.Kind))
-							if len(backendsItem.Backends1.OpenTelemetry.BackendRef.Labels) > 0 {
-								backends.One.OpenTelemetry.BackendRef.Labels = make(map[string]types.String, len(backendsItem.Backends1.OpenTelemetry.BackendRef.Labels))
-								for key, value := range backendsItem.Backends1.OpenTelemetry.BackendRef.Labels {
-									backends.One.OpenTelemetry.BackendRef.Labels[key] = types.StringValue(value)
-								}
+						backends.OpenTelemetry.BackendRef = &tfTypes.MeshAccessLogItemSpecBackendRef{}
+						backends.OpenTelemetry.BackendRef.Kind = types.StringValue(string(backendsItem.OpenTelemetry.BackendRef.Kind))
+						if len(backendsItem.OpenTelemetry.BackendRef.Labels) > 0 {
+							backends.OpenTelemetry.BackendRef.Labels = make(map[string]types.String, len(backendsItem.OpenTelemetry.BackendRef.Labels))
+							for key, value := range backendsItem.OpenTelemetry.BackendRef.Labels {
+								backends.OpenTelemetry.BackendRef.Labels[key] = types.StringValue(value)
 							}
 						}
-					}
-					backends.One.Type = types.StringValue(string(backendsItem.Backends1.Type))
-					if backendsItem.Backends1.Zipkin == nil {
-						backends.One.Zipkin = nil
-					} else {
-						backends.One.Zipkin = &tfTypes.Zipkin{}
-						if backendsItem.Backends1.Zipkin.APIVersion != nil {
-							backends.One.Zipkin.APIVersion = types.StringValue(string(*backendsItem.Backends1.Zipkin.APIVersion))
-						} else {
-							backends.One.Zipkin.APIVersion = types.StringNull()
-						}
-						backends.One.Zipkin.SharedSpanContext = types.BoolPointerValue(backendsItem.Backends1.Zipkin.SharedSpanContext)
-						backends.One.Zipkin.TraceId128bit = types.BoolPointerValue(backendsItem.Backends1.Zipkin.TraceId128bit)
-						backends.One.Zipkin.URL = types.StringValue(backendsItem.Backends1.Zipkin.URL)
 					}
 				}
-				if backendsItem.Backends2 != nil {
-					backends.Two = &tfTypes.Backends1{}
-					if backendsItem.Backends2.Datadog == nil {
-						backends.Two.Datadog = nil
+				backends.Type = types.StringValue(string(backendsItem.Type))
+				if backendsItem.Zipkin == nil {
+					backends.Zipkin = nil
+				} else {
+					backends.Zipkin = &tfTypes.Zipkin{}
+					if backendsItem.Zipkin.APIVersion != nil {
+						backends.Zipkin.APIVersion = types.StringValue(string(*backendsItem.Zipkin.APIVersion))
 					} else {
-						backends.Two.Datadog = &tfTypes.Datadog{}
-						backends.Two.Datadog.SplitService = types.BoolPointerValue(backendsItem.Backends2.Datadog.SplitService)
-						backends.Two.Datadog.URL = types.StringValue(backendsItem.Backends2.Datadog.URL)
+						backends.Zipkin.APIVersion = types.StringNull()
 					}
-					if backendsItem.Backends2.OpenTelemetry == nil {
-						backends.Two.OpenTelemetry = nil
-					} else {
-						backends.Two.OpenTelemetry = &tfTypes.MeshTraceItemBackendsOpenTelemetry{}
-						if backendsItem.Backends2.OpenTelemetry.BackendRef == nil {
-							backends.Two.OpenTelemetry.BackendRef = nil
-						} else {
-							backends.Two.OpenTelemetry.BackendRef = &tfTypes.MeshAccessLogItemBackendsSpecRulesBackendRef{}
-							backends.Two.OpenTelemetry.BackendRef.Kind = types.StringValue(string(backendsItem.Backends2.OpenTelemetry.BackendRef.Kind))
-							if len(backendsItem.Backends2.OpenTelemetry.BackendRef.Labels) > 0 {
-								backends.Two.OpenTelemetry.BackendRef.Labels = make(map[string]types.String, len(backendsItem.Backends2.OpenTelemetry.BackendRef.Labels))
-								for key1, value1 := range backendsItem.Backends2.OpenTelemetry.BackendRef.Labels {
-									backends.Two.OpenTelemetry.BackendRef.Labels[key1] = types.StringValue(value1)
-								}
-							}
-						}
-					}
-					backends.Two.Type = types.StringValue(string(backendsItem.Backends2.Type))
-					if backendsItem.Backends2.Zipkin == nil {
-						backends.Two.Zipkin = nil
-					} else {
-						backends.Two.Zipkin = &tfTypes.Zipkin{}
-						if backendsItem.Backends2.Zipkin.APIVersion != nil {
-							backends.Two.Zipkin.APIVersion = types.StringValue(string(*backendsItem.Backends2.Zipkin.APIVersion))
-						} else {
-							backends.Two.Zipkin.APIVersion = types.StringNull()
-						}
-						backends.Two.Zipkin.SharedSpanContext = types.BoolPointerValue(backendsItem.Backends2.Zipkin.SharedSpanContext)
-						backends.Two.Zipkin.TraceId128bit = types.BoolPointerValue(backendsItem.Backends2.Zipkin.TraceId128bit)
-						backends.Two.Zipkin.URL = types.StringValue(backendsItem.Backends2.Zipkin.URL)
-					}
-				}
-				if backendsItem.Backends3 != nil {
-					backends.Three = &tfTypes.Backends1{}
-					if backendsItem.Backends3.Datadog == nil {
-						backends.Three.Datadog = nil
-					} else {
-						backends.Three.Datadog = &tfTypes.Datadog{}
-						backends.Three.Datadog.SplitService = types.BoolPointerValue(backendsItem.Backends3.Datadog.SplitService)
-						backends.Three.Datadog.URL = types.StringValue(backendsItem.Backends3.Datadog.URL)
-					}
-					if backendsItem.Backends3.OpenTelemetry == nil {
-						backends.Three.OpenTelemetry = nil
-					} else {
-						backends.Three.OpenTelemetry = &tfTypes.MeshTraceItemBackendsOpenTelemetry{}
-						if backendsItem.Backends3.OpenTelemetry.BackendRef == nil {
-							backends.Three.OpenTelemetry.BackendRef = nil
-						} else {
-							backends.Three.OpenTelemetry.BackendRef = &tfTypes.MeshAccessLogItemBackendsSpecRulesBackendRef{}
-							backends.Three.OpenTelemetry.BackendRef.Kind = types.StringValue(string(backendsItem.Backends3.OpenTelemetry.BackendRef.Kind))
-							if len(backendsItem.Backends3.OpenTelemetry.BackendRef.Labels) > 0 {
-								backends.Three.OpenTelemetry.BackendRef.Labels = make(map[string]types.String, len(backendsItem.Backends3.OpenTelemetry.BackendRef.Labels))
-								for key2, value2 := range backendsItem.Backends3.OpenTelemetry.BackendRef.Labels {
-									backends.Three.OpenTelemetry.BackendRef.Labels[key2] = types.StringValue(value2)
-								}
-							}
-						}
-					}
-					backends.Three.Type = types.StringValue(string(backendsItem.Backends3.Type))
-					if backendsItem.Backends3.Zipkin == nil {
-						backends.Three.Zipkin = nil
-					} else {
-						backends.Three.Zipkin = &tfTypes.Zipkin{}
-						if backendsItem.Backends3.Zipkin.APIVersion != nil {
-							backends.Three.Zipkin.APIVersion = types.StringValue(string(*backendsItem.Backends3.Zipkin.APIVersion))
-						} else {
-							backends.Three.Zipkin.APIVersion = types.StringNull()
-						}
-						backends.Three.Zipkin.SharedSpanContext = types.BoolPointerValue(backendsItem.Backends3.Zipkin.SharedSpanContext)
-						backends.Three.Zipkin.TraceId128bit = types.BoolPointerValue(backendsItem.Backends3.Zipkin.TraceId128bit)
-						backends.Three.Zipkin.URL = types.StringValue(backendsItem.Backends3.Zipkin.URL)
-					}
+					backends.Zipkin.SharedSpanContext = types.BoolPointerValue(backendsItem.Zipkin.SharedSpanContext)
+					backends.Zipkin.TraceId128bit = types.BoolPointerValue(backendsItem.Zipkin.TraceId128bit)
+					backends.Zipkin.URL = types.StringValue(backendsItem.Zipkin.URL)
 				}
 
 				r.Spec.Default.Backends = append(r.Spec.Default.Backends, backends)
@@ -233,8 +148,8 @@ func (r *MeshTraceResourceModel) RefreshFromSharedMeshTraceItem(ctx context.Cont
 			r.Spec.TargetRef.Kind = types.StringValue(string(resp.Spec.TargetRef.Kind))
 			if len(resp.Spec.TargetRef.Labels) > 0 {
 				r.Spec.TargetRef.Labels = make(map[string]types.String, len(resp.Spec.TargetRef.Labels))
-				for key3, value3 := range resp.Spec.TargetRef.Labels {
-					r.Spec.TargetRef.Labels[key3] = types.StringValue(value3)
+				for key1, value1 := range resp.Spec.TargetRef.Labels {
+					r.Spec.TargetRef.Labels[key1] = types.StringValue(value1)
 				}
 			}
 			r.Spec.TargetRef.SectionName = types.StringPointerValue(resp.Spec.TargetRef.SectionName)
@@ -296,6 +211,27 @@ func (r *MeshTraceResourceModel) ToOperationsGetMeshTraceRequest(ctx context.Con
 	return &out, diags
 }
 
+func (r *MeshTraceResourceModel) ToOperationsPostMeshTraceRequest(ctx context.Context) (*operations.PostMeshTraceRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	meshTraceItem, meshTraceItemDiags := r.ToSharedMeshTraceItemInput(ctx)
+	diags.Append(meshTraceItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PostMeshTraceRequest{
+		Mesh:          mesh,
+		MeshTraceItem: *meshTraceItem,
+	}
+
+	return &out, diags
+}
+
 func (r *MeshTraceResourceModel) ToOperationsPutMeshTraceRequest(ctx context.Context) (*operations.PutMeshTraceRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -341,244 +277,81 @@ func (r *MeshTraceResourceModel) ToSharedMeshTraceItemInput(ctx context.Context)
 	var defaultVar *shared.MeshTraceItemDefault
 	if r.Spec.Default != nil {
 		backends := make([]shared.MeshTraceItemBackends, 0, len(r.Spec.Default.Backends))
-		for backendsItem := range r.Spec.Default.Backends {
-			if r.Spec.Default.Backends[backendsItem].One != nil {
-				typeVar1 := shared.MeshTraceItemBackendsType(r.Spec.Default.Backends[backendsItem].One.Type.ValueString())
-				var zipkin *shared.Zipkin
-				if r.Spec.Default.Backends[backendsItem].One.Zipkin != nil {
-					apiVersion := new(shared.APIVersion)
-					if !r.Spec.Default.Backends[backendsItem].One.Zipkin.APIVersion.IsUnknown() && !r.Spec.Default.Backends[backendsItem].One.Zipkin.APIVersion.IsNull() {
-						*apiVersion = shared.APIVersion(r.Spec.Default.Backends[backendsItem].One.Zipkin.APIVersion.ValueString())
-					} else {
-						apiVersion = nil
-					}
-					sharedSpanContext := new(bool)
-					if !r.Spec.Default.Backends[backendsItem].One.Zipkin.SharedSpanContext.IsUnknown() && !r.Spec.Default.Backends[backendsItem].One.Zipkin.SharedSpanContext.IsNull() {
-						*sharedSpanContext = r.Spec.Default.Backends[backendsItem].One.Zipkin.SharedSpanContext.ValueBool()
-					} else {
-						sharedSpanContext = nil
-					}
-					traceId128bit := new(bool)
-					if !r.Spec.Default.Backends[backendsItem].One.Zipkin.TraceId128bit.IsUnknown() && !r.Spec.Default.Backends[backendsItem].One.Zipkin.TraceId128bit.IsNull() {
-						*traceId128bit = r.Spec.Default.Backends[backendsItem].One.Zipkin.TraceId128bit.ValueBool()
-					} else {
-						traceId128bit = nil
-					}
-					var url string
-					url = r.Spec.Default.Backends[backendsItem].One.Zipkin.URL.ValueString()
+		for backendsIndex := range r.Spec.Default.Backends {
+			var datadog *shared.Datadog
+			if r.Spec.Default.Backends[backendsIndex].Datadog != nil {
+				splitService := new(bool)
+				if !r.Spec.Default.Backends[backendsIndex].Datadog.SplitService.IsUnknown() && !r.Spec.Default.Backends[backendsIndex].Datadog.SplitService.IsNull() {
+					*splitService = r.Spec.Default.Backends[backendsIndex].Datadog.SplitService.ValueBool()
+				} else {
+					splitService = nil
+				}
+				var url string
+				url = r.Spec.Default.Backends[backendsIndex].Datadog.URL.ValueString()
 
-					zipkin = &shared.Zipkin{
-						APIVersion:        apiVersion,
-						SharedSpanContext: sharedSpanContext,
-						TraceId128bit:     traceId128bit,
-						URL:               url,
-					}
+				datadog = &shared.Datadog{
+					SplitService: splitService,
+					URL:          url,
 				}
-				var datadog *shared.Datadog
-				if r.Spec.Default.Backends[backendsItem].One.Datadog != nil {
-					splitService := new(bool)
-					if !r.Spec.Default.Backends[backendsItem].One.Datadog.SplitService.IsUnknown() && !r.Spec.Default.Backends[backendsItem].One.Datadog.SplitService.IsNull() {
-						*splitService = r.Spec.Default.Backends[backendsItem].One.Datadog.SplitService.ValueBool()
-					} else {
-						splitService = nil
-					}
-					var url1 string
-					url1 = r.Spec.Default.Backends[backendsItem].One.Datadog.URL.ValueString()
-
-					datadog = &shared.Datadog{
-						SplitService: splitService,
-						URL:          url1,
-					}
-				}
-				var openTelemetry *shared.MeshTraceItemBackendsOpenTelemetry
-				if r.Spec.Default.Backends[backendsItem].One.OpenTelemetry != nil {
-					var backendRef *shared.MeshTraceItemBackendsBackendRef
-					if r.Spec.Default.Backends[backendsItem].One.OpenTelemetry.BackendRef != nil {
-						kind := shared.MeshTraceItemBackendsKind(r.Spec.Default.Backends[backendsItem].One.OpenTelemetry.BackendRef.Kind.ValueString())
-						labels1 := make(map[string]string)
-						for labelsKey := range r.Spec.Default.Backends[backendsItem].One.OpenTelemetry.BackendRef.Labels {
-							var labelsInst string
-							labelsInst = r.Spec.Default.Backends[backendsItem].One.OpenTelemetry.BackendRef.Labels[labelsKey].ValueString()
-
-							labels1[labelsKey] = labelsInst
-						}
-						backendRef = &shared.MeshTraceItemBackendsBackendRef{
-							Kind:   kind,
-							Labels: labels1,
-						}
-					}
-					openTelemetry = &shared.MeshTraceItemBackendsOpenTelemetry{
-						BackendRef: backendRef,
-					}
-				}
-				backends1 := shared.Backends1{
-					Type:          typeVar1,
-					Zipkin:        zipkin,
-					Datadog:       datadog,
-					OpenTelemetry: openTelemetry,
-				}
-				backends = append(backends, shared.MeshTraceItemBackends{
-					Backends1: &backends1,
-				})
 			}
-			if r.Spec.Default.Backends[backendsItem].Two != nil {
-				var datadog1 *shared.BackendsDatadog
-				if r.Spec.Default.Backends[backendsItem].Two.Datadog != nil {
-					splitService1 := new(bool)
-					if !r.Spec.Default.Backends[backendsItem].Two.Datadog.SplitService.IsUnknown() && !r.Spec.Default.Backends[backendsItem].Two.Datadog.SplitService.IsNull() {
-						*splitService1 = r.Spec.Default.Backends[backendsItem].Two.Datadog.SplitService.ValueBool()
-					} else {
-						splitService1 = nil
-					}
-					var url2 string
-					url2 = r.Spec.Default.Backends[backendsItem].Two.Datadog.URL.ValueString()
+			var openTelemetry *shared.MeshTraceItemOpenTelemetry
+			if r.Spec.Default.Backends[backendsIndex].OpenTelemetry != nil {
+				var backendRef *shared.MeshTraceItemBackendRef
+				if r.Spec.Default.Backends[backendsIndex].OpenTelemetry.BackendRef != nil {
+					kind := shared.MeshTraceItemSpecKind(r.Spec.Default.Backends[backendsIndex].OpenTelemetry.BackendRef.Kind.ValueString())
+					labels1 := make(map[string]string)
+					for labelsKey := range r.Spec.Default.Backends[backendsIndex].OpenTelemetry.BackendRef.Labels {
+						var labelsInst string
+						labelsInst = r.Spec.Default.Backends[backendsIndex].OpenTelemetry.BackendRef.Labels[labelsKey].ValueString()
 
-					datadog1 = &shared.BackendsDatadog{
-						SplitService: splitService1,
-						URL:          url2,
+						labels1[labelsKey] = labelsInst
+					}
+					backendRef = &shared.MeshTraceItemBackendRef{
+						Kind:   kind,
+						Labels: labels1,
 					}
 				}
-				typeVar2 := shared.MeshTraceItemBackendsSpecType(r.Spec.Default.Backends[backendsItem].Two.Type.ValueString())
-				var openTelemetry1 *shared.MeshTraceItemBackendsSpecOpenTelemetry
-				if r.Spec.Default.Backends[backendsItem].Two.OpenTelemetry != nil {
-					var backendRef1 *shared.MeshTraceItemBackendsSpecBackendRef
-					if r.Spec.Default.Backends[backendsItem].Two.OpenTelemetry.BackendRef != nil {
-						kind1 := shared.MeshTraceItemBackendsSpecKind(r.Spec.Default.Backends[backendsItem].Two.OpenTelemetry.BackendRef.Kind.ValueString())
-						labels2 := make(map[string]string)
-						for labelsKey1 := range r.Spec.Default.Backends[backendsItem].Two.OpenTelemetry.BackendRef.Labels {
-							var labelsInst1 string
-							labelsInst1 = r.Spec.Default.Backends[backendsItem].Two.OpenTelemetry.BackendRef.Labels[labelsKey1].ValueString()
-
-							labels2[labelsKey1] = labelsInst1
-						}
-						backendRef1 = &shared.MeshTraceItemBackendsSpecBackendRef{
-							Kind:   kind1,
-							Labels: labels2,
-						}
-					}
-					openTelemetry1 = &shared.MeshTraceItemBackendsSpecOpenTelemetry{
-						BackendRef: backendRef1,
-					}
+				openTelemetry = &shared.MeshTraceItemOpenTelemetry{
+					BackendRef: backendRef,
 				}
-				var zipkin1 *shared.BackendsZipkin
-				if r.Spec.Default.Backends[backendsItem].Two.Zipkin != nil {
-					apiVersion1 := new(shared.BackendsAPIVersion)
-					if !r.Spec.Default.Backends[backendsItem].Two.Zipkin.APIVersion.IsUnknown() && !r.Spec.Default.Backends[backendsItem].Two.Zipkin.APIVersion.IsNull() {
-						*apiVersion1 = shared.BackendsAPIVersion(r.Spec.Default.Backends[backendsItem].Two.Zipkin.APIVersion.ValueString())
-					} else {
-						apiVersion1 = nil
-					}
-					sharedSpanContext1 := new(bool)
-					if !r.Spec.Default.Backends[backendsItem].Two.Zipkin.SharedSpanContext.IsUnknown() && !r.Spec.Default.Backends[backendsItem].Two.Zipkin.SharedSpanContext.IsNull() {
-						*sharedSpanContext1 = r.Spec.Default.Backends[backendsItem].Two.Zipkin.SharedSpanContext.ValueBool()
-					} else {
-						sharedSpanContext1 = nil
-					}
-					traceId128bit1 := new(bool)
-					if !r.Spec.Default.Backends[backendsItem].Two.Zipkin.TraceId128bit.IsUnknown() && !r.Spec.Default.Backends[backendsItem].Two.Zipkin.TraceId128bit.IsNull() {
-						*traceId128bit1 = r.Spec.Default.Backends[backendsItem].Two.Zipkin.TraceId128bit.ValueBool()
-					} else {
-						traceId128bit1 = nil
-					}
-					var url3 string
-					url3 = r.Spec.Default.Backends[backendsItem].Two.Zipkin.URL.ValueString()
-
-					zipkin1 = &shared.BackendsZipkin{
-						APIVersion:        apiVersion1,
-						SharedSpanContext: sharedSpanContext1,
-						TraceId128bit:     traceId128bit1,
-						URL:               url3,
-					}
-				}
-				backends2 := shared.Backends2{
-					Datadog:       datadog1,
-					Type:          typeVar2,
-					OpenTelemetry: openTelemetry1,
-					Zipkin:        zipkin1,
-				}
-				backends = append(backends, shared.MeshTraceItemBackends{
-					Backends2: &backends2,
-				})
 			}
-			if r.Spec.Default.Backends[backendsItem].Three != nil {
-				var openTelemetry2 *shared.MeshTraceItemBackendsSpecDefaultOpenTelemetry
-				if r.Spec.Default.Backends[backendsItem].Three.OpenTelemetry != nil {
-					var backendRef2 *shared.MeshTraceItemBackendsSpecDefaultBackendRef
-					if r.Spec.Default.Backends[backendsItem].Three.OpenTelemetry.BackendRef != nil {
-						kind2 := shared.MeshTraceItemBackendsSpecDefaultKind(r.Spec.Default.Backends[backendsItem].Three.OpenTelemetry.BackendRef.Kind.ValueString())
-						labels3 := make(map[string]string)
-						for labelsKey2 := range r.Spec.Default.Backends[backendsItem].Three.OpenTelemetry.BackendRef.Labels {
-							var labelsInst2 string
-							labelsInst2 = r.Spec.Default.Backends[backendsItem].Three.OpenTelemetry.BackendRef.Labels[labelsKey2].ValueString()
+			type1 := shared.MeshTraceItemSpecType(r.Spec.Default.Backends[backendsIndex].Type.ValueString())
+			var zipkin *shared.Zipkin
+			if r.Spec.Default.Backends[backendsIndex].Zipkin != nil {
+				apiVersion := new(shared.APIVersion)
+				if !r.Spec.Default.Backends[backendsIndex].Zipkin.APIVersion.IsUnknown() && !r.Spec.Default.Backends[backendsIndex].Zipkin.APIVersion.IsNull() {
+					*apiVersion = shared.APIVersion(r.Spec.Default.Backends[backendsIndex].Zipkin.APIVersion.ValueString())
+				} else {
+					apiVersion = nil
+				}
+				sharedSpanContext := new(bool)
+				if !r.Spec.Default.Backends[backendsIndex].Zipkin.SharedSpanContext.IsUnknown() && !r.Spec.Default.Backends[backendsIndex].Zipkin.SharedSpanContext.IsNull() {
+					*sharedSpanContext = r.Spec.Default.Backends[backendsIndex].Zipkin.SharedSpanContext.ValueBool()
+				} else {
+					sharedSpanContext = nil
+				}
+				traceId128bit := new(bool)
+				if !r.Spec.Default.Backends[backendsIndex].Zipkin.TraceId128bit.IsUnknown() && !r.Spec.Default.Backends[backendsIndex].Zipkin.TraceId128bit.IsNull() {
+					*traceId128bit = r.Spec.Default.Backends[backendsIndex].Zipkin.TraceId128bit.ValueBool()
+				} else {
+					traceId128bit = nil
+				}
+				var url1 string
+				url1 = r.Spec.Default.Backends[backendsIndex].Zipkin.URL.ValueString()
 
-							labels3[labelsKey2] = labelsInst2
-						}
-						backendRef2 = &shared.MeshTraceItemBackendsSpecDefaultBackendRef{
-							Kind:   kind2,
-							Labels: labels3,
-						}
-					}
-					openTelemetry2 = &shared.MeshTraceItemBackendsSpecDefaultOpenTelemetry{
-						BackendRef: backendRef2,
-					}
+				zipkin = &shared.Zipkin{
+					APIVersion:        apiVersion,
+					SharedSpanContext: sharedSpanContext,
+					TraceId128bit:     traceId128bit,
+					URL:               url1,
 				}
-				typeVar3 := shared.MeshTraceItemBackendsSpecDefaultType(r.Spec.Default.Backends[backendsItem].Three.Type.ValueString())
-				var datadog2 *shared.MeshTraceItemBackendsDatadog
-				if r.Spec.Default.Backends[backendsItem].Three.Datadog != nil {
-					splitService2 := new(bool)
-					if !r.Spec.Default.Backends[backendsItem].Three.Datadog.SplitService.IsUnknown() && !r.Spec.Default.Backends[backendsItem].Three.Datadog.SplitService.IsNull() {
-						*splitService2 = r.Spec.Default.Backends[backendsItem].Three.Datadog.SplitService.ValueBool()
-					} else {
-						splitService2 = nil
-					}
-					var url4 string
-					url4 = r.Spec.Default.Backends[backendsItem].Three.Datadog.URL.ValueString()
-
-					datadog2 = &shared.MeshTraceItemBackendsDatadog{
-						SplitService: splitService2,
-						URL:          url4,
-					}
-				}
-				var zipkin2 *shared.MeshTraceItemBackendsZipkin
-				if r.Spec.Default.Backends[backendsItem].Three.Zipkin != nil {
-					apiVersion2 := new(shared.MeshTraceItemBackendsAPIVersion)
-					if !r.Spec.Default.Backends[backendsItem].Three.Zipkin.APIVersion.IsUnknown() && !r.Spec.Default.Backends[backendsItem].Three.Zipkin.APIVersion.IsNull() {
-						*apiVersion2 = shared.MeshTraceItemBackendsAPIVersion(r.Spec.Default.Backends[backendsItem].Three.Zipkin.APIVersion.ValueString())
-					} else {
-						apiVersion2 = nil
-					}
-					sharedSpanContext2 := new(bool)
-					if !r.Spec.Default.Backends[backendsItem].Three.Zipkin.SharedSpanContext.IsUnknown() && !r.Spec.Default.Backends[backendsItem].Three.Zipkin.SharedSpanContext.IsNull() {
-						*sharedSpanContext2 = r.Spec.Default.Backends[backendsItem].Three.Zipkin.SharedSpanContext.ValueBool()
-					} else {
-						sharedSpanContext2 = nil
-					}
-					traceId128bit2 := new(bool)
-					if !r.Spec.Default.Backends[backendsItem].Three.Zipkin.TraceId128bit.IsUnknown() && !r.Spec.Default.Backends[backendsItem].Three.Zipkin.TraceId128bit.IsNull() {
-						*traceId128bit2 = r.Spec.Default.Backends[backendsItem].Three.Zipkin.TraceId128bit.ValueBool()
-					} else {
-						traceId128bit2 = nil
-					}
-					var url5 string
-					url5 = r.Spec.Default.Backends[backendsItem].Three.Zipkin.URL.ValueString()
-
-					zipkin2 = &shared.MeshTraceItemBackendsZipkin{
-						APIVersion:        apiVersion2,
-						SharedSpanContext: sharedSpanContext2,
-						TraceId128bit:     traceId128bit2,
-						URL:               url5,
-					}
-				}
-				backends3 := shared.Backends3{
-					OpenTelemetry: openTelemetry2,
-					Type:          typeVar3,
-					Datadog:       datadog2,
-					Zipkin:        zipkin2,
-				}
-				backends = append(backends, shared.MeshTraceItemBackends{
-					Backends3: &backends3,
-				})
 			}
+			backends = append(backends, shared.MeshTraceItemBackends{
+				Datadog:       datadog,
+				OpenTelemetry: openTelemetry,
+				Type:          type1,
+				Zipkin:        zipkin,
+			})
 		}
 		var sampling *shared.Sampling
 		if r.Spec.Default.Sampling != nil {
@@ -704,13 +477,13 @@ func (r *MeshTraceResourceModel) ToSharedMeshTraceItemInput(ctx context.Context)
 	}
 	var targetRef *shared.MeshTraceItemTargetRef
 	if r.Spec.TargetRef != nil {
-		kind3 := shared.MeshTraceItemKind(r.Spec.TargetRef.Kind.ValueString())
-		labels4 := make(map[string]string)
-		for labelsKey3 := range r.Spec.TargetRef.Labels {
-			var labelsInst3 string
-			labelsInst3 = r.Spec.TargetRef.Labels[labelsKey3].ValueString()
+		kind1 := shared.MeshTraceItemKind(r.Spec.TargetRef.Kind.ValueString())
+		labels2 := make(map[string]string)
+		for labelsKey1 := range r.Spec.TargetRef.Labels {
+			var labelsInst1 string
+			labelsInst1 = r.Spec.TargetRef.Labels[labelsKey1].ValueString()
 
-			labels4[labelsKey3] = labelsInst3
+			labels2[labelsKey1] = labelsInst1
 		}
 		sectionName := new(string)
 		if !r.Spec.TargetRef.SectionName.IsUnknown() && !r.Spec.TargetRef.SectionName.IsNull() {
@@ -719,8 +492,8 @@ func (r *MeshTraceResourceModel) ToSharedMeshTraceItemInput(ctx context.Context)
 			sectionName = nil
 		}
 		targetRef = &shared.MeshTraceItemTargetRef{
-			Kind:        kind3,
-			Labels:      labels4,
+			Kind:        kind1,
+			Labels:      labels2,
 			SectionName: sectionName,
 		}
 	}

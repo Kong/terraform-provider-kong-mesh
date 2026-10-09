@@ -6,64 +6,62 @@ resource "kong-mesh_mesh_identity" "my_meshidentity" {
   name = "...my_name..."
   spec = {
     provider = {
-      three = {
-        bundled = {
-          autogenerate = {
-            enabled = false
-          }
-          ca = {
-            certificate = {
-              env_var = {
-                name = "...my_name..."
-              }
-              file = {
-                path = "...my_path..."
-              }
-              insecure_inline = {
-                value = "...my_value..."
-              }
-              secret_ref = {
-                kind = "Secret"
-                name = "...my_name..."
-              }
-              type = "Secret"
+      bundled = {
+        autogenerate = {
+          enabled = false
+        }
+        ca = {
+          certificate = {
+            env_var = {
+              name = "...my_name..."
             }
-            private_key = {
-              env_var = {
-                name = "...my_name..."
-              }
-              file = {
-                path = "...my_path..."
-              }
-              insecure_inline = {
-                value = "...my_value..."
-              }
-              secret_ref = {
-                kind = "Secret"
-                name = "...my_name..."
-              }
-              type = "InsecureInline"
+            file = {
+              path = "...my_path..."
             }
+            insecure_inline = {
+              value = "...my_value..."
+            }
+            secret_ref = {
+              kind = "Secret"
+              name = "...my_name..."
+            }
+            type = "InsecureInline"
           }
-          certificate_parameters = {
-            expiry = "...my_expiry..."
+          private_key = {
+            env_var = {
+              name = "...my_name..."
+            }
+            file = {
+              path = "...my_path..."
+            }
+            insecure_inline = {
+              value = "...my_value..."
+            }
+            secret_ref = {
+              kind = "Secret"
+              name = "...my_name..."
+            }
+            type = "File"
           }
-          insecure_allow_self_signed = false
-          mesh_trust_creation        = "Disabled"
         }
-        extension = {
-          certmanager = {
-            config = "{ \"see\": \"documentation\" }"
-            name   = "...my_name..."
-          }
+        certificate_parameters = {
+          expiry = "...my_expiry..."
         }
-        spire = {
-          agent = {
-            timeout = "...my_timeout..."
-          }
-        }
-        type = "Spire"
+        insecure_allow_self_signed = true
+        mesh_trust_creation        = "Enabled"
       }
+      extension = {
+        vault = {
+          config = "{ \"see\": \"documentation\" }"
+          name   = "...my_name..."
+        }
+      }
+      spire = {
+        agent = {
+          timeout = "...my_timeout..."
+        }
+      }
+      type = "Bundled"
     }
     selector = {
       dataplane = {

@@ -131,6 +131,27 @@ func (r *MeshTLSResourceModel) ToOperationsGetMeshTLSRequest(ctx context.Context
 	return &out, diags
 }
 
+func (r *MeshTLSResourceModel) ToOperationsPostMeshTLSRequest(ctx context.Context) (*operations.PostMeshTLSRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	meshTLSItem, meshTLSItemDiags := r.ToSharedMeshTLSItemInput(ctx)
+	diags.Append(meshTLSItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PostMeshTLSRequest{
+		Mesh:        mesh,
+		MeshTLSItem: *meshTLSItem,
+	}
+
+	return &out, diags
+}
+
 func (r *MeshTLSResourceModel) ToOperationsPutMeshTLSRequest(ctx context.Context) (*operations.PutMeshTLSRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 

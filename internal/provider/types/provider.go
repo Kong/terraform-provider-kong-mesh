@@ -2,8 +2,13 @@
 
 package types
 
+import (
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
+
 type Provider struct {
-	One   *One `queryParam:"inline" tfsdk:"one"`
-	Two   *One `queryParam:"inline" tfsdk:"two"`
-	Three *One `queryParam:"inline" tfsdk:"three"`
+	Bundled   *Bundled                   `tfsdk:"bundled"`
+	Extension *MeshIdentityItemExtension `tfsdk:"extension"`
+	Spire     *Spire                     `tfsdk:"spire"`
+	Type      types.String               `tfsdk:"type"`
 }

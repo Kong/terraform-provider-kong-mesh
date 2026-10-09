@@ -89,20 +89,20 @@ func (r *MeshHealthCheckResourceModel) RefreshFromSharedMeshHealthCheckItem(ctx 
 						to.Default.HTTP.RequestHeadersToAdd = nil
 					} else {
 						to.Default.HTTP.RequestHeadersToAdd = &tfTypes.RequestHeadersToAdd{}
-						to.Default.HTTP.RequestHeadersToAdd.Add = []tfTypes.MeshHTTPRouteItemFiltersSpecToRulesDefaultBackendRefs1Add{}
+						to.Default.HTTP.RequestHeadersToAdd.Add = []tfTypes.MeshHTTPRouteItemSpecToAdd{}
 
 						for _, addItem := range toItem.Default.HTTP.RequestHeadersToAdd.Add {
-							var add tfTypes.MeshHTTPRouteItemFiltersSpecToRulesDefaultBackendRefs1Add
+							var add tfTypes.MeshHTTPRouteItemSpecToAdd
 
 							add.Name = types.StringValue(addItem.Name)
 							add.Value = types.StringValue(addItem.Value)
 
 							to.Default.HTTP.RequestHeadersToAdd.Add = append(to.Default.HTTP.RequestHeadersToAdd.Add, add)
 						}
-						to.Default.HTTP.RequestHeadersToAdd.Set = []tfTypes.MeshHTTPRouteItemFiltersSpecToRulesDefaultBackendRefs1Add{}
+						to.Default.HTTP.RequestHeadersToAdd.Set = []tfTypes.MeshHTTPRouteItemSpecToAdd{}
 
 						for _, setItem := range toItem.Default.HTTP.RequestHeadersToAdd.Set {
-							var set tfTypes.MeshHTTPRouteItemFiltersSpecToRulesDefaultBackendRefs1Add
+							var set tfTypes.MeshHTTPRouteItemSpecToAdd
 
 							set.Name = types.StringValue(setItem.Name)
 							set.Value = types.StringValue(setItem.Value)
@@ -178,6 +178,27 @@ func (r *MeshHealthCheckResourceModel) ToOperationsGetMeshHealthCheckRequest(ctx
 	out := operations.GetMeshHealthCheckRequest{
 		Mesh: mesh,
 		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshHealthCheckResourceModel) ToOperationsPostMeshHealthCheckRequest(ctx context.Context) (*operations.PostMeshHealthCheckRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	meshHealthCheckItem, meshHealthCheckItemDiags := r.ToSharedMeshHealthCheckItemInput(ctx)
+	diags.Append(meshHealthCheckItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PostMeshHealthCheckRequest{
+		Mesh:                mesh,
+		MeshHealthCheckItem: *meshHealthCheckItem,
 	}
 
 	return &out, diags

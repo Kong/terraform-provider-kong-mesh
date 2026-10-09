@@ -8,7 +8,7 @@ import (
 
 type CaCert struct {
 	EnvVar         *MeshExternalServiceItemSpecTLSEnvVar         `tfsdk:"env_var"`
-	File           *MeshExternalServiceItemSpecTLSFile           `tfsdk:"file"`
+	File           *MeshExternalServiceItemFile                  `tfsdk:"file"`
 	InsecureInline *MeshExternalServiceItemSpecTLSInsecureInline `tfsdk:"insecure_inline"`
 	SecretRef      *MeshExternalServiceItemSpecTLSSecretRef      `tfsdk:"secret_ref"`
 	Type           types.String                                  `tfsdk:"type"`
