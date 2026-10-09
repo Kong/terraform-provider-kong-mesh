@@ -36,6 +36,7 @@ func TestMesh(t *testing.T) {
 		Cmd: []string{"run"},
 		Env: map[string]string{
 			"KUMA_MODE": "global",
+			"KUMA_API_SERVER_AUTHN_LOCALHOST_IS_ADMIN": "true",
 		},
 	}
 	if os.Getenv("RUNNER_DEBUG") == "1" {
