@@ -3,7 +3,7 @@
 all: generate
 
 .PHONY: generate
-generate: clean-plan-modifiers speakeasy generate-plan-modifiers
+generate: speakeasy
 
 speakeasy: check-speakeasy
 	speakeasy run --skip-versioning --output console --minimal
@@ -43,28 +43,3 @@ dev/use-local-shared-speakeasy:
 
 acceptance:
 	@TF_ACC=1 go test -count=1 -v ./tests/resources
-
-# renovate: datasource=go depName=Kong/shared-speakeasy/resource_plan_modifier packageName=github.com/Kong/shared-speakeasy/generators/resource_plan_modifier
-RESOURCE_PLAN_MODIFIER_VERSION := v0.0.15
-
-PLAN_MOD_CMD = $(if $(wildcard go.work),go run ../shared-speakeasy/generators/resource_plan_modifier,go run github.com/Kong/shared-speakeasy/generators/resource_plan_modifier@$(RESOURCE_PLAN_MODIFIER_VERSION))
-
-# plan modifiers are compiled by `speakeasy run`, so stale ones (removed or renamed resources) must go before it
-.PHONY: clean-plan-modifiers
-clean-plan-modifiers:
-	rm -f internal/provider/*_resource_plan_modify.go
-
-.PHONY: generate-plan-modifiers
-generate-plan-modifiers:
-	mkdir -p "resouce-plan-modifiers"
-	cat internal/provider/mesh*_resource.go \
-	| grep "Resource struct" \
-	| cut -d ' ' -f 2 \
-	| sed 's/Resource$$//' \
-	| while read RESOURCE; do \
-		LOWER=$$(echo $$RESOURCE | tr A-Z a-z); \
-		SDK_NAME=$$(grep -oE 'r\.client\.[A-Za-z]+' internal/provider/$${LOWER}_resource.go | head -1 | sed 's/r\.client\.//'); \
-		if grep -q 'Mesh string.*json:"mesh"' internal/provider/$${LOWER}_resource.go; then MESH_SCOPED=true; else MESH_SCOPED=false; fi; \
-		$(PLAN_MOD_CMD) \
-		internal/provider/$${LOWER}_resource_plan_modify.go $$RESOURCE terraform-provider-kong-mesh $$SDK_NAME $$MESH_SCOPED; \
-	done
