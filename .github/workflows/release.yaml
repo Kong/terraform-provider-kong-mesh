@@ -56,7 +56,7 @@ jobs:
           git push origin "v$NEW_VER"
       - name: Import GPG key
         if: ${{ steps.check_version.outputs.skip_release != 'true' }}
-        uses: crazy-max/ghaction-import-gpg@111c56156bcc6918c056dbef52164cfa583dc549 # v5.2.0
+        uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd # v7.0.0
         id: import_gpg
         with:
           gpg_private_key: ${{ secrets.TERRAFORM_GPG_PRIVATE_KEY }}
