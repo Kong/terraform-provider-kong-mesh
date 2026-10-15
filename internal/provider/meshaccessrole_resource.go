@@ -130,16 +130,6 @@ func (r *MeshAccessRoleResource) Schema(ctx context.Context, req resource.Schema
 									speakeasy_objectvalidators.NotNull(),
 								},
 								Attributes: map[string]schema.Attribute{
-									"destinations": schema.SingleNestedAttribute{
-										Optional: true,
-										Attributes: map[string]schema.Attribute{
-											"match": schema.MapAttribute{
-												Optional:    true,
-												ElementType: types.StringType,
-												Description: `Tags to match, can be used for both source and destinations`,
-											},
-										},
-									},
 									"dp_token": schema.SingleNestedAttribute{
 										Optional: true,
 										Attributes: map[string]schema.Attribute{
@@ -181,26 +171,6 @@ func (r *MeshAccessRoleResource) Schema(ctx context.Context, req resource.Schema
 														Optional: true,
 													},
 												},
-											},
-										},
-									},
-									"selectors": schema.SingleNestedAttribute{
-										Optional: true,
-										Attributes: map[string]schema.Attribute{
-											"match": schema.MapAttribute{
-												Optional:    true,
-												ElementType: types.StringType,
-												Description: `Tags to match, can be used for both source and destinations`,
-											},
-										},
-									},
-									"sources": schema.SingleNestedAttribute{
-										Optional: true,
-										Attributes: map[string]schema.Attribute{
-											"match": schema.MapAttribute{
-												Optional:    true,
-												ElementType: types.StringType,
-												Description: `Tags to match, can be used for both source and destinations`,
 											},
 										},
 									},

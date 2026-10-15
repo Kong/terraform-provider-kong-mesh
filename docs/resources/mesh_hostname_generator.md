@@ -20,10 +20,8 @@ resource "kong-mesh_mesh_hostname_generator" "my_meshhostnamegenerator" {
   name = "...my_name..."
   spec = {
     extension = {
-      other = {
-        config = "{ \"see\": \"documentation\" }"
-        type   = "...my_type..."
-      }
+      config = "{ \"see\": \"documentation\" }"
+      type   = "...my_type..."
     }
     selector = {
       mesh_external_service = {
@@ -84,14 +82,6 @@ Optional:
 <a id="nestedatt--spec--extension"></a>
 ### Nested Schema for `spec.extension`
 
-Optional:
-
-- `other` (Attributes) An extension this control plane does not ship. Its configuration is not described here. (see [below for nested schema](#nestedatt--spec--extension--other))
-- `route53` (Attributes) (see [below for nested schema](#nestedatt--spec--extension--route53))
-
-<a id="nestedatt--spec--extension--other"></a>
-### Nested Schema for `spec.extension.other`
-
 Required:
 
 - `type` (String) Type of the extension.
@@ -99,19 +89,6 @@ Required:
 Optional:
 
 - `config` (String) Config freeform configuration for the extension. Parsed as JSON.
-
-
-<a id="nestedatt--spec--extension--route53"></a>
-### Nested Schema for `spec.extension.route53`
-
-Required:
-
-- `type` (String) Type of the extension.
-
-Optional:
-
-- `config` (String) Config freeform configuration for the extension. Parsed as JSON.
-
 
 
 <a id="nestedatt--spec--selector"></a>

@@ -66,10 +66,8 @@ resource "kong-mesh_mesh_identity" "my_meshidentity" {
         mesh_trust_creation        = "Enabled"
       }
       extension = {
-        vault = {
-          config = "{ \"see\": \"documentation\" }"
-          name   = "...my_name..."
-        }
+        config = "{ \"see\": \"documentation\" }"
+        name   = "...my_name..."
       }
       spire = {
         agent = {
@@ -278,16 +276,6 @@ Optional:
 <a id="nestedatt--spec--provider--extension"></a>
 ### Nested Schema for `spec.provider.extension`
 
-Optional:
-
-- `acmpca` (Attributes) (see [below for nested schema](#nestedatt--spec--provider--extension--acmpca))
-- `certmanager` (Attributes) (see [below for nested schema](#nestedatt--spec--provider--extension--certmanager))
-- `other` (Attributes) An extension this control plane does not ship. Its configuration is not described here. (see [below for nested schema](#nestedatt--spec--provider--extension--other))
-- `vault` (Attributes) (see [below for nested schema](#nestedatt--spec--provider--extension--vault))
-
-<a id="nestedatt--spec--provider--extension--acmpca"></a>
-### Nested Schema for `spec.provider.extension.acmpca`
-
 Required:
 
 - `name` (String) Name is the name of the extension provider.
@@ -295,43 +283,6 @@ Required:
 Optional:
 
 - `config` (String) Config is a freeform configuration for the extension. Parsed as JSON.
-
-
-<a id="nestedatt--spec--provider--extension--certmanager"></a>
-### Nested Schema for `spec.provider.extension.certmanager`
-
-Required:
-
-- `name` (String) Name is the name of the extension provider.
-
-Optional:
-
-- `config` (String) Config is a freeform configuration for the extension. Parsed as JSON.
-
-
-<a id="nestedatt--spec--provider--extension--other"></a>
-### Nested Schema for `spec.provider.extension.other`
-
-Required:
-
-- `name` (String) Name is the name of the extension provider.
-
-Optional:
-
-- `config` (String) Config is a freeform configuration for the extension. Parsed as JSON.
-
-
-<a id="nestedatt--spec--provider--extension--vault"></a>
-### Nested Schema for `spec.provider.extension.vault`
-
-Required:
-
-- `name` (String) Name is the name of the extension provider.
-
-Optional:
-
-- `config` (String) Config is a freeform configuration for the extension. Parsed as JSON.
-
 
 
 <a id="nestedatt--spec--provider--spire"></a>

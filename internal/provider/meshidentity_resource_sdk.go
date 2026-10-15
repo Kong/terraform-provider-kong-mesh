@@ -137,48 +137,17 @@ func (r *MeshIdentityResourceModel) RefreshFromSharedMeshIdentityItem(ctx contex
 					r.Spec.Provider.Bundled.MeshTrustCreation = types.StringNull()
 				}
 			}
-			if resp.Spec.Provider.Extension != nil {
+			if resp.Spec.Provider.Extension == nil {
+				r.Spec.Provider.Extension = nil
+			} else {
 				r.Spec.Provider.Extension = &tfTypes.MeshIdentityItemExtension{}
-				if resp.Spec.Provider.Extension.ExtensionOther != nil {
-					r.Spec.Provider.Extension.Other = &tfTypes.ExtensionOther{}
-					if resp.Spec.Provider.Extension.ExtensionOther.Config == nil {
-						r.Spec.Provider.Extension.Other.Config = jsontypes.NewNormalizedNull()
-					} else {
-						configResult, _ := json.Marshal(resp.Spec.Provider.Extension.ExtensionOther.Config)
-						r.Spec.Provider.Extension.Other.Config = jsontypes.NewNormalizedValue(string(configResult))
-					}
-					r.Spec.Provider.Extension.Other.Name = types.StringValue(resp.Spec.Provider.Extension.ExtensionOther.Name)
+				if resp.Spec.Provider.Extension.Config == nil {
+					r.Spec.Provider.Extension.Config = jsontypes.NewNormalizedNull()
+				} else {
+					configResult, _ := json.Marshal(resp.Spec.Provider.Extension.Config)
+					r.Spec.Provider.Extension.Config = jsontypes.NewNormalizedValue(string(configResult))
 				}
-				if resp.Spec.Provider.Extension.Acmpca != nil {
-					r.Spec.Provider.Extension.Acmpca = &tfTypes.ExtensionOther{}
-					if resp.Spec.Provider.Extension.Acmpca.Config == nil {
-						r.Spec.Provider.Extension.Acmpca.Config = jsontypes.NewNormalizedNull()
-					} else {
-						configResult1, _ := json.Marshal(resp.Spec.Provider.Extension.Acmpca.Config)
-						r.Spec.Provider.Extension.Acmpca.Config = jsontypes.NewNormalizedValue(string(configResult1))
-					}
-					r.Spec.Provider.Extension.Acmpca.Name = types.StringValue(resp.Spec.Provider.Extension.Acmpca.Name)
-				}
-				if resp.Spec.Provider.Extension.Certmanager != nil {
-					r.Spec.Provider.Extension.Certmanager = &tfTypes.ExtensionOther{}
-					if resp.Spec.Provider.Extension.Certmanager.Config == nil {
-						r.Spec.Provider.Extension.Certmanager.Config = jsontypes.NewNormalizedNull()
-					} else {
-						configResult2, _ := json.Marshal(resp.Spec.Provider.Extension.Certmanager.Config)
-						r.Spec.Provider.Extension.Certmanager.Config = jsontypes.NewNormalizedValue(string(configResult2))
-					}
-					r.Spec.Provider.Extension.Certmanager.Name = types.StringValue(resp.Spec.Provider.Extension.Certmanager.Name)
-				}
-				if resp.Spec.Provider.Extension.Vault != nil {
-					r.Spec.Provider.Extension.Vault = &tfTypes.ExtensionOther{}
-					if resp.Spec.Provider.Extension.Vault.Config == nil {
-						r.Spec.Provider.Extension.Vault.Config = jsontypes.NewNormalizedNull()
-					} else {
-						configResult3, _ := json.Marshal(resp.Spec.Provider.Extension.Vault.Config)
-						r.Spec.Provider.Extension.Vault.Config = jsontypes.NewNormalizedValue(string(configResult3))
-					}
-					r.Spec.Provider.Extension.Vault.Name = types.StringValue(resp.Spec.Provider.Extension.Vault.Name)
-				}
+				r.Spec.Provider.Extension.Name = types.StringValue(resp.Spec.Provider.Extension.Name)
 			}
 			if resp.Spec.Provider.Spire == nil {
 				r.Spec.Provider.Spire = nil
@@ -492,81 +461,16 @@ func (r *MeshIdentityResourceModel) ToSharedMeshIdentityItemInput(ctx context.Co
 		}
 		var extension *shared.MeshIdentityItemExtension
 		if r.Spec.Provider.Extension != nil {
-			var acmpca *shared.Acmpca
-			if r.Spec.Provider.Extension.Acmpca != nil {
-				var config interface{}
-				if !r.Spec.Provider.Extension.Acmpca.Config.IsUnknown() && !r.Spec.Provider.Extension.Acmpca.Config.IsNull() {
-					_ = json.Unmarshal([]byte(r.Spec.Provider.Extension.Acmpca.Config.ValueString()), &config)
-				}
-				var name5 string
-				name5 = r.Spec.Provider.Extension.Acmpca.Name.ValueString()
+			var config interface{}
+			if !r.Spec.Provider.Extension.Config.IsUnknown() && !r.Spec.Provider.Extension.Config.IsNull() {
+				_ = json.Unmarshal([]byte(r.Spec.Provider.Extension.Config.ValueString()), &config)
+			}
+			var name5 string
+			name5 = r.Spec.Provider.Extension.Name.ValueString()
 
-				acmpca = &shared.Acmpca{
-					Config: config,
-					Name:   name5,
-				}
-			}
-			if acmpca != nil {
-				extension = &shared.MeshIdentityItemExtension{
-					Acmpca: acmpca,
-				}
-			}
-			var certmanager *shared.Certmanager
-			if r.Spec.Provider.Extension.Certmanager != nil {
-				var config1 interface{}
-				if !r.Spec.Provider.Extension.Certmanager.Config.IsUnknown() && !r.Spec.Provider.Extension.Certmanager.Config.IsNull() {
-					_ = json.Unmarshal([]byte(r.Spec.Provider.Extension.Certmanager.Config.ValueString()), &config1)
-				}
-				var name6 string
-				name6 = r.Spec.Provider.Extension.Certmanager.Name.ValueString()
-
-				certmanager = &shared.Certmanager{
-					Config: config1,
-					Name:   name6,
-				}
-			}
-			if certmanager != nil {
-				extension = &shared.MeshIdentityItemExtension{
-					Certmanager: certmanager,
-				}
-			}
-			var vault *shared.Vault
-			if r.Spec.Provider.Extension.Vault != nil {
-				var config2 interface{}
-				if !r.Spec.Provider.Extension.Vault.Config.IsUnknown() && !r.Spec.Provider.Extension.Vault.Config.IsNull() {
-					_ = json.Unmarshal([]byte(r.Spec.Provider.Extension.Vault.Config.ValueString()), &config2)
-				}
-				var name7 string
-				name7 = r.Spec.Provider.Extension.Vault.Name.ValueString()
-
-				vault = &shared.Vault{
-					Config: config2,
-					Name:   name7,
-				}
-			}
-			if vault != nil {
-				extension = &shared.MeshIdentityItemExtension{
-					Vault: vault,
-				}
-			}
-			var extensionOther *shared.ExtensionOther
-			if r.Spec.Provider.Extension.Other != nil {
-				var name8 string
-				name8 = r.Spec.Provider.Extension.Other.Name.ValueString()
-
-				var config3 interface{}
-				if !r.Spec.Provider.Extension.Other.Config.IsUnknown() && !r.Spec.Provider.Extension.Other.Config.IsNull() {
-					_ = json.Unmarshal([]byte(r.Spec.Provider.Extension.Other.Config.ValueString()), &config3)
-				}
-				extensionOther = &shared.ExtensionOther{
-					Name:   name8,
-					Config: config3,
-				}
-			}
-			if extensionOther != nil {
-				extension = &shared.MeshIdentityItemExtension{
-					ExtensionOther: extensionOther,
-				}
+			extension = &shared.MeshIdentityItemExtension{
+				Config: config,
+				Name:   name5,
 			}
 		}
 		var spire *shared.Spire

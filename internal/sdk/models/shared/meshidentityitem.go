@@ -4,7 +4,6 @@ package shared
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/utils"
 	"time"
@@ -441,275 +440,26 @@ func (b *Bundled) GetMeshTrustCreation() *MeshTrustCreation {
 	return b.MeshTrustCreation
 }
 
-// ExtensionOther - An extension this control plane does not ship. Its configuration is not described here.
-type ExtensionOther struct {
-	// Name is the name of the extension provider.
-	Name string `json:"name"`
-	// Config is a freeform configuration for the extension.
-	Config any `json:"config,omitempty"`
-}
-
-func (e ExtensionOther) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(e, "", false)
-}
-
-func (e *ExtensionOther) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &e, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (e *ExtensionOther) GetName() string {
-	if e == nil {
-		return ""
-	}
-	return e.Name
-}
-
-func (e *ExtensionOther) GetConfig() any {
-	if e == nil {
-		return nil
-	}
-	return e.Config
-}
-
-type Vault struct {
-	// Config is a freeform configuration for the extension.
-	Config any `json:"config,omitempty"`
-	// Name is the name of the extension provider.
-	Name string `json:"name"`
-}
-
-func (v Vault) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(v, "", false)
-}
-
-func (v *Vault) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &v, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (v *Vault) GetConfig() any {
-	if v == nil {
-		return nil
-	}
-	return v.Config
-}
-
-func (v *Vault) GetName() string {
-	if v == nil {
-		return ""
-	}
-	return v.Name
-}
-
-type Certmanager struct {
-	// Config is a freeform configuration for the extension.
-	Config any `json:"config,omitempty"`
-	// Name is the name of the extension provider.
-	Name string `json:"name"`
-}
-
-func (c Certmanager) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(c, "", false)
-}
-
-func (c *Certmanager) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &c, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (c *Certmanager) GetConfig() any {
-	if c == nil {
-		return nil
-	}
-	return c.Config
-}
-
-func (c *Certmanager) GetName() string {
-	if c == nil {
-		return ""
-	}
-	return c.Name
-}
-
-type Acmpca struct {
-	// Config is a freeform configuration for the extension.
-	Config any `json:"config,omitempty"`
-	// Name is the name of the extension provider.
-	Name string `json:"name"`
-}
-
-func (a Acmpca) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(a, "", false)
-}
-
-func (a *Acmpca) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (a *Acmpca) GetConfig() any {
-	if a == nil {
-		return nil
-	}
-	return a.Config
-}
-
-func (a *Acmpca) GetName() string {
-	if a == nil {
-		return ""
-	}
-	return a.Name
-}
-
-type MeshIdentityItemExtensionType string
-
-const (
-	MeshIdentityItemExtensionTypeAcmpca         MeshIdentityItemExtensionType = "acmpca"
-	MeshIdentityItemExtensionTypeCertmanager    MeshIdentityItemExtensionType = "certmanager"
-	MeshIdentityItemExtensionTypeVault          MeshIdentityItemExtensionType = "vault"
-	MeshIdentityItemExtensionTypeExtensionOther MeshIdentityItemExtensionType = "extension_Other"
-)
-
 // MeshIdentityItemExtension - Extension indicates that custom provider is used.
 type MeshIdentityItemExtension struct {
-	Acmpca         *Acmpca         `queryParam:"inline" union:"member"`
-	Certmanager    *Certmanager    `queryParam:"inline" union:"member"`
-	Vault          *Vault          `queryParam:"inline" union:"member"`
-	ExtensionOther *ExtensionOther `queryParam:"inline" union:"member"`
-
-	Type MeshIdentityItemExtensionType
+	// Config is a freeform configuration for the extension.
+	Config any `json:"config,omitempty"`
+	// Name is the name of the extension provider.
+	Name string `json:"name"`
 }
 
-func CreateMeshIdentityItemExtensionAcmpca(acmpca Acmpca) MeshIdentityItemExtension {
-	typ := MeshIdentityItemExtensionTypeAcmpca
-
-	return MeshIdentityItemExtension{
-		Acmpca: &acmpca,
-		Type:   typ,
-	}
-}
-
-func CreateMeshIdentityItemExtensionCertmanager(certmanager Certmanager) MeshIdentityItemExtension {
-	typ := MeshIdentityItemExtensionTypeCertmanager
-
-	return MeshIdentityItemExtension{
-		Certmanager: &certmanager,
-		Type:        typ,
-	}
-}
-
-func CreateMeshIdentityItemExtensionVault(vault Vault) MeshIdentityItemExtension {
-	typ := MeshIdentityItemExtensionTypeVault
-
-	return MeshIdentityItemExtension{
-		Vault: &vault,
-		Type:  typ,
-	}
-}
-
-func CreateMeshIdentityItemExtensionExtensionOther(extensionOther ExtensionOther) MeshIdentityItemExtension {
-	typ := MeshIdentityItemExtensionTypeExtensionOther
-
-	return MeshIdentityItemExtension{
-		ExtensionOther: &extensionOther,
-		Type:           typ,
-	}
-}
-
-func (u *MeshIdentityItemExtension) UnmarshalJSON(data []byte) error {
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var acmpca Acmpca = Acmpca{}
-	if err := utils.UnmarshalJSON(data, &acmpca, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshIdentityItemExtensionTypeAcmpca,
-			Value: &acmpca,
-		})
-	}
-
-	var certmanager Certmanager = Certmanager{}
-	if err := utils.UnmarshalJSON(data, &certmanager, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshIdentityItemExtensionTypeCertmanager,
-			Value: &certmanager,
-		})
-	}
-
-	var vault Vault = Vault{}
-	if err := utils.UnmarshalJSON(data, &vault, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshIdentityItemExtensionTypeVault,
-			Value: &vault,
-		})
-	}
-
-	var extensionOther ExtensionOther = ExtensionOther{}
-	if err := utils.UnmarshalJSON(data, &extensionOther, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  MeshIdentityItemExtensionTypeExtensionOther,
-			Value: &extensionOther,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshIdentityItemExtension", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshIdentityItemExtension", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(MeshIdentityItemExtensionType)
-	switch best.Type {
-	case MeshIdentityItemExtensionTypeAcmpca:
-		u.Acmpca = best.Value.(*Acmpca)
-		return nil
-	case MeshIdentityItemExtensionTypeCertmanager:
-		u.Certmanager = best.Value.(*Certmanager)
-		return nil
-	case MeshIdentityItemExtensionTypeVault:
-		u.Vault = best.Value.(*Vault)
-		return nil
-	case MeshIdentityItemExtensionTypeExtensionOther:
-		u.ExtensionOther = best.Value.(*ExtensionOther)
+func (m *MeshIdentityItemExtension) GetConfig() any {
+	if m == nil {
 		return nil
 	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshIdentityItemExtension", string(data))
+	return m.Config
 }
 
-func (u MeshIdentityItemExtension) MarshalJSON() ([]byte, error) {
-	if u.Acmpca != nil {
-		return utils.MarshalJSON(u.Acmpca, "", true)
+func (m *MeshIdentityItemExtension) GetName() string {
+	if m == nil {
+		return ""
 	}
-
-	if u.Certmanager != nil {
-		return utils.MarshalJSON(u.Certmanager, "", true)
-	}
-
-	if u.Vault != nil {
-		return utils.MarshalJSON(u.Vault, "", true)
-	}
-
-	if u.ExtensionOther != nil {
-		return utils.MarshalJSON(u.ExtensionOther, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type MeshIdentityItemExtension: all fields are null")
+	return m.Name
 }
 
 // Agent - Spire agent configuration

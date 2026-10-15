@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -260,94 +259,15 @@ func (r *MeshIdentityResource) Schema(ctx context.Context, req resource.SchemaRe
 							"extension": schema.SingleNestedAttribute{
 								Optional: true,
 								Attributes: map[string]schema.Attribute{
-									"acmpca": schema.SingleNestedAttribute{
-										Optional: true,
-										Attributes: map[string]schema.Attribute{
-											"config": schema.StringAttribute{
-												CustomType:  jsontypes.NormalizedType{},
-												Computed:    true,
-												Optional:    true,
-												Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
-											},
-											"name": schema.StringAttribute{
-												Required:    true,
-												Description: `Name is the name of the extension provider.`,
-											},
-										},
-										Validators: []validator.Object{
-											objectvalidator.ConflictsWith(path.Expressions{
-												path.MatchRelative().AtParent().AtName("other"),
-												path.MatchRelative().AtParent().AtName("certmanager"),
-												path.MatchRelative().AtParent().AtName("vault"),
-											}...),
-										},
+									"config": schema.StringAttribute{
+										CustomType:  jsontypes.NormalizedType{},
+										Computed:    true,
+										Optional:    true,
+										Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
 									},
-									"certmanager": schema.SingleNestedAttribute{
-										Optional: true,
-										Attributes: map[string]schema.Attribute{
-											"config": schema.StringAttribute{
-												CustomType:  jsontypes.NormalizedType{},
-												Computed:    true,
-												Optional:    true,
-												Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
-											},
-											"name": schema.StringAttribute{
-												Required:    true,
-												Description: `Name is the name of the extension provider.`,
-											},
-										},
-										Validators: []validator.Object{
-											objectvalidator.ConflictsWith(path.Expressions{
-												path.MatchRelative().AtParent().AtName("other"),
-												path.MatchRelative().AtParent().AtName("acmpca"),
-												path.MatchRelative().AtParent().AtName("vault"),
-											}...),
-										},
-									},
-									"other": schema.SingleNestedAttribute{
-										Optional: true,
-										Attributes: map[string]schema.Attribute{
-											"config": schema.StringAttribute{
-												CustomType:  jsontypes.NormalizedType{},
-												Computed:    true,
-												Optional:    true,
-												Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
-											},
-											"name": schema.StringAttribute{
-												Required:    true,
-												Description: `Name is the name of the extension provider.`,
-											},
-										},
-										Description: `An extension this control plane does not ship. Its configuration is not described here.`,
-										Validators: []validator.Object{
-											objectvalidator.ConflictsWith(path.Expressions{
-												path.MatchRelative().AtParent().AtName("acmpca"),
-												path.MatchRelative().AtParent().AtName("certmanager"),
-												path.MatchRelative().AtParent().AtName("vault"),
-											}...),
-										},
-									},
-									"vault": schema.SingleNestedAttribute{
-										Optional: true,
-										Attributes: map[string]schema.Attribute{
-											"config": schema.StringAttribute{
-												CustomType:  jsontypes.NormalizedType{},
-												Computed:    true,
-												Optional:    true,
-												Description: `Config is a freeform configuration for the extension. Parsed as JSON.`,
-											},
-											"name": schema.StringAttribute{
-												Required:    true,
-												Description: `Name is the name of the extension provider.`,
-											},
-										},
-										Validators: []validator.Object{
-											objectvalidator.ConflictsWith(path.Expressions{
-												path.MatchRelative().AtParent().AtName("other"),
-												path.MatchRelative().AtParent().AtName("acmpca"),
-												path.MatchRelative().AtParent().AtName("certmanager"),
-											}...),
-										},
+									"name": schema.StringAttribute{
+										Required:    true,
+										Description: `Name is the name of the extension provider.`,
 									},
 								},
 								Description: `Extension indicates that custom provider is used.`,
