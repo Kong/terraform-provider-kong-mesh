@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.9.0
+> Released on 2026/10/01
+>
+> - feat(resources): add `kong-mesh_mesh_open_telemetry_backend` resource for shared OTel collector config (#147)
+> - feat(resources): add `kong-mesh_mesh_zone_address` resource (#147)
+> - feat(resources): add `backend_ref` to MeshAccessLog, MeshMetric and MeshTrace OTel backends; `endpoint` is now optional and deprecated (#147)
+> - feat(resources): add `rules[].matches` (`spiffe_id`, `sni`) to MeshAccessLog, MeshRateLimit and MeshTimeout; add `sni` matching to MeshFaultInjection and MeshTrafficPermission (#147)
+> - feat(resources): add `endpoints[].priority` and new TLS cert forms (`type`, `secret_ref`, `insecure_inline`) to MeshExternalService (#147)
+> - feat(resources): add `Extension` provider type to MeshIdentity (#147)
+> - feat(resources): add computed `snis`, `status.conditions`, `kri`, `creation_time` and `modification_time` to several resources (#147)
+
+
+## 0.8.3
+> Released on 2026/10/01
+>
+> - chore(deps): bump customtypes to v0.2.8 (#146)
+> - fix(make): clean plan modifiers before speakeasy (#145)
+> - chore(deps): bump speakeasy-api/speakeasy from 1.642.1 to 1.791.0 (#100)
+> - chore(deps): upgrade golang from 1.24.1 to 1.26.0 (#125)
+
+
 ## 0.8.2
 > Released on 2026/04/01
 >

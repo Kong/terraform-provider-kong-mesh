@@ -2,9 +2,16 @@ name: Run Speakeasy on PR Open
 
 on:
   pull_request:
-    paths-ignore:
-      - '.github/**'
-      - 'examples/**'
+    types: [opened, synchronize, reopened]
+    # only inputs of `make generate`
+    paths:
+      - 'openapi.yaml'
+      - 'gen.yaml'
+      - '.speakeasy/workflow.yaml'
+      - 'Makefile'
+      - 'go.mod'
+      - 'go.sum'
+      - '.github/workflows/generate-speakeasy-on-pr.yaml'
   workflow_dispatch:
     inputs:
       branch:
@@ -21,12 +28,6 @@ jobs:
     env:
       REF: ${{ github.event.pull_request.head.ref || github.event.inputs.branch }}
     name: Run Speakeasy on PR Open
-    if: github.event.pull_request.head.ref == 'feat/platform-api-automated-update' ||
-      github.event.pull_request.head.ref == 'feat/platform-api-automated-update-mesh-v3' ||
-      github.event.pull_request.head.ref == 'mesh-v3' ||
-      github.event_name == 'workflow_dispatch' ||
-      github.actor == 'renovate[bot]' ||
-      github.actor == 'mend[bot]'
     runs-on: ubuntu-latest
     concurrency:
       group: speakeasy-${{ github.event.pull_request.number }}

@@ -5,12 +5,12 @@ management:
   docVersion: 2.0.0
   speakeasyVersion: 1.791.0
   generationVersion: 2.924.0
-  releaseVersion: 0.8.2
-  configChecksum: 3c99b22899a3006c9b9dce6c1572a25b
+  releaseVersion: 0.9.0
+  configChecksum: 0ace55c661990c9297d95fd412671d20
 persistentEdits:
-  generation_id: f756986c-90ea-4c01-b3a7-4f5add2d3191
-  pristine_commit_hash: 36943184c8f0f3e379cb6c27764f48b5909e3b8e
-  pristine_tree_hash: ef9f8dc582024809e272329afb90757474aea524
+  generation_id: 3285e21b-0a1a-466a-8f28-4cbc32e32276
+  pristine_commit_hash: c423bc9374660c0bd1b27016a43d9df38b0df6b2
+  pristine_tree_hash: 1488e032be8a4c4788279d6950ff463f4db509ba
 features:
   terraform:
     additionalDependencies: 0.1.0
@@ -34,8 +34,8 @@ trackedFiles:
     pristine_git_object: 8e707bb129af1da185ba30b4c289b0160819c437
   examples/provider/provider.tf:
     id: 954e955c0240
-    last_write_checksum: sha1:55ab96d209bb375ff32ef6e295dbace19e9ddb11
-    pristine_git_object: f69b8e21f8a631ee08c39da3a9f7f603d3017cee
+    last_write_checksum: sha1:5cd6b69029e291cbd70d0b63442f8e1c050ddc97
+    pristine_git_object: 28fc498281b3d863d71bf8b139121a154d0144a0
   examples/resources/kong-mesh_mesh/import-by-string-id.tf:
     id: 5703cf247414
     last_write_checksum: sha1:3e5defd972d611f0ffa2299752f3d010a4279b80
@@ -446,8 +446,8 @@ trackedFiles:
     pristine_git_object: fc26e30fdbacf69b0b0eb24f92ea726fedcba5c4
   go.mod:
     id: c47645c391ad
-    last_write_checksum: sha1:7a677e06e91a8aa694bd051b9c6942406081509e
-    pristine_git_object: 8b0c347c3c49564c6189e3be346973d251c61249
+    last_write_checksum: sha1:d21e463e991f9889c098ee8c5a1381b7530d4545
+    pristine_git_object: 1deda4431083dacab08ab1f4db855f836c4767fa
   internal/planmodifiers/boolplanmodifier/suppress_diff.go:
     id: 3cf85b98963e
     last_write_checksum: sha1:1e37c3d378182a201759b77d68d43534a9174fe2
@@ -1894,8 +1894,8 @@ trackedFiles:
     pristine_git_object: a614e37673d3ea81eabc6139236edfb22a15dc55
   internal/sdk/kongmesh.go:
     id: a3ff2dba35c0
-    last_write_checksum: sha1:ac18f95cdfb854a781373fc060c9c2d586e10d90
-    pristine_git_object: 5ea2321946f572faa05e00cd8aa70fb9a5bb28f7
+    last_write_checksum: sha1:a7749e5c4600f19fe6999e6c3917b97fda8ac066
+    pristine_git_object: f3b2d3ba72527e4f832d03b072729be27d0408e2
   internal/sdk/license.go:
     id: dcff75e01731
     last_write_checksum: sha1:58ebdbdd569e2296bb0990cc3aea4ba1b57b653d

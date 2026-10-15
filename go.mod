@@ -3,7 +3,7 @@ module github.com/kong/terraform-provider-kong-mesh
 go 1.25.10
 
 require (
-	github.com/Kong/shared-speakeasy/customtypes v0.2.7
+	github.com/Kong/shared-speakeasy/customtypes v0.2.8
 	github.com/Kong/shared-speakeasy/hclbuilder v0.0.5
 	github.com/Kong/shared-speakeasy/planmodifiers/arbitrary_json v0.0.1
 	github.com/Kong/shared-speakeasy/planmodifiers/suppress_zero_null v0.0.1
