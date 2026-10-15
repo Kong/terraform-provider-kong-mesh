@@ -2,7 +2,12 @@
 
 package types
 
+import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
+
 type Extension struct {
-	Other   *Other `queryParam:"inline" tfsdk:"other"`
-	Route53 *Other `queryParam:"inline" tfsdk:"route53"`
+	Config jsontypes.Normalized `tfsdk:"config"`
+	Type   types.String         `tfsdk:"type"`
 }

@@ -2,9 +2,12 @@
 
 package types
 
+import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
+
 type MeshIdentityItemExtension struct {
-	Other       *ExtensionOther `queryParam:"inline" tfsdk:"other"`
-	Acmpca      *ExtensionOther `queryParam:"inline" tfsdk:"acmpca"`
-	Certmanager *ExtensionOther `queryParam:"inline" tfsdk:"certmanager"`
-	Vault       *ExtensionOther `queryParam:"inline" tfsdk:"vault"`
+	Config jsontypes.Normalized `tfsdk:"config"`
+	Name   types.String         `tfsdk:"name"`
 }

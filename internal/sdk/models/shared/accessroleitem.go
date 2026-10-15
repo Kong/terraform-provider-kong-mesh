@@ -38,18 +38,6 @@ func (e *AccessRoleItemAccess) IsExact() bool {
 	return false
 }
 
-type Destinations struct {
-	// Tags to match, can be used for both source and destinations
-	Match map[string]string `json:"match,omitempty"`
-}
-
-func (d *Destinations) GetMatch() map[string]string {
-	if d == nil {
-		return nil
-	}
-	return d.Match
-}
-
 type AccessRoleItemTags struct {
 	Name  *string `json:"name,omitempty"`
 	Value *string `json:"value,omitempty"`
@@ -118,30 +106,6 @@ func (f *From) GetTargetRef() *AccessRoleItemRulesTargetRef {
 	return f.TargetRef
 }
 
-type Selectors struct {
-	// Tags to match, can be used for both source and destinations
-	Match map[string]string `json:"match,omitempty"`
-}
-
-func (s *Selectors) GetMatch() map[string]string {
-	if s == nil {
-		return nil
-	}
-	return s.Match
-}
-
-type Sources struct {
-	// Tags to match, can be used for both source and destinations
-	Match map[string]string `json:"match,omitempty"`
-}
-
-func (s *Sources) GetMatch() map[string]string {
-	if s == nil {
-		return nil
-	}
-	return s.Match
-}
-
 type AccessRoleItemTargetRef struct {
 	Kind   *string           `json:"kind,omitempty"`
 	Labels map[string]string `json:"labels,omitempty"`
@@ -208,20 +172,10 @@ func (a *AccessRoleItemTo) GetTargetRef() *AccessRoleItemRulesWhenTargetRef {
 }
 
 type When struct {
-	Destinations *Destinations            `json:"destinations,omitempty"`
-	DpToken      *DpToken                 `json:"dpToken,omitempty"`
-	From         *From                    `json:"from,omitempty"`
-	Selectors    *Selectors               `json:"selectors,omitempty"`
-	Sources      *Sources                 `json:"sources,omitempty"`
-	TargetRef    *AccessRoleItemTargetRef `json:"targetRef,omitempty"`
-	To           *AccessRoleItemTo        `json:"to,omitempty"`
-}
-
-func (w *When) GetDestinations() *Destinations {
-	if w == nil {
-		return nil
-	}
-	return w.Destinations
+	DpToken   *DpToken                 `json:"dpToken,omitempty"`
+	From      *From                    `json:"from,omitempty"`
+	TargetRef *AccessRoleItemTargetRef `json:"targetRef,omitempty"`
+	To        *AccessRoleItemTo        `json:"to,omitempty"`
 }
 
 func (w *When) GetDpToken() *DpToken {
@@ -236,20 +190,6 @@ func (w *When) GetFrom() *From {
 		return nil
 	}
 	return w.From
-}
-
-func (w *When) GetSelectors() *Selectors {
-	if w == nil {
-		return nil
-	}
-	return w.Selectors
-}
-
-func (w *When) GetSources() *Sources {
-	if w == nil {
-		return nil
-	}
-	return w.Sources
 }
 
 func (w *When) GetTargetRef() *AccessRoleItemTargetRef {

@@ -51,10 +51,8 @@ resource "kong-mesh_mesh_identity" "my_meshidentity" {
         mesh_trust_creation        = "Enabled"
       }
       extension = {
-        vault = {
-          config = "{ \"see\": \"documentation\" }"
-          name   = "...my_name..."
-        }
+        config = "{ \"see\": \"documentation\" }"
+        name   = "...my_name..."
       }
       spire = {
         agent = {

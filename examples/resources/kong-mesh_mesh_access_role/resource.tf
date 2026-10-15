@@ -17,11 +17,6 @@ resource "kong-mesh_mesh_access_role" "my_meshaccessrole" {
       ]
       when = [
         {
-          destinations = {
-            match = {
-              key = "value"
-            }
-          }
           dp_token = {
             tags = [
               {
@@ -37,16 +32,6 @@ resource "kong-mesh_mesh_access_role" "my_meshaccessrole" {
                 key = "value"
               }
               name = "...my_name..."
-            }
-          }
-          selectors = {
-            match = {
-              key = "value"
-            }
-          }
-          sources = {
-            match = {
-              key = "value"
             }
           }
           target_ref = {

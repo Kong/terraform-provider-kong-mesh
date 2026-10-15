@@ -16,7 +16,7 @@ type Error struct {
 	Type string `json:"type"`
 	// Used to return the correlation ID back to the user, in the format `<app>:trace:<correlation_id>`.
 	//
-	Instance string `json:"instance"`
+	Instance *string `json:"instance,omitempty"`
 	// A human readable explanation specific to this occurrence of the problem.
 	// This field may contain request/entity data to help the user understand what went wrong.
 	// Enclose variable values in square brackets.
@@ -50,9 +50,9 @@ func (e *Error) GetType() string {
 	return e.Type
 }
 
-func (e *Error) GetInstance() string {
+func (e *Error) GetInstance() *string {
 	if e == nil {
-		return ""
+		return nil
 	}
 	return e.Instance
 }

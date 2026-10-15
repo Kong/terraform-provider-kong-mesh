@@ -76,17 +76,6 @@ func (r *MeshAccessRoleResourceModel) RefreshFromSharedAccessRoleItem(ctx contex
 					for _, whenItem := range rulesItem.When {
 						var when tfTypes.When
 
-						if whenItem.Destinations == nil {
-							when.Destinations = nil
-						} else {
-							when.Destinations = &tfTypes.Destinations{}
-							if len(whenItem.Destinations.Match) > 0 {
-								when.Destinations.Match = make(map[string]types.String, len(whenItem.Destinations.Match))
-								for key1, value1 := range whenItem.Destinations.Match {
-									when.Destinations.Match[key1] = types.StringValue(value1)
-								}
-							}
-						}
 						if whenItem.DpToken == nil {
 							when.DpToken = nil
 						} else {
@@ -117,33 +106,11 @@ func (r *MeshAccessRoleResourceModel) RefreshFromSharedAccessRoleItem(ctx contex
 								when.From.TargetRef.Kind = types.StringPointerValue(whenItem.From.TargetRef.Kind)
 								if len(whenItem.From.TargetRef.Labels) > 0 {
 									when.From.TargetRef.Labels = make(map[string]types.String, len(whenItem.From.TargetRef.Labels))
-									for key2, value2 := range whenItem.From.TargetRef.Labels {
-										when.From.TargetRef.Labels[key2] = types.StringValue(value2)
+									for key1, value1 := range whenItem.From.TargetRef.Labels {
+										when.From.TargetRef.Labels[key1] = types.StringValue(value1)
 									}
 								}
 								when.From.TargetRef.Name = types.StringPointerValue(whenItem.From.TargetRef.Name)
-							}
-						}
-						if whenItem.Selectors == nil {
-							when.Selectors = nil
-						} else {
-							when.Selectors = &tfTypes.Destinations{}
-							if len(whenItem.Selectors.Match) > 0 {
-								when.Selectors.Match = make(map[string]types.String, len(whenItem.Selectors.Match))
-								for key3, value3 := range whenItem.Selectors.Match {
-									when.Selectors.Match[key3] = types.StringValue(value3)
-								}
-							}
-						}
-						if whenItem.Sources == nil {
-							when.Sources = nil
-						} else {
-							when.Sources = &tfTypes.Destinations{}
-							if len(whenItem.Sources.Match) > 0 {
-								when.Sources.Match = make(map[string]types.String, len(whenItem.Sources.Match))
-								for key4, value4 := range whenItem.Sources.Match {
-									when.Sources.Match[key4] = types.StringValue(value4)
-								}
 							}
 						}
 						if whenItem.TargetRef == nil {
@@ -153,8 +120,8 @@ func (r *MeshAccessRoleResourceModel) RefreshFromSharedAccessRoleItem(ctx contex
 							when.TargetRef.Kind = types.StringPointerValue(whenItem.TargetRef.Kind)
 							if len(whenItem.TargetRef.Labels) > 0 {
 								when.TargetRef.Labels = make(map[string]types.String, len(whenItem.TargetRef.Labels))
-								for key5, value5 := range whenItem.TargetRef.Labels {
-									when.TargetRef.Labels[key5] = types.StringValue(value5)
+								for key2, value2 := range whenItem.TargetRef.Labels {
+									when.TargetRef.Labels[key2] = types.StringValue(value2)
 								}
 							}
 							when.TargetRef.Name = types.StringPointerValue(whenItem.TargetRef.Name)
@@ -170,8 +137,8 @@ func (r *MeshAccessRoleResourceModel) RefreshFromSharedAccessRoleItem(ctx contex
 								when.To.TargetRef.Kind = types.StringPointerValue(whenItem.To.TargetRef.Kind)
 								if len(whenItem.To.TargetRef.Labels) > 0 {
 									when.To.TargetRef.Labels = make(map[string]types.String, len(whenItem.To.TargetRef.Labels))
-									for key6, value6 := range whenItem.To.TargetRef.Labels {
-										when.To.TargetRef.Labels[key6] = types.StringValue(value6)
+									for key3, value3 := range whenItem.To.TargetRef.Labels {
+										when.To.TargetRef.Labels[key3] = types.StringValue(value3)
 									}
 								}
 								when.To.TargetRef.Name = types.StringPointerValue(whenItem.To.TargetRef.Name)
@@ -290,19 +257,6 @@ func (r *MeshAccessRoleResourceModel) ToSharedAccessRoleItemInput(ctx context.Co
 			if r.Rules[rulesIndex].When != nil {
 				when = make([]shared.When, 0, len(r.Rules[rulesIndex].When))
 				for whenIndex := range r.Rules[rulesIndex].When {
-					var destinations *shared.Destinations
-					if r.Rules[rulesIndex].When[whenIndex].Destinations != nil {
-						match := make(map[string]string)
-						for matchKey := range r.Rules[rulesIndex].When[whenIndex].Destinations.Match {
-							var matchInst string
-							matchInst = r.Rules[rulesIndex].When[whenIndex].Destinations.Match[matchKey].ValueString()
-
-							match[matchKey] = matchInst
-						}
-						destinations = &shared.Destinations{
-							Match: match,
-						}
-					}
 					var dpToken *shared.DpToken
 					if r.Rules[rulesIndex].When[whenIndex].DpToken != nil {
 						var tags []shared.AccessRoleItemTags
@@ -362,32 +316,6 @@ func (r *MeshAccessRoleResourceModel) ToSharedAccessRoleItemInput(ctx context.Co
 						}
 						from = &shared.From{
 							TargetRef: targetRef,
-						}
-					}
-					var selectors *shared.Selectors
-					if r.Rules[rulesIndex].When[whenIndex].Selectors != nil {
-						match1 := make(map[string]string)
-						for matchKey1 := range r.Rules[rulesIndex].When[whenIndex].Selectors.Match {
-							var matchInst1 string
-							matchInst1 = r.Rules[rulesIndex].When[whenIndex].Selectors.Match[matchKey1].ValueString()
-
-							match1[matchKey1] = matchInst1
-						}
-						selectors = &shared.Selectors{
-							Match: match1,
-						}
-					}
-					var sources *shared.Sources
-					if r.Rules[rulesIndex].When[whenIndex].Sources != nil {
-						match2 := make(map[string]string)
-						for matchKey2 := range r.Rules[rulesIndex].When[whenIndex].Sources.Match {
-							var matchInst2 string
-							matchInst2 = r.Rules[rulesIndex].When[whenIndex].Sources.Match[matchKey2].ValueString()
-
-							match2[matchKey2] = matchInst2
-						}
-						sources = &shared.Sources{
-							Match: match2,
 						}
 					}
 					var targetRef1 *shared.AccessRoleItemTargetRef
@@ -451,13 +379,10 @@ func (r *MeshAccessRoleResourceModel) ToSharedAccessRoleItemInput(ctx context.Co
 						}
 					}
 					when = append(when, shared.When{
-						Destinations: destinations,
-						DpToken:      dpToken,
-						From:         from,
-						Selectors:    selectors,
-						Sources:      sources,
-						TargetRef:    targetRef1,
-						To:           to,
+						DpToken:   dpToken,
+						From:      from,
+						TargetRef: targetRef1,
+						To:        to,
 					})
 				}
 			}

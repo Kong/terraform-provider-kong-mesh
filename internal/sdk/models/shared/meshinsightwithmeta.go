@@ -2,6 +2,11 @@
 
 package shared
 
+import (
+	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/utils"
+	"time"
+)
+
 type Dataplanes struct {
 	Offline           *int64 `json:"offline,omitempty"`
 	Online            *int64 `json:"online,omitempty"`
@@ -239,27 +244,30 @@ func (r *Resources) GetTotal() *int64 {
 type MeshInsightWithMeta struct {
 	// the type of this resource
 	Type string `json:"type"`
-	// the mesh this resource is part of
-	Mesh string `json:"mesh"`
-	// the name of the resource
+	// the name of the mesh this insight is computed for
 	Name string `json:"name"`
-	// Kuma Resource Identifier (KRI) of the given resource
-	Kri *string `json:"kri,omitempty"`
-	// Labels of the resource.
-	//
-	// Labels documented as `readOnly` are always computed by the control plane; a value supplied by the
-	// user is overwritten or rejected. The remaining documented labels can be set by the user, and the
-	// control plane only fills in a default when they are absent. `kuma.io/origin` and `kuma.io/zone` are
-	// immutable after creation.
-	//
-	// Every other key under `kuma.io/` or `k8s.kuma.io/` is reserved and rejected.
-	//
-	Labels     map[string]string `json:"labels"`
-	Dataplanes *Dataplanes       `json:"dataplanes,omitempty"`
-	DpVersions *DpVersions       `json:"dpVersions,omitempty"`
+	// Labels computed by the control plane, if any.
+	Labels map[string]string `json:"labels,omitempty"`
+	// Time at which the resource was created
+	CreationTime *time.Time `json:"creationTime,omitempty"`
+	// Time at which the resource was updated
+	ModificationTime *time.Time  `json:"modificationTime,omitempty"`
+	Dataplanes       *Dataplanes `json:"dataplanes,omitempty"`
+	DpVersions       *DpVersions `json:"dpVersions,omitempty"`
 	// mTLS statistics
 	MTLS      *MeshInsightWithMetaMTLS `json:"mTLS,omitempty"`
 	Resources map[string]Resources     `json:"resources,omitempty"`
+}
+
+func (m MeshInsightWithMeta) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshInsightWithMeta) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (m *MeshInsightWithMeta) GetType() string {
@@ -269,13 +277,6 @@ func (m *MeshInsightWithMeta) GetType() string {
 	return m.Type
 }
 
-func (m *MeshInsightWithMeta) GetMesh() string {
-	if m == nil {
-		return ""
-	}
-	return m.Mesh
-}
-
 func (m *MeshInsightWithMeta) GetName() string {
 	if m == nil {
 		return ""
@@ -283,18 +284,25 @@ func (m *MeshInsightWithMeta) GetName() string {
 	return m.Name
 }
 
-func (m *MeshInsightWithMeta) GetKri() *string {
+func (m *MeshInsightWithMeta) GetLabels() map[string]string {
 	if m == nil {
 		return nil
 	}
-	return m.Kri
+	return m.Labels
 }
 
-func (m *MeshInsightWithMeta) GetLabels() map[string]string {
+func (m *MeshInsightWithMeta) GetCreationTime() *time.Time {
 	if m == nil {
-		return map[string]string{}
+		return nil
 	}
-	return m.Labels
+	return m.CreationTime
+}
+
+func (m *MeshInsightWithMeta) GetModificationTime() *time.Time {
+	if m == nil {
+		return nil
+	}
+	return m.ModificationTime
 }
 
 func (m *MeshInsightWithMeta) GetDataplanes() *Dataplanes {

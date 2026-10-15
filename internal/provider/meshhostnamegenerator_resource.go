@@ -6,7 +6,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
-	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -93,44 +92,14 @@ func (r *MeshHostnameGeneratorResource) Schema(ctx context.Context, req resource
 					"extension": schema.SingleNestedAttribute{
 						Optional: true,
 						Attributes: map[string]schema.Attribute{
-							"other": schema.SingleNestedAttribute{
-								Optional: true,
-								Attributes: map[string]schema.Attribute{
-									"config": schema.StringAttribute{
-										CustomType:  jsontypes.NormalizedType{},
-										Optional:    true,
-										Description: `Config freeform configuration for the extension. Parsed as JSON.`,
-									},
-									"type": schema.StringAttribute{
-										Required:    true,
-										Description: `Type of the extension.`,
-									},
-								},
-								Description: `An extension this control plane does not ship. Its configuration is not described here.`,
-								Validators: []validator.Object{
-									objectvalidator.ConflictsWith(path.Expressions{
-										path.MatchRelative().AtParent().AtName("route53"),
-									}...),
-								},
+							"config": schema.StringAttribute{
+								CustomType:  jsontypes.NormalizedType{},
+								Optional:    true,
+								Description: `Config freeform configuration for the extension. Parsed as JSON.`,
 							},
-							"route53": schema.SingleNestedAttribute{
-								Optional: true,
-								Attributes: map[string]schema.Attribute{
-									"config": schema.StringAttribute{
-										CustomType:  jsontypes.NormalizedType{},
-										Optional:    true,
-										Description: `Config freeform configuration for the extension. Parsed as JSON.`,
-									},
-									"type": schema.StringAttribute{
-										Required:    true,
-										Description: `Type of the extension.`,
-									},
-								},
-								Validators: []validator.Object{
-									objectvalidator.ConflictsWith(path.Expressions{
-										path.MatchRelative().AtParent().AtName("other"),
-									}...),
-								},
+							"type": schema.StringAttribute{
+								Required:    true,
+								Description: `Type of the extension.`,
 							},
 						},
 						Description: `Extension struct for a plugin configuration`,
