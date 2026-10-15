@@ -6048,146 +6048,9 @@ components:
       required:
         - status
         - title
-        - instance
         - type
         - detail
       title: Error
-    Meta:
-      type: object
-      properties:
-        type:
-          description: the type of this resource
-          type: string
-          example: Dataplane
-          x-speakeasy-param-computed: false
-        mesh:
-          description: the mesh this resource is part of
-          type: string
-          example: default
-          maxLength: 253
-          pattern: '^[0-9a-z-_.]*$'
-          x-speakeasy-param-computed: false
-        name:
-          description: the name of the resource
-          type: string
-          example: my-resource
-          maxLength: 253
-          pattern: '^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$'
-          x-speakeasy-param-computed: false
-        kri:
-          description: Kuma Resource Identifier (KRI) of the given resource
-          type: string
-          example: kri_mtp_default_zone-east_kuma-demo_mypolicy1_
-          readOnly: true
-          x-go-name: KRI
-          x-speakeasy-param-computed: false
-          x-speakeasy-param-suppress-computed-diff: true
-        labels:
-          description: |
-            Labels of the resource.
-
-            Labels documented as `readOnly` are always computed by the control plane; a value supplied by the
-            user is overwritten or rejected. The remaining documented labels can be set by the user, and the
-            control plane only fills in a default when they are absent. `kuma.io/origin` and `kuma.io/zone` are
-            immutable after creation.
-
-            Every other key under `kuma.io/` or `k8s.kuma.io/` is reserved and rejected.
-          type: object
-          example:
-            k8s.kuma.io/namespace: kuma-system
-            kuma.io/display-name: mtp
-            kuma.io/mesh: default
-            kuma.io/origin: zone
-          additionalProperties:
-            type: string
-          patternProperties:
-            ^kuma\.io/display-name$:
-              type: string
-              readOnly: true
-              description: Display name of the resource. Always computed by the control plane.
-              x-speakeasy-param-suppress-computed-diff: true
-            ^kuma\.io/origin$:
-              type: string
-              readOnly: true
-              description: 'Whether the resource originated on a zone or on global. Always computed by the control plane, and immutable.'
-              x-speakeasy-param-suppress-computed-diff: true
-            ^k8s\.kuma\.io/namespace$:
-              type: string
-              readOnly: true
-              description: Namespace the object lives in. Always computed by the control plane on Kubernetes.
-              x-speakeasy-param-suppress-computed-diff: true
-            ^kuma\.io/policy-role$:
-              type: string
-              readOnly: true
-              description: Role driving namespaced policy matching. Always computed by the control plane for namespaced policies on Kubernetes.
-              x-speakeasy-param-suppress-computed-diff: true
-            ^k8s\.kuma\.io/service-account$:
-              type: string
-              readOnly: true
-              description: Service account of the workload. Always computed by the control plane on Kubernetes.
-              x-speakeasy-param-suppress-computed-diff: true
-            ^kuma\.io/workload$:
-              type: string
-              readOnly: true
-              description: Workload the resource belongs to. Always computed by the control plane.
-              x-speakeasy-param-suppress-computed-diff: true
-            ^kuma\.io/listener-zoneingress$:
-              type: string
-              readOnly: true
-              description: Set to `enabled` when the proxy has a zone ingress listener. Always computed by the control plane.
-              x-speakeasy-param-suppress-computed-diff: true
-            ^kuma\.io/listener-zoneegress$:
-              type: string
-              readOnly: true
-              description: Set to `enabled` when the proxy has a zone egress listener. Always computed by the control plane.
-              x-speakeasy-param-suppress-computed-diff: true
-            ^kuma\.io/managed-by$:
-              type: string
-              readOnly: true
-              description: 'Component that generated the resource. Set by the control plane, cannot be set manually.'
-              x-speakeasy-param-suppress-computed-diff: true
-            ^kuma\.io/deletion-grace-period-started-at$:
-              type: string
-              readOnly: true
-              description: 'When the control plane started the grace period before deleting a generated `MeshService` no proxy serves. Set by the control plane, cannot be set manually.'
-              x-speakeasy-param-suppress-computed-diff: true
-            ^k8s\.kuma\.io/service-name$:
-              type: string
-              readOnly: true
-              description: 'Kubernetes `Service` a generated `MeshService` is derived from. Set by the control plane, cannot be set manually.'
-              x-speakeasy-param-suppress-computed-diff: true
-            ^k8s\.kuma\.io/is-headless-service$:
-              type: string
-              readOnly: true
-              description: 'Whether the Kubernetes `Service` a generated `MeshService` is derived from is headless. Set by the control plane, cannot be set manually.'
-              x-speakeasy-param-suppress-computed-diff: true
-            ^kuma\.io/mesh$:
-              type: string
-              description: Mesh the resource belongs to. Defaults to `default` when unset.
-            ^kuma\.io/zone$:
-              type: string
-              description: 'Zone the resource originated in. Defaults to the name of the zone it was applied on when unset, and is immutable afterwards.'
-            ^kuma\.io/env$:
-              type: string
-              description: Environment the resource was applied in. Defaults to `universal` or `kubernetes` when unset.
-            ^kuma\.io/kds-sync$:
-              type: string
-              enum:
-                - enabled
-                - disabled
-              description: Whether the resource is synced to the other control planes over KDS. Overrides the default of its type.
-              x-speakeasy-unknown-values: allow
-            ^kuma\.io/effect$:
-              type: string
-              enum:
-                - shadow
-              description: Set to `shadow` on a policy to keep it out of the proxy configuration while the Inspect API still reports it.
-          x-speakeasy-param-computed: false
-      required:
-        - type
-        - mesh
-        - name
-        - labels
     MeshItem:
       type: object
       properties:
@@ -13556,7 +13419,36 @@ components:
         - name
     MeshInsightWithMeta:
       allOf:
-        - $ref: '#/components/schemas/Meta'
+        - type: object
+          required:
+            - type
+            - name
+          properties:
+            type:
+              description: the type of this resource
+              type: string
+              example: MeshInsight
+            name:
+              description: the name of the mesh this insight is computed for
+              type: string
+              example: default
+            labels:
+              description: 'Labels computed by the control plane, if any.'
+              type: object
+              additionalProperties:
+                type: string
+            creationTime:
+              description: Time at which the resource was created
+              type: string
+              format: date-time
+              readOnly: true
+              x-speakeasy-param-suppress-computed-diff: true
+            modificationTime:
+              description: Time at which the resource was updated
+              type: string
+              format: date-time
+              readOnly: true
+              x-speakeasy-param-suppress-computed-diff: true
         - $ref: '#/components/schemas/MeshInsight'
     MeshInsight:
       description: MeshInsight defines the observed state of a Mesh.
@@ -14056,23 +13948,6 @@ components:
             extension:
               description: Extension struct for a plugin configuration
               type: object
-              oneOf:
-                - properties:
-                    config:
-                      $ref: '#/components/schemas/HostnameGeneratorRoute53ExtensionConfig'
-                    type:
-                      const: Route53
-                  title: Route53
-                - description: An extension this control plane does not ship. Its configuration is not described here.
-                  properties:
-                    type:
-                      default: null
-                      not:
-                        enum:
-                          - Route53
-                      nullable: true
-                      x-speakeasy-param-computed: false
-                  title: Other
               properties:
                 config:
                   description: Config freeform configuration for the extension.
@@ -14897,35 +14772,6 @@ components:
                 extension:
                   description: Extension indicates that custom provider is used.
                   type: object
-                  oneOf:
-                    - properties:
-                        config:
-                          $ref: '#/components/schemas/MeshIdentityAcmpcaExtensionConfig'
-                        name:
-                          const: acmpca
-                      title: acmpca
-                    - properties:
-                        config:
-                          $ref: '#/components/schemas/MeshIdentityCertmanagerExtensionConfig'
-                        name:
-                          const: certmanager
-                      title: certmanager
-                    - properties:
-                        config:
-                          $ref: '#/components/schemas/MeshIdentityVaultExtensionConfig'
-                        name:
-                          const: vault
-                      title: vault
-                    - description: An extension this control plane does not ship. Its configuration is not described here.
-                      properties:
-                        name:
-                          not:
-                            enum:
-                              - acmpca
-                              - certmanager
-                              - vault
-                            x-speakeasy-unknown-values: allow
-                      title: Other
                   properties:
                     config:
                       description: Config is a freeform configuration for the extension.
@@ -16192,623 +16038,6 @@ components:
         - type
         - name
         - spec
-    HostnameGeneratorRoute53ExtensionConfig:
-      description: Route53 configuration
-      type: object
-      properties:
-        hostedZoneId:
-          description: |-
-            HostedZoneId is used when HostnameGenerator is created on a Zone control plane.
-            It specifies the single AWS Route53 HostedZone to use.
-          type: string
-          x-speakeasy-param-computed: false
-        hostedZones:
-          description: |-
-            HostedZones is used when HostnameGenerator is created on the Global control plane.
-            It allows specifying different HostedZoneIds for different zones to prevent
-            zones from overriding each other's Route53 records.
-          type: array
-          items:
-            description: HostedZone maps a zone name to its corresponding AWS Route53 HostedZoneId
-            properties:
-              hostedZoneId:
-                description: HostedZoneId is the AWS Route53 HostedZoneId for this zone
-                type: string
-                x-speakeasy-param-computed: false
-              name:
-                description: Name is the zone control plane name (must match the zone name in multizone setup)
-                type: string
-                x-speakeasy-param-computed: false
-            required:
-              - hostedZoneId
-              - name
-            type: object
-          default: null
-          nullable: true
-          x-speakeasy-param-computed: false
-          x-speakeasy-plan-modifiers: SupressZeroNullModifier
-    MeshIdentityAcmpcaExtensionConfig:
-      type: object
-      properties:
-        arn:
-          description: ARN of the ACM Private CA (required)
-          type: string
-          x-speakeasy-param-computed: false
-        certificateParameters:
-          description: 'CertificateParameters for issued certificates (default: 120h, 5 days).'
-          type: object
-          properties:
-            expiry:
-              type: string
-              x-speakeasy-param-computed: false
-          x-speakeasy-param-computed: false
-        meshTrustCreation:
-          description: |-
-            MeshTrustCreation defines whether a MeshTrust resource should be automatically created
-            from an existing MeshIdentity. If not defined, the control plane automatically generates a MeshTrust.
-          type: string
-          enum:
-            - Enabled
-            - Disabled
-          x-speakeasy-param-computed: false
-          x-speakeasy-unknown-values: allow
-      required:
-        - arn
-    MeshIdentityCertmanagerExtensionConfig:
-      type: object
-      properties:
-        caCert:
-          description: |-
-            CACert is the CA certificate used for MeshTrust auto-creation.
-            Supports File, EnvVar, InsecureInline, and SecretRef sources.
-            If absent, the user must configure MeshTrust manually.
-          type: object
-          properties:
-            envVar:
-              type: object
-              properties:
-                name:
-                  type: string
-                  x-speakeasy-param-computed: false
-              required:
-                - name
-              x-speakeasy-param-computed: false
-            file:
-              type: object
-              properties:
-                path:
-                  type: string
-                  x-speakeasy-param-computed: false
-              required:
-                - path
-              x-speakeasy-param-computed: false
-            insecureInline:
-              type: object
-              properties:
-                value:
-                  type: string
-                  x-speakeasy-param-computed: false
-              required:
-                - value
-              x-speakeasy-param-computed: false
-            secretRef:
-              type: object
-              properties:
-                kind:
-                  type: string
-                  enum:
-                    - Secret
-                  x-speakeasy-param-computed: false
-                name:
-                  type: string
-                  x-speakeasy-param-computed: false
-              required:
-                - kind
-                - name
-              x-speakeasy-param-computed: false
-            type:
-              type: string
-              enum:
-                - File
-                - Secret
-                - EnvVar
-                - InsecureInline
-              x-speakeasy-param-computed: false
-              x-speakeasy-unknown-values: allow
-          required:
-            - type
-          x-speakeasy-param-computed: false
-        certificateParameters:
-          description: CertificateParameters controls issued workload certificate properties.
-          type: object
-          properties:
-            expiry:
-              description: 'Expiry is the validity duration of issued workload certificates. Default: 120h (5 days).'
-              type: string
-              x-speakeasy-param-computed: false
-          x-speakeasy-param-computed: false
-        issuerRef:
-          description: IssuerRef is the cert-manager issuer reference. Required.
-          type: object
-          properties:
-            group:
-              description: Group is the API group of the issuer object. Defaults to "cert-manager.io".
-              type: string
-              x-speakeasy-param-computed: false
-            kind:
-              description: Kind is the kind of the issuer object. Defaults to "Issuer".
-              type: string
-              x-speakeasy-param-computed: false
-            name:
-              description: Name is the name of the cert-manager Issuer or ClusterIssuer. Required.
-              type: string
-              x-speakeasy-param-computed: false
-          required:
-            - name
-          x-speakeasy-param-computed: false
-        meshTrustCreation:
-          description: |-
-            MeshTrustCreation defines whether a MeshTrust resource should be automatically created.
-            If not defined, the control plane automatically generates a MeshTrust when CACert is set.
-          type: string
-          enum:
-            - Enabled
-            - Disabled
-          x-speakeasy-param-computed: false
-          x-speakeasy-unknown-values: allow
-      required:
-        - issuerRef
-    MeshIdentityVaultExtensionConfig:
-      description: Vault configures the HashiCorp Vault PKI secrets engine as an identity provider.
-      type: object
-      properties:
-        connection:
-          description: Connection configures how the control plane reaches the Vault server.
-          type: object
-          properties:
-            agent:
-              description: Agent connects to a local Vault Agent sidecar. Required when Type is Agent.
-              type: object
-              properties:
-                address:
-                  description: Address is the HTTP/HTTPS URL of the Vault Agent.
-                  type: string
-                  x-speakeasy-param-computed: false
-                tls:
-                  description: Tls configures TLS for the connection to the agent.
-                  type: object
-                  properties:
-                    caCert:
-                      description: CaCert is the PEM-encoded CA certificate used to verify Vault's server certificate.
-                      type: object
-                      properties:
-                        envVar:
-                          type: object
-                          properties:
-                            name:
-                              type: string
-                              x-speakeasy-param-computed: false
-                          required:
-                            - name
-                          x-speakeasy-param-computed: false
-                        file:
-                          type: object
-                          properties:
-                            path:
-                              type: string
-                              x-speakeasy-param-computed: false
-                          required:
-                            - path
-                          x-speakeasy-param-computed: false
-                        insecureInline:
-                          type: object
-                          properties:
-                            value:
-                              type: string
-                              x-speakeasy-param-computed: false
-                          required:
-                            - value
-                          x-speakeasy-param-computed: false
-                        secretRef:
-                          type: object
-                          properties:
-                            kind:
-                              type: string
-                              enum:
-                                - Secret
-                              x-speakeasy-param-computed: false
-                            name:
-                              type: string
-                              x-speakeasy-param-computed: false
-                          required:
-                            - kind
-                            - name
-                          x-speakeasy-param-computed: false
-                        type:
-                          type: string
-                          enum:
-                            - File
-                            - Secret
-                            - EnvVar
-                            - InsecureInline
-                          x-speakeasy-param-computed: false
-                          x-speakeasy-unknown-values: allow
-                      required:
-                        - type
-                      x-speakeasy-param-computed: false
-                    serverName:
-                      description: ServerName overrides the hostname used for TLS SNI and certificate verification.
-                      type: string
-                      x-speakeasy-param-computed: false
-                    skipVerify:
-                      description: 'SkipVerify disables TLS certificate verification (insecure, for development only).'
-                      type: boolean
-                      x-speakeasy-param-computed: false
-                  x-speakeasy-param-computed: false
-              required:
-                - address
-              x-speakeasy-param-computed: false
-            namespace:
-              description: Namespace is the Vault namespace (Vault Enterprise only).
-              type: string
-              x-speakeasy-param-computed: false
-            server:
-              description: Server connects directly to a Vault server. Required when Type is Server.
-              type: object
-              properties:
-                address:
-                  description: Address is the HTTP/HTTPS URL of the Vault server.
-                  type: string
-                  x-speakeasy-param-computed: false
-                auth:
-                  description: Auth configures how the control plane authenticates to Vault.
-                  type: object
-                  properties:
-                    aws:
-                      description: Aws authenticates using AWS IAM or EC2 metadata. Required when Type is AWS.
-                      type: object
-                      properties:
-                        iamServerIdHeader:
-                          description: IamServerIdHeader is the value for the X-Vault-AWS-IAM-Server-ID header.
-                          type: string
-                          x-speakeasy-param-computed: false
-                        mount:
-                          description: |-
-                            Mount is the path under which the AWS auth method is mounted in Vault.
-                            Defaults to "aws" when not set.
-                          type: string
-                          x-speakeasy-param-computed: false
-                        role:
-                          description: Role is the Vault role to use for AWS authentication.
-                          type: string
-                          x-speakeasy-param-computed: false
-                        type:
-                          description: Type is the AWS authentication method.
-                          type: string
-                          enum:
-                            - IAM
-                            - EC2
-                          x-speakeasy-param-computed: false
-                          x-speakeasy-unknown-values: allow
-                      x-speakeasy-param-computed: false
-                    tls:
-                      description: Tls authenticates using a TLS client certificate. Required when Type is TLS.
-                      type: object
-                      properties:
-                        clientCert:
-                          description: ClientCert is a data source reference to the PEM-encoded client certificate.
-                          type: object
-                          properties:
-                            envVar:
-                              type: object
-                              properties:
-                                name:
-                                  type: string
-                                  x-speakeasy-param-computed: false
-                              required:
-                                - name
-                              x-speakeasy-param-computed: false
-                            file:
-                              type: object
-                              properties:
-                                path:
-                                  type: string
-                                  x-speakeasy-param-computed: false
-                              required:
-                                - path
-                              x-speakeasy-param-computed: false
-                            insecureInline:
-                              type: object
-                              properties:
-                                value:
-                                  type: string
-                                  x-speakeasy-param-computed: false
-                              required:
-                                - value
-                              x-speakeasy-param-computed: false
-                            secretRef:
-                              type: object
-                              properties:
-                                kind:
-                                  type: string
-                                  enum:
-                                    - Secret
-                                  x-speakeasy-param-computed: false
-                                name:
-                                  type: string
-                                  x-speakeasy-param-computed: false
-                              required:
-                                - kind
-                                - name
-                              x-speakeasy-param-computed: false
-                            type:
-                              type: string
-                              enum:
-                                - File
-                                - Secret
-                                - EnvVar
-                                - InsecureInline
-                              x-speakeasy-param-computed: false
-                              x-speakeasy-unknown-values: allow
-                          required:
-                            - type
-                          x-speakeasy-param-computed: false
-                        clientKey:
-                          description: ClientKey is a data source reference to the PEM-encoded client private key.
-                          type: object
-                          properties:
-                            envVar:
-                              type: object
-                              properties:
-                                name:
-                                  type: string
-                                  x-speakeasy-param-computed: false
-                              required:
-                                - name
-                              x-speakeasy-param-computed: false
-                            file:
-                              type: object
-                              properties:
-                                path:
-                                  type: string
-                                  x-speakeasy-param-computed: false
-                              required:
-                                - path
-                              x-speakeasy-param-computed: false
-                            insecureInline:
-                              type: object
-                              properties:
-                                value:
-                                  type: string
-                                  x-speakeasy-param-computed: false
-                              required:
-                                - value
-                              x-speakeasy-param-computed: false
-                            secretRef:
-                              type: object
-                              properties:
-                                kind:
-                                  type: string
-                                  enum:
-                                    - Secret
-                                  x-speakeasy-param-computed: false
-                                name:
-                                  type: string
-                                  x-speakeasy-param-computed: false
-                              required:
-                                - kind
-                                - name
-                              x-speakeasy-param-computed: false
-                            type:
-                              type: string
-                              enum:
-                                - File
-                                - Secret
-                                - EnvVar
-                                - InsecureInline
-                              x-speakeasy-param-computed: false
-                              x-speakeasy-unknown-values: allow
-                          required:
-                            - type
-                          x-speakeasy-param-computed: false
-                      required:
-                        - clientCert
-                        - clientKey
-                      x-speakeasy-param-computed: false
-                    token:
-                      description: Token authenticates using a static Vault token. Required when Type is Token.
-                      type: object
-                      properties:
-                        envVar:
-                          type: object
-                          properties:
-                            name:
-                              type: string
-                              x-speakeasy-param-computed: false
-                          required:
-                            - name
-                          x-speakeasy-param-computed: false
-                        file:
-                          type: object
-                          properties:
-                            path:
-                              type: string
-                              x-speakeasy-param-computed: false
-                          required:
-                            - path
-                          x-speakeasy-param-computed: false
-                        insecureInline:
-                          type: object
-                          properties:
-                            value:
-                              type: string
-                              x-speakeasy-param-computed: false
-                          required:
-                            - value
-                          x-speakeasy-param-computed: false
-                        secretRef:
-                          type: object
-                          properties:
-                            kind:
-                              type: string
-                              enum:
-                                - Secret
-                              x-speakeasy-param-computed: false
-                            name:
-                              type: string
-                              x-speakeasy-param-computed: false
-                          required:
-                            - kind
-                            - name
-                          x-speakeasy-param-computed: false
-                        type:
-                          type: string
-                          enum:
-                            - File
-                            - Secret
-                            - EnvVar
-                            - InsecureInline
-                          x-speakeasy-param-computed: false
-                          x-speakeasy-unknown-values: allow
-                      required:
-                        - type
-                      x-speakeasy-param-computed: false
-                    type:
-                      description: 'Type is the authentication method: Token, TLS, or AWS.'
-                      type: string
-                      enum:
-                        - Token
-                        - TLS
-                        - AWS
-                      x-speakeasy-param-computed: false
-                      x-speakeasy-unknown-values: allow
-                  required:
-                    - type
-                  x-speakeasy-param-computed: false
-                tls:
-                  description: Tls configures TLS for the connection to Vault.
-                  type: object
-                  properties:
-                    caCert:
-                      description: CaCert is the PEM-encoded CA certificate used to verify Vault's server certificate.
-                      type: object
-                      properties:
-                        envVar:
-                          type: object
-                          properties:
-                            name:
-                              type: string
-                              x-speakeasy-param-computed: false
-                          required:
-                            - name
-                          x-speakeasy-param-computed: false
-                        file:
-                          type: object
-                          properties:
-                            path:
-                              type: string
-                              x-speakeasy-param-computed: false
-                          required:
-                            - path
-                          x-speakeasy-param-computed: false
-                        insecureInline:
-                          type: object
-                          properties:
-                            value:
-                              type: string
-                              x-speakeasy-param-computed: false
-                          required:
-                            - value
-                          x-speakeasy-param-computed: false
-                        secretRef:
-                          type: object
-                          properties:
-                            kind:
-                              type: string
-                              enum:
-                                - Secret
-                              x-speakeasy-param-computed: false
-                            name:
-                              type: string
-                              x-speakeasy-param-computed: false
-                          required:
-                            - kind
-                            - name
-                          x-speakeasy-param-computed: false
-                        type:
-                          type: string
-                          enum:
-                            - File
-                            - Secret
-                            - EnvVar
-                            - InsecureInline
-                          x-speakeasy-param-computed: false
-                          x-speakeasy-unknown-values: allow
-                      required:
-                        - type
-                      x-speakeasy-param-computed: false
-                    serverName:
-                      description: ServerName overrides the hostname used for TLS SNI and certificate verification.
-                      type: string
-                      x-speakeasy-param-computed: false
-                    skipVerify:
-                      description: 'SkipVerify disables TLS certificate verification (insecure, for development only).'
-                      type: boolean
-                      x-speakeasy-param-computed: false
-                  x-speakeasy-param-computed: false
-              required:
-                - address
-                - auth
-              x-speakeasy-param-computed: false
-            type:
-              description: 'Type is the connection mode: Server (direct) or Agent (Vault Agent sidecar).'
-              type: string
-              enum:
-                - Server
-                - Agent
-              x-speakeasy-param-computed: false
-              x-speakeasy-unknown-values: allow
-          required:
-            - type
-          x-speakeasy-param-computed: false
-        meshTrustCreation:
-          description: |-
-            MeshTrustCreation controls whether the control plane creates a MeshTrust from the Vault PKI CA.
-            nil is treated as Enabled. Set to Disabled to manage MeshTrust resources manually.
-          type: string
-          enum:
-            - Enabled
-            - Disabled
-          x-speakeasy-param-computed: false
-          x-speakeasy-unknown-values: allow
-        pki:
-          description: Pki configures the PKI mount and certificate issuance parameters.
-          type: object
-          properties:
-            certificateParameters:
-              description: CertificateParameters controls parameters of issued workload certificates.
-              type: object
-              properties:
-                expiry:
-                  description: |-
-                    Expiry is the lifetime of issued certificates (default: 120h, 5 days).
-                    Vault's PKI role max_ttl takes precedence: if it is shorter, the issued certificate is capped accordingly.
-                  type: string
-                  x-speakeasy-param-computed: false
-              x-speakeasy-param-computed: false
-            mount:
-              description: |-
-                Mount is the mount path of the PKI secrets engine.
-                Defaults to "kong-mesh-pki-\u003cmesh\u003e" when not set.
-              type: string
-              x-speakeasy-param-computed: false
-            role:
-              description: |-
-                Role is the Vault PKI role used to issue certificates.
-                Defaults to "dataplanes" when not set.
-              type: string
-              x-speakeasy-param-computed: false
-          x-speakeasy-param-computed: false
     Tenant:
       type: object
       properties:
@@ -17261,16 +16490,6 @@ components:
                 type: array
                 items:
                   properties:
-                    destinations:
-                      type: object
-                      properties:
-                        match:
-                          description: 'Tags to match, can be used for both source and destinations'
-                          type: object
-                          additionalProperties:
-                            type: string
-                          x-speakeasy-param-computed: false
-                      x-speakeasy-param-computed: false
                     dpToken:
                       type: object
                       properties:
@@ -17307,26 +16526,6 @@ components:
                             name:
                               type: string
                               x-speakeasy-param-computed: false
-                          x-speakeasy-param-computed: false
-                      x-speakeasy-param-computed: false
-                    selectors:
-                      type: object
-                      properties:
-                        match:
-                          description: 'Tags to match, can be used for both source and destinations'
-                          type: object
-                          additionalProperties:
-                            type: string
-                          x-speakeasy-param-computed: false
-                      x-speakeasy-param-computed: false
-                    sources:
-                      type: object
-                      properties:
-                        match:
-                          description: 'Tags to match, can be used for both source and destinations'
-                          type: object
-                          additionalProperties:
-                            type: string
                           x-speakeasy-param-computed: false
                       x-speakeasy-param-computed: false
                     targetRef:
@@ -17490,6 +16689,7 @@ components:
       type: string
       enum:
         - required
+        - unique
         - is_array
         - is_base64
         - is_boolean
@@ -17505,6 +16705,7 @@ components:
         - unknown_property
         - missing_reference
         - is_label
+        - key_invalid
         - matches_regex
         - invalid
         - is_supported_network_availability_zone_list
@@ -17622,6 +16823,80 @@ components:
         - reason
         - rule
         - maximum
+    InvalidParameterMinimumTime:
+      type: object
+      properties:
+        field:
+          type: string
+          example: to
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
+        rule:
+          description: invalid parameters rules
+          type: string
+          enum:
+            - min_time
+          nullable: false
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
+        minimum:
+          type: string
+          format: date-time
+          example: '2026-10-01T00:00:00Z'
+        source:
+          type: string
+          example: body
+          default: null
+          nullable: true
+          x-speakeasy-param-computed: false
+        reason:
+          type: string
+          example: 'must be no earlier than 2026-10-01T00:00:00Z'
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
+      additionalProperties: false
+      required:
+        - field
+        - reason
+        - rule
+        - minimum
+    InvalidParameterMaximumTime:
+      type: object
+      properties:
+        field:
+          type: string
+          example: to
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
+        rule:
+          description: invalid parameters rules
+          type: string
+          enum:
+            - max_time
+          nullable: false
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
+        maximum:
+          type: string
+          format: date-time
+          example: '2026-10-31T23:59:59Z'
+        source:
+          type: string
+          example: body
+          default: null
+          nullable: true
+          x-speakeasy-param-computed: false
+        reason:
+          type: string
+          example: 'must be no later than 2026-10-31T23:59:59Z'
+          readOnly: true
+          x-speakeasy-param-suppress-computed-diff: true
+      additionalProperties: false
+      required:
+        - field
+        - reason
+        - rule
+        - maximum
     InvalidParameterChoiceItem:
       type: object
       properties:
@@ -17715,6 +16990,8 @@ components:
           - $ref: '#/components/schemas/InvalidParameterStandard'
           - $ref: '#/components/schemas/InvalidParameterMinimumLength'
           - $ref: '#/components/schemas/InvalidParameterMaximumLength'
+          - $ref: '#/components/schemas/InvalidParameterMinimumTime'
+          - $ref: '#/components/schemas/InvalidParameterMaximumTime'
           - $ref: '#/components/schemas/InvalidParameterChoiceItem'
           - $ref: '#/components/schemas/InvalidParameterDependentItem'
       minItems: 1
