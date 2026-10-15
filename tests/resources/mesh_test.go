@@ -1,19 +1,22 @@
 package tests
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
+	"io"
 	"net"
 	"os"
 	"testing"
 
 	"github.com/Kong/shared-speakeasy/hclbuilder"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/operations"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/models/shared"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
+	tcexec "github.com/testcontainers/testcontainers-go/exec"
 	"github.com/testcontainers/testcontainers-go/wait"
 )
 
@@ -26,7 +29,7 @@ func (g *TestLogConsumer) Accept(l testcontainers.Log) {
 func TestMesh(t *testing.T) {
 	ctx := t.Context()
 	req := testcontainers.ContainerRequest{
-		Image:        "kong/kuma-cp:2.10.1",
+		Image:        "kong/kuma-cp:3.0.0-preview.v6c3b256d2",
 		ExposedPorts: []string{"5681/tcp"},
 		WaitingFor: wait.ForAll(
 			wait.ForLog("default AccessRoleBinding created"),
@@ -53,50 +56,11 @@ func TestMesh(t *testing.T) {
 	defer testcontainers.CleanupContainer(t, cpContainer)
 	port, err := cpContainer.MappedPort(ctx, "5681/tcp")
 	require.NoError(t, err)
+	token := adminToken(t, cpContainer)
 
-	t.Run("should create a mesh without initial policies", func(t *testing.T) {
+	t.Run("create a mesh and modify labels on it", func(t *testing.T) {
 		serverURL := fmt.Sprintf("http://localhost:%d", port.Num())
-		builder := hclbuilder.NewWithProvider(hclbuilder.KongMesh, serverURL)
-
-		meshName := "m0"
-		meshResourceName := "m0"
-
-		// Create mesh resource
-		mesh, _ := hclbuilder.FromString(fmt.Sprintf(`
-resource "kong-mesh_mesh" "%s" {
-  type  = "Mesh"
-  name  = "%s"
-}
-`, meshResourceName, meshName))
-
-		// if this grows move this to shared-speakeasy
-		resource.ParallelTest(t, resource.TestCase{
-			ProtoV6ProviderFactories: providerFactory,
-			Steps: []resource.TestStep{
-				{
-					Config: builder.Upsert(mesh).Build(),
-					ConfigPlanChecks: resource.ConfigPlanChecks{
-						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction(builder.ResourceAddress("mesh", meshResourceName), plancheck.ResourceActionCreate),
-						},
-					},
-					ExpectNonEmptyPlan: true, // skip_creating_initial_policies was set by the hook
-				},
-				{
-					Config: builder.Upsert(mesh.AddAttribute("skip_creating_initial_policies", `["*"]`)).Build(),
-					ConfigPlanChecks: resource.ConfigPlanChecks{
-						PreApply: []plancheck.PlanCheck{
-							plancheck.ExpectResourceAction(builder.ResourceAddress("mesh", meshResourceName), plancheck.ResourceActionNoop),
-						},
-					},
-				},
-			},
-		})
-	})
-
-	t.Run("create a mesh and modify fields on it", func(t *testing.T) {
-		serverURL := fmt.Sprintf("http://localhost:%d", port.Num())
-		builder := hclbuilder.NewWithProvider(hclbuilder.KongMesh, serverURL)
+		builder := newBuilder(serverURL, token)
 
 		meshName := "m1"
 		meshResourceName := "m1"
@@ -105,16 +69,15 @@ resource "kong-mesh_mesh" "%s" {
 resource "kong-mesh_mesh" "%s" {
   type = "Mesh"
   name = "%s"
-  skip_creating_initial_policies = ["*"]
 }
 `, meshResourceName, meshName))
 
-		resource.ParallelTest(t, hclbuilder.CreateMeshAndModifyFields(providerFactory, builder, mesh))
+		resource.ParallelTest(t, hclbuilder.CreateMeshAndModifyLabels(providerFactory, builder, mesh))
 	})
 
 	t.Run("create a policy and modify fields on it", func(t *testing.T) {
 		serverURL := fmt.Sprintf("http://localhost:%d", port.Num())
-		builder := hclbuilder.NewWithProvider(hclbuilder.KongMesh, serverURL)
+		builder := newBuilder(serverURL, token)
 
 		meshName := "policy-test-mesh"
 		meshResourceName := "test_mesh"
@@ -123,7 +86,6 @@ resource "kong-mesh_mesh" "%s" {
 resource "kong-mesh_mesh" "%s" {
   type = "Mesh"
   name = "%s"
-  skip_creating_initial_policies = ["*"]
 }
 `, meshResourceName, meshName))
 
@@ -138,7 +100,7 @@ resource "kong-mesh_mesh_traffic_permission" "%s" {
 }
 `, policyResourceName, policyName, meshName))
 
-		resource.ParallelTest(t, hclbuilder.CreatePolicyAndModifyFields(providerFactory, builder, mesh, policy))
+		resource.ParallelTest(t, hclbuilder.CreatePolicyWithRulesAndModifyFields(providerFactory, builder, mesh, policy))
 	})
 
 	t.Run("not imported resource should error out with meaningful message", func(t *testing.T) {
@@ -147,13 +109,12 @@ resource "kong-mesh_mesh_traffic_permission" "%s" {
 		mtpName := "allow-all"
 		serverURL := fmt.Sprintf("http://localhost:%d", port.Num())
 
-		builder := hclbuilder.NewWithProvider(hclbuilder.KongMesh, serverURL)
+		builder := newBuilder(serverURL, token)
 
 		mesh, _ := hclbuilder.FromString(fmt.Sprintf(`
 resource "kong-mesh_mesh" "%s" {
   type = "Mesh"
   name = "%s"
-  skip_creating_initial_policies = ["*"]
 }
 `, meshResourceName, meshName))
 
@@ -167,7 +128,7 @@ resource "kong-mesh_mesh_traffic_permission" "%s" {
 }
 `, policyResourceName, mtpName, meshName))
 
-		resource.ParallelTest(t, hclbuilder.NotImportedResourceShouldError(providerFactory, builder, mesh, policy, func() { createAnMTP(t, "http://"+net.JoinHostPort("localhost", port.Port()), meshName, mtpName) }))
+		resource.ParallelTest(t, hclbuilder.NotImportedResourceWithRulesShouldError(providerFactory, builder, mesh, policy, func() { createAnMTP(t, "http://"+net.JoinHostPort("localhost", port.Port()), token, meshName, mtpName) }))
 	})
 
 	t.Run("should be able to store secrets", func(t *testing.T) {
@@ -175,13 +136,12 @@ resource "kong-mesh_mesh_traffic_permission" "%s" {
 		meshResourceName := "test_mesh"
 		serverURL := fmt.Sprintf("http://localhost:%d", port.Num())
 
-		builder := hclbuilder.NewWithProvider(hclbuilder.KongMesh, serverURL)
+		builder := newBuilder(serverURL, token)
 
 		mesh, _ := hclbuilder.FromString(fmt.Sprintf(`
 resource "kong-mesh_mesh" "%s" {
   type = "Mesh"
   name = "%s"
-  skip_creating_initial_policies = ["*"]
 }
 `, meshResourceName, meshName))
 
@@ -207,17 +167,41 @@ resource "kong-mesh_mesh_secret" "%s" {
 }
 `, skeyResourceName, skeyName, meshName))
 
-		resource.ParallelTest(t, hclbuilder.ShouldBeAbleToStoreSecrets(providerFactory, builder, mesh, scert, skey))
+		resource.ParallelTest(t, hclbuilder.ShouldBeAbleToStoreAndUpdateSecrets(providerFactory, builder, mesh, scert, skey))
 	})
 }
 
-func createAnMTP(t *testing.T, url string, meshName string, mtpName string) {
+// adminToken reads the admin user token from inside the container,
+// because only requests coming from the CP's loopback are treated as admin.
+func adminToken(t *testing.T, c testcontainers.Container) string {
+	t.Helper()
+	code, out, err := c.Exec(t.Context(), []string{"wget", "-qO-", "http://localhost:5681/global-secrets/admin-user-token"}, tcexec.Multiplexed())
+	require.NoError(t, err)
+	body, err := io.ReadAll(out)
+	require.NoError(t, err)
+	require.Equal(t, 0, code, string(body))
+	var secret struct {
+		Data string `json:"data"`
+	}
+	require.NoError(t, json.Unmarshal(body, &secret))
+	token, err := base64.StdEncoding.DecodeString(secret.Data)
+	require.NoError(t, err)
+	return string(token)
+}
+
+func newBuilder(serverURL string, token string) *hclbuilder.Builder {
+	builder := hclbuilder.NewWithProvider(hclbuilder.KongMesh, serverURL)
+	builder.SetAttribute(fmt.Sprintf("provider.%s.bearer_auth", hclbuilder.KongMesh), token)
+	return builder
+}
+
+func createAnMTP(t *testing.T, url string, token string, meshName string, mtpName string) {
 	ctx := t.Context()
 	opts := []sdk.SDKOption{
 		sdk.WithServerURL(url),
+		sdk.WithSecurity(shared.Security{BearerAuth: &token}),
 	}
 	client := sdk.New(opts...)
-	action := shared.ActionAllow
 	resp, err := client.MeshTrafficPermission.PutMeshTrafficPermission(ctx, operations.PutMeshTrafficPermissionRequest{
 		Mesh: meshName,
 		Name: mtpName,
@@ -226,10 +210,18 @@ func createAnMTP(t *testing.T, url string, meshName string, mtpName string) {
 			Name: mtpName,
 			Type: shared.MeshTrafficPermissionItemTypeMeshTrafficPermission,
 			Spec: shared.MeshTrafficPermissionItemSpec{
-				From: []shared.MeshTrafficPermissionItemFrom{
+				Rules: []shared.MeshTrafficPermissionItemRules{
 					{
-						TargetRef: shared.MeshTrafficPermissionItemSpecTargetRef{Kind: shared.MeshTrafficPermissionItemSpecKindMesh},
-						Default:   &shared.MeshTrafficPermissionItemDefault{Action: &action},
+						Default: shared.MeshTrafficPermissionItemDefault{
+							Allow: []shared.Allow{
+								{
+									SpiffeID: &shared.MeshTrafficPermissionItemSpiffeID{
+										Type:  shared.MeshTrafficPermissionItemSpecRulesTypePrefix,
+										Value: "spiffe://example.org",
+									},
+								},
+							},
+						},
 					},
 				},
 			},

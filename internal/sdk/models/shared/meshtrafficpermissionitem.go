@@ -33,202 +33,6 @@ func (e *MeshTrafficPermissionItemType) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// Action defines a behavior for the specified group of clients:
-type Action string
-
-const (
-	ActionAllow               Action = "Allow"
-	ActionDeny                Action = "Deny"
-	ActionAllowWithShadowDeny Action = "AllowWithShadowDeny"
-)
-
-func (e Action) ToPointer() *Action {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *Action) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Allow", "Deny", "AllowWithShadowDeny":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshTrafficPermissionItemDefault - Default is a configuration specific to the group of clients referenced in
-// 'targetRef'
-type MeshTrafficPermissionItemDefault struct {
-	// Action defines a behavior for the specified group of clients:
-	Action *Action `json:"action,omitempty"`
-}
-
-func (m *MeshTrafficPermissionItemDefault) GetAction() *Action {
-	if m == nil {
-		return nil
-	}
-	return m.Action
-}
-
-// MeshTrafficPermissionItemSpecKind - Kind of the referenced resource
-type MeshTrafficPermissionItemSpecKind string
-
-const (
-	MeshTrafficPermissionItemSpecKindMesh                 MeshTrafficPermissionItemSpecKind = "Mesh"
-	MeshTrafficPermissionItemSpecKindMeshSubset           MeshTrafficPermissionItemSpecKind = "MeshSubset"
-	MeshTrafficPermissionItemSpecKindMeshGateway          MeshTrafficPermissionItemSpecKind = "MeshGateway"
-	MeshTrafficPermissionItemSpecKindMeshService          MeshTrafficPermissionItemSpecKind = "MeshService"
-	MeshTrafficPermissionItemSpecKindMeshExternalService  MeshTrafficPermissionItemSpecKind = "MeshExternalService"
-	MeshTrafficPermissionItemSpecKindMeshMultiZoneService MeshTrafficPermissionItemSpecKind = "MeshMultiZoneService"
-	MeshTrafficPermissionItemSpecKindMeshServiceSubset    MeshTrafficPermissionItemSpecKind = "MeshServiceSubset"
-	MeshTrafficPermissionItemSpecKindMeshHTTPRoute        MeshTrafficPermissionItemSpecKind = "MeshHTTPRoute"
-	MeshTrafficPermissionItemSpecKindDataplane            MeshTrafficPermissionItemSpecKind = "Dataplane"
-)
-
-func (e MeshTrafficPermissionItemSpecKind) ToPointer() *MeshTrafficPermissionItemSpecKind {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshTrafficPermissionItemSpecKind) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshTrafficPermissionItemSpecProxyTypes string
-
-const (
-	MeshTrafficPermissionItemSpecProxyTypesSidecar MeshTrafficPermissionItemSpecProxyTypes = "Sidecar"
-	MeshTrafficPermissionItemSpecProxyTypesGateway MeshTrafficPermissionItemSpecProxyTypes = "Gateway"
-)
-
-func (e MeshTrafficPermissionItemSpecProxyTypes) ToPointer() *MeshTrafficPermissionItemSpecProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshTrafficPermissionItemSpecProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshTrafficPermissionItemSpecTargetRef - TargetRef is a reference to the resource that represents a group of
-// clients.
-type MeshTrafficPermissionItemSpecTargetRef struct {
-	// Kind of the referenced resource
-	Kind MeshTrafficPermissionItemSpecKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
-	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshTrafficPermissionItemSpecProxyTypes `json:"proxyTypes,omitempty"`
-	// SectionName is used to target specific section of resource.
-	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
-}
-
-func (m *MeshTrafficPermissionItemSpecTargetRef) GetKind() MeshTrafficPermissionItemSpecKind {
-	if m == nil {
-		return MeshTrafficPermissionItemSpecKind("")
-	}
-	return m.Kind
-}
-
-func (m *MeshTrafficPermissionItemSpecTargetRef) GetLabels() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Labels
-}
-
-func (m *MeshTrafficPermissionItemSpecTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshTrafficPermissionItemSpecTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshTrafficPermissionItemSpecTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
-func (m *MeshTrafficPermissionItemSpecTargetRef) GetProxyTypes() []MeshTrafficPermissionItemSpecProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
-func (m *MeshTrafficPermissionItemSpecTargetRef) GetSectionName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.SectionName
-}
-
-func (m *MeshTrafficPermissionItemSpecTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
-}
-
-type MeshTrafficPermissionItemFrom struct {
-	// Default is a configuration specific to the group of clients referenced in
-	// 'targetRef'
-	Default *MeshTrafficPermissionItemDefault `json:"default,omitempty"`
-	// TargetRef is a reference to the resource that represents a group of
-	// clients.
-	TargetRef MeshTrafficPermissionItemSpecTargetRef `json:"targetRef"`
-}
-
-func (m *MeshTrafficPermissionItemFrom) GetDefault() *MeshTrafficPermissionItemDefault {
-	if m == nil {
-		return nil
-	}
-	return m.Default
-}
-
-func (m *MeshTrafficPermissionItemFrom) GetTargetRef() MeshTrafficPermissionItemSpecTargetRef {
-	if m == nil {
-		return MeshTrafficPermissionItemSpecTargetRef{}
-	}
-	return m.TargetRef
-}
-
 // MeshTrafficPermissionItemSpecType - Type defines how to match traffic by SNI. Only `Exact` is supported.
 type MeshTrafficPermissionItemSpecType string
 
@@ -565,7 +369,7 @@ func (d *Deny) GetSpiffeID() *MeshTrafficPermissionItemSpecRulesSpiffeID {
 	return d.SpiffeID
 }
 
-type MeshTrafficPermissionItemSpecDefault struct {
+type MeshTrafficPermissionItemDefault struct {
 	// Allow definees a list of matches for which access will be allowed
 	Allow []Allow `json:"allow,omitempty"`
 	// AllowWithShadowDeny defines a list of matches for which access will be allowed but emits logs as if
@@ -575,21 +379,21 @@ type MeshTrafficPermissionItemSpecDefault struct {
 	Deny []Deny `json:"deny,omitempty"`
 }
 
-func (m *MeshTrafficPermissionItemSpecDefault) GetAllow() []Allow {
+func (m *MeshTrafficPermissionItemDefault) GetAllow() []Allow {
 	if m == nil {
 		return nil
 	}
 	return m.Allow
 }
 
-func (m *MeshTrafficPermissionItemSpecDefault) GetAllowWithShadowDeny() []AllowWithShadowDeny {
+func (m *MeshTrafficPermissionItemDefault) GetAllowWithShadowDeny() []AllowWithShadowDeny {
 	if m == nil {
 		return nil
 	}
 	return m.AllowWithShadowDeny
 }
 
-func (m *MeshTrafficPermissionItemSpecDefault) GetDeny() []Deny {
+func (m *MeshTrafficPermissionItemDefault) GetDeny() []Deny {
 	if m == nil {
 		return nil
 	}
@@ -597,12 +401,12 @@ func (m *MeshTrafficPermissionItemSpecDefault) GetDeny() []Deny {
 }
 
 type MeshTrafficPermissionItemRules struct {
-	Default MeshTrafficPermissionItemSpecDefault `json:"default"`
+	Default MeshTrafficPermissionItemDefault `json:"default"`
 }
 
-func (m *MeshTrafficPermissionItemRules) GetDefault() MeshTrafficPermissionItemSpecDefault {
+func (m *MeshTrafficPermissionItemRules) GetDefault() MeshTrafficPermissionItemDefault {
 	if m == nil {
-		return MeshTrafficPermissionItemSpecDefault{}
+		return MeshTrafficPermissionItemDefault{}
 	}
 	return m.Default
 }
@@ -611,15 +415,8 @@ func (m *MeshTrafficPermissionItemRules) GetDefault() MeshTrafficPermissionItemS
 type MeshTrafficPermissionItemKind string
 
 const (
-	MeshTrafficPermissionItemKindMesh                 MeshTrafficPermissionItemKind = "Mesh"
-	MeshTrafficPermissionItemKindMeshSubset           MeshTrafficPermissionItemKind = "MeshSubset"
-	MeshTrafficPermissionItemKindMeshGateway          MeshTrafficPermissionItemKind = "MeshGateway"
-	MeshTrafficPermissionItemKindMeshService          MeshTrafficPermissionItemKind = "MeshService"
-	MeshTrafficPermissionItemKindMeshExternalService  MeshTrafficPermissionItemKind = "MeshExternalService"
-	MeshTrafficPermissionItemKindMeshMultiZoneService MeshTrafficPermissionItemKind = "MeshMultiZoneService"
-	MeshTrafficPermissionItemKindMeshServiceSubset    MeshTrafficPermissionItemKind = "MeshServiceSubset"
-	MeshTrafficPermissionItemKindMeshHTTPRoute        MeshTrafficPermissionItemKind = "MeshHTTPRoute"
-	MeshTrafficPermissionItemKindDataplane            MeshTrafficPermissionItemKind = "Dataplane"
+	MeshTrafficPermissionItemKindMesh      MeshTrafficPermissionItemKind = "Mesh"
+	MeshTrafficPermissionItemKindDataplane MeshTrafficPermissionItemKind = "Dataplane"
 )
 
 func (e MeshTrafficPermissionItemKind) ToPointer() *MeshTrafficPermissionItemKind {
@@ -630,29 +427,7 @@ func (e MeshTrafficPermissionItemKind) ToPointer() *MeshTrafficPermissionItemKin
 func (e *MeshTrafficPermissionItemKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshTrafficPermissionItemProxyTypes string
-
-const (
-	MeshTrafficPermissionItemProxyTypesSidecar MeshTrafficPermissionItemProxyTypes = "Sidecar"
-	MeshTrafficPermissionItemProxyTypesGateway MeshTrafficPermissionItemProxyTypes = "Gateway"
-)
-
-func (e MeshTrafficPermissionItemProxyTypes) ToPointer() *MeshTrafficPermissionItemProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshTrafficPermissionItemProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
+		case "Mesh", "Dataplane":
 			return true
 		}
 	}
@@ -665,26 +440,13 @@ func (e *MeshTrafficPermissionItemProxyTypes) IsExact() bool {
 type MeshTrafficPermissionItemTargetRef struct {
 	// Kind of the referenced resource
 	Kind MeshTrafficPermissionItemKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select referenced real resources and to carry legacy
+	// service identity when a common TargetRef must still target old
+	// service-tag based paths.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshTrafficPermissionItemProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
 }
 
 func (m *MeshTrafficPermissionItemTargetRef) GetKind() MeshTrafficPermissionItemKind {
@@ -701,34 +463,6 @@ func (m *MeshTrafficPermissionItemTargetRef) GetLabels() map[string]string {
 	return m.Labels
 }
 
-func (m *MeshTrafficPermissionItemTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshTrafficPermissionItemTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshTrafficPermissionItemTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
-func (m *MeshTrafficPermissionItemTargetRef) GetProxyTypes() []MeshTrafficPermissionItemProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
 func (m *MeshTrafficPermissionItemTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
@@ -736,30 +470,14 @@ func (m *MeshTrafficPermissionItemTargetRef) GetSectionName() *string {
 	return m.SectionName
 }
 
-func (m *MeshTrafficPermissionItemTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
-}
-
 // MeshTrafficPermissionItemSpec - Spec is the specification of the Kuma MeshTrafficPermission resource.
 type MeshTrafficPermissionItemSpec struct {
-	// From list makes a match between clients and corresponding configurations
-	From []MeshTrafficPermissionItemFrom `json:"from,omitempty"`
 	// Rules defines inbound permissions configuration
 	Rules []MeshTrafficPermissionItemRules `json:"rules,omitempty"`
 	// TargetRef is a reference to the resource the policy takes an effect on.
 	// The resource could be either a real store object or virtual resource
 	// defined inplace.
 	TargetRef *MeshTrafficPermissionItemTargetRef `json:"targetRef,omitempty"`
-}
-
-func (m *MeshTrafficPermissionItemSpec) GetFrom() []MeshTrafficPermissionItemFrom {
-	if m == nil {
-		return nil
-	}
-	return m.From
 }
 
 func (m *MeshTrafficPermissionItemSpec) GetRules() []MeshTrafficPermissionItemRules {

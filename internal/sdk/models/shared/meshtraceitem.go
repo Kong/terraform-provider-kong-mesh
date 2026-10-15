@@ -97,7 +97,7 @@ func (e *MeshTraceItemSpecKind) UnmarshalJSON(data []byte) error {
 }
 
 // MeshTraceItemBackendRef - BackendRef is a reference to a MeshOpenTelemetryBackend resource that
-// defines the collector endpoint. Mutually exclusive with Endpoint.
+// defines the collector endpoint.
 type MeshTraceItemBackendRef struct {
 	// Kind of the backend resource.
 	Kind MeshTraceItemSpecKind `json:"kind"`
@@ -123,23 +123,8 @@ func (m *MeshTraceItemBackendRef) GetLabels() map[string]string {
 // MeshTraceItemOpenTelemetry - OpenTelemetry backend configuration.
 type MeshTraceItemOpenTelemetry struct {
 	// BackendRef is a reference to a MeshOpenTelemetryBackend resource that
-	// defines the collector endpoint. Mutually exclusive with Endpoint.
+	// defines the collector endpoint.
 	BackendRef *MeshTraceItemBackendRef `json:"backendRef,omitempty"`
-	// Address of OpenTelemetry collector.
-	//
-	// Deprecated: use BackendRef instead.
-	Endpoint *string `default:"" json:"endpoint"`
-}
-
-func (m MeshTraceItemOpenTelemetry) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(m, "", false)
-}
-
-func (m *MeshTraceItemOpenTelemetry) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
-		return err
-	}
-	return nil
 }
 
 func (m *MeshTraceItemOpenTelemetry) GetBackendRef() *MeshTraceItemBackendRef {
@@ -147,13 +132,6 @@ func (m *MeshTraceItemOpenTelemetry) GetBackendRef() *MeshTraceItemBackendRef {
 		return nil
 	}
 	return m.BackendRef
-}
-
-func (m *MeshTraceItemOpenTelemetry) GetEndpoint() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Endpoint
 }
 
 type MeshTraceItemSpecType string
@@ -733,15 +711,8 @@ func (m *MeshTraceItemDefault) GetTags() []Tags {
 type MeshTraceItemKind string
 
 const (
-	MeshTraceItemKindMesh                 MeshTraceItemKind = "Mesh"
-	MeshTraceItemKindMeshSubset           MeshTraceItemKind = "MeshSubset"
-	MeshTraceItemKindMeshGateway          MeshTraceItemKind = "MeshGateway"
-	MeshTraceItemKindMeshService          MeshTraceItemKind = "MeshService"
-	MeshTraceItemKindMeshExternalService  MeshTraceItemKind = "MeshExternalService"
-	MeshTraceItemKindMeshMultiZoneService MeshTraceItemKind = "MeshMultiZoneService"
-	MeshTraceItemKindMeshServiceSubset    MeshTraceItemKind = "MeshServiceSubset"
-	MeshTraceItemKindMeshHTTPRoute        MeshTraceItemKind = "MeshHTTPRoute"
-	MeshTraceItemKindDataplane            MeshTraceItemKind = "Dataplane"
+	MeshTraceItemKindMesh      MeshTraceItemKind = "Mesh"
+	MeshTraceItemKindDataplane MeshTraceItemKind = "Dataplane"
 )
 
 func (e MeshTraceItemKind) ToPointer() *MeshTraceItemKind {
@@ -752,29 +723,7 @@ func (e MeshTraceItemKind) ToPointer() *MeshTraceItemKind {
 func (e *MeshTraceItemKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshTraceItemProxyTypes string
-
-const (
-	MeshTraceItemProxyTypesSidecar MeshTraceItemProxyTypes = "Sidecar"
-	MeshTraceItemProxyTypesGateway MeshTraceItemProxyTypes = "Gateway"
-)
-
-func (e MeshTraceItemProxyTypes) ToPointer() *MeshTraceItemProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshTraceItemProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
+		case "Mesh", "Dataplane":
 			return true
 		}
 	}
@@ -787,26 +736,13 @@ func (e *MeshTraceItemProxyTypes) IsExact() bool {
 type MeshTraceItemTargetRef struct {
 	// Kind of the referenced resource
 	Kind MeshTraceItemKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select referenced real resources and to carry legacy
+	// service identity when a common TargetRef must still target old
+	// service-tag based paths.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshTraceItemProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
 }
 
 func (m *MeshTraceItemTargetRef) GetKind() MeshTraceItemKind {
@@ -823,46 +759,11 @@ func (m *MeshTraceItemTargetRef) GetLabels() map[string]string {
 	return m.Labels
 }
 
-func (m *MeshTraceItemTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshTraceItemTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshTraceItemTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
-func (m *MeshTraceItemTargetRef) GetProxyTypes() []MeshTraceItemProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
 func (m *MeshTraceItemTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
-}
-
-func (m *MeshTraceItemTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
 }
 
 // MeshTraceItemSpec - Spec is the specification of the Kuma MeshTrace resource.

@@ -64,7 +64,7 @@ func (r *MeshTraceResourceModel) RefreshFromSharedMeshTraceItem(ctx context.Cont
 					if backendsItem.OpenTelemetry.BackendRef == nil {
 						backends.OpenTelemetry.BackendRef = nil
 					} else {
-						backends.OpenTelemetry.BackendRef = &tfTypes.MeshAccessLogItemSpecFromBackendRef{}
+						backends.OpenTelemetry.BackendRef = &tfTypes.MeshAccessLogItemSpecBackendRef{}
 						backends.OpenTelemetry.BackendRef.Kind = types.StringValue(string(backendsItem.OpenTelemetry.BackendRef.Kind))
 						if len(backendsItem.OpenTelemetry.BackendRef.Labels) > 0 {
 							backends.OpenTelemetry.BackendRef.Labels = make(map[string]types.String, len(backendsItem.OpenTelemetry.BackendRef.Labels))
@@ -73,7 +73,6 @@ func (r *MeshTraceResourceModel) RefreshFromSharedMeshTraceItem(ctx context.Cont
 							}
 						}
 					}
-					backends.OpenTelemetry.Endpoint = types.StringPointerValue(backendsItem.OpenTelemetry.Endpoint)
 				}
 				backends.Type = types.StringValue(string(backendsItem.Type))
 				if backendsItem.Zipkin == nil {
@@ -97,7 +96,7 @@ func (r *MeshTraceResourceModel) RefreshFromSharedMeshTraceItem(ctx context.Cont
 			} else {
 				r.Spec.Default.Sampling = &tfTypes.Sampling{}
 				if resp.Spec.Default.Sampling.Client != nil {
-					r.Spec.Default.Sampling.Client = &tfTypes.Mode{}
+					r.Spec.Default.Sampling.Client = &tfTypes.StandardDeviationFactor{}
 					if resp.Spec.Default.Sampling.Client.Integer != nil {
 						r.Spec.Default.Sampling.Client.Integer = types.Int64PointerValue(resp.Spec.Default.Sampling.Client.Integer)
 					}
@@ -106,7 +105,7 @@ func (r *MeshTraceResourceModel) RefreshFromSharedMeshTraceItem(ctx context.Cont
 					}
 				}
 				if resp.Spec.Default.Sampling.Overall != nil {
-					r.Spec.Default.Sampling.Overall = &tfTypes.Mode{}
+					r.Spec.Default.Sampling.Overall = &tfTypes.StandardDeviationFactor{}
 					if resp.Spec.Default.Sampling.Overall.Integer != nil {
 						r.Spec.Default.Sampling.Overall.Integer = types.Int64PointerValue(resp.Spec.Default.Sampling.Overall.Integer)
 					}
@@ -115,7 +114,7 @@ func (r *MeshTraceResourceModel) RefreshFromSharedMeshTraceItem(ctx context.Cont
 					}
 				}
 				if resp.Spec.Default.Sampling.Random != nil {
-					r.Spec.Default.Sampling.Random = &tfTypes.Mode{}
+					r.Spec.Default.Sampling.Random = &tfTypes.StandardDeviationFactor{}
 					if resp.Spec.Default.Sampling.Random.Integer != nil {
 						r.Spec.Default.Sampling.Random.Integer = types.Int64PointerValue(resp.Spec.Default.Sampling.Random.Integer)
 					}
@@ -145,7 +144,7 @@ func (r *MeshTraceResourceModel) RefreshFromSharedMeshTraceItem(ctx context.Cont
 		if resp.Spec.TargetRef == nil {
 			r.Spec.TargetRef = nil
 		} else {
-			r.Spec.TargetRef = &tfTypes.MeshAccessLogItemTargetRef{}
+			r.Spec.TargetRef = &tfTypes.TargetRef{}
 			r.Spec.TargetRef.Kind = types.StringValue(string(resp.Spec.TargetRef.Kind))
 			if len(resp.Spec.TargetRef.Labels) > 0 {
 				r.Spec.TargetRef.Labels = make(map[string]types.String, len(resp.Spec.TargetRef.Labels))
@@ -153,20 +152,7 @@ func (r *MeshTraceResourceModel) RefreshFromSharedMeshTraceItem(ctx context.Cont
 					r.Spec.TargetRef.Labels[key1] = types.StringValue(value1)
 				}
 			}
-			r.Spec.TargetRef.Mesh = types.StringPointerValue(resp.Spec.TargetRef.Mesh)
-			r.Spec.TargetRef.Name = types.StringPointerValue(resp.Spec.TargetRef.Name)
-			r.Spec.TargetRef.Namespace = types.StringPointerValue(resp.Spec.TargetRef.Namespace)
-			r.Spec.TargetRef.ProxyTypes = make([]types.String, 0, len(resp.Spec.TargetRef.ProxyTypes))
-			for _, v := range resp.Spec.TargetRef.ProxyTypes {
-				r.Spec.TargetRef.ProxyTypes = append(r.Spec.TargetRef.ProxyTypes, types.StringValue(string(v)))
-			}
 			r.Spec.TargetRef.SectionName = types.StringPointerValue(resp.Spec.TargetRef.SectionName)
-			if len(resp.Spec.TargetRef.Tags) > 0 {
-				r.Spec.TargetRef.Tags = make(map[string]types.String, len(resp.Spec.TargetRef.Tags))
-				for key2, value2 := range resp.Spec.TargetRef.Tags {
-					r.Spec.TargetRef.Tags[key2] = types.StringValue(value2)
-				}
-			}
 		}
 		if resp.Status == nil {
 			r.Status = nil
@@ -220,6 +206,27 @@ func (r *MeshTraceResourceModel) ToOperationsGetMeshTraceRequest(ctx context.Con
 	out := operations.GetMeshTraceRequest{
 		Mesh: mesh,
 		Name: name,
+	}
+
+	return &out, diags
+}
+
+func (r *MeshTraceResourceModel) ToOperationsPostMeshTraceRequest(ctx context.Context) (*operations.PostMeshTraceRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var mesh string
+	mesh = r.Mesh.ValueString()
+
+	meshTraceItem, meshTraceItemDiags := r.ToSharedMeshTraceItemInput(ctx)
+	diags.Append(meshTraceItemDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.PostMeshTraceRequest{
+		Mesh:          mesh,
+		MeshTraceItem: *meshTraceItem,
 	}
 
 	return &out, diags
@@ -304,15 +311,8 @@ func (r *MeshTraceResourceModel) ToSharedMeshTraceItemInput(ctx context.Context)
 						Labels: labels1,
 					}
 				}
-				endpoint := new(string)
-				if !r.Spec.Default.Backends[backendsIndex].OpenTelemetry.Endpoint.IsUnknown() && !r.Spec.Default.Backends[backendsIndex].OpenTelemetry.Endpoint.IsNull() {
-					*endpoint = r.Spec.Default.Backends[backendsIndex].OpenTelemetry.Endpoint.ValueString()
-				} else {
-					endpoint = nil
-				}
 				openTelemetry = &shared.MeshTraceItemOpenTelemetry{
 					BackendRef: backendRef,
-					Endpoint:   endpoint,
 				}
 			}
 			type1 := shared.MeshTraceItemSpecType(r.Spec.Default.Backends[backendsIndex].Type.ValueString())
@@ -485,50 +485,16 @@ func (r *MeshTraceResourceModel) ToSharedMeshTraceItemInput(ctx context.Context)
 
 			labels2[labelsKey1] = labelsInst1
 		}
-		mesh1 := new(string)
-		if !r.Spec.TargetRef.Mesh.IsUnknown() && !r.Spec.TargetRef.Mesh.IsNull() {
-			*mesh1 = r.Spec.TargetRef.Mesh.ValueString()
-		} else {
-			mesh1 = nil
-		}
-		name3 := new(string)
-		if !r.Spec.TargetRef.Name.IsUnknown() && !r.Spec.TargetRef.Name.IsNull() {
-			*name3 = r.Spec.TargetRef.Name.ValueString()
-		} else {
-			name3 = nil
-		}
-		namespace := new(string)
-		if !r.Spec.TargetRef.Namespace.IsUnknown() && !r.Spec.TargetRef.Namespace.IsNull() {
-			*namespace = r.Spec.TargetRef.Namespace.ValueString()
-		} else {
-			namespace = nil
-		}
-		proxyTypes := make([]shared.MeshTraceItemProxyTypes, 0, len(r.Spec.TargetRef.ProxyTypes))
-		for _, proxyTypesItem := range r.Spec.TargetRef.ProxyTypes {
-			proxyTypes = append(proxyTypes, shared.MeshTraceItemProxyTypes(proxyTypesItem.ValueString()))
-		}
 		sectionName := new(string)
 		if !r.Spec.TargetRef.SectionName.IsUnknown() && !r.Spec.TargetRef.SectionName.IsNull() {
 			*sectionName = r.Spec.TargetRef.SectionName.ValueString()
 		} else {
 			sectionName = nil
 		}
-		tags1 := make(map[string]string)
-		for tagsKey := range r.Spec.TargetRef.Tags {
-			var tagsInst string
-			tagsInst = r.Spec.TargetRef.Tags[tagsKey].ValueString()
-
-			tags1[tagsKey] = tagsInst
-		}
 		targetRef = &shared.MeshTraceItemTargetRef{
 			Kind:        kind1,
 			Labels:      labels2,
-			Mesh:        mesh1,
-			Name:        name3,
-			Namespace:   namespace,
-			ProxyTypes:  proxyTypes,
 			SectionName: sectionName,
-			Tags:        tags1,
 		}
 	}
 	spec := shared.MeshTraceItemSpec{

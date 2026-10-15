@@ -3,8 +3,7 @@
 package types
 
 type MeshTimeoutItemSpec struct {
-	From      []MeshTimeoutItemFrom       `tfsdk:"from"`
-	Rules     []MeshTimeoutItemRules      `tfsdk:"rules"`
-	TargetRef *MeshAccessLogItemTargetRef `tfsdk:"target_ref"`
-	To        []MeshTimeoutItemFrom       `tfsdk:"to"`
+	Rules     []MeshTimeoutItemRules `tfsdk:"rules"`
+	TargetRef *TargetRef             `tfsdk:"target_ref"`
+	To        []MeshTimeoutItemTo    `tfsdk:"to"`
 }

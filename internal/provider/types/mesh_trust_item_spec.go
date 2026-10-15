@@ -8,6 +8,5 @@ import (
 
 type MeshTrustItemSpec struct {
 	CaBundles   []CaBundles  `tfsdk:"ca_bundles"`
-	Origin      *Origin      `tfsdk:"origin"`
 	TrustDomain types.String `tfsdk:"trust_domain"`
 }

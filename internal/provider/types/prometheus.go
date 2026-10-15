@@ -7,8 +7,8 @@ import (
 )
 
 type Prometheus struct {
-	ClientID types.String       `tfsdk:"client_id"`
-	Path     types.String       `tfsdk:"path"`
-	Port     types.Int32        `tfsdk:"port"`
-	TLS      *MeshMetricItemTLS `tfsdk:"tls"`
+	ClientID types.String  `tfsdk:"client_id"`
+	Path     types.String  `tfsdk:"path"`
+	Port     types.Int32   `tfsdk:"port"`
+	TLS      *MeshServices `tfsdk:"tls"`
 }

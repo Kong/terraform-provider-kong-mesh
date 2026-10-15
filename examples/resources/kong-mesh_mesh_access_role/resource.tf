@@ -6,9 +6,7 @@ resource "kong-mesh_mesh_access_role" "my_meshaccessrole" {
   rules = [
     {
       access = [
-        {
-          str = "...my_str..."
-        }
+        "GENERATE_ZONE_TOKEN"
       ]
       mesh = "...my_mesh..."
       names = [
@@ -19,11 +17,6 @@ resource "kong-mesh_mesh_access_role" "my_meshaccessrole" {
       ]
       when = [
         {
-          destinations = {
-            match = {
-              key = "value"
-            }
-          }
           dp_token = {
             tags = [
               {
@@ -35,39 +28,26 @@ resource "kong-mesh_mesh_access_role" "my_meshaccessrole" {
           from = {
             target_ref = {
               kind = "...my_kind..."
-              mesh = "...my_mesh..."
-              name = "...my_name..."
-              tags = {
+              labels = {
                 key = "value"
               }
-            }
-          }
-          selectors = {
-            match = {
-              key = "value"
-            }
-          }
-          sources = {
-            match = {
-              key = "value"
+              name = "...my_name..."
             }
           }
           target_ref = {
             kind = "...my_kind..."
-            mesh = "...my_mesh..."
-            name = "...my_name..."
-            tags = {
+            labels = {
               key = "value"
             }
+            name = "...my_name..."
           }
           to = {
             target_ref = {
               kind = "...my_kind..."
-              mesh = "...my_mesh..."
-              name = "...my_name..."
-              tags = {
+              labels = {
                 key = "value"
               }
+              name = "...my_name..."
             }
           }
         }

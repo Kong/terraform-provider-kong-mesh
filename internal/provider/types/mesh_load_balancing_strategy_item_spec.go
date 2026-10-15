@@ -3,6 +3,6 @@
 package types
 
 type MeshLoadBalancingStrategyItemSpec struct {
-	TargetRef *MeshAccessLogItemTargetRef       `tfsdk:"target_ref"`
+	TargetRef *TargetRef                        `tfsdk:"target_ref"`
 	To        []MeshLoadBalancingStrategyItemTo `tfsdk:"to"`
 }

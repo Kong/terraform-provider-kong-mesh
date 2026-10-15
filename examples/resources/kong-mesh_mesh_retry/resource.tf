@@ -6,20 +6,11 @@ resource "kong-mesh_mesh_retry" "my_meshretry" {
   name = "...my_name..."
   spec = {
     target_ref = {
-      kind = "MeshServiceSubset"
+      kind = "Dataplane"
       labels = {
         key = "value"
       }
-      mesh      = "...my_mesh..."
-      name      = "...my_name..."
-      namespace = "...my_namespace..."
-      proxy_types = [
-        "Gateway"
-      ]
       section_name = "...my_section_name..."
-      tags = {
-        key = "value"
-      }
     }
     to = [
       {
@@ -77,14 +68,14 @@ resource "kong-mesh_mesh_retry" "my_meshretry" {
             retriable_request_headers = [
               {
                 name  = "...my_name..."
-                type  = "Exact"
+                type  = "RegularExpression"
                 value = "...my_value..."
               }
             ]
             retriable_response_headers = [
               {
                 name  = "...my_name..."
-                type  = "Exact"
+                type  = "RegularExpression"
                 value = "...my_value..."
               }
             ]
@@ -119,16 +110,7 @@ resource "kong-mesh_mesh_retry" "my_meshretry" {
           labels = {
             key = "value"
           }
-          mesh      = "...my_mesh..."
-          name      = "...my_name..."
-          namespace = "...my_namespace..."
-          proxy_types = [
-            "Gateway"
-          ]
           section_name = "...my_section_name..."
-          tags = {
-            key = "value"
-          }
         }
       }
     ]

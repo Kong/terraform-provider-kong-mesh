@@ -3,6 +3,6 @@
 package types
 
 type MeshHealthCheckItemSpec struct {
-	TargetRef *MeshAccessLogItemTargetRef `tfsdk:"target_ref"`
-	To        []MeshHealthCheckItemTo     `tfsdk:"to"`
+	TargetRef *TargetRef              `tfsdk:"target_ref"`
+	To        []MeshHealthCheckItemTo `tfsdk:"to"`
 }

@@ -27,6 +27,7 @@ import (
 	speakeasy_listvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/listvalidators"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/stringvalidators"
+	"regexp"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -89,6 +90,10 @@ func (r *MeshLoadBalancingStrategyResource) Schema(ctx context.Context, req reso
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
 				Description: `name of the mesh. Requires replacement if changed.`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(253),
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[0-9a-z-_.]*$`), "must match pattern "+regexp.MustCompile(`^[0-9a-z-_.]*$`).String()),
+				},
 			},
 			"modification_time": schema.StringAttribute{
 				Computed: true,
@@ -102,7 +107,11 @@ func (r *MeshLoadBalancingStrategyResource) Schema(ctx context.Context, req reso
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
-				Description: `name of the MeshLoadBalancingStrategy. Requires replacement if changed.`,
+				Description: `Name of the Kuma resource. Requires replacement if changed.`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(253),
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
+				},
 			},
 			"spec": schema.SingleNestedAttribute{
 				Required: true,
@@ -112,48 +121,19 @@ func (r *MeshLoadBalancingStrategyResource) Schema(ctx context.Context, req reso
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
 								Required:    true,
-								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
+								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "Dataplane"]`,
 							},
 							"labels": schema.MapAttribute{
 								Optional:    true,
 								ElementType: types.StringType,
-								MarkdownDescription: `Labels are used to select group of MeshServices that match labels. Either Labels or` + "\n" +
-									`Name and Namespace can be used.`,
-							},
-							"mesh": schema.StringAttribute{
-								Optional:    true,
-								Description: `Mesh is reserved for future use to identify cross mesh resources.`,
-							},
-							"name": schema.StringAttribute{
-								Optional: true,
-								MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `,` + "\n" +
-									`` + "`" + `MeshServiceSubset` + "`" + ` and ` + "`" + `MeshGatewayRoute` + "`" + ``,
-							},
-							"namespace": schema.StringAttribute{
-								Optional: true,
-								MarkdownDescription: `Namespace specifies the namespace of target resource. If empty only resources in policy namespace` + "\n" +
-									`will be targeted.`,
-							},
-							"proxy_types": schema.ListAttribute{
-								Computed: true,
-								Optional: true,
-								PlanModifiers: []planmodifier.List{
-									custom_listplanmodifier.SupressZeroNullModifier(),
-								},
-								ElementType: types.StringType,
-								MarkdownDescription: `ProxyTypes specifies the data plane types that are subject to the policy. When not specified,` + "\n" +
-									`all data plane types are targeted by the policy.`,
+								MarkdownDescription: `Labels are used to select referenced real resources and to carry legacy` + "\n" +
+									`service identity when a common TargetRef must still target old` + "\n" +
+									`service-tag based paths.`,
 							},
 							"section_name": schema.StringAttribute{
 								Optional: true,
 								MarkdownDescription: `SectionName is used to target specific section of resource.` + "\n" +
 									`For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.`,
-							},
-							"tags": schema.MapAttribute{
-								Optional:    true,
-								ElementType: types.StringType,
-								MarkdownDescription: `Tags used to select a subset of proxies by tags. Can only be used with kinds` + "\n" +
-									`` + "`" + `MeshSubset` + "`" + ` and ` + "`" + `MeshServiceSubset` + "`" + ``,
 							},
 						},
 						MarkdownDescription: `TargetRef is a reference to the resource the policy takes an effect on.` + "\n" +
@@ -269,7 +249,7 @@ func (r *MeshLoadBalancingStrategyResource) Schema(ctx context.Context, req reso
 													},
 													"type": schema.StringAttribute{
 														Optional:    true,
-														Description: `possible known values include one of ["Header", "Cookie", "Connection", "SourceIP", "QueryParameter", "FilterState"]; Not Null`,
+														Description: `possible known values include one of ["Header", "Cookie", "Connection", "QueryParameter", "FilterState"]; Not Null`,
 														Validators: []validator.String{
 															speakeasy_stringvalidators.NotNull(),
 														},
@@ -329,113 +309,6 @@ func (r *MeshLoadBalancingStrategyResource) Schema(ctx context.Context, req reso
 												"maglev": schema.SingleNestedAttribute{
 													Optional: true,
 													Attributes: map[string]schema.Attribute{
-														"hash_policies": schema.ListNestedAttribute{
-															Computed: true,
-															Optional: true,
-															PlanModifiers: []planmodifier.List{
-																custom_listplanmodifier.SupressZeroNullModifier(),
-															},
-															NestedObject: schema.NestedAttributeObject{
-																Validators: []validator.Object{
-																	speakeasy_objectvalidators.NotNull(),
-																},
-																Attributes: map[string]schema.Attribute{
-																	"connection": schema.SingleNestedAttribute{
-																		Optional: true,
-																		Attributes: map[string]schema.Attribute{
-																			"source_ip": schema.BoolAttribute{
-																				Optional:    true,
-																				Description: `Hash on source IP address.`,
-																			},
-																		},
-																	},
-																	"cookie": schema.SingleNestedAttribute{
-																		Optional: true,
-																		Attributes: map[string]schema.Attribute{
-																			"name": schema.StringAttribute{
-																				Optional:    true,
-																				Description: `The name of the cookie that will be used to obtain the hash key. Not Null`,
-																				Validators: []validator.String{
-																					speakeasy_stringvalidators.NotNull(),
-																					stringvalidator.UTF8LengthAtLeast(1),
-																				},
-																			},
-																			"path": schema.StringAttribute{
-																				Optional:    true,
-																				Description: `The name of the path for the cookie.`,
-																			},
-																			"ttl": schema.StringAttribute{
-																				Optional:    true,
-																				Description: `If specified, a cookie with the TTL will be generated if the cookie is not present.`,
-																			},
-																		},
-																	},
-																	"filter_state": schema.SingleNestedAttribute{
-																		Optional: true,
-																		Attributes: map[string]schema.Attribute{
-																			"key": schema.StringAttribute{
-																				Optional: true,
-																				MarkdownDescription: `The name of the Object in the per-request filterState, which is` + "\n" +
-																					`an Envoy::Hashable object. If there is no data associated with the key,` + "\n" +
-																					`or the stored object is not Envoy::Hashable, no hash will be produced.` + "\n" +
-																					`Not Null`,
-																				Validators: []validator.String{
-																					speakeasy_stringvalidators.NotNull(),
-																					stringvalidator.UTF8LengthAtLeast(1),
-																				},
-																			},
-																		},
-																	},
-																	"header": schema.SingleNestedAttribute{
-																		Optional: true,
-																		Attributes: map[string]schema.Attribute{
-																			"name": schema.StringAttribute{
-																				Optional:    true,
-																				Description: `The name of the request header that will be used to obtain the hash key. Not Null`,
-																				Validators: []validator.String{
-																					speakeasy_stringvalidators.NotNull(),
-																					stringvalidator.UTF8LengthAtLeast(1),
-																				},
-																			},
-																		},
-																	},
-																	"query_parameter": schema.SingleNestedAttribute{
-																		Optional: true,
-																		Attributes: map[string]schema.Attribute{
-																			"name": schema.StringAttribute{
-																				Optional: true,
-																				MarkdownDescription: `The name of the URL query parameter that will be used to obtain the hash key.` + "\n" +
-																					`If the parameter is not present, no hash will be produced. Query parameter names` + "\n" +
-																					`are case-sensitive.` + "\n" +
-																					`Not Null`,
-																				Validators: []validator.String{
-																					speakeasy_stringvalidators.NotNull(),
-																					stringvalidator.UTF8LengthAtLeast(1),
-																				},
-																			},
-																		},
-																	},
-																	"terminal": schema.BoolAttribute{
-																		Optional: true,
-																		MarkdownDescription: `Terminal is a flag that short-circuits the hash computing. This field provides` + "\n" +
-																			`a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback` + "\n" +
-																			`to rest of the policy list”, it saves time when the terminal policy works.` + "\n" +
-																			`If true, and there is already a hash computed, ignore rest of the list of hash polices.`,
-																	},
-																	"type": schema.StringAttribute{
-																		Optional:    true,
-																		Description: `possible known values include one of ["Header", "Cookie", "Connection", "SourceIP", "QueryParameter", "FilterState"]; Not Null`,
-																		Validators: []validator.String{
-																			speakeasy_stringvalidators.NotNull(),
-																		},
-																	},
-																},
-															},
-															MarkdownDescription: `HashPolicies specify a list of request/connection properties that are used to calculate a hash.` + "\n" +
-																`These hash policies are executed in the specified order. If a hash policy has the “terminal” attribute` + "\n" +
-																`set to true, and there is already a hash generated, the hash is returned immediately,` + "\n" +
-																`ignoring the rest of the hash policy list.`,
-														},
 														"table_size": schema.Int32Attribute{
 															Optional: true,
 															MarkdownDescription: `The table size for Maglev hashing. Maglev aims for “minimal disruption”` + "\n" +
@@ -467,113 +340,6 @@ func (r *MeshLoadBalancingStrategyResource) Schema(ctx context.Context, req reso
 															MarkdownDescription: `HashFunction is a function used to hash hosts onto the ketama ring.` + "\n" +
 																`The value defaults to XX_HASH. Available values – XX_HASH, MURMUR_HASH_2.` + "\n" +
 																`possible known values include one of ["XXHash", "MurmurHash2"]`,
-														},
-														"hash_policies": schema.ListNestedAttribute{
-															Computed: true,
-															Optional: true,
-															PlanModifiers: []planmodifier.List{
-																custom_listplanmodifier.SupressZeroNullModifier(),
-															},
-															NestedObject: schema.NestedAttributeObject{
-																Validators: []validator.Object{
-																	speakeasy_objectvalidators.NotNull(),
-																},
-																Attributes: map[string]schema.Attribute{
-																	"connection": schema.SingleNestedAttribute{
-																		Optional: true,
-																		Attributes: map[string]schema.Attribute{
-																			"source_ip": schema.BoolAttribute{
-																				Optional:    true,
-																				Description: `Hash on source IP address.`,
-																			},
-																		},
-																	},
-																	"cookie": schema.SingleNestedAttribute{
-																		Optional: true,
-																		Attributes: map[string]schema.Attribute{
-																			"name": schema.StringAttribute{
-																				Optional:    true,
-																				Description: `The name of the cookie that will be used to obtain the hash key. Not Null`,
-																				Validators: []validator.String{
-																					speakeasy_stringvalidators.NotNull(),
-																					stringvalidator.UTF8LengthAtLeast(1),
-																				},
-																			},
-																			"path": schema.StringAttribute{
-																				Optional:    true,
-																				Description: `The name of the path for the cookie.`,
-																			},
-																			"ttl": schema.StringAttribute{
-																				Optional:    true,
-																				Description: `If specified, a cookie with the TTL will be generated if the cookie is not present.`,
-																			},
-																		},
-																	},
-																	"filter_state": schema.SingleNestedAttribute{
-																		Optional: true,
-																		Attributes: map[string]schema.Attribute{
-																			"key": schema.StringAttribute{
-																				Optional: true,
-																				MarkdownDescription: `The name of the Object in the per-request filterState, which is` + "\n" +
-																					`an Envoy::Hashable object. If there is no data associated with the key,` + "\n" +
-																					`or the stored object is not Envoy::Hashable, no hash will be produced.` + "\n" +
-																					`Not Null`,
-																				Validators: []validator.String{
-																					speakeasy_stringvalidators.NotNull(),
-																					stringvalidator.UTF8LengthAtLeast(1),
-																				},
-																			},
-																		},
-																	},
-																	"header": schema.SingleNestedAttribute{
-																		Optional: true,
-																		Attributes: map[string]schema.Attribute{
-																			"name": schema.StringAttribute{
-																				Optional:    true,
-																				Description: `The name of the request header that will be used to obtain the hash key. Not Null`,
-																				Validators: []validator.String{
-																					speakeasy_stringvalidators.NotNull(),
-																					stringvalidator.UTF8LengthAtLeast(1),
-																				},
-																			},
-																		},
-																	},
-																	"query_parameter": schema.SingleNestedAttribute{
-																		Optional: true,
-																		Attributes: map[string]schema.Attribute{
-																			"name": schema.StringAttribute{
-																				Optional: true,
-																				MarkdownDescription: `The name of the URL query parameter that will be used to obtain the hash key.` + "\n" +
-																					`If the parameter is not present, no hash will be produced. Query parameter names` + "\n" +
-																					`are case-sensitive.` + "\n" +
-																					`Not Null`,
-																				Validators: []validator.String{
-																					speakeasy_stringvalidators.NotNull(),
-																					stringvalidator.UTF8LengthAtLeast(1),
-																				},
-																			},
-																		},
-																	},
-																	"terminal": schema.BoolAttribute{
-																		Optional: true,
-																		MarkdownDescription: `Terminal is a flag that short-circuits the hash computing. This field provides` + "\n" +
-																			`a ‘fallback’ style of configuration: “if a terminal policy doesn’t work, fallback` + "\n" +
-																			`to rest of the policy list”, it saves time when the terminal policy works.` + "\n" +
-																			`If true, and there is already a hash computed, ignore rest of the list of hash polices.`,
-																	},
-																	"type": schema.StringAttribute{
-																		Optional:    true,
-																		Description: `possible known values include one of ["Header", "Cookie", "Connection", "SourceIP", "QueryParameter", "FilterState"]; Not Null`,
-																		Validators: []validator.String{
-																			speakeasy_stringvalidators.NotNull(),
-																		},
-																	},
-																},
-															},
-															MarkdownDescription: `HashPolicies specify a list of request/connection properties that are used to calculate a hash.` + "\n" +
-																`These hash policies are executed in the specified order. If a hash policy has the “terminal” attribute` + "\n" +
-																`set to true, and there is already a hash generated, the hash is returned immediately,` + "\n" +
-																`ignoring the rest of the hash policy list.`,
 														},
 														"max_ring_size": schema.Int32Attribute{
 															Optional: true,
@@ -713,7 +479,7 @@ func (r *MeshLoadBalancingStrategyResource) Schema(ctx context.Context, req reso
 														},
 													},
 													MarkdownDescription: `CrossZone defines locality aware load balancing priorities when dataplane proxies inside local zone` + "\n" +
-														`are unavailable`,
+														`are unavailable. Supported only for to[].targetRef.kind MeshMultiZoneService.`,
 												},
 												"disabled": schema.BoolAttribute{
 													Optional: true,
@@ -769,7 +535,7 @@ func (r *MeshLoadBalancingStrategyResource) Schema(ctx context.Context, req reso
 									Attributes: map[string]schema.Attribute{
 										"kind": schema.StringAttribute{
 											Optional:    true,
-											Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null`,
+											Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshHTTPRoute"]; Not Null`,
 											Validators: []validator.String{
 												speakeasy_stringvalidators.NotNull(),
 											},
@@ -777,43 +543,14 @@ func (r *MeshLoadBalancingStrategyResource) Schema(ctx context.Context, req reso
 										"labels": schema.MapAttribute{
 											Optional:    true,
 											ElementType: types.StringType,
-											MarkdownDescription: `Labels are used to select group of MeshServices that match labels. Either Labels or` + "\n" +
-												`Name and Namespace can be used.`,
-										},
-										"mesh": schema.StringAttribute{
-											Optional:    true,
-											Description: `Mesh is reserved for future use to identify cross mesh resources.`,
-										},
-										"name": schema.StringAttribute{
-											Optional: true,
-											MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `,` + "\n" +
-												`` + "`" + `MeshServiceSubset` + "`" + ` and ` + "`" + `MeshGatewayRoute` + "`" + ``,
-										},
-										"namespace": schema.StringAttribute{
-											Optional: true,
-											MarkdownDescription: `Namespace specifies the namespace of target resource. If empty only resources in policy namespace` + "\n" +
-												`will be targeted.`,
-										},
-										"proxy_types": schema.ListAttribute{
-											Computed: true,
-											Optional: true,
-											PlanModifiers: []planmodifier.List{
-												custom_listplanmodifier.SupressZeroNullModifier(),
-											},
-											ElementType: types.StringType,
-											MarkdownDescription: `ProxyTypes specifies the data plane types that are subject to the policy. When not specified,` + "\n" +
-												`all data plane types are targeted by the policy.`,
+											MarkdownDescription: `Labels are used to select referenced real resources and to carry legacy` + "\n" +
+												`service identity when a common TargetRef must still target old` + "\n" +
+												`service-tag based paths.`,
 										},
 										"section_name": schema.StringAttribute{
 											Optional: true,
 											MarkdownDescription: `SectionName is used to target specific section of resource.` + "\n" +
 												`For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.`,
-										},
-										"tags": schema.MapAttribute{
-											Optional:    true,
-											ElementType: types.StringType,
-											MarkdownDescription: `Tags used to select a subset of proxies by tags. Can only be used with kinds` + "\n" +
-												`` + "`" + `MeshSubset` + "`" + ` and ` + "`" + `MeshServiceSubset` + "`" + ``,
 										},
 									},
 									MarkdownDescription: `TargetRef is a reference to the resource that represents a group of` + "\n" +
@@ -890,13 +627,13 @@ func (r *MeshLoadBalancingStrategyResource) Create(ctx context.Context, req reso
 		return
 	}
 
-	request, requestDiags := data.ToOperationsPutMeshLoadBalancingStrategyRequest(ctx)
+	request, requestDiags := data.ToOperationsPostMeshLoadBalancingStrategyRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshLoadBalancingStrategy.PutMeshLoadBalancingStrategy(ctx, *request)
+	res, err := r.client.MeshLoadBalancingStrategy.PostMeshLoadBalancingStrategy(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -908,10 +645,14 @@ func (r *MeshLoadBalancingStrategyResource) Create(ctx context.Context, req reso
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	switch res.StatusCode {
-	case 200, 201:
-		break
-	default:
+	if res.StatusCode == 409 {
+		resp.Diagnostics.AddError(
+			"Resource Already Exists",
+			"When creating this resource, the API indicated that this resource already exists. You can bring the existing resource under management using Terraform import functionality or retry with a unique configuration.",
+		)
+		return
+	}
+	if res.StatusCode != 201 {
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}

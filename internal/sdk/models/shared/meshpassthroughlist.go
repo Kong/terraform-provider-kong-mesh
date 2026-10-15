@@ -4,23 +4,23 @@ package shared
 
 // MeshPassthroughList - List
 type MeshPassthroughList struct {
-	Items []MeshPassthroughItem `json:"items,omitempty"`
+	Items []MeshPassthroughItem `json:"items"`
 	// The total number of entities
-	Total *float64 `json:"total,omitempty"`
-	// URL to the next page
-	Next *string `json:"next,omitempty"`
+	Total float64 `json:"total"`
+	// URL to the next page, or null when this is the last page
+	Next *string `json:"next"`
 }
 
 func (m *MeshPassthroughList) GetItems() []MeshPassthroughItem {
 	if m == nil {
-		return nil
+		return []MeshPassthroughItem{}
 	}
 	return m.Items
 }
 
-func (m *MeshPassthroughList) GetTotal() *float64 {
+func (m *MeshPassthroughList) GetTotal() float64 {
 	if m == nil {
-		return nil
+		return 0.0
 	}
 	return m.Total
 }

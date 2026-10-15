@@ -2,6 +2,10 @@
 
 package types
 
+import (
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
+
 type MeshServices struct {
-	Mode *Mode `tfsdk:"mode"`
+	Mode types.String `tfsdk:"mode"`
 }

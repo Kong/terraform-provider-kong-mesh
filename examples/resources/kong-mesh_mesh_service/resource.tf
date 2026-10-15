@@ -30,9 +30,6 @@ resource "kong-mesh_mesh_service" "my_meshservice" {
       dataplane_ref = {
         name = "...my_name..."
       }
-      dataplane_tags = {
-        key = "value"
-      }
     }
     state = "Unavailable"
   }

@@ -5,7 +5,6 @@ package provider
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -20,6 +19,7 @@ import (
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
+	"regexp"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -39,6 +39,7 @@ type MeshAccessAuditResource struct {
 // MeshAccessAuditResourceModel describes the resource data model.
 type MeshAccessAuditResourceModel struct {
 	CreationTime     types.String            `tfsdk:"creation_time"`
+	Kri              types.String            `tfsdk:"kri"`
 	Labels           map[string]types.String `tfsdk:"labels"`
 	ModificationTime types.String            `tfsdk:"modification_time"`
 	Name             types.String            `tfsdk:"name"`
@@ -62,6 +63,10 @@ func (r *MeshAccessAuditResource) Schema(ctx context.Context, req resource.Schem
 				},
 				Description: `Time at which the resource was created`,
 			},
+			"kri": schema.StringAttribute{
+				Computed:    true,
+				Description: `Kuma Resource Identifier (KRI) of the given resource`,
+			},
 			"labels": schema.MapAttribute{
 				Optional:    true,
 				ElementType: types.StringType,
@@ -76,6 +81,10 @@ func (r *MeshAccessAuditResource) Schema(ctx context.Context, req resource.Schem
 			"name": schema.StringAttribute{
 				Required:    true,
 				Description: `name of the AccessAudit`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(253),
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
+				},
 			},
 			"rules": schema.ListNestedAttribute{
 				Optional: true,
@@ -87,34 +96,12 @@ func (r *MeshAccessAuditResource) Schema(ctx context.Context, req resource.Schem
 						speakeasy_objectvalidators.NotNull(),
 					},
 					Attributes: map[string]schema.Attribute{
-						"access": schema.ListNestedAttribute{
+						"access": schema.ListAttribute{
 							Optional: true,
 							PlanModifiers: []planmodifier.List{
 								custom_listplanmodifier.SupressZeroNullModifier(),
 							},
-							NestedObject: schema.NestedAttributeObject{
-								Validators: []validator.Object{
-									speakeasy_objectvalidators.NotNull(),
-								},
-								Attributes: map[string]schema.Attribute{
-									"integer": schema.Int64Attribute{
-										Optional: true,
-										Validators: []validator.Int64{
-											int64validator.ConflictsWith(path.Expressions{
-												path.MatchRelative().AtParent().AtName("str"),
-											}...),
-										},
-									},
-									"str": schema.StringAttribute{
-										Optional: true,
-										Validators: []validator.String{
-											stringvalidator.ConflictsWith(path.Expressions{
-												path.MatchRelative().AtParent().AtName("integer"),
-											}...),
-										},
-									},
-								},
-							},
+							ElementType: types.StringType,
 						},
 						"access_all": schema.BoolAttribute{
 							Optional: true,
@@ -186,13 +173,13 @@ func (r *MeshAccessAuditResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
-	request, requestDiags := data.ToOperationsPutAccessAuditRequest(ctx)
+	request, requestDiags := data.ToSharedAccessAuditItemInput(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.AccessAudit.PutAccessAudit(ctx, *request)
+	res, err := r.client.AccessAudit.PostAccessAudit(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -204,10 +191,14 @@ func (r *MeshAccessAuditResource) Create(ctx context.Context, req resource.Creat
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	switch res.StatusCode {
-	case 200, 201:
-		break
-	default:
+	if res.StatusCode == 409 {
+		resp.Diagnostics.AddError(
+			"Resource Already Exists",
+			"When creating this resource, the API indicated that this resource already exists. You can bring the existing resource under management using Terraform import functionality or retry with a unique configuration.",
+		)
+		return
+	}
+	if res.StatusCode != 201 {
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}

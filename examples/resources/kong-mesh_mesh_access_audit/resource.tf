@@ -6,9 +6,7 @@ resource "kong-mesh_mesh_access_audit" "my_meshaccessaudit" {
   rules = [
     {
       access = [
-        {
-          str = "...my_str..."
-        }
+        "CREATE"
       ]
       access_all = true
       mesh       = "...my_mesh..."

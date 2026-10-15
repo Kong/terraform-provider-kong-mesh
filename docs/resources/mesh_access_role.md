@@ -21,9 +21,7 @@ resource "kong-mesh_mesh_access_role" "my_meshaccessrole" {
   rules = [
     {
       access = [
-        {
-          str = "...my_str..."
-        }
+        "GENERATE_ZONE_TOKEN"
       ]
       mesh = "...my_mesh..."
       names = [
@@ -34,11 +32,6 @@ resource "kong-mesh_mesh_access_role" "my_meshaccessrole" {
       ]
       when = [
         {
-          destinations = {
-            match = {
-              key = "value"
-            }
-          }
           dp_token = {
             tags = [
               {
@@ -50,39 +43,26 @@ resource "kong-mesh_mesh_access_role" "my_meshaccessrole" {
           from = {
             target_ref = {
               kind = "...my_kind..."
-              mesh = "...my_mesh..."
-              name = "...my_name..."
-              tags = {
+              labels = {
                 key = "value"
               }
-            }
-          }
-          selectors = {
-            match = {
-              key = "value"
-            }
-          }
-          sources = {
-            match = {
-              key = "value"
+              name = "...my_name..."
             }
           }
           target_ref = {
             kind = "...my_kind..."
-            mesh = "...my_mesh..."
-            name = "...my_name..."
-            tags = {
+            labels = {
               key = "value"
             }
+            name = "...my_name..."
           }
           to = {
             target_ref = {
               kind = "...my_kind..."
-              mesh = "...my_mesh..."
-              name = "...my_name..."
-              tags = {
+              labels = {
                 key = "value"
               }
+              name = "...my_name..."
             }
           }
         }
@@ -109,6 +89,7 @@ resource "kong-mesh_mesh_access_role" "my_meshaccessrole" {
 ### Read-Only
 
 - `creation_time` (String) Time at which the resource was created
+- `kri` (String) Kuma Resource Identifier (KRI) of the given resource
 - `modification_time` (String) Time at which the resource was updated
 - `warnings` (List of String) warnings is a list of warning messages to return to the requesting Kuma API clients.
 Warning messages describe a problem the client making the API request should correct or be aware of.
@@ -118,41 +99,21 @@ Warning messages describe a problem the client making the API request should cor
 
 Optional:
 
-- `access` (Attributes List) (see [below for nested schema](#nestedatt--rules--access))
+- `access` (List of String)
 - `mesh` (String)
 - `names` (List of String)
 - `types` (List of String)
 - `when` (Attributes List) (see [below for nested schema](#nestedatt--rules--when))
-
-<a id="nestedatt--rules--access"></a>
-### Nested Schema for `rules.access`
-
-Optional:
-
-- `integer` (Number)
-- `str` (String)
-
 
 <a id="nestedatt--rules--when"></a>
 ### Nested Schema for `rules.when`
 
 Optional:
 
-- `destinations` (Attributes) (see [below for nested schema](#nestedatt--rules--when--destinations))
 - `dp_token` (Attributes) (see [below for nested schema](#nestedatt--rules--when--dp_token))
 - `from` (Attributes) (see [below for nested schema](#nestedatt--rules--when--from))
-- `selectors` (Attributes) (see [below for nested schema](#nestedatt--rules--when--selectors))
-- `sources` (Attributes) (see [below for nested schema](#nestedatt--rules--when--sources))
 - `target_ref` (Attributes) (see [below for nested schema](#nestedatt--rules--when--target_ref))
 - `to` (Attributes) (see [below for nested schema](#nestedatt--rules--when--to))
-
-<a id="nestedatt--rules--when--destinations"></a>
-### Nested Schema for `rules.when.destinations`
-
-Optional:
-
-- `match` (Map of String) Tags to match, can be used for both source and destinations
-
 
 <a id="nestedatt--rules--when--dp_token"></a>
 ### Nested Schema for `rules.when.dp_token`
@@ -184,26 +145,9 @@ Optional:
 Optional:
 
 - `kind` (String)
-- `mesh` (String)
+- `labels` (Map of String)
 - `name` (String)
-- `tags` (Map of String)
 
-
-
-<a id="nestedatt--rules--when--selectors"></a>
-### Nested Schema for `rules.when.selectors`
-
-Optional:
-
-- `match` (Map of String) Tags to match, can be used for both source and destinations
-
-
-<a id="nestedatt--rules--when--sources"></a>
-### Nested Schema for `rules.when.sources`
-
-Optional:
-
-- `match` (Map of String) Tags to match, can be used for both source and destinations
 
 
 <a id="nestedatt--rules--when--target_ref"></a>
@@ -212,9 +156,8 @@ Optional:
 Optional:
 
 - `kind` (String)
-- `mesh` (String)
+- `labels` (Map of String)
 - `name` (String)
-- `tags` (Map of String)
 
 
 <a id="nestedatt--rules--when--to"></a>
@@ -230,9 +173,8 @@ Optional:
 Optional:
 
 - `kind` (String)
-- `mesh` (String)
+- `labels` (Map of String)
 - `name` (String)
-- `tags` (Map of String)
 
 ## Import
 

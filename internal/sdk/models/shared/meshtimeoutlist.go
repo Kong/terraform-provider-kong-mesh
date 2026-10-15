@@ -4,23 +4,23 @@ package shared
 
 // MeshTimeoutList - List
 type MeshTimeoutList struct {
-	Items []MeshTimeoutItem `json:"items,omitempty"`
+	Items []MeshTimeoutItem `json:"items"`
 	// The total number of entities
-	Total *float64 `json:"total,omitempty"`
-	// URL to the next page
-	Next *string `json:"next,omitempty"`
+	Total float64 `json:"total"`
+	// URL to the next page, or null when this is the last page
+	Next *string `json:"next"`
 }
 
 func (m *MeshTimeoutList) GetItems() []MeshTimeoutItem {
 	if m == nil {
-		return nil
+		return []MeshTimeoutItem{}
 	}
 	return m.Items
 }
 
-func (m *MeshTimeoutList) GetTotal() *float64 {
+func (m *MeshTimeoutList) GetTotal() float64 {
 	if m == nil {
-		return nil
+		return 0.0
 	}
 	return m.Total
 }

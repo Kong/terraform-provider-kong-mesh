@@ -17,20 +17,11 @@ resource "kong-mesh_mesh_passthrough" "my_meshpassthrough" {
       passthrough_mode = "Matched"
     }
     target_ref = {
-      kind = "MeshMultiZoneService"
+      kind = "Dataplane"
       labels = {
         key = "value"
       }
-      mesh      = "...my_mesh..."
-      name      = "...my_name..."
-      namespace = "...my_namespace..."
-      proxy_types = [
-        "Gateway"
-      ]
       section_name = "...my_section_name..."
-      tags = {
-        key = "value"
-      }
     }
   }
   type = "MeshPassthrough"

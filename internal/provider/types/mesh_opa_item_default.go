@@ -3,7 +3,7 @@
 package types
 
 type MeshOPAItemDefault struct {
-	AgentConfig    *AgentConfig     `tfsdk:"agent_config"`
+	AgentConfig    *CaCert          `tfsdk:"agent_config"`
 	AppendPolicies []AppendPolicies `tfsdk:"append_policies"`
 	AuthConfig     *AuthConfig      `tfsdk:"auth_config"`
 }

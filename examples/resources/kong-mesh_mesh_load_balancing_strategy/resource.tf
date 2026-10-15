@@ -10,16 +10,7 @@ resource "kong-mesh_mesh_load_balancing_strategy" "my_meshloadbalancingstrategy"
       labels = {
         key = "value"
       }
-      mesh      = "...my_mesh..."
-      name      = "...my_name..."
-      namespace = "...my_namespace..."
-      proxy_types = [
-        "Sidecar"
-      ]
       section_name = "...my_section_name..."
-      tags = {
-        key = "value"
-      }
     }
     to = [
       {
@@ -55,29 +46,6 @@ resource "kong-mesh_mesh_load_balancing_strategy" "my_meshloadbalancingstrategy"
               choice_count = 4
             }
             maglev = {
-              hash_policies = [
-                {
-                  connection = {
-                    source_ip = false
-                  }
-                  cookie = {
-                    name = "...my_name..."
-                    path = "...my_path..."
-                    ttl  = "...my_ttl..."
-                  }
-                  filter_state = {
-                    key = "...my_key..."
-                  }
-                  header = {
-                    name = "...my_name..."
-                  }
-                  query_parameter = {
-                    name = "...my_name..."
-                  }
-                  terminal = false
-                  type     = "Connection"
-                }
-              ]
               table_size = 26413
             }
             random = {
@@ -85,29 +53,6 @@ resource "kong-mesh_mesh_load_balancing_strategy" "my_meshloadbalancingstrategy"
             }
             ring_hash = {
               hash_function = "XXHash"
-              hash_policies = [
-                {
-                  connection = {
-                    source_ip = false
-                  }
-                  cookie = {
-                    name = "...my_name..."
-                    path = "...my_path..."
-                    ttl  = "...my_ttl..."
-                  }
-                  filter_state = {
-                    key = "...my_key..."
-                  }
-                  header = {
-                    name = "...my_name..."
-                  }
-                  query_parameter = {
-                    name = "...my_name..."
-                  }
-                  terminal = false
-                  type     = "QueryParameter"
-                }
-              ]
               max_ring_size = 5614666
               min_ring_size = 623920
             }
@@ -155,16 +100,7 @@ resource "kong-mesh_mesh_load_balancing_strategy" "my_meshloadbalancingstrategy"
           labels = {
             key = "value"
           }
-          mesh      = "...my_mesh..."
-          name      = "...my_name..."
-          namespace = "...my_namespace..."
-          proxy_types = [
-            "Sidecar"
-          ]
           section_name = "...my_section_name..."
-          tags = {
-            key = "value"
-          }
         }
       }
     ]

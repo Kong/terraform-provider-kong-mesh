@@ -3,8 +3,7 @@
 package types
 
 type MeshRateLimitItemSpec struct {
-	From      []MeshRateLimitItemFrom     `tfsdk:"from"`
-	Rules     []MeshRateLimitItemRules    `tfsdk:"rules"`
-	TargetRef *MeshAccessLogItemTargetRef `tfsdk:"target_ref"`
-	To        []MeshRateLimitItemFrom     `tfsdk:"to"`
+	Rules     []MeshRateLimitItemRules `tfsdk:"rules"`
+	TargetRef *TargetRef               `tfsdk:"target_ref"`
+	To        []MeshRateLimitItemTo    `tfsdk:"to"`
 }

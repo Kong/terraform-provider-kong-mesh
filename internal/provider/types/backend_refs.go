@@ -7,14 +7,10 @@ import (
 )
 
 type BackendRefs struct {
-	Kind        types.String            `tfsdk:"kind"`
-	Labels      map[string]types.String `tfsdk:"labels"`
-	Mesh        types.String            `tfsdk:"mesh"`
-	Name        types.String            `tfsdk:"name"`
-	Namespace   types.String            `tfsdk:"namespace"`
-	Port        types.Int32             `tfsdk:"port"`
-	ProxyTypes  []types.String          `tfsdk:"proxy_types"`
-	SectionName types.String            `tfsdk:"section_name"`
-	Tags        map[string]types.String `tfsdk:"tags"`
-	Weight      types.Int64             `tfsdk:"weight"`
+	Filters     []MeshHTTPRouteItemFilters `tfsdk:"filters"`
+	Kind        types.String               `tfsdk:"kind"`
+	Labels      map[string]types.String    `tfsdk:"labels"`
+	Port        types.Int32                `tfsdk:"port"`
+	SectionName types.String               `tfsdk:"section_name"`
+	Weight      types.Int64                `tfsdk:"weight"`
 }

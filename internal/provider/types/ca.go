@@ -3,6 +3,6 @@
 package types
 
 type Ca struct {
-	Certificate *Certificate `tfsdk:"certificate"`
-	PrivateKey  *Certificate `tfsdk:"private_key"`
+	Certificate *CaCert `tfsdk:"certificate"`
+	PrivateKey  *CaCert `tfsdk:"private_key"`
 }

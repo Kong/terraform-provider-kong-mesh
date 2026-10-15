@@ -28,8 +28,10 @@ func (s *Subjects) GetType() *string {
 
 type AccessRoleBindingItem struct {
 	// Time at which the resource was created
-	CreationTime *time.Time        `json:"creationTime,omitempty"`
-	Labels       map[string]string `json:"labels,omitempty"`
+	CreationTime *time.Time `json:"creationTime,omitempty"`
+	// Kuma Resource Identifier (KRI) of the given resource
+	Kri    *string           `json:"kri,omitempty"`
+	Labels map[string]string `json:"labels,omitempty"`
 	// Time at which the resource was updated
 	ModificationTime *time.Time `json:"modificationTime,omitempty"`
 	Name             string     `json:"name"`
@@ -54,6 +56,13 @@ func (a *AccessRoleBindingItem) GetCreationTime() *time.Time {
 		return nil
 	}
 	return a.CreationTime
+}
+
+func (a *AccessRoleBindingItem) GetKri() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Kri
 }
 
 func (a *AccessRoleBindingItem) GetLabels() map[string]string {

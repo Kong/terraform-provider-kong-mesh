@@ -4,23 +4,23 @@ package shared
 
 // MeshTrafficPermissionList - List
 type MeshTrafficPermissionList struct {
-	Items []MeshTrafficPermissionItem `json:"items,omitempty"`
+	Items []MeshTrafficPermissionItem `json:"items"`
 	// The total number of entities
-	Total *float64 `json:"total,omitempty"`
-	// URL to the next page
-	Next *string `json:"next,omitempty"`
+	Total float64 `json:"total"`
+	// URL to the next page, or null when this is the last page
+	Next *string `json:"next"`
 }
 
 func (m *MeshTrafficPermissionList) GetItems() []MeshTrafficPermissionItem {
 	if m == nil {
-		return nil
+		return []MeshTrafficPermissionItem{}
 	}
 	return m.Items
 }
 
-func (m *MeshTrafficPermissionList) GetTotal() *float64 {
+func (m *MeshTrafficPermissionList) GetTotal() float64 {
 	if m == nil {
-		return nil
+		return 0.0
 	}
 	return m.Total
 }

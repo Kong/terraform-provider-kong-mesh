@@ -38,15 +38,8 @@ func (e *MeshHTTPRouteItemType) UnmarshalJSON(data []byte) error {
 type MeshHTTPRouteItemKind string
 
 const (
-	MeshHTTPRouteItemKindMesh                 MeshHTTPRouteItemKind = "Mesh"
-	MeshHTTPRouteItemKindMeshSubset           MeshHTTPRouteItemKind = "MeshSubset"
-	MeshHTTPRouteItemKindMeshGateway          MeshHTTPRouteItemKind = "MeshGateway"
-	MeshHTTPRouteItemKindMeshService          MeshHTTPRouteItemKind = "MeshService"
-	MeshHTTPRouteItemKindMeshExternalService  MeshHTTPRouteItemKind = "MeshExternalService"
-	MeshHTTPRouteItemKindMeshMultiZoneService MeshHTTPRouteItemKind = "MeshMultiZoneService"
-	MeshHTTPRouteItemKindMeshServiceSubset    MeshHTTPRouteItemKind = "MeshServiceSubset"
-	MeshHTTPRouteItemKindMeshHTTPRoute        MeshHTTPRouteItemKind = "MeshHTTPRoute"
-	MeshHTTPRouteItemKindDataplane            MeshHTTPRouteItemKind = "Dataplane"
+	MeshHTTPRouteItemKindMesh      MeshHTTPRouteItemKind = "Mesh"
+	MeshHTTPRouteItemKindDataplane MeshHTTPRouteItemKind = "Dataplane"
 )
 
 func (e MeshHTTPRouteItemKind) ToPointer() *MeshHTTPRouteItemKind {
@@ -57,29 +50,7 @@ func (e MeshHTTPRouteItemKind) ToPointer() *MeshHTTPRouteItemKind {
 func (e *MeshHTTPRouteItemKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshHTTPRouteItemProxyTypes string
-
-const (
-	MeshHTTPRouteItemProxyTypesSidecar MeshHTTPRouteItemProxyTypes = "Sidecar"
-	MeshHTTPRouteItemProxyTypesGateway MeshHTTPRouteItemProxyTypes = "Gateway"
-)
-
-func (e MeshHTTPRouteItemProxyTypes) ToPointer() *MeshHTTPRouteItemProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshHTTPRouteItemProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
+		case "Mesh", "Dataplane":
 			return true
 		}
 	}
@@ -92,26 +63,13 @@ func (e *MeshHTTPRouteItemProxyTypes) IsExact() bool {
 type MeshHTTPRouteItemTargetRef struct {
 	// Kind of the referenced resource
 	Kind MeshHTTPRouteItemKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select referenced real resources and to carry legacy
+	// service identity when a common TargetRef must still target old
+	// service-tag based paths.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshHTTPRouteItemProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
 }
 
 func (m *MeshHTTPRouteItemTargetRef) GetKind() MeshHTTPRouteItemKind {
@@ -128,34 +86,6 @@ func (m *MeshHTTPRouteItemTargetRef) GetLabels() map[string]string {
 	return m.Labels
 }
 
-func (m *MeshHTTPRouteItemTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshHTTPRouteItemTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshHTTPRouteItemTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
-func (m *MeshHTTPRouteItemTargetRef) GetProxyTypes() []MeshHTTPRouteItemProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
 func (m *MeshHTTPRouteItemTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
@@ -163,26 +93,665 @@ func (m *MeshHTTPRouteItemTargetRef) GetSectionName() *string {
 	return m.SectionName
 }
 
-func (m *MeshHTTPRouteItemTargetRef) GetTags() map[string]string {
+type MeshHTTPRouteItemSpecToAdd struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
+
+func (m *MeshHTTPRouteItemSpecToAdd) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+func (m *MeshHTTPRouteItemSpecToAdd) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+type MeshHTTPRouteItemSpecToSet struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
+
+func (m *MeshHTTPRouteItemSpecToSet) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+func (m *MeshHTTPRouteItemSpecToSet) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// MeshHTTPRouteItemRequestHeaderModifier - Only one action is supported per header name.
+// Configuration to set or add multiple values for a header must use RFC 7230
+// header value formatting, separating each value with a comma.
+type MeshHTTPRouteItemRequestHeaderModifier struct {
+	Add    []MeshHTTPRouteItemSpecToAdd `json:"add,omitempty"`
+	Remove []string                     `json:"remove,omitempty"`
+	Set    []MeshHTTPRouteItemSpecToSet `json:"set,omitempty"`
+}
+
+func (m *MeshHTTPRouteItemRequestHeaderModifier) GetAdd() []MeshHTTPRouteItemSpecToAdd {
 	if m == nil {
 		return nil
 	}
-	return m.Tags
+	return m.Add
+}
+
+func (m *MeshHTTPRouteItemRequestHeaderModifier) GetRemove() []string {
+	if m == nil {
+		return nil
+	}
+	return m.Remove
+}
+
+func (m *MeshHTTPRouteItemRequestHeaderModifier) GetSet() []MeshHTTPRouteItemSpecToSet {
+	if m == nil {
+		return nil
+	}
+	return m.Set
+}
+
+// MeshHTTPRouteItemSpecToRulesDefaultKind - Kind of the referenced resource
+type MeshHTTPRouteItemSpecToRulesDefaultKind string
+
+const (
+	MeshHTTPRouteItemSpecToRulesDefaultKindMeshService          MeshHTTPRouteItemSpecToRulesDefaultKind = "MeshService"
+	MeshHTTPRouteItemSpecToRulesDefaultKindMeshExternalService  MeshHTTPRouteItemSpecToRulesDefaultKind = "MeshExternalService"
+	MeshHTTPRouteItemSpecToRulesDefaultKindMeshMultiZoneService MeshHTTPRouteItemSpecToRulesDefaultKind = "MeshMultiZoneService"
+)
+
+func (e MeshHTTPRouteItemSpecToRulesDefaultKind) ToPointer() *MeshHTTPRouteItemSpecToRulesDefaultKind {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshHTTPRouteItemSpecToRulesDefaultKind) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "MeshService", "MeshExternalService", "MeshMultiZoneService":
+			return true
+		}
+	}
+	return false
+}
+
+// MeshHTTPRouteItemSpecBackendRef - BackendRef defines the destination traffic is routed to.
+type MeshHTTPRouteItemSpecBackendRef struct {
+	// Kind of the referenced resource
+	Kind MeshHTTPRouteItemSpecToRulesDefaultKind `json:"kind"`
+	// Labels are used to select the referenced real resource.
+	Labels map[string]string `json:"labels,omitempty"`
+	// Port is only supported when this ref refers to a real MeshService object
+	Port *int `json:"port,omitempty"`
+	// SectionName is used to target a specific section of the resource.
+	// For example, you can target a port from MeshService.ports[] by its name.
+	SectionName *string `json:"sectionName,omitempty"`
+	Weight      *int64  `json:"weight,omitempty"`
+}
+
+func (m *MeshHTTPRouteItemSpecBackendRef) GetKind() MeshHTTPRouteItemSpecToRulesDefaultKind {
+	if m == nil {
+		return MeshHTTPRouteItemSpecToRulesDefaultKind("")
+	}
+	return m.Kind
+}
+
+func (m *MeshHTTPRouteItemSpecBackendRef) GetLabels() map[string]string {
+	if m == nil {
+		return nil
+	}
+	return m.Labels
+}
+
+func (m *MeshHTTPRouteItemSpecBackendRef) GetPort() *int {
+	if m == nil {
+		return nil
+	}
+	return m.Port
+}
+
+func (m *MeshHTTPRouteItemSpecBackendRef) GetSectionName() *string {
+	if m == nil {
+		return nil
+	}
+	return m.SectionName
+}
+
+func (m *MeshHTTPRouteItemSpecBackendRef) GetWeight() *int64 {
+	if m == nil {
+		return nil
+	}
+	return m.Weight
+}
+
+type MeshHTTPRouteItemSpecPercentageType string
+
+const (
+	MeshHTTPRouteItemSpecPercentageTypeInteger MeshHTTPRouteItemSpecPercentageType = "integer"
+	MeshHTTPRouteItemSpecPercentageTypeStr     MeshHTTPRouteItemSpecPercentageType = "str"
+)
+
+// MeshHTTPRouteItemSpecPercentage - Percentage of requests to mirror. If not specified, all requests
+// to the target cluster will be mirrored.
+type MeshHTTPRouteItemSpecPercentage struct {
+	Integer *int64  `queryParam:"inline" union:"member"`
+	Str     *string `queryParam:"inline" union:"member"`
+
+	Type MeshHTTPRouteItemSpecPercentageType
+}
+
+func CreateMeshHTTPRouteItemSpecPercentageInteger(integer int64) MeshHTTPRouteItemSpecPercentage {
+	typ := MeshHTTPRouteItemSpecPercentageTypeInteger
+
+	return MeshHTTPRouteItemSpecPercentage{
+		Integer: &integer,
+		Type:    typ,
+	}
+}
+
+func CreateMeshHTTPRouteItemSpecPercentageStr(str string) MeshHTTPRouteItemSpecPercentage {
+	typ := MeshHTTPRouteItemSpecPercentageTypeStr
+
+	return MeshHTTPRouteItemSpecPercentage{
+		Str:  &str,
+		Type: typ,
+	}
+}
+
+func (u *MeshHTTPRouteItemSpecPercentage) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var integer int64 = int64(0)
+	if err := utils.UnmarshalJSON(data, &integer, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshHTTPRouteItemSpecPercentageTypeInteger,
+			Value: &integer,
+		})
+	}
+
+	var str string = ""
+	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  MeshHTTPRouteItemSpecPercentageTypeStr,
+			Value: &str,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshHTTPRouteItemSpecPercentage", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshHTTPRouteItemSpecPercentage", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(MeshHTTPRouteItemSpecPercentageType)
+	switch best.Type {
+	case MeshHTTPRouteItemSpecPercentageTypeInteger:
+		u.Integer = best.Value.(*int64)
+		return nil
+	case MeshHTTPRouteItemSpecPercentageTypeStr:
+		u.Str = best.Value.(*string)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for MeshHTTPRouteItemSpecPercentage", string(data))
+}
+
+func (u MeshHTTPRouteItemSpecPercentage) MarshalJSON() ([]byte, error) {
+	if u.Integer != nil {
+		return utils.MarshalJSON(u.Integer, "", true)
+	}
+
+	if u.Str != nil {
+		return utils.MarshalJSON(u.Str, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type MeshHTTPRouteItemSpecPercentage: all fields are null")
+}
+
+type MeshHTTPRouteItemRequestMirror struct {
+	// BackendRef defines the destination traffic is routed to.
+	BackendRef MeshHTTPRouteItemSpecBackendRef `json:"backendRef"`
+	// Percentage of requests to mirror. If not specified, all requests
+	// to the target cluster will be mirrored.
+	Percentage *MeshHTTPRouteItemSpecPercentage `json:"percentage,omitempty"`
+}
+
+func (m *MeshHTTPRouteItemRequestMirror) GetBackendRef() MeshHTTPRouteItemSpecBackendRef {
+	if m == nil {
+		return MeshHTTPRouteItemSpecBackendRef{}
+	}
+	return m.BackendRef
+}
+
+func (m *MeshHTTPRouteItemRequestMirror) GetPercentage() *MeshHTTPRouteItemSpecPercentage {
+	if m == nil {
+		return nil
+	}
+	return m.Percentage
+}
+
+type MeshHTTPRouteItemSpecToRulesDefaultBackendRefsFiltersType string
+
+const (
+	MeshHTTPRouteItemSpecToRulesDefaultBackendRefsFiltersTypeReplaceFullPath    MeshHTTPRouteItemSpecToRulesDefaultBackendRefsFiltersType = "ReplaceFullPath"
+	MeshHTTPRouteItemSpecToRulesDefaultBackendRefsFiltersTypeReplacePrefixMatch MeshHTTPRouteItemSpecToRulesDefaultBackendRefsFiltersType = "ReplacePrefixMatch"
+)
+
+func (e MeshHTTPRouteItemSpecToRulesDefaultBackendRefsFiltersType) ToPointer() *MeshHTTPRouteItemSpecToRulesDefaultBackendRefsFiltersType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshHTTPRouteItemSpecToRulesDefaultBackendRefsFiltersType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "ReplaceFullPath", "ReplacePrefixMatch":
+			return true
+		}
+	}
+	return false
+}
+
+// MeshHTTPRouteItemSpecToRulesPath - Path defines parameters used to modify the path of the incoming request.
+// The modified path is then used to construct the location header.
+// When empty, the request path is used as-is.
+type MeshHTTPRouteItemSpecToRulesPath struct {
+	ReplaceFullPath    *string                                                   `json:"replaceFullPath,omitempty"`
+	ReplacePrefixMatch *string                                                   `json:"replacePrefixMatch,omitempty"`
+	Type               MeshHTTPRouteItemSpecToRulesDefaultBackendRefsFiltersType `json:"type"`
+}
+
+func (m *MeshHTTPRouteItemSpecToRulesPath) GetReplaceFullPath() *string {
+	if m == nil {
+		return nil
+	}
+	return m.ReplaceFullPath
+}
+
+func (m *MeshHTTPRouteItemSpecToRulesPath) GetReplacePrefixMatch() *string {
+	if m == nil {
+		return nil
+	}
+	return m.ReplacePrefixMatch
+}
+
+func (m *MeshHTTPRouteItemSpecToRulesPath) GetType() MeshHTTPRouteItemSpecToRulesDefaultBackendRefsFiltersType {
+	if m == nil {
+		return MeshHTTPRouteItemSpecToRulesDefaultBackendRefsFiltersType("")
+	}
+	return m.Type
+}
+
+type MeshHTTPRouteItemScheme string
+
+const (
+	MeshHTTPRouteItemSchemeHTTP  MeshHTTPRouteItemScheme = "http"
+	MeshHTTPRouteItemSchemeHTTPS MeshHTTPRouteItemScheme = "https"
+)
+
+func (e MeshHTTPRouteItemScheme) ToPointer() *MeshHTTPRouteItemScheme {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshHTTPRouteItemScheme) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "http", "https":
+			return true
+		}
+	}
+	return false
+}
+
+// MeshHTTPRouteItemStatusCode - StatusCode is the HTTP status code to be used in response.
+type MeshHTTPRouteItemStatusCode int64
+
+const (
+	MeshHTTPRouteItemStatusCodeThreeHundredAndOne   MeshHTTPRouteItemStatusCode = 301
+	MeshHTTPRouteItemStatusCodeThreeHundredAndTwo   MeshHTTPRouteItemStatusCode = 302
+	MeshHTTPRouteItemStatusCodeThreeHundredAndThree MeshHTTPRouteItemStatusCode = 303
+	MeshHTTPRouteItemStatusCodeThreeHundredAndSeven MeshHTTPRouteItemStatusCode = 307
+	MeshHTTPRouteItemStatusCodeThreeHundredAndEight MeshHTTPRouteItemStatusCode = 308
+)
+
+func (e MeshHTTPRouteItemStatusCode) ToPointer() *MeshHTTPRouteItemStatusCode {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshHTTPRouteItemStatusCode) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case 301, 302, 303, 307, 308:
+			return true
+		}
+	}
+	return false
+}
+
+type MeshHTTPRouteItemRequestRedirect struct {
+	// PreciseHostname is the fully qualified domain name of a network host. This
+	// matches the RFC 1123 definition of a hostname with 1 notable exception that
+	// numeric IP addresses are not allowed.
+	//
+	// Note that as per RFC1035 and RFC1123, a *label* must consist of lower case
+	// alphanumeric characters or '-', and must start and end with an alphanumeric
+	// character. No other punctuation is allowed.
+	Hostname *string `json:"hostname,omitempty"`
+	// Path defines parameters used to modify the path of the incoming request.
+	// The modified path is then used to construct the location header.
+	// When empty, the request path is used as-is.
+	Path *MeshHTTPRouteItemSpecToRulesPath `json:"path,omitempty"`
+	// Port is the port to be used in the value of the `Location`
+	// header in the response.
+	// When empty, port (if specified) of the request is used.
+	Port   *int                     `json:"port,omitempty"`
+	Scheme *MeshHTTPRouteItemScheme `json:"scheme,omitempty"`
+	// StatusCode is the HTTP status code to be used in response.
+	StatusCode *MeshHTTPRouteItemStatusCode `default:"302" json:"statusCode"`
+}
+
+func (m MeshHTTPRouteItemRequestRedirect) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(m, "", false)
+}
+
+func (m *MeshHTTPRouteItemRequestRedirect) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MeshHTTPRouteItemRequestRedirect) GetHostname() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Hostname
+}
+
+func (m *MeshHTTPRouteItemRequestRedirect) GetPath() *MeshHTTPRouteItemSpecToRulesPath {
+	if m == nil {
+		return nil
+	}
+	return m.Path
+}
+
+func (m *MeshHTTPRouteItemRequestRedirect) GetPort() *int {
+	if m == nil {
+		return nil
+	}
+	return m.Port
+}
+
+func (m *MeshHTTPRouteItemRequestRedirect) GetScheme() *MeshHTTPRouteItemScheme {
+	if m == nil {
+		return nil
+	}
+	return m.Scheme
+}
+
+func (m *MeshHTTPRouteItemRequestRedirect) GetStatusCode() *MeshHTTPRouteItemStatusCode {
+	if m == nil {
+		return nil
+	}
+	return m.StatusCode
+}
+
+type MeshHTTPRouteItemSpecToRulesAdd struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
+
+func (m *MeshHTTPRouteItemSpecToRulesAdd) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+func (m *MeshHTTPRouteItemSpecToRulesAdd) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+type MeshHTTPRouteItemSpecToRulesSet struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
+
+func (m *MeshHTTPRouteItemSpecToRulesSet) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+func (m *MeshHTTPRouteItemSpecToRulesSet) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+// MeshHTTPRouteItemResponseHeaderModifier - Only one action is supported per header name.
+// Configuration to set or add multiple values for a header must use RFC 7230
+// header value formatting, separating each value with a comma.
+type MeshHTTPRouteItemResponseHeaderModifier struct {
+	Add    []MeshHTTPRouteItemSpecToRulesAdd `json:"add,omitempty"`
+	Remove []string                          `json:"remove,omitempty"`
+	Set    []MeshHTTPRouteItemSpecToRulesSet `json:"set,omitempty"`
+}
+
+func (m *MeshHTTPRouteItemResponseHeaderModifier) GetAdd() []MeshHTTPRouteItemSpecToRulesAdd {
+	if m == nil {
+		return nil
+	}
+	return m.Add
+}
+
+func (m *MeshHTTPRouteItemResponseHeaderModifier) GetRemove() []string {
+	if m == nil {
+		return nil
+	}
+	return m.Remove
+}
+
+func (m *MeshHTTPRouteItemResponseHeaderModifier) GetSet() []MeshHTTPRouteItemSpecToRulesSet {
+	if m == nil {
+		return nil
+	}
+	return m.Set
+}
+
+type MeshHTTPRouteItemSpecToRulesDefaultType string
+
+const (
+	MeshHTTPRouteItemSpecToRulesDefaultTypeRequestHeaderModifier  MeshHTTPRouteItemSpecToRulesDefaultType = "RequestHeaderModifier"
+	MeshHTTPRouteItemSpecToRulesDefaultTypeResponseHeaderModifier MeshHTTPRouteItemSpecToRulesDefaultType = "ResponseHeaderModifier"
+	MeshHTTPRouteItemSpecToRulesDefaultTypeRequestRedirect        MeshHTTPRouteItemSpecToRulesDefaultType = "RequestRedirect"
+	MeshHTTPRouteItemSpecToRulesDefaultTypeURLRewrite             MeshHTTPRouteItemSpecToRulesDefaultType = "URLRewrite"
+	MeshHTTPRouteItemSpecToRulesDefaultTypeRequestMirror          MeshHTTPRouteItemSpecToRulesDefaultType = "RequestMirror"
+)
+
+func (e MeshHTTPRouteItemSpecToRulesDefaultType) ToPointer() *MeshHTTPRouteItemSpecToRulesDefaultType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshHTTPRouteItemSpecToRulesDefaultType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "RequestHeaderModifier", "ResponseHeaderModifier", "RequestRedirect", "URLRewrite", "RequestMirror":
+			return true
+		}
+	}
+	return false
+}
+
+type MeshHTTPRouteItemSpecToRulesDefaultBackendRefsType string
+
+const (
+	MeshHTTPRouteItemSpecToRulesDefaultBackendRefsTypeReplaceFullPath    MeshHTTPRouteItemSpecToRulesDefaultBackendRefsType = "ReplaceFullPath"
+	MeshHTTPRouteItemSpecToRulesDefaultBackendRefsTypeReplacePrefixMatch MeshHTTPRouteItemSpecToRulesDefaultBackendRefsType = "ReplacePrefixMatch"
+)
+
+func (e MeshHTTPRouteItemSpecToRulesDefaultBackendRefsType) ToPointer() *MeshHTTPRouteItemSpecToRulesDefaultBackendRefsType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshHTTPRouteItemSpecToRulesDefaultBackendRefsType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "ReplaceFullPath", "ReplacePrefixMatch":
+			return true
+		}
+	}
+	return false
+}
+
+// MeshHTTPRouteItemSpecToPath - Path defines a path rewrite.
+type MeshHTTPRouteItemSpecToPath struct {
+	ReplaceFullPath    *string                                            `json:"replaceFullPath,omitempty"`
+	ReplacePrefixMatch *string                                            `json:"replacePrefixMatch,omitempty"`
+	Type               MeshHTTPRouteItemSpecToRulesDefaultBackendRefsType `json:"type"`
+}
+
+func (m *MeshHTTPRouteItemSpecToPath) GetReplaceFullPath() *string {
+	if m == nil {
+		return nil
+	}
+	return m.ReplaceFullPath
+}
+
+func (m *MeshHTTPRouteItemSpecToPath) GetReplacePrefixMatch() *string {
+	if m == nil {
+		return nil
+	}
+	return m.ReplacePrefixMatch
+}
+
+func (m *MeshHTTPRouteItemSpecToPath) GetType() MeshHTTPRouteItemSpecToRulesDefaultBackendRefsType {
+	if m == nil {
+		return MeshHTTPRouteItemSpecToRulesDefaultBackendRefsType("")
+	}
+	return m.Type
+}
+
+type MeshHTTPRouteItemURLRewrite struct {
+	// HostToBackendHostname is not currently supported and must not be set.
+	HostToBackendHostname *bool `json:"hostToBackendHostname,omitempty"`
+	// Hostname is the value to be used to replace the host header value during forwarding.
+	Hostname *string `json:"hostname,omitempty"`
+	// Path defines a path rewrite.
+	Path *MeshHTTPRouteItemSpecToPath `json:"path,omitempty"`
+}
+
+func (m *MeshHTTPRouteItemURLRewrite) GetHostToBackendHostname() *bool {
+	if m == nil {
+		return nil
+	}
+	return m.HostToBackendHostname
+}
+
+func (m *MeshHTTPRouteItemURLRewrite) GetHostname() *string {
+	if m == nil {
+		return nil
+	}
+	return m.Hostname
+}
+
+func (m *MeshHTTPRouteItemURLRewrite) GetPath() *MeshHTTPRouteItemSpecToPath {
+	if m == nil {
+		return nil
+	}
+	return m.Path
+}
+
+type MeshHTTPRouteItemFilters struct {
+	// Only one action is supported per header name.
+	// Configuration to set or add multiple values for a header must use RFC 7230
+	// header value formatting, separating each value with a comma.
+	RequestHeaderModifier *MeshHTTPRouteItemRequestHeaderModifier `json:"requestHeaderModifier,omitempty"`
+	RequestMirror         *MeshHTTPRouteItemRequestMirror         `json:"requestMirror,omitempty"`
+	RequestRedirect       *MeshHTTPRouteItemRequestRedirect       `json:"requestRedirect,omitempty"`
+	// Only one action is supported per header name.
+	// Configuration to set or add multiple values for a header must use RFC 7230
+	// header value formatting, separating each value with a comma.
+	ResponseHeaderModifier *MeshHTTPRouteItemResponseHeaderModifier `json:"responseHeaderModifier,omitempty"`
+	Type                   MeshHTTPRouteItemSpecToRulesDefaultType  `json:"type"`
+	URLRewrite             *MeshHTTPRouteItemURLRewrite             `json:"urlRewrite,omitempty"`
+}
+
+func (m *MeshHTTPRouteItemFilters) GetRequestHeaderModifier() *MeshHTTPRouteItemRequestHeaderModifier {
+	if m == nil {
+		return nil
+	}
+	return m.RequestHeaderModifier
+}
+
+func (m *MeshHTTPRouteItemFilters) GetRequestMirror() *MeshHTTPRouteItemRequestMirror {
+	if m == nil {
+		return nil
+	}
+	return m.RequestMirror
+}
+
+func (m *MeshHTTPRouteItemFilters) GetRequestRedirect() *MeshHTTPRouteItemRequestRedirect {
+	if m == nil {
+		return nil
+	}
+	return m.RequestRedirect
+}
+
+func (m *MeshHTTPRouteItemFilters) GetResponseHeaderModifier() *MeshHTTPRouteItemResponseHeaderModifier {
+	if m == nil {
+		return nil
+	}
+	return m.ResponseHeaderModifier
+}
+
+func (m *MeshHTTPRouteItemFilters) GetType() MeshHTTPRouteItemSpecToRulesDefaultType {
+	if m == nil {
+		return MeshHTTPRouteItemSpecToRulesDefaultType("")
+	}
+	return m.Type
+}
+
+func (m *MeshHTTPRouteItemFilters) GetURLRewrite() *MeshHTTPRouteItemURLRewrite {
+	if m == nil {
+		return nil
+	}
+	return m.URLRewrite
 }
 
 // MeshHTTPRouteItemSpecToKind - Kind of the referenced resource
 type MeshHTTPRouteItemSpecToKind string
 
 const (
-	MeshHTTPRouteItemSpecToKindMesh                 MeshHTTPRouteItemSpecToKind = "Mesh"
-	MeshHTTPRouteItemSpecToKindMeshSubset           MeshHTTPRouteItemSpecToKind = "MeshSubset"
-	MeshHTTPRouteItemSpecToKindMeshGateway          MeshHTTPRouteItemSpecToKind = "MeshGateway"
 	MeshHTTPRouteItemSpecToKindMeshService          MeshHTTPRouteItemSpecToKind = "MeshService"
 	MeshHTTPRouteItemSpecToKindMeshExternalService  MeshHTTPRouteItemSpecToKind = "MeshExternalService"
 	MeshHTTPRouteItemSpecToKindMeshMultiZoneService MeshHTTPRouteItemSpecToKind = "MeshMultiZoneService"
-	MeshHTTPRouteItemSpecToKindMeshServiceSubset    MeshHTTPRouteItemSpecToKind = "MeshServiceSubset"
-	MeshHTTPRouteItemSpecToKindMeshHTTPRoute        MeshHTTPRouteItemSpecToKind = "MeshHTTPRoute"
-	MeshHTTPRouteItemSpecToKindDataplane            MeshHTTPRouteItemSpecToKind = "Dataplane"
 )
 
 func (e MeshHTTPRouteItemSpecToKind) ToPointer() *MeshHTTPRouteItemSpecToKind {
@@ -193,73 +762,32 @@ func (e MeshHTTPRouteItemSpecToKind) ToPointer() *MeshHTTPRouteItemSpecToKind {
 func (e *MeshHTTPRouteItemSpecToKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+		case "MeshService", "MeshExternalService", "MeshMultiZoneService":
 			return true
 		}
 	}
 	return false
 }
 
-type MeshHTTPRouteItemSpecToProxyTypes string
-
-const (
-	MeshHTTPRouteItemSpecToProxyTypesSidecar MeshHTTPRouteItemSpecToProxyTypes = "Sidecar"
-	MeshHTTPRouteItemSpecToProxyTypesGateway MeshHTTPRouteItemSpecToProxyTypes = "Gateway"
-)
-
-func (e MeshHTTPRouteItemSpecToProxyTypes) ToPointer() *MeshHTTPRouteItemSpecToProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshHTTPRouteItemSpecToProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
-			return true
-		}
-	}
-	return false
-}
-
-// BackendRefs - BackendRef defines where to forward traffic.
 type BackendRefs struct {
+	Filters []MeshHTTPRouteItemFilters `json:"filters,omitempty"`
 	// Kind of the referenced resource
 	Kind MeshHTTPRouteItemSpecToKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select the referenced real resource.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
 	// Port is only supported when this ref refers to a real MeshService object
 	Port *int `json:"port,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshHTTPRouteItemSpecToProxyTypes `json:"proxyTypes,omitempty"`
-	// SectionName is used to target specific section of resource.
-	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
+	// SectionName is used to target a specific section of the resource.
+	// For example, you can target a port from MeshService.ports[] by its name.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags   map[string]string `json:"tags,omitempty"`
-	Weight *int64            `default:"1" json:"weight"`
+	Weight      *int64  `json:"weight,omitempty"`
 }
 
-func (b BackendRefs) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(b, "", false)
-}
-
-func (b *BackendRefs) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &b, "", false, nil); err != nil {
-		return err
+func (b *BackendRefs) GetFilters() []MeshHTTPRouteItemFilters {
+	if b == nil {
+		return nil
 	}
-	return nil
+	return b.Filters
 }
 
 func (b *BackendRefs) GetKind() MeshHTTPRouteItemSpecToKind {
@@ -276,27 +804,6 @@ func (b *BackendRefs) GetLabels() map[string]string {
 	return b.Labels
 }
 
-func (b *BackendRefs) GetMesh() *string {
-	if b == nil {
-		return nil
-	}
-	return b.Mesh
-}
-
-func (b *BackendRefs) GetName() *string {
-	if b == nil {
-		return nil
-	}
-	return b.Name
-}
-
-func (b *BackendRefs) GetNamespace() *string {
-	if b == nil {
-		return nil
-	}
-	return b.Namespace
-}
-
 func (b *BackendRefs) GetPort() *int {
 	if b == nil {
 		return nil
@@ -304,25 +811,11 @@ func (b *BackendRefs) GetPort() *int {
 	return b.Port
 }
 
-func (b *BackendRefs) GetProxyTypes() []MeshHTTPRouteItemSpecToProxyTypes {
-	if b == nil {
-		return nil
-	}
-	return b.ProxyTypes
-}
-
 func (b *BackendRefs) GetSectionName() *string {
 	if b == nil {
 		return nil
 	}
 	return b.SectionName
-}
-
-func (b *BackendRefs) GetTags() map[string]string {
-	if b == nil {
-		return nil
-	}
-	return b.Tags
 }
 
 func (b *BackendRefs) GetWeight() *int64 {
@@ -404,15 +897,9 @@ func (r *RequestHeaderModifier) GetSet() []MeshHTTPRouteItemSet {
 type MeshHTTPRouteItemSpecToRulesKind string
 
 const (
-	MeshHTTPRouteItemSpecToRulesKindMesh                 MeshHTTPRouteItemSpecToRulesKind = "Mesh"
-	MeshHTTPRouteItemSpecToRulesKindMeshSubset           MeshHTTPRouteItemSpecToRulesKind = "MeshSubset"
-	MeshHTTPRouteItemSpecToRulesKindMeshGateway          MeshHTTPRouteItemSpecToRulesKind = "MeshGateway"
 	MeshHTTPRouteItemSpecToRulesKindMeshService          MeshHTTPRouteItemSpecToRulesKind = "MeshService"
 	MeshHTTPRouteItemSpecToRulesKindMeshExternalService  MeshHTTPRouteItemSpecToRulesKind = "MeshExternalService"
 	MeshHTTPRouteItemSpecToRulesKindMeshMultiZoneService MeshHTTPRouteItemSpecToRulesKind = "MeshMultiZoneService"
-	MeshHTTPRouteItemSpecToRulesKindMeshServiceSubset    MeshHTTPRouteItemSpecToRulesKind = "MeshServiceSubset"
-	MeshHTTPRouteItemSpecToRulesKindMeshHTTPRoute        MeshHTTPRouteItemSpecToRulesKind = "MeshHTTPRoute"
-	MeshHTTPRouteItemSpecToRulesKindDataplane            MeshHTTPRouteItemSpecToRulesKind = "Dataplane"
 )
 
 func (e MeshHTTPRouteItemSpecToRulesKind) ToPointer() *MeshHTTPRouteItemSpecToRulesKind {
@@ -423,73 +910,25 @@ func (e MeshHTTPRouteItemSpecToRulesKind) ToPointer() *MeshHTTPRouteItemSpecToRu
 func (e *MeshHTTPRouteItemSpecToRulesKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
+		case "MeshService", "MeshExternalService", "MeshMultiZoneService":
 			return true
 		}
 	}
 	return false
 }
 
-type MeshHTTPRouteItemSpecToRulesProxyTypes string
-
-const (
-	MeshHTTPRouteItemSpecToRulesProxyTypesSidecar MeshHTTPRouteItemSpecToRulesProxyTypes = "Sidecar"
-	MeshHTTPRouteItemSpecToRulesProxyTypesGateway MeshHTTPRouteItemSpecToRulesProxyTypes = "Gateway"
-)
-
-func (e MeshHTTPRouteItemSpecToRulesProxyTypes) ToPointer() *MeshHTTPRouteItemSpecToRulesProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshHTTPRouteItemSpecToRulesProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
-			return true
-		}
-	}
-	return false
-}
-
-// MeshHTTPRouteItemBackendRef - BackendRef defines where to forward traffic.
+// MeshHTTPRouteItemBackendRef - BackendRef defines the destination traffic is routed to.
 type MeshHTTPRouteItemBackendRef struct {
 	// Kind of the referenced resource
 	Kind MeshHTTPRouteItemSpecToRulesKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select the referenced real resource.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
 	// Port is only supported when this ref refers to a real MeshService object
 	Port *int `json:"port,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshHTTPRouteItemSpecToRulesProxyTypes `json:"proxyTypes,omitempty"`
-	// SectionName is used to target specific section of resource.
-	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
+	// SectionName is used to target a specific section of the resource.
+	// For example, you can target a port from MeshService.ports[] by its name.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags   map[string]string `json:"tags,omitempty"`
-	Weight *int64            `default:"1" json:"weight"`
-}
-
-func (m MeshHTTPRouteItemBackendRef) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(m, "", false)
-}
-
-func (m *MeshHTTPRouteItemBackendRef) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &m, "", false, nil); err != nil {
-		return err
-	}
-	return nil
+	Weight      *int64  `json:"weight,omitempty"`
 }
 
 func (m *MeshHTTPRouteItemBackendRef) GetKind() MeshHTTPRouteItemSpecToRulesKind {
@@ -506,27 +945,6 @@ func (m *MeshHTTPRouteItemBackendRef) GetLabels() map[string]string {
 	return m.Labels
 }
 
-func (m *MeshHTTPRouteItemBackendRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshHTTPRouteItemBackendRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshHTTPRouteItemBackendRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
 func (m *MeshHTTPRouteItemBackendRef) GetPort() *int {
 	if m == nil {
 		return nil
@@ -534,25 +952,11 @@ func (m *MeshHTTPRouteItemBackendRef) GetPort() *int {
 	return m.Port
 }
 
-func (m *MeshHTTPRouteItemBackendRef) GetProxyTypes() []MeshHTTPRouteItemSpecToRulesProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
 func (m *MeshHTTPRouteItemBackendRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
-}
-
-func (m *MeshHTTPRouteItemBackendRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
 }
 
 func (m *MeshHTTPRouteItemBackendRef) GetWeight() *int64 {
@@ -654,7 +1058,7 @@ func (u MeshHTTPRouteItemPercentage) MarshalJSON() ([]byte, error) {
 }
 
 type RequestMirror struct {
-	// BackendRef defines where to forward traffic.
+	// BackendRef defines the destination traffic is routed to.
 	BackendRef MeshHTTPRouteItemBackendRef `json:"backendRef"`
 	// Percentage of requests to mirror. If not specified, all requests
 	// to the target cluster will be mirrored.
@@ -675,19 +1079,19 @@ func (r *RequestMirror) GetPercentage() *MeshHTTPRouteItemPercentage {
 	return r.Percentage
 }
 
-type MeshHTTPRouteItemSpecToRulesDefaultType string
+type MeshHTTPRouteItemSpecToRulesDefaultFiltersType string
 
 const (
-	MeshHTTPRouteItemSpecToRulesDefaultTypeReplaceFullPath    MeshHTTPRouteItemSpecToRulesDefaultType = "ReplaceFullPath"
-	MeshHTTPRouteItemSpecToRulesDefaultTypeReplacePrefixMatch MeshHTTPRouteItemSpecToRulesDefaultType = "ReplacePrefixMatch"
+	MeshHTTPRouteItemSpecToRulesDefaultFiltersTypeReplaceFullPath    MeshHTTPRouteItemSpecToRulesDefaultFiltersType = "ReplaceFullPath"
+	MeshHTTPRouteItemSpecToRulesDefaultFiltersTypeReplacePrefixMatch MeshHTTPRouteItemSpecToRulesDefaultFiltersType = "ReplacePrefixMatch"
 )
 
-func (e MeshHTTPRouteItemSpecToRulesDefaultType) ToPointer() *MeshHTTPRouteItemSpecToRulesDefaultType {
+func (e MeshHTTPRouteItemSpecToRulesDefaultFiltersType) ToPointer() *MeshHTTPRouteItemSpecToRulesDefaultFiltersType {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshHTTPRouteItemSpecToRulesDefaultType) IsExact() bool {
+func (e *MeshHTTPRouteItemSpecToRulesDefaultFiltersType) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "ReplaceFullPath", "ReplacePrefixMatch":
@@ -701,9 +1105,9 @@ func (e *MeshHTTPRouteItemSpecToRulesDefaultType) IsExact() bool {
 // The modified path is then used to construct the location header.
 // When empty, the request path is used as-is.
 type MeshHTTPRouteItemSpecPath struct {
-	ReplaceFullPath    *string                                 `json:"replaceFullPath,omitempty"`
-	ReplacePrefixMatch *string                                 `json:"replacePrefixMatch,omitempty"`
-	Type               MeshHTTPRouteItemSpecToRulesDefaultType `json:"type"`
+	ReplaceFullPath    *string                                        `json:"replaceFullPath,omitempty"`
+	ReplacePrefixMatch *string                                        `json:"replacePrefixMatch,omitempty"`
+	Type               MeshHTTPRouteItemSpecToRulesDefaultFiltersType `json:"type"`
 }
 
 func (m *MeshHTTPRouteItemSpecPath) GetReplaceFullPath() *string {
@@ -720,9 +1124,9 @@ func (m *MeshHTTPRouteItemSpecPath) GetReplacePrefixMatch() *string {
 	return m.ReplacePrefixMatch
 }
 
-func (m *MeshHTTPRouteItemSpecPath) GetType() MeshHTTPRouteItemSpecToRulesDefaultType {
+func (m *MeshHTTPRouteItemSpecPath) GetType() MeshHTTPRouteItemSpecToRulesDefaultFiltersType {
 	if m == nil {
-		return MeshHTTPRouteItemSpecToRulesDefaultType("")
+		return MeshHTTPRouteItemSpecToRulesDefaultFiltersType("")
 	}
 	return m.Type
 }
@@ -936,19 +1340,19 @@ func (e *MeshHTTPRouteItemSpecType) IsExact() bool {
 	return false
 }
 
-type MeshHTTPRouteItemSpecToRulesDefaultFiltersType string
+type MeshHTTPRouteItemSpecToRulesDefaultFiltersURLRewriteType string
 
 const (
-	MeshHTTPRouteItemSpecToRulesDefaultFiltersTypeReplaceFullPath    MeshHTTPRouteItemSpecToRulesDefaultFiltersType = "ReplaceFullPath"
-	MeshHTTPRouteItemSpecToRulesDefaultFiltersTypeReplacePrefixMatch MeshHTTPRouteItemSpecToRulesDefaultFiltersType = "ReplacePrefixMatch"
+	MeshHTTPRouteItemSpecToRulesDefaultFiltersURLRewriteTypeReplaceFullPath    MeshHTTPRouteItemSpecToRulesDefaultFiltersURLRewriteType = "ReplaceFullPath"
+	MeshHTTPRouteItemSpecToRulesDefaultFiltersURLRewriteTypeReplacePrefixMatch MeshHTTPRouteItemSpecToRulesDefaultFiltersURLRewriteType = "ReplacePrefixMatch"
 )
 
-func (e MeshHTTPRouteItemSpecToRulesDefaultFiltersType) ToPointer() *MeshHTTPRouteItemSpecToRulesDefaultFiltersType {
+func (e MeshHTTPRouteItemSpecToRulesDefaultFiltersURLRewriteType) ToPointer() *MeshHTTPRouteItemSpecToRulesDefaultFiltersURLRewriteType {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshHTTPRouteItemSpecToRulesDefaultFiltersType) IsExact() bool {
+func (e *MeshHTTPRouteItemSpecToRulesDefaultFiltersURLRewriteType) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "ReplaceFullPath", "ReplacePrefixMatch":
@@ -960,9 +1364,9 @@ func (e *MeshHTTPRouteItemSpecToRulesDefaultFiltersType) IsExact() bool {
 
 // MeshHTTPRouteItemPath - Path defines a path rewrite.
 type MeshHTTPRouteItemPath struct {
-	ReplaceFullPath    *string                                        `json:"replaceFullPath,omitempty"`
-	ReplacePrefixMatch *string                                        `json:"replacePrefixMatch,omitempty"`
-	Type               MeshHTTPRouteItemSpecToRulesDefaultFiltersType `json:"type"`
+	ReplaceFullPath    *string                                                  `json:"replaceFullPath,omitempty"`
+	ReplacePrefixMatch *string                                                  `json:"replacePrefixMatch,omitempty"`
+	Type               MeshHTTPRouteItemSpecToRulesDefaultFiltersURLRewriteType `json:"type"`
 }
 
 func (m *MeshHTTPRouteItemPath) GetReplaceFullPath() *string {
@@ -979,16 +1383,15 @@ func (m *MeshHTTPRouteItemPath) GetReplacePrefixMatch() *string {
 	return m.ReplacePrefixMatch
 }
 
-func (m *MeshHTTPRouteItemPath) GetType() MeshHTTPRouteItemSpecToRulesDefaultFiltersType {
+func (m *MeshHTTPRouteItemPath) GetType() MeshHTTPRouteItemSpecToRulesDefaultFiltersURLRewriteType {
 	if m == nil {
-		return MeshHTTPRouteItemSpecToRulesDefaultFiltersType("")
+		return MeshHTTPRouteItemSpecToRulesDefaultFiltersURLRewriteType("")
 	}
 	return m.Type
 }
 
 type URLRewrite struct {
-	// HostToBackendHostname rewrites the hostname to the hostname of the
-	// upstream host. This option is only available when targeting MeshGateways.
+	// HostToBackendHostname is not currently supported and must not be set.
 	HostToBackendHostname *bool `json:"hostToBackendHostname,omitempty"`
 	// Hostname is the value to be used to replace the host header value during forwarding.
 	Hostname *string `json:"hostname,omitempty"`
@@ -1128,20 +1531,9 @@ type Headers struct {
 	// as they will be handled with case insensitivity (See https://tools.ietf.org/html/rfc7230#section-3.2).
 	Name string `json:"name"`
 	// Type specifies how to match against the value of the header.
-	Type *MeshHTTPRouteItemSpecToType `default:"Exact" json:"type"`
+	Type *MeshHTTPRouteItemSpecToType `json:"type,omitempty"`
 	// Value is the value of HTTP Header to be matched.
 	Value *string `json:"value,omitempty"`
-}
-
-func (h Headers) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(h, "", false)
-}
-
-func (h *Headers) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &h, "", false, nil); err != nil {
-		return err
-	}
-	return nil
 }
 
 func (h *Headers) GetName() string {
@@ -1352,14 +1744,10 @@ type MeshHTTPRouteItemSpecKind string
 
 const (
 	MeshHTTPRouteItemSpecKindMesh                 MeshHTTPRouteItemSpecKind = "Mesh"
-	MeshHTTPRouteItemSpecKindMeshSubset           MeshHTTPRouteItemSpecKind = "MeshSubset"
-	MeshHTTPRouteItemSpecKindMeshGateway          MeshHTTPRouteItemSpecKind = "MeshGateway"
 	MeshHTTPRouteItemSpecKindMeshService          MeshHTTPRouteItemSpecKind = "MeshService"
 	MeshHTTPRouteItemSpecKindMeshExternalService  MeshHTTPRouteItemSpecKind = "MeshExternalService"
 	MeshHTTPRouteItemSpecKindMeshMultiZoneService MeshHTTPRouteItemSpecKind = "MeshMultiZoneService"
-	MeshHTTPRouteItemSpecKindMeshServiceSubset    MeshHTTPRouteItemSpecKind = "MeshServiceSubset"
 	MeshHTTPRouteItemSpecKindMeshHTTPRoute        MeshHTTPRouteItemSpecKind = "MeshHTTPRoute"
-	MeshHTTPRouteItemSpecKindDataplane            MeshHTTPRouteItemSpecKind = "Dataplane"
 )
 
 func (e MeshHTTPRouteItemSpecKind) ToPointer() *MeshHTTPRouteItemSpecKind {
@@ -1370,29 +1758,7 @@ func (e MeshHTTPRouteItemSpecKind) ToPointer() *MeshHTTPRouteItemSpecKind {
 func (e *MeshHTTPRouteItemSpecKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshHTTPRouteItemSpecProxyTypes string
-
-const (
-	MeshHTTPRouteItemSpecProxyTypesSidecar MeshHTTPRouteItemSpecProxyTypes = "Sidecar"
-	MeshHTTPRouteItemSpecProxyTypesGateway MeshHTTPRouteItemSpecProxyTypes = "Gateway"
-)
-
-func (e MeshHTTPRouteItemSpecProxyTypes) ToPointer() *MeshHTTPRouteItemSpecProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshHTTPRouteItemSpecProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
+		case "Mesh", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshHTTPRoute":
 			return true
 		}
 	}
@@ -1404,26 +1770,13 @@ func (e *MeshHTTPRouteItemSpecProxyTypes) IsExact() bool {
 type MeshHTTPRouteItemSpecTargetRef struct {
 	// Kind of the referenced resource
 	Kind MeshHTTPRouteItemSpecKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select referenced real resources and to carry legacy
+	// service identity when a common TargetRef must still target old
+	// service-tag based paths.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshHTTPRouteItemSpecProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
 }
 
 func (m *MeshHTTPRouteItemSpecTargetRef) GetKind() MeshHTTPRouteItemSpecKind {
@@ -1440,34 +1793,6 @@ func (m *MeshHTTPRouteItemSpecTargetRef) GetLabels() map[string]string {
 	return m.Labels
 }
 
-func (m *MeshHTTPRouteItemSpecTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshHTTPRouteItemSpecTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshHTTPRouteItemSpecTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
-func (m *MeshHTTPRouteItemSpecTargetRef) GetProxyTypes() []MeshHTTPRouteItemSpecProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
 func (m *MeshHTTPRouteItemSpecTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
@@ -1475,18 +1800,8 @@ func (m *MeshHTTPRouteItemSpecTargetRef) GetSectionName() *string {
 	return m.SectionName
 }
 
-func (m *MeshHTTPRouteItemSpecTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
-}
-
 type MeshHTTPRouteItemTo struct {
-	// Hostnames is only valid when targeting MeshGateway and limits the
-	// effects of the rules to requests to this hostname.
-	// Given hostnames must intersect with the hostname of the listeners the
-	// route attaches to.
+	// Hostnames is not currently supported and must not be set.
 	Hostnames []string `json:"hostnames,omitempty"`
 	// Rules contains the routing rules applies to a combination of top-level
 	// targetRef and the targetRef in this entry.

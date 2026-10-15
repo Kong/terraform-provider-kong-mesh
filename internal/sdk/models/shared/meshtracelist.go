@@ -4,23 +4,23 @@ package shared
 
 // MeshTraceList - List
 type MeshTraceList struct {
-	Items []MeshTraceItem `json:"items,omitempty"`
+	Items []MeshTraceItem `json:"items"`
 	// The total number of entities
-	Total *float64 `json:"total,omitempty"`
-	// URL to the next page
-	Next *string `json:"next,omitempty"`
+	Total float64 `json:"total"`
+	// URL to the next page, or null when this is the last page
+	Next *string `json:"next"`
 }
 
 func (m *MeshTraceList) GetItems() []MeshTraceItem {
 	if m == nil {
-		return nil
+		return []MeshTraceItem{}
 	}
 	return m.Items
 }
 
-func (m *MeshTraceList) GetTotal() *float64 {
+func (m *MeshTraceList) GetTotal() float64 {
 	if m == nil {
-		return nil
+		return 0.0
 	}
 	return m.Total
 }

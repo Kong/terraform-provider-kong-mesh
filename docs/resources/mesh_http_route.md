@@ -25,16 +25,7 @@ resource "kong-mesh_mesh_http_route" "my_meshhttproute" {
       labels = {
         key = "value"
       }
-      mesh      = "...my_mesh..."
-      name      = "...my_name..."
-      namespace = "...my_namespace..."
-      proxy_types = [
-        "Sidecar"
-      ]
       section_name = "...my_section_name..."
-      tags = {
-        key = "value"
-      }
     }
     to = [
       {
@@ -46,22 +37,86 @@ resource "kong-mesh_mesh_http_route" "my_meshhttproute" {
             default = {
               backend_refs = [
                 {
-                  kind = "Dataplane"
+                  filters = [
+                    {
+                      request_header_modifier = {
+                        add = [
+                          {
+                            name  = "...my_name..."
+                            value = "...my_value..."
+                          }
+                        ]
+                        remove = [
+                          "..."
+                        ]
+                        set = [
+                          {
+                            name  = "...my_name..."
+                            value = "...my_value..."
+                          }
+                        ]
+                      }
+                      request_mirror = {
+                        backend_ref = {
+                          kind = "MeshExternalService"
+                          labels = {
+                            key = "value"
+                          }
+                          port         = 9
+                          section_name = "...my_section_name..."
+                          weight       = 1106520977
+                        }
+                        percentage = {
+                          str = "...my_str..."
+                        }
+                      }
+                      request_redirect = {
+                        hostname = "...my_hostname..."
+                        path = {
+                          replace_full_path    = "...my_replace_full_path..."
+                          replace_prefix_match = "...my_replace_prefix_match..."
+                          type                 = "ReplacePrefixMatch"
+                        }
+                        port        = 28655
+                        scheme      = "http"
+                        status_code = 302
+                      }
+                      response_header_modifier = {
+                        add = [
+                          {
+                            name  = "...my_name..."
+                            value = "...my_value..."
+                          }
+                        ]
+                        remove = [
+                          "..."
+                        ]
+                        set = [
+                          {
+                            name  = "...my_name..."
+                            value = "...my_value..."
+                          }
+                        ]
+                      }
+                      type = "RequestRedirect"
+                      url_rewrite = {
+                        host_to_backend_hostname = false
+                        hostname                 = "...my_hostname..."
+                        path = {
+                          replace_full_path    = "...my_replace_full_path..."
+                          replace_prefix_match = "...my_replace_prefix_match..."
+                          type                 = "ReplacePrefixMatch"
+                        }
+                      }
+                    }
+                  ]
+                  kind = "MeshMultiZoneService"
                   labels = {
                     key = "value"
                   }
-                  mesh      = "...my_mesh..."
-                  name      = "...my_name..."
-                  namespace = "...my_namespace..."
-                  port      = 10
-                  proxy_types = [
-                    "Gateway"
-                  ]
+                  port         = 10
                   section_name = "...my_section_name..."
-                  tags = {
-                    key = "value"
-                  }
-                  weight = 1
+                  weight       = 2238824958
                 }
               ]
               filters = [
@@ -85,22 +140,13 @@ resource "kong-mesh_mesh_http_route" "my_meshhttproute" {
                   }
                   request_mirror = {
                     backend_ref = {
-                      kind = "Mesh"
+                      kind = "MeshService"
                       labels = {
                         key = "value"
                       }
-                      mesh      = "...my_mesh..."
-                      name      = "...my_name..."
-                      namespace = "...my_namespace..."
-                      port      = 4
-                      proxy_types = [
-                        "Sidecar"
-                      ]
+                      port         = 4
                       section_name = "...my_section_name..."
-                      tags = {
-                        key = "value"
-                      }
-                      weight = 1
+                      weight       = 871984813
                     }
                     percentage = {
                       str = "...my_str..."
@@ -152,7 +198,7 @@ resource "kong-mesh_mesh_http_route" "my_meshhttproute" {
                 headers = [
                   {
                     name  = "...my_name..."
-                    type  = "Exact"
+                    type  = "Absent"
                     value = "...my_value..."
                   }
                 ]
@@ -173,20 +219,11 @@ resource "kong-mesh_mesh_http_route" "my_meshhttproute" {
           }
         ]
         target_ref = {
-          kind = "MeshServiceSubset"
+          kind = "MeshMultiZoneService"
           labels = {
             key = "value"
           }
-          mesh      = "...my_mesh..."
-          name      = "...my_name..."
-          namespace = "...my_namespace..."
-          proxy_types = [
-            "Gateway"
-          ]
           section_name = "...my_section_name..."
-          tags = {
-            key = "value"
-          }
         }
       }
     ]
@@ -201,7 +238,7 @@ resource "kong-mesh_mesh_http_route" "my_meshhttproute" {
 ### Required
 
 - `mesh` (String) name of the mesh. Requires replacement if changed.
-- `name` (String) name of the MeshHTTPRoute. Requires replacement if changed.
+- `name` (String) Name of the Kuma resource. Requires replacement if changed.
 - `spec` (Attributes) Spec is the specification of the Kuma MeshHTTPRoute resource. (see [below for nested schema](#nestedatt--spec))
 - `type` (String) the type of the resource. must be "MeshHTTPRoute"
 
@@ -232,23 +269,15 @@ defined inplace. (see [below for nested schema](#nestedatt--spec--target_ref))
 
 Required:
 
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "Dataplane"]
 
 Optional:
 
-- `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
-Name and Namespace can be used.
-- `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`,
-`MeshServiceSubset` and `MeshGatewayRoute`
-- `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-will be targeted.
-- `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-all data plane types are targeted by the policy.
+- `labels` (Map of String) Labels are used to select referenced real resources and to carry legacy
+service identity when a common TargetRef must still target old
+service-tag based paths.
 - `section_name` (String) SectionName is used to target specific section of resource.
 For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-- `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds
-`MeshSubset` and `MeshServiceSubset`
 
 
 <a id="nestedatt--spec--to"></a>
@@ -256,10 +285,7 @@ For example, you can target port from MeshService.ports[] by its name. Only traf
 
 Optional:
 
-- `hostnames` (List of String) Hostnames is only valid when targeting MeshGateway and limits the
-effects of the rules to requests to this hostname.
-Given hostnames must intersect with the hostname of the listeners the
-route attaches to.
+- `hostnames` (List of String) Hostnames is not currently supported and must not be set.
 - `rules` (Attributes List) Rules contains the routing rules applies to a combination of top-level
 targetRef and the targetRef in this entry.
 Not Null (see [below for nested schema](#nestedatt--spec--to--rules))
@@ -292,22 +318,170 @@ Optional:
 
 Optional:
 
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
-- `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
-Name and Namespace can be used.
-- `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`,
-`MeshServiceSubset` and `MeshGatewayRoute`
-- `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-will be targeted.
+- `filters` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters))
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["MeshService", "MeshExternalService", "MeshMultiZoneService"]; Not Null
+- `labels` (Map of String) Labels are used to select the referenced real resource.
 - `port` (Number) Port is only supported when this ref refers to a real MeshService object
-- `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-all data plane types are targeted by the policy.
-- `section_name` (String) SectionName is used to target specific section of resource.
-For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-- `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds
-`MeshSubset` and `MeshServiceSubset`
-- `weight` (Number) Default: 1
+- `section_name` (String) SectionName is used to target a specific section of the resource.
+For example, you can target a port from MeshService.ports[] by its name.
+- `weight` (Number)
+
+<a id="nestedatt--spec--to--rules--default--backend_refs--filters"></a>
+### Nested Schema for `spec.to.rules.default.backend_refs.filters`
+
+Optional:
+
+- `request_header_modifier` (Attributes) Only one action is supported per header name.
+Configuration to set or add multiple values for a header must use RFC 7230
+header value formatting, separating each value with a comma. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--request_header_modifier))
+- `request_mirror` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--request_mirror))
+- `request_redirect` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--request_redirect))
+- `response_header_modifier` (Attributes) Only one action is supported per header name.
+Configuration to set or add multiple values for a header must use RFC 7230
+header value formatting, separating each value with a comma. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--response_header_modifier))
+- `type` (String) possible known values include one of ["RequestHeaderModifier", "ResponseHeaderModifier", "RequestRedirect", "URLRewrite", "RequestMirror"]; Not Null
+- `url_rewrite` (Attributes) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--url_rewrite))
+
+<a id="nestedatt--spec--to--rules--default--backend_refs--filters--request_header_modifier"></a>
+### Nested Schema for `spec.to.rules.default.backend_refs.filters.request_header_modifier`
+
+Optional:
+
+- `add` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--request_header_modifier--add))
+- `remove` (List of String)
+- `set` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--request_header_modifier--set))
+
+<a id="nestedatt--spec--to--rules--default--backend_refs--filters--request_header_modifier--add"></a>
+### Nested Schema for `spec.to.rules.default.backend_refs.filters.request_header_modifier.add`
+
+Optional:
+
+- `name` (String) Not Null
+- `value` (String) Not Null
+
+
+<a id="nestedatt--spec--to--rules--default--backend_refs--filters--request_header_modifier--set"></a>
+### Nested Schema for `spec.to.rules.default.backend_refs.filters.request_header_modifier.set`
+
+Optional:
+
+- `name` (String) Not Null
+- `value` (String) Not Null
+
+
+
+<a id="nestedatt--spec--to--rules--default--backend_refs--filters--request_mirror"></a>
+### Nested Schema for `spec.to.rules.default.backend_refs.filters.request_mirror`
+
+Optional:
+
+- `backend_ref` (Attributes) BackendRef defines the destination traffic is routed to. Not Null (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--request_mirror--backend_ref))
+- `percentage` (Attributes) Percentage of requests to mirror. If not specified, all requests
+to the target cluster will be mirrored. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--request_mirror--percentage))
+
+<a id="nestedatt--spec--to--rules--default--backend_refs--filters--request_mirror--backend_ref"></a>
+### Nested Schema for `spec.to.rules.default.backend_refs.filters.request_mirror.backend_ref`
+
+Optional:
+
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["MeshService", "MeshExternalService", "MeshMultiZoneService"]; Not Null
+- `labels` (Map of String) Labels are used to select the referenced real resource.
+- `port` (Number) Port is only supported when this ref refers to a real MeshService object
+- `section_name` (String) SectionName is used to target a specific section of the resource.
+For example, you can target a port from MeshService.ports[] by its name.
+- `weight` (Number)
+
+
+<a id="nestedatt--spec--to--rules--default--backend_refs--filters--request_mirror--percentage"></a>
+### Nested Schema for `spec.to.rules.default.backend_refs.filters.request_mirror.percentage`
+
+Optional:
+
+- `integer` (Number)
+- `str` (String)
+
+
+
+<a id="nestedatt--spec--to--rules--default--backend_refs--filters--request_redirect"></a>
+### Nested Schema for `spec.to.rules.default.backend_refs.filters.request_redirect`
+
+Optional:
+
+- `hostname` (String) PreciseHostname is the fully qualified domain name of a network host. This
+matches the RFC 1123 definition of a hostname with 1 notable exception that
+numeric IP addresses are not allowed.
+
+Note that as per RFC1035 and RFC1123, a *label* must consist of lower case
+alphanumeric characters or '-', and must start and end with an alphanumeric
+character. No other punctuation is allowed.
+- `path` (Attributes) Path defines parameters used to modify the path of the incoming request.
+The modified path is then used to construct the location header.
+When empty, the request path is used as-is. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--request_redirect--path))
+- `port` (Number) Port is the port to be used in the value of the `Location`
+header in the response.
+When empty, port (if specified) of the request is used.
+- `scheme` (String) possible known values include one of ["http", "https"]
+- `status_code` (Number) StatusCode is the HTTP status code to be used in response. possible known values include one of [301, 302, 303, 307, 308]; Default: 302
+
+<a id="nestedatt--spec--to--rules--default--backend_refs--filters--request_redirect--path"></a>
+### Nested Schema for `spec.to.rules.default.backend_refs.filters.request_redirect.path`
+
+Optional:
+
+- `replace_full_path` (String)
+- `replace_prefix_match` (String)
+- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
+
+
+
+<a id="nestedatt--spec--to--rules--default--backend_refs--filters--response_header_modifier"></a>
+### Nested Schema for `spec.to.rules.default.backend_refs.filters.response_header_modifier`
+
+Optional:
+
+- `add` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--response_header_modifier--add))
+- `remove` (List of String)
+- `set` (Attributes List) (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--response_header_modifier--set))
+
+<a id="nestedatt--spec--to--rules--default--backend_refs--filters--response_header_modifier--add"></a>
+### Nested Schema for `spec.to.rules.default.backend_refs.filters.response_header_modifier.add`
+
+Optional:
+
+- `name` (String) Not Null
+- `value` (String) Not Null
+
+
+<a id="nestedatt--spec--to--rules--default--backend_refs--filters--response_header_modifier--set"></a>
+### Nested Schema for `spec.to.rules.default.backend_refs.filters.response_header_modifier.set`
+
+Optional:
+
+- `name` (String) Not Null
+- `value` (String) Not Null
+
+
+
+<a id="nestedatt--spec--to--rules--default--backend_refs--filters--url_rewrite"></a>
+### Nested Schema for `spec.to.rules.default.backend_refs.filters.url_rewrite`
+
+Optional:
+
+- `host_to_backend_hostname` (Boolean) HostToBackendHostname is not currently supported and must not be set.
+- `hostname` (String) Hostname is the value to be used to replace the host header value during forwarding.
+- `path` (Attributes) Path defines a path rewrite. (see [below for nested schema](#nestedatt--spec--to--rules--default--backend_refs--filters--url_rewrite--path))
+
+<a id="nestedatt--spec--to--rules--default--backend_refs--filters--url_rewrite--path"></a>
+### Nested Schema for `spec.to.rules.default.backend_refs.filters.url_rewrite.path`
+
+Optional:
+
+- `replace_full_path` (String)
+- `replace_prefix_match` (String)
+- `type` (String) possible known values include one of ["ReplaceFullPath", "ReplacePrefixMatch"]; Not Null
+
+
+
 
 
 <a id="nestedatt--spec--to--rules--default--filters"></a>
@@ -359,7 +533,7 @@ Optional:
 
 Optional:
 
-- `backend_ref` (Attributes) BackendRef defines where to forward traffic. Not Null (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--request_mirror--backend_ref))
+- `backend_ref` (Attributes) BackendRef defines the destination traffic is routed to. Not Null (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--request_mirror--backend_ref))
 - `percentage` (Attributes) Percentage of requests to mirror. If not specified, all requests
 to the target cluster will be mirrored. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--request_mirror--percentage))
 
@@ -368,22 +542,12 @@ to the target cluster will be mirrored. (see [below for nested schema](#nestedat
 
 Optional:
 
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
-- `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
-Name and Namespace can be used.
-- `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`,
-`MeshServiceSubset` and `MeshGatewayRoute`
-- `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-will be targeted.
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["MeshService", "MeshExternalService", "MeshMultiZoneService"]; Not Null
+- `labels` (Map of String) Labels are used to select the referenced real resource.
 - `port` (Number) Port is only supported when this ref refers to a real MeshService object
-- `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-all data plane types are targeted by the policy.
-- `section_name` (String) SectionName is used to target specific section of resource.
-For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-- `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds
-`MeshSubset` and `MeshServiceSubset`
-- `weight` (Number) Default: 1
+- `section_name` (String) SectionName is used to target a specific section of the resource.
+For example, you can target a port from MeshService.ports[] by its name.
+- `weight` (Number)
 
 
 <a id="nestedatt--spec--to--rules--default--filters--request_mirror--percentage"></a>
@@ -461,8 +625,7 @@ Optional:
 
 Optional:
 
-- `host_to_backend_hostname` (Boolean) HostToBackendHostname rewrites the hostname to the hostname of the
-upstream host. This option is only available when targeting MeshGateways.
+- `host_to_backend_hostname` (Boolean) HostToBackendHostname is not currently supported and must not be set.
 - `hostname` (String) Hostname is the value to be used to replace the host header value during forwarding.
 - `path` (Attributes) Path defines a path rewrite. (see [below for nested schema](#nestedatt--spec--to--rules--default--filters--url_rewrite--path))
 
@@ -498,7 +661,7 @@ Optional:
 - `name` (String) Name is the name of the HTTP Header to be matched. Name MUST be lower case
 as they will be handled with case insensitivity (See https://tools.ietf.org/html/rfc7230#section-3.2).
 Not Null
-- `type` (String) Type specifies how to match against the value of the header. possible known values include one of ["Exact", "Present", "RegularExpression", "Absent", "Prefix"]; Default: "Exact"
+- `type` (String) Type specifies how to match against the value of the header. possible known values include one of ["Exact", "Present", "RegularExpression", "Absent", "Prefix"]
 - `value` (String) Value is the value of HTTP Header to be matched.
 
 
@@ -530,20 +693,12 @@ Optional:
 
 Optional:
 
-- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]; Not Null
-- `labels` (Map of String) Labels are used to select group of MeshServices that match labels. Either Labels or
-Name and Namespace can be used.
-- `mesh` (String) Mesh is reserved for future use to identify cross mesh resources.
-- `name` (String) Name of the referenced resource. Can only be used with kinds: `MeshService`,
-`MeshServiceSubset` and `MeshGatewayRoute`
-- `namespace` (String) Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-will be targeted.
-- `proxy_types` (List of String) ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-all data plane types are targeted by the policy.
+- `kind` (String) Kind of the referenced resource. possible known values include one of ["Mesh", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshHTTPRoute"]; Not Null
+- `labels` (Map of String) Labels are used to select referenced real resources and to carry legacy
+service identity when a common TargetRef must still target old
+service-tag based paths.
 - `section_name` (String) SectionName is used to target specific section of resource.
 For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
-- `tags` (Map of String) Tags used to select a subset of proxies by tags. Can only be used with kinds
-`MeshSubset` and `MeshServiceSubset`
 
 ## Import
 

@@ -7,8 +7,7 @@ import (
 )
 
 type RingHash struct {
-	HashFunction types.String   `tfsdk:"hash_function"`
-	HashPolicies []HashPolicies `tfsdk:"hash_policies"`
-	MaxRingSize  types.Int32    `tfsdk:"max_ring_size"`
-	MinRingSize  types.Int32    `tfsdk:"min_ring_size"`
+	HashFunction types.String `tfsdk:"hash_function"`
+	MaxRingSize  types.Int32  `tfsdk:"max_ring_size"`
+	MinRingSize  types.Int32  `tfsdk:"min_ring_size"`
 }

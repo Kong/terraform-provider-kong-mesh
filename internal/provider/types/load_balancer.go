@@ -7,10 +7,10 @@ import (
 )
 
 type LoadBalancer struct {
-	LeastRequest *LeastRequest `tfsdk:"least_request"`
-	Maglev       *Maglev       `tfsdk:"maglev"`
-	Random       *Options      `tfsdk:"random"`
-	RingHash     *RingHash     `tfsdk:"ring_hash"`
-	RoundRobin   *Options      `tfsdk:"round_robin"`
-	Type         types.String  `tfsdk:"type"`
+	LeastRequest *LeastRequest                        `tfsdk:"least_request"`
+	Maglev       *Maglev                              `tfsdk:"maglev"`
+	Random       *MeshLoadBalancingStrategyItemRandom `tfsdk:"random"`
+	RingHash     *RingHash                            `tfsdk:"ring_hash"`
+	RoundRobin   *MeshLoadBalancingStrategyItemRandom `tfsdk:"round_robin"`
+	Type         types.String                         `tfsdk:"type"`
 }

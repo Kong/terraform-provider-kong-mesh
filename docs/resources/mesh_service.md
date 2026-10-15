@@ -45,9 +45,6 @@ resource "kong-mesh_mesh_service" "my_meshservice" {
       dataplane_ref = {
         name = "...my_name..."
       }
-      dataplane_tags = {
-        key = "value"
-      }
     }
     state = "Unavailable"
   }
@@ -61,7 +58,7 @@ resource "kong-mesh_mesh_service" "my_meshservice" {
 ### Required
 
 - `mesh` (String) name of the mesh. Requires replacement if changed.
-- `name` (String) name of the MeshService. Requires replacement if changed.
+- `name` (String) Name of the Kuma resource. Requires replacement if changed.
 - `spec` (Attributes) Spec is the specification of the Kuma MeshService resource. (see [below for nested schema](#nestedatt--spec))
 - `type` (String) the type of the resource. must be "MeshService"
 
@@ -96,7 +93,7 @@ possible known values include one of ["Available", "Unavailable"]; Default: "Una
 
 Optional:
 
-- `type` (String) possible known values include one of ["ServiceTag", "SpiffeID"]; Not Null
+- `type` (String) Not Null; must be "SpiffeID"
 - `value` (String) Not Null
 
 
@@ -127,7 +124,6 @@ Optional:
 
 - `dataplane_labels` (Attributes) (see [below for nested schema](#nestedatt--spec--selector--dataplane_labels))
 - `dataplane_ref` (Attributes) (see [below for nested schema](#nestedatt--spec--selector--dataplane_ref))
-- `dataplane_tags` (Map of String)
 
 <a id="nestedatt--spec--selector--dataplane_labels"></a>
 ### Nested Schema for `spec.selector.dataplane_labels`

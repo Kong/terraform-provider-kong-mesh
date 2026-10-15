@@ -7,6 +7,5 @@ import (
 )
 
 type Maglev struct {
-	HashPolicies []HashPolicies `tfsdk:"hash_policies"`
-	TableSize    types.Int32    `tfsdk:"table_size"`
+	TableSize types.Int32 `tfsdk:"table_size"`
 }
