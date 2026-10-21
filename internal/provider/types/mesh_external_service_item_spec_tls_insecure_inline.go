@@ -6,6 +6,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type InsecureInline struct {
+type MeshExternalServiceItemSpecTLSInsecureInline struct {
 	Value types.String `tfsdk:"value"`
 }

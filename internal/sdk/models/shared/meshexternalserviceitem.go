@@ -199,16 +199,16 @@ func (m *Match) GetType() *MeshExternalServiceItemSpecType {
 	return m.Type
 }
 
-// InsecureInline is the data source value as plain text, used with `type: InsecureInline`.
-type InsecureInline struct {
+// MeshExternalServiceItemSpecTLSInsecureInline - InsecureInline is the data source value as plain text, used with `type: InsecureInline`.
+type MeshExternalServiceItemSpecTLSInsecureInline struct {
 	Value string `json:"value"`
 }
 
-func (i *InsecureInline) GetValue() string {
-	if i == nil {
+func (m *MeshExternalServiceItemSpecTLSInsecureInline) GetValue() string {
+	if m == nil {
 		return ""
 	}
-	return i.Value
+	return m.Value
 }
 
 type MeshExternalServiceItemKind string
@@ -234,24 +234,24 @@ func (e *MeshExternalServiceItemKind) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// SecretRef references a Secret, used with `type: Secret`.
-type SecretRef struct {
+// MeshExternalServiceItemSpecTLSSecretRef - SecretRef references a Secret, used with `type: Secret`.
+type MeshExternalServiceItemSpecTLSSecretRef struct {
 	Kind MeshExternalServiceItemKind `json:"kind"`
 	Name string                      `json:"name"`
 }
 
-func (s *SecretRef) GetKind() MeshExternalServiceItemKind {
-	if s == nil {
+func (m *MeshExternalServiceItemSpecTLSSecretRef) GetKind() MeshExternalServiceItemKind {
+	if m == nil {
 		return MeshExternalServiceItemKind("")
 	}
-	return s.Kind
+	return m.Kind
 }
 
-func (s *SecretRef) GetName() string {
-	if s == nil {
+func (m *MeshExternalServiceItemSpecTLSSecretRef) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return s.Name
+	return m.Name
 }
 
 // MeshExternalServiceItemSpecTLSType - Type of the data source, one of `Secret` or `InsecureInline`.
@@ -286,11 +286,11 @@ type CaCert struct {
 	// InlineString is the legacy form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
 	InlineString *string `json:"inlineString,omitempty"`
 	// InsecureInline is the data source value as plain text, used with `type: InsecureInline`.
-	InsecureInline *InsecureInline `json:"insecureInline,omitempty"`
+	InsecureInline *MeshExternalServiceItemSpecTLSInsecureInline `json:"insecureInline,omitempty"`
 	// Secret is the legacy form of `type: Secret` with `secretRef`, not read by 3.0.
 	Secret *string `json:"secret,omitempty"`
 	// SecretRef references a Secret, used with `type: Secret`.
-	SecretRef *SecretRef `json:"secretRef,omitempty"`
+	SecretRef *MeshExternalServiceItemSpecTLSSecretRef `json:"secretRef,omitempty"`
 	// Type of the data source, one of `Secret` or `InsecureInline`.
 	Type *MeshExternalServiceItemSpecTLSType `json:"type,omitempty"`
 }
@@ -309,7 +309,7 @@ func (c *CaCert) GetInlineString() *string {
 	return c.InlineString
 }
 
-func (c *CaCert) GetInsecureInline() *InsecureInline {
+func (c *CaCert) GetInsecureInline() *MeshExternalServiceItemSpecTLSInsecureInline {
 	if c == nil {
 		return nil
 	}
@@ -323,7 +323,7 @@ func (c *CaCert) GetSecret() *string {
 	return c.Secret
 }
 
-func (c *CaCert) GetSecretRef() *SecretRef {
+func (c *CaCert) GetSecretRef() *MeshExternalServiceItemSpecTLSSecretRef {
 	if c == nil {
 		return nil
 	}

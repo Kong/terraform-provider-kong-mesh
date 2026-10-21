@@ -24,7 +24,15 @@ resource "kong-mesh_mesh_opa" "my_meshopa" {
       agent_config = {
         inline        = "...my_inline..."
         inline_string = "...my_inline_string..."
-        secret        = "...my_secret..."
+        insecure_inline = {
+          value = "...my_value..."
+        }
+        secret = "...my_secret..."
+        secret_ref = {
+          kind = "Secret"
+          name = "...my_name..."
+        }
+        type = "File"
       }
       append_policies = [
         {
@@ -32,7 +40,15 @@ resource "kong-mesh_mesh_opa" "my_meshopa" {
           rego = {
             inline        = "...my_inline..."
             inline_string = "...my_inline_string..."
-            secret        = "...my_secret..."
+            insecure_inline = {
+              value = "...my_value..."
+            }
+            secret = "...my_secret..."
+            secret_ref = {
+              kind = "Secret"
+              name = "...my_name..."
+            }
+            type = "Secret"
           }
         }
       ]
@@ -113,9 +129,29 @@ Optional:
 
 Optional:
 
-- `inline` (String) Data source is inline bytes.
-- `inline_string` (String) Data source is inline string`
-- `secret` (String) Data source is a secret with given Secret key.
+- `inline` (String) Inline is the legacy, base64-encoded form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
+- `inline_string` (String) InlineString is the legacy form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
+- `insecure_inline` (Attributes) InsecureInline is the data source value as plain text, used with `type: InsecureInline`. (see [below for nested schema](#nestedatt--spec--default--agent_config--insecure_inline))
+- `secret` (String) Secret is the legacy form of `type: Secret` with `secretRef`, not read by 3.0.
+- `secret_ref` (Attributes) SecretRef references a Secret, used with `type: Secret`. (see [below for nested schema](#nestedatt--spec--default--agent_config--secret_ref))
+- `type` (String) Type of the data source, one of `Secret` or `InsecureInline`. possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]
+
+<a id="nestedatt--spec--default--agent_config--insecure_inline"></a>
+### Nested Schema for `spec.default.agent_config.insecure_inline`
+
+Required:
+
+- `value` (String)
+
+
+<a id="nestedatt--spec--default--agent_config--secret_ref"></a>
+### Nested Schema for `spec.default.agent_config.secret_ref`
+
+Required:
+
+- `kind` (String) must be "Secret"
+- `name` (String)
+
 
 
 <a id="nestedatt--spec--default--append_policies"></a>
@@ -124,16 +160,36 @@ Optional:
 Optional:
 
 - `ignore_decision` (Boolean) If true, then policy won't be taken into account when making a decision.
-- `rego` (Attributes) OPA Policy written in Rego. Available values: secret, inline, inlineString. Not Null (see [below for nested schema](#nestedatt--spec--default--append_policies--rego))
+- `rego` (Attributes) OPA Policy written in Rego. Not Null (see [below for nested schema](#nestedatt--spec--default--append_policies--rego))
 
 <a id="nestedatt--spec--default--append_policies--rego"></a>
 ### Nested Schema for `spec.default.append_policies.rego`
 
 Optional:
 
-- `inline` (String) Data source is inline bytes.
-- `inline_string` (String) Data source is inline string`
-- `secret` (String) Data source is a secret with given Secret key.
+- `inline` (String) Inline is the legacy, base64-encoded form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
+- `inline_string` (String) InlineString is the legacy form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
+- `insecure_inline` (Attributes) InsecureInline is the data source value as plain text, used with `type: InsecureInline`. (see [below for nested schema](#nestedatt--spec--default--append_policies--rego--insecure_inline))
+- `secret` (String) Secret is the legacy form of `type: Secret` with `secretRef`, not read by 3.0.
+- `secret_ref` (Attributes) SecretRef references a Secret, used with `type: Secret`. (see [below for nested schema](#nestedatt--spec--default--append_policies--rego--secret_ref))
+- `type` (String) Type of the data source, one of `Secret` or `InsecureInline`. possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]
+
+<a id="nestedatt--spec--default--append_policies--rego--insecure_inline"></a>
+### Nested Schema for `spec.default.append_policies.rego.insecure_inline`
+
+Optional:
+
+- `value` (String) Not Null
+
+
+<a id="nestedatt--spec--default--append_policies--rego--secret_ref"></a>
+### Nested Schema for `spec.default.append_policies.rego.secret_ref`
+
+Optional:
+
+- `kind` (String) Not Null; must be "Secret"
+- `name` (String) Not Null
+
 
 
 

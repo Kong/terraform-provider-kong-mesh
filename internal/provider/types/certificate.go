@@ -7,9 +7,9 @@ import (
 )
 
 type Certificate struct {
-	EnvVar         *EnvVar               `tfsdk:"env_var"`
-	File           *MeshIdentityItemFile `tfsdk:"file"`
-	InsecureInline *InsecureInline       `tfsdk:"insecure_inline"`
-	SecretRef      *SecretRef            `tfsdk:"secret_ref"`
-	Type           types.String          `tfsdk:"type"`
+	EnvVar         *EnvVar                                       `tfsdk:"env_var"`
+	File           *MeshIdentityItemFile                         `tfsdk:"file"`
+	InsecureInline *MeshExternalServiceItemSpecTLSInsecureInline `tfsdk:"insecure_inline"`
+	SecretRef      *MeshExternalServiceItemSpecTLSSecretRef      `tfsdk:"secret_ref"`
+	Type           types.String                                  `tfsdk:"type"`
 }

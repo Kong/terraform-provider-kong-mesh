@@ -23,6 +23,7 @@ import (
 	tfTypes "github.com/kong/terraform-provider-kong-mesh/internal/provider/types"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
+	speakeasy_stringvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/stringvalidators"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -111,15 +112,44 @@ func (r *MeshOPAResource) Schema(ctx context.Context, req resource.SchemaRequest
 								Attributes: map[string]schema.Attribute{
 									"inline": schema.StringAttribute{
 										Optional:    true,
-										Description: `Data source is inline bytes.`,
+										Description: `Inline is the legacy, base64-encoded form of ` + "`" + `type: InsecureInline` + "`" + ` with ` + "`" + `insecureInline.value` + "`" + `, not read by 3.0.`,
 									},
 									"inline_string": schema.StringAttribute{
 										Optional:    true,
-										Description: `Data source is inline string` + "`" + ``,
+										Description: `InlineString is the legacy form of ` + "`" + `type: InsecureInline` + "`" + ` with ` + "`" + `insecureInline.value` + "`" + `, not read by 3.0.`,
+									},
+									"insecure_inline": schema.SingleNestedAttribute{
+										Optional: true,
+										Attributes: map[string]schema.Attribute{
+											"value": schema.StringAttribute{
+												Required: true,
+											},
+										},
+										Description: `InsecureInline is the data source value as plain text, used with ` + "`" + `type: InsecureInline` + "`" + `.`,
 									},
 									"secret": schema.StringAttribute{
 										Optional:    true,
-										Description: `Data source is a secret with given Secret key.`,
+										Description: `Secret is the legacy form of ` + "`" + `type: Secret` + "`" + ` with ` + "`" + `secretRef` + "`" + `, not read by 3.0.`,
+									},
+									"secret_ref": schema.SingleNestedAttribute{
+										Optional: true,
+										Attributes: map[string]schema.Attribute{
+											"kind": schema.StringAttribute{
+												Required:    true,
+												Description: `must be "Secret"`,
+												Validators: []validator.String{
+													stringvalidator.OneOf("Secret"),
+												},
+											},
+											"name": schema.StringAttribute{
+												Required: true,
+											},
+										},
+										Description: `SecretRef references a Secret, used with ` + "`" + `type: Secret` + "`" + `.`,
+									},
+									"type": schema.StringAttribute{
+										Optional:    true,
+										Description: `Type of the data source, one of ` + "`" + `Secret` + "`" + ` or ` + "`" + `InsecureInline` + "`" + `. possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]`,
 									},
 								},
 								Description: `AgentConfig defines bootstrap OPA agent configuration.`,
@@ -144,18 +174,56 @@ func (r *MeshOPAResource) Schema(ctx context.Context, req resource.SchemaRequest
 											Attributes: map[string]schema.Attribute{
 												"inline": schema.StringAttribute{
 													Optional:    true,
-													Description: `Data source is inline bytes.`,
+													Description: `Inline is the legacy, base64-encoded form of ` + "`" + `type: InsecureInline` + "`" + ` with ` + "`" + `insecureInline.value` + "`" + `, not read by 3.0.`,
 												},
 												"inline_string": schema.StringAttribute{
 													Optional:    true,
-													Description: `Data source is inline string` + "`" + ``,
+													Description: `InlineString is the legacy form of ` + "`" + `type: InsecureInline` + "`" + ` with ` + "`" + `insecureInline.value` + "`" + `, not read by 3.0.`,
+												},
+												"insecure_inline": schema.SingleNestedAttribute{
+													Optional: true,
+													Attributes: map[string]schema.Attribute{
+														"value": schema.StringAttribute{
+															Optional:    true,
+															Description: `Not Null`,
+															Validators: []validator.String{
+																speakeasy_stringvalidators.NotNull(),
+															},
+														},
+													},
+													Description: `InsecureInline is the data source value as plain text, used with ` + "`" + `type: InsecureInline` + "`" + `.`,
 												},
 												"secret": schema.StringAttribute{
 													Optional:    true,
-													Description: `Data source is a secret with given Secret key.`,
+													Description: `Secret is the legacy form of ` + "`" + `type: Secret` + "`" + ` with ` + "`" + `secretRef` + "`" + `, not read by 3.0.`,
+												},
+												"secret_ref": schema.SingleNestedAttribute{
+													Optional: true,
+													Attributes: map[string]schema.Attribute{
+														"kind": schema.StringAttribute{
+															Optional:    true,
+															Description: `Not Null; must be "Secret"`,
+															Validators: []validator.String{
+																speakeasy_stringvalidators.NotNull(),
+																stringvalidator.OneOf("Secret"),
+															},
+														},
+														"name": schema.StringAttribute{
+															Optional:    true,
+															Description: `Not Null`,
+															Validators: []validator.String{
+																speakeasy_stringvalidators.NotNull(),
+															},
+														},
+													},
+													Description: `SecretRef references a Secret, used with ` + "`" + `type: Secret` + "`" + `.`,
+												},
+												"type": schema.StringAttribute{
+													Optional:    true,
+													Description: `Type of the data source, one of ` + "`" + `Secret` + "`" + ` or ` + "`" + `InsecureInline` + "`" + `. possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]`,
 												},
 											},
-											Description: `OPA Policy written in Rego. Available values: secret, inline, inlineString. Not Null`,
+											Description: `OPA Policy written in Rego. Not Null`,
 											Validators: []validator.Object{
 												speakeasy_objectvalidators.NotNull(),
 											},

@@ -33,14 +33,100 @@ func (e *MeshOPAItemType) UnmarshalJSON(data []byte) error {
 	}
 }
 
+// InsecureInline is the data source value as plain text, used with `type: InsecureInline`.
+type InsecureInline struct {
+	Value string `json:"value"`
+}
+
+func (i *InsecureInline) GetValue() string {
+	if i == nil {
+		return ""
+	}
+	return i.Value
+}
+
+type MeshOPAItemSpecKind string
+
+const (
+	MeshOPAItemSpecKindSecret MeshOPAItemSpecKind = "Secret"
+)
+
+func (e MeshOPAItemSpecKind) ToPointer() *MeshOPAItemSpecKind {
+	return &e
+}
+func (e *MeshOPAItemSpecKind) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "Secret":
+		*e = MeshOPAItemSpecKind(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshOPAItemSpecKind: %v", v)
+	}
+}
+
+// SecretRef references a Secret, used with `type: Secret`.
+type SecretRef struct {
+	Kind MeshOPAItemSpecKind `json:"kind"`
+	Name string              `json:"name"`
+}
+
+func (s *SecretRef) GetKind() MeshOPAItemSpecKind {
+	if s == nil {
+		return MeshOPAItemSpecKind("")
+	}
+	return s.Kind
+}
+
+func (s *SecretRef) GetName() string {
+	if s == nil {
+		return ""
+	}
+	return s.Name
+}
+
+// MeshOPAItemSpecType - Type of the data source, one of `Secret` or `InsecureInline`.
+type MeshOPAItemSpecType string
+
+const (
+	MeshOPAItemSpecTypeFile           MeshOPAItemSpecType = "File"
+	MeshOPAItemSpecTypeSecret         MeshOPAItemSpecType = "Secret"
+	MeshOPAItemSpecTypeEnvVar         MeshOPAItemSpecType = "EnvVar"
+	MeshOPAItemSpecTypeInsecureInline MeshOPAItemSpecType = "InsecureInline"
+)
+
+func (e MeshOPAItemSpecType) ToPointer() *MeshOPAItemSpecType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshOPAItemSpecType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "File", "Secret", "EnvVar", "InsecureInline":
+			return true
+		}
+	}
+	return false
+}
+
 // AgentConfig defines bootstrap OPA agent configuration.
 type AgentConfig struct {
-	// Data source is inline bytes.
+	// Inline is the legacy, base64-encoded form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
 	Inline *string `json:"inline,omitempty"`
-	// Data source is inline string`
+	// InlineString is the legacy form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
 	InlineString *string `json:"inlineString,omitempty"`
-	// Data source is a secret with given Secret key.
+	// InsecureInline is the data source value as plain text, used with `type: InsecureInline`.
+	InsecureInline *InsecureInline `json:"insecureInline,omitempty"`
+	// Secret is the legacy form of `type: Secret` with `secretRef`, not read by 3.0.
 	Secret *string `json:"secret,omitempty"`
+	// SecretRef references a Secret, used with `type: Secret`.
+	SecretRef *SecretRef `json:"secretRef,omitempty"`
+	// Type of the data source, one of `Secret` or `InsecureInline`.
+	Type *MeshOPAItemSpecType `json:"type,omitempty"`
 }
 
 func (a *AgentConfig) GetInline() *string {
@@ -57,6 +143,13 @@ func (a *AgentConfig) GetInlineString() *string {
 	return a.InlineString
 }
 
+func (a *AgentConfig) GetInsecureInline() *InsecureInline {
+	if a == nil {
+		return nil
+	}
+	return a.InsecureInline
+}
+
 func (a *AgentConfig) GetSecret() *string {
 	if a == nil {
 		return nil
@@ -64,14 +157,114 @@ func (a *AgentConfig) GetSecret() *string {
 	return a.Secret
 }
 
-// Rego - OPA Policy written in Rego. Available values: secret, inline, inlineString.
+func (a *AgentConfig) GetSecretRef() *SecretRef {
+	if a == nil {
+		return nil
+	}
+	return a.SecretRef
+}
+
+func (a *AgentConfig) GetType() *MeshOPAItemSpecType {
+	if a == nil {
+		return nil
+	}
+	return a.Type
+}
+
+// MeshOPAItemInsecureInline - InsecureInline is the data source value as plain text, used with `type: InsecureInline`.
+type MeshOPAItemInsecureInline struct {
+	Value string `json:"value"`
+}
+
+func (m *MeshOPAItemInsecureInline) GetValue() string {
+	if m == nil {
+		return ""
+	}
+	return m.Value
+}
+
+type MeshOPAItemSpecDefaultKind string
+
+const (
+	MeshOPAItemSpecDefaultKindSecret MeshOPAItemSpecDefaultKind = "Secret"
+)
+
+func (e MeshOPAItemSpecDefaultKind) ToPointer() *MeshOPAItemSpecDefaultKind {
+	return &e
+}
+func (e *MeshOPAItemSpecDefaultKind) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "Secret":
+		*e = MeshOPAItemSpecDefaultKind(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for MeshOPAItemSpecDefaultKind: %v", v)
+	}
+}
+
+// MeshOPAItemSecretRef - SecretRef references a Secret, used with `type: Secret`.
+type MeshOPAItemSecretRef struct {
+	Kind MeshOPAItemSpecDefaultKind `json:"kind"`
+	Name string                     `json:"name"`
+}
+
+func (m *MeshOPAItemSecretRef) GetKind() MeshOPAItemSpecDefaultKind {
+	if m == nil {
+		return MeshOPAItemSpecDefaultKind("")
+	}
+	return m.Kind
+}
+
+func (m *MeshOPAItemSecretRef) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+// MeshOPAItemSpecDefaultType - Type of the data source, one of `Secret` or `InsecureInline`.
+type MeshOPAItemSpecDefaultType string
+
+const (
+	MeshOPAItemSpecDefaultTypeFile           MeshOPAItemSpecDefaultType = "File"
+	MeshOPAItemSpecDefaultTypeSecret         MeshOPAItemSpecDefaultType = "Secret"
+	MeshOPAItemSpecDefaultTypeEnvVar         MeshOPAItemSpecDefaultType = "EnvVar"
+	MeshOPAItemSpecDefaultTypeInsecureInline MeshOPAItemSpecDefaultType = "InsecureInline"
+)
+
+func (e MeshOPAItemSpecDefaultType) ToPointer() *MeshOPAItemSpecDefaultType {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *MeshOPAItemSpecDefaultType) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "File", "Secret", "EnvVar", "InsecureInline":
+			return true
+		}
+	}
+	return false
+}
+
+// Rego - OPA Policy written in Rego.
 type Rego struct {
-	// Data source is inline bytes.
+	// Inline is the legacy, base64-encoded form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
 	Inline *string `json:"inline,omitempty"`
-	// Data source is inline string`
+	// InlineString is the legacy form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
 	InlineString *string `json:"inlineString,omitempty"`
-	// Data source is a secret with given Secret key.
+	// InsecureInline is the data source value as plain text, used with `type: InsecureInline`.
+	InsecureInline *MeshOPAItemInsecureInline `json:"insecureInline,omitempty"`
+	// Secret is the legacy form of `type: Secret` with `secretRef`, not read by 3.0.
 	Secret *string `json:"secret,omitempty"`
+	// SecretRef references a Secret, used with `type: Secret`.
+	SecretRef *MeshOPAItemSecretRef `json:"secretRef,omitempty"`
+	// Type of the data source, one of `Secret` or `InsecureInline`.
+	Type *MeshOPAItemSpecDefaultType `json:"type,omitempty"`
 }
 
 func (r *Rego) GetInline() *string {
@@ -88,6 +281,13 @@ func (r *Rego) GetInlineString() *string {
 	return r.InlineString
 }
 
+func (r *Rego) GetInsecureInline() *MeshOPAItemInsecureInline {
+	if r == nil {
+		return nil
+	}
+	return r.InsecureInline
+}
+
 func (r *Rego) GetSecret() *string {
 	if r == nil {
 		return nil
@@ -95,10 +295,24 @@ func (r *Rego) GetSecret() *string {
 	return r.Secret
 }
 
+func (r *Rego) GetSecretRef() *MeshOPAItemSecretRef {
+	if r == nil {
+		return nil
+	}
+	return r.SecretRef
+}
+
+func (r *Rego) GetType() *MeshOPAItemSpecDefaultType {
+	if r == nil {
+		return nil
+	}
+	return r.Type
+}
+
 type AppendPolicies struct {
 	// If true, then policy won't be taken into account when making a decision.
 	IgnoreDecision *bool `json:"ignoreDecision,omitempty"`
-	// OPA Policy written in Rego. Available values: secret, inline, inlineString.
+	// OPA Policy written in Rego.
 	Rego Rego `json:"rego"`
 }
 

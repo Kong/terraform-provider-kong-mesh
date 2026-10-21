@@ -49,7 +49,7 @@ func (r *MeshTrustResourceModel) RefreshFromSharedMeshTrustItem(ctx context.Cont
 			if caBundlesItem.Pem == nil {
 				caBundles.Pem = nil
 			} else {
-				caBundles.Pem = &tfTypes.InsecureInline{}
+				caBundles.Pem = &tfTypes.MeshExternalServiceItemSpecTLSInsecureInline{}
 				caBundles.Pem.Value = types.StringValue(caBundlesItem.Pem.Value)
 			}
 			caBundles.Type = types.StringValue(string(caBundlesItem.Type))
