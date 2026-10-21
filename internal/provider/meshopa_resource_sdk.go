@@ -48,10 +48,28 @@ func (r *MeshOPAResourceModel) RefreshFromSharedMeshOPAItem(ctx context.Context,
 			if resp.Spec.Default.AgentConfig == nil {
 				r.Spec.Default.AgentConfig = nil
 			} else {
-				r.Spec.Default.AgentConfig = &tfTypes.AgentConfig{}
+				r.Spec.Default.AgentConfig = &tfTypes.CaCert{}
 				r.Spec.Default.AgentConfig.Inline = types.StringPointerValue(resp.Spec.Default.AgentConfig.Inline)
 				r.Spec.Default.AgentConfig.InlineString = types.StringPointerValue(resp.Spec.Default.AgentConfig.InlineString)
+				if resp.Spec.Default.AgentConfig.InsecureInline == nil {
+					r.Spec.Default.AgentConfig.InsecureInline = nil
+				} else {
+					r.Spec.Default.AgentConfig.InsecureInline = &tfTypes.MeshExternalServiceItemSpecTLSInsecureInline{}
+					r.Spec.Default.AgentConfig.InsecureInline.Value = types.StringValue(resp.Spec.Default.AgentConfig.InsecureInline.Value)
+				}
 				r.Spec.Default.AgentConfig.Secret = types.StringPointerValue(resp.Spec.Default.AgentConfig.Secret)
+				if resp.Spec.Default.AgentConfig.SecretRef == nil {
+					r.Spec.Default.AgentConfig.SecretRef = nil
+				} else {
+					r.Spec.Default.AgentConfig.SecretRef = &tfTypes.MeshExternalServiceItemSpecTLSSecretRef{}
+					r.Spec.Default.AgentConfig.SecretRef.Kind = types.StringValue(string(resp.Spec.Default.AgentConfig.SecretRef.Kind))
+					r.Spec.Default.AgentConfig.SecretRef.Name = types.StringValue(resp.Spec.Default.AgentConfig.SecretRef.Name)
+				}
+				if resp.Spec.Default.AgentConfig.Type != nil {
+					r.Spec.Default.AgentConfig.Type = types.StringValue(string(*resp.Spec.Default.AgentConfig.Type))
+				} else {
+					r.Spec.Default.AgentConfig.Type = types.StringNull()
+				}
 			}
 			r.Spec.Default.AppendPolicies = []tfTypes.AppendPolicies{}
 
@@ -59,10 +77,28 @@ func (r *MeshOPAResourceModel) RefreshFromSharedMeshOPAItem(ctx context.Context,
 				var appendPolicies tfTypes.AppendPolicies
 
 				appendPolicies.IgnoreDecision = types.BoolPointerValue(appendPoliciesItem.IgnoreDecision)
-				appendPolicies.Rego = &tfTypes.AgentConfig{}
+				appendPolicies.Rego = &tfTypes.CaCert{}
 				appendPolicies.Rego.Inline = types.StringPointerValue(appendPoliciesItem.Rego.Inline)
 				appendPolicies.Rego.InlineString = types.StringPointerValue(appendPoliciesItem.Rego.InlineString)
+				if appendPoliciesItem.Rego.InsecureInline == nil {
+					appendPolicies.Rego.InsecureInline = nil
+				} else {
+					appendPolicies.Rego.InsecureInline = &tfTypes.MeshExternalServiceItemSpecTLSInsecureInline{}
+					appendPolicies.Rego.InsecureInline.Value = types.StringValue(appendPoliciesItem.Rego.InsecureInline.Value)
+				}
 				appendPolicies.Rego.Secret = types.StringPointerValue(appendPoliciesItem.Rego.Secret)
+				if appendPoliciesItem.Rego.SecretRef == nil {
+					appendPolicies.Rego.SecretRef = nil
+				} else {
+					appendPolicies.Rego.SecretRef = &tfTypes.MeshExternalServiceItemSpecTLSSecretRef{}
+					appendPolicies.Rego.SecretRef.Kind = types.StringValue(string(appendPoliciesItem.Rego.SecretRef.Kind))
+					appendPolicies.Rego.SecretRef.Name = types.StringValue(appendPoliciesItem.Rego.SecretRef.Name)
+				}
+				if appendPoliciesItem.Rego.Type != nil {
+					appendPolicies.Rego.Type = types.StringValue(string(*appendPoliciesItem.Rego.Type))
+				} else {
+					appendPolicies.Rego.Type = types.StringNull()
+				}
 
 				r.Spec.Default.AppendPolicies = append(r.Spec.Default.AppendPolicies, appendPolicies)
 			}
@@ -210,16 +246,45 @@ func (r *MeshOPAResourceModel) ToSharedMeshOPAItemInput(ctx context.Context) (*s
 			} else {
 				inlineString = nil
 			}
+			var insecureInline *shared.InsecureInline
+			if r.Spec.Default.AgentConfig.InsecureInline != nil {
+				var value string
+				value = r.Spec.Default.AgentConfig.InsecureInline.Value.ValueString()
+
+				insecureInline = &shared.InsecureInline{
+					Value: value,
+				}
+			}
 			secret := new(string)
 			if !r.Spec.Default.AgentConfig.Secret.IsUnknown() && !r.Spec.Default.AgentConfig.Secret.IsNull() {
 				*secret = r.Spec.Default.AgentConfig.Secret.ValueString()
 			} else {
 				secret = nil
 			}
+			var secretRef *shared.SecretRef
+			if r.Spec.Default.AgentConfig.SecretRef != nil {
+				kind := shared.MeshOPAItemSpecKind(r.Spec.Default.AgentConfig.SecretRef.Kind.ValueString())
+				var name1 string
+				name1 = r.Spec.Default.AgentConfig.SecretRef.Name.ValueString()
+
+				secretRef = &shared.SecretRef{
+					Kind: kind,
+					Name: name1,
+				}
+			}
+			typeVar1 := new(shared.MeshOPAItemSpecType)
+			if !r.Spec.Default.AgentConfig.Type.IsUnknown() && !r.Spec.Default.AgentConfig.Type.IsNull() {
+				*typeVar1 = shared.MeshOPAItemSpecType(r.Spec.Default.AgentConfig.Type.ValueString())
+			} else {
+				typeVar1 = nil
+			}
 			agentConfig = &shared.AgentConfig{
-				Inline:       inline,
-				InlineString: inlineString,
-				Secret:       secret,
+				Inline:         inline,
+				InlineString:   inlineString,
+				InsecureInline: insecureInline,
+				Secret:         secret,
+				SecretRef:      secretRef,
+				Type:           typeVar1,
 			}
 		}
 		appendPolicies := make([]shared.AppendPolicies, 0, len(r.Spec.Default.AppendPolicies))
@@ -242,16 +307,45 @@ func (r *MeshOPAResourceModel) ToSharedMeshOPAItemInput(ctx context.Context) (*s
 			} else {
 				inlineString1 = nil
 			}
+			var insecureInline1 *shared.MeshOPAItemInsecureInline
+			if r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.InsecureInline != nil {
+				var value1 string
+				value1 = r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.InsecureInline.Value.ValueString()
+
+				insecureInline1 = &shared.MeshOPAItemInsecureInline{
+					Value: value1,
+				}
+			}
 			secret1 := new(string)
 			if !r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.Secret.IsUnknown() && !r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.Secret.IsNull() {
 				*secret1 = r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.Secret.ValueString()
 			} else {
 				secret1 = nil
 			}
+			var secretRef1 *shared.MeshOPAItemSecretRef
+			if r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.SecretRef != nil {
+				kind1 := shared.MeshOPAItemSpecDefaultKind(r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.SecretRef.Kind.ValueString())
+				var name2 string
+				name2 = r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.SecretRef.Name.ValueString()
+
+				secretRef1 = &shared.MeshOPAItemSecretRef{
+					Kind: kind1,
+					Name: name2,
+				}
+			}
+			typeVar2 := new(shared.MeshOPAItemSpecDefaultType)
+			if !r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.Type.IsUnknown() && !r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.Type.IsNull() {
+				*typeVar2 = shared.MeshOPAItemSpecDefaultType(r.Spec.Default.AppendPolicies[appendPoliciesIndex].Rego.Type.ValueString())
+			} else {
+				typeVar2 = nil
+			}
 			rego := shared.Rego{
-				Inline:       inline1,
-				InlineString: inlineString1,
-				Secret:       secret1,
+				Inline:         inline1,
+				InlineString:   inlineString1,
+				InsecureInline: insecureInline1,
+				Secret:         secret1,
+				SecretRef:      secretRef1,
+				Type:           typeVar2,
 			}
 			appendPolicies = append(appendPolicies, shared.AppendPolicies{
 				IgnoreDecision: ignoreDecision,
@@ -312,7 +406,7 @@ func (r *MeshOPAResourceModel) ToSharedMeshOPAItemInput(ctx context.Context) (*s
 	}
 	var targetRef *shared.MeshOPAItemTargetRef
 	if r.Spec.TargetRef != nil {
-		kind := shared.MeshOPAItemKind(r.Spec.TargetRef.Kind.ValueString())
+		kind2 := shared.MeshOPAItemKind(r.Spec.TargetRef.Kind.ValueString())
 		labels1 := make(map[string]string)
 		for labelsKey := range r.Spec.TargetRef.Labels {
 			var labelsInst string
@@ -326,11 +420,11 @@ func (r *MeshOPAResourceModel) ToSharedMeshOPAItemInput(ctx context.Context) (*s
 		} else {
 			mesh1 = nil
 		}
-		name1 := new(string)
+		name3 := new(string)
 		if !r.Spec.TargetRef.Name.IsUnknown() && !r.Spec.TargetRef.Name.IsNull() {
-			*name1 = r.Spec.TargetRef.Name.ValueString()
+			*name3 = r.Spec.TargetRef.Name.ValueString()
 		} else {
-			name1 = nil
+			name3 = nil
 		}
 		namespace := new(string)
 		if !r.Spec.TargetRef.Namespace.IsUnknown() && !r.Spec.TargetRef.Namespace.IsNull() {
@@ -356,10 +450,10 @@ func (r *MeshOPAResourceModel) ToSharedMeshOPAItemInput(ctx context.Context) (*s
 			tags[tagsKey] = tagsInst
 		}
 		targetRef = &shared.MeshOPAItemTargetRef{
-			Kind:        kind,
+			Kind:        kind2,
 			Labels:      labels1,
 			Mesh:        mesh1,
-			Name:        name1,
+			Name:        name3,
 			Namespace:   namespace,
 			ProxyTypes:  proxyTypes,
 			SectionName: sectionName,

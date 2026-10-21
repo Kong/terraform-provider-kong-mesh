@@ -6,7 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type SecretRef struct {
+type MeshExternalServiceItemSpecTLSSecretRef struct {
 	Kind types.String `tfsdk:"kind"`
 	Name types.String `tfsdk:"name"`
 }

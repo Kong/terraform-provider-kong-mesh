@@ -80,13 +80,13 @@ func (r *MeshIdentityResourceModel) RefreshFromSharedMeshIdentityItem(ctx contex
 						if resp.Spec.Provider.Bundled.Ca.Certificate.InsecureInline == nil {
 							r.Spec.Provider.Bundled.Ca.Certificate.InsecureInline = nil
 						} else {
-							r.Spec.Provider.Bundled.Ca.Certificate.InsecureInline = &tfTypes.InsecureInline{}
+							r.Spec.Provider.Bundled.Ca.Certificate.InsecureInline = &tfTypes.MeshExternalServiceItemSpecTLSInsecureInline{}
 							r.Spec.Provider.Bundled.Ca.Certificate.InsecureInline.Value = types.StringValue(resp.Spec.Provider.Bundled.Ca.Certificate.InsecureInline.Value)
 						}
 						if resp.Spec.Provider.Bundled.Ca.Certificate.SecretRef == nil {
 							r.Spec.Provider.Bundled.Ca.Certificate.SecretRef = nil
 						} else {
-							r.Spec.Provider.Bundled.Ca.Certificate.SecretRef = &tfTypes.SecretRef{}
+							r.Spec.Provider.Bundled.Ca.Certificate.SecretRef = &tfTypes.MeshExternalServiceItemSpecTLSSecretRef{}
 							r.Spec.Provider.Bundled.Ca.Certificate.SecretRef.Kind = types.StringValue(string(resp.Spec.Provider.Bundled.Ca.Certificate.SecretRef.Kind))
 							r.Spec.Provider.Bundled.Ca.Certificate.SecretRef.Name = types.StringValue(resp.Spec.Provider.Bundled.Ca.Certificate.SecretRef.Name)
 						}
@@ -111,13 +111,13 @@ func (r *MeshIdentityResourceModel) RefreshFromSharedMeshIdentityItem(ctx contex
 						if resp.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline == nil {
 							r.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline = nil
 						} else {
-							r.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline = &tfTypes.InsecureInline{}
+							r.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline = &tfTypes.MeshExternalServiceItemSpecTLSInsecureInline{}
 							r.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline.Value = types.StringValue(resp.Spec.Provider.Bundled.Ca.PrivateKey.InsecureInline.Value)
 						}
 						if resp.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef == nil {
 							r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef = nil
 						} else {
-							r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef = &tfTypes.SecretRef{}
+							r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef = &tfTypes.MeshExternalServiceItemSpecTLSSecretRef{}
 							r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef.Kind = types.StringValue(string(resp.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef.Kind))
 							r.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef.Name = types.StringValue(resp.Spec.Provider.Bundled.Ca.PrivateKey.SecretRef.Name)
 						}

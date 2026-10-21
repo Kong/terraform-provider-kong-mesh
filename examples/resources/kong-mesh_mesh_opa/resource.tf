@@ -9,7 +9,15 @@ resource "kong-mesh_mesh_opa" "my_meshopa" {
       agent_config = {
         inline        = "...my_inline..."
         inline_string = "...my_inline_string..."
-        secret        = "...my_secret..."
+        insecure_inline = {
+          value = "...my_value..."
+        }
+        secret = "...my_secret..."
+        secret_ref = {
+          kind = "Secret"
+          name = "...my_name..."
+        }
+        type = "File"
       }
       append_policies = [
         {
@@ -17,7 +25,15 @@ resource "kong-mesh_mesh_opa" "my_meshopa" {
           rego = {
             inline        = "...my_inline..."
             inline_string = "...my_inline_string..."
-            secret        = "...my_secret..."
+            insecure_inline = {
+              value = "...my_value..."
+            }
+            secret = "...my_secret..."
+            secret_ref = {
+              kind = "Secret"
+              name = "...my_name..."
+            }
+            type = "Secret"
           }
         }
       ]
