@@ -7,7 +7,7 @@ on:
       - "gen.yaml"
     branches:
       - main
-      - release-*
+      - kong-mesh-*
   workflow_dispatch:
 
 # Releases need permissions to read and write the repository contents.
@@ -36,7 +36,7 @@ jobs:
           git config --global user.email "apiops@konghq.com"
           git config --global user.name "kong-apiops[bot]"
 
-          # release-* branches tag older versions than main, so check this version's tag rather than the highest one
+          # kong-mesh-* branches tag older versions than main, so check this version's tag rather than the highest one
           if git rev-parse -q --verify "refs/tags/v$NEW_VER" >/dev/null; then
             echo "Tag v$NEW_VER already exists. Skipping release."
             echo "skip_release=true" >> $GITHUB_OUTPUT
