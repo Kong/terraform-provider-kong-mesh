@@ -270,10 +270,10 @@ jobs:
           - Updated CHANGELOG.md with commits since v${{ steps.version.outputs.current }}
           - Regenerated provider code via make
 
-          Once merged to main, the release workflow will automatically create a new tag and publish the release.
+          Once merged to ${{ github.ref_name }}, the release workflow will automatically create a new tag and publish the release.
           EOF
           )"
-            --base main
+            --base "${{ github.ref_name }}"
             --head "release/${{ steps.version.outputs.new }}"
           )
 
