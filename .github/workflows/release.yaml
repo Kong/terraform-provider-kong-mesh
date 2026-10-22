@@ -7,6 +7,7 @@ on:
       - "gen.yaml"
     branches:
       - main
+      - kong-mesh-*
   workflow_dispatch:
 
 # Releases need permissions to read and write the repository contents.
@@ -26,7 +27,7 @@ jobs:
         with:
           go-version-file: "go.mod"
           cache: true
-      - name: Read terraform.version from gen.yaml and create tag if higher
+      - name: Read terraform.version from gen.yaml and create tag if missing
         id: check_version
         run: |
           set -euo pipefail
@@ -35,25 +36,27 @@ jobs:
           git config --global user.email "apiops@konghq.com"
           git config --global user.name "kong-apiops[bot]"
 
-          # Find latest tag (sorted by version); may be empty
-          LAST_TAG=$(git tag --list --sort=-v:refname | head -n1 || true)
-
-          if [ -z "$LAST_TAG" ]; then
-            echo "No existing tags found. Proceeding to create tag v$NEW_VER"
-            echo "skip_release=false" >> $GITHUB_OUTPUT
-          else
-            LAST_VER="${LAST_TAG#v}"
-            if [ "$NEW_VER" = "$LAST_VER" ]; then
-              echo "Version unchanged ($NEW_VER == $LAST_VER). Skipping release."
-              echo "skip_release=true" >> $GITHUB_OUTPUT
-              exit 0
-            fi
-            echo "skip_release=false" >> $GITHUB_OUTPUT
-            echo "New version detected. Continuing."
+          # kong-mesh-* branches tag older versions than main, so check this version's tag rather than the highest one
+          if git rev-parse -q --verify "refs/tags/v$NEW_VER" >/dev/null; then
+            echo "Tag v$NEW_VER already exists. Skipping release."
+            echo "skip_release=true" >> $GITHUB_OUTPUT
+            exit 0
           fi
+          echo "skip_release=false" >> $GITHUB_OUTPUT
 
           git tag -a "v$NEW_VER" -m "Release v$NEW_VER"
           git push origin "v$NEW_VER"
+
+          # goreleaser v1 doesn't template make_latest, and editing the tracked config would make the tree dirty
+          GORELEASER_CONFIG="$RUNNER_TEMP/goreleaser.yml"
+          LATEST_TAG=$(git tag --list --sort=-v:refname | head -n1)
+          if [ "$LATEST_TAG" = "v$NEW_VER" ]; then
+            cp .goreleaser.yml "$GORELEASER_CONFIG"
+          else
+            echo "v$NEW_VER is older than $LATEST_TAG, not marking the GitHub release as latest"
+            yq '.release.make_latest = "false"' .goreleaser.yml > "$GORELEASER_CONFIG"
+          fi
+          echo "goreleaser_config=$GORELEASER_CONFIG" >> $GITHUB_OUTPUT
       - name: Import GPG key
         if: ${{ steps.check_version.outputs.skip_release != 'true' }}
         uses: crazy-max/ghaction-import-gpg@111c56156bcc6918c056dbef52164cfa583dc549 # v5.2.0
@@ -65,7 +68,7 @@ jobs:
         if: ${{ steps.check_version.outputs.skip_release != 'true' }}
         uses: goreleaser/goreleaser-action@f82d6c1c344bcacabba2c841718984797f664a6b # v4.2.0
         with:
-          args: release --clean
+          args: release --clean --config ${{ steps.check_version.outputs.goreleaser_config }}
           version: ~> v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
