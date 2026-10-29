@@ -26,7 +26,7 @@ func (g *TestLogConsumer) Accept(l testcontainers.Log) {
 func TestMesh(t *testing.T) {
 	ctx := t.Context()
 	req := testcontainers.ContainerRequest{
-		Image:        "kong/kuma-cp:2.10.1",
+		Image:        "kong/kuma-cp:2.14.6",
 		ExposedPorts: []string{"5681/tcp"},
 		WaitingFor: wait.ForAll(
 			wait.ForLog("default AccessRoleBinding created"),
