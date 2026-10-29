@@ -9,6 +9,7 @@
     "docker:pinDigests",
     "schedule:daily"
   ],
+  "baseBranchPatterns": ["$default", "/^kong-mesh-/"],
   "enabledManagers": [
     "custom.jsonata",
     "custom.regex",
@@ -51,6 +52,12 @@
     {
       "matchPackageNames": ["{github.com/,}[Kk]ong/shared-speakeasy/**"],
       "minimumReleaseAge": "0"
+    },
+    {
+      "description": "Maintenance branches only get patch and digest updates, minor Speakeasy bumps would regenerate the provider",
+      "matchBaseBranches": ["/^kong-mesh-/"],
+      "matchUpdateTypes": ["major", "minor"],
+      "enabled": false
     },
     {
       "description": [
