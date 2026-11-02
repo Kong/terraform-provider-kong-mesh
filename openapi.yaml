@@ -18501,7 +18501,6 @@ components:
         - title
         - instance
         - detail
-      title: Error
   responses:
     MeshAccessLogItem:
       description: Successful response
