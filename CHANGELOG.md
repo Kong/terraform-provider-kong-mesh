@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.9.1
+> Released on 2026/11/02
+>
+> - feat(sdk): automated oas update (#176)
+> - test: run acceptance tests against kuma-cp 2.14 (#159)
+> - feat(sdk): automated oas update (#156)
+
+
 ## 0.9.0
 > Released on 2026/10/01
 >
