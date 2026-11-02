@@ -16964,11 +16964,9 @@ components:
           type: array
           items:
             type: string
-          default: null
           nullable: true
           readOnly: true
           uniqueItems: true
-          x-speakeasy-param-computed: false
           x-speakeasy-param-suppress-computed-diff: true
         source:
           type: string
@@ -17048,7 +17046,6 @@ components:
         - instance
         - detail
         - invalid_parameters
-      title: Error
     InternalError:
       description: standard error
       type: object
@@ -17098,7 +17095,6 @@ components:
         - title
         - instance
         - detail
-      title: Error
     NotFoundError:
       description: standard error
       type: object
@@ -17152,7 +17148,6 @@ components:
         - title
         - instance
         - detail
-      title: Error
   responses:
     MeshAccessLogItem:
       description: Successful response
