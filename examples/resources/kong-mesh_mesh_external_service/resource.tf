@@ -26,12 +26,15 @@ resource "kong-mesh_mesh_external_service" "my_meshexternalservice" {
       enabled             = false
       verification = {
         ca_cert = {
-          inline        = "...my_inline..."
-          inline_string = "...my_inline_string..."
+          env_var = {
+            name = "...my_name..."
+          }
+          file = {
+            path = "...my_path..."
+          }
           insecure_inline = {
             value = "...my_value..."
           }
-          secret = "...my_secret..."
           secret_ref = {
             kind = "Secret"
             name = "...my_name..."
@@ -39,12 +42,15 @@ resource "kong-mesh_mesh_external_service" "my_meshexternalservice" {
           type = "Secret"
         }
         client_cert = {
-          inline        = "...my_inline..."
-          inline_string = "...my_inline_string..."
+          env_var = {
+            name = "...my_name..."
+          }
+          file = {
+            path = "...my_path..."
+          }
           insecure_inline = {
             value = "...my_value..."
           }
-          secret = "...my_secret..."
           secret_ref = {
             kind = "Secret"
             name = "...my_name..."
@@ -52,12 +58,15 @@ resource "kong-mesh_mesh_external_service" "my_meshexternalservice" {
           type = "InsecureInline"
         }
         client_key = {
-          inline        = "...my_inline..."
-          inline_string = "...my_inline_string..."
+          env_var = {
+            name = "...my_name..."
+          }
+          file = {
+            path = "...my_path..."
+          }
           insecure_inline = {
             value = "...my_value..."
           }
-          secret = "...my_secret..."
           secret_ref = {
             kind = "Secret"
             name = "...my_name..."

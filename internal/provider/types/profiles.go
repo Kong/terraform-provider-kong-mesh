@@ -3,7 +3,7 @@
 package types
 
 type Profiles struct {
-	AppendProfiles []EnvVar  `tfsdk:"append_profiles"`
-	Exclude        []Exclude `tfsdk:"exclude"`
-	Include        []Exclude `tfsdk:"include"`
+	AppendProfiles []MeshExternalServiceItemSpecTLSEnvVar `tfsdk:"append_profiles"`
+	Exclude        []Exclude                              `tfsdk:"exclude"`
+	Include        []Exclude                              `tfsdk:"include"`
 }

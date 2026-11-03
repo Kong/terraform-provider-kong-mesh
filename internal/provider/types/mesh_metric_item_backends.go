@@ -7,7 +7,7 @@ import (
 )
 
 type MeshMetricItemBackends struct {
-	OpenTelemetry *OpenTelemetry `tfsdk:"open_telemetry"`
-	Prometheus    *Prometheus    `tfsdk:"prometheus"`
-	Type          types.String   `tfsdk:"type"`
+	OpenTelemetry *MeshMetricItemOpenTelemetry `tfsdk:"open_telemetry"`
+	Prometheus    *Prometheus                  `tfsdk:"prometheus"`
+	Type          types.String                 `tfsdk:"type"`
 }

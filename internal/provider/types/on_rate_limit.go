@@ -7,6 +7,6 @@ import (
 )
 
 type OnRateLimit struct {
-	Headers *MeshGlobalRateLimitItemHeaders `tfsdk:"headers"`
-	Status  types.Int32                     `tfsdk:"status"`
+	Headers *RequestHeadersToAdd `tfsdk:"headers"`
+	Status  types.Int32          `tfsdk:"status"`
 }

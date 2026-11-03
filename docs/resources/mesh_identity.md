@@ -98,7 +98,7 @@ resource "kong-mesh_mesh_identity" "my_meshidentity" {
 ### Required
 
 - `mesh` (String) name of the mesh. Requires replacement if changed.
-- `name` (String) name of the MeshIdentity. Requires replacement if changed.
+- `name` (String) Name of the Kuma resource. Requires replacement if changed.
 - `spec` (Attributes) Spec is the specification of the Kuma MeshIdentity resource. (see [below for nested schema](#nestedatt--spec))
 - `type` (String) the type of the resource. must be "MeshIdentity"
 
@@ -335,6 +335,12 @@ Optional:
 Read-Only:
 
 - `conditions` (Attributes List) Conditions is an array of hostname generator conditions. (see [below for nested schema](#nestedatt--status--conditions))
+- `trust_domain` (String) TrustDomain is the trust domain this identity issues certificates in. The
+control plane renders `spec.spiffeID.trustDomain` once, when it first
+initializes the identity, and then keeps issuing in the recorded value.
+Templates such as `{{ .Zone }}` therefore stop following the zone name,
+which would otherwise silently move every workload into a trust domain no
+MeshTrust publishes yet.
 
 <a id="nestedatt--status--conditions"></a>
 ### Nested Schema for `status.conditions`

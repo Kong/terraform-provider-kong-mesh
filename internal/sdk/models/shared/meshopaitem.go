@@ -33,7 +33,28 @@ func (e *MeshOPAItemType) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// InsecureInline is the data source value as plain text, used with `type: InsecureInline`.
+type EnvVar struct {
+	Name string `json:"name"`
+}
+
+func (e *EnvVar) GetName() string {
+	if e == nil {
+		return ""
+	}
+	return e.Name
+}
+
+type File struct {
+	Path string `json:"path"`
+}
+
+func (f *File) GetPath() string {
+	if f == nil {
+		return ""
+	}
+	return f.Path
+}
+
 type InsecureInline struct {
 	Value string `json:"value"`
 }
@@ -68,7 +89,6 @@ func (e *MeshOPAItemSpecKind) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// SecretRef references a Secret, used with `type: Secret`.
 type SecretRef struct {
 	Kind MeshOPAItemSpecKind `json:"kind"`
 	Name string              `json:"name"`
@@ -88,7 +108,6 @@ func (s *SecretRef) GetName() string {
 	return s.Name
 }
 
-// MeshOPAItemSpecType - Type of the data source, one of `Secret` or `InsecureInline`.
 type MeshOPAItemSpecType string
 
 const (
@@ -115,32 +134,25 @@ func (e *MeshOPAItemSpecType) IsExact() bool {
 
 // AgentConfig defines bootstrap OPA agent configuration.
 type AgentConfig struct {
-	// Inline is the legacy, base64-encoded form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
-	Inline *string `json:"inline,omitempty"`
-	// InlineString is the legacy form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
-	InlineString *string `json:"inlineString,omitempty"`
-	// InsecureInline is the data source value as plain text, used with `type: InsecureInline`.
-	InsecureInline *InsecureInline `json:"insecureInline,omitempty"`
-	// Secret is the legacy form of `type: Secret` with `secretRef`, not read by 3.0.
-	Secret *string `json:"secret,omitempty"`
-	// SecretRef references a Secret, used with `type: Secret`.
-	SecretRef *SecretRef `json:"secretRef,omitempty"`
-	// Type of the data source, one of `Secret` or `InsecureInline`.
-	Type *MeshOPAItemSpecType `json:"type,omitempty"`
+	EnvVar         *EnvVar             `json:"envVar,omitempty"`
+	File           *File               `json:"file,omitempty"`
+	InsecureInline *InsecureInline     `json:"insecureInline,omitempty"`
+	SecretRef      *SecretRef          `json:"secretRef,omitempty"`
+	Type           MeshOPAItemSpecType `json:"type"`
 }
 
-func (a *AgentConfig) GetInline() *string {
+func (a *AgentConfig) GetEnvVar() *EnvVar {
 	if a == nil {
 		return nil
 	}
-	return a.Inline
+	return a.EnvVar
 }
 
-func (a *AgentConfig) GetInlineString() *string {
+func (a *AgentConfig) GetFile() *File {
 	if a == nil {
 		return nil
 	}
-	return a.InlineString
+	return a.File
 }
 
 func (a *AgentConfig) GetInsecureInline() *InsecureInline {
@@ -150,13 +162,6 @@ func (a *AgentConfig) GetInsecureInline() *InsecureInline {
 	return a.InsecureInline
 }
 
-func (a *AgentConfig) GetSecret() *string {
-	if a == nil {
-		return nil
-	}
-	return a.Secret
-}
-
 func (a *AgentConfig) GetSecretRef() *SecretRef {
 	if a == nil {
 		return nil
@@ -164,14 +169,35 @@ func (a *AgentConfig) GetSecretRef() *SecretRef {
 	return a.SecretRef
 }
 
-func (a *AgentConfig) GetType() *MeshOPAItemSpecType {
+func (a *AgentConfig) GetType() MeshOPAItemSpecType {
 	if a == nil {
-		return nil
+		return MeshOPAItemSpecType("")
 	}
 	return a.Type
 }
 
-// MeshOPAItemInsecureInline - InsecureInline is the data source value as plain text, used with `type: InsecureInline`.
+type MeshOPAItemEnvVar struct {
+	Name string `json:"name"`
+}
+
+func (m *MeshOPAItemEnvVar) GetName() string {
+	if m == nil {
+		return ""
+	}
+	return m.Name
+}
+
+type MeshOPAItemFile struct {
+	Path string `json:"path"`
+}
+
+func (m *MeshOPAItemFile) GetPath() string {
+	if m == nil {
+		return ""
+	}
+	return m.Path
+}
+
 type MeshOPAItemInsecureInline struct {
 	Value string `json:"value"`
 }
@@ -206,7 +232,6 @@ func (e *MeshOPAItemSpecDefaultKind) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// MeshOPAItemSecretRef - SecretRef references a Secret, used with `type: Secret`.
 type MeshOPAItemSecretRef struct {
 	Kind MeshOPAItemSpecDefaultKind `json:"kind"`
 	Name string                     `json:"name"`
@@ -226,7 +251,6 @@ func (m *MeshOPAItemSecretRef) GetName() string {
 	return m.Name
 }
 
-// MeshOPAItemSpecDefaultType - Type of the data source, one of `Secret` or `InsecureInline`.
 type MeshOPAItemSpecDefaultType string
 
 const (
@@ -253,32 +277,25 @@ func (e *MeshOPAItemSpecDefaultType) IsExact() bool {
 
 // Rego - OPA Policy written in Rego.
 type Rego struct {
-	// Inline is the legacy, base64-encoded form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
-	Inline *string `json:"inline,omitempty"`
-	// InlineString is the legacy form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
-	InlineString *string `json:"inlineString,omitempty"`
-	// InsecureInline is the data source value as plain text, used with `type: InsecureInline`.
+	EnvVar         *MeshOPAItemEnvVar         `json:"envVar,omitempty"`
+	File           *MeshOPAItemFile           `json:"file,omitempty"`
 	InsecureInline *MeshOPAItemInsecureInline `json:"insecureInline,omitempty"`
-	// Secret is the legacy form of `type: Secret` with `secretRef`, not read by 3.0.
-	Secret *string `json:"secret,omitempty"`
-	// SecretRef references a Secret, used with `type: Secret`.
-	SecretRef *MeshOPAItemSecretRef `json:"secretRef,omitempty"`
-	// Type of the data source, one of `Secret` or `InsecureInline`.
-	Type *MeshOPAItemSpecDefaultType `json:"type,omitempty"`
+	SecretRef      *MeshOPAItemSecretRef      `json:"secretRef,omitempty"`
+	Type           MeshOPAItemSpecDefaultType `json:"type"`
 }
 
-func (r *Rego) GetInline() *string {
+func (r *Rego) GetEnvVar() *MeshOPAItemEnvVar {
 	if r == nil {
 		return nil
 	}
-	return r.Inline
+	return r.EnvVar
 }
 
-func (r *Rego) GetInlineString() *string {
+func (r *Rego) GetFile() *MeshOPAItemFile {
 	if r == nil {
 		return nil
 	}
-	return r.InlineString
+	return r.File
 }
 
 func (r *Rego) GetInsecureInline() *MeshOPAItemInsecureInline {
@@ -288,13 +305,6 @@ func (r *Rego) GetInsecureInline() *MeshOPAItemInsecureInline {
 	return r.InsecureInline
 }
 
-func (r *Rego) GetSecret() *string {
-	if r == nil {
-		return nil
-	}
-	return r.Secret
-}
-
 func (r *Rego) GetSecretRef() *MeshOPAItemSecretRef {
 	if r == nil {
 		return nil
@@ -302,9 +312,9 @@ func (r *Rego) GetSecretRef() *MeshOPAItemSecretRef {
 	return r.SecretRef
 }
 
-func (r *Rego) GetType() *MeshOPAItemSpecDefaultType {
+func (r *Rego) GetType() MeshOPAItemSpecDefaultType {
 	if r == nil {
-		return nil
+		return MeshOPAItemSpecDefaultType("")
 	}
 	return r.Type
 }
@@ -457,15 +467,8 @@ func (m *MeshOPAItemDefault) GetAuthConfig() *AuthConfig {
 type MeshOPAItemKind string
 
 const (
-	MeshOPAItemKindMesh                 MeshOPAItemKind = "Mesh"
-	MeshOPAItemKindMeshSubset           MeshOPAItemKind = "MeshSubset"
-	MeshOPAItemKindMeshGateway          MeshOPAItemKind = "MeshGateway"
-	MeshOPAItemKindMeshService          MeshOPAItemKind = "MeshService"
-	MeshOPAItemKindMeshExternalService  MeshOPAItemKind = "MeshExternalService"
-	MeshOPAItemKindMeshMultiZoneService MeshOPAItemKind = "MeshMultiZoneService"
-	MeshOPAItemKindMeshServiceSubset    MeshOPAItemKind = "MeshServiceSubset"
-	MeshOPAItemKindMeshHTTPRoute        MeshOPAItemKind = "MeshHTTPRoute"
-	MeshOPAItemKindDataplane            MeshOPAItemKind = "Dataplane"
+	MeshOPAItemKindMesh      MeshOPAItemKind = "Mesh"
+	MeshOPAItemKindDataplane MeshOPAItemKind = "Dataplane"
 )
 
 func (e MeshOPAItemKind) ToPointer() *MeshOPAItemKind {
@@ -476,29 +479,7 @@ func (e MeshOPAItemKind) ToPointer() *MeshOPAItemKind {
 func (e *MeshOPAItemKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshOPAItemProxyTypes string
-
-const (
-	MeshOPAItemProxyTypesSidecar MeshOPAItemProxyTypes = "Sidecar"
-	MeshOPAItemProxyTypesGateway MeshOPAItemProxyTypes = "Gateway"
-)
-
-func (e MeshOPAItemProxyTypes) ToPointer() *MeshOPAItemProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshOPAItemProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
+		case "Mesh", "Dataplane":
 			return true
 		}
 	}
@@ -511,26 +492,13 @@ func (e *MeshOPAItemProxyTypes) IsExact() bool {
 type MeshOPAItemTargetRef struct {
 	// Kind of the referenced resource
 	Kind MeshOPAItemKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select referenced real resources and to carry legacy
+	// service identity when a common TargetRef must still target old
+	// service-tag based paths.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshOPAItemProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
 }
 
 func (m *MeshOPAItemTargetRef) GetKind() MeshOPAItemKind {
@@ -547,46 +515,11 @@ func (m *MeshOPAItemTargetRef) GetLabels() map[string]string {
 	return m.Labels
 }
 
-func (m *MeshOPAItemTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshOPAItemTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshOPAItemTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
-func (m *MeshOPAItemTargetRef) GetProxyTypes() []MeshOPAItemProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
 func (m *MeshOPAItemTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
-}
-
-func (m *MeshOPAItemTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
 }
 
 // MeshOPAItemSpec - Spec is the specification of the Kuma MeshOPA resource.

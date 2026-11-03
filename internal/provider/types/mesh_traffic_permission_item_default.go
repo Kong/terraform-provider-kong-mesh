@@ -2,10 +2,8 @@
 
 package types
 
-import (
-	"github.com/hashicorp/terraform-plugin-framework/types"
-)
-
 type MeshTrafficPermissionItemDefault struct {
-	Action types.String `tfsdk:"action"`
+	Allow               []Matches `tfsdk:"allow"`
+	AllowWithShadowDeny []Matches `tfsdk:"allow_with_shadow_deny"`
+	Deny                []Matches `tfsdk:"deny"`
 }

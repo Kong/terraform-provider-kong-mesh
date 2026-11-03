@@ -2,40 +2,25 @@
 
 package shared
 
-import (
-	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/utils"
-)
-
 // HostnameGeneratorList - List
 type HostnameGeneratorList struct {
 	Items []HostnameGeneratorItem `json:"items"`
 	// The total number of entities
-	Total *float64 `default:"null" json:"total"`
-	// URL to the next page
-	Next *string `default:"null" json:"next"`
-}
-
-func (h HostnameGeneratorList) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(h, "", false)
-}
-
-func (h *HostnameGeneratorList) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &h, "", false, nil); err != nil {
-		return err
-	}
-	return nil
+	Total float64 `json:"total"`
+	// URL to the next page, or null when this is the last page
+	Next *string `json:"next"`
 }
 
 func (h *HostnameGeneratorList) GetItems() []HostnameGeneratorItem {
 	if h == nil {
-		return nil
+		return []HostnameGeneratorItem{}
 	}
 	return h.Items
 }
 
-func (h *HostnameGeneratorList) GetTotal() *float64 {
+func (h *HostnameGeneratorList) GetTotal() float64 {
 	if h == nil {
-		return nil
+		return 0.0
 	}
 	return h.Total
 }

@@ -4,23 +4,23 @@ package shared
 
 // MeshExternalServiceList - List
 type MeshExternalServiceList struct {
-	Items []MeshExternalServiceItem `json:"items,omitempty"`
+	Items []MeshExternalServiceItem `json:"items"`
 	// The total number of entities
-	Total *float64 `json:"total,omitempty"`
-	// URL to the next page
-	Next *string `json:"next,omitempty"`
+	Total float64 `json:"total"`
+	// URL to the next page, or null when this is the last page
+	Next *string `json:"next"`
 }
 
 func (m *MeshExternalServiceList) GetItems() []MeshExternalServiceItem {
 	if m == nil {
-		return nil
+		return []MeshExternalServiceItem{}
 	}
 	return m.Items
 }
 
-func (m *MeshExternalServiceList) GetTotal() *float64 {
+func (m *MeshExternalServiceList) GetTotal() float64 {
 	if m == nil {
-		return nil
+		return 0.0
 	}
 	return m.Total
 }

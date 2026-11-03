@@ -4,23 +4,23 @@ package shared
 
 // MeshMultiZoneServiceList - List
 type MeshMultiZoneServiceList struct {
-	Items []MeshMultiZoneServiceItem `json:"items,omitempty"`
+	Items []MeshMultiZoneServiceItem `json:"items"`
 	// The total number of entities
-	Total *float64 `json:"total,omitempty"`
-	// URL to the next page
-	Next *string `json:"next,omitempty"`
+	Total float64 `json:"total"`
+	// URL to the next page, or null when this is the last page
+	Next *string `json:"next"`
 }
 
 func (m *MeshMultiZoneServiceList) GetItems() []MeshMultiZoneServiceItem {
 	if m == nil {
-		return nil
+		return []MeshMultiZoneServiceItem{}
 	}
 	return m.Items
 }
 
-func (m *MeshMultiZoneServiceList) GetTotal() *float64 {
+func (m *MeshMultiZoneServiceList) GetTotal() float64 {
 	if m == nil {
-		return nil
+		return 0.0
 	}
 	return m.Total
 }

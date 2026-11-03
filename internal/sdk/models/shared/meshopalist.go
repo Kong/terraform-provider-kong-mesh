@@ -4,23 +4,23 @@ package shared
 
 // MeshOPAList - List
 type MeshOPAList struct {
-	Items []MeshOPAItem `json:"items,omitempty"`
+	Items []MeshOPAItem `json:"items"`
 	// The total number of entities
-	Total *float64 `json:"total,omitempty"`
-	// URL to the next page
-	Next *string `json:"next,omitempty"`
+	Total float64 `json:"total"`
+	// URL to the next page, or null when this is the last page
+	Next *string `json:"next"`
 }
 
 func (m *MeshOPAList) GetItems() []MeshOPAItem {
 	if m == nil {
-		return nil
+		return []MeshOPAItem{}
 	}
 	return m.Items
 }
 
-func (m *MeshOPAList) GetTotal() *float64 {
+func (m *MeshOPAList) GetTotal() float64 {
 	if m == nil {
-		return nil
+		return 0.0
 	}
 	return m.Total
 }

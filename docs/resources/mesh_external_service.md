@@ -41,12 +41,15 @@ resource "kong-mesh_mesh_external_service" "my_meshexternalservice" {
       enabled             = false
       verification = {
         ca_cert = {
-          inline        = "...my_inline..."
-          inline_string = "...my_inline_string..."
+          env_var = {
+            name = "...my_name..."
+          }
+          file = {
+            path = "...my_path..."
+          }
           insecure_inline = {
             value = "...my_value..."
           }
-          secret = "...my_secret..."
           secret_ref = {
             kind = "Secret"
             name = "...my_name..."
@@ -54,12 +57,15 @@ resource "kong-mesh_mesh_external_service" "my_meshexternalservice" {
           type = "Secret"
         }
         client_cert = {
-          inline        = "...my_inline..."
-          inline_string = "...my_inline_string..."
+          env_var = {
+            name = "...my_name..."
+          }
+          file = {
+            path = "...my_path..."
+          }
           insecure_inline = {
             value = "...my_value..."
           }
-          secret = "...my_secret..."
           secret_ref = {
             kind = "Secret"
             name = "...my_name..."
@@ -67,12 +73,15 @@ resource "kong-mesh_mesh_external_service" "my_meshexternalservice" {
           type = "InsecureInline"
         }
         client_key = {
-          inline        = "...my_inline..."
-          inline_string = "...my_inline_string..."
+          env_var = {
+            name = "...my_name..."
+          }
+          file = {
+            path = "...my_path..."
+          }
           insecure_inline = {
             value = "...my_value..."
           }
-          secret = "...my_secret..."
           secret_ref = {
             kind = "Secret"
             name = "...my_name..."
@@ -104,7 +113,7 @@ resource "kong-mesh_mesh_external_service" "my_meshexternalservice" {
 ### Required
 
 - `mesh` (String) name of the mesh. Requires replacement if changed.
-- `name` (String) name of the MeshExternalService. Requires replacement if changed.
+- `name` (String) Name of the Kuma resource. Requires replacement if changed.
 - `spec` (Attributes) Spec is the specification of the Kuma MeshExternalService resource. (see [below for nested schema](#nestedatt--spec))
 - `type` (String) the type of the resource. must be "MeshExternalService"
 
@@ -199,14 +208,32 @@ Optional:
 <a id="nestedatt--spec--tls--verification--ca_cert"></a>
 ### Nested Schema for `spec.tls.verification.ca_cert`
 
+Required:
+
+- `type` (String) possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]
+
 Optional:
 
-- `inline` (String) Inline is the legacy, base64-encoded form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
-- `inline_string` (String) InlineString is the legacy form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
-- `insecure_inline` (Attributes) InsecureInline is the data source value as plain text, used with `type: InsecureInline`. (see [below for nested schema](#nestedatt--spec--tls--verification--ca_cert--insecure_inline))
-- `secret` (String) Secret is the legacy form of `type: Secret` with `secretRef`, not read by 3.0.
-- `secret_ref` (Attributes) SecretRef references a Secret, used with `type: Secret`. (see [below for nested schema](#nestedatt--spec--tls--verification--ca_cert--secret_ref))
-- `type` (String) Type of the data source, one of `Secret` or `InsecureInline`. possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]
+- `env_var` (Attributes) (see [below for nested schema](#nestedatt--spec--tls--verification--ca_cert--env_var))
+- `file` (Attributes) (see [below for nested schema](#nestedatt--spec--tls--verification--ca_cert--file))
+- `insecure_inline` (Attributes) (see [below for nested schema](#nestedatt--spec--tls--verification--ca_cert--insecure_inline))
+- `secret_ref` (Attributes) (see [below for nested schema](#nestedatt--spec--tls--verification--ca_cert--secret_ref))
+
+<a id="nestedatt--spec--tls--verification--ca_cert--env_var"></a>
+### Nested Schema for `spec.tls.verification.ca_cert.env_var`
+
+Required:
+
+- `name` (String)
+
+
+<a id="nestedatt--spec--tls--verification--ca_cert--file"></a>
+### Nested Schema for `spec.tls.verification.ca_cert.file`
+
+Required:
+
+- `path` (String)
+
 
 <a id="nestedatt--spec--tls--verification--ca_cert--insecure_inline"></a>
 ### Nested Schema for `spec.tls.verification.ca_cert.insecure_inline`
@@ -229,14 +256,32 @@ Required:
 <a id="nestedatt--spec--tls--verification--client_cert"></a>
 ### Nested Schema for `spec.tls.verification.client_cert`
 
+Required:
+
+- `type` (String) possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]
+
 Optional:
 
-- `inline` (String) Inline is the legacy, base64-encoded form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
-- `inline_string` (String) InlineString is the legacy form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
-- `insecure_inline` (Attributes) InsecureInline is the data source value as plain text, used with `type: InsecureInline`. (see [below for nested schema](#nestedatt--spec--tls--verification--client_cert--insecure_inline))
-- `secret` (String) Secret is the legacy form of `type: Secret` with `secretRef`, not read by 3.0.
-- `secret_ref` (Attributes) SecretRef references a Secret, used with `type: Secret`. (see [below for nested schema](#nestedatt--spec--tls--verification--client_cert--secret_ref))
-- `type` (String) Type of the data source, one of `Secret` or `InsecureInline`. possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]
+- `env_var` (Attributes) (see [below for nested schema](#nestedatt--spec--tls--verification--client_cert--env_var))
+- `file` (Attributes) (see [below for nested schema](#nestedatt--spec--tls--verification--client_cert--file))
+- `insecure_inline` (Attributes) (see [below for nested schema](#nestedatt--spec--tls--verification--client_cert--insecure_inline))
+- `secret_ref` (Attributes) (see [below for nested schema](#nestedatt--spec--tls--verification--client_cert--secret_ref))
+
+<a id="nestedatt--spec--tls--verification--client_cert--env_var"></a>
+### Nested Schema for `spec.tls.verification.client_cert.env_var`
+
+Required:
+
+- `name` (String)
+
+
+<a id="nestedatt--spec--tls--verification--client_cert--file"></a>
+### Nested Schema for `spec.tls.verification.client_cert.file`
+
+Required:
+
+- `path` (String)
+
 
 <a id="nestedatt--spec--tls--verification--client_cert--insecure_inline"></a>
 ### Nested Schema for `spec.tls.verification.client_cert.insecure_inline`
@@ -259,14 +304,32 @@ Required:
 <a id="nestedatt--spec--tls--verification--client_key"></a>
 ### Nested Schema for `spec.tls.verification.client_key`
 
+Required:
+
+- `type` (String) possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]
+
 Optional:
 
-- `inline` (String) Inline is the legacy, base64-encoded form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
-- `inline_string` (String) InlineString is the legacy form of `type: InsecureInline` with `insecureInline.value`, not read by 3.0.
-- `insecure_inline` (Attributes) InsecureInline is the data source value as plain text, used with `type: InsecureInline`. (see [below for nested schema](#nestedatt--spec--tls--verification--client_key--insecure_inline))
-- `secret` (String) Secret is the legacy form of `type: Secret` with `secretRef`, not read by 3.0.
-- `secret_ref` (Attributes) SecretRef references a Secret, used with `type: Secret`. (see [below for nested schema](#nestedatt--spec--tls--verification--client_key--secret_ref))
-- `type` (String) Type of the data source, one of `Secret` or `InsecureInline`. possible known values include one of ["File", "Secret", "EnvVar", "InsecureInline"]
+- `env_var` (Attributes) (see [below for nested schema](#nestedatt--spec--tls--verification--client_key--env_var))
+- `file` (Attributes) (see [below for nested schema](#nestedatt--spec--tls--verification--client_key--file))
+- `insecure_inline` (Attributes) (see [below for nested schema](#nestedatt--spec--tls--verification--client_key--insecure_inline))
+- `secret_ref` (Attributes) (see [below for nested schema](#nestedatt--spec--tls--verification--client_key--secret_ref))
+
+<a id="nestedatt--spec--tls--verification--client_key--env_var"></a>
+### Nested Schema for `spec.tls.verification.client_key.env_var`
+
+Required:
+
+- `name` (String)
+
+
+<a id="nestedatt--spec--tls--verification--client_key--file"></a>
+### Nested Schema for `spec.tls.verification.client_key.file`
+
+Required:
+
+- `path` (String)
+
 
 <a id="nestedatt--spec--tls--verification--client_key--insecure_inline"></a>
 ### Nested Schema for `spec.tls.verification.client_key.insecure_inline`

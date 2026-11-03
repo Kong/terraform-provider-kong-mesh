@@ -2,33 +2,18 @@
 
 package shared
 
-import (
-	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/utils"
-)
-
 // AccessAuditList - List
 type AccessAuditList struct {
 	Items []AccessAuditItem `json:"items"`
-	// URL to the next page
-	Next *string `default:"null" json:"next"`
+	// URL to the next page, or null when this is the last page
+	Next *string `json:"next"`
 	// The total number of entities
-	Total *float64 `default:"null" json:"total"`
-}
-
-func (a AccessAuditList) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(a, "", false)
-}
-
-func (a *AccessAuditList) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
-		return err
-	}
-	return nil
+	Total float64 `json:"total"`
 }
 
 func (a *AccessAuditList) GetItems() []AccessAuditItem {
 	if a == nil {
-		return nil
+		return []AccessAuditItem{}
 	}
 	return a.Items
 }
@@ -40,9 +25,9 @@ func (a *AccessAuditList) GetNext() *string {
 	return a.Next
 }
 
-func (a *AccessAuditList) GetTotal() *float64 {
+func (a *AccessAuditList) GetTotal() float64 {
 	if a == nil {
-		return nil
+		return 0.0
 	}
 	return a.Total
 }

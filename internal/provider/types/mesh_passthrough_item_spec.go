@@ -4,5 +4,5 @@ package types
 
 type MeshPassthroughItemSpec struct {
 	Default   *MeshPassthroughItemDefault `tfsdk:"default"`
-	TargetRef *MeshAccessLogItemTargetRef `tfsdk:"target_ref"`
+	TargetRef *TargetRef                  `tfsdk:"target_ref"`
 }

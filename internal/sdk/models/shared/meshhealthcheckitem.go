@@ -4,7 +4,6 @@ package shared
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk/internal/utils"
 	"time"
@@ -38,15 +37,8 @@ func (e *MeshHealthCheckItemType) UnmarshalJSON(data []byte) error {
 type MeshHealthCheckItemKind string
 
 const (
-	MeshHealthCheckItemKindMesh                 MeshHealthCheckItemKind = "Mesh"
-	MeshHealthCheckItemKindMeshSubset           MeshHealthCheckItemKind = "MeshSubset"
-	MeshHealthCheckItemKindMeshGateway          MeshHealthCheckItemKind = "MeshGateway"
-	MeshHealthCheckItemKindMeshService          MeshHealthCheckItemKind = "MeshService"
-	MeshHealthCheckItemKindMeshExternalService  MeshHealthCheckItemKind = "MeshExternalService"
-	MeshHealthCheckItemKindMeshMultiZoneService MeshHealthCheckItemKind = "MeshMultiZoneService"
-	MeshHealthCheckItemKindMeshServiceSubset    MeshHealthCheckItemKind = "MeshServiceSubset"
-	MeshHealthCheckItemKindMeshHTTPRoute        MeshHealthCheckItemKind = "MeshHTTPRoute"
-	MeshHealthCheckItemKindDataplane            MeshHealthCheckItemKind = "Dataplane"
+	MeshHealthCheckItemKindMesh      MeshHealthCheckItemKind = "Mesh"
+	MeshHealthCheckItemKindDataplane MeshHealthCheckItemKind = "Dataplane"
 )
 
 func (e MeshHealthCheckItemKind) ToPointer() *MeshHealthCheckItemKind {
@@ -57,29 +49,7 @@ func (e MeshHealthCheckItemKind) ToPointer() *MeshHealthCheckItemKind {
 func (e *MeshHealthCheckItemKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshHealthCheckItemProxyTypes string
-
-const (
-	MeshHealthCheckItemProxyTypesSidecar MeshHealthCheckItemProxyTypes = "Sidecar"
-	MeshHealthCheckItemProxyTypesGateway MeshHealthCheckItemProxyTypes = "Gateway"
-)
-
-func (e MeshHealthCheckItemProxyTypes) ToPointer() *MeshHealthCheckItemProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshHealthCheckItemProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
+		case "Mesh", "Dataplane":
 			return true
 		}
 	}
@@ -92,26 +62,13 @@ func (e *MeshHealthCheckItemProxyTypes) IsExact() bool {
 type MeshHealthCheckItemTargetRef struct {
 	// Kind of the referenced resource
 	Kind MeshHealthCheckItemKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select referenced real resources and to carry legacy
+	// service identity when a common TargetRef must still target old
+	// service-tag based paths.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshHealthCheckItemProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
 }
 
 func (m *MeshHealthCheckItemTargetRef) GetKind() MeshHealthCheckItemKind {
@@ -128,46 +85,11 @@ func (m *MeshHealthCheckItemTargetRef) GetLabels() map[string]string {
 	return m.Labels
 }
 
-func (m *MeshHealthCheckItemTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshHealthCheckItemTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshHealthCheckItemTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
-func (m *MeshHealthCheckItemTargetRef) GetProxyTypes() []MeshHealthCheckItemProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
 func (m *MeshHealthCheckItemTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
-}
-
-func (m *MeshHealthCheckItemTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
 }
 
 // Grpc - GrpcHealthCheck defines gRPC configuration which will instruct the service
@@ -201,101 +123,6 @@ func (g *Grpc) GetServiceName() *string {
 		return nil
 	}
 	return g.ServiceName
-}
-
-type HealthyPanicThresholdType string
-
-const (
-	HealthyPanicThresholdTypeInteger HealthyPanicThresholdType = "integer"
-	HealthyPanicThresholdTypeStr     HealthyPanicThresholdType = "str"
-)
-
-// HealthyPanicThreshold - Allows to configure panic threshold for Envoy cluster. If not specified,
-// the default is 50%. To disable panic mode, set to 0%.
-// Either int or decimal represented as string.
-//
-// Deprecated: the setting has been moved to MeshCircuitBreaker policy,
-// please use MeshCircuitBreaker policy instead.
-type HealthyPanicThreshold struct {
-	Integer *int64  `queryParam:"inline" union:"member"`
-	Str     *string `queryParam:"inline" union:"member"`
-
-	Type HealthyPanicThresholdType
-}
-
-func CreateHealthyPanicThresholdInteger(integer int64) HealthyPanicThreshold {
-	typ := HealthyPanicThresholdTypeInteger
-
-	return HealthyPanicThreshold{
-		Integer: &integer,
-		Type:    typ,
-	}
-}
-
-func CreateHealthyPanicThresholdStr(str string) HealthyPanicThreshold {
-	typ := HealthyPanicThresholdTypeStr
-
-	return HealthyPanicThreshold{
-		Str:  &str,
-		Type: typ,
-	}
-}
-
-func (u *HealthyPanicThreshold) UnmarshalJSON(data []byte) error {
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var integer int64 = int64(0)
-	if err := utils.UnmarshalJSON(data, &integer, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  HealthyPanicThresholdTypeInteger,
-			Value: &integer,
-		})
-	}
-
-	var str string = ""
-	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  HealthyPanicThresholdTypeStr,
-			Value: &str,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for HealthyPanicThreshold", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for HealthyPanicThreshold", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(HealthyPanicThresholdType)
-	switch best.Type {
-	case HealthyPanicThresholdTypeInteger:
-		u.Integer = best.Value.(*int64)
-		return nil
-	case HealthyPanicThresholdTypeStr:
-		u.Str = best.Value.(*string)
-		return nil
-	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for HealthyPanicThreshold", string(data))
-}
-
-func (u HealthyPanicThreshold) MarshalJSON() ([]byte, error) {
-	if u.Integer != nil {
-		return utils.MarshalJSON(u.Integer, "", true)
-	}
-
-	if u.Str != nil {
-		return utils.MarshalJSON(u.Str, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type HealthyPanicThreshold: all fields are null")
 }
 
 type Add struct {
@@ -454,13 +281,6 @@ type MeshHealthCheckItemDefault struct {
 	// GrpcHealthCheck defines gRPC configuration which will instruct the service
 	// the health check will be made for is a gRPC service.
 	Grpc *Grpc `json:"grpc,omitempty"`
-	// Allows to configure panic threshold for Envoy cluster. If not specified,
-	// the default is 50%. To disable panic mode, set to 0%.
-	// Either int or decimal represented as string.
-	//
-	// Deprecated: the setting has been moved to MeshCircuitBreaker policy,
-	// please use MeshCircuitBreaker policy instead.
-	HealthyPanicThreshold *HealthyPanicThreshold `json:"healthyPanicThreshold,omitempty"`
 	// Number of consecutive healthy checks before considering a host healthy.
 	// If not specified then the default value is 1
 	HealthyThreshold *int `json:"healthyThreshold,omitempty"`
@@ -531,13 +351,6 @@ func (m *MeshHealthCheckItemDefault) GetGrpc() *Grpc {
 		return nil
 	}
 	return m.Grpc
-}
-
-func (m *MeshHealthCheckItemDefault) GetHealthyPanicThreshold() *HealthyPanicThreshold {
-	if m == nil {
-		return nil
-	}
-	return m.HealthyPanicThreshold
 }
 
 func (m *MeshHealthCheckItemDefault) GetHealthyThreshold() *int {
@@ -622,14 +435,10 @@ type MeshHealthCheckItemSpecKind string
 
 const (
 	MeshHealthCheckItemSpecKindMesh                 MeshHealthCheckItemSpecKind = "Mesh"
-	MeshHealthCheckItemSpecKindMeshSubset           MeshHealthCheckItemSpecKind = "MeshSubset"
-	MeshHealthCheckItemSpecKindMeshGateway          MeshHealthCheckItemSpecKind = "MeshGateway"
 	MeshHealthCheckItemSpecKindMeshService          MeshHealthCheckItemSpecKind = "MeshService"
 	MeshHealthCheckItemSpecKindMeshExternalService  MeshHealthCheckItemSpecKind = "MeshExternalService"
 	MeshHealthCheckItemSpecKindMeshMultiZoneService MeshHealthCheckItemSpecKind = "MeshMultiZoneService"
-	MeshHealthCheckItemSpecKindMeshServiceSubset    MeshHealthCheckItemSpecKind = "MeshServiceSubset"
 	MeshHealthCheckItemSpecKindMeshHTTPRoute        MeshHealthCheckItemSpecKind = "MeshHTTPRoute"
-	MeshHealthCheckItemSpecKindDataplane            MeshHealthCheckItemSpecKind = "Dataplane"
 )
 
 func (e MeshHealthCheckItemSpecKind) ToPointer() *MeshHealthCheckItemSpecKind {
@@ -640,29 +449,7 @@ func (e MeshHealthCheckItemSpecKind) ToPointer() *MeshHealthCheckItemSpecKind {
 func (e *MeshHealthCheckItemSpecKind) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane":
-			return true
-		}
-	}
-	return false
-}
-
-type MeshHealthCheckItemSpecProxyTypes string
-
-const (
-	MeshHealthCheckItemSpecProxyTypesSidecar MeshHealthCheckItemSpecProxyTypes = "Sidecar"
-	MeshHealthCheckItemSpecProxyTypesGateway MeshHealthCheckItemSpecProxyTypes = "Gateway"
-)
-
-func (e MeshHealthCheckItemSpecProxyTypes) ToPointer() *MeshHealthCheckItemSpecProxyTypes {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *MeshHealthCheckItemSpecProxyTypes) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "Sidecar", "Gateway":
+		case "Mesh", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshHTTPRoute":
 			return true
 		}
 	}
@@ -674,26 +461,13 @@ func (e *MeshHealthCheckItemSpecProxyTypes) IsExact() bool {
 type MeshHealthCheckItemSpecTargetRef struct {
 	// Kind of the referenced resource
 	Kind MeshHealthCheckItemSpecKind `json:"kind"`
-	// Labels are used to select group of MeshServices that match labels. Either Labels or
-	// Name and Namespace can be used.
+	// Labels are used to select referenced real resources and to carry legacy
+	// service identity when a common TargetRef must still target old
+	// service-tag based paths.
 	Labels map[string]string `json:"labels,omitempty"`
-	// Mesh is reserved for future use to identify cross mesh resources.
-	Mesh *string `json:"mesh,omitempty"`
-	// Name of the referenced resource. Can only be used with kinds: `MeshService`,
-	// `MeshServiceSubset` and `MeshGatewayRoute`
-	Name *string `json:"name,omitempty"`
-	// Namespace specifies the namespace of target resource. If empty only resources in policy namespace
-	// will be targeted.
-	Namespace *string `json:"namespace,omitempty"`
-	// ProxyTypes specifies the data plane types that are subject to the policy. When not specified,
-	// all data plane types are targeted by the policy.
-	ProxyTypes []MeshHealthCheckItemSpecProxyTypes `json:"proxyTypes,omitempty"`
 	// SectionName is used to target specific section of resource.
 	// For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.
 	SectionName *string `json:"sectionName,omitempty"`
-	// Tags used to select a subset of proxies by tags. Can only be used with kinds
-	// `MeshSubset` and `MeshServiceSubset`
-	Tags map[string]string `json:"tags,omitempty"`
 }
 
 func (m *MeshHealthCheckItemSpecTargetRef) GetKind() MeshHealthCheckItemSpecKind {
@@ -710,46 +484,11 @@ func (m *MeshHealthCheckItemSpecTargetRef) GetLabels() map[string]string {
 	return m.Labels
 }
 
-func (m *MeshHealthCheckItemSpecTargetRef) GetMesh() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Mesh
-}
-
-func (m *MeshHealthCheckItemSpecTargetRef) GetName() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Name
-}
-
-func (m *MeshHealthCheckItemSpecTargetRef) GetNamespace() *string {
-	if m == nil {
-		return nil
-	}
-	return m.Namespace
-}
-
-func (m *MeshHealthCheckItemSpecTargetRef) GetProxyTypes() []MeshHealthCheckItemSpecProxyTypes {
-	if m == nil {
-		return nil
-	}
-	return m.ProxyTypes
-}
-
 func (m *MeshHealthCheckItemSpecTargetRef) GetSectionName() *string {
 	if m == nil {
 		return nil
 	}
 	return m.SectionName
-}
-
-func (m *MeshHealthCheckItemSpecTargetRef) GetTags() map[string]string {
-	if m == nil {
-		return nil
-	}
-	return m.Tags
 }
 
 type MeshHealthCheckItemTo struct {

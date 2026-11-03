@@ -8,15 +8,18 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/Kong/shared-speakeasy/customtypes/kumalabels"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	speakeasy_listplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/listplanmodifier"
 	speakeasy_stringplanmodifier "github.com/kong/terraform-provider-kong-mesh/internal/planmodifiers/stringplanmodifier"
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
+	"regexp"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -74,6 +77,10 @@ func (r *MeshSecretResource) Schema(ctx context.Context, req resource.SchemaRequ
 			"mesh": schema.StringAttribute{
 				Required:    true,
 				Description: `name of the mesh`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(253),
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[0-9a-z-_.]*$`), "must match pattern "+regexp.MustCompile(`^[0-9a-z-_.]*$`).String()),
+				},
 			},
 			"modification_time": schema.StringAttribute{
 				Computed: true,
@@ -85,6 +92,10 @@ func (r *MeshSecretResource) Schema(ctx context.Context, req resource.SchemaRequ
 			"name": schema.StringAttribute{
 				Required:    true,
 				Description: `name of the Secret`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(253),
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
+				},
 			},
 			"type": schema.StringAttribute{
 				Required: true,
@@ -140,13 +151,13 @@ func (r *MeshSecretResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 
-	request, requestDiags := data.ToOperationsPutSecretRequest(ctx)
+	request, requestDiags := data.ToOperationsPostSecretRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.Secret.PutSecret(ctx, *request)
+	res, err := r.client.Secret.PostSecret(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -158,10 +169,14 @@ func (r *MeshSecretResource) Create(ctx context.Context, req resource.CreateRequ
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	switch res.StatusCode {
-	case 200, 201:
-		break
-	default:
+	if res.StatusCode == 409 {
+		resp.Diagnostics.AddError(
+			"Resource Already Exists",
+			"When creating this resource, the API indicated that this resource already exists. You can bring the existing resource under management using Terraform import functionality or retry with a unique configuration.",
+		)
+		return
+	}
+	if res.StatusCode != 201 {
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}

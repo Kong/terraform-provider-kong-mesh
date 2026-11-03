@@ -10,16 +10,7 @@ resource "kong-mesh_mesh_http_route" "my_meshhttproute" {
       labels = {
         key = "value"
       }
-      mesh      = "...my_mesh..."
-      name      = "...my_name..."
-      namespace = "...my_namespace..."
-      proxy_types = [
-        "Sidecar"
-      ]
       section_name = "...my_section_name..."
-      tags = {
-        key = "value"
-      }
     }
     to = [
       {
@@ -31,22 +22,86 @@ resource "kong-mesh_mesh_http_route" "my_meshhttproute" {
             default = {
               backend_refs = [
                 {
-                  kind = "Dataplane"
+                  filters = [
+                    {
+                      request_header_modifier = {
+                        add = [
+                          {
+                            name  = "...my_name..."
+                            value = "...my_value..."
+                          }
+                        ]
+                        remove = [
+                          "..."
+                        ]
+                        set = [
+                          {
+                            name  = "...my_name..."
+                            value = "...my_value..."
+                          }
+                        ]
+                      }
+                      request_mirror = {
+                        backend_ref = {
+                          kind = "MeshExternalService"
+                          labels = {
+                            key = "value"
+                          }
+                          port         = 9
+                          section_name = "...my_section_name..."
+                          weight       = 1106520977
+                        }
+                        percentage = {
+                          str = "...my_str..."
+                        }
+                      }
+                      request_redirect = {
+                        hostname = "...my_hostname..."
+                        path = {
+                          replace_full_path    = "...my_replace_full_path..."
+                          replace_prefix_match = "...my_replace_prefix_match..."
+                          type                 = "ReplacePrefixMatch"
+                        }
+                        port        = 28655
+                        scheme      = "http"
+                        status_code = 302
+                      }
+                      response_header_modifier = {
+                        add = [
+                          {
+                            name  = "...my_name..."
+                            value = "...my_value..."
+                          }
+                        ]
+                        remove = [
+                          "..."
+                        ]
+                        set = [
+                          {
+                            name  = "...my_name..."
+                            value = "...my_value..."
+                          }
+                        ]
+                      }
+                      type = "RequestRedirect"
+                      url_rewrite = {
+                        host_to_backend_hostname = false
+                        hostname                 = "...my_hostname..."
+                        path = {
+                          replace_full_path    = "...my_replace_full_path..."
+                          replace_prefix_match = "...my_replace_prefix_match..."
+                          type                 = "ReplacePrefixMatch"
+                        }
+                      }
+                    }
+                  ]
+                  kind = "MeshMultiZoneService"
                   labels = {
                     key = "value"
                   }
-                  mesh      = "...my_mesh..."
-                  name      = "...my_name..."
-                  namespace = "...my_namespace..."
-                  port      = 10
-                  proxy_types = [
-                    "Gateway"
-                  ]
+                  port         = 10
                   section_name = "...my_section_name..."
-                  tags = {
-                    key = "value"
-                  }
-                  weight = 1
+                  weight       = 2238824958
                 }
               ]
               filters = [
@@ -70,22 +125,13 @@ resource "kong-mesh_mesh_http_route" "my_meshhttproute" {
                   }
                   request_mirror = {
                     backend_ref = {
-                      kind = "Mesh"
+                      kind = "MeshService"
                       labels = {
                         key = "value"
                       }
-                      mesh      = "...my_mesh..."
-                      name      = "...my_name..."
-                      namespace = "...my_namespace..."
-                      port      = 4
-                      proxy_types = [
-                        "Sidecar"
-                      ]
+                      port         = 4
                       section_name = "...my_section_name..."
-                      tags = {
-                        key = "value"
-                      }
-                      weight = 1
+                      weight       = 871984813
                     }
                     percentage = {
                       str = "...my_str..."
@@ -137,7 +183,7 @@ resource "kong-mesh_mesh_http_route" "my_meshhttproute" {
                 headers = [
                   {
                     name  = "...my_name..."
-                    type  = "Exact"
+                    type  = "Absent"
                     value = "...my_value..."
                   }
                 ]
@@ -158,20 +204,11 @@ resource "kong-mesh_mesh_http_route" "my_meshhttproute" {
           }
         ]
         target_ref = {
-          kind = "MeshServiceSubset"
+          kind = "MeshMultiZoneService"
           labels = {
             key = "value"
           }
-          mesh      = "...my_mesh..."
-          name      = "...my_name..."
-          namespace = "...my_namespace..."
-          proxy_types = [
-            "Gateway"
-          ]
           section_name = "...my_section_name..."
-          tags = {
-            key = "value"
-          }
         }
       }
     ]

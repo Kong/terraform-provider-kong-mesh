@@ -45,15 +45,15 @@ func (a *Autogenerate) GetEnabled() *bool {
 	return a.Enabled
 }
 
-type EnvVar struct {
+type MeshIdentityItemEnvVar struct {
 	Name string `json:"name"`
 }
 
-func (e *EnvVar) GetName() string {
-	if e == nil {
+func (m *MeshIdentityItemEnvVar) GetName() string {
+	if m == nil {
 		return ""
 	}
-	return e.Name
+	return m.Name
 }
 
 type MeshIdentityItemFile struct {
@@ -146,14 +146,14 @@ func (e *MeshIdentityItemSpecProviderBundledType) IsExact() bool {
 
 // Certificate allows the user to specify a custom certificate.
 type Certificate struct {
-	EnvVar         *EnvVar                                 `json:"envVar,omitempty"`
+	EnvVar         *MeshIdentityItemEnvVar                 `json:"envVar,omitempty"`
 	File           *MeshIdentityItemFile                   `json:"file,omitempty"`
 	InsecureInline *MeshIdentityItemInsecureInline         `json:"insecureInline,omitempty"`
 	SecretRef      *MeshIdentityItemSecretRef              `json:"secretRef,omitempty"`
 	Type           MeshIdentityItemSpecProviderBundledType `json:"type"`
 }
 
-func (c *Certificate) GetEnvVar() *EnvVar {
+func (c *Certificate) GetEnvVar() *MeshIdentityItemEnvVar {
 	if c == nil {
 		return nil
 	}
@@ -188,11 +188,11 @@ func (c *Certificate) GetType() MeshIdentityItemSpecProviderBundledType {
 	return c.Type
 }
 
-type MeshIdentityItemEnvVar struct {
+type MeshIdentityItemSpecEnvVar struct {
 	Name string `json:"name"`
 }
 
-func (m *MeshIdentityItemEnvVar) GetName() string {
+func (m *MeshIdentityItemSpecEnvVar) GetName() string {
 	if m == nil {
 		return ""
 	}
@@ -289,14 +289,14 @@ func (e *MeshIdentityItemSpecProviderType) IsExact() bool {
 
 // PrivateKey allows the user to specify a custom private key.
 type PrivateKey struct {
-	EnvVar         *MeshIdentityItemEnvVar             `json:"envVar,omitempty"`
+	EnvVar         *MeshIdentityItemSpecEnvVar         `json:"envVar,omitempty"`
 	File           *MeshIdentityItemSpecFile           `json:"file,omitempty"`
 	InsecureInline *MeshIdentityItemSpecInsecureInline `json:"insecureInline,omitempty"`
 	SecretRef      *MeshIdentityItemSpecSecretRef      `json:"secretRef,omitempty"`
 	Type           MeshIdentityItemSpecProviderType    `json:"type"`
 }
 
-func (p *PrivateKey) GetEnvVar() *MeshIdentityItemEnvVar {
+func (p *PrivateKey) GetEnvVar() *MeshIdentityItemSpecEnvVar {
 	if p == nil {
 		return nil
 	}
@@ -694,6 +694,13 @@ func (m *MeshIdentityItemConditions) GetType() string {
 type MeshIdentityItemStatus struct {
 	// Conditions is an array of hostname generator conditions.
 	Conditions []MeshIdentityItemConditions `json:"conditions,omitempty"`
+	// TrustDomain is the trust domain this identity issues certificates in. The
+	// control plane renders `spec.spiffeID.trustDomain` once, when it first
+	// initializes the identity, and then keeps issuing in the recorded value.
+	// Templates such as `{{ .Zone }}` therefore stop following the zone name,
+	// which would otherwise silently move every workload into a trust domain no
+	// MeshTrust publishes yet.
+	TrustDomain *string `json:"trustDomain,omitempty"`
 }
 
 func (m *MeshIdentityItemStatus) GetConditions() []MeshIdentityItemConditions {
@@ -701,6 +708,13 @@ func (m *MeshIdentityItemStatus) GetConditions() []MeshIdentityItemConditions {
 		return nil
 	}
 	return m.Conditions
+}
+
+func (m *MeshIdentityItemStatus) GetTrustDomain() *string {
+	if m == nil {
+		return nil
+	}
+	return m.TrustDomain
 }
 
 // MeshIdentityItem - MeshIdentity manages service identity and certificate provisioning for workloads in the mesh. It configures how services obtain their identity certificates, supporting multiple providers including bundled certificates (self-signed or user-provided CA), SPIRE integration, and custom SPIFFE ID configuration for secure service-to-service authentication.

@@ -4,23 +4,23 @@ package shared
 
 // MeshTrustList - List
 type MeshTrustList struct {
-	Items []MeshTrustItem `json:"items,omitempty"`
+	Items []MeshTrustItem `json:"items"`
 	// The total number of entities
-	Total *float64 `json:"total,omitempty"`
-	// URL to the next page
-	Next *string `json:"next,omitempty"`
+	Total float64 `json:"total"`
+	// URL to the next page, or null when this is the last page
+	Next *string `json:"next"`
 }
 
 func (m *MeshTrustList) GetItems() []MeshTrustItem {
 	if m == nil {
-		return nil
+		return []MeshTrustItem{}
 	}
 	return m.Items
 }
 
-func (m *MeshTrustList) GetTotal() *float64 {
+func (m *MeshTrustList) GetTotal() float64 {
 	if m == nil {
-		return nil
+		return 0.0
 	}
 	return m.Total
 }

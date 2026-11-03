@@ -4,23 +4,23 @@ package shared
 
 // MeshCircuitBreakerList - List
 type MeshCircuitBreakerList struct {
-	Items []MeshCircuitBreakerItem `json:"items,omitempty"`
+	Items []MeshCircuitBreakerItem `json:"items"`
 	// The total number of entities
-	Total *float64 `json:"total,omitempty"`
-	// URL to the next page
-	Next *string `json:"next,omitempty"`
+	Total float64 `json:"total"`
+	// URL to the next page, or null when this is the last page
+	Next *string `json:"next"`
 }
 
 func (m *MeshCircuitBreakerList) GetItems() []MeshCircuitBreakerItem {
 	if m == nil {
-		return nil
+		return []MeshCircuitBreakerItem{}
 	}
 	return m.Items
 }
 
-func (m *MeshCircuitBreakerList) GetTotal() *float64 {
+func (m *MeshCircuitBreakerList) GetTotal() float64 {
 	if m == nil {
-		return nil
+		return 0.0
 	}
 	return m.Total
 }

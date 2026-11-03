@@ -25,6 +25,7 @@ import (
 	"github.com/kong/terraform-provider-kong-mesh/internal/sdk"
 	speakeasy_objectvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/kong/terraform-provider-kong-mesh/internal/validators/stringvalidators"
+	"regexp"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -87,6 +88,10 @@ func (r *MeshPassthroughResource) Schema(ctx context.Context, req resource.Schem
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
 				Description: `name of the mesh. Requires replacement if changed.`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(253),
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[0-9a-z-_.]*$`), "must match pattern "+regexp.MustCompile(`^[0-9a-z-_.]*$`).String()),
+				},
 			},
 			"modification_time": schema.StringAttribute{
 				Computed: true,
@@ -100,7 +105,11 @@ func (r *MeshPassthroughResource) Schema(ctx context.Context, req resource.Schem
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
-				Description: `name of the MeshPassthrough. Requires replacement if changed.`,
+				Description: `Name of the Kuma resource. Requires replacement if changed.`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(253),
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`), "must match pattern "+regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`).String()),
+				},
 			},
 			"spec": schema.SingleNestedAttribute{
 				Required: true,
@@ -120,8 +129,11 @@ func (r *MeshPassthroughResource) Schema(ctx context.Context, req resource.Schem
 									},
 									Attributes: map[string]schema.Attribute{
 										"port": schema.Int32Attribute{
-											Optional:    true,
-											Description: `Port defines the port to which a user makes a request.`,
+											Optional: true,
+											MarkdownDescription: `Port defines the port to which a user makes a request. It is required for a` + "\n" +
+												`` + "`" + `Domain` + "`" + ` that is not a wildcard: the sidecar resolves the domain itself and` + "\n" +
+												`connects to this port, so the destination doesn't depend on the address the` + "\n" +
+												`client dials.`,
 										},
 										"protocol": schema.StringAttribute{
 											Computed:    true,
@@ -137,8 +149,11 @@ func (r *MeshPassthroughResource) Schema(ctx context.Context, req resource.Schem
 											},
 										},
 										"value": schema.StringAttribute{
-											Optional:    true,
-											Description: `Value for the specified Type. Not Null`,
+											Optional: true,
+											MarkdownDescription: `Value for the specified Type. A wildcard ` + "`" + `Domain` + "`" + `, for example` + "\n" +
+												`` + "`" + `*.example.com` + "`" + `, cannot be resolved by the sidecar, so its traffic goes to the` + "\n" +
+												`address the client dials and the match only restricts the SNI or Host.` + "\n" +
+												`Not Null`,
 											Validators: []validator.String{
 												speakeasy_stringvalidators.NotNull(),
 											},
@@ -162,48 +177,19 @@ func (r *MeshPassthroughResource) Schema(ctx context.Context, req resource.Schem
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
 								Required:    true,
-								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "MeshSubset", "MeshGateway", "MeshService", "MeshExternalService", "MeshMultiZoneService", "MeshServiceSubset", "MeshHTTPRoute", "Dataplane"]`,
+								Description: `Kind of the referenced resource. possible known values include one of ["Mesh", "Dataplane"]`,
 							},
 							"labels": schema.MapAttribute{
 								Optional:    true,
 								ElementType: types.StringType,
-								MarkdownDescription: `Labels are used to select group of MeshServices that match labels. Either Labels or` + "\n" +
-									`Name and Namespace can be used.`,
-							},
-							"mesh": schema.StringAttribute{
-								Optional:    true,
-								Description: `Mesh is reserved for future use to identify cross mesh resources.`,
-							},
-							"name": schema.StringAttribute{
-								Optional: true,
-								MarkdownDescription: `Name of the referenced resource. Can only be used with kinds: ` + "`" + `MeshService` + "`" + `,` + "\n" +
-									`` + "`" + `MeshServiceSubset` + "`" + ` and ` + "`" + `MeshGatewayRoute` + "`" + ``,
-							},
-							"namespace": schema.StringAttribute{
-								Optional: true,
-								MarkdownDescription: `Namespace specifies the namespace of target resource. If empty only resources in policy namespace` + "\n" +
-									`will be targeted.`,
-							},
-							"proxy_types": schema.ListAttribute{
-								Computed: true,
-								Optional: true,
-								PlanModifiers: []planmodifier.List{
-									custom_listplanmodifier.SupressZeroNullModifier(),
-								},
-								ElementType: types.StringType,
-								MarkdownDescription: `ProxyTypes specifies the data plane types that are subject to the policy. When not specified,` + "\n" +
-									`all data plane types are targeted by the policy.`,
+								MarkdownDescription: `Labels are used to select referenced real resources and to carry legacy` + "\n" +
+									`service identity when a common TargetRef must still target old` + "\n" +
+									`service-tag based paths.`,
 							},
 							"section_name": schema.StringAttribute{
 								Optional: true,
 								MarkdownDescription: `SectionName is used to target specific section of resource.` + "\n" +
 									`For example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.`,
-							},
-							"tags": schema.MapAttribute{
-								Optional:    true,
-								ElementType: types.StringType,
-								MarkdownDescription: `Tags used to select a subset of proxies by tags. Can only be used with kinds` + "\n" +
-									`` + "`" + `MeshSubset` + "`" + ` and ` + "`" + `MeshServiceSubset` + "`" + ``,
 							},
 						},
 						MarkdownDescription: `TargetRef is a reference to the resource the policy takes an effect on.` + "\n" +
@@ -273,13 +259,13 @@ func (r *MeshPassthroughResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
-	request, requestDiags := data.ToOperationsPutMeshPassthroughRequest(ctx)
+	request, requestDiags := data.ToOperationsPostMeshPassthroughRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.MeshPassthrough.PutMeshPassthrough(ctx, *request)
+	res, err := r.client.MeshPassthrough.PostMeshPassthrough(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -291,10 +277,14 @@ func (r *MeshPassthroughResource) Create(ctx context.Context, req resource.Creat
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	switch res.StatusCode {
-	case 200, 201:
-		break
-	default:
+	if res.StatusCode == 409 {
+		resp.Diagnostics.AddError(
+			"Resource Already Exists",
+			"When creating this resource, the API indicated that this resource already exists. You can bring the existing resource under management using Terraform import functionality or retry with a unique configuration.",
+		)
+		return
+	}
+	if res.StatusCode != 201 {
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
