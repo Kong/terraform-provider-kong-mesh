@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - kong-mesh-*
   pull_request:
 
 permissions:
