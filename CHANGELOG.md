@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.10.0
+> Released on 2026/11/03
+>
+> - feat(mesh): v3 release (#137)
+> - chore(renovate): update kong-mesh-* maintenance branches (#160)
+> - feat(sdk): automated oas update (#156)
+
+
 ## 0.9.0
 > Released on 2026/10/01
 >
