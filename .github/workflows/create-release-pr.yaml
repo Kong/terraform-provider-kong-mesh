@@ -81,6 +81,24 @@ jobs:
               ;;
           esac
 
+          case "${{ github.ref_name }}" in
+            main)
+              [[ "$RELEASE_TYPE" =~ ^(minor|patch)$ ]] || { echo "::error::main only releases minor or patch versions"; exit 1; }
+              ;;
+            kong-mesh-*)
+              [ "$RELEASE_TYPE" = patch ] || { echo "::error::${{ github.ref_name }} only releases patch versions"; exit 1; }
+              ;;
+            *)
+              echo "::error::releases are only cut from main or kong-mesh-* branches"
+              exit 1
+              ;;
+          esac
+
+          if git rev-parse -q --verify "refs/tags/v$NEW_VERSION" >/dev/null; then
+            echo "::error::v$NEW_VERSION already exists"
+            exit 1
+          fi
+
           echo "new=$NEW_VERSION" >> $GITHUB_OUTPUT
 
           echo "Current version: $CURRENT_VERSION"
